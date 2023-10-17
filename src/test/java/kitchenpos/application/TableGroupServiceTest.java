@@ -147,7 +147,7 @@ class TableGroupServiceTest extends ServiceTest {
                 List.of(orderTable, orderTable1));
         final TableGroup saveTableGroup = tableGroupService.create(tableGroup);
 
-        final Order order = new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), null);
+        final Order order = new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now());
         orderDao.save(order);
 
         //when, then

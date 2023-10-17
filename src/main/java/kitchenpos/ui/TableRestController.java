@@ -17,12 +17,10 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
-        final OrderTable created = tableService.create(orderTable);
-        final URI uri = URI.create("/api/tables/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(created)
-                ;
+    public ResponseEntity<Void> create() {
+        final Long tableId = tableService.create();
+        final URI uri = URI.create("/api/tables/" + tableId);
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/api/tables")

@@ -22,7 +22,7 @@ class JdbcTemplateOrderDaoTest extends RepositoryTest {
     @Test
     void saveAndFindById() {
         //when
-        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null));
+        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now()));
 
         //then
         assertThat(jdbcTemplateOrderDao.findById(1L)).isNotNull();
@@ -40,7 +40,7 @@ class JdbcTemplateOrderDaoTest extends RepositoryTest {
     @Test
     void existsByOrderTableIdAndOrderStatusIn() {
         //given
-        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null));
+        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now()));
 
         //when
         final boolean result = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of("COOKING"));
@@ -52,7 +52,7 @@ class JdbcTemplateOrderDaoTest extends RepositoryTest {
     @Test
     void existsByOrderTableIdAndOrderStatusInIfNotMatchOrderStatus() {
         //given
-        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null));
+        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now()));
 
         //when
         final boolean result = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of("MEAL"));
@@ -64,7 +64,7 @@ class JdbcTemplateOrderDaoTest extends RepositoryTest {
     @Test
     void existsByOrderTableIdInAndOrderStatusIn() {
         //given
-        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null));
+        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now()));
 
         //when
         final boolean result = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(1L), List.of("COOKING"));
@@ -76,7 +76,7 @@ class JdbcTemplateOrderDaoTest extends RepositoryTest {
     @Test
     void existsByOrderTableIdInAndOrderStatusInIfNotMatchOrderTableId() {
         //given
-        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now(), null));
+        jdbcTemplateOrderDao.save(new Order(1L, "COOKING", LocalDateTime.now()));
 
         //when
         final boolean result = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(List.of(3L), List.of("COOKING"));

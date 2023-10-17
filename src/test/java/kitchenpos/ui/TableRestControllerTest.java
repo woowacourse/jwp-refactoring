@@ -3,10 +3,10 @@ package kitchenpos.ui;
 import io.restassured.RestAssured;
 import kitchenpos.application.TableService;
 import kitchenpos.common.controller.ControllerTest;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,7 +25,7 @@ class TableRestControllerTest extends ControllerTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void OrderTable을_생성하면_201을_반환한다() {
@@ -60,7 +60,7 @@ class TableRestControllerTest extends ControllerTest {
 
     @Test
     void OrderTable을_비우면_200을_반환한다() {
-        final OrderTable 주문_테이블 = tableService.create(new OrderTable(null, 0, false));
+        final Long orderTableId = tableService.create();
         final var 요청_준비 = RestAssured.given()
                 .body(new OrderTable(null, 0, true))
                 .contentType(JSON);
@@ -68,7 +68,7 @@ class TableRestControllerTest extends ControllerTest {
         // when
         final var 응답 = 요청_준비
                 .when()
-                .put("/api/tables/" + 주문_테이블.getId() + "/empty");
+                .put("/api/tables/" + orderTableId + "/empty");
 
         // then
         응답.then().assertThat().statusCode(OK.value());
@@ -77,7 +77,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void OrderTable의_손님_수를_변경하면_200을_반환한다() {
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        final OrderTable 주문_테이블 = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
         final var 요청_준비 = RestAssured.given()
                 .body(new OrderTable(null, 0, false))
                 .contentType(JSON);

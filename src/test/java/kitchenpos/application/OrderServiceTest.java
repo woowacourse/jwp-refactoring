@@ -1,22 +1,16 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,12 +29,6 @@ class OrderServiceTest extends ServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
     private OrderDao orderDao;
 
     @Test
@@ -48,13 +36,9 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
 
         //when
-        final Order order = orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(),
-                List.of(orderLineItem)));
+        final Order order = orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now()));
 
         //then
         assertThat(order.getId()).isNotNull();
@@ -68,7 +52,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
 
         //when, then
-        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(), null)))
+        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -77,13 +61,9 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
 
         //when, then
-        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(),
-                List.of(orderLineItem, orderLineItem))))
+        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -92,13 +72,9 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, true));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
 
         //when, then
-        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now(),
-                List.of(orderLineItem))))
+        assertThatThrownBy(() -> orderService.create(new Order(orderTable.getId(), null, LocalDateTime.now())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -107,10 +83,7 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-        orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), List.of(orderLineItem)));
+        orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
 
         //when
         final List<Order> orders = orderService.list();
@@ -124,15 +97,11 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-        final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-                List.of(orderLineItem)));
+        final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
 
         //when
         final Order savedOrder = orderService.changeOrderStatus(order.getId(),
-                new Order(null, OrderStatus.COMPLETION.name(), null, null));
+                new Order(null, OrderStatus.COMPLETION.name(), null));
 
         //then
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
@@ -143,11 +112,7 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("마라탕그룹"));
-        final Menu menu = menuDao.save(new Menu("디노 마라탕", new BigDecimal(20000), menuGroup.getId()));
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-        final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(),
-                List.of(orderLineItem)));
+        final Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
 
         //when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
