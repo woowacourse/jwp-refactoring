@@ -113,13 +113,12 @@ public class ControllerTest {
 
     protected Order 주문(Long id) {
         OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
-        return new Order(
+        Order order = new Order(
                 id,
-                new OrderTable(1L, 테이블_그룹(), 0, false),
-                null,
-                null,
-                List.of(orderLineItem)
+                new OrderTable(1L, 테이블_그룹(), 0, false)
         );
+        order.addOrderLineItem(orderLineItem);
+        return order;
     }
 
     protected TableGroup 테이블_그룹() {

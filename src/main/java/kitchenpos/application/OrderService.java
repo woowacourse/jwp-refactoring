@@ -3,7 +3,9 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.CreateOrderCommand;
+import kitchenpos.application.dto.CreateOrderResponse;
+import kitchenpos.application.dto.common.OrderLineItemCommand;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -33,32 +35,33 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.orderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+    public CreateOrderResponse create(CreateOrderCommand command) {
+        List<OrderLineItemCommand> orderLineItemCommands = command.orderLineItemCommands();
+        if (CollectionUtils.isEmpty(orderLineItemCommands)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::menu)
-                .map(Menu::id)
+        final List<Long> menuIds = orderLineItemCommands.stream()
+                .map(OrderLineItemCommand::menuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItemCommands.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(order.orderTable().id())
+        final OrderTable orderTable = orderTableRepository.findById(command.orderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.empty()) {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderStatus(OrderStatus.COOKING.name());
-
-        return orderRepository.save(order);
+        Order order = new Order(orderTable, OrderStatus.COOKING.name());
+        orderLineItemCommands.stream()
+                .map(it -> new OrderLineItem(menuRepository.getById(it.menuId()), it.quantity()))
+                .forEach(order::addOrderLineItem);
+        Order savedOrder = orderRepository.save(order);
+        return CreateOrderResponse.from(savedOrder);
     }
 
     public List<Order> list() {

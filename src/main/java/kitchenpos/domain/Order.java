@@ -48,6 +48,10 @@ public class Order {
         this(null, orderTable, null, LocalDateTime.now(), new ArrayList<>());
     }
 
+    public Order(Long id, OrderTable orderTable) {
+        this(id, orderTable, null, null, new ArrayList<>());
+    }
+
     public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;

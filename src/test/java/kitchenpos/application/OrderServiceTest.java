@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateOrderCommand;
+import kitchenpos.application.dto.CreateOrderResponse;
+import kitchenpos.application.dto.common.OrderLineItemCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -19,20 +22,20 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 주문_항목이_null이면_예외가_발생한다() {
         // given
-        Order order = new Order(null, null);
+        CreateOrderCommand command = new CreateOrderCommand(null, null);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(command))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_항목이_없으면_예외가_발생한다() {
         // given
-        Order order = new Order(null, null, null, null, List.of());
+        CreateOrderCommand command = new CreateOrderCommand(null, List.of());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(command))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -40,12 +43,11 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 존재하지_않는_메뉴를_주문하면_예외가_발생한다() {
         // given
-        Menu menu = new Menu(1L, null, null, null, null);
-        OrderLineItem orderLineItem = new OrderLineItem(menu, 0);
-        Order order = new Order(null, null, null, null, List.of(orderLineItem));
+        OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(1L, 0);
+        CreateOrderCommand command = new CreateOrderCommand(null, List.of(orderLineItemCommand));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(command))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -63,24 +65,26 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 존재하지_않는_주문테이블로_주문하면_예외가_발생한다() {
             // given
-            OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
-            OrderTable orderTable = new OrderTable(1L);
-            order = new Order(null, orderTable, null, null, List.of(orderLineItem));
+            Menu 맛있는_메뉴 = 맛있는_메뉴();
+            OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(맛있는_메뉴.id(), 0);
+            CreateOrderCommand command = new CreateOrderCommand(1L, List.of(orderLineItemCommand));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_비어있으면_예외가_발생한다() {
             // given
-            OrderTable orderTable = new OrderTable(1L);
-            OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
-            Order order = new Order(null, orderTable, null, null, List.of(orderLineItem));
+            Menu 맛있는_메뉴 = 맛있는_메뉴();
+            OrderTable 주문_테이블 = 주문_테이블(true);
+
+            OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(맛있는_메뉴.id(), 0);
+            CreateOrderCommand command = new CreateOrderCommand(주문_테이블.id(), List.of(orderLineItemCommand));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -90,19 +94,19 @@ class OrderServiceTest extends IntegrationTest {
             @Test
             void 주문을_저장한다() {
                 // given
-                OrderTable orderTable = new OrderTable(0, false);
-                OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-                OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴(), 0);
-                Order order = new Order(savedOrderTable);
-                order.addOrderLineItem(orderLineItem);
+                Menu 맛있는_메뉴 = 맛있는_메뉴();
+                OrderTable 주문_테이블 = 주문_테이블(false);
+
+                OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(맛있는_메뉴.id(), 0);
+                CreateOrderCommand command = new CreateOrderCommand(주문_테이블.id(), List.of(orderLineItemCommand));
 
                 // when
-                Order result = orderService.create(order);
+                CreateOrderResponse result = orderService.create(command);
 
                 // then
                 assertAll(
                         () -> assertThat(result.id()).isPositive(),
-                        () -> assertThat(result.orderLineItems().get(0).order().id()).isEqualTo(result.id())
+                        () -> assertThat(result.orderLineItemResponses().get(0).orderId()).isEqualTo(result.id())
                 );
             }
 

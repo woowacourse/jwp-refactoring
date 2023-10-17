@@ -10,7 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateOrderResponse;
 import kitchenpos.domain.Order;
+import kitchenpos.ui.dto.CreateOrderRequest;
+import kitchenpos.ui.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -19,11 +22,14 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_생성() throws Exception {
         // given
-        Order order = 주문();
-        String request = objectMapper.writeValueAsString(order);
-        Order savedOrder = 주문(1L);
-        given(orderService.create(any())).willReturn(savedOrder);
-        String response = objectMapper.writeValueAsString(savedOrder);
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest(1L, List.of(
+                new OrderLineItemRequest(1L, 2)
+        ));
+        String request = objectMapper.writeValueAsString(createOrderRequest);
+
+        CreateOrderResponse createOrderResponse = CreateOrderResponse.from(주문(1L));
+        given(orderService.create(any())).willReturn(createOrderResponse);
+        String response = objectMapper.writeValueAsString(createOrderResponse);
 
         // when & then
         mockMvc.perform(post("/api/orders")
