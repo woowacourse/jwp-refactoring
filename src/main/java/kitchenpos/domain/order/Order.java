@@ -44,6 +44,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isCookingOrMeal() {
+        return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
+    }
+
     public Long getId() {
         return id;
     }
@@ -82,9 +86,5 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = new OrderLineItems(orderLineItems);
-    }
-
-    public boolean isCookingOrMeal() {
-        return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
     }
 }
