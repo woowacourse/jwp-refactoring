@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu.MenuGroup;
+import kitchenpos.domain.Menu.MenuGroupName;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -21,23 +22,20 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹_목록을_조회한다() {
         // given
-        MenuGroup expectedFirstMenuGroup = new MenuGroup();
-        expectedFirstMenuGroup.setId(1L);
-        expectedFirstMenuGroup.setName("고기");
-
-        MenuGroup expectedSecondMenuGroup = new MenuGroup();
-        expectedSecondMenuGroup.setId(2L);
-        expectedSecondMenuGroup.setName("물고기");
-
+        MenuGroup expectedFirstMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName("고기"));
+        MenuGroup expectedSecondMenuGroup = new MenuGroup(
+                2L,
+                new MenuGroupName("물고기"));
         List<MenuGroup> expected = List.of(expectedFirstMenuGroup, expectedSecondMenuGroup);
 
-        MenuGroup mockFirstMenuGroup = new MenuGroup();
-        mockFirstMenuGroup.setId(1L);
-        mockFirstMenuGroup.setName("고기");
-
-        MenuGroup mockSecondMenuGroup = new MenuGroup();
-        mockSecondMenuGroup.setId(2L);
-        mockSecondMenuGroup.setName("물고기");
+        MenuGroup mockFirstMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName("고기"));
+        MenuGroup mockSecondMenuGroup = new MenuGroup(
+                2L,
+                new MenuGroupName("물고기"));
 
         BDDMockito.given(menuGroupDao.findAll())
                 .willReturn(List.of(mockFirstMenuGroup, mockSecondMenuGroup));
@@ -52,16 +50,16 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹을_추가한다() {
         // given
-        MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("고기");
+        MenuGroup expected = new MenuGroup(
+                1L,
+                new MenuGroupName("고기"));
 
-        MenuGroup argumentMenuGroup = new MenuGroup();
-        argumentMenuGroup.setName("고기");
+        MenuGroup argumentMenuGroup = new MenuGroup(
+                new MenuGroupName("고기"));
 
-        MenuGroup mockReturnMenuGroup = new MenuGroup();
-        mockReturnMenuGroup.setId(1L);
-        mockReturnMenuGroup.setName("고기");
+        MenuGroup mockReturnMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName("고기"));
 
         BDDMockito.given(menuGroupDao.save(argumentMenuGroup))
                 .willReturn(mockReturnMenuGroup);
@@ -76,16 +74,16 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹을_추가할_때_이름이_공백일_수_있다() {
         // given
-        MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("");
+        MenuGroup expected = new MenuGroup(
+                1L,
+                new MenuGroupName(""));
 
-        MenuGroup argumentMenuGroup = new MenuGroup();
-        argumentMenuGroup.setName("");
+        MenuGroup argumentMenuGroup = new MenuGroup(
+                new MenuGroupName(""));
 
-        MenuGroup mockReturnMenuGroup = new MenuGroup();
-        mockReturnMenuGroup.setId(1L);
-        mockReturnMenuGroup.setName("");
+        MenuGroup mockReturnMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName(""));
 
         BDDMockito.given(menuGroupDao.save(argumentMenuGroup))
                 .willReturn(mockReturnMenuGroup);
