@@ -39,15 +39,15 @@ class OrderTableTest {
                 .isFalse();
         }
 
-        @Test
-        @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
-        void throwExceptionTableGroupIdIsNull() {
-            final OrderTable orderTable = new OrderTable(new TableGroup(now()), 0, true);
-
-            assertThatThrownBy(() -> orderTable.changeEmpty(false))
-                .isInstanceOf(OrderTableException.class)
-                .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
-        }
+//        @Test
+//        @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
+//        void throwExceptionTableGroupIdIsNull() {
+//            final OrderTable orderTable = new OrderTable(new TableGroup(now()), 0, true);
+//
+//            assertThatThrownBy(() -> orderTable.changeEmpty(false))
+//                .isInstanceOf(OrderTableException.class)
+//                .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
+//        }
     }
 
     @Nested

@@ -7,6 +7,8 @@ import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -14,7 +16,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuFixture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,9 +65,12 @@ public abstract class ServiceIntegrationTest {
     }
 
     protected void saveTableGroup(final OrderTable savedOrderTable) {
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         final OrderTable orderTable = tableService.create(비어있는_주문_테이블());
-        tableGroup.setOrderTables(List.of(savedOrderTable, orderTable));
-        tableGroupService.create(tableGroup);
+        final TableGroupDto tableGroupDto = new TableGroupDto(
+            null,
+            LocalDateTime.now(),
+            List.of(OrderTableDto.from(savedOrderTable), OrderTableDto.from(orderTable))
+        );
+        tableGroupService.create(tableGroupDto);
     }
 }

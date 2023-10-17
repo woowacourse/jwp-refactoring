@@ -59,7 +59,7 @@ public class OrderTable {
         return id;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void changeTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 

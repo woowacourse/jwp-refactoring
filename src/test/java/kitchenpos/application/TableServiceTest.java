@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
+import static kitchenpos.fixture.TableFixture.*;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,7 +37,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("table 목록을 조회한다.")
     void list() {
-        final List<OrderTable> orderTables = TableFixture.전체_주문_테이블();
+        final List<OrderTable> orderTables = 비어있는_전체_주문_테이블();
         orderTables.forEach(tableService::create);
 
         final List<OrderTable> foundedOrderTables = tableService.list();
