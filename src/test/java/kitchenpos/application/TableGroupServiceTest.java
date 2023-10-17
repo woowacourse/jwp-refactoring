@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableId;
+import kitchenpos.application.dto.TableGroupResponse;
+import kitchenpos.application.dto.TableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -22,6 +26,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kitchenpos.fixture.OrderTableFixtures.EMPTY_TABLE;
+import static kitchenpos.fixture.OrderTableFixtures.NOT_EMPTY_TABLE;
+
 @Transactional
 @SpringBootTest
 class TableGroupServiceTest {
@@ -43,15 +50,8 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setup() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setEmpty(true);
-        testTable1 = orderTableDao.save(orderTable1);
-
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setEmpty(true);
-        testTable2 = orderTableDao.save(orderTable2);
+        testTable1 = orderTableDao.save(EMPTY_TABLE());
+        testTable2 = orderTableDao.save(EMPTY_TABLE());
     }
 
     @Nested
@@ -62,18 +62,21 @@ class TableGroupServiceTest {
         @DisplayName("테이블 그룹 생성에 성공한다")
         void success() {
             // given
-            final TableGroup tableGroupRequest = new TableGroup();
-            tableGroupRequest.setOrderTables(List.of(testTable1, testTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            new OrderTableId(testTable1.getId()),
+                            new OrderTableId(testTable2.getId())
+                    ));
 
             // when
-            final TableGroup response = tableGroupService.create(tableGroupRequest);
+            final TableGroupResponse response = tableGroupService.create(request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
-                final List<Long> tableIds = response.getOrderTables()
+                final List<Long> tableIds = response.getTableResponses()
                         .stream()
-                        .map(OrderTable::getId)
+                        .map(TableResponse::getId)
                         .collect(Collectors.toList());
                 softly.assertThat(tableIds).containsExactlyInAnyOrderElementsOf(List.of(testTable1.getId(), testTable2.getId()));
             });
@@ -83,14 +86,14 @@ class TableGroupServiceTest {
         @DisplayName("생성되지 않은 태이블로 그룹생성시 예외가 발생한다.")
         void throwExceptionWhenTableIsNotCreated() {
             // given
-            final TableGroup tableGroupRequest = new TableGroup();
-            final OrderTable notCreatedTable = new OrderTable();
-            notCreatedTable.setId(-1L);
-            tableGroupRequest.setOrderTables(List.of(testTable1, notCreatedTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(
+                    new OrderTableId(testTable1.getId()),
+                    new OrderTableId(-1L)
+            ));
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -98,15 +101,16 @@ class TableGroupServiceTest {
         @DisplayName("비어있지 않는 테이블로는 그룹을 생성시 예외가 발생한다.")
         void throwExceptionWithEmptyTable() {
             // given
-            final TableGroup tableGroupRequest = new TableGroup();
-            final OrderTable notEmptyTable = new OrderTable();
-            notEmptyTable.setEmpty(false);
-            final OrderTable savedNotEmptyTable = orderTableDao.save(notEmptyTable);
-            tableGroupRequest.setOrderTables(List.of(testTable1, savedNotEmptyTable));
+            final OrderTable savedNotEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            new OrderTableId(testTable1.getId()),
+                            new OrderTableId(savedNotEmptyTable.getId())
+                    ));
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -123,12 +127,15 @@ class TableGroupServiceTest {
             groupedTable.setTableGroupId(savedOtherTableGroup.getId());
             final OrderTable savedGroupedTable = orderTableDao.save(groupedTable);
 
-            final TableGroup tableGroupRequest = new TableGroup();
-            tableGroupRequest.setOrderTables(List.of(testTable1, savedGroupedTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            new OrderTableId(testTable1.getId()),
+                            new OrderTableId(savedGroupedTable.getId())
+                    ));
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
