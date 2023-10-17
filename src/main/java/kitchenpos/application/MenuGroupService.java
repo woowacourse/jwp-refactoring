@@ -30,4 +30,10 @@ public class MenuGroupService {
                 .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
     }
+
+    public void validateExistenceById(final long id) {
+        if (!menuGroupRepository.existsById(id)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
+        }
+    }
 }

@@ -7,6 +7,7 @@ import kitchenpos.ui.dto.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,5 +29,12 @@ public class ProductService {
         return productRepository.findAll().stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    public BigDecimal calculatePrice(final long id, final long quantity) {
+        final Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+
+        return product.calculatePrice(quantity);
     }
 }

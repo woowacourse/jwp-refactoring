@@ -1,11 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -17,30 +13,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
-    private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
 
-    public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
-    ) {
+    private final MenuRepository menuRepository;
+    private final ProductService productService;
+    private final MenuGroupService menuGroupService;
+
+    public MenuService(final MenuRepository menuRepository,
+                       final ProductService productService,
+                       final MenuGroupService menuGroupService) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.productService = productService;
+        this.menuGroupService = menuGroupService;
     }
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
-        }
+        menuGroupService.validateExistenceById(request.getMenuGroupId());
 
-        final BigDecimal sum = request.getMenuProducts().stream()
-                .map(this::calculatePrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (request.getPrice().compareTo(sum) > 0) {
+        if (calculateSumOfPrice(request).compareTo(request.getPrice()) < 0) {
             throw new IllegalArgumentException("메뉴 가격은 상품 가격들의 합보다 클 수 없습니다.");
         }
 
@@ -48,12 +38,11 @@ public class MenuService {
         return MenuResponse.from(menu);
     }
 
-    private BigDecimal calculatePrice(final MenuProduct menuProduct) {
-        final Product product = productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
-        final BigDecimal quantity = BigDecimal.valueOf(menuProduct.getQuantity());
-
-        return product.getPrice().multiply(quantity);
+    private BigDecimal calculateSumOfPrice(final MenuCreateRequest request) {
+        return request.getMenuProducts().stream()
+                .map(menuProduct -> productService.calculatePrice(
+                        menuProduct.getProductId(), menuProduct.getQuantity()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public List<MenuResponse> list() {

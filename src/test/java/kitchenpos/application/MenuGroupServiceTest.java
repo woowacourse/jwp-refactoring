@@ -47,4 +47,12 @@ class MenuGroupServiceTest {
     void list() {
         assertDoesNotThrow(() -> menuGroupService.list());
     }
+
+    @Test
+    @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다")
+    void validateExistence() {
+        assertThatThrownBy(() -> menuGroupService.validateExistenceById(0L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴 그룹입니다.");
+    }
 }
