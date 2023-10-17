@@ -37,17 +37,14 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        final TableGroup savedTableGroup = tableGroupDao.save(
-                new TableGroup(null, LocalDateTime.now(), savedOrderTables));
-
         // todo: tablegroup repository 안으로 보내기
-        final Long tableGroupId = savedTableGroup.getId();
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(null, LocalDateTime.now(), savedOrderTables));
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
+            savedOrderTable.setTableGroupId(savedTableGroup.getId());
             savedOrderTable.changeEmpty(false);
             orderTableDao.save(savedOrderTable);
         }
-        return new TableGroup(tableGroupId, savedTableGroup.getCreatedDate(), savedOrderTables);
+        return savedTableGroup;
         // repository 안으로 보내기
     }
 

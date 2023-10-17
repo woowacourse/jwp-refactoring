@@ -68,7 +68,7 @@ class TableGroupServiceTest extends ServiceTest {
             );
 
             tableGroupService.create(커맨드);
-            return 테이블;
+            return orderTableDao.findById(테이블.getId()).get();
         }
 
     }
