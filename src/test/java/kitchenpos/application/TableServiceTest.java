@@ -31,8 +31,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableCreate() {
             //given
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(0);
+            final OrderTable orderTable = new OrderTable(null, 0, true);
             orderTable.setEmpty(true);
 
             //when
@@ -41,7 +40,7 @@ class TableServiceTest extends ServiceTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isNotNull();
-                softly.assertThat(actual.getTableGroupId()).isNull();
+                softly.assertThat(actual.getTableGroup()).isNull();
                 softly.assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
                 softly.assertThat(actual.isEmpty()).isEqualTo(orderTable.isEmpty());
             });
@@ -56,9 +55,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableFindAll() {
             //given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            orderTable.setNumberOfGuests(0);
+            OrderTable orderTable = new OrderTable(null, 0, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
             //when
@@ -83,10 +80,7 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(booleans = {true, false})
         void orderTableChangeEmpty(final boolean isEmpty) {
             //given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(isEmpty);
-            orderTable.setTableGroupId(null);
-            orderTable.setNumberOfGuests(0);
+            OrderTable orderTable = new OrderTable(null, 0, isEmpty);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
             final OrderTable changingStatus = new OrderTable();
@@ -118,15 +112,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeEmptyFailWhenTableGroupIdIsNotNull() {
             //given
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(Collections.emptyList());
-            tableGroup.setCreatedDate(LocalDateTime.now());
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             tableGroup = testFixtureBuilder.buildTableGroup(tableGroup);
 
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            orderTable.setTableGroupId(tableGroup.getId());
-            orderTable.setNumberOfGuests(0);
+            OrderTable orderTable = new OrderTable(tableGroup, 0, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
             final OrderTable changingStatus = new OrderTable();
@@ -143,16 +132,10 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void orderTableChangeEmptyFailWhenOrderStatusNotCompletion(final String orderStatus) {
             //given
-            OrderTable notCompletionOrdertable = new OrderTable();
-            notCompletionOrdertable.setEmpty(false);
-            notCompletionOrdertable.setTableGroupId(null);
-            notCompletionOrdertable.setNumberOfGuests(3);
+            OrderTable notCompletionOrdertable = new OrderTable(null, 3, false);
             notCompletionOrdertable = testFixtureBuilder.buildOrderTable(notCompletionOrdertable);
 
-            final Order notCompletionOrder = new Order();
-            notCompletionOrder.setOrderStatus(orderStatus);
-            notCompletionOrder.setOrderedTime(LocalDateTime.now());
-            notCompletionOrder.setOrderTableId(notCompletionOrdertable.getId());
+            final Order notCompletionOrder = new Order(notCompletionOrdertable, orderStatus, LocalDateTime.now(), Collections.emptyList());
             testFixtureBuilder.buildOrder(notCompletionOrder);
 
             final OrderTable changingStatus = new OrderTable();
@@ -174,14 +157,11 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeNumberOfGuests() {
             //given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
             final int beforeGuests = 10;
-            orderTable.setNumberOfGuests(beforeGuests);
+            OrderTable orderTable = new OrderTable(null, beforeGuests, false);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable afterGuests = new OrderTable();
-            afterGuests.setNumberOfGuests(beforeGuests + 100);
+            final OrderTable afterGuests = new OrderTable(null, beforeGuests + 100, true);
 
             //when
             final OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), afterGuests);
@@ -196,13 +176,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeNumberOfGuestsFailWhenChangingGuestsLessThenZero() {
             //given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            orderTable.setNumberOfGuests(3);
+            OrderTable orderTable = new OrderTable(null, 3, false);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable guestsLessThenZero = new OrderTable();
-            guestsLessThenZero.setNumberOfGuests(-1);
+            final OrderTable guestsLessThenZero = new OrderTable(null, -1, true);
 
             // when & then
             final Long orderTableId = orderTable.getId();
@@ -214,13 +191,9 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeNumberOfGuestsFailWhenNotExistOrderTable() {
             //given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            orderTable.setNumberOfGuests(3);
-            orderTable.setId(-1L);
+            OrderTable orderTable = new OrderTable(null, 3, true);
 
-            final OrderTable changingGuests = new OrderTable();
-            changingGuests.setNumberOfGuests(5);
+            final OrderTable changingGuests = new OrderTable(null, 5, true);
 
             // when & then
             final Long orderTableId = orderTable.getId();
@@ -232,13 +205,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeNumberOfGuestsFailWhenOrderTableIsEmpty() {
             //given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            orderTable.setNumberOfGuests(3);
+            OrderTable orderTable = new OrderTable(null, 3, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable changingGuests = new OrderTable();
-            changingGuests.setNumberOfGuests(5);
+            final OrderTable changingGuests = new OrderTable(null, 5, true);
 
             // when & then
             final Long orderTableId = orderTable.getId();

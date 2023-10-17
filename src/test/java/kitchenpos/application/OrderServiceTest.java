@@ -32,39 +32,21 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menu group");
+        MenuGroup menuGroup = new MenuGroup("menu group");
         menuGroup = testFixtureBuilder.buildMenuGroup(menuGroup);
 
-        Menu menu1 = new Menu();
-        menu1.setPrice(new BigDecimal(100));
-        menu1.setMenuGroupId(menuGroup.getId());
-        menu1.setName("menu");
-        menu1.setMenuProducts(Collections.emptyList());
+        Menu menu1 = new Menu("name", new BigDecimal( 100), menuGroup.getId(), Collections.emptyList());
         menu1 = testFixtureBuilder.buildMenu(menu1);
-        Menu menu2 = new Menu();
-        menu2.setPrice(new BigDecimal(100));
-        menu2.setMenuGroupId(menuGroup.getId());
-        menu2.setName("menu");
-        menu2.setMenuProducts(Collections.emptyList());
+        Menu menu2 = new Menu("name", new BigDecimal( 100), menuGroup.getId(), Collections.emptyList());
         menu2 = testFixtureBuilder.buildMenu(menu2);
 
         orderLineItems = new ArrayList<>();
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(menu1.getId());
-        orderLineItem1.setQuantity(1L);
-        orderLineItem1.setSeq(1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setMenuId(menu2.getId());
-        orderLineItem2.setQuantity(1L);
-        orderLineItem2.setSeq(1L);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu1, 1L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2, 1L);
         orderLineItems.add(orderLineItem1);
         orderLineItems.add(orderLineItem2);
 
-        orderTable = new OrderTable();
-        orderTable.setTableGroupId(null);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(3);
+        orderTable = new OrderTable(null, 3, false);
         orderTable = testFixtureBuilder.buildOrderTable(orderTable);
     }
 
@@ -76,9 +58,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreate() {
             //given
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(orderLineItems);
+            final Order order = new Order(orderTable, null, null, orderLineItems);
 
             //when
             final Order actual = orderService.create(order);
@@ -93,9 +73,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenOrderLineItemsIsEmpty() {
             //given
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(Collections.emptyList());
+            final Order order = new Order(orderTable, null, null, Collections.emptyList());
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -106,13 +84,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenNotExistMenu() {
             //given
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
+            final Order order = new Order(orderTable, null, null, orderLineItems);
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(-1L);
+            final Menu notExistMenu = new Menu("menu", new BigDecimal(1000), null, Collections.emptyList());
+            final OrderLineItem orderLineItem = new OrderLineItem(null, notExistMenu, 1);
             orderLineItems.add(orderLineItem);
-            order.setOrderLineItems(orderLineItems);
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -123,8 +99,8 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenNotExistOrderTable() {
             //given
-            final Order order = new Order();
-            order.setOrderTableId(-1L);
+            final OrderTable notExistOrderTable = new OrderTable(null, 3, true);
+            final Order order = new Order(notExistOrderTable, null, null, orderLineItems);
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -135,14 +111,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenOrderTableIsEmpty() {
             //given
-            orderTable = new OrderTable();
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(true);
-            orderTable.setNumberOfGuests(3);
+            orderTable = new OrderTable(null, 3, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final Order order = new Order();
-            order.setOrderTableId(orderTable.getId());
+            final Order order = new Order(orderTable, null, null, orderLineItems);
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -158,11 +130,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderFindAll() {
             //given
-            Order order = new Order();
-            order.setOrderedTime(LocalDateTime.now());
-            order.setOrderStatus(OrderStatus.COOKING.name());
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(Collections.emptyList());
+            Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
             order = testFixtureBuilder.buildOrder(order);
 
             //when
@@ -185,15 +153,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderStatusChange() {
             //given
-            Order order = new Order();
-            order.setOrderedTime(LocalDateTime.now());
-            order.setOrderStatus(OrderStatus.COOKING.name());
-            order.setOrderTableId(orderTable.getId());
-            order.setOrderLineItems(Collections.emptyList());
+            Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
             order = testFixtureBuilder.buildOrder(order);
 
-            final Order changeStatus = new Order();
-            changeStatus.setOrderStatus(OrderStatus.MEAL.name());
+            final Order changeStatus = new Order(null, OrderStatus.MEAL.name(), null, null);
 
             //when
             final Order actual = orderService.changeOrderStatus(order.getId(), changeStatus);
@@ -210,10 +173,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderStatusChangeFailWhenNotExistOrder() {
             //given
-            final Order order = new Order();
-            order.setId(-1L);
+            Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
 
-            final Order changeStatus = new Order();
+            final Order changeStatus = new Order(null, OrderStatus.MEAL.name(), null, null);
             changeStatus.setOrderStatus(OrderStatus.MEAL.name());
 
             // when & then
@@ -225,15 +187,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderStatusChangeFailWhenStatusIsCompletion() {
             //given
-            Order completionOrder = new Order();
-            completionOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-            completionOrder.setOrderedTime(LocalDateTime.now());
-            completionOrder.setOrderTableId(orderTable.getId());
-            completionOrder.setOrderLineItems(orderLineItems);
+            Order completionOrder = new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList());
             completionOrder = testFixtureBuilder.buildOrder(completionOrder);
 
-            final Order changeStatus = new Order();
-            changeStatus.setOrderStatus(OrderStatus.MEAL.name());
+            final Order changeStatus = new Order(null, OrderStatus.MEAL.name(), null, null);
 
             // when & then
             final Long completionOrderId = completionOrder.getId();

@@ -25,8 +25,7 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void createMenuGroup() {
             //given
-            final MenuGroup expected = new MenuGroup();
-            expected.setName("name");
+            final MenuGroup expected = new MenuGroup("menu group");
 
             //when
             final MenuGroup actual = menuGroupService.create(expected);
@@ -47,12 +46,10 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void findAllMenuGroup() {
             //given
-            final MenuGroup menuGroup1 = new MenuGroup();
-            menuGroup1.setName("name1");
+            final MenuGroup menuGroup1 = new MenuGroup("name1");
             final MenuGroup expected1 = testFixtureBuilder.buildMenuGroup(menuGroup1);
 
-            final MenuGroup menuGroup2 = new MenuGroup();
-            menuGroup2.setName("name2");
+            final MenuGroup menuGroup2 = new MenuGroup("name2");
             final MenuGroup expected2 = testFixtureBuilder.buildMenuGroup(menuGroup2);
 
             //when

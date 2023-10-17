@@ -26,9 +26,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreate() {
             //given
-            final Product product = new Product();
-            product.setPrice(new BigDecimal(1000));
-            product.setName("product");
+            final Product product = new Product("product", new BigDecimal(1000));
 
             //when
             final Product actual = productService.create(product);
@@ -45,8 +43,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreateFailWhenPriceIsNull() {
             //given
-            final Product product = new Product();
-            product.setPrice(null);
+            final Product product = new Product("product", null);
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -57,8 +54,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreateFailWhenPriceLessThenZero() {
             //given
-            final Product product = new Product();
-            product.setPrice(new BigDecimal(-1));
+            final Product product = new Product("product", new BigDecimal(-1));
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -74,9 +70,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productFindAll() {
             //given
-            Product product = new Product();
-            product.setPrice(new BigDecimal(1000));
-            product.setName("product");
+            final Product product = new Product("product", new BigDecimal(1000));
             final Product expected = testFixtureBuilder.buildProduct(product);
 
             //when
@@ -86,7 +80,7 @@ class ProductServiceTest extends ServiceTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
                 softly.assertThat(actual.get(0).getId()).isEqualTo(expected.getId());
-                softly.assertThat(actual.get(0).getPrice()).isEqualTo(expected.getPrice());
+                softly.assertThat(actual.get(0).getPrice()).isEqualByComparingTo(expected.getPrice());
                 softly.assertThat(actual.get(0).getName()).isEqualTo(expected.getName());
             });
         }

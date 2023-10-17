@@ -29,19 +29,13 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        menuGroup = new MenuGroup("menu group");
         menuGroup = testFixtureBuilder.buildMenuGroup(menuGroup);
 
-        product = new Product();
-        product.setName("product");
-        product.setPrice(new BigDecimal(PRODUCT_PRICE));
+        product = new Product("product", new BigDecimal(PRODUCT_PRICE));
         product = testFixtureBuilder.buildProduct(product);
 
-        menuProduct = new MenuProduct();
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(1L);
-        menuProduct.setSeq(1L);
+        menuProduct = new MenuProduct(null, product, 1);
     }
 
     @DisplayName("메뉴 생성 테스트")
@@ -52,11 +46,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void createMenu() {
             //given
-            final Menu expected = new Menu();
-            expected.setPrice(new BigDecimal(100));
-            expected.setMenuGroupId(menuGroup.getId());
-            expected.setName("menu");
-            expected.setMenuProducts(List.of(menuProduct));
+            final Menu expected = new Menu("name", new BigDecimal(100), menuGroup.getId(), List.of(menuProduct));
 
             //when
             final Menu actual = menuService.create(expected);
@@ -71,10 +61,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void menuCreateFailWhenPriceLessThenZero() {
             //given
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(-1));
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setName("menu");
+            final Menu menu = new Menu("name", new BigDecimal(-1), menuGroup.getId(), List.of(menuProduct));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -85,10 +72,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void menuCreateFailWhenNotExistMenuGroup() {
             //given
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(-1));
-            menu.setMenuGroupId(-1L);
-            menu.setName("menu");
+            final Menu menu = new Menu("name", new BigDecimal(1000), -1L, List.of(menuProduct));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -99,14 +83,9 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void menuCreateFailWhenNotExistProduct() {
             //given
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(-1));
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setName("menu");
-
-            final MenuProduct notExistProduct = new MenuProduct();
-            notExistProduct.setProductId(-1L);
-            menu.setMenuProducts(List.of(notExistProduct));
+            final Product notExistProduct = new Product("name", new BigDecimal(1000));
+            final MenuProduct menuProduct = new MenuProduct(null, notExistProduct, 1);
+            final Menu menu = new Menu("name", new BigDecimal(1000), menuGroup.getId(), List.of(menuProduct));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -117,10 +96,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void menuCreateFailWhenPriceIsNull() {
             //given
-            final Menu menu = new Menu();
-            menu.setPrice(null);
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setName("menu");
+            final Menu menu = new Menu("name", null, menuGroup.getId(), List.of(menuProduct));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -131,11 +107,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void menuCreateFailWhenMenuPriceGraterThenProductsPriceSum() {
             //given
-            final Menu menu = new Menu();
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setName("menu");
-            menu.setPrice(new BigDecimal(PRODUCT_PRICE + 10000));
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu("name", new BigDecimal(PRODUCT_PRICE + 1000), menuGroup.getId(), List.of(menuProduct));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -151,10 +123,8 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void findAllMenu() {
             //given
-            final Menu menu = new Menu();
-            menu.setMenuGroupId(menuGroup.getId());
-            menu.setName("menu");
-            menu.setPrice(new BigDecimal(1000));
+            final Menu menu = new Menu("name", new BigDecimal(1000), menuGroup.getId(), List.of(menuProduct));
+
             final Menu expected = testFixtureBuilder.buildMenu(menu);
 
             //when
