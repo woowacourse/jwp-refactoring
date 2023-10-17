@@ -72,6 +72,7 @@ public class MenuService {
         });
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResult> list() {
         return menuRepository.findAll().stream()
                 .map(MenuResult::from)

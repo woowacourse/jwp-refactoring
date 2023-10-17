@@ -25,6 +25,7 @@ public class ProductService {
         return ProductResult.from(productRepository.save(product));
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResult> list() {
         return productRepository.findAll().stream()
                 .map(ProductResult::from)

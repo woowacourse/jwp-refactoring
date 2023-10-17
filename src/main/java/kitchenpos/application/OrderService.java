@@ -74,6 +74,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResult> list() {
         return orderRepository.findAll().stream()
                 .map(OrderResult::from)

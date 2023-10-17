@@ -24,6 +24,7 @@ public class MenuGroupService {
         return MenuGroupResult.from(menuGroupRepository.save(menuGroup));
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResult> list() {
         return menuGroupRepository.findAll().stream()
                 .map(MenuGroupResult::from)

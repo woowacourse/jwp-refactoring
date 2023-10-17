@@ -26,6 +26,7 @@ public class TableService {
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResult> list() {
         return orderTableRepository.findAll().stream()
                 .map(OrderTableResult::from)
