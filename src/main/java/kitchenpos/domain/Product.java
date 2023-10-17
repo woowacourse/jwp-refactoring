@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 public class Product {
@@ -13,26 +12,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Money price;
 
     protected Product() {
     }
 
     public Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Money(price);
     }
 
     public Product(String name, BigDecimal price) {
         this(null, name, price);
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("상품 가격은 0보다 커야합니다");
-        }
     }
 
     public Long getId() {
@@ -44,6 +36,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 }

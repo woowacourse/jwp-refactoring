@@ -16,7 +16,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Money price;
     private Long menuGroupId;
     @Embedded
     private MenuProducts menuProducts;
@@ -39,16 +39,13 @@ public class Menu {
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Money(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts);
         validatePrice(price);
     }
 
     private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격은 0원 이상이여야합니다");
-        }
         if (price.compareTo(menuProducts.menuProductsPrice()) > 0) {
             throw new IllegalArgumentException("가격의 합이 맞지 않습니다");
         }
@@ -63,7 +60,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
