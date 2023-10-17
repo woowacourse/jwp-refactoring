@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,17 +30,15 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(BigDecimal.valueOf(10000));
+            final ProductCreateRequest request = new ProductCreateRequest("상품이름", BigDecimal.valueOf(10000));
 
             // when
-            final Product actual = productService.create(productInput);
+            final Product actual = productService.create(request);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getName()).isEqualTo(productInput.getName());
-                softly.assertThat(actual.getPrice().compareTo(productInput.getPrice())).isZero();
+                softly.assertThat(actual.getName()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice().compareTo(request.getPrice())).isZero();
             });
         }
 
@@ -47,12 +46,10 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_price_is_null() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(null);
+            final ProductCreateRequest request = new ProductCreateRequest("상품이름", null);
 
             // then
-            assertThatThrownBy(() -> productService.create(productInput))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -60,12 +57,10 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_price_under_zero() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(BigDecimal.valueOf(-1));
+            final ProductCreateRequest request = new ProductCreateRequest("상품이름", BigDecimal.valueOf(-1));
 
             // then
-            assertThatThrownBy(() -> productService.create(productInput))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

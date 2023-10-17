@@ -2,6 +2,7 @@ package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class ProductCreateApiTest extends ApiTestConfig {
         final Long expectedId = 1L;
         final Product expectedProduct = new Product();
         expectedProduct.setId(expectedId);
-        when(productService.create(any(Product.class))).thenReturn(expectedProduct);
+        when(productService.create(any(ProductCreateRequest.class))).thenReturn(expectedProduct);
 
         // then
         mockMvc.perform(post("/api/products")
