@@ -1,31 +1,35 @@
 package kitchenpos.common.fixtures;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.OrderTableFindRequest;
+import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 
 public class TableGroupFixtures {
 
     /**
      * ORDER_TABLES
      */
-    public static List<OrderTable> TABLE_GROUP1_ORDER_TABLES() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
+    public static List<OrderTableFindRequest> TABLE_GROUP1_ORDER_TABLE_REQUESTS() {
+        final OrderTableFindRequest orderTableFindRequest1 = new OrderTableFindRequest(1L);
+        final OrderTableFindRequest orderTableFindRequest2 = new OrderTableFindRequest(2L);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-
-        return List.of(orderTable1, orderTable2);
+        return List.of(orderTableFindRequest1, orderTableFindRequest2);
     }
 
     /**
      * REQUEST
      */
-    public static TableGroup TABLE_GROUP1_CREATE_REQUEST() {
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = TABLE_GROUP1_ORDER_TABLES();
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+    public static TableGroupCreateRequest TABLE_GROUP1_CREATE_REQUEST() {
+        List<OrderTableFindRequest> orderTables = TABLE_GROUP1_ORDER_TABLE_REQUESTS();
+        return new TableGroupCreateRequest(orderTables);
+    }
+
+    /**
+     * ENTITY
+     */
+    public static TableGroup TABLE_GROUP1() {
+        return new TableGroup(LocalDateTime.now());
     }
 }

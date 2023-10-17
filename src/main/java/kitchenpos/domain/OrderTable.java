@@ -16,26 +16,20 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
     protected OrderTable() {}
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests,
-                      final boolean empty) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public TableGroup getTableGroup() {
@@ -50,15 +44,17 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public void confirmTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        tableGroup.getOrderTables().add(this);
+    }
+
+    public void unGroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 }

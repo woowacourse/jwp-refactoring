@@ -1,6 +1,7 @@
 package kitchenpos.common.fixtures;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.table.OrderTableCreateRequest;
 
 public class OrderTableFixtures {
 
@@ -17,10 +18,14 @@ public class OrderTableFixtures {
     /**
      * CREATE_REQUEST
      */
-    public static OrderTable ORDER_TABLE1_CREATE_REQUEST() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(ORDER_TABLE1_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(ORDER_TABLE1_IS_EMPTY);
-        return orderTable;
+    public static OrderTableCreateRequest ORDER_TABLE1_CREATE_REQUEST() {
+        return new OrderTableCreateRequest(ORDER_TABLE1_NUMBER_OF_GUESTS, ORDER_TABLE1_IS_EMPTY);
+    }
+
+    /**
+     * ENTITY
+     */
+    public static OrderTable ORDER_TABLE1() {
+        return new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, ORDER_TABLE1_IS_EMPTY);
     }
 }
