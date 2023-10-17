@@ -114,7 +114,7 @@ class TableGroupServiceTest extends ServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블 등록 시, 주문 테이블이 이미 그룹에 속해있을 경우 예외가 발생한다.")
+    @DisplayName("테이블 등록 시, 주문 테이블이 비어있지 않은 경우 예외가 발생한다.")
     @Test
     void create_FailWithNotEmptyOrderTable() {
         // given
@@ -126,6 +126,28 @@ class TableGroupServiceTest extends ServiceTest {
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2, 비어있지_않은_주문테이블));
+
+        // when & then
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블 등록 시, 주문 테이블이 이미 테이블 그룹에 속해있을 경우 예외가 발생한다.")
+    @Test
+    void create_FailWithOrderTableAlreadyHasTableGroup() {
+        // given
+        TableGroup existingTableGroup = new TableGroup();
+        existingTableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2));
+
+        OrderTable orderTable3 = new OrderTable();
+        orderTable3.setEmpty(false);
+        orderTable3.setNumberOfGuests(0);
+        orderTable3.setTableGroupId(tableGroupService.create(existingTableGroup).getId());
+
+        OrderTable 이미_테이블그룹에_속한_주문테이블 = orderTableDao.save(orderTable3);
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2, 이미_테이블그룹에_속한_주문테이블));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
