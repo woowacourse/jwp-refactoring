@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.CreateProductDto;
 import kitchenpos.application.dto.ProductDto;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.repository.ProductRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
@@ -22,7 +22,7 @@ class ProductServiceTest extends MockServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     void 상품_목록을_조회한다() {
@@ -50,7 +50,7 @@ class ProductServiceTest extends MockServiceTest {
                 new ProductName("chicken"),
                 new ProductPrice(BigDecimal.valueOf(21000L)));
 
-        BDDMockito.given(productDao.findAll())
+        BDDMockito.given(productRepository.findAll())
                 .willReturn(List.of(mockFirstProduct, mockSecondProduct));
 
         // when
@@ -77,7 +77,7 @@ class ProductServiceTest extends MockServiceTest {
                 new ProductName("pizza"),
                 new ProductPrice(BigDecimal.valueOf(18000L)));
 
-        BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
+        BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
                 .willReturn(mockReturnProduct);
 
         // when
@@ -93,7 +93,7 @@ class ProductServiceTest extends MockServiceTest {
         CreateProductDto createProductDto = new CreateProductDto(
                 "pizza",
                 BigDecimal.valueOf(0L));
-        BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
+        BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
                 .willReturn(new Product(
                         1L,
                         new ProductName("pizza"),
@@ -110,7 +110,7 @@ class ProductServiceTest extends MockServiceTest {
         CreateProductDto createProductDto = new CreateProductDto(
                 "",
                 BigDecimal.valueOf(1000L));
-        BDDMockito.given(productDao.save(BDDMockito.any(Product.class)))
+        BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
                 .willReturn(new Product(
                         1L,
                         new ProductName(""),

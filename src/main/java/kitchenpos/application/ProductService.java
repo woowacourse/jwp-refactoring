@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.CreateProductDto;
 import kitchenpos.application.dto.ProductDto;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.repository.ProductRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -27,15 +27,16 @@ public class ProductService {
                 new ProductName(createProductDto.getName()),
                 new ProductPrice(createProductDto.getPrice()));
 
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
         return new ProductDto(
                 savedProduct.getId(),
                 savedProduct.getName(),
                 savedProduct.getPrice());
     }
 
+    @Transactional(readOnly = true)
     public List<ProductDto> list() {
-        return productDao.findAll()
+        return productRepository.findAll()
                 .stream()
                 .map(product -> new ProductDto(
                         product.getId(),

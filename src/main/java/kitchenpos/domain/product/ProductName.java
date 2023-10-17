@@ -1,10 +1,15 @@
 package kitchenpos.domain.product;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class ProductName {
 
-    private final String name;
+    private String name;
+
+    protected ProductName() {
+    }
 
     public ProductName(String name) {
         this.name = name;
