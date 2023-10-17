@@ -1,12 +1,10 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,28 +22,25 @@ class ProductServiceTest {
 
     @Test
     void 상품_가격은_NULL_일_수_없다() {
-        Product product = new Product();
-        product.setPrice(null);
+        Product product = new Product(1L, "NULL", null);
 
         assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품_가격은_음수일_수_없다() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1));
+        Product product = new Product(1L, "NULL", BigDecimal.valueOf(-1));
 
         assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 상품_생성할_수_있다() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(100));
+        Product 로제떡볶이 = ProductFixtures.로제떡볶이();
 
-        productService.create(product);
+        productService.create(로제떡볶이);
 
-        verify(productDao).save(product);
+        verify(productDao).save(로제떡볶이);
     }
 
     @Test

@@ -84,20 +84,18 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(1000));
         menu.setMenuGroupId(1L);
         MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(2L);
+        menuProduct1.setProductId(1L);
         MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(3L);
+        menuProduct2.setProductId(2L);
         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
         when(menuGroupDao.existsById(1L)).thenReturn(true);
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(1000));
-        when(productDao.findById(2L)).thenReturn(Optional.of(product));
+        Product 로제떡볶이 = ProductFixtures.로제떡볶이();
+        when(productDao.findById(1L)).thenReturn(Optional.of(로제떡볶이));
 
-        Product product2 = new Product();
-        product2.setPrice(BigDecimal.valueOf(100));
-        when(productDao.findById(3L)).thenReturn(Optional.of(product2));
+        Product 짜장떡볶이 = ProductFixtures.짜장떡볶이();
+        when(productDao.findById(2L)).thenReturn(Optional.of(짜장떡볶이));
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -109,22 +107,20 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(1000));
         menu.setMenuGroupId(1L);
         MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(2L);
+        menuProduct1.setProductId(3L);
         menuProduct1.setQuantity(1);
         MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(3L);
+        menuProduct2.setProductId(2L);
         menuProduct2.setQuantity(1);
         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
         when(menuGroupDao.existsById(1L)).thenReturn(true);
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(900));
-        when(productDao.findById(2L)).thenReturn(Optional.of(product));
+        Product 마라떡볶이 = ProductFixtures.마라떡볶이();
+        when(productDao.findById(3L)).thenReturn(Optional.of(마라떡볶이));
 
-        Product product2 = new Product();
-        product2.setPrice(BigDecimal.valueOf(100));
-        when(productDao.findById(3L)).thenReturn(Optional.of(product2));
+        Product 짜장떡볶이 = ProductFixtures.짜장떡볶이();
+        when(productDao.findById(2L)).thenReturn(Optional.of(짜장떡볶이));
 
         when(menuDao.save(menu)).thenReturn(menu);
         when(menuProductDao.save(menuProduct1)).thenReturn(menuProduct1);
