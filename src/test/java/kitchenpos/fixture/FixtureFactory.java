@@ -22,13 +22,6 @@ public class FixtureFactory {
     private FixtureFactory() {
     }
 
-    public static Product 상품_생성(final String name, final BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
-    }
-
     public static Order 주문_생성(
             final Long orderTableId,
             final String orderStatus,
