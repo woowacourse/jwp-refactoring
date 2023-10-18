@@ -68,6 +68,38 @@ public class IntegrationTest {
     @Autowired
     protected ProductRepository productRepository;
 
+    protected Price 가격(long 가격) {
+        return new Price(BigDecimal.valueOf(가격));
+    }
+
+    protected Product 상품(String 이름, Price 가격) {
+        return new Product(이름, 가격);
+    }
+
+    protected MenuGroup 메뉴그룹(String 이름) {
+        return new MenuGroup(이름);
+    }
+
+    protected MenuProduct 메뉴상품(Product 상품, long 수량) {
+        return new MenuProduct(상품, 수량);
+    }
+
+    protected Menu 메뉴(String 메뉴이름, Price 가격, MenuGroup 메뉴그룹, MenuProduct... 메뉴상품) {
+        return new Menu(메뉴이름, 가격, 메뉴그룹, Arrays.asList(메뉴상품));
+    }
+
+    protected Product 상품저장(Product 상품) {
+        return productRepository.save(상품);
+    }
+
+    protected MenuGroup 메뉴그룹저장(MenuGroup 메뉴그룹) {
+        return menuGroupRepository.save(메뉴그룹);
+    }
+
+    protected Menu 메뉴저장(Menu 메뉴) {
+        return menuRepository.save(메뉴);
+    }
+
     protected Order 맛있는_메뉴_주문() {
         OrderTable 주문_테이블 = 주문_테이블(false);
         return 주문(주문_테이블, OrderStatus.COOKING, 맛있는_메뉴());

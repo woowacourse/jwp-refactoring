@@ -16,10 +16,7 @@ import kitchenpos.application.dto.menu.CreateMenuCommand;
 import kitchenpos.application.dto.menu.CreateMenuResponse;
 import kitchenpos.application.dto.menu.SearchMenuResponse;
 import kitchenpos.application.dto.menuproduct.MenuProductCommand;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
@@ -36,9 +33,9 @@ class MenuServiceTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        메뉴그룹 = menuGroupRepository.save(new MenuGroup("추천메뉴"));
-        가격이_1인_상품 = productRepository.save(new Product("가격이 1인 상품", new Price(BigDecimal.valueOf(1))));
-        가격이_3인_상품 = productRepository.save(new Product("가격이 3인 상품", new Price(BigDecimal.valueOf(3))));
+        메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
+        가격이_1인_상품 = 상품저장(상품("가격이 1인 상품", 가격(1)));
+        가격이_3인_상품 = 상품저장(상품("가격이 3인 상품", 가격(3)));
         메뉴이름 = "메뉴";
     }
 
@@ -149,14 +146,8 @@ class MenuServiceTest extends IntegrationTest {
     @Test
     void 메뉴들을_조회한다() {
         // given
-        menuRepository.save(new Menu(메뉴이름, new Price(BigDecimal.valueOf(11)), 메뉴그룹, List.of(
-                new MenuProduct(가격이_1인_상품, 2),
-                new MenuProduct(가격이_3인_상품, 3)
-        )));
-        menuRepository.save(new Menu(메뉴이름, new Price(BigDecimal.valueOf(9)), 메뉴그룹, List.of(
-                new MenuProduct(가격이_1인_상품, 3),
-                new MenuProduct(가격이_3인_상품, 2)
-        )));
+        메뉴저장(메뉴(메뉴이름, 가격(11), 메뉴그룹, 메뉴상품(가격이_1인_상품, 2), 메뉴상품(가격이_3인_상품, 3)));
+        메뉴저장(메뉴(메뉴이름, 가격(9), 메뉴그룹, 메뉴상품(가격이_1인_상품, 3), 메뉴상품(가격이_3인_상품, 2)));
 
         // when
         List<SearchMenuResponse> result = menuService.list();
