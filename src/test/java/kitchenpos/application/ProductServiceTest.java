@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends IntegrationTest {
 
     @Autowired
@@ -20,9 +21,7 @@ class ProductServiceTest extends IntegrationTest {
     @DisplayName("상품 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 상품_등록_성공_저장() {
         // given
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(new BigDecimal("1000"));
+        final Product product = new Product("상품", BigDecimal.TEN);
 
         // when
         final Product saved = productService.create(product);
@@ -35,29 +34,9 @@ class ProductServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("상품 등록 시 가격 정보가 있어야 한다.")
-    void 상품_등록_실패_가격_없음() {
-        // given
-        final Product product = new Product();
-        product.setName("상품");
-
-        // when
-        // then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("상품 등록 시 가격은 0 이상의 수여야 한다.")
     void 상품_등록_실패_가격_음수() {
-        // given
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(new BigDecimal("-1000"));
-
-        // when
-        // then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new Product("상품", BigDecimal.valueOf(-1))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

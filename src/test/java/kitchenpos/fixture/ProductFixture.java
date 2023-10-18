@@ -10,16 +10,12 @@ public class ProductFixture {
             final Function<Product, Product> persistable,
             final BigDecimal price
     ) {
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(price);
+        final Product product = new Product("상품", price);
         return persistable.apply(product);
     }
 
     public static Product 상품_저장(final Function<Product, Product> productPersistable) {
-        final Product product = new Product();
-        product.setName("허니콤보");
-        product.setPrice(new BigDecimal("20000"));
+        final Product product = new Product("허니콤보", new BigDecimal("20000"));
         return productPersistable.apply(product);
     }
 }
