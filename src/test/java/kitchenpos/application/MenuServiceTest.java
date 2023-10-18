@@ -74,9 +74,7 @@ class MenuServiceTest {
                 new MenuProductCreateRequest(1, 4885L),
                 new MenuProductCreateRequest(1, 4886L)
             ));
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
             given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
 
@@ -99,9 +97,7 @@ class MenuServiceTest {
             var request = new MenuCreateRequest(1000, 1L, "맥주세트", List.of(
                 new MenuProductCreateRequest(1, 1L)
             ));
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
             given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
             given(productRepository.findByIdIn(anyList()))
@@ -121,9 +117,7 @@ class MenuServiceTest {
             var request = new MenuCreateRequest(1000, 1L, "맥주세트", List.of(
                 new MenuProductCreateRequest(1, 1L)
             ));
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
             given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
             given(productRepository.findByIdIn(anyList()))

@@ -23,9 +23,7 @@ class MenuTest {
         void 가격이_null_이면_예외() {
             // given
             Money price = null;
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
 
             // when & then
             assertThatThrownBy(() -> new Menu(1L, "맥주세트", price, menuGroup))
@@ -37,9 +35,7 @@ class MenuTest {
         void 가격이_0보다_작으면_예외() {
             // given
             Money price = Money.from(-1);
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
 
             // when & then
             assertThatThrownBy(() -> new Menu(1L, "맥주세트", price, menuGroup))
@@ -52,9 +48,7 @@ class MenuTest {
         void 가격이_0_이상이면_성공(long value) {
             // given
             Money price = Money.from(value);
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
 
             // when
             Menu menu = new Menu(1L, "맥주세트", price, menuGroup);
@@ -70,9 +64,7 @@ class MenuTest {
         @Test
         void 메뉴_상품의_가격_총합보다_메뉴의_가격이_크면_예외() {
             // given
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
             Menu menu = new Menu(1L, "맥주세트", Money.from(1100), menuGroup);
 
             List<MenuProduct> menuProducts = List.of(
@@ -87,9 +79,7 @@ class MenuTest {
         @Test
         void 메뉴_상품의_가격_총합보다_메뉴의_가격이_작으면_성공() {
             // given
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
             Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
 
             List<MenuProduct> menuProducts = List.of(
@@ -108,9 +98,7 @@ class MenuTest {
         @Test
         void 메뉴_상품의_가격_총합과_메뉴의_가격이_같아도_성공() {
             // given
-            MenuGroup menuGroup = new MenuGroup();
-            menuGroup.setId(1L);
-            menuGroup.setName("주류");
+            MenuGroup menuGroup = new MenuGroup(1L, "주류");
             Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
 
             List<MenuProduct> menuProducts = List.of(
