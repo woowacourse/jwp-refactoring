@@ -7,6 +7,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.dto.EmptyChangeRequest;
+import kitchenpos.ui.dto.GuestChangeRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -62,7 +64,7 @@ class TableRestControllerTest extends ControllerTest {
     void OrderTable을_비우면_200을_반환한다() {
         final Long orderTableId = tableService.create();
         final var 요청_준비 = RestAssured.given()
-                .body(new OrderTable(null, 0, true))
+                .body(new EmptyChangeRequest(true))
                 .contentType(JSON);
 
         // when
@@ -79,7 +81,7 @@ class TableRestControllerTest extends ControllerTest {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
         final var 요청_준비 = RestAssured.given()
-                .body(new OrderTable(null, 0, false))
+                .body(new GuestChangeRequest(3))
                 .contentType(JSON);
 
         // when

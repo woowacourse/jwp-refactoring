@@ -63,7 +63,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable());
 
         //when
-        tableService.changeEmpty(orderTable.getId(), new OrderTable(null, 0, true));
+        tableService.changeEmpty(orderTable.getId(), true);
 
         //then
         final OrderTable changedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
@@ -77,7 +77,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
 
         //when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), null))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,7 +90,7 @@ class TableServiceTest extends ServiceTest {
         orderRepository.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
 
         //when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), null))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), false))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,7 +102,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
 
         //when
-        tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, 3, false));
+        tableService.changeNumberOfGuests(orderTable.getId(), 3);
 
         //then
         final OrderTable changedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
@@ -116,8 +116,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
 
         //when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
-                new OrderTable(null, -1, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), -1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -128,8 +127,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
 
         //when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(),
-                new OrderTable(null, 3, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 3))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

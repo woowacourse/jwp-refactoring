@@ -32,7 +32,7 @@ public class TableService {
     }
 
     @Transactional
-    public void changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public void changeEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,13 +45,11 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(isEmpty);
     }
 
     @Transactional
-    public void changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
+    public void changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
