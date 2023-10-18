@@ -1,8 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.OrderRepository;
@@ -18,14 +15,9 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql("/data.sql")
 public abstract class ServiceBaseTest {
 
-    @Autowired
-    protected ProductDao productDao;
 
     @Autowired
     protected ProductRepository productRepository;
-
-    @Autowired
-    protected MenuGroupDao menuGroupDao;
 
     @Autowired
     protected MenuRepository menuRepository;
@@ -37,7 +29,4 @@ public abstract class ServiceBaseTest {
     protected OrderTableRepository orderTableRepository;
     @Autowired
     protected OrderRepository orderRepository;
-
-    @Autowired
-    protected TableGroupDao tableGroupDao;
 }

@@ -33,7 +33,7 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("주문을 생성할 수 있다.")
     void create() {
         //given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
@@ -79,7 +79,7 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("주문 목록을 조회할 수 있다.")
     void list() {
         //given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
@@ -102,7 +102,7 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus() {
         //given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
@@ -130,7 +130,7 @@ class OrderServiceTest extends ServiceBaseTest {
     @DisplayName("완료된 주문은 상태를 변경할 수 없다.")
     void changeOrderStatusValidComplitionOrder() {
         //given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, false));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
