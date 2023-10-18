@@ -81,6 +81,5 @@ public class OrderService {
 
         final OrderStatus orderStatus = OrderStatus.valueOf(status);
         savedOrder.changeOrderStatus(orderStatus.name());
-        System.out.println();
     }
 }

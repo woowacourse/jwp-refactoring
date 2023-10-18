@@ -63,11 +63,11 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable());
 
         //when
-        final OrderTable saveOrderTable = tableService.changeEmpty(orderTable.getId(),
-                new OrderTable(null, 0, true));
+        tableService.changeEmpty(orderTable.getId(), new OrderTable(null, 0, true));
 
         //then
-        assertThat(saveOrderTable.isEmpty()).isTrue();
+        final OrderTable changedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
+        assertThat(changedOrderTable.isEmpty()).isTrue();
     }
 
     @Test
@@ -102,11 +102,11 @@ class TableServiceTest extends ServiceTest {
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
 
         //when
-        final OrderTable saveOrderTable = tableService.changeNumberOfGuests(orderTable.getId(),
-                new OrderTable(null, 3, false));
+        tableService.changeNumberOfGuests(orderTable.getId(), new OrderTable(null, 3, false));
 
         //then
-        assertThat(saveOrderTable.getNumberOfGuests()).isEqualTo(3);
+        final OrderTable changedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
+        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(3);
     }
 
     @Test
