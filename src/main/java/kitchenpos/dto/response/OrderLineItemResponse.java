@@ -3,13 +3,11 @@ package kitchenpos.dto.response;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
-    private Long seq;
 
-    private Long orderId;
-
-    private Long menuId;
-
-    private long quantity;
+    private final Long seq;
+    private final Long orderId;
+    private final Long menuId;
+    private final long quantity;
 
     public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
         this.seq = seq;

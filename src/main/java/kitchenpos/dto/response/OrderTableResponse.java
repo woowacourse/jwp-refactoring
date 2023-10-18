@@ -3,6 +3,7 @@ package kitchenpos.dto.response;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableResponse {
+
     private final Long id;
     private final Long tableGroupId;
     private final Integer numberOfGuests;

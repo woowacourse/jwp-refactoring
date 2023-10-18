@@ -3,6 +3,7 @@ package kitchenpos.dto.response;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupResponse {
+
     private final Long id;
     private final String name;
 

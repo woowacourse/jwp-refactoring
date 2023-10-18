@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderResponse {
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItemResponse> orderLineItems;
+
+    private final Long id;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
                          final LocalDateTime orderedTime, final List<OrderLineItemResponse> orderLineItems) {

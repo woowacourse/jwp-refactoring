@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableGroupResponse {
+
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<OrderTableResponse> orderTables;

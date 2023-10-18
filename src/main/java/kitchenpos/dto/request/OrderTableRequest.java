@@ -1,8 +1,9 @@
 package kitchenpos.dto.request;
 
 public class OrderTableRequest {
-    private Integer numberOfGuest;
-    private Boolean empty;
+
+    private final Integer numberOfGuest;
+    private final Boolean empty;
 
     public OrderTableRequest(final Integer numberOfGuest, final Boolean empty) {
         this.numberOfGuest = numberOfGuest;
