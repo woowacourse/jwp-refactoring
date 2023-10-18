@@ -2,7 +2,10 @@ package kitchenpos.ui.dto;
 
 public class TableGroupOrderTableRequest {
 
-    private final Long id;
+    private Long id;
+
+    protected TableGroupOrderTableRequest() {
+    }
 
     public TableGroupOrderTableRequest(final Long id) {
         this.id = id;

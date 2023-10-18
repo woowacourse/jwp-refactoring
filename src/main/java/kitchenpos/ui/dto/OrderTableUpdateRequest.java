@@ -2,8 +2,11 @@ package kitchenpos.ui.dto;
 
 public class OrderTableUpdateRequest {
 
-    private final int numberOfGuests;
-    private final boolean empty;
+    private int numberOfGuests;
+    private boolean empty;
+
+    protected OrderTableUpdateRequest() {
+    }
 
     public OrderTableUpdateRequest(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;

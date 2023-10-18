@@ -1,14 +1,22 @@
 package kitchenpos.ui.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
 
-    private final List<TableGroupOrderTableRequest> orderTables;
+    private List<TableGroupOrderTableRequest> orderTables = new ArrayList<>();
+
+    protected TableGroupCreateRequest() {
+    }
 
     public TableGroupCreateRequest(final List<TableGroupOrderTableRequest> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public List<TableGroupOrderTableRequest> getOrderTables() {
+        return orderTables;
     }
 
     public List<Long> getOrderTableIds() {

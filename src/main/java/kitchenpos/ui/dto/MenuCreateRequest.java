@@ -4,15 +4,19 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductRequest> menuProducts;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductRequest> menuProducts = new ArrayList<>();
+
+    protected MenuCreateRequest() {
+    }
 
     public MenuCreateRequest(final String name, final BigDecimal price, final Long menuGroupId,
                              final List<MenuProductRequest> menuProducts) {

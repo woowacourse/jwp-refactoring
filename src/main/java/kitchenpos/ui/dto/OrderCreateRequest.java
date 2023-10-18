@@ -3,12 +3,16 @@ package kitchenpos.ui.dto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderCreateRequest {
 
-    private final Long orderTableId;
-    private final List<OrderLineItem> orderLineItems;
+    private Long orderTableId;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    protected OrderCreateRequest() {
+    }
 
     public OrderCreateRequest(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
