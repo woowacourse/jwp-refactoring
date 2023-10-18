@@ -7,7 +7,6 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable() {
-        this(null, null, 0, false);
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {

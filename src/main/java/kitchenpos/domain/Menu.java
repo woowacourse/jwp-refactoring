@@ -11,7 +11,6 @@ public class Menu {
     private List<MenuProduct> menuProducts;
 
     public Menu() {
-        this(null, null, null, null, null);
     }
 
     public Menu(

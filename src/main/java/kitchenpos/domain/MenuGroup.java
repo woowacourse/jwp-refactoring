@@ -5,7 +5,6 @@ public class MenuGroup {
     private String name;
 
     public MenuGroup(){
-        this(null, null);
     }
 
     public MenuGroup(String name) {

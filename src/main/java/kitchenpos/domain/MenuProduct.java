@@ -7,7 +7,6 @@ public class MenuProduct {
     private long quantity;
 
     public MenuProduct() {
-        this(null, null, null, 0);
     }
 
     public MenuProduct(Long productId, long quantity) {
