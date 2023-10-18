@@ -11,7 +11,7 @@ public class Price {
 
     private static final BigDecimal LOWER_BOUND = BigDecimal.ZERO;
 
-    @Column
+    @Column(name = "price")
     private BigDecimal value;
 
     protected Price() {}
