@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -7,13 +10,9 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Transactional
 @Service
@@ -36,41 +35,47 @@ public class MenuService {
         this.productDao = productDao;
     }
 
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(final MenuCreateRequest request) {
+        Menu menu = request.to();
+        BigDecimal sum = calculateSumByMenuProducts(menu.getMenuProducts());
+        validateMenuGroup(menu);
+        validatePrice(menu, sum);
+        final Menu savedMenu = menuDao.save(menu);
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+        saveMenuProducts(savedMenu, menu.getMenuProducts());
+        return savedMenu;
+    }
+
+    private void saveMenuProducts(Menu savedMenu, List<MenuProduct> menuProducts) {
+        final Long menuId = savedMenu.getId();
+        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        for (final MenuProduct menuProduct : menuProducts) {
+            MenuProduct newMenuProduct = MenuProduct.of(menuId, menuProduct.getProductId(), menuProduct.getQuantity());
+            savedMenuProducts.add(menuProductDao.save(newMenuProduct));
         }
+        savedMenu.setMenuProducts(savedMenuProducts);
+    }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+    private void validatePrice(final Menu menu, final BigDecimal sum) {
+        if (menu.isGreaterThanByPrice(sum)) {
+            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품 가격 합산 금액보다 클 수 없습니다.");
         }
+    }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
+    private BigDecimal calculateSumByMenuProducts(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
+        return sum;
+    }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+    private void validateMenuGroup(final Menu menu) {
+        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
         }
-
-        final Menu savedMenu = menuDao.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
     }
 
     @Transactional(readOnly = true)

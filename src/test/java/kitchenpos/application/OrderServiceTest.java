@@ -38,10 +38,7 @@ class OrderServiceTest extends ServiceTest {
         OrderTable newOrderTable = createOrderTable(false, null, 10);
         orderTable = tableDao.save(newOrderTable);
 
-        Menu newMenu = new Menu();
-        newMenu.setName("치킨");
-        newMenu.setPrice(BigDecimal.valueOf(15_000L));
-        newMenu.setMenuGroupId(1L);
+        Menu newMenu = Menu.of("치킨", 15_000L, 1L);
         menu = menuDao.save(newMenu);
     }
 
