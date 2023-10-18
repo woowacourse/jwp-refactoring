@@ -4,7 +4,6 @@ import kitchenpos.exception.QuantityEmptyException;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.util.Objects;
 
 @Embeddable
 public class Quantity {
@@ -26,7 +25,7 @@ public class Quantity {
     }
 
     private static void validateQuantityEmpty(final Long quantity) {
-        if (Objects.isNull(quantity) || quantity < EMPTY_QUANTITY) {
+        if (quantity == null || quantity < EMPTY_QUANTITY) {
             throw new QuantityEmptyException();
         }
     }

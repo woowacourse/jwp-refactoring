@@ -5,7 +5,6 @@ import kitchenpos.exception.PriceEmptyException;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Embeddable
 public class Price {
@@ -28,7 +27,7 @@ public class Price {
     }
 
     private static void validateEmptyPrice(final Long price) {
-        if (Objects.isNull(price) || price < ZERO_PRICE) {
+        if (price == null || price < ZERO_PRICE) {
             throw new PriceEmptyException();
         }
     }

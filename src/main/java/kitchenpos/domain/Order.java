@@ -6,7 +6,6 @@ import kitchenpos.exception.OrderTableEmptyException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +29,7 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_order_table"), nullable = false)
+    @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
     @Column(nullable = false)
