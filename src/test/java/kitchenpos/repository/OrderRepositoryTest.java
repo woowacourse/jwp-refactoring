@@ -13,7 +13,8 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -65,7 +66,7 @@ class OrderRepositoryTest {
     class existsByOrderTableIdInAndOrderStatusIn {
 
         @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
+        @EnumSource(value = OrderStatus.class, mode = Mode.EXCLUDE, names = {"COMPLETION"})
         void 주문_테이블_식별자_목록이_포함되고_주문_상태가_포함되면_true(OrderStatus status) {
             // given
             List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
@@ -85,7 +86,7 @@ class OrderRepositoryTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
+        @EnumSource(value = OrderStatus.class, mode = Mode.EXCLUDE, names = {"COMPLETION"})
         void 주문_테이블_식별자_목록에_포함이_되지_않고_주문_상태가_포함되면_false(OrderStatus status) {
             // given
             List<Long> orderTableIds = List.of(4885L, 4886L);

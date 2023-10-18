@@ -21,7 +21,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -63,7 +64,7 @@ class OrderTableServiceTest {
     class changeEmpty {
 
         @ParameterizedTest
-        @ValueSource(strings = {"COOKING", "MEAL"})
+        @EnumSource(value = OrderStatus.class, mode = Mode.EXCLUDE, names = {"COMPLETION"})
         void 테이블의_주문이_계산_완료가_아니면_예외(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = new OrderTable(1L, false, 0);
