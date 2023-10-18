@@ -1,14 +1,16 @@
 package kitchenpos.order.application;
 
-import static kitchenpos.fixture.OrderFixture.빈_주문;
-import static kitchenpos.fixture.OrderFixture.주문;
-import static kitchenpos.fixture.OrderFixture.주문_잘못된_메뉴;
+import static kitchenpos.fixture.OrderFixture.getOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.helper.ServiceIntegrateTest;
-import kitchenpos.order.domain.Order;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.OrderQueryResponse;
+import kitchenpos.order.application.dto.OrderStatusModifyRequest;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
@@ -43,7 +45,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 수 있다.")
   void create_success() {
     //given, when
-    final Order actual = orderService.create(주문(notEmptyOrderTableId));
+    final OrderQueryResponse actual = orderService.create(getOrderRequest(notEmptyOrderTableId));
 
     //then
     Assertions.assertAll(
@@ -57,7 +59,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 메뉴가 1개도 포함되어 있지 않다면 예외를 반환한다.")
   void create_fail_empty_orderLineItem() {
     //given
-    final Order order = 빈_주문(notEmptyOrderTableId);
+    final OrderCreateRequest order = getEmptyOrderRequest(notEmptyOrderTableId);
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -66,21 +68,32 @@ class OrderServiceTest extends ServiceIntegrateTest {
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
   }
 
+  private OrderCreateRequest getEmptyOrderRequest(final Long orderTableId) {
+    return new OrderCreateRequest(orderTableId, Collections.emptyList());
+  }
+
   @Test
   @DisplayName("주문을 등록할 때 존재하지 않는 메뉴가 포함되어 있으면 예외를 반환한다.")
   void create_fail_not_exist_menu() {
     //given, when
-    final ThrowingCallable actual = () -> orderService.create(주문_잘못된_메뉴());
+    final ThrowingCallable actual = () -> orderService.create(getWrongOrderRequest());
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
+  }
+
+  private OrderCreateRequest getWrongOrderRequest() {
+    final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
+        999L,
+        1);
+    return new OrderCreateRequest(1L, List.of(orderLineItemCreateRequest));
   }
 
   @Test
   @DisplayName("주문을 등록할 때 존재하지 않는 테이블의 주문이면 예외를 반환한다.")
   void create_fail_not_exist_table() {
     //given
-    final Order order = 주문(999L);
+    final OrderCreateRequest order = getOrderRequest(999L);
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -93,7 +106,7 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("주문을 등록할 때 주문한 테이블이 비어있으면 예외를 반환한다.")
   void create_fail_empty_table() {
     //given
-    final Order order = 주문(emptyOrderTableId);
+    final OrderCreateRequest order = getOrderRequest(emptyOrderTableId);
 
     //when
     final ThrowingCallable actual = () -> orderService.create(order);
@@ -106,10 +119,10 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("등록된 주문 목록을 조회할 수 있다.")
   void list_success() {
     //given
-    orderService.create(주문(notEmptyOrderTableId));
+    orderService.create(getOrderRequest(notEmptyOrderTableId));
 
     // when
-    final List<Order> actual = orderService.list();
+    final List<OrderQueryResponse> actual = orderService.list();
 
     //then
     assertThat(actual).hasSize(1);
@@ -119,23 +132,23 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("등록된 주문 상태를 수정할 수 있다.")
   void changeOrderStatus_success() {
     //given
-    final String newStatus = OrderStatus.MEAL.name();
-    final Order order = 주문(notEmptyOrderTableId, newStatus);
-    final Long savedOrderId = orderService.create(order).getId();
+    final OrderStatus newStatus = OrderStatus.MEAL;
+    final OrderStatusModifyRequest order = new OrderStatusModifyRequest(newStatus);
+    final Long savedOrderId = orderService.create(getOrderRequest(notEmptyOrderTableId)).getId();
 
     // when
-    final Order actual = orderService.changeOrderStatus(savedOrderId, order);
+    final OrderQueryResponse actual = orderService.changeOrderStatus(savedOrderId, order);
 
     //then
-    assertThat(actual.getOrderStatus()).isEqualTo(newStatus);
+    assertThat(actual.getOrderStatus()).isEqualTo(newStatus.name());
   }
 
   @Test
   @DisplayName("등록된 주문 상태를 수정할 때 존재하지 않는 주문이라면 예외를 반환한다.")
   void changeOrderStatus_fail_not_exist_order() {
     //given
-    final String newStatus = OrderStatus.MEAL.name();
-    final Order order = 주문(notEmptyOrderTableId, newStatus);
+    final OrderStatus newStatus = OrderStatus.MEAL;
+    final OrderStatusModifyRequest order = new OrderStatusModifyRequest(newStatus);
 
     // when
     final ThrowingCallable actual = () -> orderService.changeOrderStatus(999L, order);
@@ -148,9 +161,9 @@ class OrderServiceTest extends ServiceIntegrateTest {
   @DisplayName("등록된 주문 상태를 수정할 때 이미 계산이 완료된 주문이라면 예외를 반환한다.")
   void changeOrderStatus_fail_already_COMPLETEION() {
     //given
-    final String newStatus = OrderStatus.COMPLETION.name();
-    final Order order = 주문(notEmptyOrderTableId, newStatus);
-    final Long savedOrderId = orderService.create(order).getId();
+    final OrderStatus newStatus = OrderStatus.COMPLETION;
+    final OrderStatusModifyRequest order = new OrderStatusModifyRequest(newStatus);
+    final Long savedOrderId = orderService.create(getOrderRequest(notEmptyOrderTableId)).getId();
 
     orderService.changeOrderStatus(savedOrderId, order);
 

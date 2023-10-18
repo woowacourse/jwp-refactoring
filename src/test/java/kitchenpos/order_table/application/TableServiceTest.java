@@ -1,6 +1,6 @@
 package kitchenpos.order_table.application;
 
-import static kitchenpos.fixture.OrderFixture.주문;
+import static kitchenpos.fixture.OrderFixture.getOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -114,7 +114,7 @@ class TableServiceTest extends ServiceIntegrateTest {
     //given
     orderTableDao.save(new OrderTable(1L, null, 4, false));
 
-    orderService.create(주문(table1.getId()));
+    orderService.create(getOrderRequest(table1.getId()));
     final OrderTable changedTable = new OrderTable(null, null, 0, true);
 
     //when

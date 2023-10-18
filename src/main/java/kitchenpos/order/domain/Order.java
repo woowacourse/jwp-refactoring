@@ -21,6 +21,11 @@ public class Order {
     this.orderLineItems = orderLineItems;
   }
 
+  public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    this.orderTableId = orderTableId;
+    this.orderLineItems = orderLineItems;
+  }
+
   public Order(final Long id, final Long orderTableId, final String orderStatus,
       final LocalDateTime orderedTime) {
     this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
