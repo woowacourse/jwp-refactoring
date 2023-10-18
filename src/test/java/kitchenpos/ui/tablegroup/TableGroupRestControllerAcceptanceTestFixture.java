@@ -45,7 +45,7 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
                 .isEqualTo(tableGroup.getOrderTables().size());
     }
 
-    protected <T> ExtractableResponse 단체를_제거한다(final String url) {
+    protected ExtractableResponse 단체를_제거한다(final String url) {
         return RestAssured.given().log().all()
                 .contentType(ContentType.JSON)
                 .when()

@@ -93,7 +93,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         return orderService.create(req);
     }
 
-    protected <T> ExtractableResponse 주문을_전체_조회한다(final String url) {
+    protected ExtractableResponse 주문을_전체_조회한다(final String url) {
         return RestAssured.given().log().all()
                 .when()
                 .get(url)

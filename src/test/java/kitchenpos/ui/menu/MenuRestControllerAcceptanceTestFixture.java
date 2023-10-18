@@ -67,7 +67,7 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
                 .extract();
     }
 
-    protected <T> ExtractableResponse 메뉴를_전체_조회한다(final String url) {
+    protected ExtractableResponse 메뉴를_전체_조회한다(final String url) {
         return RestAssured.given().log().all()
                 .when()
                 .get(url)

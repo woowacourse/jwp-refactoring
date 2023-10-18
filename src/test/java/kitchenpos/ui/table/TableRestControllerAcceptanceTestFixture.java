@@ -42,7 +42,7 @@ class TableRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         });
     }
 
-    protected <T> ExtractableResponse 주문_테이블을_전체_조회한다(final String url) {
+    protected ExtractableResponse 주문_테이블을_전체_조회한다(final String url) {
         return RestAssured.given().log().all()
                 .when()
                 .get(url)
