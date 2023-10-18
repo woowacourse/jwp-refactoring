@@ -5,23 +5,23 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderTableValidator {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
 
-    public OrderTableValidator(OrderDao orderDao) {
-        this.orderDao = orderDao;
+    public OrderTableValidator(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     public void validateChangeEmpty(OrderTable orderTable) {
         if (Objects.nonNull(orderTable.getTableGroupId())) {
             throw new OrderTableException("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
         }
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTable.getId(),
                 List.of(COOKING.name(), MEAL.name())
         )) {

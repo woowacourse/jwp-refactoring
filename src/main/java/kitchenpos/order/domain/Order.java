@@ -1,15 +1,32 @@
 package kitchenpos.order.domain;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Table(name = "orders")
+@Entity
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {

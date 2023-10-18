@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.dao.TableGroupDao;
@@ -17,16 +17,16 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
+
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
     public TableGroupService(
-            final OrderDao orderDao,
-            final OrderTableDao orderTableDao,
+            OrderRepository orderRepository, final OrderTableDao orderTableDao,
             final TableGroupDao tableGroupDao
     ) {
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -77,7 +77,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }

@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableException;
@@ -22,8 +22,8 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTableValidatorTest {
 
-    private final OrderDao orderDao = mock(OrderDao.class);
-    private final OrderTableValidator orderTableValidator = new OrderTableValidator(orderDao);
+    private final OrderRepository orderRepository = mock(OrderRepository.class);
+    private final OrderTableValidator orderTableValidator = new OrderTableValidator(orderRepository);
 
     @Nested
     class 비어있음_상태_변경_검증_시 {
@@ -44,7 +44,7 @@ class OrderTableValidatorTest {
         @Test
         void 조리_혹은_식사중_상태의_테이블이라면_예외() {
             // given
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                     2L,
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
             )).willReturn(true);
@@ -61,7 +61,7 @@ class OrderTableValidatorTest {
         @Test
         void 그룹에_속하지_않았으면서_계산_완료된_테이블의_상태는_변경_가능() {
             // given
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                     2L,
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
             )).willReturn(false);

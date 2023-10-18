@@ -27,12 +27,10 @@ public class OrderAcceptanceSteps {
     }
 
     public static OrderLineItem 주문_항목(
-            Long 주문_ID,
             Long 메뉴_ID,
             int 수량
     ) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(주문_ID);
         orderLineItem.setMenuId(메뉴_ID);
         orderLineItem.setQuantity(수량);
         return orderLineItem;
