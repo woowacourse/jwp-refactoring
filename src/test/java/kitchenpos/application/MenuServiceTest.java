@@ -4,14 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.refactoring.domain.MenuGroup;
+import kitchenpos.refactoring.domain.MenuGroupRepository;
 import kitchenpos.refactoring.domain.Product;
 import kitchenpos.refactoring.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
@@ -23,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupDao;
     @Autowired
     private ProductRepository productRepository;
 
@@ -36,7 +35,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product savedProduct = productRepository.save(ProductFixture.create("후라이드", 2000));
             MenuProduct menuProduct = MenuProductFixture.create(savedProduct.getId());
-            MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.create("치킨"));
+            MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("치킨"));
 
             Menu menu = MenuFixture.create(
                     "후라이드 치킨",
@@ -58,7 +57,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product savedProduct = productRepository.save(ProductFixture.create("후라이드", 2000));
             MenuProduct menuProduct = MenuProductFixture.create(savedProduct.getId());
-            MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.create("치킨"));
+            MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("치킨"));
 
             Menu menu = MenuFixture.create(
                     "후라이드 치킨",
@@ -78,7 +77,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product savedProduct = productRepository.save(ProductFixture.create("후라이드", 2000));
             MenuProduct menuProduct = MenuProductFixture.create(savedProduct.getId());
-            MenuGroup savedMenuGroup = MenuGroupFixture.create("치킨");
+            MenuGroup savedMenuGroup = new MenuGroup("치킨");
 
             Menu menu = MenuFixture.create(
                     "후라이드 치킨",
@@ -98,7 +97,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             Product savedProduct = productRepository.save(ProductFixture.create("후라이드", 2000));
             MenuProduct menuProduct = MenuProductFixture.create(savedProduct.getId());
-            MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.create("치킨"));
+            MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("치킨"));
 
             Menu menu = MenuFixture.create(
                     "후라이드 치킨",
@@ -120,7 +119,7 @@ class MenuServiceTest extends ServiceTest {
         // given
         Product savedProduct = productRepository.save(ProductFixture.create("후라이드", 2000));
         MenuProduct menuProduct = MenuProductFixture.create(savedProduct.getId());
-        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.create("치킨"));
+        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("치킨"));
 
         Menu menu = MenuFixture.create(
                 "후라이드 치킨",

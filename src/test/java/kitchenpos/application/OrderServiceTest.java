@@ -6,19 +6,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.refactoring.domain.MenuGroup;
+import kitchenpos.refactoring.domain.MenuGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -33,7 +32,7 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private MenuDao menuDao;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private OrderTableDao orderTableDao;
 
@@ -43,7 +42,7 @@ class OrderServiceTest extends ServiceTest {
     @BeforeEach
     void init() {
         orderTable = orderTableDao.save(OrderTableFixture.create(false, 4));
-        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.create("Leo's Pick"));
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("Leo's Pick"));
         menu = menuDao.save(MenuFixture.create("후라이드", 1000, savedMenuGroup.getId(), null));
     }
 

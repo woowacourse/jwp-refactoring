@@ -3,9 +3,12 @@ package kitchenpos.application;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixture.MenuGroupFixture;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import kitchenpos.refactoring.application.dto.MenuGroupRequest;
+import kitchenpos.refactoring.application.dto.MenuGroupResponse;
+import kitchenpos.refactoring.domain.MenuGroup;
+import kitchenpos.refactoring.domain.MenuGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,32 +17,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴_그룹_등록() {
         // given
-        MenuGroup menuGroup = MenuGroupFixture.create("제이슨 추천 메뉴");
+        MenuGroupRequest request = new MenuGroupRequest("제이슨 추천 메뉴");
 
         // when
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(request);
+        Long menuGroupId = savedMenuGroup.getId();
 
         // then
-        assertThat(menuGroupDao.findById(savedMenuGroup.getId())).isPresent();
+        assertThat(menuGroupRepository.findById(menuGroupId)).isPresent();
     }
 
     @Test
     void 메뉴_그룹_목록_조회() {
         // given
-        MenuGroup leoGroup = menuGroupDao.save(MenuGroupFixture.create("레오 추천 메뉴"));
-        MenuGroup junpakGroup = menuGroupDao.save(MenuGroupFixture.create("준팍 추천 메뉴"));
+        List<MenuGroup> menuGroups = List.of(
+                new MenuGroup("레오 추천 메뉴"),
+                new MenuGroup("준팍 추천 메뉴")
+        );
+
+        Iterable<MenuGroup> savedMenuGroups = menuGroupRepository.saveAll(menuGroups);
+        List<MenuGroupResponse> expected = StreamSupport.stream(savedMenuGroups.spliterator(), false)
+                .map(MenuGroupResponse::from)
+                .collect(Collectors.toList());
 
         // when
-        List<MenuGroup> result = menuGroupService.list();
+        List<MenuGroupResponse> result = menuGroupService.list();
 
         // then
         assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(List.of(leoGroup, junpakGroup));
+                .isEqualTo(expected);
     }
 }
