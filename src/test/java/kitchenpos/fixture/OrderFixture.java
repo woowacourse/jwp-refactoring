@@ -56,7 +56,7 @@ public class OrderFixture {
         );
     }
 
-    public static Order 존재하지_않는_OrderTable을_가진_주문_생성(
+    public static Order 존재하지_않는_주문_테이블을_가진_주문_생성(
             List<OrderLineItem> orderLineItems
     ) {
         return new Order(

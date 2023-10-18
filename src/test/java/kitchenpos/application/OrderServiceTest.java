@@ -5,11 +5,11 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
-import static kitchenpos.fixture.OrderFixture.존재하지_않는_OrderTable을_가진_주문_생성;
+import static kitchenpos.fixture.OrderFixture.존재하지_않는_주문_테이블을_가진_주문_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
-import static kitchenpos.fixture.OrderLineItemFixture.메뉴만을_가진_OrderLineItem_생성;
-import static kitchenpos.fixture.OrderLineItemFixture.존재하지_않는_메뉴를_가진_OrderLineItem_생성;
-import static kitchenpos.fixture.OrderTableFixture.테이블_그룹이_없는_주문_테이블_생성;
+import static kitchenpos.fixture.OrderLineItemFixture.메뉴을_가진_주문_항목_생성;
+import static kitchenpos.fixture.OrderLineItemFixture.존재하지_않는_메뉴를_가진_주문_항목_생성;
+import static kitchenpos.fixture.OrderTableFixture.단체_지정이_없는_주문_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,7 +34,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 주문한_메뉴가_1개_미만인_경우_저장에_실패한다() {
         // given
-        OrderTable savedOrderTable = 테이블_그룹이_없는_주문_테이블_생성(1, false);
+        OrderTable savedOrderTable = 단체_지정이_없는_주문_테이블_생성(1, false);
         Order order = 주문_생성(savedOrderTable, Collections.emptyList());
 
         // expect
@@ -45,8 +45,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 주문한_메뉴_중_존재하지_않는_메뉴가_있으면_저장에_실패한다() {
         // given
-        OrderTable savedOrderTable = 테이블_그룹이_없는_주문_테이블_생성(1, false);
-        OrderLineItem orderLineItem = 존재하지_않는_메뉴를_가진_OrderLineItem_생성();
+        OrderTable savedOrderTable = 단체_지정이_없는_주문_테이블_생성(1, false);
+        OrderLineItem orderLineItem = 존재하지_않는_메뉴를_가진_주문_항목_생성();
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
         // expect
@@ -55,14 +55,14 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void OrderTable이_존재하지_않으면_저장에_실패한다() {
+    void 주문_테이블이_존재하지_않으면_저장에_실패한다() {
         // given
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
         Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
-        Order order = 존재하지_않는_OrderTable을_가진_주문_생성(List.of(orderLineItem));
+        OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
+        Order order = 존재하지_않는_주문_테이블을_가진_주문_생성(List.of(orderLineItem));
 
         // expect
         assertThatThrownBy(() -> orderService.create(order))
@@ -72,12 +72,12 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 주문이_불가능한_상태라면_주문이_불가능하다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, true));
+        OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, true));
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
         Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
+        OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
         // expect
@@ -86,9 +86,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void Order를_성공적으로_저장한다() {
+    void 주문을_성공적으로_저장한다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, false));
 
         // when
         Order savedOrder = 주문을_저장하고_반환받는다(savedOrderTable);
@@ -105,9 +105,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void 전체_Order_목록을_반환받는다() {
+    void 전체_주문_목록을_반환받는다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, false));
         List<Order> expected = List.of(
                 주문을_저장하고_반환받는다(savedOrderTable)
         );
@@ -121,9 +121,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void 존재하지_않는_Order를_변경할_수_없다() {
+    void 존재하지_않는_주문을_변경할_수_없다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, true));
+        OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, true));
         Order order = 주문_생성(savedOrderTable, Collections.emptyList());
 
         // expect
@@ -134,7 +134,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 이미_식사를_완료한_주문을_변경을_할_수_없다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, false));
         Order order = 주문을_저장하고_반환받는다(savedOrderTable);
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(order);
@@ -145,9 +145,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
     }
 
     @Test
-    void 성공적으로_Order를_원하는_상태로_바꾼다() {
+    void 성공적으로_주문을_원하는_상태로_바꾼다() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+        OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, false));
         Order savedOrder = 주문을_저장하고_반환받는다(savedOrderTable);
         savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
 

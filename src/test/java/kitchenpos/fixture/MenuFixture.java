@@ -22,7 +22,7 @@ public class MenuFixture {
         );
     }
 
-    public static Menu 존재하지_않는_MenuGroup_을_가진_메뉴_생성(
+    public static Menu 존재하지_않는_메뉴_그룹을_가진_메뉴_생성(
             BigDecimal price,
             MenuProduct savedMenuProduct
     ) {

@@ -4,7 +4,7 @@ import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
-import static kitchenpos.fixture.OrderLineItemFixture.메뉴만을_가진_OrderLineItem_생성;
+import static kitchenpos.fixture.OrderLineItemFixture.메뉴을_가진_주문_항목_생성;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 
 import java.math.BigDecimal;
@@ -72,7 +72,7 @@ public abstract class ServiceIntegrationTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
         Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
+        OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
         return orderService.create(order);
