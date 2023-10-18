@@ -44,7 +44,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
-        orderTable.setEmpty(orderTableRequest.getEmpty());
+        orderTable.changeEmptyStatus(orderTableRequest.getEmpty());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         validateOrderTableStatus(orderTable);
 

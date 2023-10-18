@@ -37,25 +37,15 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public void changeEmptyStatus(final boolean empty) {
+        validateEmpty();
+        this.empty = empty;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.empty=false;
-        this.tableGroup = tableGroup;
+    private void validateEmpty() {
+        if (tableGroup != null) {
+            throw new InvalidTableGroupException();
+        }
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
@@ -69,17 +59,24 @@ public class OrderTable {
         }
     }
 
-    public boolean isEmpty() {
-        return empty;
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.empty = false;
+        this.tableGroup = tableGroup;
     }
 
-    public void setEmpty(final boolean empty) {
-        validateEmpty();
-        this.empty = empty;
+    public Long getId() {
+        return id;
     }
-    public void validateEmpty() {
-        if (tableGroup != null) {
-            throw new InvalidTableGroupException();
-        }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

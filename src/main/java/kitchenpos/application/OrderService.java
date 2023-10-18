@@ -4,7 +4,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItemRepository;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -58,7 +57,6 @@ public class OrderService {
                     return new OrderLineItem(order, menu, orderLineItemRequest.getQuantity());
                 }).collect(Collectors.toList());
     }
-
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();

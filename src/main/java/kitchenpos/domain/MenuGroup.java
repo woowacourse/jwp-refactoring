@@ -34,12 +34,4 @@ public class MenuGroup {
         return name;
     }
 
-    //TODO Setter 삭제
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
 }

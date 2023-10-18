@@ -34,13 +34,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    //TODO setter 삭제
     public Long getSeq() {
         return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
     }
 
     public Menu getMenu() {
@@ -53,9 +48,5 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

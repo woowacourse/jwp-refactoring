@@ -101,20 +101,4 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
-
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
 }
