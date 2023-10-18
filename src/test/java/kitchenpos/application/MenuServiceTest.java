@@ -26,7 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class MenuServiceTest extends ServiceTest {
+@ServiceTest
+class MenuServiceTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;

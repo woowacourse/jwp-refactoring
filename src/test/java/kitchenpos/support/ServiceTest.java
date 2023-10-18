@@ -1,28 +1,14 @@
 package kitchenpos.support;
 
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestExecutionListeners.MergeMode;
 
 @SpringBootTest
-public class ServiceTest {
+@TestExecutionListeners(value = DatabaseCleaner.class, mergeMode = MergeMode.MERGE_WITH_DEFAULTS)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface ServiceTest {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    void clean() {
-        truncate();
-    }
-
-    private void truncate() {
-        jdbcTemplate.execute(String.format("SET FOREIGN_KEY_CHECKS %d", 0));
-        List<String> tables = jdbcTemplate.query("SHOW TABLES", (rs, rowNum) -> rs.getString(1));
-        for (String tableName : tables) {
-            jdbcTemplate.execute(String.format("TRUNCATE TABLE %s", tableName));
-        }
-        jdbcTemplate.execute(String.format("SET FOREIGN_KEY_CHECKS %d", 1));
-    }
 }

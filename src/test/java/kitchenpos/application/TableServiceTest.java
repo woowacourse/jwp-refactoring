@@ -28,7 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class TableServiceTest extends ServiceTest {
+@ServiceTest
+class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -112,8 +113,8 @@ class TableServiceTest extends ServiceTest {
         void 특정_테이블그룹에_속한다면_예외() {
             // given
             Long tableGroupId = tableGroupRepository.save(TableGroup.createEmpty()).getId();
-            OrderTable orderTableA = orderTableRepository.save(new OrderTable(null, tableGroupId,3, true));
-            OrderTable orderTableB = orderTableRepository.save(new OrderTable(null, tableGroupId,2, true));
+            OrderTable orderTableA = orderTableRepository.save(new OrderTable(null, tableGroupId, 3, true));
+            OrderTable orderTableB = orderTableRepository.save(new OrderTable(null, tableGroupId, 2, true));
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableA.getId(), false))

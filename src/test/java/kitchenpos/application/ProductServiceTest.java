@@ -19,7 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class ProductServiceTest extends ServiceTest {
+@ServiceTest
+class ProductServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
