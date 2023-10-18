@@ -1,12 +1,14 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.exception.ProductExceptionType.PRICE_IS_LOWER_THAN_ZERO;
+import static kitchenpos.domain.exception.ProductExceptionType.PRICE_IS_NULL;
+
 import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import kitchenpos.domain.exception.ProductException;
-import kitchenpos.domain.exception.ProductExceptionType;
 
 @Entity
 public class Product {
@@ -27,8 +29,11 @@ public class Product {
     }
 
     private void validatePrice(final BigDecimal price) {
+        if (price == null) {
+            throw new ProductException(PRICE_IS_NULL);
+        }
         if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new ProductException(ProductExceptionType.PRICE_IS_LOWER_THAN_ZERO);
+            throw new ProductException(PRICE_IS_LOWER_THAN_ZERO);
         }
     }
 

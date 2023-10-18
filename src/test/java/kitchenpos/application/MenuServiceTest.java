@@ -3,17 +3,17 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
 import static kitchenpos.fixture.MenuFixture.한마리메뉴;
 import static kitchenpos.fixture.MenuFixture.후라이드치킨;
-import static kitchenpos.fixture.ProductFixture.후라이드;
+import static kitchenpos.fixture.ProductFixture.후라이드_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.ProductDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
         @Test
         @DisplayName("정상적으로 생성한다.")
-        void create() {
-            final Product savedProduct = productService.create(후라이드());
+        void success() {
+            final ProductDto savedProduct = productService.create(후라이드_DTO());
             final MenuProduct menuProduct = createMenuProduct(savedProduct, 1L);
             final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
@@ -47,8 +47,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("가격이 0미만인 경우 예외처리.")
         void throwExceptionPriceLowerThan0() {
-            final Product savedProduct = productService.create(후라이드());
-            final MenuProduct menuProduct = createMenuProduct(savedProduct, 1L);
+            final ProductDto savedProductDto = productService.create(후라이드_DTO());
+            final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
             final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
 
@@ -63,8 +63,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("MenuGroup이 저장되지 않은 경우 예외처리")
         void throwExceptionMenuGroupIsNotExist() {
-            final Product savedProduct = productService.create(후라이드());
-            final MenuProduct menuProduct = createMenuProduct(savedProduct, 1L);
+            final ProductDto savedProductDto = productService.create(후라이드_DTO());
+            final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
             final MenuGroup unSavedMenuGroup = 한마리메뉴();
             final Menu menu = 후라이드치킨(unSavedMenuGroup, List.of(menuProduct));
 
@@ -76,8 +76,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("product가 저장되지 않은 경우 예외처리")
         void throwExceptionProductIsNotExist() {
-            final Product unSavedProduct = 후라이드();
-            final MenuProduct menuProduct = createMenuProduct(unSavedProduct, 1L);
+            final ProductDto unSavedProductDto = 후라이드_DTO();
+            final MenuProduct menuProduct = createMenuProduct(unSavedProductDto, 1L);
             final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
 
@@ -89,8 +89,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("price가 product의 총합보다 큰 경우 예외처리")
         void throwExceptionPriceIsBiggerThanProductSum() {
-            final Product savedProduct = productService.create(후라이드());
-            final MenuProduct menuProduct = createMenuProduct(savedProduct, 1L);
+            final ProductDto savedProductDto = productService.create(후라이드_DTO());
+            final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
             final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
 
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
@@ -105,8 +105,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("menu list를 조회한다.")
     void list() {
-        final Product savedProduct = productService.create(후라이드());
-        final MenuProduct menuProduct = createMenuProduct(savedProduct, 1L);
+        final ProductDto savedProductDto = productService.create(후라이드_DTO());
+        final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
         final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
         final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
 

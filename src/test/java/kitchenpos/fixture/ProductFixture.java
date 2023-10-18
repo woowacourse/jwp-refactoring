@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.ProductDto;
 import kitchenpos.domain.Product;
 
 public class ProductFixture {
@@ -42,6 +43,54 @@ public class ProductFixture {
 
     public static Product 순살치킨() {
         return new Product(
+            "순살치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 후라이드_DTO() {
+        return new ProductDto(
+            null,
+            "후라이드",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 양념치킨_DTO() {
+        return new ProductDto(
+            null,
+            "양념치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 반반치킨_DTO() {
+        return new ProductDto(
+            null,
+            "반반치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 통구이_DTO() {
+        return new ProductDto(
+            null,
+            "통구이",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 간장치킨_DTO() {
+        return new ProductDto(
+            null,
+            "간장치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 순살치킨_DTO() {
+        return new ProductDto(
+            null,
             "순살치킨",
             BigDecimal.valueOf(16000)
         );
