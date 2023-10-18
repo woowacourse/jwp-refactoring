@@ -24,13 +24,11 @@ public class ProductService {
     public CreateProductResponse create(CreateProductCommand command) {
         Price price = new Price(command.price());
         Product product = new Product(command.name(), price);
-        Product savedProduct = productRepository.save(product);
-        return CreateProductResponse.from(savedProduct);
+        return CreateProductResponse.from(productRepository.save(product));
     }
 
     public List<SearchProductResponse> list() {
-        List<Product> products = productRepository.findAll();
-        return products.stream()
+        return productRepository.findAll().stream()
                 .map(SearchProductResponse::from)
                 .collect(Collectors.toList());
     }

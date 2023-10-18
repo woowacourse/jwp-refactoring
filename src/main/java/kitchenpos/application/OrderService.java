@@ -46,8 +46,7 @@ public class OrderService {
     }
 
     public List<SearchOrderResponse> list() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
+        return orderRepository.findAll().stream()
                 .map(SearchOrderResponse::from)
                 .collect(Collectors.toList());
     }

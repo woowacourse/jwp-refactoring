@@ -28,8 +28,8 @@ public class TableGroupService {
     @Transactional
     public CreateTableGroupResponse create(CreateTableGroupCommand command) {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdInOrElseThrow(command.orderTableIds());
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(orderTables));
-        return CreateTableGroupResponse.from(tableGroup);
+        TableGroup tableGroup = new TableGroup(orderTables);
+        return CreateTableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
     @Transactional
