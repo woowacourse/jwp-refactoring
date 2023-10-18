@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.TableGroupException;
 
 @Entity
 public class TableGroup {
@@ -33,6 +35,13 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public void ungroup() {
+        if (orderTables.stream().anyMatch(OrderTable::hasOrderOfCookingOrMeal)) {
+            throw new TableGroupException(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
+        }
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public void addOrderTable(OrderTable orderTable) {

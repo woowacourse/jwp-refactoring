@@ -1,14 +1,17 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -20,6 +23,9 @@ public class OrderTable {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
+
+    @OneToMany(mappedBy = "orderTable", fetch = EAGER)
+    private List<Order> orders;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -47,6 +53,16 @@ public class OrderTable {
         this.tableGroup = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public boolean hasOrderOfCookingOrMeal() {
+        return orders.stream()
+                .anyMatch(Order::isCookingOrMeal);
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
     }
 
     public void setTableGroup(TableGroup tableGroup) {

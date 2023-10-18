@@ -5,6 +5,8 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
 import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
@@ -71,6 +73,10 @@ public class Order {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new OrderException(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
         }
+    }
+
+    public boolean isCookingOrMeal() {
+        return orderStatus == COOKING || orderStatus == MEAL;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
