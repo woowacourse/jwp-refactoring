@@ -1,5 +1,6 @@
 package kitchenpos.Fixture;
 
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.menu.Menu;
@@ -7,7 +8,6 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.ui.dto.OrderTableDto;
 
 import java.math.BigDecimal;
@@ -35,7 +35,9 @@ public abstract class Fixture {
 
     public static Order orderFixture(OrderTable orderTable, String orderStatus,
                                      LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable, orderStatus, orderedTime, orderLineItems);
+        Order order = new Order(orderTable, orderStatus, orderedTime);
+        order.addOrderLineItems(orderLineItems);
+        return order;
     }
 
     public static OrderLineItem orderLineItemFixture(Order order, Menu menu, long quantity) {
