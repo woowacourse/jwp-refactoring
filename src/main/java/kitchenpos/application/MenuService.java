@@ -56,20 +56,19 @@ public class MenuService {
     }
 
     private List<MenuProduct> createMenuProducts(Menu menu, List<MenuProductCreateRequest> requests) {
-        Map<Long, Long> idToQuantity = requests.stream()
-            .collect(toMap(MenuProductCreateRequest::getProductId, MenuProductCreateRequest::getQuantity));
         List<Product> products = findProducts(requests);
+        validateNotExistProducts(products, requests);
+        Map<Long, Long> productIdToQuantity = requests.stream()
+            .collect(toMap(MenuProductCreateRequest::getProductId, MenuProductCreateRequest::getQuantity));
         return products.stream()
-            .map(product -> new MenuProduct(null, idToQuantity.get(product.getId()), product, menu))
+            .map(product -> new MenuProduct(null, productIdToQuantity.get(product.getId()), product, menu))
             .collect(toList());
     }
 
     private List<Product> findProducts(List<MenuProductCreateRequest> requests) {
-        List<Product> products = requests.stream()
+        return requests.stream()
             .map(MenuProductCreateRequest::getProductId)
             .collect(collectingAndThen(toList(), productRepository::findByIdIn));
-        validateNotExistProducts(products, requests);
-        return products;
     }
 
     private void validateNotExistProducts(List<Product> products, List<MenuProductCreateRequest> requests) {
