@@ -28,9 +28,8 @@ public class TableGroup {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
-        // TODO 테스트코드
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new TableGroupException("테이블 그룹에는 최소 2개 이상의 테이블이 포함되어야 합니다.");
         }
         this.createdDate = LocalDateTime.now();
         for (OrderTable orderTable : orderTables) {
