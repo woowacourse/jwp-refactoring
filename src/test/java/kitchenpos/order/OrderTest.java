@@ -10,6 +10,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderException;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -29,7 +30,7 @@ class OrderTest {
         @Test
         void 결제되지_않은_주문의_상태를_변경한다() {
             // given
-            Order order = new Order(1L, List.of(), validator);
+            Order order = new Order(new OrderTable(1, false), List.of(), validator);
 
             // when
             order.setOrderStatus(COMPLETION.name());
@@ -41,7 +42,7 @@ class OrderTest {
         @Test
         void 이미_결제_완료된_주문은_상태를_변경할_수_없다() {
             // given
-            Order order = new Order(1L, List.of(), validator);
+            Order order = new Order(new OrderTable(1, false), List.of(), validator);
             order.setOrderStatus(COMPLETION.name());
 
             // when & then

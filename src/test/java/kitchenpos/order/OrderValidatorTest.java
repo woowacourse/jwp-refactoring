@@ -34,7 +34,7 @@ class OrderValidatorTest {
         void 주문_목록이_비어있는_경우_예외() {
             // when & then
             assertThatThrownBy(() ->
-                    orderValidator.validateCreate(List.of(), 1L)
+                    orderValidator.validateCreate(List.of(), new OrderTable(1, true))
             ).isInstanceOf(OrderException.class)
                     .hasMessage("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
         }
@@ -49,7 +49,7 @@ class OrderValidatorTest {
             assertThatThrownBy(() ->
                     orderValidator.validateCreate(List.of(
                             new OrderLineItem(1L, 10)
-                    ), 1L)
+                    ), new OrderTable(1, true))
             ).isInstanceOf(OrderException.class)
                     .hasMessage("주문 메뉴중 존재하지 않는 메뉴가 있습니다.");
         }
@@ -59,14 +59,12 @@ class OrderValidatorTest {
             // given
             given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(1L);
-            given(orderTableRepository.getById(1L))
-                    .willReturn(new OrderTable(10, true));
 
             // when & then
             assertThatThrownBy(() ->
                     orderValidator.validateCreate(List.of(
                             new OrderLineItem(1L, 10)
-                    ), 1L)
+                    ), new OrderTable(1, true))
             ).isInstanceOf(OrderException.class)
                     .hasMessage("비어있는 테이블에서는 주문할 수 없습니다.");
         }
@@ -76,14 +74,12 @@ class OrderValidatorTest {
             // given
             given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(1L);
-            given(orderTableRepository.getById(1L))
-                    .willReturn(new OrderTable(10, false));
 
             // when & then
             assertDoesNotThrow(() ->
                     orderValidator.validateCreate(List.of(
                             new OrderLineItem(1L, 10)
-                    ), 1L)
+                    ), new OrderTable(1, false))
             );
         }
     }

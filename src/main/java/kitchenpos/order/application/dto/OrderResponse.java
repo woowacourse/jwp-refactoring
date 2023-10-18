@@ -31,13 +31,33 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTableId(),
+                order.getOrderTable().getId(),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 order.getOrderLineItems().stream()
                         .map(OrderLineItemResponse::from)
                         .collect(Collectors.toList())
         );
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
     }
 
     public static class OrderLineItemResponse {

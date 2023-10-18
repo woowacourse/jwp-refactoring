@@ -1,18 +1,20 @@
 package kitchenpos.order.domain;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -21,11 +23,14 @@ public class Order {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Long orderTableId;
+
+    @ManyToOne(fetch = LAZY)
+    private OrderTable orderTable;
+
     private String orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
+    @OneToMany(fetch = LAZY, cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems;
 
@@ -33,12 +38,12 @@ public class Order {
     }
 
     public Order(
-            Long orderTableId,
+            OrderTable orderTable,
             List<OrderLineItem> orderLineItems,
             OrderValidator orderValidator
     ) {
-        orderValidator.validateCreate(orderLineItems, orderTableId);
-        this.orderTableId = orderTableId;
+        orderValidator.validateCreate(orderLineItems, orderTable);
+        this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
@@ -48,8 +53,8 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public String getOrderStatus() {

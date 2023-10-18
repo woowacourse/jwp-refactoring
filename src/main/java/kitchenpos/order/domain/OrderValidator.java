@@ -19,7 +19,7 @@ public class OrderValidator {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public void validateCreate(List<OrderLineItem> orderLineItems, Long orderTableId) {
+    public void validateCreate(List<OrderLineItem> orderLineItems, OrderTable orderTable) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new OrderException("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
         }
@@ -29,7 +29,6 @@ public class OrderValidator {
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new OrderException("주문 메뉴중 존재하지 않는 메뉴가 있습니다.");
         }
-        OrderTable orderTable = orderTableRepository.getById(orderTableId);
         if (orderTable.isEmpty()) {
             throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
         }
