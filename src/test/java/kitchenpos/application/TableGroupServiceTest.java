@@ -29,7 +29,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         // given
         TableGroup tableGroup = 빈_테이블_그룹_생성();
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -40,7 +40,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, true));
         TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(List.of(savedOrderTable));
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -54,7 +54,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         );
         TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -68,7 +68,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         );
         TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -84,7 +84,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
         TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -133,7 +133,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -151,7 +151,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         TableGroup tableGroup = 오더_테이블이_있는_테이블_그룹_생성(savedOrderTables);
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
                 .isInstanceOf(IllegalArgumentException.class);
     }

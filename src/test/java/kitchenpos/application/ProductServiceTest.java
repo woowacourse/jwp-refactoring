@@ -47,7 +47,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         // given
         Product product = 후추_칰힌_가격_책정(null);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -57,7 +57,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         // given
         Product product = 후추_칰힌_가격_책정(BigDecimal.valueOf(-1));
 
-        // when then
+        // expect
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }

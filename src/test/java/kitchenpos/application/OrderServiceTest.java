@@ -39,7 +39,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable = 테이블_그룹이_없는_주문_테이블_생성(1, false);
         Order order = 주문_생성(savedOrderTable, Collections.emptyList());
 
-        // when then
+        // expect
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -51,7 +51,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         OrderLineItem orderLineItem = 존재하지_않는_메뉴를_가진_OrderLineItem_생성();
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
-        // when then
+        // expect
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -66,7 +66,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
         Order order = 존재하지_않는_OrderTable을_가진_주문_생성(List.of(orderLineItem));
 
-        // when then
+        // expect
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -82,7 +82,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         OrderLineItem orderLineItem = 메뉴만을_가진_OrderLineItem_생성(savedMenu, 2);
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
-        // when then
+        // expect
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -135,7 +135,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, true));
         Order order = 주문_생성(savedOrderTable, Collections.emptyList());
 
-        // when then
+        // expect
         assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -148,7 +148,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         orderDao.save(order);
 
-        // when
+        // expect
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);
     }

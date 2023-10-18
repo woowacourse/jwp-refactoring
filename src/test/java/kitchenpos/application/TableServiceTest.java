@@ -78,7 +78,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         // given
         OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(1, true);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeEmpty(MAX_VALUE, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -99,7 +99,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 false
         );
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyFalseOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -115,7 +115,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 true
         );
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -131,7 +131,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 true
         );
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -167,7 +167,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         // given
         OrderTable orderTable = 테이블_그룹이_없는_주문_테이블_생성(2, false);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(MAX_VALUE, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -185,7 +185,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 true
         );
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -203,7 +203,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 false
         );
 
-        // when then
+        // expect
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }

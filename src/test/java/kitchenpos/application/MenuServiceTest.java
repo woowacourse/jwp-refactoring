@@ -55,7 +55,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = 메뉴_생성(null, savedMenuGroup, menuProduct);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -68,7 +68,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = 메뉴_생성(BigDecimal.valueOf(-1), savedMenuGroup, menuProduct);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -80,7 +80,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
         Menu menu = 존재하지_않는_MenuGroup_을_가진_메뉴_생성(BigDecimal.valueOf(19000), menuProduct);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -92,7 +92,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = 메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, invalidMenuProduct);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -105,7 +105,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
         Menu menu = 메뉴_생성(BigDecimal.valueOf(10000 + 10000 + 1), savedMenuGroup, menuProduct);
 
-        // when then
+        // expect
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
