@@ -24,6 +24,12 @@ public class Order {
     protected Order() {
     }
 
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
@@ -51,4 +57,9 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
+
+    public void updateOrderStatus(String orderStatus) {
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
+    }
+
 }
