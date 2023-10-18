@@ -6,11 +6,11 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +23,9 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
     @BeforeEach
     void setUp() {
         menuService = new MenuService(
-                menuDao,
-                menuGroupDao,
-                menuProductDao,
-                productDao
+                menuRepository,
+                menuGroupRepository,
+                productRepository
         );
     }
 
@@ -34,24 +33,26 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
     @Test
     void success_findAll() {
         // given
-        final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
 
-        final Long menuIdIsNotProblem = null;
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (int count = 1; count <= 10; count++) {
-            final Product savedProduct = productDao.save(new Product("테스트용 상품명", new BigDecimal("10000")));
-            menuProducts.add(new MenuProduct(menuIdIsNotProblem, savedProduct.getId(), 10));
-        }
+        final List<MenuProduct> unsavedMenuProducts = List.of(
+                new MenuProduct(null, productRepository.save(new Product("테스트용 상품명", new Price("10000"))), 10),
+                new MenuProduct(null, productRepository.save(new Product("테스트용 상품명", new Price("10000"))), 10),
+                new MenuProduct(null, productRepository.save(new Product("테스트용 상품명", new Price("10000"))), 10),
+                new MenuProduct(null, productRepository.save(new Product("테스트용 상품명", new Price("10000"))), 10),
+                new MenuProduct(null, productRepository.save(new Product("테스트용 상품명", new Price("10000"))), 10)
+        );
 
         final Menu menu = new Menu(
                 "테스트용 메뉴명",
-                BigDecimal.ZERO,
-                savedMenuGroup.getId(),
-                menuProducts
+                new Price("0"),
+                savedMenuGroup,
+                new ArrayList<>()
         );
+        menu.addMenuProducts(unsavedMenuProducts);
 
         // when
-        final Menu expected = menuService.create(menu);
+        final Menu expected = menuRepository.save(menu);
         final List<Menu> actual = menuService.list();
 
         // then
@@ -62,10 +63,8 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
             softly.assertThat(actualMenu.getId()).isEqualTo(expected.getId());
             softly.assertThat(actualMenu.getName()).isEqualTo(expected.getName());
             softly.assertThat(actualMenu.getPrice()).isEqualTo(expected.getPrice());
-            softly.assertThat(actualMenu.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
-            softly.assertThat(actualMenu.getMenuProducts())
-                    .usingRecursiveComparison()
-                    .isEqualTo(expected.getMenuProducts());
+            softly.assertThat(actualMenu.getMenuGroup()).isEqualTo(expected.getMenuGroup());
+            softly.assertThat(actualMenu.getMenuProducts()).isEqualTo(expected.getMenuProducts());
         });
     }
 }
