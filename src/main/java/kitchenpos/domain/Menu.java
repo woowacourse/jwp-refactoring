@@ -1,10 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,8 +25,8 @@ public class Menu {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Embedded
+    private Name name;
 
     @Embedded
     private Price price;
@@ -42,7 +42,7 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(final String name,
+    public Menu(final Name name,
                 final Price price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts
@@ -51,7 +51,7 @@ public class Menu {
     }
 
     public Menu(final Long id,
-                final String name,
+                final Name name,
                 final Price price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts
@@ -88,7 +88,7 @@ public class Menu {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 

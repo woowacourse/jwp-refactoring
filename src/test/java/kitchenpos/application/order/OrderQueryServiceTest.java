@@ -8,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +33,9 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
     @Test
     void success_findAll() {
         // given
-        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
         final Menu savedMenu = menuRepository.save(new Menu(
-                "테스트용 메뉴명",
+                new Name("테스트용 메뉴명"),
                 new Price("0"),
                 savedMenuGroup,
                 Collections.emptyList()

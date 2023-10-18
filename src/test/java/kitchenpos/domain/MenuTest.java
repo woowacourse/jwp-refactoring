@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class MenuTest {
     @Test
     void throwException_price_isNull() {
         // expect
-        assertThatThrownBy(() -> new Menu("테스트용 메뉴명", null, null, Collections.emptyList()))
+        assertThatThrownBy(() -> new Menu(new Name("테스트용 메뉴명"), null, null, Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -30,7 +31,7 @@ class MenuTest {
     @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
     void throwException_price_isNegative(final String negativePriceValue) {
         // expect
-        assertThatThrownBy(() -> new Menu("테스트용 메뉴명", new Price(negativePriceValue), null, Collections.emptyList()))
+        assertThatThrownBy(() -> new Menu(new Name("테스트용 메뉴명"), new Price(negativePriceValue), null, Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -39,7 +40,7 @@ class MenuTest {
     @CsvSource(value = {"10000:9999:true", "10000:1:true", "10000:-10:true", "10000:10001:false", "10000:99999999:false"}, delimiter = ':')
     void isGreaterThan(final String menuPrice, final String otherPrice, final boolean expected) {
         // given
-        final Menu menu = new Menu("테스트용 메뉴명", new Price(menuPrice), null, Collections.emptyList());
+        final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price(menuPrice), null, Collections.emptyList());
 
         // when
         final boolean actual = menu.isGreaterThan(new Price(otherPrice).getValue());
@@ -52,9 +53,9 @@ class MenuTest {
     @Test
     void success_addMenuProducts() {
         // given
-        final Product product = new Product("테스트용 상품명", new Price("10000"));
-        final MenuGroup menuGroup = new MenuGroup("테스트용 메뉴 그룹명");
-        final Menu menu = new Menu("테스트용 메뉴명", new Price("10000"), menuGroup, new ArrayList<>());
+        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
+        final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price("10000"), menuGroup, new ArrayList<>());
 
         // when
         menu.addMenuProducts(List.of(new MenuProduct(null, product, 10)));

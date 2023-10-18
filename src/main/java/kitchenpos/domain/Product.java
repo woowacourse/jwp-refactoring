@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,8 +16,8 @@ public class Product {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Embedded
+    private Name name;
 
     @Embedded
     private Price price;
@@ -25,11 +25,11 @@ public class Product {
     public Product() {
     }
 
-    public Product(final String name, final Price price) {
+    public Product(final Name name, final Price price) {
         this(null, name, price);
     }
 
-    public Product(final Long id, final String name, final Price price) {
+    public Product(final Long id, final Name name, final Price price) {
         validate(price);
         this.id = id;
         this.name = name;
@@ -50,7 +50,7 @@ public class Product {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 

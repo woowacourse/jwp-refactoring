@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,10 +41,10 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void success_create_menu_when_MenuProductsIsEmpty() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             final Menu expected = new Menu(
-                    "테스트용 메뉴명",
+                    new Name("테스트용 메뉴명"),
                     new Price("0"),
                     savedMenuGroup,
                     Collections.emptyList()
@@ -66,11 +67,11 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_create_Menu_IfMenuProductsPriceSum_IsGreaterThanMenuPrice() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             // when
             final Menu expected = new Menu(
-                    "테스트용 메뉴명",
+                    new Name("테스트용 메뉴명"),
                     new Price("10000"),
                     savedMenuGroup,
                     Collections.emptyList()
@@ -90,11 +91,11 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_create_Menu_IfMenuGroupIsNotExists() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             // when
             final Menu expected = new Menu(
-                    "테스트용 메뉴명",
+                    new Name("테스트용 메뉴명"),
                     new Price("10000"),
                     savedMenuGroup,
                     Collections.emptyList()
@@ -114,16 +115,16 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void success_create_menu_with_MenuProducts() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             final List<MenuProduct> menuProducts = new ArrayList<>();
             for (int count = 1; count <= 10; count++) {
-                final Product savedProduct = productRepository.save(new Product("테스트용 상품명", new Price("10000")));
+                final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
                 menuProducts.add(new MenuProduct(null, savedProduct, 10));
             }
 
             final Menu expected = new Menu(
-                    "테스트용 메뉴명",
+                    new Name("테스트용 메뉴명"),
                     new Price("0"),
                     savedMenuGroup,
                     new ArrayList<>()

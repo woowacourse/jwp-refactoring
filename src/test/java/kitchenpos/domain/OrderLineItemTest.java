@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,8 @@ class OrderLineItemTest {
     @Test
     void success_create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("테스트용 메뉴 그룹명");
-        final Menu menu = new Menu("테스트용 메뉴명", new Price("10000"), menuGroup, new ArrayList<>());
+        final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
+        final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price("10000"), menuGroup, new ArrayList<>());
 
         final OrderTable orderTable = new OrderTable(null, 10, true);
         final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());

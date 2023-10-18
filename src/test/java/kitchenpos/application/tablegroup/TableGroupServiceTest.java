@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -198,7 +199,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @MethodSource("getOrderStatusWithoutCompletion")
         void throwException_when_orderStatus_isCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            final Product savedProduct = productRepository.save(new Product("테스트용 상품명", new Price("10000")));
+            final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
             final Menu savedMenu = createMenu(savedProduct);
             final OrderTable savedOrderTableWithFiveGuests = createOrder(orderStatus, savedMenu, 5);
             final OrderTable savedOrderTableWithTenGuests = createOrder(orderStatus, savedMenu, 10);
@@ -234,10 +235,10 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         }
 
         private Menu createMenu(final Product savedProduct) {
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
             final Menu savedMenu = menuRepository.save(
                     new Menu(
-                            "테스트용 메뉴명",
+                            new Name("테스트용 메뉴명"),
                             new Price("10000"),
                             savedMenuGroup,
                             new ArrayList<>()

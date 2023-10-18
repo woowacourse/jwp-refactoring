@@ -3,6 +3,7 @@ package kitchenpos.application.product;
 import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +25,7 @@ class ProductServiceTest extends ApplicationTestConfig {
     @Test
     void success_create() {
         // given
-        final Product expected = new Product("테스트용 상품 이름", new Price("10000"));
+        final Product expected = new Product(new Name("테스트용 상품명"), new Price("10000"));
 
         // when
         final Product actual = productService.create(expected);

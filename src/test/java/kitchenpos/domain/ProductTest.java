@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,7 @@ class ProductTest {
     @DisplayName("[SUCCESS] 생성한다.")
     @Test
     void success_create() {
-        assertThatCode(() -> new Product("테스트용 상품명", new
-                Price("10000")))
+        assertThatCode(() -> new Product(new Name("테스트용 상품명"), new Price("10000")))
                 .doesNotThrowAnyException();
     }
 
@@ -23,7 +23,7 @@ class ProductTest {
     @Test
     void throwException_when_price_isNull() {
         // expect
-        assertThatThrownBy(() -> new Product("테스트용 상품명", null))
+        assertThatThrownBy(() -> new Product(new Name("테스트용 상품명"), null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -32,7 +32,7 @@ class ProductTest {
     @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
     void throwException_when_price_isNegative(final String value) {
         // expect
-        assertThatThrownBy(() -> new Product("테스트용 상품명", new Price(value)))
+        assertThatThrownBy(() -> new Product(new Name("테스트용 상품명"), new Price(value)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
