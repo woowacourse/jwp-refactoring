@@ -17,7 +17,7 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {

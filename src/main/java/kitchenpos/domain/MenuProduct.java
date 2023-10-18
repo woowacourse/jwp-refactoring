@@ -15,7 +15,7 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(Long menuId, Long productId, long quantity) {
