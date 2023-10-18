@@ -56,10 +56,10 @@ class MenuProductRepositoryImplTest {
   @DisplayName("save() : MenuProduct를 생성할 수 있다.")
   void test_save() throws Exception {
     //given
-    final MenuProduct2 menuProduct = MenuProductFixture.createMenuProduct(product, menu1);
+    final MenuProduct2 menuProduct = MenuProductFixture.createMenuProduct(product);
 
     //when
-    final MenuProduct2 savedMenuProduct = menuProductRepository.save(menuProduct);
+    final MenuProduct2 savedMenuProduct = menuProductRepository.save(menuProduct, menu1);
 
     //then
     assertAll(
@@ -76,7 +76,7 @@ class MenuProductRepositoryImplTest {
   void test_findById() throws Exception {
     //given
     final MenuProduct2 menuProduct = menuProductRepository.save(
-        MenuProductFixture.createMenuProduct(product, menu1)
+        MenuProductFixture.createMenuProduct(product), menu1
     );
 
     //when
@@ -97,11 +97,9 @@ class MenuProductRepositoryImplTest {
   void test_findAll() throws Exception {
     //given
     final MenuProduct2 menuProduct1 = menuProductRepository.save(
-        MenuProductFixture.createMenuProduct(product, menu1)
-    );
+        MenuProductFixture.createMenuProduct(product), menu1);
     final MenuProduct2 menuProduct2 = menuProductRepository.save(
-        MenuProductFixture.createMenuProduct(product, menu1)
-    );
+        MenuProductFixture.createMenuProduct(product), menu1);
 
     //when
     final List<MenuProduct2> menuProducts = menuProductRepository.findAll();
@@ -117,15 +115,15 @@ class MenuProductRepositoryImplTest {
   void test_findAllByMenuId() throws Exception {
     //given
     final MenuProduct2 menuProduct1 = menuProductRepository.save(
-        MenuProductFixture.createMenuProduct(product, menu1));
+        MenuProductFixture.createMenuProduct(product), menu1);
     final MenuProduct2 menuProduct2 = menuProductRepository.save(
-        MenuProductFixture.createMenuProduct(product, menu1));
+        MenuProductFixture.createMenuProduct(product), menu1);
     final MenuProduct2 menuProduct3 = menuProductRepository.save(
-        MenuProductFixture.createMenuProduct(product, menu2));
+        MenuProductFixture.createMenuProduct(product), menu2);
 
     //when
     final List<MenuProduct2> menuProducts = menuProductRepository.findAllByMenuId(
-        menuProduct1.getMenu().getId()
+        menu1.getId()
     );
 
     //then

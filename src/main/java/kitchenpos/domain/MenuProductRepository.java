@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface MenuProductRepository {
 
-  MenuProduct2 save(MenuProduct2 menu);
+  MenuProduct2 save(MenuProduct2 menuProduct, Menu2 menu);
 
   Optional<MenuProduct2> findById(Long id);
 

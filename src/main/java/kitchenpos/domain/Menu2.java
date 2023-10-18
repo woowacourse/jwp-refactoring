@@ -9,7 +9,7 @@ public class Menu2 {
   private String name;
   private BigDecimal price;
   private MenuGroup menuGroup;
-  private List<MenuProduct> menuProducts;
+  private List<MenuProduct2> menuProducts;
 
   public Menu2(
       final Long id,
@@ -45,7 +45,7 @@ public class Menu2 {
     return menuGroup;
   }
 
-  public List<MenuProduct> getMenuProducts() {
+  public List<MenuProduct2> getMenuProducts() {
     return menuProducts;
   }
 }
