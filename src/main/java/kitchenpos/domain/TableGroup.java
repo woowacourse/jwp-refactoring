@@ -28,7 +28,7 @@ public class TableGroup {
     @NotNull
     private LocalDateTime createdDate;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     private TableGroup(OrderTables orderTables) {

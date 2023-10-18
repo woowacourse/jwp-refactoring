@@ -52,7 +52,7 @@ public class OrderTable {
         return new OrderTable(id, tableGroup, numberOfGuests, empty);
     }
 
-    public static OrderTable create(
+    public static OrderTable createWithoutTableGroup(
             Integer numberOfGuests,
             Boolean empty
     ) {

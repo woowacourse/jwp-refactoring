@@ -25,7 +25,7 @@ public class Product {
     @NotNull
     private BigDecimal price;
 
-    public Product() {
+    protected Product() {
     }
 
     private Product(String name, BigDecimal price) {
