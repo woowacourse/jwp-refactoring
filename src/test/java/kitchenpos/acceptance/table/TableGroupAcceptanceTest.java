@@ -144,6 +144,7 @@ public class TableGroupAcceptanceTest {
             );
 
         }
+
         @Test
         void 테이블_그룹에_속한_테이블_중_계산_완료되지_않은_테이블이_있는_경우_그룹_제거를_할_수_없다() {
             // given
