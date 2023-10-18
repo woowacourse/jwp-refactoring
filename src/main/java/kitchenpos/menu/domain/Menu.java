@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Menu {
 
-  private Long id;
-  private String name;
-  private BigDecimal price;
-  private Long menuGroupId;
-  private List<MenuProduct> menuProducts;
+  private final Long id;
+  private final String name;
+  private final BigDecimal price;
+  private final Long menuGroupId;
+  private final List<MenuProduct> menuProducts;
 
   public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
       final List<MenuProduct> menuProducts) {
