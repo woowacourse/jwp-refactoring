@@ -9,7 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -50,11 +54,13 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void 주문_테이블_상태_변경() throws Exception {
         // given
-        OrderTable orderTable1 = 주문_테이블();
-        String request = objectMapper.writeValueAsString(orderTable1);
-        OrderTable savedOrderTable1 = 주문_테이블(1L);
-        given(tableService.changeEmpty(any())).willReturn(savedOrderTable1);
-        String response = objectMapper.writeValueAsString(savedOrderTable1);
+        ChangeOrderTableEmptyRequest changeOrderTableEmptyRequest = new ChangeOrderTableEmptyRequest(true);
+        String request = objectMapper.writeValueAsString(changeOrderTableEmptyRequest);
+
+        ChangeOrderTableEmptyResponse changeOrderTableEmptyResponse =
+                ChangeOrderTableEmptyResponse.from(new OrderTable(1L, null, 0, true));
+        given(tableService.changeEmpty(any())).willReturn(changeOrderTableEmptyResponse);
+        String response = objectMapper.writeValueAsString(changeOrderTableEmptyRequest);
 
         // when & then
         mockMvc.perform(put("/api/tables/1/empty")
@@ -67,11 +73,14 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void 주문_테이블_인원_변경() throws Exception {
         // given
-        OrderTable orderTable1 = 주문_테이블();
-        String request = objectMapper.writeValueAsString(orderTable1);
-        OrderTable savedOrderTable1 = 주문_테이블(1L);
-        given(tableService.changeNumberOfGuests(any())).willReturn(savedOrderTable1);
-        String response = objectMapper.writeValueAsString(savedOrderTable1);
+        ChangeOrderTableNumberOfGuestsRequest changeOrderTableNumberOfGuestsRequest =
+                new ChangeOrderTableNumberOfGuestsRequest(2);
+        String request = objectMapper.writeValueAsString(changeOrderTableNumberOfGuestsRequest);
+
+        ChangeOrderTableNumberOfGuestsResponse changeOrderTableNumberOfGuestsResponse =
+                ChangeOrderTableNumberOfGuestsResponse.from(new OrderTable(1L, null, 2, true));
+        given(tableService.changeNumberOfGuests(any())).willReturn(changeOrderTableNumberOfGuestsResponse);
+        String response = objectMapper.writeValueAsString(changeOrderTableNumberOfGuestsRequest);
 
         // when & then
         mockMvc.perform(put("/api/tables/1/number-of-guests")

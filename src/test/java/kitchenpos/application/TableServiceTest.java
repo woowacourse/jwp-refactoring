@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -107,7 +109,7 @@ class TableServiceTest extends IntegrationTest {
             ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(savedOrderTable1.id(), false);
 
             // when
-            OrderTable result = tableService.changeEmpty(command);
+            ChangeOrderTableEmptyResponse result = tableService.changeEmpty(command);
 
             // then
             assertThat(result.empty()).isFalse();
@@ -167,7 +169,7 @@ class TableServiceTest extends IntegrationTest {
                     new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), 2);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(command);
+            ChangeOrderTableNumberOfGuestsResponse result = tableService.changeNumberOfGuests(command);
 
             // then
             assertThat(result.numberOfGuests()).isEqualTo(2);

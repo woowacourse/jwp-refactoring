@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -27,16 +29,16 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(ChangeOrderTableEmptyCommand command) {
+    public ChangeOrderTableEmptyResponse changeEmpty(ChangeOrderTableEmptyCommand command) {
         OrderTable orderTable = orderTableRepository.getById(command.id());
         orderTable.changeEmpty(command.empty());
-        return orderTableRepository.save(orderTable);
+        return ChangeOrderTableEmptyResponse.from(orderTableRepository.save(orderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(ChangeOrderTableNumberOfGuestsCommand command) {
+    public ChangeOrderTableNumberOfGuestsResponse changeNumberOfGuests(ChangeOrderTableNumberOfGuestsCommand command) {
         OrderTable orderTable = orderTableRepository.getById(command.id());
         orderTable.changeNumberOfGuests(command.numberOfGuests());
-        return orderTableRepository.save(orderTable);
+        return ChangeOrderTableNumberOfGuestsResponse.from(orderTableRepository.save(orderTable));
     }
 }

@@ -37,9 +37,9 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(Long id, TableGroup tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }

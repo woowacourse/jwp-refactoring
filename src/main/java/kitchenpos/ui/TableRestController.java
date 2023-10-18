@@ -3,9 +3,11 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
-import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
+import kitchenpos.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,36 +29,30 @@ public class TableRestController {
         final OrderTable created = tableService.create(orderTable);
         final URI uri = URI.create("/api/tables/" + created.id());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(created);
     }
 
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTable>> list() {
         return ResponseEntity.ok()
-                .body(tableService.list())
-                ;
+                .body(tableService.list());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
-            @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+    public ResponseEntity<ChangeOrderTableEmptyResponse> changeEmpty(
+            @PathVariable Long orderTableId,
+            @RequestBody ChangeOrderTableEmptyRequest request
     ) {
-        ChangeOrderTableEmptyCommand command =
-                new ChangeOrderTableEmptyCommand(orderTableId, orderTable.empty());
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(command));
+                .body(tableService.changeEmpty(request.toCommand(orderTableId)));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
-            @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+    public ResponseEntity<ChangeOrderTableNumberOfGuestsResponse> changeNumberOfGuests(
+            @PathVariable Long orderTableId,
+            @RequestBody ChangeOrderTableNumberOfGuestsRequest request
     ) {
-        ChangeOrderTableNumberOfGuestsCommand command =
-                new ChangeOrderTableNumberOfGuestsCommand(orderTableId, orderTable.numberOfGuests());
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(command));
+                .body(tableService.changeNumberOfGuests(request.toCommand(orderTableId)));
     }
 }
