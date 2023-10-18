@@ -66,7 +66,7 @@ public class OrderTable {
         }
     }
 
-    public void validateOrderTableIsNotEmpty() {
+    public void validateIsNotEmpty() {
         if (empty) {
             throw new IllegalArgumentException();
         }

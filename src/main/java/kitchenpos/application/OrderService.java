@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
@@ -35,13 +36,10 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-
-    @Transactional
     public Long create(final List<Long> menuIds, final List<Integer> quantities, final Long orderTableId) {
         if (CollectionUtils.isEmpty(menuIds)) {
             throw new IllegalArgumentException();
         }
-
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
@@ -49,10 +47,8 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+        orderTable.validateIsNotEmpty();
+        
         final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
 
         for (int index = 0; index < menuIds.size(); index++) {
@@ -66,19 +62,17 @@ public class OrderService {
         return order.getId();
     }
 
+    @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }
 
-    @Transactional
     public void changeOrderStatus(final Long orderId, final String status) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
-
         final OrderStatus orderStatus = OrderStatus.valueOf(status);
         savedOrder.changeOrderStatus(orderStatus.name());
     }

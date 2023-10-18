@@ -48,7 +48,7 @@ public class TableService {
         }
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrderTable.validateOrderTableIsNotEmpty();
+        savedOrderTable.validateIsNotEmpty();
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
     }
 }

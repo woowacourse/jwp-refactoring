@@ -21,7 +21,7 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(null, 0, true);
 
         //when, then
-        Assertions.assertThatThrownBy(orderTable::validateOrderTableIsNotEmpty)
+        Assertions.assertThatThrownBy(orderTable::validateIsNotEmpty)
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
