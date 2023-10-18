@@ -1,20 +1,45 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "TABLE_GROUP")
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup")
+    private List<OrderTable> orderTables = new ArrayList<>();
+
+    protected TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.createdDate = createdDate;
+    public static TableGroup createDefault() {
+        return new TableGroup();
+    }
+
+    public void initOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 
@@ -22,24 +47,12 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 
     @Override

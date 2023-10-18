@@ -1,8 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.application.table.TableService;
+import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.application.table.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.CannotChangeNumberOfGuestBecauseOfEmptyTableException;
+import kitchenpos.exception.CannotUnGroupBecauseOfStatusException;
+import kitchenpos.exception.NumberOfGuestsInvalidException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.helper.IntegrationTestHelper;
+import kitchenpos.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -13,7 +22,10 @@ import java.util.List;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
+import static kitchenpos.fixture.OrderTableFixture.주문_테이블_상태_업데이트_요청;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
+import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성_요청;
+import static kitchenpos.fixture.OrderTableFixture.주문_테이블_손님_수_업데이트_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -26,15 +38,16 @@ class TableServiceTest extends IntegrationTestHelper {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     void 주문_테이블을_생성한다() {
         // given
         OrderTable orderTable = 주문_테이블_생성(null, 10, false);
+        OrderTableCreateRequest req = 주문_테이블_생성_요청(orderTable);
 
         // when
-        OrderTable result = tableService.create(orderTable);
+        OrderTable result = tableService.create(req);
 
         // then
         assertSoftly(softly -> {
@@ -47,7 +60,8 @@ class TableServiceTest extends IntegrationTestHelper {
     void 모든_주문_테이블을_반환한다() {
         // given
         OrderTable orderTable = 주문_테이블_생성(null, 10, false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableCreateRequest req = 주문_테이블_생성_요청(orderTable);
+        OrderTable savedOrderTable = tableService.create(req);
 
         // when
         List<OrderTable> result = tableService.list();
@@ -63,11 +77,13 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블을_빈_상태로_변경한다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성(null, 1, false));
-        OrderTable changedTable = 주문_테이블_생성(null, 1, true);
+        OrderTableCreateRequest req = 주문_테이블_생성_요청(주문_테이블_생성(null, 1, false));
+        OrderTable orderTable = tableService.create(req);
+
+        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
 
         // when
-        OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), changedTable);
+        OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), changedTableRequest);
 
         // then
         assertThat(changedOrderTable.isEmpty()).isTrue();
@@ -78,57 +94,60 @@ class TableServiceTest extends IntegrationTestHelper {
         // given
         Long invalidOrderTableId = -1L;
 
-        OrderTable orderTable = tableService.create(주문_테이블_생성(null, 1, false));
-        OrderTable changedTable = 주문_테이블_생성(null, 1, true);
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
+        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, changedTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, changedTableRequest))
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
     void 주문_테이블을_빈_상태로_변경시에_밥을_먹는중이라면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성(null, 1, false));
-        OrderTable changedTable = 주문_테이블_생성(null, 1, true);
-        orderDao.save(주문_생성(orderTable.getId(), COOKING.name(), LocalDateTime.now(), null));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
+        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
+        orderRepository.save(주문_생성(orderTable, COOKING.name(), LocalDateTime.now(), List.of(
+                OrderLineItemFixture.주문_품목_생성(null, 10L)
+        )));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changedTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changedTableRequest))
+                .isInstanceOf(CannotUnGroupBecauseOfStatusException.class);
     }
 
     @Test
     void 주문_테이블의_손님_수를_변경한다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성(null, 1, false));
-        OrderTable changedTable = 주문_테이블_생성(null, 10, true);
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
+        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, 10, true));
+
 
         // when
-        OrderTable result = tableService.changeNumberOfGuests(orderTable.getId(), changedTable);
+        OrderTable result = tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest);
 
         // then
-        assertThat(result.getNumberOfGuests()).isEqualTo(changedTable.getNumberOfGuests());
+        assertThat(result.getNumberOfGuests()).isEqualTo(changeTableRequest.getNumberOfGuests());
     }
 
     @Test
     void 변경하려는_주문_테이블의_손님_수가_0보다_작다면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성(null, 1, false));
-        OrderTable changedTable = 주문_테이블_생성(null, -1, true);
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changedTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, -1, true))))
+                .isInstanceOf(NumberOfGuestsInvalidException.class);
     }
 
     @Test
     void 인원_변경하려는_주문_테이블이_빈_테이블이면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성(null, 0, true));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 0, true)));
+        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, 0, false));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest))
+                .isInstanceOf(CannotChangeNumberOfGuestBecauseOfEmptyTableException.class);
     }
 }

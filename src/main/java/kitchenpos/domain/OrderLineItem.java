@@ -1,53 +1,57 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.util.Objects;
 
+@Entity
+@Table(name = "ORDER_LINE_ITEM")
 public class OrderLineItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
 
-    public OrderLineItem() {
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @Embedded
+    private Quantity quantity;
+
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
-        this.orderId = orderId;
-        this.menuId = menuId;
-        this.quantity = quantity;
+    public OrderLineItem(final Order order, final Menu menu, final Long quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = Quantity.from(quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Order getOrder() {
+        return order;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public Long getQuantity() {
+        return quantity.getQuantity();
     }
 
     @Override
@@ -55,11 +59,11 @@ public class OrderLineItem {
         if (this == o) return true;
         if (!(o instanceof OrderLineItem)) return false;
         OrderLineItem that = (OrderLineItem) o;
-        return quantity == that.quantity && Objects.equals(seq, that.seq) && Objects.equals(orderId, that.orderId) && Objects.equals(menuId, that.menuId);
+        return quantity == that.quantity && Objects.equals(seq, that.seq) && Objects.equals(order, that.order) && Objects.equals(menu, that.menu);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(seq, orderId, menuId, quantity);
+        return Objects.hash(seq, order, menu, quantity);
     }
 }
