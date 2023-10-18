@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
+import kitchenpos.application.dto.ordertable.SearchOrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
@@ -43,11 +44,12 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void 주문_테이블_조회() throws Exception {
         // given
-        OrderTable orderTable1 = 주문_테이블(1L);
-        OrderTable orderTable2 = 주문_테이블(2L);
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        given(tableService.list()).willReturn(orderTables);
-        String response = objectMapper.writeValueAsString(orderTables);
+        List<SearchOrderTableResponse> searchOrderTableResponses = List.of(
+                SearchOrderTableResponse.from(주문_테이블(1L)),
+                SearchOrderTableResponse.from(주문_테이블(2L))
+        );
+        given(tableService.list()).willReturn(searchOrderTableResponses);
+        String response = objectMapper.writeValueAsString(searchOrderTableResponses);
 
         // when & then
         mockMvc.perform(get("/api/tables"))

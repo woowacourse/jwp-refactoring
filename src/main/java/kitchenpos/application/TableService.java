@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.application.dto.ordertable.CreateOrderTableCommand;
 import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
+import kitchenpos.application.dto.ordertable.SearchOrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,10 @@ public class TableService {
         return CreateOrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<SearchOrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(SearchOrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional

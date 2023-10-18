@@ -13,6 +13,7 @@ import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsComma
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.application.dto.ordertable.CreateOrderTableCommand;
 import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
+import kitchenpos.application.dto.ordertable.SearchOrderTableResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -44,7 +45,7 @@ class TableServiceTest extends IntegrationTest {
         OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
         // when
-        List<OrderTable> result = tableService.list();
+        List<SearchOrderTableResponse> result = tableService.list();
 
         // then
         assertAll(

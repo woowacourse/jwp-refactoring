@@ -6,7 +6,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
 import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.ordertable.SearchOrderTableResponse;
 import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
 import kitchenpos.ui.dto.CreateOrderTableRequest;
@@ -35,7 +35,7 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<SearchOrderTableResponse>> list() {
         return ResponseEntity.ok()
                 .body(tableService.list());
     }
