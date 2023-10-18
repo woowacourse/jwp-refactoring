@@ -2,8 +2,10 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.data.annotation.Id;
 
 public class Menu {
+    @Id
     private Long id;
     private String name;
     private BigDecimal price;
