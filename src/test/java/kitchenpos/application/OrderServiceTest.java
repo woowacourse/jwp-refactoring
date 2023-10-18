@@ -1,14 +1,11 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderFixture.주문_생성;
-import static kitchenpos.fixture.OrderLineItemFixture.주문_항목_생성;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.config.ServiceTest;
@@ -25,8 +22,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.OrderFixture;
-import org.junit.jupiter.api.Disabled;
+import kitchenpos.ui.dto.request.CreateOrderLineItemRequest;
+import kitchenpos.ui.dto.request.CreateOrderRequest;
+import kitchenpos.ui.dto.request.UpdateOrderStatusRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -55,49 +53,51 @@ class OrderServiceTest {
     OrderService orderService;
 
     @Test
-    // TODO: 2023/10/18 JPA 변경 이후 제거
-    @Disabled
     void create_메서드는_order를_전달하면_order를_저장하고_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu persistMenu = Menu.of("메뉴", BigDecimal.TEN, List.of(persistMenuProduct), persistMenuGroup);
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order order = 주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem));
+        final Menu persistMenu = menuDao.save(Menu.of(
+                "메뉴",
+                BigDecimal.TEN,
+                List.of(persistMenuProduct),
+                persistMenuGroup)
+        );
+        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(persistMenu.getId(), 1L);
+        final CreateOrderRequest request = new CreateOrderRequest(persistOrderTable.getId(), List.of(createOrderLineItemRequest));
 
         // when
-        final Order actual = orderService.create(order);
+        final Order actual = orderService.create(request);
 
         // then
         assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
-                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
         );
-        assertThat(actual.getId()).isPositive();
     }
 
     @Test
     void create_메서드는_order의_orderLineItem이_없다면_예외가_발생한다() {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order invalidOrder = 주문_생성(persistOrderTable.getId(), Collections.emptyList());
+        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final CreateOrderRequest invalidRequest = new CreateOrderRequest(persistOrderTable.getId(), Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
+        assertThatThrownBy(() -> orderService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void create_메서드는_order의_orderLineItem의_menu가_없다면_예외가_발생한다() {
         // given
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(-999L);
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order invalidOrder = 주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem));
+        final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(-999L, 1L);
+        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final CreateOrderRequest invalidRequest = new CreateOrderRequest(persistOrderTable.getId(), List.of(createOrderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
+        assertThatThrownBy(() -> orderService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -108,11 +108,11 @@ class OrderServiceTest {
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu persistMenu = Menu.of("메뉴", BigDecimal.TEN, List.of(persistMenuProduct), persistMenuGroup);
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final Order invalidOrder = 주문_생성(-999L, Arrays.asList(persistOrderLineItem));
+        final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(persistMenu.getId(), 1L);
+        final CreateOrderRequest invalidRequest = new CreateOrderRequest(-999L, List.of(createOrderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
+        assertThatThrownBy(() -> orderService.create(invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -122,11 +122,16 @@ class OrderServiceTest {
         final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu persistMenu = Menu.of("메뉴", BigDecimal.TEN, List.of(persistMenuProduct), persistMenuGroup);
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
+        final Menu persistMenu = menuDao.save(Menu.of(
+                "메뉴",
+                BigDecimal.TEN,
+                List.of(persistMenuProduct),
+                persistMenuGroup)
+        );
+        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderLineItem persistOrderLineItem = new OrderLineItem(persistMenu, 1L);
         final Order expected = orderDao.save(
-                주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem), "MEAL")
+                new Order(persistOrderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(persistOrderLineItem))
         );
 
         // when
@@ -146,19 +151,24 @@ class OrderServiceTest {
         final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu persistMenu = Menu.of("메뉴", BigDecimal.TEN, List.of(persistMenuProduct), persistMenuGroup);
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order persistOrder = orderDao.save(
-                주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem), "MEAL")
+        final Menu persistMenu = menuDao.save(Menu.of(
+                "메뉴",
+                BigDecimal.TEN,
+                List.of(persistMenuProduct),
+                persistMenuGroup)
         );
+        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
+        final Order persistOrder = orderDao.save(
+                new Order(persistOrderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem))
+        );
+        final UpdateOrderStatusRequest request = new UpdateOrderStatusRequest(orderStatus);
 
         // when
-        final Order statusOrder = OrderFixture.주문_생성(orderStatus);
-        final Order actual = orderService.changeOrderStatus(persistOrder.getId(), statusOrder);
+        final Order actual = orderService.changeOrderStatus(persistOrder.getId(), request);
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo(orderStatus);
+        assertThat(actual.getOrderStatus().name()).isEqualTo(orderStatus);
     }
 
     @ParameterizedTest(name = "orderStatus가 {0}일 때 예외가 발생한다")
@@ -168,17 +178,21 @@ class OrderServiceTest {
         final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu persistMenu = Menu.of("메뉴", BigDecimal.TEN, List.of(persistMenuProduct), persistMenuGroup);
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order persistOrder = orderDao.save(
-                주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem), "COMPLETION")
+        final Menu persistMenu = menuDao.save(Menu.of(
+                "메뉴",
+                BigDecimal.TEN,
+                List.of(persistMenuProduct),
+                persistMenuGroup)
         );
+        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderLineItem persistOrderLineItem = new OrderLineItem(persistMenu, 1L);
+        final Order persistOrder = orderDao.save(
+                new Order(persistOrderTable, OrderStatus.COMPLETION, LocalDateTime.now().minusHours(3L), List.of(persistOrderLineItem))
+        );
+        final UpdateOrderStatusRequest invalidRequest = new UpdateOrderStatusRequest(orderStatus);
 
         // when & then
-        final Order statusOrder = OrderFixture.주문_생성(orderStatus);
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(persistOrder.getId(), statusOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(persistOrder.getId(), invalidRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
