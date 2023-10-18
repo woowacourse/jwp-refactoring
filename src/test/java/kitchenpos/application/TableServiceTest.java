@@ -1,19 +1,21 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
+import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.TableFixture.비어있는_전체_주문_테이블;
-import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
-import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블_DTO;
+import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이블_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,26 +26,27 @@ class TableServiceTest extends ServiceIntegrationTest {
     @Test
     @DisplayName("table을 생성한다.")
     void create() {
-        final OrderTable orderTable = 비어있는_주문_테이블();
+        final OrderTableDto orderTableDto = 비어있는_주문_테이블_DTO();
 
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
 
-        assertThat(savedOrderTable)
+        assertThat(savedOrderTableDto)
             .usingRecursiveComparison()
             .ignoringFields("id", "tableGroupId")
-            .isEqualTo(orderTable);
+            .isEqualTo(orderTableDto);
     }
 
     @Test
     @DisplayName("table 목록을 조회한다.")
     void list() {
-        final List<OrderTable> orderTables = 비어있는_전체_주문_테이블();
-        orderTables.forEach(tableService::create);
+        final List<OrderTableDto> orderTables = 비어있는_전쳬_주문_테이블_DTO().stream()
+            .map(tableService::create)
+            .collect(Collectors.toList());
 
-        final List<OrderTable> foundedOrderTables = tableService.list();
+        final List<OrderTableDto> foundedOrderTables = tableService.list();
 
         assertThat(foundedOrderTables)
-            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
+            .usingRecursiveFieldByFieldElementComparatorIgnoringFields()
             .isEqualTo(orderTables);
     }
 
@@ -54,24 +57,26 @@ class TableServiceTest extends ServiceIntegrationTest {
         @Test
         @DisplayName("성공적으로 바꾼다.")
         void success() {
-            final OrderTable orderTable = tableService.create(비어있는_주문_테이블());
+            final OrderTableDto orderTableDto = tableService.create(비어있는_주문_테이블_DTO());
+            final OrderTableDto parameter = 비어있지_않는_주문_테이블_DTO();
 
-            final OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(),
-                orderTable);
+            final OrderTableDto changedOrderTable = tableService.changeEmpty
+                (orderTableDto.getId(), parameter);
 
-            assertTrue(changedOrderTable.isEmpty());
+            assertThat(changedOrderTable.getEmpty())
+                .isEqualTo(parameter.getEmpty());
         }
 
         @Test
         @DisplayName("tableGroupId가 null이 아닌 경우 예외처리한다.")
         void throwExceptionTableGroupIdIsNonNull() {
-            final OrderTable orderTable = 비어있는_주문_테이블();
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-            saveTableGroup(savedOrderTable);
+            final OrderTableDto orderTableDto = 비어있는_주문_테이블_DTO();
+            final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
+            saveTableGroup(savedOrderTableDto);
 
-            final Long orderTableId = savedOrderTable.getId();
+            final Long orderTableId = savedOrderTableDto.getId();
             assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTableId, savedOrderTable)
+                () -> tableService.changeEmpty(orderTableId, savedOrderTableDto)
             ).isInstanceOf(OrderTableException.class)
                 .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
         }
@@ -80,24 +85,24 @@ class TableServiceTest extends ServiceIntegrationTest {
         @DisplayName("저장된 table에 속한 order가 cooking이나 meal 상태인 경우 예외처리")
         void throwExceptionTableIsEmpty() {
             //given
-            final OrderTable orderTable = 비어있지_않는_주문_테이블();
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-            createOrderSuccessfully(savedOrderTable);
+            final OrderTableDto orderTableDto = 비어있지_않는_주문_테이블_DTO();
+            final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
+            createOrderSuccessfully(savedOrderTableDto);
 
             //when
-            final Long orderTableId = savedOrderTable.getId();
+            final Long orderTableId = savedOrderTableDto.getId();
             assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTableId, savedOrderTable)
+                () -> tableService.changeEmpty(orderTableId, savedOrderTableDto)
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
-        private void createOrderSuccessfully(final OrderTable orderTable) {
+        private void createOrderSuccessfully(final OrderTableDto orderTableDto) {
             final Menu menu = createMenu();
             final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
 
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));
-            order.setOrderTableId(orderTable.getId());
+            order.setOrderTableId(orderTableDto.getId());
             orderService.create(order);
         }
     }
@@ -110,54 +115,55 @@ class TableServiceTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 변경한다.")
         void success() {
             //given
-            final OrderTable orderTable = 비어있지_않는_주문_테이블();
+            final OrderTableDto orderTableDto = 비어있지_않는_주문_테이블_DTO();
+            final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
 
-            final OrderTable savedOrderTable = tableService.create(orderTable);
-            savedOrderTable.changeNumberOfGuests(10);
+            final OrderTableDto parameter = new OrderTableDto(savedOrderTableDto.getId(),
+                savedOrderTableDto.getTableGroupId(), 100, savedOrderTableDto.getEmpty());
 
             //when
-            final OrderTable changedOrderTable =
-                tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable);
+            final OrderTableDto changedOrderTableDto =
+                tableService.changeNumberOfGuests(savedOrderTableDto.getId(), parameter);
 
             //then
-            assertThat(changedOrderTable.getNumberOfGuests())
-                .isEqualTo(savedOrderTable.getNumberOfGuests());
+            assertThat(changedOrderTableDto.getNumberOfGuests())
+                .isEqualTo(parameter.getNumberOfGuests());
         }
 
-        //파라미터를 dto로 바꾸면 예외처리
-//        @Test
-//        @DisplayName("numberOfGuest가 0미만인 경우 예외처리")
-//        void throwExceptionNumberOfGuestLowerThan0() {
-//            //given
-//            final OrderTable orderTable = 주문_테이블();
-//            orderTable.setEmpty(false);
-//
-//            final OrderTable savedOrderTable = tableService.create(orderTable);
-//            savedOrderTable.changeNumberOfGuests(-1);
-//
-//            //when
-//            assertThatThrownBy(() ->
-//                tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable)
-//            ).isInstanceOf(IllegalArgumentException.class);
-//        }
+        @Test
+        @DisplayName("numberOfGuest가 0미만인 경우 예외처리")
+        void throwExceptionNumberOfGuestLowerThan0() {
+            //given
+            final OrderTableDto orderTableDto = 비어있지_않는_주문_테이블_DTO();
+            final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
 
-        //TODO: 추후 DTO로 변경하면서 리팩터링
-//        @Test
-//        @DisplayName("orderTable이 비어있는 경우 예외처리")
-//        void throwExceptionOrderTableIsEmpty() {
-//            //given
-//            final OrderTable orderTable = 비어있는_주문_테이블();
-//            orderTable.setEmpty(true);
-//
-//            final OrderTable savedOrderTable = tableService.create(orderTable);
-//            savedOrderTable.changeNumberOfGuests(10);
-//
-//            //when
-//            final Long tableId = savedOrderTable.getId();
-//            assertThatThrownBy(() ->
-//                tableService.changeNumberOfGuests(tableId, savedOrderTable)
-//            ).isInstanceOf(OrderTableException.class)
-//                .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
-//        }
+            final OrderTableDto parameter = new OrderTableDto(savedOrderTableDto.getId(),
+                savedOrderTableDto.getTableGroupId(), -1, savedOrderTableDto.getEmpty());
+
+            //when
+            final Long savedOrderTableId = savedOrderTableDto.getId();
+            assertThatThrownBy(() ->
+                tableService.changeNumberOfGuests(savedOrderTableId, parameter)
+            ).isInstanceOf(OrderTableException.class)
+                .hasMessage(NUMBER_OF_GUEST_LOWER_THAN_ZERO.getMessage());
+        }
+
+        @Test
+        @DisplayName("orderTable이 비어있는 경우 예외처리")
+        void throwExceptionOrderTableIsEmpty() {
+            //given
+            final OrderTableDto orderTableDto = 비어있는_주문_테이블_DTO();
+            final OrderTableDto savedOrderTableDto = tableService.create(orderTableDto);
+
+            final OrderTableDto parameter = new OrderTableDto(savedOrderTableDto.getId(),
+                savedOrderTableDto.getTableGroupId(), 10, savedOrderTableDto.getEmpty());
+
+            //when
+            final Long tableId = savedOrderTableDto.getId();
+            assertThatThrownBy(() ->
+                tableService.changeNumberOfGuests(tableId, parameter)
+            ).isInstanceOf(OrderTableException.class)
+                .hasMessage(TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY.getMessage());
+        }
     }
 }

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.ProductFixture.간장치킨;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;

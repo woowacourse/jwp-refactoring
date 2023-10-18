@@ -58,6 +58,7 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuest(numberOfGuests);
         if (empty) {
             throw new OrderTableException(TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY);
         }

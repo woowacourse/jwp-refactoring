@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -21,40 +23,51 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.changeTableGroup(null);
+    public OrderTableDto create(final OrderTableDto orderTableDto) {
+        final OrderTable orderTable = new OrderTable(
+            null,
+            orderTableDto.getNumberOfGuests(),
+            orderTableDto.getEmpty()
+        );
 
-        return orderTableRepository.save(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+
+        return OrderTableDto.from(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableDto> list() {
+        return orderTableRepository.findAll()
+            .stream()
+            .map(OrderTableDto::from)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
+        validateContainedTablesOrderStatusIsNotCompletion(orderTableId);
+        savedOrderTable.changeEmpty(orderTableDto.getEmpty());
+        return OrderTableDto.from(savedOrderTable);
+    }
 
+    private void validateContainedTablesOrderStatusIsNotCompletion(final Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.changeEmpty(orderTable.isEmpty());
-
-        return orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableDto changeNumberOfGuests(final Long orderTableId,
+        final OrderTableDto orderTableDto) {
+        final int numberOfGuests = orderTableDto.getNumberOfGuests();
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        return OrderTableDto.from(savedOrderTable);
     }
 }

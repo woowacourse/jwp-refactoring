@@ -1,17 +1,17 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
             //given
             final Menu menu = createMenu();
             final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
-            final OrderTable savedOrderTable = createOrderTable();
+            final OrderTableDto savedOrderTable = createNotEmptyOrderTable();
 
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));
@@ -54,7 +54,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
             //given
             final Menu menu = createMenu();
             final OrderLineItem orderLineItem = createOrderLineItem(menu.getId() + 1, 1L);
-            final OrderTable savedOrderTable = createOrderTable();
+            final OrderTableDto savedOrderTable = createNotEmptyOrderTable();
 
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));
@@ -71,7 +71,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
             //given
             final Menu menu = createMenu();
             final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
-            final OrderTable savedOrderTable = tableService.create(비어있는_주문_테이블());
+            final OrderTableDto savedOrderTable = tableService.create(비어있는_주문_테이블_DTO());
 
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));

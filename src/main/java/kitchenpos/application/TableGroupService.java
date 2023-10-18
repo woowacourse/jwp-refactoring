@@ -62,12 +62,12 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
             .orElseThrow(() -> new TableGroupException(TABLE_GROUP_NOT_FOUND));
         //TODO : Order Repository 전환 후 수정하기
-        validateContainedTablesOrderStatusIsNotCompletitino(tableGroup);
+        validateContainedTablesOrderStatusIsNotCompletion(tableGroup);
         tableGroup.ungroup();
         tableGroupRepository.delete(tableGroup);
     }
 
-    private void validateContainedTablesOrderStatusIsNotCompletitino(final TableGroup tableGroup) {
+    private void validateContainedTablesOrderStatusIsNotCompletion(final TableGroup tableGroup) {
         final List<Long> orderTableIds = tableGroup.getOrderTables()
             .stream()
             .map(OrderTable::getId)

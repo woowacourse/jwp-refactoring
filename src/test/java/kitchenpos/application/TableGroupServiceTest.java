@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
-import static kitchenpos.fixture.TableFixture.비어있는_전체_주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 import static kitchenpos.fixture.TableFixture.비어있지_않는_전쳬_주문_테이블_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,9 +46,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("테이블 그룹을 정상적으로 생성한다.")
         void success() {
             //given
-            final List<OrderTableDto> orderTableDtos = 비어있는_전체_주문_테이블().stream()
+            final List<OrderTableDto> orderTableDtos = 비어있는_전쳬_주문_테이블_DTO().stream()
                 .map(tableService::create)
-                .map(OrderTableDto::from)
                 .collect(Collectors.toList());
 
             final TableGroupDto tableGroupDto = new TableGroupDto(
@@ -116,7 +115,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 tableGroup을 해제한다.")
         void success() {
             //given
-            final TableGroupDto savedTableGroupDto = saveTableGroupSuccessfully(비어있는_전체_주문_테이블());
+            final TableGroupDto savedTableGroupDto = saveTableGroupSuccessfully(
+                비어있는_전쳬_주문_테이블_DTO());
 
             //when
             tableGroupService.ungroup(savedTableGroupDto.getId());
@@ -173,11 +173,10 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     }
 
     private TableGroupDto saveTableGroupSuccessfully(
-        final List<OrderTable> orderTables
+        final List<OrderTableDto> orderTableDtos
     ) {
-        final List<OrderTableDto> savedOrderTableDtos = orderTables.stream()
+        final List<OrderTableDto> savedOrderTableDtos = orderTableDtos.stream()
             .map(tableService::create)
-            .map(OrderTableDto::from)
             .collect(Collectors.toList());
         final TableGroupDto tableGroupDto =
             new TableGroupDto(null, LocalDateTime.now(), savedOrderTableDtos);

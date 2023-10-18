@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
+import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
 import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이블;
@@ -11,6 +12,7 @@ import kitchenpos.domain.exception.OrderTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class OrderTableTest {
 
@@ -37,15 +39,16 @@ class OrderTableTest {
                 .isFalse();
         }
 
-//        @Test
-//        @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
-//        void throwExceptionTableGroupIdIsNull() {
-//            final OrderTable orderTable = new OrderTable(new TableGroup(now()), 0, true);
-//
-//            assertThatThrownBy(() -> orderTable.changeEmpty(false))
-//                .isInstanceOf(OrderTableException.class)
-//                .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
-//        }
+        @Test
+        @DisplayName("tableGroup에 속해있는 orderTalbe인 경우 예외처리 한다.")
+        void throwExceptionTableGroupIdIsNull() {
+            final TableGroup mockTableGroup = Mockito.mock(TableGroup.class);
+            final OrderTable orderTable = new OrderTable(mockTableGroup, 0, true);
+
+            assertThatThrownBy(() -> orderTable.changeEmpty(false))
+                .isInstanceOf(OrderTableException.class)
+                .hasMessage(TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP.getMessage());
+        }
     }
 
     @Nested
@@ -72,6 +75,16 @@ class OrderTableTest {
             assertThatThrownBy(() -> emptyTable.changeNumberOfGuests(10))
                 .isInstanceOf(OrderTableException.class)
                 .hasMessage(TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY.getMessage());
+        }
+
+        @Test
+        @DisplayName("table의 손님 수가 0보다 작은 경우 예외처리.")
+        void throwExceptionNumberOfGuestIsLowerThanZero() {
+            final OrderTable emptyTable = 비어있는_주문_테이블();
+
+            assertThatThrownBy(() -> emptyTable.changeNumberOfGuests(-1))
+                .isInstanceOf(OrderTableException.class)
+                .hasMessage(NUMBER_OF_GUEST_LOWER_THAN_ZERO.getMessage());
         }
     }
 }
