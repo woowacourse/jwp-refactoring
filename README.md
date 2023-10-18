@@ -61,6 +61,6 @@
 
 ### 2단계
 - [x] setter를 지운다.
-- [ ] JPA로 바꾼다.
+- [x] JPA로 바꾼다.
   - [x] menu 관련해서 JPA로 바꾼다.
-  - [ ] order 관련해서 JPA로 바꾼다.
+  - [x] order 관련해서 JPA로 바꾼다.
