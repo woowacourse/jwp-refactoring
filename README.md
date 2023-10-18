@@ -81,9 +81,24 @@
   - 테이블 그룹 식별자를 받는다.
   - 테이블 그룹의 식별자로 주문 테이블 목록을 조회한다.
   - 주문 테이블의 주문 목록에 주문의 상태가 계산 완료가 아니면 예외를 던진다.
-  - 주문 테이블 목록의 테이블 그룹 식별자를 null로 변경하고, 빈 테이블 상태를 false로 설정한다.
+  - 주문 테이블 목록의 테이블 그룹 식별자를 null로 변경한다.
 
-### 프로젝트 개선 목록
+## 클래스 다이어그램
+
+```mermaid
+classDiagram
+    Menu "*" --> "1" MenuGroup
+    Menu ..> MenuProduct: mappedBy
+    MenuProduct "*" --o "1" Menu
+    MenuProduct "*" --> "1" Product
+    Order "*" --> "1" OrderTable
+    Order ..> OrderLineItem: mappedBy
+    OrderLineItem "*" ..> "1" Menu : id
+    OrderLineItem "*" --o "1" Order
+    OrderTable "*" --> "0..1" TableGroup
+```
+
+## 프로젝트 개선 목록
 
 - [X] 코드 서식을 정리한다.
   - [X] 응용 계층에 `@Transactional`을 클래스 단에 적용, 조회에는 `readonly` 설정 
@@ -96,7 +111,7 @@
 - [X] 예외를 명확하게 던지고, `@ControllerAdvice`를 적용한다.
 - [X] 표현 계층에서 응답의 형식을 정의하고 적용한다.
 
-### 1단계 요구 사항
+## 1단계 요구 사항
 
 - [X] 도메인 요구 사항 정리
 - [X] Controller 테스트 추가
