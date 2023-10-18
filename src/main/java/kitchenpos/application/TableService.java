@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
@@ -10,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableCreationRequest;
 import kitchenpos.dto.TableEmptyUpdateRequest;
 import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,34 +27,39 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(TableCreationRequest request) {
+    public TableResponse create(TableCreationRequest request) {
         OrderTable orderTable = OrderTable.createWithoutTableGroup(request.getNumberOfGuests(), request.getEmpty());
 
-        return orderTableRepository.save(orderTable);
+        orderTableRepository.save(orderTable);
+
+        return TableResponse.from(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<TableResponse> list() {
+        return orderTableRepository.findAll()
+                .stream()
+                .map(TableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(Long orderTableId, TableEmptyUpdateRequest request) {
+    public TableResponse changeEmpty(Long orderTableId, TableEmptyUpdateRequest request) {
         OrderTable orderTable = findOrderTableById(orderTableId);
 
         validateChangeableEmpty(orderTableId);
 
         orderTable.changeEmpty(request.getEmpty());
 
-        return orderTable;
+        return TableResponse.from(orderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, TableNumberOfGuestsUpdateRequest request) {
+    public TableResponse changeNumberOfGuests(final Long orderTableId, TableNumberOfGuestsUpdateRequest request) {
         OrderTable orderTable = findOrderTableById(orderTableId);
 
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return orderTable;
+        return TableResponse.from(orderTable);
     }
 
     private void validateChangeableEmpty(Long orderTableId) {

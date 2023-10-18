@@ -12,6 +12,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreationRequest;
+import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,13 +34,14 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(MenuCreationRequest request) {
+    public MenuResponse create(MenuCreationRequest request) {
         MenuGroup menuGroup = findMenuGroupById(request.getMenuGroupId());
         Menu menu = Menu.createWithEmptyMenuProducts(request.getName(), request.getPrice(), menuGroup);
 
         initializeMenuProducts(request, menu);
+        menuRepository.save(menu);
 
-        return menuRepository.save(menu);
+        return MenuResponse.from(menu);
     }
 
     private void initializeMenuProducts(MenuCreationRequest request, Menu menu) {
@@ -66,8 +68,11 @@ public class MenuService {
                 .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 메뉴 그룹이 존재하지 않습니다."));
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll()
+                .stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 
 }

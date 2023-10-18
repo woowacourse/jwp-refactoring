@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreationRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,23 +21,24 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService( OrderRepository orderRepository,  OrderTableRepository orderTableRepository,
-             TableGroupRepository tableGroupRepository) {
+    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
+            TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
-    public TableGroup create(TableGroupCreationRequest request) {
+    public TableGroupResponse create(TableGroupCreationRequest request) {
         List<Long> orderTableIds = request.getOrderTableIds();
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         validateOrderTableSize(orderTableIds, orderTables);
 
         TableGroup tableGroup = TableGroup.from(orderTables);
+        tableGroupRepository.save(tableGroup);
 
-        return tableGroupRepository.save(tableGroup);
+        return TableGroupResponse.from(tableGroup);
     }
 
     private static void validateOrderTableSize(List<Long> orderTableIds, List<OrderTable> orderTables) {

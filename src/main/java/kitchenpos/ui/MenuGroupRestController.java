@@ -3,8 +3,8 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreationRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,16 +21,16 @@ public class MenuGroupRestController {
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroup> create(@RequestBody MenuGroupCreationRequest request) {
-        MenuGroup created = menuGroupService.create(request);
-        URI uri = URI.create("/api/menu-groups/" + created.getId());
+    public ResponseEntity<MenuGroupResponse> create(@RequestBody MenuGroupCreationRequest request) {
+        MenuGroupResponse response = menuGroupService.create(request);
+        URI uri = URI.create("/api/menu-groups/" + response.getId());
 
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(response);
     }
 
     @GetMapping("/api/menu-groups")
-    public ResponseEntity<List<MenuGroup>> list() {
+    public ResponseEntity<List<MenuGroupResponse>> list() {
         return ResponseEntity.ok()
                 .body(menuGroupService.list());
     }

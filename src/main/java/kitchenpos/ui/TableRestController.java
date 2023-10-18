@@ -3,10 +3,10 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableCreationRequest;
 import kitchenpos.dto.TableEmptyUpdateRequest;
 import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.TableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,22 +25,22 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody TableCreationRequest request) {
-        OrderTable created = tableService.create(request);
-        URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<TableResponse> create(@RequestBody TableCreationRequest request) {
+        TableResponse response = tableService.create(request);
+        URI uri = URI.create("/api/tables/" + response.getId());
 
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(response);
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<TableResponse>> list() {
         return ResponseEntity.ok()
                 .body(tableService.list());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<TableResponse> changeEmpty(
             @PathVariable Long orderTableId,
             @RequestBody TableEmptyUpdateRequest request
     ) {
@@ -49,7 +49,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<TableResponse> changeNumberOfGuests(
             @PathVariable Long orderTableId,
             @RequestBody TableNumberOfGuestsUpdateRequest request
     ) {

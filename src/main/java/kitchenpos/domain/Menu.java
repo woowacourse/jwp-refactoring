@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 public class Menu {
@@ -61,15 +60,6 @@ public class Menu {
         return new Menu(name, price, menuGroup, MenuProducts.from(new ArrayList<>()));
     }
 
-    public static Menu of(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validateName(name);
-        validatePrice(price);
-        validateMenuGroup(menuGroup);
-        validateMenuProducts(menuProducts);
-
-        return new Menu(name, price, menuGroup, MenuProducts.from(menuProducts));
-    }
-
     private static void validateName(String name) {
         if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
             throw new IllegalArgumentException("메뉴 이름의 길이는 1글자 이상, 255글자 이하여야 합니다.");
@@ -85,12 +75,6 @@ public class Menu {
     private static void validateMenuGroup(MenuGroup menuGroup) {
         if (menuGroup == null) {
             throw new NullPointerException();
-        }
-    }
-
-    private static void validateMenuProducts(List<MenuProduct> menuProducts) {
-        if (CollectionUtils.isEmpty(menuProducts)) {
-            throw new IllegalArgumentException("메뉴 상품은 1개 이상 존재해야합니다.");
         }
     }
 

@@ -50,8 +50,8 @@ public class TableGroup {
         return createdDate;
     }
 
-    public OrderTables getOrderTables() {
-        return orderTables;
+    public List<OrderTable> getOrderTables() {
+        return orderTables.getOrderTables();
     }
 
 }

@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreationRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(OrderCreationRequest request) {
+    public OrderResponse create(OrderCreationRequest request) {
         List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItemRequests();
 
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
@@ -47,8 +48,9 @@ public class OrderService {
         Order order = Order.createWithEmptyOrderLinItems(orderTable);
 
         initializeOrderLineItems(request, order);
+        orderRepository.save(order);
 
-        return orderRepository.save(order);
+        return OrderResponse.from(order);
     }
 
     private OrderTable findOrderTableById(Long orderTableId) {
@@ -70,18 +72,21 @@ public class OrderService {
         order.initializeOrderLineItems(orderLineItems);
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
+    public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
         Order order = findOrderById(orderId);
 
         String orderStatus = request.getOrderStatus();
         order.changeOrderStatus(OrderStatus.valueOf(orderStatus));
 
-        return order;
+        return OrderResponse.from(order);
     }
 
     private Order findOrderById(Long orderId) {

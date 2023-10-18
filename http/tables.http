@@ -9,6 +9,15 @@ Content-Type: application/json
 
 ###
 GET {{host}}/api/tables
+Content-Type: application/json
+
+{
+  "id": 1,
+  "tableGroupId": 1,
+  "numberOfGuests": 0,
+  "isEmpty": true,
+  "isGrouped": true
+}
 
 ###
 PUT {{host}}/api/tables/1/empty
