@@ -17,3 +17,6 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+server:
+  servlet:
+    context-path: /api
