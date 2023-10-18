@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
+import kitchenpos.application.dto.tablegroup.UngroupTableGroupCommand;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -62,8 +63,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+    public void ungroup(UngroupTableGroupCommand command) {
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(command.tableGroupId());
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::id)

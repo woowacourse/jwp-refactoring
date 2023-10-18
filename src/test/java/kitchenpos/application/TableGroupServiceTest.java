@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
+import kitchenpos.application.dto.tablegroup.UngroupTableGroupCommand;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -150,9 +151,11 @@ class TableGroupServiceTest extends IntegrationTest {
                         List.of(orderLineItem));
                 orderRepository.save(order);
 
+                UngroupTableGroupCommand command = new UngroupTableGroupCommand(savedTableGroup.id());
+
                 // when
                 BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                        tableGroupService.ungroup(savedTableGroup.id())
+                        tableGroupService.ungroup(command)
                 ).exceptionType();
 
                 // then
