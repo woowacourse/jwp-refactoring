@@ -8,7 +8,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+import kitchenpos.application.dto.tablegroup.CreateTableGroupResponse;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.CreateTableGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -17,11 +20,13 @@ class TableGroupRestControllerTest extends ControllerTest {
     @Test
     void 테이블_그룹_생성() throws Exception {
         // given
-        TableGroup tableGroup = 테이블_그룹();
-        String request = objectMapper.writeValueAsString(tableGroup);
-        TableGroup savedTableGroup = 테이블_그룹(1L);
-        given(tableGroupService.create(any())).willReturn(savedTableGroup);
-        String response = objectMapper.writeValueAsString(savedTableGroup);
+        CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(List.of(1L, 2L));
+        String request = objectMapper.writeValueAsString(createTableGroupRequest);
+
+        TableGroup tableGroup = 테이블_그룹(1L);
+        CreateTableGroupResponse createTableGroupResponse = CreateTableGroupResponse.from(tableGroup);
+        given(tableGroupService.create(any())).willReturn(createTableGroupResponse);
+        String response = objectMapper.writeValueAsString(createTableGroupResponse);
 
         // when & then
         mockMvc.perform(post("/api/table-groups")

@@ -13,6 +13,14 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
         return findById(id).orElseThrow(() -> new OrderTableException(ORDER_TABLE_NOT_FOUND));
     }
 
+    default List<OrderTable> findAllByIdInOrElseThrow(List<Long> ids) {
+        List<OrderTable> orderTables = findAllByIdIn(ids);
+        if (ids.size() != orderTables.size()) {
+            throw new OrderTableException(ORDER_TABLE_NOT_FOUND);
+        }
+        return orderTables;
+    }
+
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);

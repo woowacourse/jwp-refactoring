@@ -96,14 +96,14 @@ public class ControllerTest {
     }
 
     protected TableGroup 테이블_그룹() {
-        OrderTable orderTable1 = new OrderTable(1L);
-        OrderTable orderTable2 = new OrderTable(2L);
+        OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
         return new TableGroup(List.of(orderTable1, orderTable2));
     }
 
     protected TableGroup 테이블_그룹(Long id) {
-        OrderTable orderTable1 = new OrderTable(1L);
-        OrderTable orderTable2 = new OrderTable(2L);
+        OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
         return new TableGroup(id, null, List.of(orderTable1, orderTable2));
     }
 
