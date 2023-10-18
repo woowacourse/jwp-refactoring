@@ -1,40 +1,64 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private long quantity;
 
-    public Long getSeq() {
+    protected MenuProduct() {
+    }
+
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this(null, menu, product, quantity);
+    }
+
+    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+        menu.add(this);
+    }
+
+    public BigDecimal amount() {
+        return product.calculateAmount(quantity);
+    }
+
+    public Long seq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Menu menu() {
+        return menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Product product() {
+        return product;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
+    public long quantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

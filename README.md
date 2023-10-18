@@ -71,10 +71,10 @@
 
 ## 2단계 서비스 리팩터링
 
-- [ ] 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리한다. 분리한 코드에 대해 단위 테스트를 구현한다.
-    - [ ] MenuService 리팩터링
-    - [ ] MenuGroupService 리팩터링
-    - [ ] OrderService 리팩터링
-    - [ ] TableService 리팩터링
-    - [ ] TableGroupService 리팩터링
-    - [ ] ProductService 리팩터링
+- [x] 단위 테스트하기 어려운 코드와 단위 테스트 가능한 코드를 분리한다. 분리한 코드에 대해 단위 테스트를 구현한다.
+    - [x] MenuService 리팩터링
+    - [x] MenuGroupService 리팩터링
+    - [x] ProductService 리팩터링
+    - [x] OrderService 리팩터링
+    - [x] TableService 리팩터링
+    - [x] TableGroupService 리팩터링

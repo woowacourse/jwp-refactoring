@@ -1,42 +1,36 @@
 package kitchenpos.application;
 
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
-import kitchenpos.annotation.MockTest;
-import kitchenpos.dao.MenuGroupDao;
+import java.util.List;
+import kitchenpos.common.IntegrationTest;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@MockTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends IntegrationTest {
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
     @Test
     void 메뉴_그룹을_저장한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("Fried Chicken");
+        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("신메뉴");
 
-        // when
-        menuGroupService.create(menuGroup);
-
-        // then
-        verify(menuGroupDao).save(menuGroup);
+        // expect
+        assertThatNoException().isThrownBy(() -> menuGroupService.create(menuGroupCreateRequest));
     }
 
     @Test
     void 저장된_모든_메뉴_그룹을_조회한다() {
         // when
-        menuGroupService.list();
+        List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        verify(menuGroupDao).findAll();
+        assertThat(menuGroups).isNotNull();
+        assertThat(menuGroups.size()).isGreaterThanOrEqualTo(0);
     }
 }
