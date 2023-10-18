@@ -33,7 +33,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         final Menu savedMenu = persistMenu(new Menu(new Name("테스트용 메뉴명"), new Price("10000"), savedMenuGroup, Collections.emptyList()));
         persistMenuProduct(new MenuProduct(savedMenu, savedProduct, 1));
         final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, true));
-        final Order savedOrder = persistOrder(new Order(savedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList()));
+        final Order savedOrder = persistOrder(new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList()));
         persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, 1));
         persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, 1));
 
@@ -41,7 +41,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         em.close();
 
         // when
-        final boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(savedOrderTable.getId(), List.of(OrderStatus.COOKING.name()));
+        final boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(savedOrderTable.getId(), List.of(OrderStatus.COOKING));
 
         // then
         assertThat(actual).isTrue();

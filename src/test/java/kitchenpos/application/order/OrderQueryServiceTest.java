@@ -45,7 +45,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
 
         final Order order = new Order(
                 savedOrderTable,
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 LocalDateTime.now(),
                 Collections.emptyList()
         );

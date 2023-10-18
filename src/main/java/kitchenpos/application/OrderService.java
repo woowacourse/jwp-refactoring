@@ -65,7 +65,7 @@ public class OrderService {
         }
 
         requestOrder.setOrderTable(findOrderTable);
-        requestOrder.setOrderStatus(OrderStatus.COOKING.name());
+        requestOrder.setOrderStatus(OrderStatus.COOKING);
         requestOrder.setOrderedTime(LocalDateTime.now());
 
         final Order savedOrder = orderRepository.save(requestOrder);
@@ -96,12 +96,12 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        final OrderStatus orderStatus = order.getOrderStatus();
+        savedOrder.setOrderStatus(orderStatus);
 
         orderRepository.save(savedOrder);
 

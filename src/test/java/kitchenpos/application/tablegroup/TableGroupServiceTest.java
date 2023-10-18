@@ -224,7 +224,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final Order savedOrder = orderRepository.save(
                     new Order(
                             savedOrderTable,
-                            orderStatus.name(),
+                            orderStatus,
                             LocalDateTime.now(),
                             new ArrayList<>()
                     )

@@ -46,7 +46,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
             final Order expected = new Order(
                     savedOrderTable,
-                    OrderStatus.COOKING.name(),
+                    OrderStatus.COOKING,
                     LocalDateTime.now(),
                     new ArrayList<>()
             );
@@ -78,7 +78,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             final List<OrderLineItem> wrongOrderLineItems = Collections.emptyList();
             final Order expected = new Order(
                     savedOrderTable,
-                    OrderStatus.COOKING.name(),
+                    OrderStatus.COOKING,
                     LocalDateTime.now(),
                     wrongOrderLineItems
             );
@@ -104,7 +104,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
             final Order expected = new Order(
                     savedOrderTable,
-                    OrderStatus.COOKING.name(),
+                    OrderStatus.COOKING,
                     LocalDateTime.now(),
                     orderLineItems
             );
@@ -124,7 +124,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             // when
             final Order expected = new Order(
                     savedOrderTable,
-                    OrderStatus.COOKING.name(),
+                    OrderStatus.COOKING,
                     LocalDateTime.now(),
                     Collections.emptyList()
             );
@@ -165,7 +165,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
             final Order order = new Order(
                     savedOrderTable,
-                    OrderStatus.COOKING.name(),
+                    OrderStatus.COOKING,
                     LocalDateTime.now(),
                     new ArrayList<>()
             );
@@ -176,7 +176,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             // when
             final Order status = new Order(
                     null,
-                    OrderStatus.COMPLETION.name(),
+                    OrderStatus.COMPLETION,
                     null,
                     null
             );
@@ -199,7 +199,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             // given
             final Order status = new Order(
                     null,
-                    OrderStatus.COMPLETION.name(),
+                    OrderStatus.COMPLETION,
                     null,
                     null
             );
@@ -219,7 +219,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
             final Order order = new Order(
                     savedOrderTable,
-                    OrderStatus.COOKING.name(),
+                    OrderStatus.COOKING,
                     LocalDateTime.now(),
                     new ArrayList<>()
             );
@@ -229,7 +229,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
             final Order completionStatus = new Order(
                     null,
-                    OrderStatus.COMPLETION.name(),
+                    OrderStatus.COMPLETION,
                     null,
                     null
             );

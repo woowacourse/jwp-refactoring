@@ -20,7 +20,7 @@ class OrderLineItemTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price("10000"), menuGroup, new ArrayList<>());
 
         final OrderTable orderTable = new OrderTable(null, 10, true);
-        final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
 
         // expect
         assertThatCode(() -> new OrderLineItem(order, menu, 10))

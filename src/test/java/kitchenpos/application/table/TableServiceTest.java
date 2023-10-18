@@ -69,7 +69,7 @@ class TableServiceTest extends ApplicationTestConfig {
             // given
             final TableGroup noTableGroup = null;
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
-            orderRepository.save(new Order(savedOrderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList()));
+            orderRepository.save(new Order(savedOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(), Collections.emptyList()));
 
             // when
             final OrderTable emptyStatus = new OrderTable(null, 0, true);
@@ -99,7 +99,7 @@ class TableServiceTest extends ApplicationTestConfig {
                 orderTableRepository.save(savedOrderTable);
                 orderRepository.save(new Order(
                         savedOrderTable,
-                        OrderStatus.COOKING.name(),
+                        OrderStatus.COOKING,
                         LocalDateTime.now(),
                         Collections.emptyList()
                 ));
@@ -127,7 +127,7 @@ class TableServiceTest extends ApplicationTestConfig {
             final Order savedOrder = orderRepository.save(
                     new Order(
                             savedOrderTable,
-                            orderStatus.name(),
+                            orderStatus,
                             LocalDateTime.now(),
                             new ArrayList<>()
                     )

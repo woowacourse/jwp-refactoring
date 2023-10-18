@@ -23,7 +23,7 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(null, 10, true);
 
         // expect
-        assertThatCode(() -> new Order(orderTable, OrderStatus.MEAL.name(), LocalDateTime.now(), Collections.emptyList()))
+        assertThatCode(() -> new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), Collections.emptyList()))
                 .doesNotThrowAnyException();
     }
 
@@ -35,7 +35,7 @@ class OrderTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price("10000"), menuGroup, new ArrayList<>());
 
         final OrderTable orderTable = new OrderTable(null, 10, true);
-        final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
 
         // then
         order.addOrderLineItems(List.of(

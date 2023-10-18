@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +29,8 @@ public class Order {
     private OrderTable orderTable;
 
     @Column(name = "order_status")
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
@@ -39,7 +42,7 @@ public class Order {
     }
 
     public Order(final OrderTable orderTable,
-                 final String orderStatus,
+                 final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems
     ) {
@@ -48,7 +51,7 @@ public class Order {
 
     public Order(final Long id,
                  final OrderTable orderTable,
-                 final String orderStatus,
+                 final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems
     ) {
@@ -73,7 +76,7 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -93,7 +96,7 @@ public class Order {
         this.orderTable = orderTable;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
