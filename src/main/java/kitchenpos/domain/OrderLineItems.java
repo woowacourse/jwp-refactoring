@@ -2,11 +2,9 @@ package kitchenpos.domain;
 
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
-@Embeddable
 public class OrderLineItems {
 
     @OneToMany(cascade = CascadeType.ALL)

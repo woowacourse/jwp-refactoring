@@ -22,6 +22,7 @@ public class Menu {
 
     private Long menuGroupId;
 
+    @Embedded
     private MenuProducts menuProducts;
 
     protected Menu() {
