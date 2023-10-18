@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuGroupService {
     private final MenuGroupDao menuGroupDao;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
+    public MenuGroupService(MenuGroupDao menuGroupDao) {
         this.menuGroupDao = menuGroupDao;
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
+    public MenuGroup create(MenuGroup menuGroup) {
         return menuGroupDao.save(menuGroup);
     }
 
