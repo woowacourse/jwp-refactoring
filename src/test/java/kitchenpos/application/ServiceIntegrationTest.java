@@ -4,6 +4,7 @@ import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.fixture.ProductFixture.후라이드;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이블;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,8 +60,7 @@ public abstract class ServiceIntegrationTest {
     }
 
     protected OrderTable createOrderTable() {
-        final OrderTable orderTable = 비어있는_주문_테이블();
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = 비어있지_않는_주문_테이블();
         return tableService.create(orderTable);
     }
 

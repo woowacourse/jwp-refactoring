@@ -2,8 +2,9 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.TableFixture.*;
+import static kitchenpos.fixture.TableFixture.비어있는_전체_주문_테이블;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,7 +15,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderTableException;
-import kitchenpos.fixture.TableFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -80,8 +80,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         @DisplayName("저장된 table에 속한 order가 cooking이나 meal 상태인 경우 예외처리")
         void throwExceptionTableIsEmpty() {
             //given
-            final OrderTable orderTable = 비어있는_주문_테이블();
-            orderTable.setEmpty(false);
+            final OrderTable orderTable = 비어있지_않는_주문_테이블();
             final OrderTable savedOrderTable = tableService.create(orderTable);
             createOrderSuccessfully(savedOrderTable);
 
@@ -111,8 +110,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 변경한다.")
         void success() {
             //given
-            final OrderTable orderTable = 비어있는_주문_테이블();
-            orderTable.setEmpty(false);
+            final OrderTable orderTable = 비어있지_않는_주문_테이블();
 
             final OrderTable savedOrderTable = tableService.create(orderTable);
             savedOrderTable.changeNumberOfGuests(10);

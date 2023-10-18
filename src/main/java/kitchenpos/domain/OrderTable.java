@@ -28,21 +28,11 @@ public class OrderTable {
 
     private boolean empty;
 
-    public OrderTable(
-        final Long id,
-        final TableGroup tableGroup,
-        final int numberOfGuests,
-        final boolean empty
-    ) {
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuest(numberOfGuests);
-        this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
     }
 
     protected OrderTable() {
@@ -76,11 +66,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    //TODO : 추후 제거
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     public void changeEmpty(final boolean empty) {

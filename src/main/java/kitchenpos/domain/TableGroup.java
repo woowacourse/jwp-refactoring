@@ -80,7 +80,7 @@ public class TableGroup {
     public void ungroup() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.changeEmpty(false);
         }
         orderTables.clear();
     }
