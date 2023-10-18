@@ -15,12 +15,14 @@ public class Menu2 {
       final Long id,
       final String name,
       final BigDecimal price,
-      final MenuGroup menuGroup
+      final MenuGroup menuGroup,
+      final List<MenuProduct2> menuProducts
   ) {
     this.id = id;
     this.name = name;
     this.price = price;
     this.menuGroup = menuGroup;
+    this.menuProducts = menuProducts;
   }
 
   public Menu2(final String name, final BigDecimal price, final MenuGroup menuGroup) {
