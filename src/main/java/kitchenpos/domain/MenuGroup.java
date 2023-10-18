@@ -11,6 +11,10 @@ public class MenuGroup {
         this.name = name;
     }
 
+    public MenuGroup(final String name) {
+        this.name = name;
+    }
+
     public MenuGroup() {
     }
 
