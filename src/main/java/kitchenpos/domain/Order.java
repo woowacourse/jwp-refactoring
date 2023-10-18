@@ -1,10 +1,9 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,10 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
 
 @Entity
@@ -35,8 +32,8 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
@@ -47,27 +44,12 @@ public class Order {
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        validateOrderLineItems(orderLineItems);
-
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = OrderLineItems.of(this, orderLineItems);
 
-        initOrderLineItem(orderLineItems);
         initOrderTable(orderTable);
-    }
-
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new InvalidOrderLineItemException();
-        }
-    }
-
-    private void initOrderLineItem(final List<OrderLineItem> orderLineItems) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.initOrder(this);
-        }
     }
 
     private void initOrderTable(final OrderTable orderTable) {
@@ -99,7 +81,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public boolean isCompletion() {
