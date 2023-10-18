@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,8 +20,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,7 @@ class TableServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("[SUCCESS] 주문 테이블을 등록한다.")
@@ -50,7 +51,7 @@ class TableServiceTest extends ApplicationTestConfig {
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isPositive();
-            softly.assertThat(actual.getTableGroupId()).isNull();
+            softly.assertThat(actual.getTableGroup()).isNull();
             softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
             softly.assertThat(actual.isEmpty()).isEqualTo(expected.isEmpty());
         });
@@ -61,20 +62,22 @@ class TableServiceTest extends ApplicationTestConfig {
     @Nested
     class ChangeEmptyNestedTest {
 
-        @DisplayName("[SUCCESS] 주문 테이블을 비어있는 상태로 변경한다.")
+        @DisplayName("[SUCCESS] 주문 테이블이 완료되어 있는 상태일 경우 비어있는 상태로 변경할 수 있다.")
         @Test
         void success_changeEmpty() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final TableGroup noTableGroup = null;
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
+            orderRepository.save(new Order(savedOrderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList()));
 
             // when
-            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
+            final OrderTable emptyStatus = new OrderTable(null, 0, true);
+            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), emptyStatus);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.getTableGroupId()).isEqualTo(savedOrderTable.getTableGroupId());
+                softly.assertThat(actual.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup());
                 softly.assertThat(actual.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
                 softly.assertThat(actual.isEmpty()).isTrue();
             });
@@ -84,15 +87,21 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_changeEmpty_orderTable_isIn_tableGroup() {
             // given
-            final OrderTable savedOrderTableWithFiveGuests = orderTableDao.save(new OrderTable(null, 5, true));
+            final OrderTable savedOrderTableWithFiveGuests = orderTableRepository.save(new OrderTable(null, 5, true));
             final List<OrderTable> savedOrderTables = List.of(
                     savedOrderTableWithFiveGuests,
-                    orderTableDao.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(new OrderTable(null, 10, true))
             );
-            final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+            final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
             for (final OrderTable savedOrderTable : savedOrderTables) {
-                savedOrderTable.setTableGroupId(savedTableGroup.getId());
-                orderTableDao.save(savedOrderTable);
+                savedOrderTable.setTableGroup(savedTableGroup);
+                orderTableRepository.save(savedOrderTable);
+                orderRepository.save(new Order(
+                        savedOrderTable,
+                        OrderStatus.COOKING.name(),
+                        LocalDateTime.now(),
+                        Collections.emptyList()
+                ));
             }
 
             // expect
@@ -105,21 +114,24 @@ class TableServiceTest extends ApplicationTestConfig {
         @MethodSource("getOrderStatusWithoutCompletion")
         void throwException_when_changeEmpty_orderStatus_isCookieOrMeal(final OrderStatus orderStatus) {
             // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-            final Menu savedMenu = menuDao.save(new Menu(
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final Menu savedMenu = menuRepository.save(new Menu(
                     "테스트용 메뉴명",
-                    BigDecimal.ZERO,
-                    savedMenuGroup.getId(),
-                    Collections.emptyList()
+                    new Price("0"),
+                    savedMenuGroup,
+                    new ArrayList<>()
             ));
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu.getId(), 10));
-            final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, 5, false));
-            orderDao.save(new Order(
-                    savedOrderTable.getId(),
-                    orderStatus.name(),
-                    LocalDateTime.now(),
-                    orderLineItems
-            ));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+            final Order savedOrder = orderRepository.save(
+                    new Order(
+                            savedOrderTable,
+                            orderStatus.name(),
+                            LocalDateTime.now(),
+                            new ArrayList<>()
+                    )
+            );
+            savedOrder.addOrderLineItems(orderLineItems);
 
             // expect
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
