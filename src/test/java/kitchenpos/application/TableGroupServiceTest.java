@@ -31,10 +31,10 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = createOrderTable(true, null, 10);
-        OrderTable orderTable2 = createOrderTable(true, null, 15);
-        savedOrderTable1 = tableDao.save(orderTable1);
-        savedOrderTable2 = tableDao.save(orderTable2);
+        OrderTable orderTable1 = OrderTable.of(null, 10, true);
+        OrderTable orderTable2 = OrderTable.of(null, 15, true);
+        savedOrderTable1 = orderTableRepository.save(orderTable1);
+        savedOrderTable2 = orderTableRepository.save(orderTable2);
     }
 
     @Nested
@@ -68,9 +68,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 요청의_주문_테이블이_존재하지_않으면_예외_발생() {
             // given
-            long invalidOrderTableId = -1;
-            OrderTable orderTable = createOrderTable(true, null, 1);
-            orderTable.setId(invalidOrderTableId);
+            OrderTable orderTable = OrderTable.of(null, 1, true);
             TableGroup tableGroup = createTableGroup(orderTable);
 
             // when, then
@@ -82,8 +80,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 요청의_주문_테이블이_비어있지_않으면_예외_발생() {
             // given
-            OrderTable orderTable = createOrderTable(false, null, 15);
-            orderTable = tableDao.save(orderTable);
+            OrderTable orderTable = OrderTable.of(null, 15, false);
+            orderTable = orderTableRepository.save(orderTable);
             TableGroup tableGroup = createTableGroup(orderTable);
 
             // when, then
@@ -95,11 +93,11 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 주문_테이블에_그룹이_이미_존재하면_예외_발생() {
             // given
-            TableGroup savedTableGroup = tableGroupDao.save(createTableGroup());
-            OrderTable orderTable1 = createOrderTable(true, savedTableGroup.getId(), 10);
-            OrderTable orderTable2 = createOrderTable(true, savedTableGroup.getId(), 15);
-            OrderTable savedOrderTable1 = tableDao.save(orderTable1);
-            OrderTable savedOrderTable2 = tableDao.save(orderTable2);
+            TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
+            OrderTable orderTable1 = OrderTable.of(savedTableGroup, 10, true);
+            OrderTable orderTable2 = OrderTable.of(savedTableGroup, 15, true);
+            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+            OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
             TableGroup tableGroup = createTableGroup(savedOrderTable1, savedOrderTable2);
 
             // when, then
@@ -122,7 +120,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            List<OrderTable> tables = tableDao.findAllByTableGroupId(savedTableGroup.getId());
+            List<OrderTable> tables = orderTableRepository.findAllByTableGroup(savedTableGroup);
             assertThat(tables).isEmpty();
         }
 
@@ -142,21 +140,8 @@ class TableGroupServiceTest extends ServiceTest {
         }
     }
 
-    private OrderTable createOrderTable(final boolean empty,
-                                        final Long tableGroupId,
-                                        final Integer numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
-    }
-
     private TableGroup createTableGroup(final OrderTable... orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(Arrays.asList(orderTables));
-        return tableGroup;
+        return TableGroup.of(LocalDateTime.now(), Arrays.asList(orderTables));
     }
 
     private Order createOrder(final Long orderTableId,

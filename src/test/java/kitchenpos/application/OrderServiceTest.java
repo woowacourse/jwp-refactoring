@@ -37,8 +37,8 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable newOrderTable = createOrderTable(false, null, 10);
-        orderTable = tableDao.save(newOrderTable);
+        OrderTable newOrderTable = OrderTable.of(null, 10, false);
+        orderTable = orderTableRepository.save(newOrderTable);
         menuGroup = menuGroupRepository.save(MenuGroup.from("후라이드 세트"));
         Menu newMenu = Menu.of("치킨", 15_000L, menuGroup);
         menu = menuRepository.save(newMenu);
@@ -109,8 +109,8 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_테이블이_비어_있으면_예외_발생() {
             // given
-            OrderTable newOrderTable = createOrderTable(true, null, 10);
-            OrderTable orderTable = tableDao.save(newOrderTable);
+            OrderTable newOrderTable = OrderTable.of(null, 10, true);
+            OrderTable orderTable = orderTableRepository.save(newOrderTable);
             OrderLineItem orderLineItem = createOrderLineItem(null, 1, menu.getId());
             Order order = createOrder(orderTable.getId(), COOKING, orderLineItem);
 
@@ -187,16 +187,6 @@ class OrderServiceTest extends ServiceTest {
                     () -> orderService.changeOrderStatus(savedOrder.getId(), newOrder)
             ).isInstanceOf(IllegalArgumentException.class);
         }
-    }
-
-    private OrderTable createOrderTable(final boolean empty,
-                                        final Long tableGroupId,
-                                        final Integer numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
     }
 
     private Order createOrder(final Long orderTableId,
