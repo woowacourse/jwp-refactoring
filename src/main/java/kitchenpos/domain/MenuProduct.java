@@ -12,7 +12,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 public class MenuProduct {
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long seq;
 
