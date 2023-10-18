@@ -23,7 +23,7 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
@@ -33,10 +33,6 @@ public class OrderTable {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public TableGroup getTableGroup() {
@@ -63,10 +59,6 @@ public class OrderTable {
 
     public void setEmpty(OrderTableValidator orderTableValidator, final boolean empty) {
         orderTableValidator.validateChangeEmpty(this);
-        setEmpty(empty);
-    }
-
-    public void setEmpty(boolean empty) {
         this.empty = empty;
     }
 

@@ -12,11 +12,13 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableException;
 import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.table.domain.TableGroup;
+import org.hibernate.annotations.common.reflection.ReflectionUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("주문 테이블 검증기(OrderTableValidator) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
@@ -51,7 +53,7 @@ class OrderTableValidatorTest {
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
             )).willReturn(true);
             OrderTable orderTable = new OrderTable(10, false);
-            orderTable.setId(2L);
+            ReflectionTestUtils.setField(orderTable, "id", 2L);
 
             // when & then
             assertThatThrownBy(() ->
@@ -68,7 +70,7 @@ class OrderTableValidatorTest {
                     Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
             )).willReturn(false);
             OrderTable orderTable = new OrderTable(10, false);
-            orderTable.setId(2L);
+            ReflectionTestUtils.setField(orderTable, "id", 2L);
 
             // when & then
             assertDoesNotThrow(() ->
