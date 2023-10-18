@@ -110,23 +110,16 @@ class OrderServiceTest extends ServiceIntegrationTest {
     void 전체_Order_목록을_반환받는다() {
         // given
         OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
-        List<Order> savedOrder =List.of(
+        List<Order> expected = List.of(
                 주문을_저장하고_반환받는다(savedOrderTable)
         );
 
         // when
-        List<Order> savedOrdersExcludeExistingData = orderService.list()
-                .stream()
-                .filter(order ->
-                        containsObjects(
-                                savedOrder,
-                                orderInSavedOrder -> orderInSavedOrder.getId().equals(order.getId())
-                        )
-                ).collect(Collectors.toList());
+        List<Order> actual = orderService.list();
 
         // then
-        assertThat(savedOrdersExcludeExistingData).usingRecursiveComparison()
-                .isEqualTo(savedOrder);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test

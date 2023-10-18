@@ -9,7 +9,7 @@ import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.function.Predicate;
+import kitchenpos.DatabaseCleanup;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -25,11 +25,14 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @SuppressWarnings("NonAsciiCharacters")
+@ActiveProfiles("test")
 public abstract class ServiceIntegrationTest {
 
     @Autowired
@@ -56,6 +59,14 @@ public abstract class ServiceIntegrationTest {
     @Autowired
     protected OrderService orderService;
 
+    @Autowired
+    private DatabaseCleanup databaseCleanup;
+
+    @BeforeEach
+    void beforeEach() {
+        databaseCleanup.execute();
+    }
+
     protected Order 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
         Product savedProduct = productDao.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
@@ -73,14 +84,5 @@ public abstract class ServiceIntegrationTest {
         return orderService.changeOrderStatus(order.getId(), order);
     }
 
-    protected <T> boolean containsObjects(List<T> objects, Predicate<T> predicate) {
-        for (T object : objects) {
-            if (predicate.test(object)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
 }

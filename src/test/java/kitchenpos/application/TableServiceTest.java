@@ -50,27 +50,18 @@ class TableServiceTest extends ServiceIntegrationTest {
                 테이블_그룹이_없는_주문_테이블_생성(1, false),
                 테이블_그룹이_없는_주문_테이블_생성(1, false)
         );
-        List<OrderTable> savedOrderTables = new ArrayList<>();
+        List<OrderTable> expected = new ArrayList<>();
         for (OrderTable orderTable : orderTables) {
-            savedOrderTables.add(tableService.create(orderTable));
+            expected.add(tableService.create(orderTable));
         }
 
         // when
-        List<OrderTable> orderTablesExcludeExistingData = tableService.list()
-                .stream()
-                .filter(orderTable ->
-                        containsObjects(
-                                savedOrderTables,
-                                orderTableInSavedOrderTables -> orderTableInSavedOrderTables.getId()
-                                        .equals(orderTable.getId())
-                        )
-                )
-                .collect(Collectors.toList());
+        List<OrderTable> actual = tableService.list();
 
         // then
-        assertThat(orderTablesExcludeExistingData).usingRecursiveComparison()
+        assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(orderTables);
+                .isEqualTo(expected);
     }
 
     @Test

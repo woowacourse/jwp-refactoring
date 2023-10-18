@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
-
 
     @Test
     void 메뉴_그룹을_생성한다() {
@@ -43,26 +41,18 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
                 떠오르는_메뉴_그룹(),
                 싼_메뉴_그룹()
         );
-        List<MenuGroup> savedMenuGroups = new ArrayList<>();
+        List<MenuGroup> expected = new ArrayList<>();
         for (MenuGroup menuGroup : menuGroups) {
-            savedMenuGroups.add(menuGroupDao.save(menuGroup));
+            expected.add(menuGroupDao.save(menuGroup));
         }
 
         // when
-        List<MenuGroup> results = menuGroupService.list()
-                .stream()
-                .filter(menuGroup ->
-                        containsObjects(
-                                savedMenuGroups,
-                                menuGroupInSavedMenuGroups ->
-                                        menuGroupInSavedMenuGroups.getId().equals(menuGroup.getId())
-                        )
-                ).collect(Collectors.toList());
+        List<MenuGroup> actual = menuGroupService.list();
 
         // then
-        assertThat(results).usingRecursiveComparison()
+        assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(menuGroups);
+                .isEqualTo(expected);
     }
 
 }

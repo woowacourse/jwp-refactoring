@@ -69,25 +69,18 @@ class ProductServiceTest extends ServiceIntegrationTest {
                 후추_치킨_10000원(),
                 매튜_치킨_10000원()
         );
-        List<Product> savedProducts = new ArrayList<>();
+        List<Product> expected = new ArrayList<>();
         for (Product product : products) {
-            savedProducts.add(productDao.save(product));
+            expected.add(productDao.save(product));
         }
 
         // when
-        List<Product> results = productService.list()
-                .stream()
-                .filter(product ->
-                        containsObjects(
-                                savedProducts,
-                                productInSavedProducts -> productInSavedProducts.getId().equals(product.getId())
-                        )
-                ).collect(Collectors.toList());
+        List<Product> actual = productService.list();
 
         // then
-        assertThat(results).usingRecursiveComparison()
+        assertThat(actual).usingRecursiveComparison()
                 .ignoringFields("id", "price")
-                .isEqualTo(products);
+                .isEqualTo(expected);
     }
 
 }
