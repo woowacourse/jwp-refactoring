@@ -8,6 +8,7 @@ import static kitchenpos.fixture.MenuProductFixture.존재하지_않는_상품�
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,11 +41,18 @@ class MenuServiceTest extends ServiceIntegrationTest {
                 .getId();
 
         // then
-        Menu savedMenu = menuDao.findById(savedMenuId)
-                .orElseThrow(NoSuchElementException::new);
-        assertThat(savedMenu).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(savedMenu);
+        Menu savedMenu = menuService.list()
+                .stream()
+                .filter(inquiryMenu -> inquiryMenu.getId().equals(savedMenuId))
+                .findAny()
+                .get();
+        assertAll(
+                () -> assertThat(savedMenu).usingRecursiveComparison()
+                        .ignoringFields("id", "menuProducts.seq")
+                        .ignoringFieldsOfTypes(BigDecimal.class)
+                        .isEqualTo(menu),
+                () -> assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice())
+        );
     }
 
     @Test
