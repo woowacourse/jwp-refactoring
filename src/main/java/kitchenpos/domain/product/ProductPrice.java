@@ -21,7 +21,7 @@ public class ProductPrice {
 
     private void validateProductPrice(BigDecimal price) {
         if (isNull(price) || isNegative(price)) {
-            throw new ProductPriceException();
+            throw new ProductPriceException("상품 가격은 0 이상이어야 합니다.");
         }
     }
 
