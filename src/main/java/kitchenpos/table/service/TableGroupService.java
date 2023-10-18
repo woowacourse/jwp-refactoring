@@ -9,6 +9,7 @@ import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.response.TableGroupResponse;
+import kitchenpos.table.exception.OrderTableCountNotEnoughException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.exception.TableGroupNotFoundException;
 import kitchenpos.order.repository.OrderRepository;
@@ -35,12 +36,11 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(CreateTableGroupRequest request) {
         List<OrderTable> orderTables = findOrderTables(request.getOrderTables());
-
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.groupOrderTables(orderTables);
+        groupOrderTables(orderTables);
         tableGroupRepository.save(tableGroup);
 
-        return TableGroupResponse.from(tableGroup);
+        return TableGroupResponse.from(tableGroup, orderTables);
     }
 
     private List<OrderTable> findOrderTables(List<OrderTableRequest> orderTableRequests) {
@@ -54,15 +54,36 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        validateAllOrderCompleted(tableGroup);
-
-        tableGroup.unGroupOrderTables();
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
+        validateAllOrderCompleted(orderTables);
+        unGroupOrderTables(orderTables);
     }
 
-    private void validateAllOrderCompleted(TableGroup tableGroup) {
-        List<Order> orders = orderRepository.findByOrderTableIn(tableGroup.getOrderTables());
+    private void validateAllOrderCompleted(List<OrderTable> orderTables) {
+        List<Order> orders = orderRepository.findByOrderTableIn(orderTables);
         for (Order order : orders) {
             order.validateOrderIsCompleted();
         }
     }
+
+    public void groupOrderTables(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.validateIsEmpty();
+            orderTable.validateTableGroupNotExists();
+        }
+        validateOrderTableCount(orderTables);
+    }
+
+    private void validateOrderTableCount(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new OrderTableCountNotEnoughException();
+        }
+    }
+
+    public void unGroupOrderTables(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(null);
+        }
+    }
+
 }
