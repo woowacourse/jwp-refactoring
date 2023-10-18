@@ -2,71 +2,32 @@ package kitchenpos.domain;
 
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import kitchenpos.domain.common.CreatedTimeEntity;
-import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
-import kitchenpos.domain.exception.InvalidOrderTableSizeException;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup extends CreatedTimeEntity {
-
-    private static final int MINIMUM_TABLE_SIZE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     protected TableGroup() {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-
-        this.orderTables = orderTables;
-
-        groupOrderTables(orderTables);
-    }
-
-    private void groupOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.group(this);
-        }
+        this.orderTables = OrderTables.of(this, orderTables);
     }
 
     public void ungroupOrderTables() {
-        validateEmptyOrderTable(orderTables);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
-    }
-
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        validateOrderTableSize(orderTables);
-        validateEmptyOrderTable(orderTables);
-    }
-
-    private void validateOrderTableSize(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_TABLE_SIZE) {
-            throw new InvalidOrderTableSizeException();
-        }
-    }
-
-    private void validateEmptyOrderTable(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty()) {
-                throw new InvalidEmptyOrderTableException();
-            }
-        }
+        orderTables.ungroup();
     }
 
     public Long getId() {
@@ -74,7 +35,7 @@ public class TableGroup extends CreatedTimeEntity {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
     @Override

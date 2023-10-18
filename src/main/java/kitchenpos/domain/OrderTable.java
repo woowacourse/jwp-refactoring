@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +29,7 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @OneToOne(mappedBy = "orderTable", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "orderTable")
     private Order order;
 
     @Embedded
