@@ -1,16 +1,12 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.Price;
 
 @Entity
@@ -26,9 +22,7 @@ public class Menu {
 
     private Long menuGroupId;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @Column(name = "menuId", updatable = false, nullable = false)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -38,27 +32,11 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validate(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = new Price(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts.addAll(menuProducts);
-    }
-
-    private void validate(BigDecimal price, List<MenuProduct> menuProducts) {
-        validateSumOfMenuProductsPrice(price, menuProducts);
-    }
-
-    private void validateSumOfMenuProductsPrice(BigDecimal price, List<MenuProduct> menuProducts) {
-        BigDecimal sumOfEachPrice = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sumOfEachPrice = sumOfEachPrice.add(menuProduct.getPrice());
-        }
-
-        if (price.compareTo(sumOfEachPrice) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 개별 상품 가격의 합보다 같거나 적어야합니다.");
-        }
+        this.menuProducts = MenuProducts.create(menuProducts, price);
     }
 
     public Long getId() {
@@ -78,6 +56,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getValues();
     }
 }
