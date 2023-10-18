@@ -1,17 +1,13 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 
 @Entity(name = "orders")
@@ -25,10 +21,7 @@ public class Order {
     private OrderTable orderTable;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "orderId")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
@@ -44,7 +37,7 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
@@ -63,9 +56,6 @@ public class Order {
     }
 
     private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
-        }
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블은 주문 받을 수 없습니다.");
@@ -93,6 +83,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getValues();
     }
 }
