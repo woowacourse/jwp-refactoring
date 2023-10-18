@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,15 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        return menuGroupRepository.save(menuGroup);
+    public MenuGroupDto create(final MenuGroupDto menuGroupDto) {
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroupDto.toEntity());
+        return MenuGroupDto.from(savedMenuGroup);
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupRepository.findAll();
+    public List<MenuGroupDto> list() {
+        return menuGroupRepository.findAll()
+            .stream()
+            .map(MenuGroupDto::from)
+            .collect(Collectors.toUnmodifiableList());
     }
 }

@@ -14,7 +14,6 @@ public class MenuGroup {
 
     private String name;
 
-    //추후 제거하기
     public MenuGroup(final Long id, final String name) {
         this.id = id;
         this.name = name;

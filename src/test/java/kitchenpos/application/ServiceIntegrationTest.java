@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuFixture.createMenuProduct;
+import static kitchenpos.fixture.MenuFixture.한마리메뉴_DTO;
 import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.fixture.ProductFixture.후라이드_DTO;
@@ -8,15 +10,14 @@ import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이�
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.fixture.MenuFixture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -40,9 +41,9 @@ public abstract class ServiceIntegrationTest {
 
     protected Menu createMenu() {
         final ProductDto savedProductDto = productService.create(후라이드_DTO());
-        final MenuProduct menuProduct = MenuFixture.createMenuProduct(savedProductDto, 1L);
-        final MenuGroup savedMenuGroup = menuGroupService.create(MenuFixture.한마리메뉴());
-        final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
+        final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
+        final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
+        final Menu menu = 후라이드치킨(savedMenuGroupDto, List.of(menuProduct));
 
         return menuService.create(menu);
     }

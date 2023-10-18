@@ -44,7 +44,7 @@
     - [x] MenuGroup
     - [ ] Menu
     - [x] OrderTable
-    - [ ] TableGroup
+    - [x] TableGroup
     - [ ] OrderLineItem
     - [x] Product
     - [ ] MenuProduct
@@ -52,7 +52,15 @@
     - [x] MenuGroupService
     - [ ] MenuService
     - [x] OrderTableService
-    - [ ] TableGroupService
+    - [x] TableGroupService
+    - [ ] OrderLineItemService
+    - [x] ProductService
+    - [ ] MenuProductService
+- [ ] dto를 사용하도록 리팩터링
+    - [x] MenuGroupService
+    - [ ] MenuService
+    - [x] OrderTableService
+    - [x] TableGroupService
     - [ ] OrderLineItemService
     - [x] ProductService
     - [ ] MenuProductService

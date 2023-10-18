@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.createMenuProduct;
-import static kitchenpos.fixture.MenuFixture.한마리메뉴;
+import static kitchenpos.fixture.MenuFixture.한마리메뉴_DTO;
 import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.ProductFixture.후라이드_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,8 +29,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
         void success() {
             final ProductDto savedProduct = productService.create(후라이드_DTO());
             final MenuProduct menuProduct = createMenuProduct(savedProduct, 1L);
-            final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
-            final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
+            final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
+            final Menu menu = 후라이드치킨(savedMenuGroupDto, List.of(menuProduct));
 
             final Menu savedMenu = menuService.create(menu);
 
@@ -49,7 +49,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         void throwExceptionPriceLowerThan0() {
             final ProductDto savedProductDto = productService.create(후라이드_DTO());
             final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
-            final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
+            final MenuGroupDto savedMenuGroup = menuGroupService.create(한마리메뉴_DTO());
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
 
             menu.setPrice(BigDecimal.valueOf(-1000));
@@ -65,8 +65,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
         void throwExceptionMenuGroupIsNotExist() {
             final ProductDto savedProductDto = productService.create(후라이드_DTO());
             final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
-            final MenuGroup unSavedMenuGroup = 한마리메뉴();
-            final Menu menu = 후라이드치킨(unSavedMenuGroup, List.of(menuProduct));
+            final MenuGroupDto unSavedMenuGroupDto = 한마리메뉴_DTO();
+            final Menu menu = 후라이드치킨(unSavedMenuGroupDto, List.of(menuProduct));
 
             //when
             assertThatThrownBy(() -> menuService.create(menu))
@@ -78,7 +78,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         void throwExceptionProductIsNotExist() {
             final ProductDto unSavedProductDto = 후라이드_DTO();
             final MenuProduct menuProduct = createMenuProduct(unSavedProductDto, 1L);
-            final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
+            final MenuGroupDto savedMenuGroup = menuGroupService.create(한마리메뉴_DTO());
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
 
             //when
@@ -91,7 +91,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
         void throwExceptionPriceIsBiggerThanProductSum() {
             final ProductDto savedProductDto = productService.create(후라이드_DTO());
             final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
-            final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
+            final MenuGroupDto savedMenuGroup = menuGroupService.create(한마리메뉴_DTO());
 
             final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
             menu.setPrice(BigDecimal.valueOf(18000));
@@ -107,7 +107,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void list() {
         final ProductDto savedProductDto = productService.create(후라이드_DTO());
         final MenuProduct menuProduct = createMenuProduct(savedProductDto, 1L);
-        final MenuGroup savedMenuGroup = menuGroupService.create(한마리메뉴());
+        final MenuGroupDto savedMenuGroup = menuGroupService.create(한마리메뉴_DTO());
         final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
 
         final Menu savedMenu = menuService.create(menu);
