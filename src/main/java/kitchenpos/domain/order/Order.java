@@ -39,19 +39,19 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id,
-                 OrderTable orderTable,
-                 OrderStatus orderStatus,
-                 LocalDateTime orderedTime) {
+    public Order(final Long id,
+                 final OrderTable orderTable,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(OrderTable orderTable,
-                 String orderStatus,
-                 LocalDateTime orderedTime) {
+    public Order(final OrderTable orderTable,
+                 final String orderStatus,
+                 final LocalDateTime orderedTime) {
         this(null, orderTable, OrderStatus.valueOf(orderStatus), orderedTime);
     }
 
@@ -62,7 +62,7 @@ public class Order {
         this.orderLineItems.addAll(orderLineItems);
     }
 
-    public void updateStatus(Order order) {
+    public void updateStatus(final Order order) {
         validateStatus();
         this.orderStatus = order.orderStatus;
     }
@@ -73,7 +73,7 @@ public class Order {
         }
     }
 
-    public boolean isStatus(OrderStatus orderStatus) {
+    public boolean isStatus(final OrderStatus orderStatus) {
         return this.orderStatus == orderStatus;
     }
 

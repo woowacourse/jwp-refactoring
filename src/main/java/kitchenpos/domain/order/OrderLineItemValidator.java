@@ -15,7 +15,7 @@ public class OrderLineItemValidator {
         this.menuRepository = menuRepository;
     }
 
-    public void validate(List<OrderLineItem> orderLineItems) {
+    public void validateOrderMenuExist(List<OrderLineItem> orderLineItems) {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
