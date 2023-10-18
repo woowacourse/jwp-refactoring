@@ -1,14 +1,15 @@
 package kitchenpos.test.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class TableFixture {
 
-    public static OrderTable 테이블(Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTable 테이블(int numberOfGuess, boolean empty) {
+        return new OrderTable(numberOfGuess, empty);
+    }
+
+    public static OrderTable 테이블(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        return new OrderTable(tableGroup, numberOfGuests, empty);
     }
 }
