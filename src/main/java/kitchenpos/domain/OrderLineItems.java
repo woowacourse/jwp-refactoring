@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
@@ -9,7 +10,7 @@ import org.springframework.util.CollectionUtils;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected OrderLineItems() {
@@ -25,6 +26,10 @@ public class OrderLineItems {
         return new OrderLineItems(orderLineItems);
     }
 
+    public static OrderLineItems createEmptyOrderLineItems() {
+        return new OrderLineItems();
+    }
+
     private static void validate(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -38,4 +43,5 @@ public class OrderLineItems {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
+
 }

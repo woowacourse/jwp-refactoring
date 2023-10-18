@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class OrderTable {
 
+    private static final int MIN_NUMBER_OF_GUESTS = 0;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,43 +21,108 @@ public class OrderTable {
     private TableGroup tableGroup;
 
     @NotNull
-    private Integer numberOfGuests = 0;
+    private Integer numberOfGuests;
 
     @NotNull
-    private Boolean empty = false;
+    private Boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
+    }
+
+    private OrderTable(
+            Long id,
+            TableGroup tableGroup,
+            Integer numberOfGuests,
+            Boolean empty
+    ) {
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public static OrderTable of(
+            Long id,
+            TableGroup tableGroup,
+            Integer numberOfGuests,
+            Boolean empty
+    ) {
+        validateNumberOfGuests(numberOfGuests);
+
+        return new OrderTable(id, tableGroup, numberOfGuests, empty);
+    }
+
+    public static OrderTable create(
+            Integer numberOfGuests,
+            Boolean empty
+    ) {
+        validateNumberOfGuests(numberOfGuests);
+
+        return new OrderTable(null, null, numberOfGuests, empty);
+    }
+
+    private static void validateNumberOfGuests(Integer numberOfGuests) {
+        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeNumberOfGuests(Integer numberOfGuests) {
+        validateChangeableNumberOfGuests(numberOfGuests);
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateChangeableNumberOfGuests(Integer numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+
+        if (empty == Boolean.TRUE) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeEmpty(Boolean empty) {
+        validateChangeableEmpty();
+
+        this.empty = empty;
+    }
+
+    private void validateChangeableEmpty() {
+        if (isGrouped()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void group(TableGroup tableGroup) {
+        if (isGrouped()) {
+            throw new IllegalArgumentException();
+        }
+
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+    }
+
+    public boolean isGrouped() {
+        return tableGroup != null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public TableGroup getTableGroup() {
         return tableGroup;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public int getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
+    public Boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
-    }
 }

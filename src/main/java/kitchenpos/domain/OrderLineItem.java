@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class OrderLineItem {
 
+    private static final int MIN_QUANTITY = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -27,6 +29,24 @@ public class OrderLineItem {
     private Long quantity;
 
     public OrderLineItem() {
+    }
+
+    public OrderLineItem(Order order, Menu menu, Long quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public static OrderLineItem create(Order order, Menu menu, Long quantity) {
+        validateQuantity(quantity);
+
+        return new OrderLineItem(order, menu, quantity);
+    }
+
+    private static void validateQuantity(Long quantity) {
+        if (quantity < MIN_QUANTITY) {
+            throw new IllegalArgumentException("주문 메뉴의 수량은 1개 이상어이야 합니다.");
+        }
     }
 
     public Long getSeq() {
@@ -60,4 +80,5 @@ public class OrderLineItem {
     public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
+
 }

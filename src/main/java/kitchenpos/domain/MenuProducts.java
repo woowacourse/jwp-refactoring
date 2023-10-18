@@ -40,4 +40,5 @@ public class MenuProducts {
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
+
 }

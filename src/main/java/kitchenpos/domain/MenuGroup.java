@@ -11,7 +11,6 @@ public class MenuGroup {
 
     private static final int MAX_NAME_LENGTH = 255;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,4 +44,5 @@ public class MenuGroup {
     public String getName() {
         return name;
     }
+
 }

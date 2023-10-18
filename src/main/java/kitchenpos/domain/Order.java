@@ -55,16 +55,24 @@ public class Order {
     public static Order of(
             OrderStatus orderStatus,
             OrderTable orderTable,
-            List<OrderLineItem> orderLineItems) {
+            List<OrderLineItem> orderLineItems
+    ) {
         validateOrderTable(orderTable);
 
         return new Order(orderStatus, orderTable, OrderLineItems.from(orderLineItems));
     }
 
-    public static Order createNewOrder(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);
+//        orderTable.changeEmpty(Boolean.TRUE);
 
         return new Order(OrderStatus.COOKING, orderTable, OrderLineItems.from(orderLineItems));
+    }
+
+    public static Order createWithEmptyOrderLinItems(OrderTable orderTable) {
+        validateOrderTable(orderTable);
+
+        return new Order(OrderStatus.COOKING, orderTable, OrderLineItems.createEmptyOrderLineItems());
     }
 
 
@@ -73,7 +81,7 @@ public class Order {
             throw new NullPointerException();
         }
 
-        if (orderTable.isEmpty()) {
+        if (Boolean.TRUE.equals(orderTable.isEmpty())) {
             throw new IllegalArgumentException();
         }
     }
@@ -88,6 +96,10 @@ public class Order {
 
     public void addOrderLineItem(OrderLineItem orderLineItem) {
         orderLineItems.add(orderLineItem);
+    }
+
+    public void initializeOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = OrderLineItems.from(orderLineItems);
     }
 
     public Long getId() {

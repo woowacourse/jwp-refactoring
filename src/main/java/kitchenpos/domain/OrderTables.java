@@ -24,7 +24,8 @@ public class OrderTables {
 
     public static OrderTables from(List<OrderTable> orderTables) {
         validate(orderTables);
-        changeEmpty(orderTables);
+        orderTables.forEach(orderTable -> orderTable.changeEmpty(Boolean.TRUE));
+
         return new OrderTables(orderTables);
     }
 
@@ -60,11 +61,8 @@ public class OrderTables {
         }
     }
 
-    private static void changeEmpty(List<OrderTable> orderTables) {
-        orderTables.forEach(orderTable -> orderTable.changeEmpty(Boolean.TRUE));
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
+
 }
