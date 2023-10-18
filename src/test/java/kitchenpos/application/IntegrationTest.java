@@ -2,21 +2,21 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import java.util.List;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -32,92 +32,59 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 public abstract class IntegrationTest {
+
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
     @Autowired
-    protected MenuProductDao menuProductDao;
+    protected MenuProductRepository menuProductRepository;
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
     @Autowired
-    protected OrderLineItemDao orderLineItemDao;
+    protected OrderLineItemRepository orderLineItemRepository;
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
 
     protected MenuGroup generateMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroupDao.save(menuGroup);
+        final MenuGroup menuGroup = new MenuGroup(name);
+        return menuGroupRepository.save(menuGroup);
     }
 
-    protected Menu generateMenu(final String name) {
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(220000));
-        menu.setMenuGroupId(generateMenuGroup(name + "-group").getId());
-        return menuDao.save(menu);
-    }
-
-    protected MenuProduct generateMenuProduct(final String menuName, final String productName) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(generateMenu(menuName).getId());
-        menuProduct.setProductId(generateProduct(productName).getId());
-        return menuProductDao.save(menuProduct);
-    }
-
-    protected Product generateProduct(final String name) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(16000));
-        return productDao.save(product);
+    protected Menu generateMenu(final String name, final Long price) {
+        final Menu menu = new Menu(name, BigDecimal.valueOf(price), generateMenuGroup(name + "-group"));
+        return menuRepository.save(menu);
     }
 
     protected Product generateProduct(final String name, final Long price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return productDao.save(product);
-    }
-
-    protected OrderLineItem generateOrderLineItem() {
-        return generateOrderLineItem(generateMenu("chicken"));
-    }
-
-    protected OrderLineItem generateOrderLineItem(final Menu menu) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setOrderId(generateOrder(OrderStatus.COOKING).getId());
-        orderLineItem.setQuantity(3L);
-        return orderLineItemDao.save(orderLineItem);
-    }
-
-    protected Order generateOrder(final OrderStatus orderStatus) {
-        return generateOrder(orderStatus, generateOrderTable(3));
+        final Product product = new Product(name, Price.from(price));
+        return productRepository.save(product);
     }
 
     protected Order generateOrder(final OrderStatus orderStatus, final OrderTable orderTable) {
-        final Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(orderTable.getId());
-        return orderDao.save(order);
+        final Order order = new Order(
+                null,
+                orderTable,
+                orderStatus,
+                LocalDateTime.now()
+        );
+        return orderRepository.save(order);
     }
 
     protected OrderTable generateOrderTable(final int numberOfGuests) {
-        return generateOrderTable(numberOfGuests, false, generateTableGroup());
+        return generateOrderTable(numberOfGuests, false, null);
     }
 
     protected OrderTable generateOrderTable(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(null);
-        return orderTableDao.save(orderTable);
+        return generateOrderTable(numberOfGuests, empty, null);
+    }
+
+    protected OrderTable generateOrderTableWithOutTableGroup(final int numberOfGuests, final boolean empty) {
+        return generateOrderTable(numberOfGuests, empty, null);
     }
 
     protected OrderTable generateOrderTable(
@@ -125,24 +92,16 @@ public abstract class IntegrationTest {
             final boolean empty,
             final TableGroup tableGroup
     ) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(tableGroup.getId());
-        return orderTableDao.save(orderTable);
+        final OrderTable orderTable = new OrderTable(
+                tableGroup,
+                numberOfGuests,
+                empty
+        );
+        return orderTableRepository.save(orderTable);
     }
 
-    protected OrderTable generateOrderTableWithOutTableGroup(final int numberOfGuests, final boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(null);
-        return orderTableDao.save(orderTable);
-    }
-
-    protected TableGroup generateTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroupDao.save(tableGroup);
+    protected TableGroup generateTableGroup(final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        return tableGroupRepository.save(tableGroup);
     }
 }

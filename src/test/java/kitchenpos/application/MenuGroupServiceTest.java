@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.domain.MenuGroup;
+import java.util.List;
+import kitchenpos.application.dto.MenuGroupCreationRequest;
+import kitchenpos.application.dto.result.MenuGroupResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,15 +13,13 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
-
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("Chicken-group");
+        final MenuGroupCreationRequest request = new MenuGroupCreationRequest("Chicken-group");
 
         // when
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResult createdMenuGroup = menuGroupService.create(request);
 
         // then
         assertThat(createdMenuGroup.getId()).isNotNull();
@@ -28,15 +28,11 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        final MenuGroup chickenGroup = new MenuGroup();
-        chickenGroup.setName("Chicken-group");
-        menuGroupService.create(chickenGroup);
-        final MenuGroup pizzaGroup = new MenuGroup();
-        pizzaGroup.setName("Pizza-group");
-        menuGroupService.create(pizzaGroup);
+        generateMenuGroup("Chicken-group");
+        generateMenuGroup("Pizza-group");
 
         // when
-        final Iterable<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResult> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups).hasSize(2);

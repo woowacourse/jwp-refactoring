@@ -13,7 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.OrderTableCreationRequest;
+import kitchenpos.application.dto.OrderTableEmptyStatusChangeRequest;
+import kitchenpos.application.dto.OrderTableGuestAmountChangeRequest;
+import kitchenpos.application.dto.result.OrderTableResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,13 +39,10 @@ class TableRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final OrderTable result = new OrderTable();
-        result.setId(1L);
+        final OrderTableResult result = new OrderTableResult(1L, 4, false);
         given(tableService.create(any())).willReturn(result);
 
-        final OrderTable request = new OrderTable();
-        request.setEmpty(false);
-        request.setNumberOfGuests(4);
+        final OrderTableCreationRequest request = new OrderTableCreationRequest(4, false);
 
         // when
         mockMvc.perform(post("/api/tables")
@@ -56,12 +56,8 @@ class TableRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final OrderTable resultA = new OrderTable();
-        resultA.setEmpty(false);
-        resultA.setNumberOfGuests(4);
-        final OrderTable resultB = new OrderTable();
-        resultB.setEmpty(true);
-        resultB.setNumberOfGuests(2);
+        final OrderTableResult resultA = new OrderTableResult(1L, 4, false);
+        final OrderTableResult resultB = new OrderTableResult(2L, 4, false);
         given(tableService.list()).willReturn(List.of(resultA, resultB));
 
         // when
@@ -74,14 +70,10 @@ class TableRestControllerTest {
     @Test
     void changeEmpty() throws Exception {
         // given
-        final OrderTable result = new OrderTable();
-        result.setEmpty(false);
-        result.setNumberOfGuests(4);
+        final OrderTableResult result = new OrderTableResult(1L, 4, false);
         given(tableService.changeEmpty(any(), any())).willReturn(result);
 
-        final OrderTable request = new OrderTable();
-        request.setEmpty(true);
-        request.setNumberOfGuests(4);
+        final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(true);
 
         // when
         mockMvc.perform(put("/api/tables/{orderTableId}/empty", 1L)
@@ -95,14 +87,10 @@ class TableRestControllerTest {
     @Test
     void changeNumberOfGuests() throws Exception {
         // given
-        final OrderTable result = new OrderTable();
-        result.setEmpty(false);
-        result.setNumberOfGuests(4);
+        final OrderTableResult result = new OrderTableResult(1L, 4, false);
         given(tableService.changeNumberOfGuests(any(), any())).willReturn(result);
 
-        final OrderTable request = new OrderTable();
-        request.setEmpty(false);
-        request.setNumberOfGuests(1);
+        final OrderTableGuestAmountChangeRequest request = new OrderTableGuestAmountChangeRequest(4);
 
         // when
         mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", 1L)

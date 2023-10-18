@@ -11,10 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.OrderCreationRequest;
+import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
+import kitchenpos.application.dto.result.OrderResult;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +40,13 @@ class OrderRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final Order result = new Order();
-        result.setId(1L);
+        final OrderResult result = new OrderResult(1L, "COOKING", null, List.of());
         given(orderService.create(any())).willReturn(result);
 
-        final Order request = new Order();
-        request.setId(1L);
-        request.setOrderStatus(OrderStatus.COOKING.name());
-        request.setOrderedTime(LocalDateTime.now());
+        final OrderCreationRequest request = new OrderCreationRequest(1L, List.of(
+                new OrderItemsWithQuantityRequest(1L, 1L),
+                new OrderItemsWithQuantityRequest(2L, 2L)
+        ));
 
         // when
         mockMvc.perform(post("/api/orders")
@@ -59,12 +60,8 @@ class OrderRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final Order resultA = new Order();
-        resultA.setOrderStatus(OrderStatus.COOKING.name());
-        resultA.setOrderedTime(LocalDateTime.now());
-        final Order resultB = new Order();
-        resultB.setOrderStatus(OrderStatus.COOKING.name());
-        resultB.setOrderedTime(LocalDateTime.now());
+        final OrderResult resultA = new OrderResult(1L, "COOKING", null, List.of());
+        final OrderResult resultB = new OrderResult(2L, "COOKING", null, List.of());
         given(orderService.list()).willReturn(List.of(resultA, resultB));
 
         // when
@@ -77,13 +74,10 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         // given
-        final Order result = new Order();
-        result.setId(1L);
-        result.setOrderStatus(OrderStatus.COMPLETION.name());
+        final OrderResult result = new OrderResult(1L, "COOKING", null, List.of());
         given(orderService.changeOrderStatus(any(), any())).willReturn(result);
 
-        final Order request = new Order();
-        request.setOrderStatus(OrderStatus.COMPLETION.name());
+        final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
 
         // when
         mockMvc.perform(put("/api/orders/{orderId}/order-status", 1L)

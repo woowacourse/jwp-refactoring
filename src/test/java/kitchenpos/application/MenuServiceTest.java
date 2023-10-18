@@ -5,7 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.MenuCreationRequest;
+import kitchenpos.application.dto.MenuProductWithQuantityRequest;
+import kitchenpos.application.dto.result.MenuResult;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
@@ -20,33 +24,26 @@ class MenuServiceTest extends IntegrationTest {
     @Test
     void create_menu_success() {
         // given
-        final Menu savedChicken = generateMenu("chicken");
-        final Product chickenProduct = generateProduct("chicken", 10000L);
-        final MenuProduct menuProductA = new MenuProduct();
-        menuProductA.setMenuId(savedChicken.getMenuGroupId());
-        menuProductA.setProductId(chickenProduct.getId());
-        menuProductA.setQuantity(2);
-        menuProductDao.save(menuProductA);
-
-        final Product sauceProduct = generateProduct("sauce", 3000L);
-        final MenuProduct menuProductB = new MenuProduct();
-        menuProductB.setMenuId(savedChicken.getMenuGroupId());
-        menuProductB.setProductId(sauceProduct.getId());
-        menuProductB.setQuantity(5);
-        menuProductDao.save(menuProductB);
-
-        final Menu requestMenu = new Menu();
-        requestMenu.setName("seasoningChicken");
-        requestMenu.setMenuProducts(List.of(menuProductA, menuProductB));
-        requestMenu.setPrice(BigDecimal.valueOf(35000));
-        requestMenu.setMenuGroupId(savedChicken.getMenuGroupId());
+        final MenuGroup menuGroup = generateMenuGroup("chicken-group");
+        final Product chicken = generateProduct("chicken", 20000L);
+        final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+        final List<MenuProductWithQuantityRequest> productsRequest = List.of(
+                new MenuProductWithQuantityRequest(chicken.getId(), 1L),
+                new MenuProductWithQuantityRequest(cheeseBall.getId(), 2L)
+        );
+        final MenuCreationRequest creationRequest = new MenuCreationRequest(
+                "chicken-set",
+                BigDecimal.valueOf(28000),
+                menuGroup.getId(),
+                productsRequest
+        );
 
         // when
-        final Menu createdMenu = menuService.create(requestMenu);
+        final MenuResult createdMenu = menuService.create(creationRequest);
 
         // then
         assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getMenuProducts()).hasSize(2);
+        assertThat(createdMenu.getMenuProductResults()).hasSize(2);
     }
 
     @Nested
@@ -55,116 +52,122 @@ class MenuServiceTest extends IntegrationTest {
         @Test
         void price_is_zero() {
             // given
-            final Menu menu = new Menu();
-            menu.setPrice(BigDecimal.ZERO);
+            final MenuGroup menuGroup = generateMenuGroup("chicken-group");
+            final MenuCreationRequest requestWithZeroPrice = new MenuCreationRequest(
+                    "chicken-set",
+                    BigDecimal.valueOf(0L),
+                    menuGroup.getId(),
+                    null
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(requestWithZeroPrice))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Price must be greater than zero.");
         }
 
         @Test
         void without_price() {
             // given
-            final Menu menu = new Menu();
-            menu.setPrice(null);
+            final MenuGroup menuGroup = generateMenuGroup("chicken-group");
+            final MenuCreationRequest requestWithoutPrice = new MenuCreationRequest(
+                    "chicken-set",
+                    null,
+                    menuGroup.getId(),
+                    null
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(requestWithoutPrice))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Price must not be null.");
         }
 
         @Test
         void menu_group_is_not_exist() {
             // given
-            final Menu menu = new Menu();
-            menu.setPrice(BigDecimal.valueOf(10000L));
-            menu.setName("chicken");
+            final Long notExistId = 10000L;
+            final MenuCreationRequest requestWithAbsenceMenuGroup = new MenuCreationRequest(
+                    "chicken-set",
+                    BigDecimal.valueOf(28000L),
+                    notExistId,
+                    null
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(requestWithAbsenceMenuGroup))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("MenuGroup does not exist.");
         }
 
         @Test
         void menu_product_is_not_exist() {
             // given
-            final Menu savedChicken = generateMenu("chicken");
-            final Product savedProduct = generateProduct("sauce", 3000L);
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setMenuId(savedChicken.getMenuGroupId());
-            menuProduct.setProductId(savedProduct.getId());
-            menuProduct.setQuantity(3);
-            final MenuProduct notMenuProduct = new MenuProduct();
-
-            final Menu requestMenu = new Menu();
-            requestMenu.setName("chicken");
-            requestMenu.setMenuProducts(List.of(menuProduct, notMenuProduct));
-            requestMenu.setPrice(BigDecimal.valueOf(10000L));
-            requestMenu.setMenuGroupId(savedChicken.getMenuGroupId());
+            final MenuGroup menuGroup = generateMenuGroup("chicken-group");
+            final Long notExistId = 10000L;
+            final MenuCreationRequest requestWithAbsenceProduct = new MenuCreationRequest(
+                    "chicken-set",
+                    BigDecimal.valueOf(28000L),
+                    menuGroup.getId(),
+                    List.of(new MenuProductWithQuantityRequest(notExistId, 3L))
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(requestMenu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(requestWithAbsenceProduct))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Product does not exist.");
         }
 
         @Test
-        void menu_price_is_not_equal_total_sum_of_menu_products() {
+        void menu_price_is_over_than_total_sum_of_menu_products() {
             // given
-            final Menu savedChicken = generateMenu("chicken");
-            final Product chickenProduct = generateProduct("chicken", 10000L);
-            final MenuProduct menuProductA = new MenuProduct();
-            menuProductA.setMenuId(savedChicken.getMenuGroupId());
-            menuProductA.setProductId(chickenProduct.getId());
-            menuProductA.setQuantity(2);
-
-            final Product sauceProduct = generateProduct("sauce", 3000L);
-            final MenuProduct menuProductB = new MenuProduct();
-            menuProductB.setMenuId(savedChicken.getMenuGroupId());
-            menuProductB.setProductId(sauceProduct.getId());
-            menuProductB.setQuantity(5);
-
-            final Menu requestMenu = new Menu();
-            requestMenu.setName("chicken");
-            requestMenu.setMenuProducts(List.of(menuProductA, menuProductB));
-            requestMenu.setPrice(BigDecimal.valueOf(35000L + 1L));
-            requestMenu.setMenuGroupId(savedChicken.getMenuGroupId());
+            final MenuGroup menuGroup = generateMenuGroup("chicken-group");
+            final Product chicken = generateProduct("chicken", 20000L);
+            final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+            final List<MenuProductWithQuantityRequest> menuProductRequest = List.of(
+                    new MenuProductWithQuantityRequest(chicken.getId(), 1L),
+                    new MenuProductWithQuantityRequest(cheeseBall.getId(), 2L)
+            );
+            final MenuCreationRequest requestWithOverProductsPrice = new MenuCreationRequest(
+                    "chicken-set",
+                    BigDecimal.valueOf(30000L + 1L),
+                    menuGroup.getId(),
+                    menuProductRequest
+            );
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(requestMenu))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(requestWithOverProductsPrice))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Sum of menu products price must be greater than menu price.");
         }
     }
 
     @Test
     void list() {
         // given
-        final Menu savedChicken = generateMenu("chicken");
-        final Product chickenProduct = generateProduct("chicken", 10000L);
-        final MenuProduct menuProductA = new MenuProduct();
-        menuProductA.setMenuId(savedChicken.getMenuGroupId());
-        menuProductA.setProductId(chickenProduct.getId());
-        menuProductA.setQuantity(2);
-        menuProductDao.save(menuProductA);
+        final MenuGroup menuGroup = generateMenuGroup("chicken-group");
+        final Product chicken = generateProduct("chicken", 20000L);
+        final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+        final Menu menuA = new Menu("chicken-set-A", BigDecimal.valueOf(28000L), menuGroup);
+        final List<MenuProduct> menuProductsA = List.of(
+                new MenuProduct(menuA, chicken, 1L),
+                new MenuProduct(menuA, cheeseBall, 2L)
+        );
 
-        final Product sauceProduct = generateProduct("sauce", 3000L);
-        final MenuProduct menuProductB = new MenuProduct();
-        menuProductB.setMenuId(savedChicken.getMenuGroupId());
-        menuProductB.setProductId(sauceProduct.getId());
-        menuProductB.setQuantity(5);
-        menuProductDao.save(menuProductB);
-
-        final Menu requestMenu = new Menu();
-        requestMenu.setName("seasoningChicken");
-        requestMenu.setMenuProducts(List.of(menuProductA, menuProductB));
-        requestMenu.setPrice(BigDecimal.valueOf(35000));
-        requestMenu.setMenuGroupId(savedChicken.getMenuGroupId());
+        final Menu menuB = new Menu("chicken-set-A", BigDecimal.valueOf(24000L), menuGroup);
+        final List<MenuProduct> menuProductsB = List.of(
+                new MenuProduct(menuB, chicken, 1L),
+                new MenuProduct(menuB, cheeseBall, 1L)
+        );
+        menuA.applyMenuProducts(menuProductsA);
+        menuB.applyMenuProducts(menuProductsB);
+        menuRepository.save(menuA);
+        menuRepository.save(menuB);
 
         // when
-        final Menu createdMenu = menuService.create(requestMenu);
+        final List<MenuResult> list = menuService.list();
 
         // then
-        assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getMenuProducts()).hasSize(2);
+        assertThat(list).hasSize(2);
     }
 }

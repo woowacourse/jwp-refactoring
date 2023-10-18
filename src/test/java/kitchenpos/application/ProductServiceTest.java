@@ -2,10 +2,12 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.ProductCreationRequest;
+import kitchenpos.application.dto.result.ProductResult;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +20,16 @@ class ProductServiceTest extends IntegrationTest {
     @Test
     void create_product_success() {
         // given
-        final Product product = new Product();
-        final BigDecimal price = BigDecimal.valueOf(10000);
-        product.setName("chicken");
-        product.setPrice(price);
+        final ProductCreationRequest request = new ProductCreationRequest("chicken", BigDecimal.valueOf(10000L));
 
         // when
-        final Product savedProduct = productService.create(product);
+        final ProductResult savedProduct = productService.create(request);
 
         // then
-        assertThat(savedProduct.getId()).isNotNull();
-        assertThat(savedProduct.getName()).isEqualTo("chicken");
+        assertSoftly(softly -> {
+            softly.assertThat(savedProduct.getId()).isNotNull();
+            softly.assertThat(savedProduct.getName()).isEqualTo("chicken");
+        });
     }
 
     @Nested
@@ -37,25 +38,24 @@ class ProductServiceTest extends IntegrationTest {
         @Test
         void product_price_is_under_zero() {
             // given
-            final Product product = new Product();
-            product.setName("chicken");
-            product.setPrice(BigDecimal.valueOf(-1000));
+            final BigDecimal priceUnderZero = BigDecimal.valueOf(-1000L);
+            final ProductCreationRequest request = new ProductCreationRequest("chicken", priceUnderZero);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> productService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Price must be greater than zero.");
         }
 
         @Test
         void product_price_is_null() {
             // given
-            final Product product = new Product();
-            product.setName("chicken");
-            product.setPrice(null);
+            final ProductCreationRequest request = new ProductCreationRequest("chicken", null);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> productService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Price must not be null.");
         }
     }
 
@@ -66,7 +66,7 @@ class ProductServiceTest extends IntegrationTest {
         generateProduct("chicken-2", 10000L);
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResult> products = productService.list();
 
         // then
         assertThat(products).hasSize(2);

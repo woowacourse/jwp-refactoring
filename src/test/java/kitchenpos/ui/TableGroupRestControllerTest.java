@@ -11,8 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.GroupOrderTableRequest;
+import kitchenpos.application.dto.TableGroupingRequest;
+import kitchenpos.application.dto.result.TableGroupResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest {
-    
+
     @Autowired
     MockMvc mockMvc;
 
@@ -35,12 +38,12 @@ class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final TableGroup result = new TableGroup();
-        result.setId(1L);
+        final TableGroupResult result = new TableGroupResult(1L, LocalDateTime.now(), null);
         given(tableGroupService.create(any())).willReturn(result);
 
-        final TableGroup request = new TableGroup();
-        request.setCreatedDate(LocalDateTime.now());
+        final TableGroupingRequest request = new TableGroupingRequest(
+                List.of(new GroupOrderTableRequest(1L), new GroupOrderTableRequest(2L))
+        );
 
         // when
         mockMvc.perform(post("/api/table-groups")
