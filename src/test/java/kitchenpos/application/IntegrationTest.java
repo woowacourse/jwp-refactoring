@@ -79,8 +79,8 @@ public class IntegrationTest {
     }
 
     protected TableGroup 빈_테이블들을_그룹으로_지정한다() {
-        OrderTable orderTable1 = new OrderTable(0, true);
-        OrderTable orderTable2 = new OrderTable(0, true);
+        OrderTable orderTable1 = new OrderTable(null, null, 0, true);
+        OrderTable orderTable2 = new OrderTable(null, null, 0, true);
         return 테이블_그룹(orderTable1, orderTable2);
     }
 
@@ -102,7 +102,7 @@ public class IntegrationTest {
     }
 
     protected OrderTable 주문_테이블(boolean empty) {
-        OrderTable orderTable = new OrderTable(0, empty);
+        OrderTable orderTable = new OrderTable(null, null, 0, empty);
         return orderTableRepository.save(orderTable);
     }
 

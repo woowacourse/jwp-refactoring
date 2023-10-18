@@ -37,18 +37,6 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(Long id) {
-        this(id, null, 0, false);
-    }
-
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, null, numberOfGuests, empty);
-    }
-
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
-    }
-
     public OrderTable(Long id, TableGroup tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroupId;

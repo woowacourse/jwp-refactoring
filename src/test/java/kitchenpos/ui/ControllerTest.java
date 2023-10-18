@@ -108,7 +108,7 @@ public class ControllerTest {
     }
 
     protected OrderTable 주문_테이블() {
-        return new OrderTable(0, true);
+        return new OrderTable(null, null, 0, true);
     }
 
     protected OrderTable 주문_테이블(Long id) {
