@@ -24,7 +24,7 @@ class MenuTest {
     @ParameterizedTest
     void 메뉴_가격이_0보다_크거나_같으면_정상_생성된다(int price) {
         Product product = new Product(null, "name", BigDecimal.valueOf(1000));
-        MenuProduct menuProduct = new MenuProduct(null, 1L, product, 1L);
+        MenuProduct menuProduct = new MenuProduct(null, product, 1L);
         assertThatCode(() -> new Menu(null, "메뉴", BigDecimal.valueOf(price), 1L, List.of(menuProduct)))
                 .doesNotThrowAnyException();
     }
@@ -32,7 +32,7 @@ class MenuTest {
     @Test
     void 메뉴_가격이_메뉴_상품_가격의_합보다_크면_예외가_발생한다() {
         Product product = new Product(null, "name", BigDecimal.valueOf(1000));
-        MenuProduct menuProduct = new MenuProduct(null, 1L, product, 1L);
+        MenuProduct menuProduct = new MenuProduct(null, product, 1L);
         assertThatThrownBy(() -> new Menu(null, "메뉴", BigDecimal.valueOf(10000), 1L, List.of(menuProduct)))
                 .isInstanceOf(IllegalArgumentException.class);
     }

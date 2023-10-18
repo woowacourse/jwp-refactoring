@@ -28,7 +28,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao = new FakeMenuProductDao();
     private MenuDao menuDao = new FakeMenuDao();
     private ProductDao productDao = new FakeProductDao();
-    private MenuService menuService = new MenuService(menuDao, menuGroupDao, menuProductDao);
+    private MenuService menuService = new MenuService(menuDao, menuGroupDao);
 
 
     private MenuProduct menuProduct;
@@ -39,7 +39,7 @@ class MenuServiceTest {
     void setUp() {
         menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         product = productDao.save(new Product(null, "상품1", BigDecimal.valueOf(1000)));
-        menuProduct = menuProductDao.save(new MenuProduct(null, 1L, product, 1L));
+        menuProduct = menuProductDao.save(new MenuProduct(null, product, 1L));
     }
 
     @Test

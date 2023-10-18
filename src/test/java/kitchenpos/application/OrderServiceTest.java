@@ -40,7 +40,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuProduct menuProduct = new MenuProduct(null, null, new Product(null, "후라이드", BigDecimal.valueOf(2000)), 1L);
+        MenuProduct menuProduct = new MenuProduct(null, new Product(null, "후라이드", BigDecimal.valueOf(2000)), 1L);
         menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(2000), 1L, List.of(menuProduct)));
         orderLineItem = orderLineItemDao.save(new OrderLineItem(null, 1L, 1L, 1L));
         tableFull = orderTableDao.save(new OrderTable(null, 3, false));

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class FakeMenuProductDao implements MenuProductDao {
 
@@ -27,19 +26,12 @@ public class FakeMenuProductDao implements MenuProductDao {
     }
 
     @Override
-    public Optional<MenuProduct> findById(Long id) {
+    public Optional<MenuProduct> findBySeq(Long id) {
         return Optional.ofNullable(menuProducts.get(id));
     }
 
     @Override
     public List<MenuProduct> findAll() {
         return new ArrayList<>(menuProducts.values());
-    }
-
-    @Override
-    public List<MenuProduct> findAllByMenuId(Long menuId) {
-        return menuProducts.values().stream()
-                .filter(menuProduct -> menuProduct.getMenuId().equals(menuId))
-                .collect(Collectors.toList());
     }
 }
