@@ -9,12 +9,12 @@ public class Order2 {
   private OrderTable2 orderTable;
   private String orderStatus;
   private LocalDateTime orderedTime;
-  private List<OrderLineItem> orderLineItems;
+  private List<OrderLineItem2> orderLineItems;
 
   public Order2(
       final Long id, final OrderTable2 orderTable,
       final String orderStatus, final LocalDateTime orderedTime,
-      final List<OrderLineItem> orderLineItems
+      final List<OrderLineItem2> orderLineItems
   ) {
     this.id = id;
     this.orderTable = orderTable;
@@ -47,7 +47,7 @@ public class Order2 {
     return orderedTime;
   }
 
-  public List<OrderLineItem> getOrderLineItems() {
+  public List<OrderLineItem2> getOrderLineItems() {
     return orderLineItems;
   }
 }
