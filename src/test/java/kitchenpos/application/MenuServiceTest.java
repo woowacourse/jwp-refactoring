@@ -35,8 +35,8 @@ class MenuServiceTest extends ServiceTest {
 
         MenuGroup newMenuGroup = MenuGroup.from("튀김류");
 
-        product = productDao.save(newProduct);
-        menuGroup = menuGroupDao.save(newMenuGroup);
+        product = productRepository.save(newProduct);
+        menuGroup = menuGroupRepository.save(newMenuGroup);
     }
 
     @Nested
