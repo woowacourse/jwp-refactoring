@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product.Product;
+import kitchenpos.domain.product.Product;
 
 public class InMemoryProductDao implements ProductDao {
 

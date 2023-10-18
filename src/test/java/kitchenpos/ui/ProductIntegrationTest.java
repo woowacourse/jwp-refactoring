@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import kitchenpos.domain.Product.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

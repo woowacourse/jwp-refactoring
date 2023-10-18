@@ -2,7 +2,7 @@ package kitchenpos.dao;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Product.Product;
+import kitchenpos.domain.product.Product;
 import org.springframework.data.repository.Repository;
 
 public interface ProductDao extends Repository<Product, Long> {

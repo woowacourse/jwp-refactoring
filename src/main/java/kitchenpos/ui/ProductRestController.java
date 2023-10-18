@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +29,6 @@ public class ProductRestController {
 
     @GetMapping("/api/products")
     public ResponseEntity<List<Product>> list() {
-        return ResponseEntity.ok()
-                             .body(productService.list());
+        return ResponseEntity.ok().body(productService.list());
     }
 }

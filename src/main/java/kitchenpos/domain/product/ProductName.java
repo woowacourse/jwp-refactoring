@@ -1,21 +1,21 @@
-package kitchenpos.domain.Product;
+package kitchenpos.domain.product;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import kitchenpos.exception.InvalidNameException;
 
 @Embeddable
-public class Name {
+public class ProductName {
 
     private static final int MAXIMUM_NAME_LENGTH = 255;
 
     @Column(name = "name", nullable = false)
     private String value;
 
-    protected Name() {
+    protected ProductName() {
     }
 
-    public Name(final String value) {
+    public ProductName(final String value) {
         validate(value);
         this.value = value.strip();
     }

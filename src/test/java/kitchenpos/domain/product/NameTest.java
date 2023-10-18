@@ -1,4 +1,4 @@
-package kitchenpos.domain.Product;
+package kitchenpos.domain.product;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,7 +17,7 @@ class NameTest {
     void 이름이_null_이거나_공백이라면_예외가_발생한다(String invalidName) {
         // given
         // when
-        final ThrowingCallable throwingCallable = () -> new Name(invalidName);
+        final ThrowingCallable throwingCallable = () -> new ProductName(invalidName);
 
         // then
         assertThatThrownBy(throwingCallable)
@@ -31,7 +31,7 @@ class NameTest {
         final var invalidName = "a".repeat(256);
 
         // when
-        final ThrowingCallable throwingCallable = () -> new Name(invalidName);
+        final ThrowingCallable throwingCallable = () -> new ProductName(invalidName);
 
         // then
         assertThatThrownBy(throwingCallable)
@@ -45,7 +45,7 @@ class NameTest {
         final var validName = "테스트 상품";
 
         // when
-        final var name = new Name(validName);
+        final var name = new ProductName(validName);
 
         // then
         assertThat(name.getValue()).isEqualTo(validName);

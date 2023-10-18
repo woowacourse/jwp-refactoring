@@ -8,8 +8,8 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuFactory;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.ProductFactory;
+import kitchenpos.domain.menugroup.MenuGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -122,8 +122,7 @@ class MenuIntegrationTest extends IntegrationTest {
         @ValueSource(ints = {-1, 0})
         void 수량이_0_이하라면_예외가_발생한다(int quantity) {
             // given
-            final var menuGroup = new MenuGroup();
-            menuGroup.setName("메뉴그룹1");
+            final var menuGroup = new MenuGroup("메뉴그룹1");
             final var savedMenuGroup = menuGroupDao.save(menuGroup);
 
             final var product = ProductFactory.createProductOf("후라이드", BigDecimal.valueOf(1000));
@@ -144,8 +143,7 @@ class MenuIntegrationTest extends IntegrationTest {
         @Test
         void 메뉴가_정상적으로_등록된다() {
             // given
-            final var menuGroup = new MenuGroup();
-            menuGroup.setName("메뉴그룹1");
+            final var menuGroup = new MenuGroup("메뉴그룹1");
             final var savedMenuGroup = menuGroupDao.save(menuGroup);
 
             final var product = ProductFactory.createProductOf("후라이드", BigDecimal.valueOf(1000));
@@ -170,8 +168,7 @@ class MenuIntegrationTest extends IntegrationTest {
         @Test
         void 메뉴_목록을_조회한다() {
             // given
-            final var menuGroup = new MenuGroup();
-            menuGroup.setName("메뉴그룹1");
+            final var menuGroup = new MenuGroup("메뉴그룹1");
             final var savedMenuGroup = menuGroupDao.save(menuGroup);
 
             final var product = ProductFactory.createProductOf("후라이드", BigDecimal.valueOf(1000));

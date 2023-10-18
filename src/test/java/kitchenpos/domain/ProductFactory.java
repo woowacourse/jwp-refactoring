@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product.Product;
+import kitchenpos.domain.product.Product;
 
 public final class ProductFactory {
 
