@@ -9,7 +9,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class MenuGroup {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
 

@@ -13,7 +13,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class TableGroup {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
 

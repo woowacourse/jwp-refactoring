@@ -3,14 +3,17 @@ package kitchenpos.domain;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 
 @Entity
 public class Orders {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_table_id")
@@ -62,4 +65,9 @@ public class Orders {
         this.orderStatus = orderStatus;
     }
 
+    public void validateStatusIsEqualTo(OrderStatus orderStatus) {
+        if (Objects.equals(COMPLETION, orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+    }
 }

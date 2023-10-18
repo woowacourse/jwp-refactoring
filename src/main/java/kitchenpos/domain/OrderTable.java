@@ -8,7 +8,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class OrderTable {
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")

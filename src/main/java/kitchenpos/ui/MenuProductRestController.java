@@ -19,7 +19,7 @@ public class MenuProductRestController {
             @PathVariable("menuId") Long menuId,
             @PathVariable("productId") Long productId,
             @RequestParam("quantity") Long quantity
-            ) {
+    ) {
         Long menuProductId = menuProductService.create(menuId, productId, quantity);
         return ResponseEntity.ok(menuProductId);
     }

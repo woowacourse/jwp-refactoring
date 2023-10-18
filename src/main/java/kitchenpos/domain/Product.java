@@ -11,7 +11,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class Product {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;

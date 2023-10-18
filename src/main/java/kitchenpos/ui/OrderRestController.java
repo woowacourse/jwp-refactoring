@@ -34,7 +34,7 @@ public class OrderRestController {
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestParam final OrderStatus orderStatus
-            ) {
+    ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
     }
 }

@@ -7,7 +7,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class OrderLineItem {
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = LAZY)
