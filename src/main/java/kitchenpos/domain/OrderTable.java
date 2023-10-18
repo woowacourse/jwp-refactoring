@@ -73,4 +73,9 @@ public class OrderTable {
     public void updateNumberOfGuests(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
+
+    public void updateTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
 }

@@ -17,7 +17,9 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = REMOVE)
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    public TableGroup(List<OrderTable> orderTables, LocalDateTime localDateTime) {
+        this.orderTables = orderTables;
+        this.createdDate = localDateTime;
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
@@ -25,6 +27,7 @@ public class TableGroup {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
+
 
     public Long getId() {
         return id;
