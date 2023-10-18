@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.table.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,9 +14,6 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Product;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableException;
-import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -117,6 +114,20 @@ class OrderTableTest {
 
             // then
             assertThat(orderTable.getTableGroup()).isNull();
+        }
+
+        @Test
+        void 조리_혹은_식사중_상태의_테이블이라면_예외() {
+            // given
+            OrderTable orderTable = new OrderTable(10, false);
+            ReflectionTestUtils.setField(orderTable, "id", 2L);
+            new Order(orderTable, List.of(new OrderLineItem(menu, 10)));
+
+            // when & then
+            assertThatThrownBy(() ->
+                    orderTable.ungroup()
+            ).isInstanceOf(OrderTableException.class)
+                    .hasMessage("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
         }
     }
 

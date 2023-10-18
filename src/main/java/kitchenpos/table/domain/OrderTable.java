@@ -25,6 +25,7 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id", nullable = true)
     private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
@@ -52,6 +53,10 @@ public class OrderTable {
         if (Objects.nonNull(getTableGroup())) {
             throw new OrderTableException("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
         }
+        validateNotCookingOrMealOrder();
+    }
+
+    private void validateNotCookingOrMealOrder() {
         if (order == null) {
             return;
         }
@@ -69,6 +74,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
+        validateNotCookingOrMealOrder();
         this.tableGroup = null;
     }
 

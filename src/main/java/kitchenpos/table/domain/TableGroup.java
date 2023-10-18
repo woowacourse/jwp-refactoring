@@ -49,4 +49,10 @@ public class TableGroup {
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
+
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
 }
