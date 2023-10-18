@@ -11,19 +11,20 @@ import java.util.Objects;
 
 @Service
 public class ProductService {
+
     private final ProductRepository productRepository;
 
-    public ProductService(final ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(final Product product) {
+    public Product create(Product product) {
         if (product.getName().length() > 255) {
             throw new IllegalArgumentException();
         }
 
-        final BigDecimal price = product.getPrice();
+        BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) ||
                 (price.compareTo(BigDecimal.ZERO) < 0) ||
