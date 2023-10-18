@@ -5,6 +5,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,6 +64,16 @@ public class OrderTable {
     public void ungroup() {
         tableGroup = null;
         empty = false;
+    }
+
+    public void changeEmpty(boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+        if (orders.stream().anyMatch(Order::isCookingOrMeal)) {
+            throw new IllegalArgumentException();
+        }
+        this.empty = empty;
     }
 
     public void setTableGroup(TableGroup tableGroup) {

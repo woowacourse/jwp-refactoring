@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -50,10 +51,10 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 존재하지_않는_주문_테이블을_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(null);
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(1L, false);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable1))
+            assertThatThrownBy(() -> tableService.changeEmpty(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -69,8 +70,10 @@ class TableServiceTest extends IntegrationTest {
             orderTable1.setTableGroup(savedTableGroup);
             Long id = orderTableRepository.save(orderTable1).id();
 
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(id, true);
+
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(id, orderTable2))
+            assertThatThrownBy(() -> tableService.changeEmpty(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -78,12 +81,12 @@ class TableServiceTest extends IntegrationTest {
         void 조리중이거나_식사중인_테이블을_변경하면_예외가_발생한다() {
             // given
             OrderTable orderTable1 = new OrderTable(0, false);
-            OrderTable orderTable2 = new OrderTable(0, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             주문(savedOrderTable1, OrderStatus.COOKING, 맛있는_메뉴());
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(savedOrderTable1.id(), true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.id(), orderTable2))
+            assertThatThrownBy(() -> tableService.changeEmpty(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -91,11 +94,11 @@ class TableServiceTest extends IntegrationTest {
         void 주문_테이블_상태를_변경한다() {
             // given
             OrderTable orderTable1 = new OrderTable(0, true);
-            OrderTable orderTable2 = new OrderTable(null);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(savedOrderTable1.id(), false);
 
             // when
-            OrderTable result = tableService.changeEmpty(savedOrderTable1.id(), orderTable2);
+            OrderTable result = tableService.changeEmpty(command);
 
             // then
             assertThat(result.empty()).isFalse();

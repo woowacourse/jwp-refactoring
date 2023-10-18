@@ -54,7 +54,7 @@ class TableRestControllerTest extends ControllerTest {
         OrderTable orderTable1 = 주문_테이블();
         String request = objectMapper.writeValueAsString(orderTable1);
         OrderTable savedOrderTable1 = 주문_테이블(1L);
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(savedOrderTable1);
+        given(tableService.changeEmpty(any())).willReturn(savedOrderTable1);
         String response = objectMapper.writeValueAsString(savedOrderTable1);
 
         // when & then
