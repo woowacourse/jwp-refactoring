@@ -26,7 +26,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
-        final OrderTable orderTable = new OrderTable(null, null, orderTableRequest.getNumberOfGuest(), orderTableRequest.getEmpty());
+        final OrderTable orderTable = new OrderTable(null, orderTableRequest.getNumberOfGuest(), orderTableRequest.getEmpty());
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(savedOrderTable);
@@ -45,8 +45,8 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
         orderTable.changeEmptyStatus(orderTableRequest.getEmpty());
-        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         validateOrderTableStatus(orderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(savedOrderTable);
     }
@@ -60,10 +60,9 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
+        final OrderTable newOrderTable = new OrderTable(orderTable.getTableGroup(), orderTableRequest.getNumberOfGuest(), orderTableRequest.getEmpty());
 
-        orderTable.setNumberOfGuests(orderTableRequest.getNumberOfGuest());
-
-        final OrderTable savedOrder = orderTableRepository.save(orderTable);
+        final OrderTable savedOrder = orderTableRepository.save(newOrderTable);
 
         return OrderTableResponse.from(savedOrder);
     }

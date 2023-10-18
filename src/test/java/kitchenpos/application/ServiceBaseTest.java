@@ -5,6 +5,7 @@ import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,7 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 @ActiveProfiles("test")
 @Sql("/data.sql")
 public abstract class ServiceBaseTest {
-
 
     @Autowired
     protected ProductRepository productRepository;
@@ -27,6 +27,10 @@ public abstract class ServiceBaseTest {
 
     @Autowired
     protected OrderTableRepository orderTableRepository;
+
     @Autowired
     protected OrderRepository orderRepository;
+
+    @Autowired
+    protected TableGroupRepository tableGroupRepository;
 }

@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import kitchenpos.exception.IllegalOrderTableGuestNumberException;
-import kitchenpos.exception.InvalidTableGroupException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,6 +30,7 @@ public class OrderTable {
     }
 
     public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        validateGuestNumber(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -38,19 +38,7 @@ public class OrderTable {
     }
 
     public void changeEmptyStatus(final boolean empty) {
-        validateEmpty();
         this.empty = empty;
-    }
-
-    private void validateEmpty() {
-        if (tableGroup != null) {
-            throw new InvalidTableGroupException();
-        }
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        validateGuestNumber(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
     }
 
     private void validateGuestNumber(final int numberOfGuests) {

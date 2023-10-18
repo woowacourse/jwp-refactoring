@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +37,8 @@ class MenuGroupServiceTest extends ServiceBaseTest {
     @DisplayName("메뉴 그룹들을 조회할 수 있다.")
     void list() {
         //given
-        final MenuGroupRequest request1 = new MenuGroupRequest("오션 메뉴 그룹");
-        final MenuGroupRequest request2 = new MenuGroupRequest("동해 메뉴 그룹");
-        menuGroupService.create(request1);
-        menuGroupService.create(request2);
+        final MenuGroup menuGroup1 = menuGroupRepository.save(new MenuGroup("오션 메뉴 그룹"));
+        final MenuGroup menuGroup2 = menuGroupRepository.save(new MenuGroup("동해 메뉴 그룹"));
 
         //when
         final List<MenuGroupResponse> menuGroupResponses = menuGroupService.list();
@@ -47,8 +46,8 @@ class MenuGroupServiceTest extends ServiceBaseTest {
         //then
         assertAll(
                 () -> assertThat(menuGroupResponses).hasSize(2),
-                () -> assertThat(menuGroupResponses.get(0).getName()).isEqualTo(request1.getName()),
-                () -> assertThat(menuGroupResponses.get(1).getName()).isEqualTo(request2.getName())
+                () -> assertThat(menuGroupResponses.get(0).getName()).isEqualTo(menuGroup1.getName()),
+                () -> assertThat(menuGroupResponses.get(1).getName()).isEqualTo(menuGroup2.getName())
         );
     }
 }

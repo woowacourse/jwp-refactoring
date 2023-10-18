@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -22,7 +23,11 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
-    public TableGroupService(final TableGroupRepository tableGroupRepository, final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+    public TableGroupService(
+            final TableGroupRepository tableGroupRepository,
+            final OrderTableRepository orderTableRepository,
+            final OrderRepository orderRepository
+    ) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
@@ -30,9 +35,8 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final TableGroup tableGroup = new TableGroup();
         final List<OrderTable> orderTables = getOrderTables(tableGroupRequest);
-        tableGroup.initOrderTables(orderTables);
+        final TableGroup tableGroup = new TableGroup(orderTables);
         orderTables.stream().forEach(it -> it.setTableGroup(tableGroup));
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
@@ -59,7 +63,7 @@ public class TableGroupService {
                 .orElseThrow(TableGroupNotFoundException::new);
 
         orderRepository.findByOrderTableIn(tableGroup.getOrderTables()).stream()
-                .forEach(it -> it.validateOrderComplete());
+                .forEach(Order::validateOrderComplete);
 
         tableGroup.ungroup();
     }

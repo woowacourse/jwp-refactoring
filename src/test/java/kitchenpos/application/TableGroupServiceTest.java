@@ -15,6 +15,7 @@ import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.DuplicateCreateTableGroup;
 import kitchenpos.exception.IllegalOrderStatusException;
 import kitchenpos.exception.InvalidOrderTableException;
+import kitchenpos.exception.TableGroupNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,8 +45,8 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("테이블 단체 지정을 할 수 있다.")
     void create() {
         //given
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(0, true));
-        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(0, true));
+        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(0, false));
+        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(0, false));
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(savedOrderTable.getId()), new OrderTableIdRequest(savedOrderTable2.getId()));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
 
@@ -78,8 +79,8 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("지정 테이블은 모두 존재하여야 한다.")
     void createValidTable() {
         //given
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(0, true));
-        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(0, true));
+        tableService.create(new OrderTableRequest(0, true));
+        tableService.create(new OrderTableRequest(0, true));
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(999L), new OrderTableIdRequest(999L));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
 
@@ -93,7 +94,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("지정 테이블은 비어있어야 한다.")
     void createValidTableEmpty() {
         //given
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(5, false));
+        tableService.create(new OrderTableRequest(5, false));
         final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, false));
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(999L), new OrderTableIdRequest(savedOrderTable2.getId()));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
@@ -108,8 +109,8 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("이미 지정된 테이블은 단체 지정할 수 없다.")
     void createValidAlreadyGroupTable() {
         //given
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(10, true));
-        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, true));
+        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(10, false));
+        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, false));
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(savedOrderTable.getId()), new OrderTableIdRequest(savedOrderTable2.getId()));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
         tableGroupService.create(tableGroupRequest);
@@ -124,8 +125,8 @@ class TableGroupServiceTest extends ServiceBaseTest {
     @DisplayName("테이블 단체 지정을 해제할수 있다.")
     void ungroup() {
         //given
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(5, true));
-        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, true));
+        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(5, false));
+        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, false));
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(savedOrderTable.getId()), new OrderTableIdRequest(savedOrderTable2.getId()));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
@@ -134,12 +135,21 @@ class TableGroupServiceTest extends ServiceBaseTest {
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupResponse.getId()));
     }
 
+    @Test
+    @DisplayName("TableGroup이 없을 경우 해제할 수 없다.")
+    void ungroupValidTableGroup() {
+        //when&then
+        assertThatThrownBy(() -> tableGroupService.ungroup(999L))
+                .isInstanceOf(TableGroupNotFoundException.class)
+                .hasMessage("TableGroup을 찾을 수 없습니다.");
+    }
+
     @ParameterizedTest(name = "테이블 단체 지정을 해제시 상태가 요리, 식사이면 안된다.")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void ungroupValidTable(final OrderStatus orderStatus) {
         //given
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(5, true));
-        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, true));
+        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(5, false));
+        final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, false));
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(savedOrderTable.getId()), new OrderTableIdRequest(savedOrderTable2.getId()));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);

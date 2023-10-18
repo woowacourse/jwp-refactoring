@@ -28,16 +28,16 @@ public class TableGroup {
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
-        this(null);
     }
 
-    public TableGroup(final Long id) {
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, orderTables);
+    }
+
+    public TableGroup(final Long id, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         this.id = id;
         this.createdDate = LocalDateTime.now();
-    }
-
-    public void initOrderTables(final List<OrderTable> orderTables){
-        validateOrderTables(orderTables);
         this.orderTables = orderTables;
     }
 
@@ -47,7 +47,7 @@ public class TableGroup {
         }
 
         for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+            if (savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new DuplicateCreateTableGroup();
             }
         }
