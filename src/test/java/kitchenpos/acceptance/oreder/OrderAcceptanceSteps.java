@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderCreateRequest.OrderLineItemInfo;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -55,10 +56,8 @@ public class OrderAcceptanceSteps {
                 .extract();
     }
 
-    public static Order 주문_상태_변경_요청(OrderStatus orderStatus) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        return order;
+    public static OrderStatusChangeRequest 주문_상태_변경_요청(OrderStatus orderStatus) {
+        return new OrderStatusChangeRequest(orderStatus.name());
     }
 
     public static ExtractableResponse<Response> 주문_상태_변경_요청을_보낸다(Long 주문_ID, OrderStatus 주문_상태) {
