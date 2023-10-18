@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import static java.math.BigDecimal.valueOf;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -23,14 +22,14 @@ class ProductTest {
         @ValueSource(longs = {10, 50, 100, 1000, 10000})
         void 성공(Long price) {
             // when && then
-            assertThatNoException().isThrownBy(() -> new Product("상품", price));
+            assertThatNoException().isThrownBy(() -> new Product("상품", BigDecimal.valueOf(price)));
         }
 
         @ParameterizedTest
         @ValueSource(ints = {-100, -1})
         void 가격이_음수면_예외(int price) {
             // when && then
-            assertThatThrownBy(() -> new Product("상품", valueOf(price)))
+            assertThatThrownBy(() -> new Product("상품", BigDecimal.valueOf(price)))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 

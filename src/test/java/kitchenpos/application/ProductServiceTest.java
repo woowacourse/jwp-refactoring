@@ -54,9 +54,9 @@ class ProductServiceTest extends ServiceTest {
     void 모든_상품_조회() {
         // given
         List<Product> expected = new ArrayList<>();
-        expected.add(productRepository.save(new Product("고추바사삭", 10000L)));
-        expected.add(productRepository.save(new Product("뿌링클", 20000L)));
-        expected.add(productRepository.save(new Product("맛초킹", 3000L)));
+        expected.add(productRepository.save(new Product("고추바사삭", BigDecimal.valueOf(10000L))));
+        expected.add(productRepository.save(new Product("뿌링클", BigDecimal.valueOf(20000L))));
+        expected.add(productRepository.save(new Product("맛초킹", BigDecimal.valueOf(3000L))));
 
         // when
         List<Product> actual = productService.list();

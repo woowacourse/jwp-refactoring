@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Menu {
@@ -20,8 +22,9 @@ public class Menu {
     private Long id;
     private String name;
 
-    @Column(precision = 19, scale = 0)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
+
     private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -39,7 +42,7 @@ public class Menu {
         validate(price, menuProducts);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts.addAll(menuProducts);
     }
@@ -75,7 +78,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
