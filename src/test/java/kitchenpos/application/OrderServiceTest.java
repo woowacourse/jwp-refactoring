@@ -57,8 +57,11 @@ class OrderServiceTest {
     private OrderTableRepository orderTableRepository;
 
     private Menu noodle;
+
     private Menu potato;
+
     private OrderLineItem wooDong;
+
     private OrderLineItem frenchFries;
 
     @BeforeEach
