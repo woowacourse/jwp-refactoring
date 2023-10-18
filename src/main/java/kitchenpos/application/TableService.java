@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
-import kitchenpos.domain.OrderRepository;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -11,14 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(
-            OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository
-    ) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -39,22 +34,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.numberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.empty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
+    public OrderTable changeNumberOfGuests(ChangeOrderTableNumberOfGuestsCommand command) {
+        OrderTable savedOrderTable = orderTableRepository.getById(command.id());
+        savedOrderTable.changeNumberOfGuests(command.numberOfGuests());
         return orderTableRepository.save(savedOrderTable);
     }
 }

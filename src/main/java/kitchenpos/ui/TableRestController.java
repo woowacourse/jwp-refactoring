@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
 import kitchenpos.domain.OrderTable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,8 +54,9 @@ public class TableRestController {
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTable orderTable
     ) {
+        ChangeOrderTableNumberOfGuestsCommand command =
+                new ChangeOrderTableNumberOfGuestsCommand(orderTableId, orderTable.numberOfGuests());
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
-                ;
+                .body(tableService.changeNumberOfGuests(command));
     }
 }

@@ -3,15 +3,17 @@ package kitchenpos.application;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +43,7 @@ class TableServiceTest extends IntegrationTest {
         List<OrderTable> result = tableService.list();
 
         // then
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(result).hasSize(2),
                 () -> assertThat(result.get(0).id()).isEqualTo(savedOrderTable1.id()),
                 () -> assertThat(result.get(1).id()).isEqualTo(savedOrderTable2.id())
@@ -57,7 +59,7 @@ class TableServiceTest extends IntegrationTest {
             ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(1L, false);
 
             // when
-            BaseExceptionType exceptionType = Assertions.assertThrows(BaseException.class, () ->
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
                     tableService.changeEmpty(command)
             ).exceptionType();
 
@@ -119,22 +121,28 @@ class TableServiceTest extends IntegrationTest {
         void 손님_숫자가_0보다_작으면_예외가_발생한다() {
             // given
             OrderTable orderTable1 = new OrderTable(null, null, 0, false);
-            OrderTable orderTable2 = new OrderTable(null, null, -1, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+            ChangeOrderTableNumberOfGuestsCommand command =
+                    new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), -1);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.id(), orderTable2))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 존재하지_않는_테이블을_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(null, null, 2, false);
+            ChangeOrderTableNumberOfGuestsCommand command =
+                    new ChangeOrderTableNumberOfGuestsCommand(1L, 2);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable1))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeNumberOfGuests(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(ORDER_TABLE_NOT_FOUND);
         }
 
         @Test
@@ -142,10 +150,11 @@ class TableServiceTest extends IntegrationTest {
             // given
             OrderTable orderTable1 = new OrderTable(null, null, 0, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            OrderTable orderTable2 = new OrderTable(null, null, 2, false);
+            ChangeOrderTableNumberOfGuestsCommand command =
+                    new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), 2);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.id(), orderTable2))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(command))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -153,11 +162,12 @@ class TableServiceTest extends IntegrationTest {
         void 손님_숫자를_변경한다() {
             // given
             OrderTable orderTable1 = new OrderTable(null, null, 0, false);
-            OrderTable orderTable2 = new OrderTable(null, null, 2, false);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+            ChangeOrderTableNumberOfGuestsCommand command =
+                    new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), 2);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(savedOrderTable1.id(), orderTable2);
+            OrderTable result = tableService.changeNumberOfGuests(command);
 
             // then
             assertThat(result.numberOfGuests()).isEqualTo(2);
