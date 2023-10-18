@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.TableGroupExceptionType.TABLE_GROUP_NOT_FOUND;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +12,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.exception.TableGroupException;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
@@ -35,14 +38,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupDto create(final TableGroupDto tableGroupDto) {
         final List<OrderTableDto> orderTableDtos = tableGroupDto.getOrderTables();
-        final List<Long> orderTableIds = orderTableDtos.stream()
-            .map(OrderTableDto::getId)
-            .collect(Collectors.toList());
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableDtos.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        final List<OrderTable> savedOrderTables = findAndValidateOrderTables(orderTableDtos);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
@@ -50,24 +46,35 @@ public class TableGroupService {
         return TableGroupDto.from(savedTableGroup);
     }
 
+    private List<OrderTable> findAndValidateOrderTables(final List<OrderTableDto> orderTableDtos) {
+        final List<Long> orderTableIds = orderTableDtos.stream()
+            .map(OrderTableDto::getId)
+            .collect(Collectors.toList());
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        if (orderTableDtos.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
+        return savedOrderTables;
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(
-            tableGroupId);
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+            .orElseThrow(() -> new TableGroupException(TABLE_GROUP_NOT_FOUND));
+        //TODO : Order Repository 전환 후 수정하기
+        validateContainedTablesOrderStatusIsNotCompletitino(tableGroup);
+        tableGroup.ungroup();
+        tableGroupRepository.delete(tableGroup);
+    }
 
-        final List<Long> orderTableIds = orderTables.stream()
+    private void validateContainedTablesOrderStatusIsNotCompletitino(final TableGroup tableGroup) {
+        final List<Long> orderTableIds = tableGroup.getOrderTables()
+            .stream()
             .map(OrderTable::getId)
             .collect(Collectors.toList());
-
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
         }
     }
 }

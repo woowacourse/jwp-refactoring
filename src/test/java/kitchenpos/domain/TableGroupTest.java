@@ -4,7 +4,11 @@ import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
 import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
 import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.List;
 import kitchenpos.domain.exception.TableGroupException;
@@ -43,5 +47,22 @@ class TableGroupTest {
         assertThatThrownBy(() -> new TableGroup(now(), List.of(invalidTable, validTable)))
             .isInstanceOf(TableGroupException.class)
             .hasMessage(ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED.getMessage());
+    }
+
+    @Test
+    @DisplayName("table Group에 속해 있는 table들의 값을 변경한다.")
+    void ungroupTable() {
+        final OrderTable validTable1 = 비어있는_주문_테이블();
+        final OrderTable validTable2 = 비어있는_주문_테이블();
+        final TableGroup tableGroup = new TableGroup(now(), List.of(validTable1, validTable2));
+
+        tableGroup.ungroup();
+
+        assertAll(
+            () -> assertThat(tableGroup.getOrderTables())
+                .isEmpty(),
+            () -> assertFalse(validTable1.isEmpty()),
+            () -> assertFalse(validTable2.isEmpty())
+        );
     }
 }

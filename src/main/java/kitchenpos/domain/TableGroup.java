@@ -76,4 +76,12 @@ public class TableGroup {
         }
         orderTables.addAll(savedOrderTables);
     }
+
+    public void ungroup() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(null);
+            orderTable.setEmpty(false);
+        }
+        orderTables.clear();
+    }
 }
