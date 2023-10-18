@@ -28,15 +28,15 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(ChangeOrderTableEmptyCommand command) {
-        OrderTable savedOrderTable = orderTableRepository.getById(command.id());
-        savedOrderTable.changeEmpty(command.empty());
-        return orderTableRepository.save(savedOrderTable);
+        OrderTable orderTable = orderTableRepository.getById(command.id());
+        orderTable.changeEmpty(command.empty());
+        return orderTableRepository.save(orderTable);
     }
 
     @Transactional
     public OrderTable changeNumberOfGuests(ChangeOrderTableNumberOfGuestsCommand command) {
-        OrderTable savedOrderTable = orderTableRepository.getById(command.id());
-        savedOrderTable.changeNumberOfGuests(command.numberOfGuests());
-        return orderTableRepository.save(savedOrderTable);
+        OrderTable orderTable = orderTableRepository.getById(command.id());
+        orderTable.changeNumberOfGuests(command.numberOfGuests());
+        return orderTableRepository.save(orderTable);
     }
 }
