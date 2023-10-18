@@ -38,10 +38,10 @@ public class MenuServiceException extends KitchenPosException {
 
     public static class NotExistsProductException extends MenuServiceException {
 
-        private static final String NOT_EXISTS_PRODUCT_MESSAGE = "전달받은 상품의 id가 없습니다. \nproduct id: ";
+        private static final String NOT_EXISTS_PRODUCT_MESSAGE = "전달받은 상품 중 존재하지 않는 상품이 있습니다.";
 
-        public NotExistsProductException(final Long productId) {
-            super(NOT_EXISTS_PRODUCT_MESSAGE + productId);
+        public NotExistsProductException() {
+            super(NOT_EXISTS_PRODUCT_MESSAGE);
         }
     }
 }

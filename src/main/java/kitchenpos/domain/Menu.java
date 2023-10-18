@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public class Menu {
     private Price price;
     @ManyToOne
     private MenuGroup menuGroup;
-    @OneToMany
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts;
 
     public Menu() {
@@ -35,16 +36,17 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+        this.menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
     }
 
     public static Menu of(final String name,
-                       final Price price,
+                       final BigDecimal price,
                        final MenuGroup menuGroup,
                        final List<MenuProduct> menuProducts) {
+        Price menuPrice = Price.from(price);
+        validateTotalPrice(menuPrice, menuProducts);
 
-        validateTotalPrice(price, menuProducts);
-
-        return new Menu(name, price, menuGroup, menuProducts);
+        return new Menu(name, menuPrice, menuGroup, menuProducts);
     }
 
     private static void validateTotalPrice(Price price, List<MenuProduct> menuProducts) {
@@ -97,5 +99,6 @@ public class Menu {
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+        this.menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
     }
 }
