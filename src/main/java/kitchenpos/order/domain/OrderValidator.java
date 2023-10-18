@@ -2,7 +2,7 @@ package kitchenpos.order.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Component;
@@ -11,11 +11,11 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class OrderValidator {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderTableDao orderTableDao;
 
-    public OrderValidator(MenuDao menuDao, OrderTableDao orderTableDao) {
-        this.menuDao = menuDao;
+    public OrderValidator(MenuRepository menuRepository, OrderTableDao orderTableDao) {
+        this.menuRepository = menuRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -26,7 +26,7 @@ public class OrderValidator {
         List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new OrderException("주문 메뉴중 존재하지 않는 메뉴가 있습니다.");
         }
         OrderTable orderTable = orderTableDao.findById(orderTableId)

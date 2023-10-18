@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.dao.MenuDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderException;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderValidator;
@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderValidatorTest {
 
-    private final MenuDao menuDao = mock(MenuDao.class);
+    private final MenuRepository menuRepository = mock(MenuRepository.class);
     private final OrderTableDao orderTableDao = mock(OrderTableDao.class);
-    private final OrderValidator orderValidator = new OrderValidator(menuDao, orderTableDao);
+    private final OrderValidator orderValidator = new OrderValidator(menuRepository, orderTableDao);
 
     @Nested
     class 주문_생성_시 {
@@ -43,7 +43,7 @@ class OrderValidatorTest {
         @Test
         void 주문_목록의_상품_ID들이_실제_존재하는_메뉴_ID와_일치하지_않는다면_오류() {
             // given
-            given(menuDao.countByIdIn(List.of(1L)))
+            given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(0L);
 
             // when & then
@@ -58,7 +58,7 @@ class OrderValidatorTest {
         @Test
         void 주문을_한_테이블이_비어있으면_예외() {
             // given
-            given(menuDao.countByIdIn(List.of(1L)))
+            given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(1L);
             given(orderTableDao.findById(1L))
                     .willReturn(Optional.of(new OrderTable(10, true)));
@@ -75,7 +75,7 @@ class OrderValidatorTest {
         @Test
         void 주문_목록이_비어있지_않고_주문을_한_테이블이_비어있지_않은_경우_주문할_수_있다() {
             // given
-            given(menuDao.countByIdIn(List.of(1L)))
+            given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(1L);
             given(orderTableDao.findById(1L))
                     .willReturn(Optional.of(new OrderTable(10, false)));

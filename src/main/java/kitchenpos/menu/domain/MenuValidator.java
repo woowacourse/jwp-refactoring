@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Component;
@@ -12,16 +11,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class MenuValidator {
 
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductDao productDao;
 
-    public MenuValidator(MenuGroupDao menuGroupDao, ProductDao productDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuValidator(MenuGroupRepository menuGroupRepository, ProductDao productDao) {
+        this.menuGroupRepository = menuGroupRepository;
         this.productDao = productDao;
     }
 
     public void validateCreate(BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new InvalidMenuException("메뉴는 메뉴 그룹에 속해야 합니다.");
         }
         if (menuProducts.isEmpty()) {

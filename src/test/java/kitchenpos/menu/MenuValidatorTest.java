@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.dao.MenuGroupDao;
 import kitchenpos.menu.domain.InvalidMenuException;
+import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.product.dao.ProductDao;
@@ -24,14 +24,14 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class MenuValidatorTest {
 
-    private final MenuGroupDao menuGroupDao = mock(MenuGroupDao.class);
+    private final MenuGroupRepository menuGroupRepository = mock(MenuGroupRepository.class);
     private final ProductDao productDao = mock(ProductDao.class);
-    private final MenuValidator menuValidator = new MenuValidator(menuGroupDao, productDao);
+    private final MenuValidator menuValidator = new MenuValidator(menuGroupRepository, productDao);
 
     @Test
     void 메뉴가_메뉴_그룹에_속하지_않는다면_예외() {
         // given
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(false);
 
         // when & then
@@ -46,7 +46,7 @@ class MenuValidatorTest {
     @Test
     void 메뉴에_속한_상품이_없으면_예외() {
         // given
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
 
         // when & then
@@ -61,7 +61,7 @@ class MenuValidatorTest {
     @Test
     void 메뉴의_가격이_0원_미만이라면_예외() {
         // given
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
         given(productDao.findById(1L))
                 .willReturn(Optional.of(
@@ -80,7 +80,7 @@ class MenuValidatorTest {
     @Test
     void 메뉴의_가격이_메뉴에_속한_상품들의_합보다_크면_예외() {
         // given
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
         given(productDao.findById(1L))
                 .willReturn(Optional.of(
@@ -99,7 +99,7 @@ class MenuValidatorTest {
     @Test
     void 예외_상황이_없는_경우() {
         // given
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
         given(productDao.findById(1L))
                 .willReturn(Optional.of(
