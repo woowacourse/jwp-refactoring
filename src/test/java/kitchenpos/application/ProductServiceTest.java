@@ -7,8 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.fakedao.InMemoryProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.Product.Product;
 import kitchenpos.domain.ProductFactory;
+import kitchenpos.ui.request.ProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class ProductServiceTest {
             final var productService = new ProductService(fakeProductDao);
             final var validName = "validName";
             final var validPrice = BigDecimal.valueOf(1000);
-            final var productWithValidNameAndPrice = ProductFactory.createProductOf(validName, validPrice);
+            final var productWithValidNameAndPrice = new ProductCreateRequest(validName, validPrice);
 
             // when
             final ThrowingSupplier<Product> throwingSupplier = () -> productService.create(productWithValidNameAndPrice);
