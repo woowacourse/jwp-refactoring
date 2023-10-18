@@ -150,8 +150,8 @@ class TableGroupServiceTest extends IntegrationTest {
                 List.of(unableToSplit, 빈_테이블_저장(tableService::create)));
 
         // when
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
-        final Menu menu = 메뉴_저장(menuService::create, new BigDecimal("5000"), List.of(product));
+        final Product product = 상품_저장(productService::create, BigDecimal.valueOf(10000));
+        final Menu menu = 메뉴_저장(menuService::create, 1L, BigDecimal.valueOf(5000), product);
         orderService.create(주문_생성(unableToSplit, OrderStatus.valueOf(orderStatus), List.of(menu)));
 
         // then

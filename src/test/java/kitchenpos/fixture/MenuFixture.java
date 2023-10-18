@@ -3,7 +3,6 @@ package kitchenpos.fixture;
 import static kitchenpos.fixture.ProductFixture.상품_저장;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import kitchenpos.domain.Menu;
@@ -14,19 +13,11 @@ public class MenuFixture {
 
     public static Menu 메뉴_저장(
             final Function<Menu, Menu> persistable,
+            final Long menuGroupId,
             final BigDecimal price,
-            final List<Product> products
+            final Product product
     ) {
-        Menu menu = new Menu();
-        menu.setName("할인 이벤트 치킨");
-        menu.setPrice(price);
-        menu.setMenuGroupId(1L);
-
-        products.forEach(product -> menu.setMenuProducts(List.of(메뉴_상품_생성(product))));
-        if (products.isEmpty()) {
-            menu.setMenuProducts(Collections.emptyList());
-        }
-
+        Menu menu = new Menu("할인치킨", price, menuGroupId, List.of(메뉴_상품_생성(product)));
         return persistable.apply(menu);
     }
 
@@ -42,12 +33,8 @@ public class MenuFixture {
             final Function<Product, Product> productPersistable
     ) {
         final Product product = 상품_저장(productPersistable);
-        Menu menu = new Menu();
-        menu.setName("할인 이벤트 치킨");
-        menu.setPrice(new BigDecimal("10000"));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
-        return persistable.apply(menu);
+
+        return 메뉴_저장(persistable::apply, 1L, BigDecimal.valueOf(5000), product);
     }
 
 }

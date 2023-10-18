@@ -10,11 +10,13 @@ import static kitchenpos.fixture.OrderTableFixture.주문_테이블_저장;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixture.OrderTableFixture;
@@ -91,8 +93,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable table = OrderTableFixture.주문_테이블_저장(tableService::create);
         final Menu actualMenu = 메뉴_저장(menuService::create, productService::create);
-        final Menu fakeMenu = new Menu();
-        fakeMenu.setId(-1L);
+        final Menu fakeMenu = new Menu(-1L, "x", BigDecimal.ONE, 1L, List.of(new MenuProduct()));
 
         // when
         final Order order = 주문_생성(
@@ -166,7 +167,7 @@ class OrderServiceTest extends IntegrationTest {
         final Order order = orderService.create(주문_생성(주문_테이블_저장(tableService::create),
                 List.of(메뉴_저장(menuService::create, productService::create))));
         order.setOrderStatus(COMPLETION.name());
-        
+
         // when
         final Long orderId = order.getId();
         final Order completedOrder = orderService.changeOrderStatus(orderId, order);
