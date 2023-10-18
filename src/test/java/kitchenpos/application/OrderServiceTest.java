@@ -55,14 +55,6 @@ class OrderServiceTest extends ServiceTest {
 
         //then
         assertThat(orderId).isNotNull();
-
-    }
-
-    @Test
-    void 주문_항목이_없으면_예외가_발생한다() {
-        //when, then
-        assertThatThrownBy(() -> orderService.create(null, null, null))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

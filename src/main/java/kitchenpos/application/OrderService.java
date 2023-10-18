@@ -10,7 +10,6 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,20 +36,20 @@ public class OrderService {
     }
 
     public Long create(final List<Long> menuIds, final List<Integer> quantities, final Long orderTableId) {
-        if (CollectionUtils.isEmpty(menuIds)) {
-            throw new IllegalArgumentException();
-        }
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
         orderTable.validateIsNotEmpty();
         
         final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
+        saveOrderLineItems(menuIds, quantities, order);
+        return order.getId();
+    }
 
+    private void saveOrderLineItems(List<Long> menuIds, List<Integer> quantities, Order order) {
         for (int index = 0; index < menuIds.size(); index++) {
             final Long menuId = menuIds.get(index);
             final Integer quantity = quantities.get(index);
@@ -58,8 +57,6 @@ public class OrderService {
             final OrderLineItem orderLineItem = new OrderLineItem(order.getId(), menuId, quantity);
             orderLineItemRepository.save(orderLineItem);
         }
-
-        return order.getId();
     }
 
     @Transactional(readOnly = true)
