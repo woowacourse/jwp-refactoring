@@ -34,7 +34,7 @@ class MenuGroupServiceTest {
         MenuGroup 메뉴_그룹1 = menuGroupService.create(새로운_메뉴_그룹("메뉴 그룹1"));
         MenuGroup 메뉴_그룹2 = menuGroupService.create(새로운_메뉴_그룹("메뉴 그룹2"));
 
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroup> actual = menuGroupService.readAll();
 
         assertThat(actual).hasSize(2)
                 .usingRecursiveFieldByFieldElementComparator()
