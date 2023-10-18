@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
@@ -99,19 +98,13 @@ public class ControllerTest {
     protected TableGroup 테이블_그룹() {
         OrderTable orderTable1 = new OrderTable(1L);
         OrderTable orderTable2 = new OrderTable(2L);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
-        return tableGroup;
+        return new TableGroup(List.of(orderTable1, orderTable2));
     }
 
     protected TableGroup 테이블_그룹(Long id) {
         OrderTable orderTable1 = new OrderTable(1L);
         OrderTable orderTable2 = new OrderTable(2L);
-        TableGroup tableGroup = new TableGroup(id, null, new ArrayList<>());
-        tableGroup.addOrderTable(orderTable1);
-        tableGroup.addOrderTable(orderTable2);
-        return tableGroup;
+        return new TableGroup(id, null, List.of(orderTable1, orderTable2));
     }
 
     protected OrderTable 주문_테이블() {

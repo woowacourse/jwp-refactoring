@@ -18,18 +18,10 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends IntegrationTest {
-
-    private TableGroup tableGroup;
-
-    @BeforeEach
-    void setUp() {
-        tableGroup = new TableGroup();
-    }
 
     @Test
     void 주문_테이블들이_null이면_예외가_발생한다() {
@@ -140,9 +132,7 @@ class TableGroupServiceTest extends IntegrationTest {
                 // given
                 OrderTable orderTable1 = new OrderTable(0, false);
                 OrderTable orderTable2 = new OrderTable(0, true);
-                TableGroup tableGroup = new TableGroup();
-                tableGroup.addOrderTable(orderTable1);
-                tableGroup.addOrderTable(orderTable2);
+                TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
                 TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
                 Menu 맛있는_메뉴 = 맛있는_메뉴();

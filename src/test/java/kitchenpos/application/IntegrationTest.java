@@ -85,8 +85,7 @@ public class IntegrationTest {
     }
 
     protected TableGroup 테이블_그룹(OrderTable... 주문_테이블들) {
-        TableGroup tableGroup = new TableGroup();
-        Arrays.stream(주문_테이블들).forEach(tableGroup::addOrderTable);
+        TableGroup tableGroup = new TableGroup(Arrays.asList(주문_테이블들));
         return tableGroupRepository.save(tableGroup);
     }
 

@@ -63,9 +63,7 @@ class TableServiceTest extends IntegrationTest {
             OrderTable orderTable1 = new OrderTable(0, true);
             OrderTable orderTable2 = new OrderTable(0, true);
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.addOrderTable(orderTable1);
-            tableGroup.addOrderTable(orderTable2);
+            TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
             TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
             orderTable1.setTableGroup(savedTableGroup);

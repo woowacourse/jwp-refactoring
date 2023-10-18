@@ -46,9 +46,8 @@ public class TableGroupService {
             }
         }
 
-        TableGroup tableGroup = new TableGroup();
         savedOrderTables.forEach(it -> it.setEmpty(false));
-        savedOrderTables.forEach(tableGroup::addOrderTable);
+        TableGroup tableGroup = new TableGroup(savedOrderTables);
         return tableGroupRepository.save(tableGroup);
     }
 

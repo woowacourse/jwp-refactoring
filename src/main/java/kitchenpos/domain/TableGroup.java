@@ -5,7 +5,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,11 +26,15 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = ALL)
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
-        this(null, LocalDateTime.now(), new ArrayList<>());
+    protected TableGroup() {
+    }
+
+    public TableGroup(List<OrderTable> orderTables) {
+        this(null, LocalDateTime.now(), orderTables);
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        orderTables.forEach(it -> it.setTableGroup(this));
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -42,11 +45,6 @@ public class TableGroup {
             throw new TableGroupException(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
         }
         orderTables.forEach(OrderTable::ungroup);
-    }
-
-    public void addOrderTable(OrderTable orderTable) {
-        orderTables.add(orderTable);
-        orderTable.setTableGroup(this);
     }
 
     public Long id() {
