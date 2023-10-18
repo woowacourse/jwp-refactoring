@@ -17,7 +17,7 @@ class TableQueryServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("[SUCCESS] 전체 테이블 목록을 조회한다.")
@@ -36,7 +36,7 @@ class TableQueryServiceTest extends ApplicationTestConfig {
             final OrderTable actualOrderTable = actual.get(0);
 
             softly.assertThat(actualOrderTable.getId()).isEqualTo(expected.getId());
-            softly.assertThat(actualOrderTable.getTableGroupId()).isEqualTo(expected.getTableGroupId());
+            softly.assertThat(actualOrderTable.getTableGroup()).isEqualTo(expected.getTableGroup());
             softly.assertThat(actualOrderTable.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
             softly.assertThat(actualOrderTable.isEmpty()).isEqualTo(expected.isEmpty());
         });
