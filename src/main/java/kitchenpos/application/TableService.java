@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.application.exception.OrderTableNotFoundException;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
@@ -16,30 +16,30 @@ import java.util.List;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTable create(final CreateOrderTableRequest request) {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
 
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
-        return orderTableDao.findAll();
+        return orderTableRepository.findAll();
     }
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest request) {
-        final OrderTable persistOrderTable = orderTableDao.findById(orderTableId)
-                                                          .orElseThrow(OrderTableNotFoundException::new);
-        final List<Order> orders = orderDao.findAllByOrderTableId(orderTableId);
+        final OrderTable persistOrderTable = orderTableRepository.findById(orderTableId)
+                                                                 .orElseThrow(OrderTableNotFoundException::new);
+        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
         persistOrderTable.changeEmptyStatus(orders, request.isEmpty());
 
         return persistOrderTable;
@@ -50,8 +50,8 @@ public class TableService {
             final Long orderTableId,
             final UpdateOrderTableNumberOfGuestsRequest request
     ) {
-        final OrderTable persistOrderTable = orderTableDao.findById(orderTableId)
-                                                          .orElseThrow(OrderTableNotFoundException::new);
+        final OrderTable persistOrderTable = orderTableRepository.findById(orderTableId)
+                                                                 .orElseThrow(OrderTableNotFoundException::new);
 
         persistOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 

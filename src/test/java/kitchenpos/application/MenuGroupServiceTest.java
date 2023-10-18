@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.config.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.exception.InvalidNameException;
 import kitchenpos.ui.dto.request.CreateMenuGroupRequest;
@@ -21,7 +21,7 @@ class MenuGroupServiceTest {
     MenuGroupService menuGroupService;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Test
     void create_메서드는_menuGroup을_전달하면_menuGroup을_저장하고_반환한다() {
@@ -52,7 +52,7 @@ class MenuGroupServiceTest {
     void list_메서드는_등록한_모든_menuGroup을_반환한다() {
         // given
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        menuGroupDao.save(menuGroup);
+        menuGroupRepository.save(menuGroup);
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();

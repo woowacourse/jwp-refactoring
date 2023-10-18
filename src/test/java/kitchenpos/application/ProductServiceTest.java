@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.config.ServiceTest;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.CreateProductRequest;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest {
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productDao;
 
     @Autowired
     ProductService productService;

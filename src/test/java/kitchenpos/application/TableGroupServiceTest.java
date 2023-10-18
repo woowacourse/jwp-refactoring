@@ -10,12 +10,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.config.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -37,22 +37,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest {
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Autowired
-    TableGroupDao tableGroupDao;
+    TableGroupRepository tableGroupRepository;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Autowired
     TableGroupService tableGroupService;
@@ -60,8 +60,8 @@ class TableGroupServiceTest {
     @Test
     void create_메서드는_tableGroup을_전달하면_tableGroup을_저장하고_반환한다() {
         // given
-        final OrderTable persistOrderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable persistOrderTable2 = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable persistOrderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, true));
         final List<CreateOrderGroupOrderTableRequest> createOrderGroupOrderTableRequests = List.of(
                 new CreateOrderGroupOrderTableRequest(persistOrderTable1.getId()),
                 new CreateOrderGroupOrderTableRequest(persistOrderTable2.getId())
@@ -88,7 +88,7 @@ class TableGroupServiceTest {
     @Test
     void create_메서드는_tableGroup이_하나인_tableGroup을_전달하면_예외가_발생한다() {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, true));
         final List<CreateOrderGroupOrderTableRequest> createOrderGroupOrderTableRequests = List.of(
                 new CreateOrderGroupOrderTableRequest(persistOrderTable.getId())
         );
@@ -102,8 +102,8 @@ class TableGroupServiceTest {
     @Test
     void create_메서드는_tableGroup이_비어있지_않은_tableGroup을_전달하면_예외가_발생한다() {
         // given
-        final OrderTable persistOrderTable1 = orderTableDao.save(new OrderTable(0, false));
-        final OrderTable persistOrderTable2 = orderTableDao.save(new OrderTable(0, false));
+        final OrderTable persistOrderTable1 = orderTableRepository.save(new OrderTable(0, false));
+        final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, false));
         final List<CreateOrderGroupOrderTableRequest> createOrderGroupOrderTableRequests = List.of(
                 new CreateOrderGroupOrderTableRequest(persistOrderTable1.getId()),
                 new CreateOrderGroupOrderTableRequest(persistOrderTable2.getId())
@@ -118,12 +118,12 @@ class TableGroupServiceTest {
     @Test
     void ungroup_메서드는_지정한_tableGroup의_id의_그룹을_해제한다() {
         // given
-        final OrderTable persistOrderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable persistOrderTable2 = orderTableDao.save(new OrderTable(0, true));
-        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final OrderTable persistOrderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, true));
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu persistMenu = menuDao.save(Menu.of(
+        final Menu persistMenu = menuRepository.save(Menu.of(
                 "메뉴",
                 BigDecimal.TEN,
                 List.of(persistMenuProduct),
@@ -143,16 +143,16 @@ class TableGroupServiceTest {
                 LocalDateTime.now().minusHours(3),
                 List.of(persistOrderLineItem2)
         );
-        orderDao.save(order1);
-        orderDao.save(order2);
+        orderRepository.save(order1);
+        orderRepository.save(order2);
         final TableGroup tableGroup = new TableGroup(List.of(persistOrderTable1, persistOrderTable2));
-        final TableGroup persistTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup persistTableGroup = tableGroupRepository.save(tableGroup);
 
         // when
         tableGroupService.ungroup(persistTableGroup.getId());
 
         // then
-        final Optional<TableGroup> actual = tableGroupDao.findById(persistTableGroup.getId());
+        final Optional<TableGroup> actual = tableGroupRepository.findById(persistTableGroup.getId());
 
         assertAll(
                 () -> assertThat(actual).isPresent(),
@@ -165,12 +165,12 @@ class TableGroupServiceTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void upgroup_메서드는_orderTable의_order의_상태가_COMPLETION이_아닌_tableGroup을_전달하면_예외가_발생한다(final String invalidOrderStatus) {
         // given
-        final OrderTable persistOrderTable1 = orderTableDao.save(new OrderTable(0, true));
-        final OrderTable persistOrderTable2 = orderTableDao.save(new OrderTable(0, true));
-        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final OrderTable persistOrderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable persistOrderTable2 = orderTableRepository.save(new OrderTable(0, true));
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu persistMenu = menuDao.save(Menu.of(
+        final Menu persistMenu = menuRepository.save(Menu.of(
                 "메뉴",
                 BigDecimal.TEN,
                 List.of(persistMenuProduct),
@@ -191,15 +191,15 @@ class TableGroupServiceTest {
                 LocalDateTime.now().minusHours(3),
                 List.of(persistOrderLineItem2)
         );
-        orderDao.save(order1);
-        orderDao.save(order2);
-        final TableGroup persistTableGroup = tableGroupDao.save(
+        orderRepository.save(order1);
+        orderRepository.save(order2);
+        final TableGroup persistTableGroup = tableGroupRepository.save(
                 new TableGroup(List.of(persistOrderTable1, persistOrderTable2))
         );
         persistOrderTable1.group(persistTableGroup);
         persistOrderTable2.group(persistTableGroup);
-        orderTableDao.save(persistOrderTable1);
-        orderTableDao.save(persistOrderTable2);
+        orderTableRepository.save(persistOrderTable1);
+        orderTableRepository.save(persistOrderTable2);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(persistTableGroup.getId()))

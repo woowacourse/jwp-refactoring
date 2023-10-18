@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.CreateProductRequest;
 import org.springframework.stereotype.Service;
@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productDao;
 
-    public ProductService(final ProductDao productDao) {
+    public ProductService(final ProductRepository productDao) {
         this.productDao = productDao;
     }
 

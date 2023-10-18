@@ -1,10 +1,10 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import java.util.List;
 import kitchenpos.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderDao extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAll();
 

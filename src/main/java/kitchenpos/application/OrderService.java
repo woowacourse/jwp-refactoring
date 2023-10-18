@@ -6,9 +6,9 @@ import java.util.List;
 import kitchenpos.application.exception.MenuNotFoundException;
 import kitchenpos.application.exception.OrderNotFoundException;
 import kitchenpos.application.exception.OrderTableNotFoundException;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -23,36 +23,36 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
 
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderTableDao orderTableDao
+            final MenuRepository menuRepository,
+            final OrderRepository orderRepository,
+            final OrderTableRepository orderTableRepository
     ) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final CreateOrderRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
-                                                   .orElseThrow(OrderTableNotFoundException::new);
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+                                                          .orElseThrow(OrderTableNotFoundException::new);
         final List<OrderLineItem> orderLineItems = findOrderLineItems(request);
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
 
-        return orderDao.save(order);
+        return orderRepository.save(order);
     }
 
     private List<OrderLineItem> findOrderLineItems(final CreateOrderRequest request) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (final CreateOrderLineItemRequest orderLineItemRequest : request.getOrderLineItems()) {
-            final Menu menu = menuDao.findById(orderLineItemRequest.getMenuId())
-                                     .orElseThrow(MenuNotFoundException::new);
+            final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                                            .orElseThrow(MenuNotFoundException::new);
 
             orderLineItems.add(new OrderLineItem(menu, orderLineItemRequest.getQuantity()));
         }
@@ -61,13 +61,13 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        return orderDao.findAll();
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final UpdateOrderStatusRequest request) {
-        final Order persistOrder = orderDao.findById(orderId)
-                                           .orElseThrow(OrderNotFoundException::new);
+        final Order persistOrder = orderRepository.findById(orderId)
+                                                  .orElseThrow(OrderNotFoundException::new);
         persistOrder.updateOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
         return persistOrder;

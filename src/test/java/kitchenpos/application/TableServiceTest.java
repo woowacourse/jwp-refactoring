@@ -8,12 +8,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.config.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -35,22 +35,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest {
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Autowired
-    TableGroupDao tableGroupDao;
+    TableGroupRepository tableGroupRepository;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productDao;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Autowired
     TableService tableService;
@@ -70,7 +70,7 @@ class TableServiceTest {
     @Test
     void list_메서드는_저장한_모든_orderTable을_반환한다() {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
 
         // when
         final List<OrderTable> actual = tableService.list();
@@ -85,7 +85,7 @@ class TableServiceTest {
     @Test
     void changeEmpty_메서드는_변경할_orderTableId와_변경한_값을_가진_orderTable을_전달하면_empty를_변경한다() {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, true));
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, true));
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
 
         // when
@@ -109,7 +109,7 @@ class TableServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_메서드는_변경할_orderTableId의_orderStatu가_COMPLETION이_아니면_예외가_발생한다(final String invalidOrderStatus) {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu menu = Menu.of(
@@ -118,8 +118,8 @@ class TableServiceTest {
                 List.of(persistMenuProduct),
                 persistMenuGroup
         );
-        final Menu persistMenu = menuDao.save(menu);
-        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final Menu persistMenu = menuRepository.save(menu);
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
         final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
         final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
         final Order order = new Order(
@@ -128,7 +128,7 @@ class TableServiceTest {
                 LocalDateTime.now().minusHours(3),
                 List.of(orderLineItem)
         );
-        orderDao.save(order);
+        orderRepository.save(order);
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
 
         // when & then
@@ -139,7 +139,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_메서드는_변경할_orderTableId와_변경할_값을_가진_orderTable을_전달하면_numberOfGuests를_변경한다() {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
         final UpdateOrderTableNumberOfGuestsRequest request = new UpdateOrderTableNumberOfGuestsRequest(1);
 
         // when
@@ -153,7 +153,7 @@ class TableServiceTest {
     @ValueSource(ints = {-1, -2, -3})
     void changeNumberOfGuests_메서드는_0_이하의_numberOfGuests를_전달하면_예외가_발생한다(final int invalidNumberOfGuests) {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(new OrderTable(0, false));
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
         final UpdateOrderTableNumberOfGuestsRequest invalidRequest =
                 new UpdateOrderTableNumberOfGuestsRequest(invalidNumberOfGuests);
 
