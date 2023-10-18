@@ -8,24 +8,24 @@ import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
-public class OrderTables {
+public class GroupedOrderTables {
 
     private static final int MIN_ORDER_TABLE_SIZE = 2;
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
-    protected OrderTables() {
+    protected GroupedOrderTables() {
     }
 
-    private OrderTables(List<OrderTable> orderTables) {
+    private GroupedOrderTables(List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 
-    public static OrderTables from(List<OrderTable> orderTables) {
+    public static GroupedOrderTables from(List<OrderTable> orderTables) {
         validate(orderTables);
 
-        return new OrderTables(orderTables);
+        return new GroupedOrderTables(orderTables);
     }
 
     private static void validate(List<OrderTable> orderTables) {

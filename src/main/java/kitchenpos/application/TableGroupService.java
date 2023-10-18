@@ -35,7 +35,7 @@ public class TableGroupService {
 
         validateOrderTableSize(orderTableIds, orderTables);
 
-        TableGroup tableGroup = TableGroup.from(orderTables);
+        TableGroup tableGroup = TableGroup.createWithGrouping(orderTables);
         tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.from(tableGroup);

@@ -65,7 +65,7 @@ public class OrderTable {
     private void validateChangeableNumberOfGuests(Integer numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
 
-        if (empty == Boolean.TRUE) {
+        if (this.empty == Boolean.TRUE) {
             throw new IllegalArgumentException("주문을 할 수 없는 상태이므로, 방문 손님 수를 변경할 수 없습니다.");
         }
     }

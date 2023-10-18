@@ -121,7 +121,7 @@ class TableGroupServiceTest {
         //given
         OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
-        TableGroup tableGroup = TableGroup.from(List.of(savedOrderTable1, savedOrderTable2));
+        TableGroup tableGroup = TableGroup.createWithGrouping(List.of(savedOrderTable1, savedOrderTable2));
 
         tableGroupRepository.save(tableGroup);
 

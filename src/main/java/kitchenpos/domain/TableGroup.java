@@ -22,7 +22,7 @@ public class TableGroup {
     private Long id;
 
     @Embedded
-    private OrderTables orderTables;
+    private GroupedOrderTables groupedOrderTables;
 
     @CreatedDate
     @NotNull
@@ -31,12 +31,12 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    private TableGroup(OrderTables orderTables) {
-        this.orderTables = orderTables;
+    private TableGroup(GroupedOrderTables groupedOrderTables) {
+        this.groupedOrderTables = groupedOrderTables;
     }
 
-    public static TableGroup from(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup(OrderTables.from(orderTables));
+    public static TableGroup createWithGrouping(List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup(GroupedOrderTables.from(orderTables));
         orderTables.forEach(orderTable -> orderTable.group(tableGroup));
 
         return tableGroup;
@@ -51,7 +51,7 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables.getOrderTables();
+        return groupedOrderTables.getOrderTables();
     }
 
 }
