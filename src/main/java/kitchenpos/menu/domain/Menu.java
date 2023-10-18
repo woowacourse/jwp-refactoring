@@ -1,10 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.AttributeOverride;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,10 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.common.vo.Money;
-import kitchenpos.menu.exception.MenuPriceIsBiggerThanActualPriceException;
 
 @Table(name = "menu")
 @Entity
@@ -36,9 +31,6 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
-
     protected Menu() {
     }
 
@@ -48,21 +40,8 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public void setupMenuProduct(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-        validateMenuPriceIsNotBiggerThanActualPrice();
-    }
-
-    private void validateMenuPriceIsNotBiggerThanActualPrice() {
-        Money actualPrice = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .map(Money::new)
-                .reduce(Money::add)
-                .orElse(Money.ZERO);
-
-        if (price.isGreaterThan(actualPrice)) {
-            throw new MenuPriceIsBiggerThanActualPriceException();
-        }
+    public boolean hasPriceGreaterThan(Money other) {
+        return price.isGreaterThan(other);
     }
 
     public Long getId() {
@@ -79,9 +58,5 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 }
