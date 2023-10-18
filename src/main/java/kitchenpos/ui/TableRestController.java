@@ -5,9 +5,11 @@ import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
+import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
+import kitchenpos.ui.dto.CreateOrderTableRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,11 +27,11 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
-        final OrderTable created = tableService.create(orderTable);
-        final URI uri = URI.create("/api/tables/" + created.id());
+    public ResponseEntity<CreateOrderTableResponse> create(@RequestBody CreateOrderTableRequest request) {
+        CreateOrderTableResponse response = tableService.create(request.toCommand());
+        URI uri = URI.create("/api/tables/" + response.id());
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(response);
     }
 
     @GetMapping("/api/tables")

@@ -11,6 +11,8 @@ import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
+import kitchenpos.application.dto.ordertable.CreateOrderTableCommand;
+import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -24,10 +26,10 @@ class TableServiceTest extends IntegrationTest {
     @Test
     void 주문_테이블을_저장한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(null, null, 0, false);
+        CreateOrderTableCommand command = new CreateOrderTableCommand(0, false);
 
         // when
-        OrderTable result = tableService.create(orderTable1);
+        CreateOrderTableResponse result = tableService.create(command);
 
         // then
         assertThat(result.id()).isPositive();

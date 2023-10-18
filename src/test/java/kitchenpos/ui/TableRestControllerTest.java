@@ -11,9 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
 import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
+import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.ui.dto.ChangeOrderTableNumberOfGuestsRequest;
+import kitchenpos.ui.dto.CreateOrderTableRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -22,11 +24,13 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void 주문_테이블_생성() throws Exception {
         // given
-        OrderTable orderTable = 주문_테이블();
-        String request = objectMapper.writeValueAsString(orderTable);
-        OrderTable savedOrderTable = 주문_테이블(1L);
-        given(tableService.create(any())).willReturn(savedOrderTable);
-        String response = objectMapper.writeValueAsString(savedOrderTable);
+        CreateOrderTableRequest createOrderTableRequest = new CreateOrderTableRequest(0, true);
+        String request = objectMapper.writeValueAsString(createOrderTableRequest);
+
+        OrderTable orderTable = new OrderTable(1L, null, 0, true);
+        CreateOrderTableResponse createOrderTableResponse = CreateOrderTableResponse.from(orderTable);
+        given(tableService.create(any())).willReturn(createOrderTableResponse);
+        String response = objectMapper.writeValueAsString(createOrderTableResponse);
 
         // when & then
         mockMvc.perform(post("/api/tables")
