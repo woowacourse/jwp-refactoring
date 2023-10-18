@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
@@ -25,7 +26,8 @@ public class Order {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
     private String orderStatus;
@@ -47,6 +49,7 @@ public class Order {
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+        orderTable.order(this);
     }
 
     private void validateCreate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {

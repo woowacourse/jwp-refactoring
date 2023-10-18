@@ -5,6 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 
+import java.math.BigDecimal;
+import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableException;
 import kitchenpos.table.domain.TableGroup;
@@ -13,11 +22,70 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @DisplayName("주문 테이블(OrderTable) 은(는)")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTableTest {
+
+    private final Menu menu = new Menu(
+            "말랑",
+            BigDecimal.valueOf(20),
+            new MenuGroup("메뉴그룹"),
+            List.of(new MenuProduct(new Product("말", BigDecimal.valueOf(10)), 2))
+    );
+
+    @Nested
+    class 비어있음_상태_변경_검증_시 {
+
+        @Test
+        void 그룹에_속한_테이블의_경우_예외() {
+            // given
+            OrderTable orderTable = new OrderTable(10, true);
+            orderTable.grouping(mock(TableGroup.class));
+
+            // when & then
+            assertThatThrownBy(() ->
+                    orderTable.setEmpty(true)
+            ).isInstanceOf(OrderTableException.class)
+                    .hasMessage("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
+        }
+
+        @Test
+        void 조리_혹은_식사중_상태의_테이블이라면_예외() {
+            // given
+            OrderTable orderTable = new OrderTable(10, false);
+            ReflectionTestUtils.setField(orderTable, "id", 2L);
+            new Order(orderTable, List.of(new OrderLineItem(menu, 10)));
+
+            // when & then
+            assertThatThrownBy(() ->
+                    orderTable.setEmpty(false)
+            ).isInstanceOf(OrderTableException.class)
+                    .hasMessage("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
+        }
+
+        @Test
+        void 그룹에_속하지_않은_테이블_중_계산_완료되었거나_주문하지_않은_테이블의_상태는_변경_가능() {
+            // given
+            OrderTable completeOrderTable = new OrderTable(10, false);
+            ReflectionTestUtils.setField(completeOrderTable, "id", 2L);
+            new Order(completeOrderTable, List.of(new OrderLineItem(menu, 10)))
+                    .setOrderStatus(OrderStatus.COMPLETION.name());
+
+            OrderTable notInGroupTable = new OrderTable(10, false);
+            ReflectionTestUtils.setField(notInGroupTable, "id", 3L);
+
+            // when & then
+            assertDoesNotThrow(() ->
+                    completeOrderTable.setEmpty(true)
+            );
+            assertDoesNotThrow(() ->
+                    notInGroupTable.setEmpty(true)
+            );
+        }
+    }
 
     @Nested
     class 그룹화_시 {
@@ -28,7 +96,6 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(1, true);
 
             // when
-            // TODO 변경
             orderTable.grouping(mock(TableGroup.class));
 
             // then
