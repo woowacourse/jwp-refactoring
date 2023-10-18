@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,6 +9,8 @@ import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.BaseException;
+import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -53,9 +56,13 @@ class TableServiceTest extends IntegrationTest {
             // given
             ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(1L, false);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = Assertions.assertThrows(BaseException.class, () ->
+                    tableService.changeEmpty(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(ORDER_TABLE_NOT_FOUND);
         }
 
         @Test

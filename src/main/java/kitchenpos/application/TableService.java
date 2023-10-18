@@ -33,9 +33,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(ChangeOrderTableEmptyCommand command) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(command.id())
-                .orElseThrow(IllegalArgumentException::new);
-
+        OrderTable savedOrderTable = orderTableRepository.getById(command.id());
         savedOrderTable.changeEmpty(command.empty());
         return orderTableRepository.save(savedOrderTable);
     }
