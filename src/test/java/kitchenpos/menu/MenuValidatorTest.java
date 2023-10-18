@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.InvalidMenuException;
+import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuValidator;
@@ -25,7 +26,7 @@ class MenuValidatorTest {
 
     private final MenuGroupRepository menuGroupRepository = mock(MenuGroupRepository.class);
     private final ProductRepository productRepository = mock(ProductRepository.class);
-    private final MenuValidator menuValidator = new MenuValidator(menuGroupRepository, productRepository);
+    private final MenuValidator menuValidator = new MenuValidator(productRepository);
 
     @Test
     void 메뉴가_메뉴_그룹에_속하지_않는다면_예외() {
@@ -36,7 +37,7 @@ class MenuValidatorTest {
         // when & then
         assertThatThrownBy(() -> menuValidator.validateCreate(
                 BigDecimal.valueOf(1000),
-                1000L,
+                null,
                 List.of(new MenuProduct(1L, 2L))
         )).isInstanceOf(InvalidMenuException.class)
                 .hasMessage("메뉴는 메뉴 그룹에 속해야 합니다.");
@@ -51,7 +52,7 @@ class MenuValidatorTest {
         // when & then
         assertThatThrownBy(() -> menuValidator.validateCreate(
                 BigDecimal.valueOf(1000),
-                1L,
+                new MenuGroup("메뉴그룹 1"),
                 List.of()
         )).isInstanceOf(InvalidMenuException.class)
                 .hasMessage("메뉴에는 최소 1개의 상품이 속해야 합니다.");
@@ -68,7 +69,7 @@ class MenuValidatorTest {
         // when & then
         assertThatThrownBy(() -> menuValidator.validateCreate(
                 BigDecimal.valueOf(-1),
-                1L,
+                new MenuGroup("메뉴그룹 1"),
                 List.of(new MenuProduct(1L, 2L))
         )).isInstanceOf(InvalidMenuException.class)
                 .hasMessage("메뉴의 가격은 0원 이상이어야 합니다.");
@@ -85,7 +86,7 @@ class MenuValidatorTest {
         // when & then
         assertThatThrownBy(() -> menuValidator.validateCreate(
                 BigDecimal.valueOf(2001),
-                1L,
+                new MenuGroup("메뉴그룹 1"),
                 List.of(new MenuProduct(1L, 2L))
         )).isInstanceOf(InvalidMenuException.class)
                 .hasMessage("메뉴의 가격은 메뉴에 포함된 상품들의 합 이하여야 합니다.");
@@ -102,7 +103,7 @@ class MenuValidatorTest {
         // when & then
         assertDoesNotThrow(() -> menuValidator.validateCreate(
                 BigDecimal.valueOf(200),
-                1L,
+                new MenuGroup("메뉴그룹 1"),
                 List.of(new MenuProduct(1L, 2L))
         ));
     }

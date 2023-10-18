@@ -10,16 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class MenuValidator {
 
-    private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuValidator(MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
-        this.menuGroupRepository = menuGroupRepository;
+    public MenuValidator(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
-    public void validateCreate(BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        if (!menuGroupRepository.existsById(menuGroupId)) {
+    public void validateCreate(BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        if (menuGroup == null) {
             throw new InvalidMenuException("메뉴는 메뉴 그룹에 속해야 합니다.");
         }
         if (menuProducts.isEmpty()) {

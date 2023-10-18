@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -20,7 +21,10 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "menu_id", updatable = false, nullable = false)
@@ -29,22 +33,22 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
     public static Menu create(
             String name,
             BigDecimal price,
-            Long menuGroupId,
+            MenuGroup menuGroup,
             List<MenuProduct> menuProducts,
             MenuValidator menuValidator
     ) {
-        menuValidator.validateCreate(price, menuGroupId, menuProducts);
-        return new Menu(name, price, menuGroupId, menuProducts);
+        menuValidator.validateCreate(price, menuGroup, menuProducts);
+        return new Menu(name, price, menuGroup, menuProducts);
     }
 
     public Long getId() {
@@ -59,8 +63,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

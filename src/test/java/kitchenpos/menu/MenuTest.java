@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.InvalidMenuException;
+import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +54,7 @@ class MenuTest {
             // when & then
             assertDoesNotThrow(() -> menuValidator.validateCreate(
                     BigDecimal.valueOf(1000),
-                    1000L,
+                    new MenuGroup("말랑"),
                     List.of(new MenuProduct(1L, 2L))
             ));
         }
