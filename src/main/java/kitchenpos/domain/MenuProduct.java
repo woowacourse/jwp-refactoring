@@ -28,4 +28,35 @@ public class MenuProduct {
 
     protected MenuProduct() {
     }
+
+    public MenuProduct(Product product, long quantity) {
+        this(null, null, product, quantity);
+    }
+
+    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public void assignMenu(Menu menu) {
+        this.menu = menu;
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

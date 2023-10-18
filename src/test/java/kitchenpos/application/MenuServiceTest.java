@@ -125,7 +125,7 @@ class MenuServiceTest {
         Menu 메뉴1 = menuService.create(새로운_메뉴("메뉴1", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품)));
         Menu 메뉴2 = menuService.create(새로운_메뉴("메뉴2", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품)));
 
-        List<Menu> 메뉴_목록 = menuService.list();
+        List<Menu> 메뉴_목록 = menuService.readAll();
 
         assertThat(메뉴_목록).hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("price", "menuProducts")

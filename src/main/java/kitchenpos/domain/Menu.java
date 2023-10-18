@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,5 +33,73 @@ public class Menu {
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
+    }
+
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
+    }
+
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        validateName(name);
+        validatePrice(price, menuProducts);
+
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
+
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.assignMenu(this);
+        }
+    }
+
+    private void validateName(String name) {
+        if (name.isBlank() || name.length() > 255) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validatePrice(BigDecimal menuPrice, List<MenuProduct> menuProducts) {
+        BigDecimal sumOfProductPrices = calculateSumOf(menuProducts);
+
+        if (Objects.isNull(menuPrice)
+                || menuPrice.compareTo(BigDecimal.ZERO) < 0
+                || menuPrice.compareTo(BigDecimal.valueOf(Math.pow(10, 20))) >= 0
+                || menuPrice.compareTo(sumOfProductPrices) > 0
+        ) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private BigDecimal calculateSumOf(List<MenuProduct> menuProducts) {
+        BigDecimal sumOfProductPrices = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            BigDecimal productPrice = menuProduct.getProduct().getPrice();
+            long productQuantity = menuProduct.getQuantity();
+
+            sumOfProductPrices = sumOfProductPrices.add(productPrice.multiply(BigDecimal.valueOf(productQuantity)));
+        }
+        return sumOfProductPrices;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }
