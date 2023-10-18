@@ -6,9 +6,8 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.Arrays;
-import java.util.List;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.table.application.dto.TableGroupCreateRequest.TableInfo;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableGroupAcceptanceSteps {
@@ -18,17 +17,13 @@ public class TableGroupAcceptanceSteps {
     }
 
     public static ExtractableResponse<Response> 테이블_그룹_등록_요청을_보낸다(Long... 테이블_ID들) {
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> list = Arrays.stream(테이블_ID들)
-                .map(it -> {
-                    OrderTable orderTable = new OrderTable();
-                    orderTable.setId(it);
-                    return orderTable;
-                })
-                .toList();
-        tableGroup.setOrderTables(list);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+                Arrays.stream(테이블_ID들)
+                        .map(TableInfo::new)
+                        .toList()
+        );
         return given()
-                .body(tableGroup)
+                .body(request)
                 .post("/api/table-groups")
                 .then()
                 .log().all()

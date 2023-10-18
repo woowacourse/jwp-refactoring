@@ -11,6 +11,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableException;
 import kitchenpos.table.domain.OrderTableValidator;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -31,8 +32,9 @@ class OrderTableValidatorTest {
         @Test
         void 그룹에_속한_테이블의_경우_예외() {
             // given
-            OrderTable orderTable = new OrderTable(10, false);
-            orderTable.setTableGroupId(1L);
+            OrderTable orderTable = new OrderTable(10, true);
+            // TODO 변경
+            orderTable.grouping(mock(TableGroup.class));
 
             // when & then
             assertThatThrownBy(() ->

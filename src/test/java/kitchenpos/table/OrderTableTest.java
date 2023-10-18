@@ -3,9 +3,11 @@ package kitchenpos.table;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.mock;
 
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableException;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -26,7 +28,8 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(1, true);
 
             // when
-            orderTable.grouping(1L);
+            // TODO 변경
+            orderTable.grouping(mock(TableGroup.class));
 
             // then
             assertThat(orderTable.isEmpty()).isFalse();
@@ -37,16 +40,16 @@ class OrderTableTest {
     class 언그룹_시 {
 
         @Test
-        void 테이블_그룹_아이디가_사라진다() {
+        void 테이블_그룹이_사라진다() {
             // given
             OrderTable orderTable = new OrderTable(1, true);
-            orderTable.grouping(1L);
+            orderTable.grouping(mock(TableGroup.class));
 
             // when
             orderTable.ungroup();
 
             // then
-            assertThat(orderTable.getTableGroupId()).isNull();
+            assertThat(orderTable.getTableGroup()).isNull();
         }
     }
 

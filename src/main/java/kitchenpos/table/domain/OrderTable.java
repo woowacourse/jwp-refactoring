@@ -1,9 +1,25 @@
 package kitchenpos.table.domain;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id", nullable = true)
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
@@ -23,20 +39,15 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-        this.empty = false;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void setNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new OrderTableException("손님 수는 0명 이상이어야 합니다.");
         }
@@ -59,12 +70,15 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void grouping(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void grouping(TableGroup tableGroup) {
+        if (!isEmpty() || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+        this.tableGroup = tableGroup;
         this.empty = false;
     }
 
     public void ungroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
     }
 }

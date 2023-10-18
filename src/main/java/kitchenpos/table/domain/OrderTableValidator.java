@@ -18,7 +18,7 @@ public class OrderTableValidator {
     }
 
     public void validateChangeEmpty(OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
+        if (Objects.nonNull(orderTable.getTableGroup())) {
             throw new OrderTableException("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
         }
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(

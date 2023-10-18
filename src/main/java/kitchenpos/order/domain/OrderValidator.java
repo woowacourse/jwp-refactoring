@@ -3,8 +3,8 @@ package kitchenpos.order.domain;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -12,11 +12,11 @@ import org.springframework.util.CollectionUtils;
 public class OrderValidator {
 
     private final MenuRepository menuRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderValidator(MenuRepository menuRepository, OrderTableDao orderTableDao) {
+    public OrderValidator(MenuRepository menuRepository, OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public void validateCreate(List<OrderLineItem> orderLineItems, Long orderTableId) {
@@ -29,8 +29,7 @@ public class OrderValidator {
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new OrderException("주문 메뉴중 존재하지 않는 메뉴가 있습니다.");
         }
-        OrderTable orderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = orderTableRepository.getById(orderTableId);
         if (orderTable.isEmpty()) {
             throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
         }

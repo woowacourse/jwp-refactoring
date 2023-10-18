@@ -6,13 +6,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderException;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.table.dao.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -25,8 +24,8 @@ import org.junit.jupiter.api.Test;
 class OrderValidatorTest {
 
     private final MenuRepository menuRepository = mock(MenuRepository.class);
-    private final OrderTableDao orderTableDao = mock(OrderTableDao.class);
-    private final OrderValidator orderValidator = new OrderValidator(menuRepository, orderTableDao);
+    private final OrderTableRepository orderTableRepository = mock(OrderTableRepository.class);
+    private final OrderValidator orderValidator = new OrderValidator(menuRepository, orderTableRepository);
 
     @Nested
     class 주문_생성_시 {
@@ -60,8 +59,8 @@ class OrderValidatorTest {
             // given
             given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(1L);
-            given(orderTableDao.findById(1L))
-                    .willReturn(Optional.of(new OrderTable(10, true)));
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(10, true));
 
             // when & then
             assertThatThrownBy(() ->
@@ -77,8 +76,8 @@ class OrderValidatorTest {
             // given
             given(menuRepository.countByIdIn(List.of(1L)))
                     .willReturn(1L);
-            given(orderTableDao.findById(1L))
-                    .willReturn(Optional.of(new OrderTable(10, false)));
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(10, false));
 
             // when & then
             assertDoesNotThrow(() ->
