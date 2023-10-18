@@ -2,7 +2,6 @@ package kitchenpos.application.config;
 
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
@@ -27,11 +26,6 @@ public class DaoConfig {
     @Bean
     public ProductDao productDao(final DataSource dataSource) {
         return new JdbcTemplateProductDao(dataSource);
-    }
-
-    @Bean
-    public MenuProductDao menuProductDao(final DataSource dataSource) {
-        return new JdbcTemplateMenuProductDao(dataSource);
     }
 
     @Bean

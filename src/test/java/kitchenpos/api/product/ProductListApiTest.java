@@ -2,9 +2,11 @@ package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,8 +22,10 @@ class ProductListApiTest extends ApiTestConfig {
     @DisplayName("상품 전체 조회 API 테스트")
     @Test
     void listProduct() throws Exception {
+        // given
+        final ProductResponse response = ProductResponse.from(new Product("pizza", new Price(BigDecimal.valueOf(17000))));
+
         // when
-        final ProductResponse response = ProductResponse.from(new Product(1L, "피자", BigDecimal.valueOf(17000)));
         when(productService.list()).thenReturn(List.of(response));
 
         // then

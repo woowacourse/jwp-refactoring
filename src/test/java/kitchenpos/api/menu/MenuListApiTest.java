@@ -5,6 +5,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.ui.dto.response.MenuProductResponse;
+import kitchenpos.ui.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,42 +26,26 @@ class MenuListApiTest extends ApiTestConfig {
     @Test
     void listMenu() throws Exception {
         // given
-        // FIXME: domain -> dto 로 변경
-        final Product product = new Product(1L, "여우가 좋아하는 피자", BigDecimal.valueOf(17000));
+        final Menu menu = new Menu("fox menu", new Price(BigDecimal.valueOf(15000)), new MenuGroup("menu group name"));
 
-        final Menu expectedMenu = new Menu();
-        expectedMenu.setId(1L);
-        expectedMenu.setName("여우메뉴");
-        expectedMenu.setPrice(BigDecimal.valueOf(15000));
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(1L);
-        menuProduct.setMenuId(expectedMenu.getId());
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(2);
-
-        expectedMenu.setMenuProducts(List.of(menuProduct));
-
-        final MenuGroup menuGroup = new MenuGroup(1L, "여우 메뉴 그룹");
-
-        expectedMenu.setMenuGroupId(menuGroup.getId());
+        final MenuProductResponse menuProductResponse = new MenuProductResponse(1L, 2L, 1L);
+        final MenuResponse response = new MenuResponse(1L, menu.getName(), menu.getPrice().getValue(), 1L, List.of(menuProductResponse));
 
         // when
-        when(menuService.list()).thenReturn(List.of(expectedMenu));
+        when(menuService.list()).thenReturn(List.of(response));
 
         // then
         mockMvc.perform(get("/api/menus"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].id", is(expectedMenu.getId().intValue())))
-                .andExpect(jsonPath("$[0].name", is(expectedMenu.getName())))
-                .andExpect(jsonPath("$[0].price", is(expectedMenu.getPrice().intValue())))
-                .andExpect(jsonPath("$[0].menuGroupId", is(expectedMenu.getMenuGroupId().intValue())))
+                .andExpect(jsonPath("$[0].id", is(response.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(response.getName())))
+                .andExpect(jsonPath("$[0].price", is(response.getPrice().intValue())))
+                .andExpect(jsonPath("$[0].menuGroupId", is(response.getMenuGroupId().intValue())))
                 .andExpect(jsonPath("$[0].menuProducts.size()", is(1)))
-                .andExpect(jsonPath("$[0].menuProducts[0].seq", is(expectedMenu.getMenuProducts().get(0).getSeq().intValue())))
-                .andExpect(jsonPath("$[0].menuProducts[0].productId", is(expectedMenu.getMenuProducts().get(0).getProductId().intValue())))
-                .andExpect(jsonPath("$[0].menuProducts[0].menuId", is(expectedMenu.getMenuProducts().get(0).getMenuId().intValue())))
-                .andExpect(jsonPath("$[0].menuProducts[0].quantity", is(Long.valueOf(expectedMenu.getMenuProducts().get(0).getQuantity()).intValue())));
+                .andExpect(jsonPath("$[0].menuProducts[0].seq", is(response.getMenuProducts().get(0).getSeq().intValue())))
+                .andExpect(jsonPath("$[0].menuProducts[0].productId", is(response.getMenuProducts().get(0).getProductId().intValue())))
+                .andExpect(jsonPath("$[0].menuProducts[0].quantity", is(Long.valueOf(response.getMenuProducts().get(0).getQuantity()).intValue())));
     }
 }

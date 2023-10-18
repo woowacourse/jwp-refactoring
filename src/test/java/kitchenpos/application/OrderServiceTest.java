@@ -6,6 +6,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ class OrderServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        orderService = new OrderService(menuRepository, orderDao, orderLineItemDao, orderTableDao);
     }
 
     @DisplayName("주문 생성")
@@ -41,7 +42,7 @@ class OrderServiceTest extends ServiceTestConfig {
             final Order orderInput = new Order();
             orderInput.setOrderTableId(orderTable.getId());
 
-            final Menu menu = saveMenu(saveMenuGroup());
+            final Menu menu = saveMenu(saveMenuGroup(), saveProduct());
             final OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setMenuId(menu.getId());
             orderLineItem.setQuantity(1L);
@@ -102,7 +103,7 @@ class OrderServiceTest extends ServiceTestConfig {
             final Order orderInput = new Order();
             orderInput.setOrderTableId(1111L);
 
-            final Menu menu = saveMenu(saveMenuGroup());
+            final Menu menu = saveMenu(saveMenuGroup(), saveProduct());
             final OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setMenuId(menu.getId());
             orderLineItem.setQuantity(1L);
@@ -127,7 +128,7 @@ class OrderServiceTest extends ServiceTestConfig {
             final Order orderInput = new Order();
             orderInput.setOrderTableId(orderTable.getId());
 
-            final Menu menu = saveMenu(saveMenuGroup());
+            final Menu menu = saveMenu(saveMenuGroup(), saveProduct());
             final OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setMenuId(menu.getId());
             orderLineItem.setQuantity(1L);

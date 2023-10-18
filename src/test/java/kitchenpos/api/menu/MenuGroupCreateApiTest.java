@@ -1,13 +1,11 @@
 package kitchenpos.api.menu;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.request.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -24,8 +22,7 @@ class MenuGroupCreateApiTest extends ApiTestConfig {
         final MenuGroupCreateRequest request = new MenuGroupCreateRequest("추천 메뉴");
 
         // when
-        final MenuGroup expectedMenuGroup = new MenuGroup(1L, request.getName());
-        final MenuGroupResponse response = MenuGroupResponse.from(expectedMenuGroup);
+        final MenuGroupResponse response = new MenuGroupResponse(1L, request.getName());
         when(menuGroupService.create(eq(request))).thenReturn(response);
 
         // then

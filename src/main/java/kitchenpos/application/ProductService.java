@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
@@ -22,7 +22,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest nameAndPrice) {
-        final Product product = new Product(null, nameAndPrice.getName(), nameAndPrice.getPrice());
+        final Product product = new Product(nameAndPrice.getName(), new Price(nameAndPrice.getPrice()));
         return ProductResponse.from(productRepository.save(product));
     }
 

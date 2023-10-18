@@ -10,14 +10,14 @@ public class ProductResponse {
     private final String name;
     private final BigDecimal price;
 
-    private ProductResponse(final Long id, final String name, final BigDecimal price) {
+    public ProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
     public static ProductResponse from(final Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice().getValue());
     }
 
     public Long getId() {

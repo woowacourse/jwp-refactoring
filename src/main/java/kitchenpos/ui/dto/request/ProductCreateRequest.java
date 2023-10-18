@@ -1,5 +1,7 @@
 package kitchenpos.ui.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -8,6 +10,7 @@ public class ProductCreateRequest {
     private final String name;
     private final BigDecimal price;
 
+    @JsonCreator
     public ProductCreateRequest(final String name, final BigDecimal price) {
         this.name = name;
         this.price = price;

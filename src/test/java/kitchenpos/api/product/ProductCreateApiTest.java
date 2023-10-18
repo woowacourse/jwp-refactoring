@@ -2,6 +2,7 @@ package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -26,8 +26,8 @@ class ProductCreateApiTest extends ApiTestConfig {
         final ProductCreateRequest request = new ProductCreateRequest("강정치킨", BigDecimal.valueOf(17000));
 
         // when
-        final Product product = new Product(1L, request.getName(), request.getPrice());
-        final ProductResponse response = ProductResponse.from(product);
+        final Product product = new Product(request.getName(), new Price(request.getPrice()));
+        final ProductResponse response = new ProductResponse(1L, product.getName(), product.getPrice().getValue());
         when(productService.create(eq(request))).thenReturn(response);
 
         // then

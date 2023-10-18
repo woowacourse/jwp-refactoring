@@ -2,13 +2,10 @@ package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
 import kitchenpos.config.JpaConfig;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -19,18 +16,19 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @DataJpaTest
 @Import({DaoConfig.class, JpaConfig.class}) // TODO: jpa로 다 변환하고 dao config 제거하기
@@ -41,10 +39,7 @@ public class ServiceTestConfig {
     protected ProductRepository productRepository;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
-
-    @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
 
     @Autowired
     protected MenuGroupRepository menuGroupRepository;
@@ -62,31 +57,19 @@ public class ServiceTestConfig {
     protected TableGroupDao tableGroupDao;
 
     protected Product saveProduct() {
-        final Product product = new Product(null, "여우가 좋아하는 피자", BigDecimal.valueOf(10000));
+        final Product product = new Product("여우가 좋아하는 피자", new Price(BigDecimal.valueOf(10000)));
         return productRepository.save(product);
     }
 
     protected MenuGroup saveMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup(null, "여우가 좋아하는 메뉴 그룹");
+        final MenuGroup menuGroup = new MenuGroup("여우가 좋아하는 메뉴 그룹");
         return menuGroupRepository.save(menuGroup);
     }
 
-    protected Menu saveMenu(final MenuGroup menuGroup) {
-        final Menu menu = new Menu();
-        menu.setName("메뉴 이름");
-        menu.setPrice(BigDecimal.valueOf(2000));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(new ArrayList<>());
-        return menuDao.save(menu);
-    }
-
-    // TODO: 사용하지 않으면 삭제
-    protected MenuProduct saveMenuProduct(final Product product, final Menu menu) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2L);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setMenuId(menu.getId());
-        return menuProductDao.save(menuProduct);
+    protected Menu saveMenu(final MenuGroup menuGroup, final Product product) {
+        final Menu menu = new Menu("여우 메뉴", new Price(BigDecimal.valueOf(2000)), menuGroup);
+        menu.addMenuProducts(List.of(new MenuProduct(2L, menu, product)));
+        return menuRepository.save(menu);
     }
 
     protected Order saveOrder(final OrderTable orderTable) {
