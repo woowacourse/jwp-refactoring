@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupResponse;
 import kitchenpos.application.dto.tablegroup.UngroupTableGroupCommand;
@@ -146,6 +147,24 @@ class TableGroupServiceTest extends IntegrationTest {
 
                 // then
                 assertThat(exceptionType).isEqualTo(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
+            }
+
+            @Test
+            void 그룹을_해제한다() {
+                // given
+                OrderTable orderTable1 = new OrderTable(0, true);
+                OrderTable orderTable2 = new OrderTable(0, true);
+                TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
+                Long tableGroupId = tableGroupRepository.save(tableGroup).id();
+                UngroupTableGroupCommand command = new UngroupTableGroupCommand(tableGroupId);
+
+                // when
+                tableGroupService.ungroup(command);
+                Optional<TableGroup> result = tableGroupRepository.findById(tableGroupId);
+
+                // then
+                assertThat(result).isPresent();
+                assertThat(result.get().orderTables()).isEmpty();
             }
         }
     }

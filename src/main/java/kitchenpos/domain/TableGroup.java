@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
 
@@ -25,7 +26,7 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = ALL)
+    @OneToMany(mappedBy = "tableGroup", cascade = ALL, fetch = EAGER)
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
