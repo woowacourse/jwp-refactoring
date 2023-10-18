@@ -36,7 +36,7 @@ public class TableService {
         savedOrderTable.validateTableGroupIdIsNull();
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("orderTable이 존재하지 않거나 조리중 또는 식사중인 주문 테이블은 empty 상태를 변경 할 수 없습니다.");
+            throw new IllegalArgumentException("orderTable이 존재하면서 조리중 또는 식사중인 주문 테이블은 empty 상태를 변경 할 수 없습니다.");
         }
         savedOrderTable.updateEmpty(isEmpty);
     }

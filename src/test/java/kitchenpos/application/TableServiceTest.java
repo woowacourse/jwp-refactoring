@@ -74,13 +74,13 @@ class TableServiceTest extends ServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 주문_상태가_COOKING이나MEAL이면_예외가_발생한다(OrderStatus orderStatus) {
         //given
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
         orderRepository.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
 
         //when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), false))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("orderTable이 존재하면서 조리중 또는 식사중인 주문 테이블은 empty 상태를 변경 할 수 없습니다.");
     }
 
 

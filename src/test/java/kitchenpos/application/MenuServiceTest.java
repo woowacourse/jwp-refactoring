@@ -48,7 +48,8 @@ class MenuServiceTest extends ServiceTest {
     void menuGroup이_존재하지_않으면_예외가_발생한다() {
         //when, then
         assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(20000), 987654321L, null, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹이 존재하지 않습니다.");
     }
 
     @Test
@@ -60,7 +61,8 @@ class MenuServiceTest extends ServiceTest {
         //when, then
         assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(9000), menuGroup.getId(),
                 List.of(product.getId()), List.of(2)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 금액이 총 상품 금액보다 작을 수 없습니다.");
     }
 
     @Test

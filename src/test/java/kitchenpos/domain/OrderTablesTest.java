@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderTablesTest {
@@ -16,8 +17,9 @@ class OrderTablesTest {
         final OrderTables orderTables = new OrderTables(List.of(orderTable));
 
         //when
-        org.assertj.core.api.Assertions.assertThatThrownBy(() -> orderTables.validateSize(2))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderTables.validateSize(2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -27,8 +29,9 @@ class OrderTablesTest {
         final OrderTables orderTables = new OrderTables(List.of(orderTable));
 
         //when
-        org.assertj.core.api.Assertions.assertThatThrownBy(orderTables::validateIsEmptyAndTableGroupIdIsNull)
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(orderTables::validateIsEmptyAndTableGroupIdIsNull)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 비어있지 않거나 이미 그룹화된 테이블입니다.");
     }
 
     @Test
@@ -38,8 +41,9 @@ class OrderTablesTest {
         final OrderTables orderTables = new OrderTables(List.of(orderTable));
 
         //when
-        org.assertj.core.api.Assertions.assertThatThrownBy(orderTables::validateIsEmptyAndTableGroupIdIsNull)
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(orderTables::validateIsEmptyAndTableGroupIdIsNull)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 비어있지 않거나 이미 그룹화된 테이블입니다.");
     }
 
     @Test

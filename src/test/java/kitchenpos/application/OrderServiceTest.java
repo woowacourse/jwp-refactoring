@@ -65,7 +65,8 @@ class OrderServiceTest extends ServiceTest {
 
         //when, then
         assertThatThrownBy(() -> orderService.create(List.of(menu.getId(), 2L), List.of(2), null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴가 존재하지 않습니다.");
     }
 
     @Test
@@ -78,7 +79,8 @@ class OrderServiceTest extends ServiceTest {
 
         //when, then
         assertThatThrownBy(() -> orderService.create(List.of(menu.getId()), List.of(2), orderTable.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블은 비어있을 수 없습니다.");
     }
 
     @Test
@@ -119,6 +121,7 @@ class OrderServiceTest extends ServiceTest {
 
         //when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), OrderStatus.COOKING.name()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(("이미 완료된 주문입니다."));
     }
 }

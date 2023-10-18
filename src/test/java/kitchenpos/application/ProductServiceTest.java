@@ -24,7 +24,8 @@ class ProductServiceTest extends ServiceTest {
     void price가_0원보다_작으면_예외가_발생한다() {
         //when, then
         Assertions.assertThatThrownBy(() -> productService.create("치킨", new BigDecimal(-1)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격이 0보다 작거나 null일 수 없습니다.");
     }
 
     @Test

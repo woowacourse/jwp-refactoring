@@ -19,6 +19,7 @@ class ProductTest {
     void price가_null이면_예외가_발생한다() {
         //when, then
         Assertions.assertThatThrownBy(() -> new Product("치킨", null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격이 0보다 작거나 null일 수 없습니다.");
     }
 }

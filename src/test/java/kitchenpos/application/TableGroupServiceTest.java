@@ -74,6 +74,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 orderTable이거나 table주문 상태가 조리중 또는 식사중인 테이블 그룹은 해체할 수 없습니다.");
     }
 }

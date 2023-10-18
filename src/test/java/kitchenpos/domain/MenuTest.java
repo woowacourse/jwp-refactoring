@@ -19,14 +19,16 @@ class MenuTest {
     void price가_null이면_예외가_발생한다() {
         //when, then
         assertThatThrownBy(() -> new Menu("디노 세트", null, null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격이 0보다 작거나 null일 수 없습니다.");
     }
 
     @Test
     void price가_0원보다_작으면_예외가_발생한다() {
         //when, then
         assertThatThrownBy(() -> new Menu("디노 세트", new BigDecimal(-1), null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격이 0보다 작거나 null일 수 없습니다.");
     }
 
 }

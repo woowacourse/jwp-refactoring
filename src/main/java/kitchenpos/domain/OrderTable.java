@@ -68,7 +68,7 @@ public class OrderTable {
 
     public void validateIsNotEmpty() {
         if (empty) {
-            throw new IllegalArgumentException("빈 테이블은 인원수를 변경할 수 없습니다.");
+            throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
         }
     }
 }
