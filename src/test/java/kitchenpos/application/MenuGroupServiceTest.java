@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.application.dto.menugroup.CreateMenuGroupCommand;
 import kitchenpos.application.dto.menugroup.CreateMenuGroupResponse;
 import kitchenpos.application.dto.menugroup.SearchMenuGroupResponse;
@@ -19,14 +18,12 @@ class MenuGroupServiceTest extends IntegrationTest {
         CreateMenuGroupCommand command = new CreateMenuGroupCommand("추천메뉴");
 
         // when
-        CreateMenuGroupResponse response = menuGroupService.create(command);
-        Optional<MenuGroup> result = menuGroupRepository.findById(response.id());
+        CreateMenuGroupResponse result = menuGroupService.create(command);
 
         // then
         assertAll(
-                () -> assertThat(result).isPresent(),
-                () -> assertThat(result.get().id()).isPositive(),
-                () -> assertThat(result.get().name()).isEqualTo("추천메뉴")
+                () -> assertThat(result.id()).isPositive(),
+                () -> assertThat(result.name()).isEqualTo("추천메뉴")
         );
     }
 
