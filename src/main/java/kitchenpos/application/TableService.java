@@ -15,6 +15,7 @@ import kitchenpos.dto.response.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true)
 @Service
 public class TableService {
 
@@ -73,4 +74,5 @@ public class TableService {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 주문 테이블이 존재하지 않습니다."));
     }
+
 }
