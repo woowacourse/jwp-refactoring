@@ -73,7 +73,7 @@
     - [x] table
 - [ ] dto 생성
     - [x] product
-    - [ ] menu group
+    - [x] menu group
     - [ ] menu
     - [x] order
     - [ ] table group

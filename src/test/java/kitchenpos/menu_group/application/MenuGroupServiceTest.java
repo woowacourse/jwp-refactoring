@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.helper.ServiceIntegrateTest;
+import kitchenpos.menu_group.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu_group.application.dto.MenuGroupQueryResponse;
 import kitchenpos.menu_group.domain.MenuGroup;
 import kitchenpos.menu_group.persistence.MenuGroupDao;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +26,8 @@ class MenuGroupServiceTest extends ServiceIntegrateTest {
   void create_success() {
     //given, when
     final String name = "추천 메뉴";
-    final MenuGroup savedManuGroup = menuGroupService.create(new MenuGroup(name));
+    final MenuGroupQueryResponse savedManuGroup = menuGroupService.create(
+        new MenuGroupCreateRequest(name));
     final MenuGroup actual = menuGroupDao.findById(savedManuGroup.getId()).get();
 
     //then
@@ -38,9 +41,9 @@ class MenuGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("등록된 메뉴 그룹 목록을 조회할 수 있다.")
   void list_success() {
     // given, when
-    final List<MenuGroup> actual = menuGroupService.list();
+    final List<MenuGroupQueryResponse> actual = menuGroupService.list();
     final List<String> actualNames = actual.stream()
-        .map(MenuGroup::getName)
+        .map(MenuGroupQueryResponse::getName)
         .collect(Collectors.toList());
 
     //then
