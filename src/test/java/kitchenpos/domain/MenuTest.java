@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,7 +59,7 @@ class MenuTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price("10000"), menuGroup, new ArrayList<>());
 
         // when
-        menu.addMenuProducts(List.of(new MenuProduct(null, product, 10)));
+        menu.addMenuProducts(List.of(new MenuProduct(null, product, new Quantity(10))));
 
         // then
         final List<MenuProduct> actual = menu.getMenuProducts();
@@ -68,7 +69,7 @@ class MenuTest {
 
             softly.assertThat(actualMenuProduct)
                     .usingRecursiveComparison()
-                    .isEqualTo(new MenuProduct(menu, product, 10));
+                    .isEqualTo(new MenuProduct(menu, product, new Quantity(10)));
         });
     }
 }

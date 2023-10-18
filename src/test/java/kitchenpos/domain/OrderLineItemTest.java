@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class OrderLineItemTest {
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
 
         // expect
-        assertThatCode(() -> new OrderLineItem(order, menu, 10))
+        assertThatCode(() -> new OrderLineItem(order, menu, new Quantity(10)))
                 .doesNotThrowAnyException();
     }
 }

@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,11 +32,11 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         final Product savedProduct = persistProduct(new Product(new Name("테스트용 상품명"), new Price("10000")));
         final MenuGroup savedMenuGroup = persistMenuGroup(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
         final Menu savedMenu = persistMenu(new Menu(new Name("테스트용 메뉴명"), new Price("10000"), savedMenuGroup, Collections.emptyList()));
-        persistMenuProduct(new MenuProduct(savedMenu, savedProduct, 1));
+        persistMenuProduct(new MenuProduct(savedMenu, savedProduct, new Quantity(1)));
         final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, true));
         final Order savedOrder = persistOrder(new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList()));
-        persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, 1));
-        persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, 1));
+        persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, new Quantity(1)));
+        persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, new Quantity(1)));
 
         em.flush();
         em.close();

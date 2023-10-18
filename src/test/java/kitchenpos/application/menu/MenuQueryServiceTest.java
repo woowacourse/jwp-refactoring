@@ -8,6 +8,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,11 +38,11 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
         final List<MenuProduct> unsavedMenuProducts = List.of(
-                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), 10),
-                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), 10),
-                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), 10),
-                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), 10),
-                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), 10)
+                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
+                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
+                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
+                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
+                new MenuProduct(null, productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10))
         );
 
         final Menu menu = new Menu(

@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
                 LocalDateTime.now(),
                 Collections.emptyList()
         );
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
         order.addOrderLineItems(orderLineItems);
 
         final Order expected = orderService.create(order);

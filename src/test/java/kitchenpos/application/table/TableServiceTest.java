@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -122,7 +123,7 @@ class TableServiceTest extends ApplicationTestConfig {
                     savedMenuGroup,
                     new ArrayList<>()
             ));
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
             final Order savedOrder = orderRepository.save(
                     new Order(

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class MenuProductTest {
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴그룹명"));
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), new Price("10000"), menuGroup, new ArrayList<>());
 
-        assertThatCode(() -> new MenuProduct(menu, product, 10))
+        assertThatCode(() -> new MenuProduct(menu, product, new Quantity(10)))
                 .doesNotThrowAnyException();
     }
 }

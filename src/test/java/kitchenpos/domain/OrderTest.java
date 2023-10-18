@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +40,7 @@ class OrderTest {
 
         // then
         order.addOrderLineItems(List.of(
-                new OrderLineItem(null, menu, 10)
+                new OrderLineItem(null, menu, new Quantity(10))
         ));
 
         // when
@@ -50,7 +51,7 @@ class OrderTest {
 
             softly.assertThat(actualOrderLineItem)
                     .usingRecursiveComparison()
-                    .isEqualTo(new OrderLineItem(order, menu, 10));
+                    .isEqualTo(new OrderLineItem(order, menu, new Quantity(10)));
         });
     }
 }

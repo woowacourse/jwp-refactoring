@@ -11,6 +11,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,7 +51,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     LocalDateTime.now(),
                     new ArrayList<>()
             );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             expected.addOrderLineItems(orderLineItems);
 
             // when
@@ -97,9 +98,9 @@ class OrderServiceTest extends ApplicationTestConfig {
 
             // when
             final List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(null, savedMenu, 10),
-                    new OrderLineItem(null, savedMenu, 10),
-                    new OrderLineItem(null, savedMenu, 10)
+                    new OrderLineItem(null, savedMenu, new Quantity(10)),
+                    new OrderLineItem(null, savedMenu, new Quantity(10)),
+                    new OrderLineItem(null, savedMenu, new Quantity(10))
             );
 
             final Order expected = new Order(
@@ -128,7 +129,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     LocalDateTime.now(),
                     Collections.emptyList()
             );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             expected.addOrderLineItems(orderLineItems);
 
             // then
@@ -169,7 +170,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     LocalDateTime.now(),
                     new ArrayList<>()
             );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             order.addOrderLineItems(orderLineItems);
             final Order expected = orderRepository.save(order);
 
@@ -223,7 +224,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     LocalDateTime.now(),
                     new ArrayList<>()
             );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, 10));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             order.addOrderLineItems(orderLineItems);
             final Order expected = orderRepository.save(order);
 

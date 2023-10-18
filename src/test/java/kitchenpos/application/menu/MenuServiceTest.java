@@ -8,6 +8,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -120,7 +121,7 @@ class MenuServiceTest extends ApplicationTestConfig {
             final List<MenuProduct> menuProducts = new ArrayList<>();
             for (int count = 1; count <= 10; count++) {
                 final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
-                menuProducts.add(new MenuProduct(null, savedProduct, 10));
+                menuProducts.add(new MenuProduct(null, savedProduct, new Quantity(10)));
             }
 
             final Menu expected = new Menu(
