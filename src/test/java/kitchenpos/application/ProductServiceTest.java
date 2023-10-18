@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -31,12 +30,5 @@ class ProductServiceTest extends IntegrationTest {
                 .map(Product::getId)
                 .filteredOn(id -> Objects.equals(id, saved.getId()))
                 .hasSize(1);
-    }
-
-    @Test
-    @DisplayName("상품 등록 시 가격은 0 이상의 수여야 한다.")
-    void 상품_등록_실패_가격_음수() {
-        assertThatThrownBy(() -> productService.create(new Product("상품", BigDecimal.valueOf(-1))))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 }

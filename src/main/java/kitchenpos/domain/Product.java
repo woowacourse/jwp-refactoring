@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Product {
 
@@ -10,21 +11,21 @@ public class Product {
     private static final int PRICE_PRECISION_MAX = 19;
     private static final int PRICE_SCALE = 2;
     private static final int NAME_LENGTH_MAXIMUM = 255;
+
     private final String name;
     private final BigDecimal price;
-    private Long id;
+    private final Long id;
 
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(final Long id, final String name, final BigDecimal price) {
+        validateName(name);
+        validatePrice(price);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = price.setScale(PRICE_SCALE, RoundingMode.DOWN);
     }
 
     public Product(final String name, final BigDecimal price) {
-        validateName(name);
-        validatePrice(price);
-        this.name = name;
-        this.price = price.setScale(PRICE_SCALE);
+        this(null, name, price);
     }
 
     private void validatePrice(final BigDecimal price) {
@@ -39,7 +40,6 @@ public class Product {
         }
     }
 
-    // TODO 테스트 추가
     private void validateName(final String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("상품 이름은 필수 항목입니다.");
