@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
 
-    private MenuRepository menuRepository;
-    private MenuGroupRepository menuGroupRepository;
-    private ProductRepository productRepository;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
                        ProductRepository productRepository) {
