@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.valueOf;
-
 @Service
 public class OrderService {
 
@@ -50,10 +48,14 @@ public class OrderService {
     }
 
     private Order makeOrder(final Long id) {
-        OrderTable orderTable = orderTableRepository.findById(id)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = findOrderTable(id);
 
         return orderRepository.save(new Order(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), null));
+    }
+
+    private OrderTable findOrderTable(final Long id) {
+        return orderTableRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private List<OrderLineItem> getOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests, final Order order) {
@@ -80,7 +82,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderUpdateRequest req) {
         Order savedOrder = findOrder(orderId);
-        savedOrder.changeOrderStatus(valueOf(req.getOrderStatus()).name());
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(req.getOrderStatus()).name());
 
         return savedOrder;
     }

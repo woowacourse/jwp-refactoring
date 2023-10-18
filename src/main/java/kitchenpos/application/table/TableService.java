@@ -18,6 +18,8 @@ import java.util.List;
 @Service
 public class TableService {
 
+    private static final List<String> UNGROUP_ORDER_STATUSES = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
@@ -59,7 +61,9 @@ public class TableService {
     }
 
     private boolean isStatusCookingOrMeal(final OrderTable savedOrderTable) {
-        return orderRepository.existsByOrderTableAndOrderStatusIsIn(savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+        return orderRepository.existsByOrderTableAndOrderStatusIsIn(
+                savedOrderTable, UNGROUP_ORDER_STATUSES
+        );
     }
 
     @Transactional
