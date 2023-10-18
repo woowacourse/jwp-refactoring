@@ -127,7 +127,7 @@ class OrderTableTest {
             assertThatThrownBy(() ->
                     orderTable.ungroup()
             ).isInstanceOf(OrderTableException.class)
-                    .hasMessage("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
+                    .hasMessage("조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
         }
     }
 

@@ -53,15 +53,15 @@ public class OrderTable {
         if (Objects.nonNull(getTableGroup())) {
             throw new OrderTableException("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
         }
-        validateNotCookingOrMealOrder();
+        validateNotCookingOrMealOrder("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
     }
 
-    private void validateNotCookingOrMealOrder() {
+    private void validateNotCookingOrMealOrder(String errorMessage) {
         if (order == null) {
             return;
         }
         if (Set.of(COOKING.name(), MEAL.name()).contains(order.getOrderStatus())) {
-            throw new OrderTableException("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
+            throw new OrderTableException(errorMessage);
         }
     }
 
@@ -74,7 +74,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        validateNotCookingOrMealOrder();
+        validateNotCookingOrMealOrder("조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
         this.tableGroup = null;
     }
 
