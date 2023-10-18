@@ -1,40 +1,76 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.product.Product;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Objects;
+
+@Entity
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Menu menu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Product product;
+
+    @Embedded
+    private MenuProductQuantity quantity;
+
+    protected MenuProduct() {
+    }
+
+    public MenuProduct(Product product, MenuProductQuantity quantity) {
+        this(null, null, product, quantity);
+    }
+
+    public MenuProduct(Long seq, Menu menu, Product product, MenuProductQuantity quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public BigDecimal calculateTotalPrice() {
+        return product.getPrice().multiply(
+                BigDecimal.valueOf(quantity.getQuantity()));
+    }
+
+    public void changeMenu(Menu menu) {
+        this.menu = menu;
+    }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Long getQuantity() {
+        return quantity.getQuantity();
     }
 
-    public Long getProductId() {
-        return productId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MenuProduct that = (MenuProduct) o;
+        return Objects.equals(getSeq(), that.getSeq());
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSeq());
     }
 }
