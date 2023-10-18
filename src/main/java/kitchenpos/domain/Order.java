@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import kitchenpos.domain.exception.OrderException;
 
 public class Order {
 
@@ -47,6 +49,9 @@ public class Order {
     }
 
     public void setOrderStatus(final String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new OrderException("이미 결제 완료된 주문은 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
     }
 
