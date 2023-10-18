@@ -1,23 +1,28 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
-public class OrderTable {
+import kitchenpos.domain.OrderTable;
+
+public class OrderTableDto {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public static OrderTableDto from(OrderTable orderTable) {
+        return new OrderTableDto(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
+    }
+
+    public OrderTableDto(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void changeNumberOfGuest(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-        this.numberOfGuests = numberOfGuests;
+    public OrderTable toDomain() {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public Long getId() {
@@ -34,10 +39,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void group(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-        this.empty = false;
     }
 }

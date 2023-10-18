@@ -114,12 +114,12 @@ class MenuServiceTest {
     void 가격이_0보다_작은_메뉴를_생성하면_예외를_던진다() {
         // given
         MenuDto menuDto = new MenuDto(menu.getId(), menu.getName(), BigDecimal.valueOf(-1), menu.getMenuGroupId(), menu.getMenuProducts());
-        product = new Product(product.getId(), product.getName(), BigDecimal.valueOf(-1));
 
         // when
         assertThatThrownBy(() -> menuService.create(menuDto))
             .isInstanceOf(IllegalArgumentException.class);
     }
+
 
     @Test
     void 메뉴_상품_가격의_합이_메뉴_가격보다_크면_예외를_던진다() {

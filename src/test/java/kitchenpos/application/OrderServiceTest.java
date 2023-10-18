@@ -53,8 +53,7 @@ class OrderServiceTest {
         orderLineItem.setMenuId(1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        OrderTable orderTable = new OrderTable(1L, null, 0 , false);
 
         Order order = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
@@ -86,8 +85,7 @@ class OrderServiceTest {
         orderLineItem.setMenuId(1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        OrderTable orderTable = new OrderTable(1L, null, 0 ,false);
 
         Order order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         Order order2 = new Order(2L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);

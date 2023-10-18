@@ -45,17 +45,12 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성한다() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(true);
-        orderTable2.setEmpty(true);
-
+        OrderTable orderTable1 = new OrderTable(1L, null, 2, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+
         TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
         TableGroup tableGroup = tableGroupDto.toDomain();
-
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -75,14 +70,10 @@ class TableGroupServiceTest {
     @Test
     void 비어있지_않은_테이블을_단체_지정하면_예외를_던진다() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(false);
-        orderTable2.setEmpty(false);
-
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 2, false);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 3, false);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+
         TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
         TableGroup tableGroup = tableGroupDto.toDomain();
 
@@ -103,16 +94,10 @@ class TableGroupServiceTest {
     @Test
     void 이미_단체_지정된_테이블을_단체_지정하면_예외를_던진다() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(true);
-        orderTable2.setEmpty(true);
-        orderTable1.setTableGroupId(1L);
-        orderTable2.setTableGroupId(1L);
-
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 2, true);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+
         TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
         TableGroup tableGroup = tableGroupDto.toDomain();
 
@@ -133,14 +118,10 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(true);
-        orderTable2.setEmpty(true);
-
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 2, true);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+
         TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
         TableGroup tableGroup = tableGroupDto.toDomain();
 
