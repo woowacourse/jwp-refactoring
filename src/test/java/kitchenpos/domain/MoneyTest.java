@@ -34,7 +34,7 @@ class MoneyTest {
             Money money = Money.from(value);
 
             // then
-            assertThat(money.getValue()).isEqualTo(BigDecimal.valueOf(value));
+            assertThat(money.getAmount()).isEqualTo(BigDecimal.valueOf(value));
         }
     }
 

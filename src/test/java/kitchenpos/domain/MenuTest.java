@@ -54,7 +54,7 @@ class MenuTest {
             Menu menu = new Menu(1L, "맥주세트", price, menuGroup);
 
             // then
-            assertThat(menu.getPrice().getValue()).isNotNegative();
+            assertThat(menu.getPrice().getAmount()).isNotNegative();
         }
     }
 

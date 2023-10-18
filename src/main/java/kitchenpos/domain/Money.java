@@ -12,7 +12,7 @@ public class Money {
     public static final Money ZERO = new Money(BigDecimal.ZERO);
 
     @Column(precision = 19, scale = 2, name = "money")
-    private BigDecimal value;
+    private BigDecimal amount;
 
     public static Money from(long value) {
         if (value == 0) {
@@ -24,9 +24,9 @@ public class Money {
     protected Money() {
     }
 
-    public Money(BigDecimal value) {
-        validate(value);
-        this.value = value;
+    public Money(BigDecimal amount) {
+        validate(amount);
+        this.amount = amount;
     }
 
     private void validate(BigDecimal value) {
@@ -42,30 +42,30 @@ public class Money {
         if (money == ZERO) {
             return this;
         }
-        return new Money(this.value.add(money.value));
+        return new Money(this.amount.add(money.amount));
     }
 
     public boolean isNegative() {
-        return value.compareTo(BigDecimal.ZERO) < 0;
+        return amount.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public boolean isLessThan(Money other) {
-        return value.compareTo(other.value) < 0;
+        return amount.compareTo(other.amount) < 0;
     }
 
     public boolean isGreaterThan(Money other) {
-        return value.compareTo(other.value) > 0;
+        return amount.compareTo(other.amount) > 0;
     }
 
     public Money multiple(long multiplicand) {
         if (multiplicand == 0) {
             return ZERO;
         }
-        return new Money(value.multiply(BigDecimal.valueOf(multiplicand)));
+        return new Money(amount.multiply(BigDecimal.valueOf(multiplicand)));
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
     @Override
@@ -79,11 +79,11 @@ public class Money {
 
         Money money = (Money) o;
 
-        return Objects.equals(value, money.value);
+        return Objects.equals(amount, money.amount);
     }
 
     @Override
     public int hashCode() {
-        return value != null ? value.hashCode() : 0;
+        return amount != null ? amount.hashCode() : 0;
     }
 }

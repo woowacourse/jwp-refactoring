@@ -50,7 +50,7 @@ class ProductTest {
             Product product = new Product(1L, "맥주", price);
 
             // then
-            assertThat(product.getPrice().getValue()).isNotNegative();
+            assertThat(product.getPrice().getAmount()).isNotNegative();
         }
     }
 }

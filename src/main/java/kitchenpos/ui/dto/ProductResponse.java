@@ -12,7 +12,7 @@ public class ProductResponse {
 
     public static ProductResponse from(Product product) {
         Money price = product.getPrice();
-        return new ProductResponse(product.getId(), product.getName(), price.getValue());
+        return new ProductResponse(product.getId(), product.getName(), price.getAmount());
     }
 
     public ProductResponse(Long id, String name, BigDecimal price) {
