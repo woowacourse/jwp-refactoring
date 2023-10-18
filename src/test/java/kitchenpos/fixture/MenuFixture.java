@@ -9,13 +9,6 @@ public class MenuFixture {
 
     public static Menu 메뉴(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
                           final List<MenuProduct> menuProducts) {
-        final Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+        return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 }

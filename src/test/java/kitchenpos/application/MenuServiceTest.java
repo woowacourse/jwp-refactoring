@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.상품;
@@ -10,6 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.menu.MenuCreateRequest;
+import kitchenpos.application.dto.menu.MenuCreateResponse;
+import kitchenpos.application.dto.menu.MenuProductCreateRequest;
+import kitchenpos.application.dto.menu.MenuResponse;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -65,24 +68,42 @@ class MenuServiceTest {
         @Test
         void 메뉴를_정상적으로_등록한다() {
             // given
-            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId(),
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateRequest 메뉴 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
+                    List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
             // when
-            final Menu 저장된_메뉴 = menuService.create(메뉴);
+            final MenuCreateResponse 저장된_메뉴 = menuService.create(메뉴);
 
             // then
+            final MenuProduct 예상_메뉴_상품1 = new MenuProduct(저장된_메뉴.getId(), 메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProduct 예상_메뉴_상품2 = new MenuProduct(저장된_메뉴.getId(), 메뉴_상품_2.getProductId(),
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateResponse 예상_응답값 = MenuCreateResponse.of(
+                    new Menu(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(), List.of(예상_메뉴_상품1, 예상_메뉴_상품2))
+            );
+
             assertAll(
                     () -> assertThat(저장된_메뉴.getId()).isNotNull(),
                     () -> assertThat(저장된_메뉴).usingRecursiveComparison()
                             .ignoringFields("id", "menuProducts.seq")
-                            .isEqualTo(메뉴)
+                            .isEqualTo(예상_응답값)
             );
         }
 
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(-22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId(),
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateRequest 메뉴 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(-22000, 2), 저장된_메뉴_그룹.getId(),
+                    List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
             // expected
             assertThatThrownBy(() -> menuService.create(메뉴))
@@ -92,7 +113,12 @@ class MenuServiceTest {
         @Test
         void 메뉴의_가격이_없으면_예외가_발생한다() {
             // given
-            final Menu 메뉴 = 메뉴(null, "메뉴", null, 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId(),
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateRequest 메뉴 = new MenuCreateRequest("메뉴", null, 저장된_메뉴_그룹.getId(),
+                    List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
             // expected
             assertThatThrownBy(() -> menuService.create(메뉴))
@@ -102,8 +128,12 @@ class MenuServiceTest {
         @Test
         void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
             // given
-            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId() + 1,
-                    List.of(메뉴_상품_1, 메뉴_상품_2));
+            final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId(),
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateRequest 메뉴 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(22000, 2),
+                    저장된_메뉴_그룹.getId() + 1, List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
             // expected
             assertThatThrownBy(() -> menuService.create(메뉴))
@@ -113,8 +143,12 @@ class MenuServiceTest {
         @Test
         void 상품이_존재하지_않으면_예외가_발생한다() {
             // given
-            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
-                    List.of(메뉴_상품_1, 메뉴_상품(null, null, 메뉴_상품_2.getProductId() + 1, 1)));
+            final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId() + 1,
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateRequest 메뉴 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
+                    List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
             // expected
             assertThatThrownBy(() -> menuService.create(메뉴))
@@ -124,7 +158,12 @@ class MenuServiceTest {
         @Test
         void 입력한_가격이_상품들의_가격합_보다_크면_예외가_발생한다() {
             // given
-            final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(23000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+            final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                    메뉴_상품_1.getQuantity());
+            final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId(),
+                    메뉴_상품_2.getQuantity());
+            final MenuCreateRequest 메뉴 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(23000, 2), 저장된_메뉴_그룹.getId(),
+                    List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
             // expected
             assertThatThrownBy(() -> menuService.create(메뉴))
@@ -135,20 +174,40 @@ class MenuServiceTest {
     @Test
     void 메뉴_목록을_정상적으로_조회한다() {
         // given
-        final Menu 메뉴1 = 메뉴(null, "메뉴1", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
+        final MenuProductCreateRequest 메뉴_상품1_요청값 = new MenuProductCreateRequest(메뉴_상품_1.getProductId(),
+                메뉴_상품_1.getQuantity());
+        final MenuProductCreateRequest 메뉴_상품2_요청값 = new MenuProductCreateRequest(메뉴_상품_2.getProductId(),
+                메뉴_상품_2.getQuantity());
+        final MenuCreateRequest 메뉴1 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
+                List.of(메뉴_상품1_요청값, 메뉴_상품2_요청값));
 
         final MenuGroup 저장된_메뉴_그룹2 = menuGroupDao.save(메뉴_그룹(null, "양념 2개"));
-        final MenuProduct 메뉴2_상품 = 메뉴_상품(null, null, 저장된_양념_치킨.getId(), 2);
-        final Menu 메뉴2 = 메뉴(null, "메뉴2", BigDecimal.valueOf(24000, 2), 저장된_메뉴_그룹2.getId(), List.of(메뉴2_상품));
+        final MenuProductCreateRequest 메뉴2_상품1_요청값 = new MenuProductCreateRequest(저장된_양념_치킨.getId(), 2);
+        final MenuCreateRequest 메뉴2 = new MenuCreateRequest("메뉴2", BigDecimal.valueOf(24000, 2), 저장된_메뉴_그룹2.getId(),
+                List.of(메뉴2_상품1_요청값));
 
-        final Menu 저장된_메뉴1 = menuService.create(메뉴1);
-        final Menu 저장된_메뉴2 = menuService.create(메뉴2);
+        final MenuCreateResponse 저장된_메뉴1 = menuService.create(메뉴1);
+        final MenuCreateResponse 저장된_메뉴2 = menuService.create(메뉴2);
 
         // when
-        final List<Menu> 메뉴들 = menuService.list();
+        final List<MenuResponse> 메뉴들 = menuService.list();
 
         // then
+        final MenuProduct 예상_메뉴1_상품1 = new MenuProduct(저장된_메뉴1.getId(), 메뉴_상품_1.getProductId(),
+                메뉴_상품_1.getQuantity());
+        final MenuProduct 예상_메뉴1_상품2 = new MenuProduct(저장된_메뉴1.getId(), 메뉴_상품_2.getProductId(),
+                메뉴_상품_2.getQuantity());
+        final MenuCreateResponse 예상_메뉴1_응답값 = MenuCreateResponse.of(
+                new Menu(저장된_메뉴1.getId(), "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(),
+                        List.of(예상_메뉴1_상품1, 예상_메뉴1_상품2))
+        );
+        final MenuProduct 예상_메뉴2_상품1 = new MenuProduct(저장된_메뉴2.getId(), 저장된_양념_치킨.getId(), 2);
+        final MenuCreateResponse 예상_메뉴2_응답값 = MenuCreateResponse.of(
+                new Menu(저장된_메뉴2.getId(), "메뉴2", BigDecimal.valueOf(24000, 2), 저장된_메뉴_그룹2.getId(), List.of(예상_메뉴2_상품1))
+        );
+
         assertThat(메뉴들).usingRecursiveComparison()
-                .isEqualTo(List.of(저장된_메뉴1, 저장된_메뉴2));
+                .ignoringFields("menuProducts.seq")
+                .isEqualTo(List.of(예상_메뉴1_응답값, 예상_메뉴2_응답값));
     }
 }
