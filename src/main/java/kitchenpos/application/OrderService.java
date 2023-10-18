@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.response.OrderResponse;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 @Service

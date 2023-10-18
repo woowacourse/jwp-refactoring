@@ -1,7 +1,7 @@
 package kitchenpos.dto.response;
 
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Orders;
 
 import java.time.LocalDateTime;
 

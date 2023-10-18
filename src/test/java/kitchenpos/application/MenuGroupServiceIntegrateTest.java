@@ -3,19 +3,18 @@ package kitchenpos.application;
 import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.domain.fixture.MenuGroupFixture.인기_메뉴_생성;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 

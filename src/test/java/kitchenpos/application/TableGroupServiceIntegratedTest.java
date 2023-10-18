@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.fixture.OrderFixture;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -18,7 +17,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.fixture.OrderFixture.*;
 import static kitchenpos.domain.fixture.OrderFixture.주문_생성;
 import static kitchenpos.domain.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

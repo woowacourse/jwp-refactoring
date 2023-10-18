@@ -1,8 +1,8 @@
 package kitchenpos.domain.fixture;
 
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 
 import static java.time.LocalDateTime.now;
 
