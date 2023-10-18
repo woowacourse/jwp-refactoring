@@ -4,48 +4,71 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Menu {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private BigDecimal price;
-    private Long menuGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id", nullable = false)
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
+
+    protected Menu() {
+    }
 
     private Menu(final Long id,
                  final String name,
                  final BigDecimal price,
-                 final Long menuGroupId,
+                 final MenuGroup menuGroup,
                  final List<MenuProduct> menuProducts) {
         validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
     public static Menu of(final String name,
                           final Long price,
-                          final Long menuGroupId) {
+                          final MenuGroup menuGroup) {
         validateNull(price);
-        return new Menu(null, name, BigDecimal.valueOf(price), menuGroupId, new ArrayList<>());
+        return new Menu(null, name, BigDecimal.valueOf(price), menuGroup, new ArrayList<>());
     }
 
     public static Menu of(final String name,
                           final Long price,
-                          final Long menuGroupId,
+                          final MenuGroup menuGroup,
                           final List<MenuProduct> menuProducts) {
         validateNull(price);
-        return new Menu(null, name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
+        return new Menu(null, name, BigDecimal.valueOf(price), menuGroup, menuProducts);
     }
 
     public static Menu of(final Long id,
                           final String name,
                           final BigDecimal price,
-                          final Long menuGroupId) {
-        return new Menu(id, name, price, menuGroupId, new ArrayList<>());
+                          final MenuGroup menuGroup) {
+        return new Menu(id, name, price, menuGroup, new ArrayList<>());
     }
 
     private static void validateNull(final Long price) {
@@ -77,14 +100,14 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
-        return menuGroupId;
+        return menuGroup.getId();
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 }

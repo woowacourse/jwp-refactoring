@@ -1,7 +1,5 @@
 package kitchenpos.dto;
 
-import kitchenpos.domain.MenuProduct;
-
 public class MenuProductCreateRequest {
 
     private final Long productId;
@@ -11,10 +9,6 @@ public class MenuProductCreateRequest {
                                     final Long quantity) {
         this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public MenuProduct to() {
-        return MenuProduct.of(productId, quantity);
     }
 
     public Long getProductId() {

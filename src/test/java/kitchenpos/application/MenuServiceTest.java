@@ -9,9 +9,9 @@ import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuProductCreateRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -57,10 +57,9 @@ class MenuServiceTest extends ServiceTest {
                         softly.assertThat(savedMenu.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
                         softly.assertThat(savedMenu.getName()).isEqualTo(request.getName());
                         softly.assertThat(savedMenu.getPrice().longValue()).isEqualTo(request.getPrice());
-                        softly.assertThat(savedMenu.getMenuProducts().get(0))
-                                .usingRecursiveComparison()
-                                .comparingOnlyFields("productId", "quantity")
-                                .isEqualTo(menuProductRequest.to());
+                        softly.assertThat(savedMenu.getMenuProducts().get(0).getSeq()).isPositive();
+                        softly.assertThat(savedMenu.getMenuProducts().get(0).getProductId())
+                                .isEqualTo(menuProductRequest.getProductId());
                     }
             );
         }

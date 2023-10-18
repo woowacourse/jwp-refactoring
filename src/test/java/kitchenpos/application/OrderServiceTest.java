@@ -7,12 +7,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -33,13 +33,15 @@ class OrderServiceTest extends ServiceTest {
 
     private Menu menu;
 
+    private MenuGroup menuGroup;
+
     @BeforeEach
     void setUp() {
         OrderTable newOrderTable = createOrderTable(false, null, 10);
         orderTable = tableDao.save(newOrderTable);
-
-        Menu newMenu = Menu.of("치킨", 15_000L, 1L);
-        menu = menuDao.save(newMenu);
+        menuGroup = menuGroupRepository.save(MenuGroup.from("후라이드 세트"));
+        Menu newMenu = Menu.of("치킨", 15_000L, menuGroup);
+        menu = menuRepository.save(newMenu);
     }
 
     @Nested

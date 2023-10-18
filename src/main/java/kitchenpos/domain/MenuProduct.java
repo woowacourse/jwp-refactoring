@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MenuProduct {
@@ -13,11 +15,13 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(nullable = false)
-    private Long menuId;
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
 
-    @Column(nullable = false)
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @Column(nullable = false)
     private Long quantity;
@@ -26,31 +30,31 @@ public class MenuProduct {
     }
 
     public MenuProduct(final Long seq,
-                        final Long menuId,
-                        final Long productId,
-                        final long quantity) {
+                       final Menu menu,
+                       final Product product,
+                       final Long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.menu = menu;
+        this.product = product;
         this.quantity = quantity;
     }
 
     public static MenuProduct of(final Long seq,
-                                 final Long menuId,
-                                 final Long productId,
+                                 final Menu menu,
+                                 final Product product,
                                  final long quantity) {
-        return new MenuProduct(seq, menuId, productId, quantity);
+        return new MenuProduct(seq, menu, product, quantity);
     }
 
-    public static MenuProduct of(final Long menuId,
-                                 final Long productId,
+    public static MenuProduct of(final Menu menu,
+                                 final Product product,
                                  final long quantity) {
-        return new MenuProduct(null, menuId, productId, quantity);
+        return new MenuProduct(null, menu, product, quantity);
     }
 
-    public static MenuProduct of(final Long productId,
+    public static MenuProduct of(final Product product,
                                  final long quantity) {
-        return new MenuProduct(null, null, productId, quantity);
+        return new MenuProduct(null, null, product, quantity);
     }
 
     public Long getSeq() {
@@ -58,11 +62,11 @@ public class MenuProduct {
     }
 
     public Long getMenuId() {
-        return menuId;
+        return menu.getId();
     }
 
     public Long getProductId() {
-        return productId;
+        return product.getId();
     }
 
     public long getQuantity() {
