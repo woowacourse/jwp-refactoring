@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.KitchenPosException;
 import kitchenpos.repository.OrderRepository;
@@ -45,7 +44,7 @@ public class OrderTableService {
     public OrderTableResponse changeEmpty(Long orderTableId, boolean empty) {
         OrderTable orderTable = findOrderTable(orderTableId);
         Order order = findOrderByOrderTableId(orderTableId);
-        if (order.getOrderStatus() != OrderStatus.COMPLETION) {
+        if (!order.isCompletion()) {
             throw new KitchenPosException("계산 완료 상태가 아닌 주문이 있는 테이블은 상태를 변경할 수 없습니다. orderTableId=" + orderTableId);
         }
         orderTable.changeEmpty(empty);
