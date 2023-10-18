@@ -29,4 +29,23 @@ public class OrderTableRestController {
         List<OrderTableResponse> responses = orderTableService.findAll();
         return ResponseEntity.ok().body(responses);
     }
+
+    @PatchMapping("/api/order-tables/{orderTableId}")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable final Long orderTableId,
+            @RequestParam final boolean isEmpty
+    ) {
+        orderTableService.changeIsEmpty(orderTableId, isEmpty);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/api/order-tables/{orderTableId}")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable final Long orderTableId,
+            @RequestParam final int numberOfGuest
+    ) {
+        orderTableService.changeNumberOfGuests(orderTableId, numberOfGuest);
+        return ResponseEntity.ok().build();
+    }
+
 }

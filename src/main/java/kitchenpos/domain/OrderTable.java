@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -30,6 +32,10 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void updateEmpty(boolean isEmpty) {
+        this.empty = isEmpty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -46,4 +52,25 @@ public class OrderTable {
         return empty;
     }
 
+    public void validateTableGroupIsNotNull() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNumberOfGuests() {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateIsEmpty() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void updateNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
 }
