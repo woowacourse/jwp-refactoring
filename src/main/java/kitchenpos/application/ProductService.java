@@ -23,15 +23,8 @@ public class ProductService {
 
     @Transactional
     public CreateProductResponse create(final CreateProductRequest request) {
-        final BigDecimal price = new BigDecimal(request.getPrice());
-
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         Product product = ProductMapper.toProduct(request);
         Product entity = productDao.save(product);
-
         return CreateProductResponse.from(entity);
     }
 

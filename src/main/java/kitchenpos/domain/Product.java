@@ -8,9 +8,16 @@ public class Product {
     private final BigDecimal price;
 
     private Product(Long id, String name, BigDecimal price) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

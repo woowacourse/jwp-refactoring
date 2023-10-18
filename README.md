@@ -108,7 +108,7 @@
     - [x] MenuGroup
     - [x] MenuProduct
 
-- [ ] 요청, 응답을 도메인이 아닌 Dto를 활용한다.
+- [x] 요청, 응답을 도메인이 아닌 Dto를 활용한다.
     - [x] GET /api/products
     - [x] POST /api/products
     - [x] GET /api/menus
@@ -128,7 +128,7 @@
     - [ ] MenuGroup
     - [ ] Menu
     - [ ] Order
-    - [ ] Product
+    - [x] Product
     - [ ] TableGroup
     - [ ] Table
     - [ ] OrderStatus
