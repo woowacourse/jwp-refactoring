@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.CreateMenuGroupDto;
 import kitchenpos.application.dto.MenuGroupDto;
-import kitchenpos.application.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupName;
 import org.assertj.core.api.Assertions;
