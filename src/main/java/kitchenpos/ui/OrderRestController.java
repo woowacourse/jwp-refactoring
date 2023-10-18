@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/orders")
 public class OrderRestController {
 
     private final OrderService orderService;
@@ -23,25 +25,20 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/orders")
+    @PostMapping
     public ResponseEntity<Order> create(@RequestBody OrderCreateRequest request) {
-        final Order created = orderService.create(request);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+        Order created = orderService.create(request);
+        URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri).body(created);
     }
 
-    @GetMapping("/api/orders")
+    @GetMapping
     public ResponseEntity<List<Order>> list() {
-        return ResponseEntity.ok()
-            .body(orderService.list())
-            ;
+        return ResponseEntity.ok().body(orderService.list());
     }
 
-    @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
-        @PathVariable final Long orderId,
-        @RequestBody final OrderStatus orderStatus
-    ) {
+    @PutMapping("/{orderId}/order-status")
+    public ResponseEntity<Order> changeOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatus orderStatus) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
     }
 }
