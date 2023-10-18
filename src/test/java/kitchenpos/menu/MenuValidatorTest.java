@@ -7,13 +7,12 @@ import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.menu.domain.InvalidMenuException;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuValidator;
-import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -25,8 +24,8 @@ import org.junit.jupiter.api.Test;
 class MenuValidatorTest {
 
     private final MenuGroupRepository menuGroupRepository = mock(MenuGroupRepository.class);
-    private final ProductDao productDao = mock(ProductDao.class);
-    private final MenuValidator menuValidator = new MenuValidator(menuGroupRepository, productDao);
+    private final ProductRepository productRepository = mock(ProductRepository.class);
+    private final MenuValidator menuValidator = new MenuValidator(menuGroupRepository, productRepository);
 
     @Test
     void 메뉴가_메뉴_그룹에_속하지_않는다면_예외() {
@@ -63,10 +62,8 @@ class MenuValidatorTest {
         // given
         given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
-        given(productDao.findById(1L))
-                .willReturn(Optional.of(
-                        new Product(1L, "상품", BigDecimal.valueOf(1000))
-                ));
+        given(productRepository.getById(1L))
+                .willReturn(new Product(1L, "상품", BigDecimal.valueOf(1000)));
 
         // when & then
         assertThatThrownBy(() -> menuValidator.validateCreate(
@@ -82,10 +79,8 @@ class MenuValidatorTest {
         // given
         given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
-        given(productDao.findById(1L))
-                .willReturn(Optional.of(
-                        new Product(1L, "상품", BigDecimal.valueOf(1000))
-                ));
+        given(productRepository.getById(1L))
+                .willReturn(new Product(1L, "상품", BigDecimal.valueOf(1000)));
 
         // when & then
         assertThatThrownBy(() -> menuValidator.validateCreate(
@@ -101,10 +96,8 @@ class MenuValidatorTest {
         // given
         given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
-        given(productDao.findById(1L))
-                .willReturn(Optional.of(
-                        new Product(1L, "상품", BigDecimal.valueOf(1000))
-                ));
+        given(productRepository.getById(1L))
+                .willReturn(new Product(1L, "상품", BigDecimal.valueOf(1000)));
 
         // when & then
         assertDoesNotThrow(() -> menuValidator.validateCreate(

@@ -2,21 +2,20 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
-import kitchenpos.product.dao.ProductDao;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuValidator {
 
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public MenuValidator(MenuGroupRepository menuGroupRepository, ProductDao productDao) {
+    public MenuValidator(MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
         this.menuGroupRepository = menuGroupRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     public void validateCreate(BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -31,8 +30,7 @@ public class MenuValidator {
         }
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
-            Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(NoSuchElementException::new);
+            Product product = productRepository.getById(menuProduct.getProductId());
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
         if (price.compareTo(sum) > 0) {
