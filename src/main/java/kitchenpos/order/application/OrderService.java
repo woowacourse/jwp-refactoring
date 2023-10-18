@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemInfo;
@@ -28,7 +27,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public Order create(OrderCreateRequest request) {
         List<OrderLineItem> orderLineItems = orderLineItems(request.getOrderLineItems());
         return orderRepository.save(
                 new Order(request.getOrderTableId(), orderLineItems, orderValidator)
@@ -46,10 +45,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+    public Order changeOrderStatus(Long orderId, OrderStatusChangeRequest request) {
+        Order savedOrder = orderRepository.getById(orderId);
+        OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
         orderRepository.save(savedOrder);
         return savedOrder;
