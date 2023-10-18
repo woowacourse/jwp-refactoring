@@ -19,6 +19,4 @@ public class OrderCreateRequest {
     public List<OrderLineItemCreateRequest> getOrderLineItems() {
         return orderLineItems;
     }
-
-
 }

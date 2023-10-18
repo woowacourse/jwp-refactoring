@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -48,14 +47,7 @@ public class Menu {
     }
 
     private void validate(BigDecimal price, List<MenuProduct> menuProducts) {
-        validatePrice(price);
         validateSumOfMenuProductsPrice(price, menuProducts);
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴 가격은 음수일 수 없습니다.");
-        }
     }
 
     private void validateSumOfMenuProductsPrice(BigDecimal price, List<MenuProduct> menuProducts) {

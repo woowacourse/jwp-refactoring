@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import kitchenpos.application.request.OrderCreateRequest;
-import kitchenpos.application.request.OrderLineItemCreateRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -39,7 +38,7 @@ public class OrderService {
     @Transactional
     public Order create(OrderCreateRequest request) {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-            .map(OrderLineItemCreateRequest::toEntity)
+            .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
             .collect(toList());
         validateOrderLineItemSize(orderLineItems);
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
