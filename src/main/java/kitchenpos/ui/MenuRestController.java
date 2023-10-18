@@ -1,18 +1,22 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.ui.dto.request.CreateMenuRequest;
+import kitchenpos.ui.dto.response.CreateMenuResponse;
+import kitchenpos.ui.dto.response.ReadMenuResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
-
 @RestController
 public class MenuRestController {
+
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {
@@ -20,18 +24,23 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<Menu> create(@RequestBody final Menu menu) {
-        final Menu created = menuService.create(menu);
+    public ResponseEntity<CreateMenuResponse> create(@RequestBody final CreateMenuRequest request) {
+        final Menu created = menuService.create(request);
         final URI uri = URI.create("/api/menus/" + created.getId());
+        final CreateMenuResponse response = new CreateMenuResponse(created);
+
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                             .body(response);
     }
 
     @GetMapping("/api/menus")
-    public ResponseEntity<List<Menu>> list() {
+    public ResponseEntity<List<ReadMenuResponse>> list() {
+        final List<ReadMenuResponse> responses = menuService.list()
+                                                            .stream()
+                                                            .map(ReadMenuResponse::new)
+                                                            .collect(Collectors.toList());
+
         return ResponseEntity.ok()
-                .body(menuService.list())
-                ;
+                             .body(responses);
     }
 }
