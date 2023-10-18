@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
@@ -43,10 +44,12 @@ public class TableGroupService {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
                 .map(it -> it.getId())
                 .collect(Collectors.toList());
+
         final List<OrderTable> orderTables = orderTableRepository.findByIdIn(orderTableIds);
         if (orderTables.size() != orderTableIds.size()) {
             throw new InvalidOrderTableException();
         }
+
         return orderTables;
     }
 
@@ -54,8 +57,6 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
         orderRepository.findByOrderTableIn(tableGroup.getOrderTables()).stream()
                 .forEach(it -> it.validateOrderComplete());
