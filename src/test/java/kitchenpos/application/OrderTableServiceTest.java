@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -68,8 +69,9 @@ class OrderTableServiceTest {
             OrderTable orderTable = new OrderTable(1L, false, 0);
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-            Order order = new Order();
-            order.setOrderStatus(orderStatus);
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+
+            Order order = new Order(1L, orderStatus, orderedTime, orderTable);
             given(orderRepository.findByOrderTableId(anyLong()))
                 .willReturn(Optional.of(order));
 
@@ -85,8 +87,9 @@ class OrderTableServiceTest {
             OrderTable orderTable = new OrderTable(1L, false, 0);
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-            Order order = new Order();
-            order.setOrderStatus(OrderStatus.COMPLETION);
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+
+            Order order = new Order(1L, OrderStatus.COMPLETION, orderedTime, orderTable);
             given(orderRepository.findByOrderTableId(anyLong()))
                 .willReturn(Optional.of(order));
 

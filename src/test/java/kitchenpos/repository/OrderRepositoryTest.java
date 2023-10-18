@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -23,16 +24,18 @@ class OrderRepositoryTest {
     @Autowired
     OrderRepository orderRepository;
 
+    @Autowired
+    OrderTableRepository orderTableRepository;
+
     @Nested
     class findByOrderTableId {
 
         @Test
         void 주문_테이블_식별자에_대한_주문이_없으면_empty() {
             // given
-            Order order = new Order();
-            order.setOrderTableId(1L);
-            order.setOrderStatus(OrderStatus.COMPLETION);
-            order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
+            Order order = new Order(null, OrderStatus.COMPLETION, orderedTime, orderTable);
             orderRepository.save(order);
 
             //when
@@ -45,14 +48,13 @@ class OrderRepositoryTest {
         @Test
         void 주문_테이블_식별자에_대한_주문이_있으면_present() {
             // given
-            Order order = new Order();
-            order.setOrderTableId(4885L);
-            order.setOrderStatus(OrderStatus.COMPLETION);
-            order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
+            Order order = new Order(null, OrderStatus.COMPLETION, orderedTime, orderTable);
             orderRepository.save(order);
 
             //when
-            Optional<Order> actual = orderRepository.findByOrderTableId(4885L);
+            Optional<Order> actual = orderRepository.findByOrderTableId(orderTable.getId());
 
             // then
             assertThat(actual).isPresent();
@@ -66,13 +68,13 @@ class OrderRepositoryTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 주문_테이블_식별자_목록이_포함되고_주문_상태가_포함되면_true(OrderStatus status) {
             // given
-            List<Long> orderTableIds = List.of(4885L, 4886L);
             List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
-            Order order = new Order();
-            order.setOrderTableId(4885L);
-            order.setOrderStatus(status);
-            order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
+            List<Long> orderTableIds = List.of(4885L, 4886L, orderTable.getId());
+
+            Order order = new Order(null, status, orderedTime, orderTable);
             orderRepository.save(order);
 
             // when
@@ -89,10 +91,9 @@ class OrderRepositoryTest {
             List<Long> orderTableIds = List.of(4885L, 4886L);
             List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
-            Order order = new Order();
-            order.setOrderTableId(4884L);
-            order.setOrderStatus(status);
-            order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
+            Order order = new Order(null, status, orderedTime, orderTable);
             orderRepository.save(order);
 
             // when
@@ -102,17 +103,16 @@ class OrderRepositoryTest {
             assertThat(actual).isFalse();
         }
 
-        @ParameterizedTest
-        @ValueSource(longs = {4885, 4886})
-        void 주문_테이블_식별자_목록에_포함되고_주문_상태가_포함되지_않으면_false(Long orderTableId) {
+        @Test
+        void 주문_테이블_식별자_목록에_포함되고_주문_상태가_포함되지_않으면_false() {
             // given
-            List<Long> orderTableIds = List.of(4885L, 4886L);
             List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
-            Order order = new Order();
-            order.setOrderTableId(orderTableId);
-            order.setOrderStatus(OrderStatus.COMPLETION);
-            order.setOrderedTime(LocalDateTime.parse("2023-10-15T22:40:00"));
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
+            List<Long> orderTableIds = List.of(4885L, 4886L, orderTable.getId());
+
+            Order order = new Order(null, OrderStatus.COMPLETION, orderedTime, orderTable);
             orderRepository.save(order);
 
             // when
