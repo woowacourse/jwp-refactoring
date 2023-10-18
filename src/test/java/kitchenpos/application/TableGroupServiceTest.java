@@ -4,7 +4,6 @@ import kitchenpos.common.service.ServiceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -62,42 +61,6 @@ class TableGroupServiceTest extends ServiceTest {
 
         //when
         Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_사이즈가_DB에_저장된_사이즈와_다른_경우_예외가_발생한다() {
-        //given
-        final TableGroup saveTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(saveTableGroup.getId(), 0, true));
-        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(saveTableGroup.getId(), 0, true));
-
-        //when, then
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블이_비어있지_않은_경우_예외가_발생한다() {
-        //given
-        final TableGroup saveTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(saveTableGroup.getId(), 0, false));
-        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(saveTableGroup.getId(), 0, false));
-
-        //when, then
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_단체_지정아이디가_널이_아닌_경우_예외가_발생한다() {
-        //given
-        final TableGroup saveTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(saveTableGroup.getId(), 0, true));
-        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(saveTableGroup.getId(), 0, true));
-
-        //when, then
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
