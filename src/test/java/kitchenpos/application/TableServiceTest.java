@@ -1,14 +1,5 @@
 package kitchenpos.application;
 
-import static java.time.LocalDateTime.now;
-import static kitchenpos.fixture.Fixture.menuFixture;
-import static kitchenpos.fixture.Fixture.menuGroupFixture;
-import static kitchenpos.fixture.Fixture.menuProductFixture;
-import static kitchenpos.fixture.Fixture.orderFixture;
-import static kitchenpos.fixture.Fixture.orderLineItemFixture;
-import static kitchenpos.fixture.Fixture.orderTableFixture;
-import static kitchenpos.fixture.Fixture.productFixture;
-import static kitchenpos.fixture.Fixture.tableGroupFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -16,57 +7,64 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.dto.ChangeEmptyRequest;
+import kitchenpos.dto.ChangeNumberOfGuestRequest;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupRequest;
 
-@SpringBootTest
-class TableServiceTest {
+class TableServiceTest extends BaseServiceTest {
 
     @Autowired
     private TableService tableService;
+
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
+
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
+
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
+
     @Autowired
     private TableGroupService tableGroupService;
-
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = orderTableFixture(null, 4, true);
-    }
 
     @Test
     @DisplayName("테이블 생성 - 정상")
     void createOrderTableTest() {
-        // Given & When
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        //given
+        final OrderTableRequest request = new OrderTableRequest(10, true);
 
+        //when
+        OrderTable createdOrderTable = tableService.create(request);
+
+        //then
         assertSoftly(softly -> {
-            softly.assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+            softly.assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
             softly.assertThat(createdOrderTable.isEmpty()).isTrue();
-            softly.assertThat(createdOrderTable.getTableGroupId()).isNull();
+            softly.assertThat(createdOrderTable.getTableGroup()).isNull();
             softly.assertThat(createdOrderTable.getId()).isNotNull();
         });
     }
@@ -77,13 +75,14 @@ class TableServiceTest {
         @Test
         @DisplayName("테이블을 비운다.")
         void changeEmptyTest() {
+
             // Given
-            orderTable.setEmpty(false);
-            final OrderTable savedTable = tableService.create(orderTable);
-            savedTable.setEmpty(true);
+            final OrderTableRequest request = new OrderTableRequest(10, false);
+            final OrderTable savedTable = tableService.create(request);
+            final ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(true);
 
             // When
-            OrderTable changedOrderTable = tableService.changeEmpty(savedTable.getId(), savedTable);
+            OrderTable changedOrderTable = tableService.changeEmpty(savedTable.getId(), changeEmptyRequest);
 
             // then
             assertThat(changedOrderTable.isEmpty()).isTrue();
@@ -92,32 +91,49 @@ class TableServiceTest {
         @Test
         @DisplayName("테이블 비우기 - 테이블 그룹이 존재할 때 예외 발생")
         void changeEmptyWithGroupId() {
-            final OrderTable orderTable1 = tableService.create(orderTable);
-            final OrderTable orderTable2 = tableService.create(orderTable);
-            tableGroupService.create(tableGroupFixture(now(), List.of(orderTable1, orderTable2)));
+            //given
+            final OrderTableRequest request1 = new OrderTableRequest(10, true);
+            final OrderTableRequest request2 = new OrderTableRequest(10, true);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable))
-                    .isInstanceOf(IllegalArgumentException.class);
+            final OrderTable savedTable1 = tableService.create(request1);
+            final OrderTable savedTable2 = tableService.create(request2);
+
+            final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                    List.of(savedTable1.getId(), savedTable2.getId()));
+
+            tableGroupService.create(tableGroupRequest);
+
+            final ChangeEmptyRequest request = new ChangeEmptyRequest(true);
+
+            //when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(savedTable1.getId(), request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("그룹화 된 테이블은 못비워용");
         }
 
         @Test
         @DisplayName("테이블 비우기 - 주문 상태가 COOKING 혹은 MEAL일 때 예외 발생")
         void changeEmptyWithCookingOrMealOrderShouldThrowException() {
-            final OrderTable savedTable = tableService.create(orderTable);
+            //given
+            final OrderTableRequest request = new OrderTableRequest(10, false);
+            final OrderTable savedTable = tableService.create(request);
 
-            final MenuGroup boonsik = menuGroupDao.save(menuGroupFixture("분식"));
-            final Product productD = productDao.save(productFixture(null, "떡볶이", BigDecimal.TEN));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("분식"));
+            final Product productD = productRepository.save(new Product("떡볶이", BigDecimal.TEN));
 
-            final List<MenuProduct> menuProducts = List.of(
-                    menuProductFixture(null, productD.getId(), 2)
+            final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD, 2));
+
+            final Menu menu = menuRepository.save(
+                    new Menu("떡순튀", BigDecimal.valueOf(20), menuGroup, new MenuProducts(menuProducts))
             );
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(),2));
+            final Order order = new Order(savedTable, new OrderLineItems(orderLineItems));
+            orderRepository.save(order);
 
-            final Menu menu = menuDao.save(menuFixture("떡순튀", new BigDecimal(31), boonsik.getId(), menuProducts));
-            final List<OrderLineItem> orderLineItems = List.of(orderLineItemFixture(null, menu.getId(), 2));
+            final ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(true);
 
-            orderDao.save(orderFixture(savedTable.getId(), "MEAL", now(), orderLineItems));
-
-            assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), savedTable))
+            //when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), changeEmptyRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("이미 주문이 진행 중이에요");
         }
@@ -131,12 +147,12 @@ class TableServiceTest {
         @DisplayName("손님 수 변경 - 정상")
         void changeNumberOfGuestsWithValidData() {
             //Given
-            orderTable.setEmpty(false);
-            final OrderTable createdTable = tableService.create(orderTable);
-            createdTable.setNumberOfGuests(10);
+            final OrderTableRequest request = new OrderTableRequest(20, false);
+            final OrderTable createdTable = tableService.create(request);
+            final ChangeNumberOfGuestRequest changeNumberOfGuestRequest = new ChangeNumberOfGuestRequest(10);
 
             // When
-            OrderTable changedOrderTable = tableService.changeNumberOfGuests(createdTable.getId(), createdTable);
+            OrderTable changedOrderTable = tableService.changeNumberOfGuests(createdTable.getId(), changeNumberOfGuestRequest);
 
             assertSoftly(softly -> {
                 softly.assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(10);
@@ -148,11 +164,12 @@ class TableServiceTest {
         @DisplayName("손님 수 변경 - 손님 수가 음수일 때 예외 발생")
         void changeNumberOfGuestsWithNegative() {
             // Given
-            final OrderTable savedTable = tableService.create(orderTable);
-            savedTable.setNumberOfGuests(-1);
+            final OrderTableRequest request = new OrderTableRequest(10, false);
+            final OrderTable savedTable = tableService.create(request);
+            final ChangeNumberOfGuestRequest changeNumberOfGuestRequest = new ChangeNumberOfGuestRequest(-1);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), savedTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), changeNumberOfGuestRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -160,10 +177,13 @@ class TableServiceTest {
         @DisplayName("손님 수 변경 - 비어있는 테이블에 손님 수 변경 시 예외 발생")
         void changeNumberOfGuestsOfEmptyShouldThrowException() {
             // given
-            final OrderTable savedTable = tableService.create(TableServiceTest.this.orderTable);
+            final OrderTableRequest request = new OrderTableRequest(10, true);
+            final OrderTable savedTable = tableService.create(request);
+
+            final ChangeNumberOfGuestRequest changeNumberOfGuestRequest = new ChangeNumberOfGuestRequest(20);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), savedTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), changeNumberOfGuestRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("테이블이 비어있어요");
         }

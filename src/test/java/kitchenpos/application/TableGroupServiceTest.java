@@ -1,9 +1,5 @@
 package kitchenpos.application;
 
-import static java.time.LocalDateTime.now;
-import static kitchenpos.fixture.Fixture.orderFixture;
-import static kitchenpos.fixture.Fixture.orderTableFixture;
-import static kitchenpos.fixture.Fixture.tableGroupFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -19,13 +15,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupRequest;
 
-@SpringBootTest
-class TableGroupServiceTest {
+class TableGroupServiceTest extends BaseServiceTest{
 
     @Autowired
     private TableService tableService;
@@ -34,18 +32,25 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
-    private TableGroup tableGroup;
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
+
+    private TableGroupRequest tableGroupRequest;
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = tableService.create(orderTableFixture(null, 4, true));
-        OrderTable orderTable2 = tableService.create(orderTableFixture(null, 4, true));
-        tableGroup = tableGroupFixture(now(), List.of(orderTable1, orderTable2));
+        final OrderTableRequest request1 = new OrderTableRequest(4, true);
+        final OrderTableRequest request2 = new OrderTableRequest(4, true);
+
+        orderTable1 = tableService.create(request1);
+        orderTable2 = tableService.create(request2);
+
+        tableGroupRequest = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
     }
 
 
@@ -57,10 +62,12 @@ class TableGroupServiceTest {
         @DisplayName("테이블 그룹을 생성한다.")
         void create() {
             //given & when
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
             //then
             assertSoftly(softAssertions -> {
+                assertThat(savedTableGroup.getOrderTables().get(0).getTableGroup().getId()).isEqualTo(savedTableGroup.getId());
+                assertThat(savedTableGroup.getOrderTables().get(1).getTableGroup().getId()).isEqualTo(savedTableGroup.getId());
                 assertThat(savedTableGroup.getOrderTables()).hasSize(2);
                 assertThat(savedTableGroup.getId()).isNotNull();
             });
@@ -70,10 +77,10 @@ class TableGroupServiceTest {
         @DisplayName("OrderTables 가 빈 리스트인 경우 예외가 발생한다.")
         void createWithEmptyCreateTables() {
             //given
-            tableGroup.setOrderTables(List.of());
+            final TableGroupRequest tableGroupWithEmptyTables = new TableGroupRequest(List.of());
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupWithEmptyTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("orderTables 갯수가 2 이하입니다.");
         }
@@ -82,11 +89,10 @@ class TableGroupServiceTest {
         @DisplayName("OrderTables의 size 1인경우 예외가 발생한다.")
         void createWithSingleOrderTable() {
             //given
-            OrderTable orderTable = tableService.create(orderTableFixture(null, 4, true));
-            tableGroup.setOrderTables(List.of(orderTable));
+            final TableGroupRequest tableGroupRequest1 = new TableGroupRequest(List.of(orderTable1.getId()));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest1))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("orderTables 갯수가 2 이하입니다.");
         }
@@ -95,12 +101,12 @@ class TableGroupServiceTest {
         @DisplayName("저장 되지 않은 OrderTable을 포함한 경우 예외가 발생한다.")
         void createdWithUnSavedOrderTable() {
             //given
-            final OrderTable orderTable1 = orderTableFixture(null, 4, true);
-            final OrderTable orderTable2 = orderTableFixture(null, 4, true);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final OrderTable unSavedOrderTable = new OrderTable(-1L, null, 10, true);
+            final TableGroupRequest tableGroupRequest1 = new TableGroupRequest(
+                    List.of(orderTable1.getId(), unSavedOrderTable.getId()));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest1))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("유효하지 않은 OrderTable을 포함하고 있습니다.");
         }
@@ -109,12 +115,12 @@ class TableGroupServiceTest {
         @DisplayName("비어있지 않은 OrderTable을 포함한 경우 예외 발생")
         void createWithFullOrderTable() {
             //given
-            final OrderTable orderTable1 = tableService.create(orderTableFixture(null, 4, false));
-            final OrderTable orderTable2 = tableService.create(orderTableFixture(null, 4, true));
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final OrderTable unEmptyTable = tableService.create(new OrderTableRequest(4, false));
+            final TableGroupRequest tableGroupRequest1 = new TableGroupRequest(
+                    List.of(orderTable1.getId(), unEmptyTable.getId()));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest1))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않거나, 이미 그룹화된 테이블을 포함하고 있습니다.");
         }
@@ -123,16 +129,17 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹화 되어있는 테이블을 포함하고 있으면 예외가 발생한다.")
         void createWithAlreadyGroupedTable() {
             //given
-            final OrderTable orderTable1 = tableService.create(orderTableFixture(null, 4, true));
-            final OrderTable orderTable2 = tableService.create(orderTableFixture(null, 4, true));
-            final OrderTable orderTable3 = tableService.create(orderTableFixture(null, 4, true));
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            tableGroupService.create(tableGroup);
+            final TableGroupRequest tableGroupRequest1 = new TableGroupRequest(
+                    List.of(orderTable1.getId(), orderTable2.getId()));
+            tableGroupService.create(tableGroupRequest1);
 
-            final TableGroup tableGroup2 = tableGroupFixture(now(), List.of(orderTable2, orderTable3));
+            final OrderTable orderTable = tableService.create(new OrderTableRequest(4, true));
+
+            final TableGroupRequest tableGroupRequest2 = new TableGroupRequest(
+                    List.of(orderTable1.getId(), orderTable.getId()));
 
             //when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest2))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("비어있지 않거나, 이미 그룹화된 테이블을 포함하고 있습니다.");
         }
@@ -146,7 +153,7 @@ class TableGroupServiceTest {
         @DisplayName("테이블의 그룹을 해제한다")
         void unGroupTables() {
             //given
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
             final List<OrderTable> orderTables = savedTableGroup.getOrderTables();
             final Long id1 = orderTables.get(0).getId();
             final Long id2 = orderTables.get(1).getId();
@@ -155,14 +162,14 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             //then
-            final OrderTable orderTable1 = orderTableDao.findById(id1).get();
-            final OrderTable orderTable2 = orderTableDao.findById(id2).get();
+            final OrderTable orderTable1 = orderTableRepository.findById(id1).get();
+            final OrderTable orderTable2 = orderTableRepository.findById(id2).get();
 
             assertSoftly(softAssertions -> {
                 assertThat(orderTable1.isEmpty()).isFalse();
                 assertThat(orderTable2.isEmpty()).isFalse();
-                assertThat(orderTable1.getTableGroupId()).isNull();
-                assertThat(orderTable2.getTableGroupId()).isNull();
+                assertThat(orderTable1.getTableGroup()).isNull();
+                assertThat(orderTable2.getTableGroup()).isNull();
             });
         }
 
@@ -171,15 +178,16 @@ class TableGroupServiceTest {
         @ValueSource(strings = {"MEAL", "COOKING"})
         void unGroupWithInvalidStatusTable(final String status) {
             //given
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
             final OrderTable orderTable = savedTableGroup.getOrderTables().get(0);
 
-            orderDao.save(orderFixture(orderTable.getId(), status, now(), null));
+            final Order order = new Order(orderTable, null);
+            orderRepository.save(order);
 
             //when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("그룹해제 할수 없는 상태의 테이블을 포함하고 있습니다.");
+                    .hasMessage("이미 주문이 진행 중이에요");
         }
     }
 }

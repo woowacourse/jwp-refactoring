@@ -1,9 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.Fixture.menuFixture;
-import static kitchenpos.fixture.Fixture.menuGroupFixture;
-import static kitchenpos.fixture.Fixture.menuProductFixture;
-import static kitchenpos.fixture.Fixture.productFixture;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -18,39 +14,46 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
 
-@SpringBootTest
-class MenuServiceTest {
+class MenuServiceTest extends BaseServiceTest {
 
     @Autowired
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
+
     @Autowired
-    private MenuGroupDao menuGroupDao;
-    private Menu menu;
+    private MenuGroupRepository menuGroupRepository;
+
+    private MenuGroup menuGroup;
+    private Product productD;
+    private Product productS;
+    private Product productT;
+    private List<MenuProductRequest> menuProductRequests;
+    private MenuRequest menuRequest;
 
     @BeforeEach
     void setUp() {
-        final MenuGroup boonsik = menuGroupDao.save(menuGroupFixture("분식"));
-        final Product productD = productDao.save(productFixture(null, "떡볶이", BigDecimal.TEN));
-        final Product productS = productDao.save(productFixture(null, "순대", BigDecimal.ONE));
-        final Product productT = productDao.save(productFixture(null, "튀김", BigDecimal.TEN));
+        menuGroup = menuGroupRepository.save(new MenuGroup("분식"));
+        productD = productRepository.save(new Product("떡볶이", BigDecimal.TEN));
+        productS = productRepository.save(new Product("순대", BigDecimal.ONE));
+        productT = productRepository.save(new Product("튀김", BigDecimal.TEN));
 
-        final List<MenuProduct> menuProducts = List.of(
-                menuProductFixture(null, productD.getId(), 2),
-                menuProductFixture(null, productS.getId(), 1),
-                menuProductFixture(null, productT.getId(), 1)
+        menuProductRequests = List.of(
+                new MenuProductRequest(productD.getId(), 2L),
+                new MenuProductRequest(productS.getId(), 1L),
+                new MenuProductRequest(productT.getId(), 1L)
         );
 
-        menu = menuFixture("떡순튀", new BigDecimal(31), boonsik.getId(), menuProducts);
+        menuRequest = new MenuRequest("떡순튀", new BigDecimal(31), menuGroup.getId(), menuProductRequests);
     }
 
     @Nested
@@ -61,13 +64,14 @@ class MenuServiceTest {
         @DisplayName("메뉴가 정상적으로 생성된다.")
         void createMenuWithValidData() {
             // Given & When
-            Menu createdMenu = menuService.create(menu);
+            Menu createdMenu = menuService.create(menuRequest);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(createdMenu.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(createdMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
-                softly.assertThat(createdMenu.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size());
+                softly.assertThat(createdMenu.getPrice()).isEqualByComparingTo(menuRequest.getPrice());
+                softly.assertThat(createdMenu.getMenuGroup().getId()).isEqualTo(menuRequest.getMenuGroupId());
+                softly.assertThat(createdMenu.getMenuProducts().getMenuProducts().size())
+                        .isEqualTo(menuRequest.getMenuProductRequests().size());
             });
         }
 
@@ -75,10 +79,10 @@ class MenuServiceTest {
         @DisplayName("가격이 null일 때 예외 발생한다.")
         void createMenuWithNullPrice() {
             // given
-            menu.setPrice(null);
+            final MenuRequest request = new MenuRequest("가격없는메뉴", null, menuGroup.getId(), menuProductRequests);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -87,10 +91,11 @@ class MenuServiceTest {
         void createProductWithSubZeroPrice() {
             // Given
             BigDecimal negativePrice = BigDecimal.valueOf(-10);
-            menu.setPrice(negativePrice);
+            final MenuRequest request = new MenuRequest("음수가격메뉴", negativePrice, menuGroup.getId(),
+                    menuProductRequests);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -98,19 +103,19 @@ class MenuServiceTest {
         @DisplayName("메뉴 그룹 ID가 존재하지 않을 때 예외 발생")
         void createProductWithUnExistedMenuGroupId() {
             // given
-            menu.setMenuGroupId(999999L);
+            final MenuRequest request = new MenuRequest("메뉴", BigDecimal.valueOf(31), 999L, menuProductRequests);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("메뉴의 가격이 메뉴 상품들의 합계보다 클 때 예외 발생")
         void createdMenuWithDifferentPrice() {
-            menu.setPrice(new BigDecimal(99));
+            final MenuRequest request = new MenuRequest("음수가격메뉴", BigDecimal.valueOf(999), menuGroup.getId(), menuProductRequests);
 
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
