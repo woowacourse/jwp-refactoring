@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.application.dto.MenuQuantityDto;
 import kitchenpos.domain.vo.OrderStatus;
 
 @Table(name = "orders")
@@ -35,8 +38,8 @@ public class Order {
     @Column(nullable = false, columnDefinition = "datetime(6)")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
@@ -85,5 +88,21 @@ public class Order {
 
     public boolean isProgress() {
         return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
+    }
+
+    public void addMenus(List<MenuQuantityDto> menuQuantities) {
+        menuQuantities.stream()
+                .map(menuQuantity -> new OrderLineItem(this, menuQuantity.getMenu(), menuQuantity.getQuantity()))
+                .forEach(orderLineItem -> orderLineItems.add(orderLineItem));
+    }
+
+    public void checkEditable() {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("주문이 종료되어 수정할 수 없습니다.");
+        }
+    }
+
+    public void updateStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
