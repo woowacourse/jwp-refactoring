@@ -20,6 +20,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreationRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -121,10 +122,10 @@ class OrderServiceTest {
         OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
 
         //when
-        Order savedOrder = orderService.create(request);
+        OrderResponse response = orderService.create(request);
 
         //then
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @DisplayName("주문이 생성될 때, 주문에 포함된 메뉴들도 저장된다.")
@@ -165,13 +166,13 @@ class OrderServiceTest {
 
         List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
         OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
-        Order savedOrder = orderService.create(request);
+        OrderResponse response = orderService.create(request);
 
         //when
+        Order savedOrder = orderRepository.findById(response.getId()).get();
         OrderLineItem expectedOrderLineItem = OrderLineItem.create(savedOrder, menu, 1L);
 
-        Order findOrder = orderRepository.findById(savedOrder.getId()).get();
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(findOrder.getId());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
 
         //then
         assertThat(orderLineItems).hasSize(1);

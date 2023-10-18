@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreationRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -72,13 +73,14 @@ class ProductServiceTest {
         ProductCreationRequest request = new ProductCreationRequest("TestProduct", BigDecimal.TEN);
 
         //when
-        Product savedProduct = productService.create(request);
+        ProductResponse response = productService.create(request);
 
         //then
-        Product findProduct = productRepository.findById(savedProduct.getId()).get();
+        Product findProduct = productRepository.findById(response.getId()).get();
+        ProductResponse expected = ProductResponse.from(findProduct);
 
         assertThat(findProduct).usingRecursiveComparison()
-                .isEqualTo(savedProduct);
+                .isEqualTo(expected);
     }
 
     @DisplayName("상품 목록을 조회할 수 있다.")
@@ -87,18 +89,18 @@ class ProductServiceTest {
         //given
         ProductCreationRequest request = new ProductCreationRequest("TestProduct", BigDecimal.TEN);
 
-        Product savedProduct = productService.create(request);
+        Long savedProductId = productService.create(request).getId();
 
         //when
-        List<Product> findProducts = productService.list();
-
+        List<ProductResponse> responses = productService.list();
+        Product findProduct = productRepository.findById(savedProductId).get();
         //then
         assertAll(
-                () -> assertThat(findProducts).usingRecursiveComparison()
+                () -> assertThat(responses).usingRecursiveComparison()
                         .ignoringFields("price")
-                        .isEqualTo(List.of(savedProduct)),
-                () -> assertThat(findProducts).hasSize(1),
-                () -> assertThat(findProducts.get(0).getPrice()).isEqualByComparingTo(savedProduct.getPrice())
+                        .isEqualTo(List.of(findProduct)),
+                () -> assertThat(responses).hasSize(1),
+                () -> assertThat(responses.get(0).getPrice()).isEqualByComparingTo(findProduct.getPrice())
         );
     }
 

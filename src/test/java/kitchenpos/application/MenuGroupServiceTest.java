@@ -6,6 +6,7 @@ import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreationRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +32,15 @@ class MenuGroupServiceTest {
         MenuGroupCreationRequest request = new MenuGroupCreationRequest("TestMenuGroup");
 
         //when
-        MenuGroup savedMenuGroup = menuGroupService.create(request);
+        MenuGroupResponse response = menuGroupService.create(request);
 
         //then
-        MenuGroup findMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId()).get();
+        MenuGroup findMenuGroup = menuGroupRepository.findById(response.getId()).get();
+        MenuGroupResponse expected = MenuGroupResponse.from(findMenuGroup);
 
-        assertThat(savedMenuGroup)
+        assertThat(response)
                 .usingRecursiveComparison()
-                .isEqualTo(findMenuGroup);
+                .isEqualTo(expected);
     }
 
     @DisplayName("메뉴 그릅을 조회할 수 있다.")
@@ -52,12 +54,17 @@ class MenuGroupServiceTest {
         menuGroupRepository.save(menuGroup2);
 
         //when
-        List<MenuGroup> findMenuGroups = menuGroupService.list();
+        List<MenuGroupResponse> responses = menuGroupService.list();
 
         //then
-        assertThat(findMenuGroups).usingRecursiveComparison()
+        List<MenuGroupResponse> expected = List.of(
+                MenuGroupResponse.from(menuGroup1),
+                MenuGroupResponse.from(menuGroup2)
+        );
+
+        assertThat(responses).usingRecursiveComparison()
                 .ignoringFields("id")
-                .isEqualTo(List.of(menuGroup1, menuGroup2));
+                .isEqualTo(expected);
     }
 
 }

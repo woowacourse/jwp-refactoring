@@ -117,4 +117,12 @@ public class OrderTable {
         return empty;
     }
 
+    public Long getTableGroupIdOrNull() {
+        if (isGrouped()) {
+            return tableGroup.getId();
+        }
+
+        return null;
+    }
+
 }

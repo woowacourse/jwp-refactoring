@@ -26,7 +26,7 @@ public class TableResponse {
     public static TableResponse from(OrderTable orderTable) {
         return new TableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroup().getId(),
+                orderTable.getTableGroupIdOrNull(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
@@ -50,7 +50,7 @@ public class TableResponse {
         return numberOfGuests;
     }
 
-    public Boolean getEmpty() {
+    public Boolean isEmpty() {
         return isEmpty;
     }
 }

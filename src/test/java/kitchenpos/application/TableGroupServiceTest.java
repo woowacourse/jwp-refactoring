@@ -153,10 +153,10 @@ class TableGroupServiceTest {
         TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
         //when
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        Long savedTableGroupId = tableGroupService.create(request).getId();
 
         //then
-        TableGroup findTableGroup = tableGroupRepository.findById(savedTableGroup.getId()).get();
+        TableGroup findTableGroup = tableGroupRepository.findById(savedTableGroupId).get();
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(findTableGroup.getId());
 
         assertAll(

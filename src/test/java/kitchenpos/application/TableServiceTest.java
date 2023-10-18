@@ -23,6 +23,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableEmptyUpdateRequest;
 import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -137,10 +138,10 @@ class TableServiceTest {
         //when
         TableEmptyUpdateRequest request = new TableEmptyUpdateRequest(Boolean.TRUE);
 
-        OrderTable changedEmptyOrderTable = tableService.changeEmpty(orderTable.getId(), request);
+        TableResponse response = tableService.changeEmpty(orderTable.getId(), request);
 
         //then
-        assertThat(changedEmptyOrderTable.isEmpty()).isTrue();
+        assertThat(response.isEmpty()).isTrue();
     }
 
     @ParameterizedTest(name = "방문한 손님 수가 0명 미만이면, 테이블에 방문한 손님 수를 변경할 수 없다.")
@@ -245,11 +246,11 @@ class TableServiceTest {
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         //when
-        List<OrderTable> findOrderTables = tableService.list();
-
+        List<TableResponse> responses = tableService.list();
+        TableResponse expected = TableResponse.from(savedOrderTable);
         //then
-        assertThat(findOrderTables).usingRecursiveComparison()
-                .isEqualTo(List.of(savedOrderTable));
+        assertThat(responses).usingRecursiveComparison()
+                .isEqualTo(List.of(expected));
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {

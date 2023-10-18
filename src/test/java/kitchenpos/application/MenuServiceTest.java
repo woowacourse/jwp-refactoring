@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -16,6 +17,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreationRequest;
 import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,8 +72,8 @@ class MenuServiceTest {
 
         //when then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 메뉴 그룹입니다.");
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("ID에 해당하는 메뉴 그룹이 존재하지 않습니다.");
     }
 
     @DisplayName("메뉴에 있는 상품이 존재하지 않으면, 생성할 수 없다")
@@ -118,7 +120,8 @@ class MenuServiceTest {
         //when then
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 금액의 합계는 각 상품들의 합계보다 클 수 없습니다.");;
+                .hasMessage("메뉴 금액의 합계는 각 상품들의 합계보다 클 수 없습니다.");
+        ;
     }
 
     @DisplayName("메뉴를 생성하면, 메뉴에 존재하는 상품들도 저장된다.")
@@ -137,18 +140,19 @@ class MenuServiceTest {
         );
 
         //when
-        Menu savedMenu = menuService.create(request);
+        MenuResponse response = menuService.create(request);
 
         //then
-        Menu findMenu = menuRepository.findById(savedMenu.getId()).get();
+        Menu findMenu = menuRepository.findById(response.getId()).get();
+        MenuResponse expectedMenu = MenuResponse.from(findMenu);
         List<MenuProduct> findMenuProducts = menuProductRepository.findAllByMenuId(findMenu.getId());
 
         assertAll(
-                () -> assertThat(findMenu).usingRecursiveComparison()
-                        .ignoringFields("price", "menuProducts")
-                        .isEqualTo(savedMenu),
+                () -> assertThat(response).usingRecursiveComparison()
+                        .ignoringFields("price")
+                        .isEqualTo(expectedMenu),
                 () -> assertThat(findMenu.getPrice())
-                        .isEqualByComparingTo(savedMenu.getPrice()),
+                        .isEqualByComparingTo(expectedMenu.getPrice()),
                 () -> assertThat(findMenuProducts).usingRecursiveComparison()
                         .ignoringFields("seq")
                         .isEqualTo(List.of(MenuProduct.create(findMenu, 1L, product)))
@@ -170,18 +174,16 @@ class MenuServiceTest {
         menuRepository.save(menu);
 
         //when
-        List<Menu> findMenus = menuService.list();
+        List<MenuResponse> responses = menuService.list();
 
         //then
-        assertAll(
-                () -> assertThat(findMenus).usingRecursiveComparison()
-                        .ignoringFields("price", "menuProducts")
-                        .isEqualTo(List.of(menu)),
-                () -> assertThat(findMenus).hasSize(1),
-                () -> assertThat(findMenus.get(0).getPrice()).isEqualByComparingTo(menu.getPrice()),
-                () -> assertThat(findMenus.get(0).getMenuProducts()).usingRecursiveComparison()
-                        .isEqualTo(List.of(menuProduct))
-        );
+        MenuResponse expected = MenuResponse.from(menu);
+
+        assertThat(responses).usingRecursiveComparison()
+                .ignoringFields("price")
+                .isEqualTo(List.of(expected));
+        assertThat(responses).hasSize(1);
+        assertThat(responses.get(0).getPrice()).isEqualByComparingTo(menu.getPrice());
     }
 
     private MenuGroup saveMenuGroup() {
