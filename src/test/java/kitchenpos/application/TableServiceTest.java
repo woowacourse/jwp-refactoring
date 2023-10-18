@@ -70,17 +70,6 @@ class TableServiceTest extends ServiceTest {
         assertThat(changedOrderTable.isEmpty()).isTrue();
     }
 
-    @Test
-    void 주문_테이블의_단체_지정_id가_널이_아니면_예외가_발생한다() {
-        //given
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
-
-        //when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 주문_상태가_COOKING이나MEAL이면_예외가_발생한다(OrderStatus orderStatus) {
@@ -117,17 +106,6 @@ class TableServiceTest extends ServiceTest {
 
         //when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), -1))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블이_비어있으면_예외가_발생한다() {
-        //given
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
-
-        //when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 3))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

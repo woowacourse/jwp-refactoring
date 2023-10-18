@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -50,5 +51,17 @@ public class OrderTable {
 
     public void updateNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void validateTableGroupIdIsNull() {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateOrderTableIsNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 }
