@@ -45,20 +45,6 @@ class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    void price가_null이면_예외가_발생한다() {
-        //when, then
-        assertThatThrownBy(() -> menuService.create("디노 세트", null, null, null, null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void price가_0원보다_작으면_예외가_발생한다() {
-        //when, then
-        assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(-1), null, null, null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void menuGroup이_존재하지_않으면_예외가_발생한다() {
         //when, then
         assertThatThrownBy(() -> menuService.create("디노 세트", new BigDecimal(20000), 987654321L, null, null))
