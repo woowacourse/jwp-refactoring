@@ -82,13 +82,13 @@ public class Order {
         }
 
         if (Boolean.TRUE.equals(orderTable.isEmpty())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다.");
         }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
-            throw new IllegalArgumentException();
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("Completion 상태일 경우, 주문 상태를 변경할 수 없습니다.");
         }
 
         this.orderStatus = orderStatus;

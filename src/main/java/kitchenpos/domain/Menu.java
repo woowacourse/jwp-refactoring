@@ -78,7 +78,7 @@ public class Menu {
 
     private static void validatePrice(BigDecimal price) {
         if (price.doubleValue() < MIN_PRICE) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 금액은 0원 이상이어야 합니다.");
         }
     }
 

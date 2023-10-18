@@ -32,7 +32,7 @@ public class OrderLineItems {
 
     private static void validate(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 메뉴는 1개 이상 존재해야 합니다.");
         }
     }
 

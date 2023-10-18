@@ -54,7 +54,7 @@ public class MenuProduct {
 
     private static void validateQuantity(Long quantity) {
         if (quantity < MIN_QUANTITY) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품 개수는 1개 이상이어야 합니다.");
         }
     }
 

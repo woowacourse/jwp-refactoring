@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import javax.validation.constraints.Null;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +21,8 @@ class MenuGroupTest {
     void createMenuGroupFailTest_ByNameLengthIsLessThanOne() {
         //when then
         assertThatThrownBy(() -> MenuGroup.from(""))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹 이름은 1글자 이상, 255자 이하여야 합니다.");
     }
 
     @Test
@@ -33,7 +33,8 @@ class MenuGroupTest {
 
         //when then
         assertThatThrownBy(() -> MenuGroup.from(menuGroupName))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹 이름은 1글자 이상, 255자 이하여야 합니다.");
     }
 
     @Test
