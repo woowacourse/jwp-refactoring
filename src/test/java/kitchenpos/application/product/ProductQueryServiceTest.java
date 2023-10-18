@@ -3,6 +3,7 @@ package kitchenpos.application.product;
 import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
         // given
         final List<Product> expected = new ArrayList<>();
         for (int productSaveCount = 1; productSaveCount <= 10; productSaveCount++) {
-            final Product savedProduct = productRepository.save(new Product("테스트용 상품 이름", new BigDecimal("10000")));
+            final Product savedProduct = productRepository.save(new Product("테스트용 상품 이름", new Price("10000")));
             expected.add(savedProduct);
         }
 

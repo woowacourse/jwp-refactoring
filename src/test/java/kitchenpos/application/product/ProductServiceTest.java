@@ -3,11 +3,10 @@ package kitchenpos.application.product;
 import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -25,7 +24,7 @@ class ProductServiceTest extends ApplicationTestConfig {
     @Test
     void success_create() {
         // given
-        final Product expected = new Product("테스트용 상품 이름", new BigDecimal("10000"));
+        final Product expected = new Product("테스트용 상품 이름", new Price("10000"));
 
         // when
         final Product actual = productService.create(expected);
@@ -34,7 +33,7 @@ class ProductServiceTest extends ApplicationTestConfig {
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isPositive();
             softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-            softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+            softly.assertThat(actual.getPrice()).isEqualTo(expected.getPrice());
         });
     }
 }
