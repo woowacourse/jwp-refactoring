@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductCreateRequest;
 
 public class MenuCreateRequest {
 

@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
+
+import kitchenpos.domain.MenuProduct;
 
 public class MenuProductCreateRequest {
 

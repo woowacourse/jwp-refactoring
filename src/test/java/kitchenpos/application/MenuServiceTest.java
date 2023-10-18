@@ -9,7 +9,7 @@ import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProductCreateRequest;
+import kitchenpos.dto.MenuProductCreateRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
