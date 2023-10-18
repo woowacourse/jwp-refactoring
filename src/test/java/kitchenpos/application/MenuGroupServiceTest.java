@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.config.ServiceTest;
+import kitchenpos.config.IntegrationTest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.exception.InvalidNameException;
@@ -13,7 +13,7 @@ import kitchenpos.ui.dto.request.CreateMenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
+@IntegrationTest
 @SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest {
 
