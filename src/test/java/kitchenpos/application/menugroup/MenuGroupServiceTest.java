@@ -15,7 +15,7 @@ class MenuGroupServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("[SUCCESS] 메뉴 그룹을 생성한다.")
