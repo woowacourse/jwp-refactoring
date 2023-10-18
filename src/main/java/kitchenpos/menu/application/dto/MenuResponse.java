@@ -74,7 +74,7 @@ public class MenuResponse {
         public static MenuProductResponse from(MenuProduct menuProduct) {
             return new MenuProductResponse(
                     menuProduct.getSeq(),
-                    menuProduct.getProductId(),
+                    menuProduct.getProduct().getId(),
                     menuProduct.getQuantity()
             );
         }
