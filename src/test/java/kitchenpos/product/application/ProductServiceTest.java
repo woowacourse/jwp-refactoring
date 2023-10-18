@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.helper.ServiceIntegrateTest;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductQueryResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.persistence.ProductDao;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -28,7 +30,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
     //given, when
     final String name = "아마란스 무침";
     final Product savedProduct = productService.create(
-        new Product(name, BigDecimal.valueOf(10000)));
+        new ProductCreateRequest(name, BigDecimal.valueOf(10000)));
     final Product actual = productDao.findById(savedProduct.getId()).get();
 
     //then
@@ -42,7 +44,8 @@ class ProductServiceTest extends ServiceIntegrateTest {
   @DisplayName("상품을 등록할 때 상품의 가격이 0보다 작을 경우 예외를 반환한다.")
   void create_fail_negative_price() {
     //given
-    final Product product = new Product("아마란스 샐러드", BigDecimal.valueOf(-1));
+    final ProductCreateRequest product = new ProductCreateRequest("아마란스 샐러드",
+        BigDecimal.valueOf(-1));
 
     //when
     final ThrowingCallable actual = () -> productService.create(product);
@@ -55,7 +58,7 @@ class ProductServiceTest extends ServiceIntegrateTest {
   @DisplayName("상품을 등록할 때 상품의 가격이 null일 경우 예외를 반환한다.")
   void create_fail_null_price() {
     //given
-    final Product product = new Product("진달래떡", BigDecimal.valueOf(-1));
+    final ProductCreateRequest product = new ProductCreateRequest("진달래떡", BigDecimal.valueOf(-1));
 
     //when
     final ThrowingCallable actual = () -> productService.create(product);
@@ -71,12 +74,12 @@ class ProductServiceTest extends ServiceIntegrateTest {
     // given
     final String name = "화전";
     final int beforeSize = productService.list().size();
-    productService.create(new Product(name, BigDecimal.valueOf(10000)));
+    productService.create(new ProductCreateRequest(name, BigDecimal.valueOf(10000)));
 
     // when
-    final List<Product> actual = productService.list();
+    final List<ProductQueryResponse> actual = productService.list();
     final List<String> actualNames = actual.stream()
-        .map(Product::getName)
+        .map(ProductQueryResponse::getName)
         .collect(Collectors.toList());
 
     //then
