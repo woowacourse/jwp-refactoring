@@ -24,8 +24,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_등록() {
         // given
-        Price price = new Price(BigDecimal.valueOf(0));
-        ProductRequest request = new ProductRequest("제이슨의 무료 나눔 마우스", price);
+        ProductRequest request = new ProductRequest("제이슨의 무료 나눔 마우스", BigDecimal.valueOf(0));
 
         // when
         ProductResponse savedProduct = productService.create(request);
@@ -43,7 +42,6 @@ class ProductServiceTest extends ServiceTest {
                 new Product("파스타", new Price(new BigDecimal("28000.00"))),
                 new Product("스테이크", new Price(new BigDecimal("60000.00")))
         );
-
 
         Iterable<Product> savedProducts = productRepository.saveAll(products);
         List<ProductResponse> expected = StreamSupport.stream(savedProducts.spliterator(), false)

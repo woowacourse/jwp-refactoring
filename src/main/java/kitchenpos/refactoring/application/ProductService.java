@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.refactoring.application.dto.ProductRequest;
 import kitchenpos.refactoring.application.dto.ProductResponse;
+import kitchenpos.refactoring.domain.Price;
 import kitchenpos.refactoring.domain.Product;
 import kitchenpos.refactoring.domain.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,10 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
-        Product product = new Product(productRequest.getName(), productRequest.getPrice());
+        Product product = new Product(
+                productRequest.getName(),
+                new Price(productRequest.getPrice())
+        );
         Product savedProduct = productRepository.save(product);
 
         return ProductResponse.from(savedProduct);

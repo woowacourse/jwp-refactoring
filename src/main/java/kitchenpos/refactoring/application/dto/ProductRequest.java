@@ -1,16 +1,16 @@
 package kitchenpos.refactoring.application.dto;
 
-import kitchenpos.refactoring.domain.Price;
+import java.math.BigDecimal;
 
 public class ProductRequest {
 
     private String name;
-    private Price price;
+    private BigDecimal price;
 
     public ProductRequest() {
     }
 
-    public ProductRequest(String name, Price price) {
+    public ProductRequest(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }
@@ -19,7 +19,7 @@ public class ProductRequest {
         return name;
     }
 
-    public Price getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 }
