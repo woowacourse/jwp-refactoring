@@ -36,7 +36,10 @@ public class TableGroup {
     }
 
     public static TableGroup from(List<OrderTable> orderTables) {
-        return new TableGroup(OrderTables.from(orderTables));
+        TableGroup tableGroup = new TableGroup(OrderTables.from(orderTables));
+        orderTables.forEach(orderTable -> orderTable.group(tableGroup));
+
+        return tableGroup;
     }
 
     public Long getId() {

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
@@ -48,6 +49,10 @@ public class MenuService {
                 .stream()
                 .collect((Collectors.toMap(Product::getId, product -> product)));
 
+        if (productIdsInMenuProduct.size() != products.size()) {
+            throw new IllegalArgumentException("메뉴에 존재하지 않는 상품이 포함되어 있습니다.");
+        }
+
         productIdsInMenuProduct.forEach(id -> {
             Long quantity = productQuantitiesByProductId.get(id);
             Product product = products.get(id);
@@ -58,7 +63,7 @@ public class MenuService {
 
     private MenuGroup findMenuGroupById(Long menuGroupId) {
         return menuGroupRepository.findById(menuGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
+                .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 메뉴 그룹이 존재하지 않습니다."));
     }
 
     public List<Menu> list() {

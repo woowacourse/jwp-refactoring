@@ -53,7 +53,7 @@ public class OrderService {
 
     private OrderTable findOrderTableById(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 주문 테이블이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 주문 테이블이 존재하지 않습니다."));
     }
 
     private void initializeOrderLineItems(OrderCreationRequest request, Order order) {

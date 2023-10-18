@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -13,12 +14,15 @@ import kitchenpos.dao.ProductRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,18 +56,22 @@ class TableGroupServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
     void createFailTest_ByOrderTableCountIsLessThanTwo() {
         //given
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable));
+        List<OrderTableRequest> orderTableRequests = List.of(new OrderTableRequest(savedOrderTable.getId()));
+        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
         //when then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹화 할 테이블 개수는 2 이상이어야 합니다");
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면, 주문 테이블 그룹을 생성할 수 없다.")
@@ -73,21 +81,19 @@ class TableGroupServiceTest {
         Long invalidId1 = 99L;
         Long invalidId2 = 100L;
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(invalidId1);
-
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(invalidId2);
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(invalidId1),
+                new OrderTableRequest(invalidId2)
+        );
+        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
         assertThat(orderTableRepository.findById(invalidId1)).isEmpty();
         assertThat(orderTableRepository.findById(invalidId2)).isEmpty();
 
         //when then
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 주문 테이블이 존재합니다.");
     }
 
     @DisplayName("주문이 가능한 테이블이 존재하면(Not Empty), 주문 테이블 그룹을 생성할 수 없다.")
@@ -98,11 +104,15 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
         //when then
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(savedOrderTable1.getId()),
+                new OrderTableRequest(savedOrderTable2.getId())
+        );
+        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 가능한 상태의 테이블이 존재합니다.");
     }
 
     @DisplayName("다른 테이블 그룹에 속해있는 주문 테이블이 있는 경우, 주문 테이블 그룹을 생성할 수 없다.")
@@ -111,23 +121,22 @@ class TableGroupServiceTest {
         //given
         OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
+        TableGroup tableGroup = TableGroup.from(List.of(savedOrderTable1, savedOrderTable2));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        tableGroupRepository.save(tableGroup);
 
-        tableGroupService.create(tableGroup);
-
-        OrderTable newOrderTable = new OrderTable();
-        newOrderTable.setEmpty(true);
-
-        OrderTable savedNewOrderTable = orderTableRepository.save(newOrderTable);
+        OrderTable newOrderTable = saveOrderTableForEmpty(true);
 
         //when then
-        TableGroup newTableGroup = new TableGroup();
-        newTableGroup.setOrderTables(List.of(savedOrderTable1, savedNewOrderTable));
+        List<OrderTableRequest> newOrderTableRequests = List.of(
+                new OrderTableRequest(savedOrderTable1.getId()),
+                new OrderTableRequest(newOrderTable.getId())
+        );
+        TableGroupCreationRequest newRequest = new TableGroupCreationRequest(newOrderTableRequests);
 
-        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(newRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 다른 그룹에 속해있는 테이블이 존재합니다.");
     }
 
     @DisplayName("주문 테이블 그룹을 생성하면, 생성 시점을 초기화 하고 주문 테이블은 해당 그룹에 속하며 각 주문 테이블은 주문 가능한 상태로 변한다.")
@@ -137,11 +146,14 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(savedOrderTable1.getId()),
+                new OrderTableRequest(savedOrderTable2.getId())
+        );
+        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
         //when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(request);
 
         //then
         TableGroup findTableGroup = tableGroupRepository.findById(savedTableGroup.getId()).get();
@@ -165,27 +177,30 @@ class TableGroupServiceTest {
     void ungroupFailTest_ByTableOrderStatusIsNotCompletion(OrderStatus status) {
         OrderTable savedOrderTable1 = saveOrderTableForEmpty(false);
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(false);
-//        Menu menu = saveMenu();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-//        orderLineItem.setMenu(menu);
-//        orderLineItem.setQuantity(1L);
-        Order order = Order.of(status, savedOrderTable1, List.of(orderLineItem));
-//        orderLineItem.setOrder(order);
+        Menu menu = saveMenu();
+        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable1);
+        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
+        order.addOrderLineItem(orderLineItem);
+        order.changeOrderStatus(status);
 
         orderRepository.save(order);
 
-        savedOrderTable1.setEmpty(true);
-        savedOrderTable2.setEmpty(true);
+        savedOrderTable1.changeEmpty(true);
+        savedOrderTable2.changeEmpty(true);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(savedOrderTable1.getId()),
+                new OrderTableRequest(savedOrderTable2.getId())
+        );
+        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
-        Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+        Long savedTableGroupId = tableGroupService.create(request).getId();
 
         //when then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문이 완료되지 않은 상태의 테이블이 존재합니다.");
     }
 
     @DisplayName("그룹을 해제하면, 각 주문 테이블은 해당 그룹에 속하지 않고, 주문이 가능한 상태(Not Empty)로 변한다.")
@@ -194,19 +209,24 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable1 = saveOrderTableForEmpty(false);
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(false);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
+        Menu menu = saveMenu();
+        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable1);
+        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
+        order.addOrderLineItem(orderLineItem);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
 
-        Order order = Order.of(OrderStatus.COMPLETION, savedOrderTable1,List.of(orderLineItem));
-
-        savedOrderTable1.setEmpty(true);
-        savedOrderTable2.setEmpty(true);
+        savedOrderTable1.changeEmpty(true);
+        savedOrderTable2.changeEmpty(true);
 
         orderRepository.save(order);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(savedOrderTable1.getId()),
+                new OrderTableRequest(savedOrderTable2.getId())
+        );
+        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
 
-        Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+        Long savedTableGroupId = tableGroupService.create(request).getId();
 
         //when
         tableGroupService.ungroup(savedTableGroupId);
@@ -219,24 +239,38 @@ class TableGroupServiceTest {
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
+        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, empty);
 
         return orderTableRepository.save(orderTable);
     }
 
     private Menu saveMenu() {
-        Menu menu = Menu.of("TestMenu", BigDecimal.TEN, MenuGroup.from("TestMenuGroup"));
+        MenuGroup menuGroup = saveMenuGroup();
+        Menu menu = Menu.createWithEmptyMenuProducts("TestMenu", BigDecimal.TEN, menuGroup);
+        MenuProduct menuProduct = createMenuProduct(menu, saveProduct());
+        menu.addMenuProduct(menuProduct);
 
         return menuRepository.save(menu);
     }
 
-    private OrderLineItem createOrderLineItem(Menu menu, Order order) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenu(menu);
-        orderLineItem.setOrder(order);
+    private MenuGroup saveMenuGroup(){
+        MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
 
-        return orderLineItem;
+        return menuGroupRepository.save(menuGroup);
+    }
+
+    private MenuProduct createMenuProduct(Menu menu, Product product) {
+        return MenuProduct.create(menu, 1L, product);
+    }
+
+    private Product saveProduct() {
+        Product product = Product.create("TestProduct", BigDecimal.TEN);
+
+        return productRepository.save(product);
+    }
+
+    private OrderLineItem createOrderLineItem(Menu menu, Order order) {
+        return OrderLineItem.create(order, menu, 1L);
     }
 
 }

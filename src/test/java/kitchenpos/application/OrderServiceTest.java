@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
@@ -17,6 +18,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderCreationRequest;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderStatusUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,34 +56,36 @@ class OrderServiceTest {
     void createFailTest_ByOrderLineItemIsNotExists() {
         //given
         Long invalidId = 99L;
+        OrderTable orderTable = saveOrderTableForEmpty(false);
 
-        Menu menu = Menu.of("TestMenu", BigDecimal.TEN, MenuGroup.from("TestMenuGroup"));
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
-
-        Order order = Order.createNewOrder(new OrderTable(), List.of(orderLineItem));
+        List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(invalidId, 1L));
+        OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
 
         assertThat(menuRepository.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 메뉴는 1개 이상 존재해야 합니다.");
     }
 
     @DisplayName("주문을 한 테이블이 존재하지 않을 경우, 생성할 수 없다.")
     @Test
     void createFailTest_ByOrderTableIsNotExists() {
         //given
+        Long invalidId = 99L;
         Menu menu = saveMenu();
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
 
-        Order order = Order.createNewOrder(new OrderTable(), List.of(orderLineItem));
+        List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
+        OrderCreationRequest request = new OrderCreationRequest(invalidId, orderLineItemRequests);
 
         assertThat(menuRepository.findById(menu.getId())).isPresent();
-        assertThat(order.getOrderTable().getId()).isNull();
+        assertThat(orderTableRepository.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("ID에 해당하는 주문 테이블이 존재하지 않습니다.");
     }
 
     @DisplayName("주문을 한 테이블이 주문할 수 없는(empty) 경우, 생성할 수 없다.")
@@ -87,21 +93,21 @@ class OrderServiceTest {
     void createFailTest_ByOrderTableIsEmpty() {
         //given
         Menu menu = saveMenu();
-        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
+        OrderTable orderTable = saveOrderTableForEmpty(true);
 
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
+        OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
 
-        Order order = Order.createNewOrder(new OrderTable(), List.of(orderLineItem));
-
-        savedOrderTable.setEmpty(true);
+        Optional<OrderTable> findOrderTable = orderTableRepository.findById(orderTable.getId());
 
         assertThat(menuRepository.findById(menu.getId())).isPresent();
-        assertThat(orderTableRepository.findById(savedOrderTable.getId())).isPresent();
-        assertThat(orderTableRepository.findById(savedOrderTable.getId()).get().isEmpty()).isTrue();
+        assertThat(findOrderTable).isPresent();
+        assertThat(findOrderTable.get().isEmpty()).isTrue();
 
         //when then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문할 수 없는 상태의 테이블이 존재합니다.");
     }
 
     @DisplayName("주문이 생성될 때, 주문 관련 정보가 변경된다.")
@@ -109,15 +115,13 @@ class OrderServiceTest {
     void createSuccessTest_ChangeOrderInformation() {
         //given
         Menu menu = saveMenu();
-        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        OrderTable orderTable = saveOrderTableForEmpty(false);
 
-        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
-
-        assertThat(order.getOrderedTime()).isNull();
+        List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
+        OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
 
         //when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(request);
 
         //then
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
@@ -128,10 +132,10 @@ class OrderServiceTest {
     void createSuccessTest_SaveWithOrderLineItems() {
         //given
         Menu menu = saveMenu();
-        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        OrderTable orderTable = saveOrderTableForEmpty(false);
 
-        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
+        List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
+        OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
 
         Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemRepository.findAll()
                 .stream()
@@ -141,7 +145,7 @@ class OrderServiceTest {
         assertThat(findOrderLineItemBeforeCreatingOrder).isEmpty();
 
         //when
-        orderService.create(order);
+        orderService.create(request);
 
         //then
         Optional<OrderLineItem> findOrderLineItemAfterCreatingOrder = orderLineItemRepository.findAll()
@@ -157,14 +161,15 @@ class OrderServiceTest {
     void listSuccessTest() {
         //given
         Menu menu = saveMenu();
-        OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        OrderTable orderTable = saveOrderTableForEmpty(false);
 
-        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
-
-        Order savedOrder = orderService.create(order);
+        List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
+        OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
+        Order savedOrder = orderService.create(request);
 
         //when
+        OrderLineItem expectedOrderLineItem = OrderLineItem.create(savedOrder, menu, 1L);
+
         Order findOrder = orderRepository.findById(savedOrder.getId()).get();
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(findOrder.getId());
 
@@ -173,7 +178,7 @@ class OrderServiceTest {
         assertThat(orderLineItems.get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("seq")
-                .isEqualTo(orderLineItem);
+                .isEqualTo(expectedOrderLineItem);
     }
 
     @DisplayName("변경하려는 주문이 존재하지 않으면 변경할 수 없다.")
@@ -183,9 +188,12 @@ class OrderServiceTest {
         Long invalidId = 99L;
         assertThat(orderRepository.findById(invalidId)).isEmpty();
 
+        OrderStatusUpdateRequest request = new OrderStatusUpdateRequest("COMPLETION");
+
         //when then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, OrderStatus.COMPLETION))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, request))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("ID에 해당하는 주문이 존재하지 않습니다.");
     }
 
     @DisplayName("주문이 완료(COMPLETION) 상태인 경우, 변경할 수 없다.")
@@ -194,15 +202,18 @@ class OrderServiceTest {
         //given
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable);
+        OrderLineItem orderLineItem = createOrderLineItem(order, menu);
+        order.addOrderLineItem(orderLineItem);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
 
-        Order order = Order.of(OrderStatus.COMPLETION, savedOrderTable, List.of(orderLineItem));
+        Long savedOrderId = orderRepository.save(order).getId();
+        OrderStatusUpdateRequest request = new OrderStatusUpdateRequest("COMPLETION");
 
         //when then
-        Long savedOrderId = orderRepository.save(order).getId();
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, OrderStatus.COMPLETION))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Completion 상태일 경우, 주문 상태를 변경할 수 없습니다.");
     }
 
     @DisplayName("주문의 상태를 변경할 수 있다.")
@@ -211,14 +222,15 @@ class OrderServiceTest {
         //given
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
-
-        Order order = Order.createNewOrder(savedOrderTable, List.of(orderLineItem));
+        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable);
+        OrderLineItem orderLineItem = createOrderLineItem(order, menu);
+        order.addOrderLineItem(orderLineItem);
 
         Long savedOrderId = orderRepository.save(order).getId();
 
         //when
-        orderService.changeOrderStatus(savedOrderId, OrderStatus.COMPLETION);
+        OrderStatusUpdateRequest request = new OrderStatusUpdateRequest("COMPLETION");
+        orderService.changeOrderStatus(savedOrderId, request);
 
         //then
         Order findOrder = orderRepository.findById(savedOrderId).get();
@@ -229,7 +241,7 @@ class OrderServiceTest {
     private Menu saveMenu() {
         MenuGroup savedMenuGroup = saveMenuGroup();
 
-        Menu menu = Menu.of("TestMenu", BigDecimal.valueOf(10000), savedMenuGroup);
+        Menu menu = Menu.createWithEmptyMenuProducts("TestMenu", BigDecimal.valueOf(10000), savedMenuGroup);
 
         return menuRepository.save(menu);
     }
@@ -241,18 +253,13 @@ class OrderServiceTest {
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
+        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, empty);
 
         return orderTableRepository.save(orderTable);
     }
 
-    private OrderLineItem createOrderLineItem(Menu menu) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenu(menu);
-        orderLineItem.setQuantity(1);
-
-        return orderLineItem;
+    private OrderLineItem createOrderLineItem(Order order, Menu menu) {
+        return OrderLineItem.create(order, menu, 1L);
     }
 
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,39 +29,50 @@ class ProductServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @ParameterizedTest(name = "상품 이름이 1글자 미만, 255글자 이상이면, 저장할 수 없다.")
+    @ValueSource(ints = {0, 256})
+    void createFailTest_ByProductNameLengthIsNotInRange(int count) {
+        //given
+        String name = "a".repeat(count);
+        ProductCreationRequest request = new ProductCreationRequest(name, BigDecimal.TEN);
+
+        //when then
+        assertThatThrownBy(() -> productService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품 이름은 1글자 이상, 255자 이하여야 합니다.");
+    }
+
     @DisplayName("상품 금액이 null이면, 저장할 수 없다.")
     @Test
     void createFailTest_ByProductPriceIsNull() {
         //given
-        Product product = createProduct();
-        product.setPrice(null);
+        ProductCreationRequest request = new ProductCreationRequest("TestProduct", null);
 
         //when then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @ParameterizedTest(name = "상품 금액이 0원 미만이면, 저장할 수 없다.")
     @ValueSource(ints = {-1000, -1})
     void createFailTest_ByProductPriceIsLessThanZero(int price) {
         //given
-        Product product = createProduct();
-        product.setPrice(BigDecimal.valueOf(price));
+        ProductCreationRequest request = new ProductCreationRequest("TestProduct", BigDecimal.valueOf(price));
 
         //when then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품 금액은 0원 이상이어야 합니다.");
     }
 
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void createSuccessTest() {
         //given
-        Product product = createProduct();
-        product.setPrice(BigDecimal.ZERO);
+        ProductCreationRequest request = new ProductCreationRequest("TestProduct", BigDecimal.TEN);
 
         //when
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productService.create(request);
 
         //then
         Product findProduct = productRepository.findById(savedProduct.getId()).get();
@@ -73,10 +85,9 @@ class ProductServiceTest {
     @Test
     void listSuccessTest() {
         //given
-        Product product = createProduct();
-        product.setPrice(BigDecimal.ZERO);
+        ProductCreationRequest request = new ProductCreationRequest("TestProduct", BigDecimal.TEN);
 
-        Product savedProduct = productRepository.save(product);
+        Product savedProduct = productService.create(request);
 
         //when
         List<Product> findProducts = productService.list();
@@ -89,12 +100,6 @@ class ProductServiceTest {
                 () -> assertThat(findProducts).hasSize(1),
                 () -> assertThat(findProducts.get(0).getPrice()).isEqualByComparingTo(savedProduct.getPrice())
         );
-    }
-
-    private Product createProduct() {
-        Product product = new Product();
-        product.setName("TestProduct");
-        return product;
     }
 
 }

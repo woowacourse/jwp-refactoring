@@ -14,6 +14,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreationRequest;
+import kitchenpos.dto.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,15 +44,11 @@ class MenuServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    private Menu menu;
-
     private MenuGroup menuGroup;
 
     @BeforeEach
     void setUp() {
         menuGroup = saveMenuGroup();
-
-        menu = Menu.of("TestMenu", BigDecimal.valueOf(1000), menuGroup);
     }
 
     @DisplayName("메뉴 그룹이 존재하지 않으면, 생성할 수 없다.")
@@ -58,12 +56,22 @@ class MenuServiceTest {
     void createFailTest_ByMenuGroupIsNotExists() {
         //given
         Long invalidId = 99L;
+        Product product = saveProductAmountOf(1000);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1L);
+
+        MenuCreationRequest request = new MenuCreationRequest(
+                "TestMenu",
+                BigDecimal.valueOf(1000),
+                invalidId,
+                List.of(menuProductRequest)
+        );
 
         assertThat(menuGroupRepository.existsById(invalidId)).isFalse();
 
         //when then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴 그룹입니다.");
     }
 
     @DisplayName("메뉴에 있는 상품이 존재하지 않으면, 생성할 수 없다")
@@ -71,38 +79,46 @@ class MenuServiceTest {
     void createFailTest_ByMenuProductIsNotExists() {
         //given
         Long invalidId = 99L;
-        Product product = new Product();
-        product.setId(invalidId);
+        MenuProductRequest menuProductRequestWithInvalidProductId = new MenuProductRequest(invalidId, 1L);
 
-        MenuProduct menuProduct = MenuProduct.of(menu, 1L, product);
-
-        menu.addMenuProduct(menuProduct);
+        MenuCreationRequest request = new MenuCreationRequest(
+                "TestMenu",
+                BigDecimal.valueOf(1000),
+                menuGroup.getId(),
+                List.of(menuProductRequestWithInvalidProductId)
+        );
 
         assertThat(menuGroupRepository.existsById(menuGroup.getId())).isTrue();
         assertThat(productRepository.findById(invalidId)).isEmpty();
 
         //when then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴에 존재하지 않는 상품이 포함되어 있습니다.");
     }
 
     @DisplayName("메뉴에 존재하는 (상품 x 개수)의 가격 합계보다 메뉴 금액이 큰 경우 생성할 수 없다.")
     @Test
     void createFailTest_ByMenuProductsTotalPriceIsLessThanMenuPrice() {
         //given
-        BigDecimal price = menu.getPrice();
+        BigDecimal price = BigDecimal.valueOf(1000);
+        Product product = saveProductAmountOf(price.intValue() - 1);
 
-        Product savedProduct = saveProductAmountOf(price.intValue() - 1);
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-
-        menu.addMenuProduct(menuProduct);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1L);
+        MenuCreationRequest request = new MenuCreationRequest(
+                "TestMenu",
+                price,
+                menuGroup.getId(),
+                List.of(menuProductRequest)
+        );
 
         assertThat(menuGroupRepository.existsById(menuGroup.getId())).isTrue();
-        assertThat(productRepository.findById(savedProduct.getId())).isPresent();
+        assertThat(productRepository.findById(product.getId())).isPresent();
 
         //when then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 금액의 합계는 각 상품들의 합계보다 클 수 없습니다.");;
     }
 
     @DisplayName("메뉴를 생성하면, 메뉴에 존재하는 상품들도 저장된다.")
@@ -111,13 +127,17 @@ class MenuServiceTest {
         //given
         int price = 10000;
 
-        Product savedProduct = saveProductAmountOf(price);
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-
-        menu.addMenuProduct(menuProduct);
+        Product product = saveProductAmountOf(price);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1L);
+        MenuCreationRequest request = new MenuCreationRequest(
+                "TestMenu",
+                BigDecimal.valueOf(price),
+                menuGroup.getId(),
+                List.of(menuProductRequest)
+        );
 
         //when
-        Menu savedMenu = menuService.create(menu);
+        Menu savedMenu = menuService.create(request);
 
         //then
         Menu findMenu = menuRepository.findById(savedMenu.getId()).get();
@@ -130,8 +150,8 @@ class MenuServiceTest {
                 () -> assertThat(findMenu.getPrice())
                         .isEqualByComparingTo(savedMenu.getPrice()),
                 () -> assertThat(findMenuProducts).usingRecursiveComparison()
-                        .ignoringFields("menuId", "seq")
-                        .isEqualTo(List.of(menuProduct))
+                        .ignoringFields("seq")
+                        .isEqualTo(List.of(MenuProduct.create(findMenu, 1L, product)))
         );
     }
 
@@ -140,13 +160,14 @@ class MenuServiceTest {
     void listSuccessTest() {
         //given
         int price = 10000;
+        Product product = saveProductAmountOf(price);
+        MenuGroup menuGroup = saveMenuGroup();
 
-        Product savedProduct = saveProductAmountOf(price);
+        Menu menu = Menu.createWithEmptyMenuProducts("TestMenu", BigDecimal.valueOf(price), menuGroup);
+        MenuProduct menuProduct = createMenuProduct(menu, product);
+        menu.addMenuProduct(menuProduct);
 
-        Menu savedMenu = menuRepository.save(menu);
-
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
+        menuRepository.save(menu);
 
         //when
         List<Menu> findMenus = menuService.list();
@@ -155,11 +176,11 @@ class MenuServiceTest {
         assertAll(
                 () -> assertThat(findMenus).usingRecursiveComparison()
                         .ignoringFields("price", "menuProducts")
-                        .isEqualTo(List.of(savedMenu)),
+                        .isEqualTo(List.of(menu)),
                 () -> assertThat(findMenus).hasSize(1),
-                () -> assertThat(findMenus.get(0).getPrice()).isEqualByComparingTo(savedMenu.getPrice()),
+                () -> assertThat(findMenus.get(0).getPrice()).isEqualByComparingTo(menu.getPrice()),
                 () -> assertThat(findMenus.get(0).getMenuProducts()).usingRecursiveComparison()
-                        .isEqualTo(List.of(savedMenuProduct))
+                        .isEqualTo(List.of(menuProduct))
         );
     }
 
@@ -170,15 +191,13 @@ class MenuServiceTest {
     }
 
     private Product saveProductAmountOf(int price) {
-        Product product = new Product();
-        product.setName("TestName");
-        product.setPrice(BigDecimal.valueOf(price));
+        Product product = Product.create("TestProduct", BigDecimal.valueOf(price));
 
         return productRepository.save(product);
     }
 
-    private MenuProduct createMenuProduct(Product savedProduct) {
-        return MenuProduct.of(menu, 1L, savedProduct);
+    private MenuProduct createMenuProduct(Menu menu, Product savedProduct) {
+        return MenuProduct.create(menu, 1L, savedProduct);
     }
 
 }

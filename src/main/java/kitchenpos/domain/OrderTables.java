@@ -24,20 +24,19 @@ public class OrderTables {
 
     public static OrderTables from(List<OrderTable> orderTables) {
         validate(orderTables);
-        orderTables.forEach(orderTable -> orderTable.changeEmpty(Boolean.TRUE));
 
         return new OrderTables(orderTables);
     }
 
     private static void validate(List<OrderTable> orderTables) {
         validateSize(orderTables);
-        validateEmpty(orderTables);
         validateDuplicateGroup(orderTables);
+        validateEmpty(orderTables);
     }
 
     private static void validateSize(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_ORDER_TABLE_SIZE) {
-            throw new IllegalArgumentException("그룹화 할 테이블 크기는 2 이상이어야 합니다");
+            throw new IllegalArgumentException("그룹화 할 테이블 개수는 2 이상이어야 합니다");
         }
     }
 

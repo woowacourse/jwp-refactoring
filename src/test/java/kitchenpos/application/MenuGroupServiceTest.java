@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +28,10 @@ class MenuGroupServiceTest {
     @Test
     void createSuccessTest() {
         //given
-        MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuGroupCreationRequest request = new MenuGroupCreationRequest("TestMenuGroup");
 
         //when
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         //then
         MenuGroup findMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId()).get();
@@ -58,4 +59,5 @@ class MenuGroupServiceTest {
                 .ignoringFields("id")
                 .isEqualTo(List.of(menuGroup1, menuGroup2));
     }
+
 }

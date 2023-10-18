@@ -41,17 +41,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public static OrderTable of(
-            Long id,
-            TableGroup tableGroup,
-            Integer numberOfGuests,
-            Boolean empty
-    ) {
-        validateNumberOfGuests(numberOfGuests);
-
-        return new OrderTable(id, tableGroup, numberOfGuests, empty);
-    }
-
     public static OrderTable createWithoutTableGroup(
             Integer numberOfGuests,
             Boolean empty
@@ -63,7 +52,7 @@ public class OrderTable {
 
     private static void validateNumberOfGuests(Integer numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블에 방문한 손님 수는 0 이상이어야 합니다.");
         }
     }
 
@@ -77,7 +66,7 @@ public class OrderTable {
         validateNumberOfGuests(numberOfGuests);
 
         if (empty == Boolean.TRUE) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문을 할 수 없는 상태이므로, 방문 손님 수를 변경할 수 없습니다.");
         }
     }
 
@@ -89,20 +78,23 @@ public class OrderTable {
 
     private void validateChangeableEmpty() {
         if (isGrouped()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("다른 그룹에 속해있으므로, 주문 상태를 변경할 수 없습니다.");
         }
+
     }
 
     public void group(TableGroup tableGroup) {
         if (isGrouped()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 다른 그룹에 속한 테이블입니다.");
         }
 
         this.tableGroup = tableGroup;
+        this.empty = Boolean.FALSE;
     }
 
     public void ungroup() {
         this.tableGroup = null;
+        this.empty = Boolean.FALSE;
     }
 
     public boolean isGrouped() {
