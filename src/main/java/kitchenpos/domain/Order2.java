@@ -7,13 +7,13 @@ public class Order2 {
 
   private Long id;
   private OrderTable2 orderTable;
-  private String orderStatus;
+  private OrderStatus orderStatus;
   private LocalDateTime orderedTime;
   private List<OrderLineItem2> orderLineItems;
 
   public Order2(
       final Long id, final OrderTable2 orderTable,
-      final String orderStatus, final LocalDateTime orderedTime,
+      final OrderStatus orderStatus, final LocalDateTime orderedTime,
       final List<OrderLineItem2> orderLineItems
   ) {
     this.id = id;
@@ -25,10 +25,19 @@ public class Order2 {
 
   public Order2(
       final OrderTable2 orderTable,
-      final String orderStatus,
-      final LocalDateTime orderedTime
+      final OrderStatus orderStatus,
+      final LocalDateTime orderedTime,
+      final List<OrderLineItem2> orderLineItems
   ) {
-    this(null, orderTable, orderStatus, orderedTime, null);
+    this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+  }
+
+  public boolean isCompletion() {
+    return orderStatus == OrderStatus.COMPLETION;
+  }
+
+  public void changeStatus(final OrderStatus orderStatus) {
+    this.orderStatus = orderStatus;
   }
 
   public Long getId() {
@@ -39,7 +48,7 @@ public class Order2 {
     return orderTable;
   }
 
-  public String getOrderStatus() {
+  public OrderStatus getOrderStatus() {
     return orderStatus;
   }
 

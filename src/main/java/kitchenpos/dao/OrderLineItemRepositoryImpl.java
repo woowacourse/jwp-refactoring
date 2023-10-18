@@ -6,16 +6,13 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.entity.MenuEntity;
 import kitchenpos.dao.entity.MenuProductEntity;
 import kitchenpos.dao.entity.OrderLineItemEntity;
-import kitchenpos.dao.entity.OrderTableEntity;
 import kitchenpos.domain.Menu2;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct2;
 import kitchenpos.domain.Order2;
 import kitchenpos.domain.OrderLineItem2;
 import kitchenpos.domain.OrderLineItemRepository;
-import kitchenpos.domain.OrderTable2;
 import kitchenpos.domain.Product2;
-import kitchenpos.domain.TableGroup2;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -45,7 +42,7 @@ public class OrderLineItemRepositoryImpl implements OrderLineItemRepository {
   public OrderLineItem2 save(final OrderLineItem2 orderLineItem, final Order2 order) {
     final OrderLineItemEntity orderLineItemEntity = new OrderLineItemEntity(
         order.getId(),
-        orderLineItem.getMenu().getId(),
+        orderLineItem.getMenuId(),
         orderLineItem.getQuantity()
     );
 
@@ -55,9 +52,7 @@ public class OrderLineItemRepositoryImpl implements OrderLineItemRepository {
   private OrderLineItem2 mapToOrderLineItem(final OrderLineItemEntity orderLineItemEntity) {
     return new OrderLineItem2(
         orderLineItemEntity.getSeq(),
-        menuDao.findById(orderLineItemEntity.getMenuId())
-            .map(this::mapToMenu)
-            .orElseThrow(IllegalArgumentException::new),
+        orderLineItemEntity.getMenuId(),
         orderLineItemEntity.getQuantity()
     );
   }

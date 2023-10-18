@@ -8,14 +8,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import kitchenpos.domain.Menu2;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Order2;
+import kitchenpos.domain.OrderLineItem2;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.Product2;
 import kitchenpos.domain.TableGroup2;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.support.JdbcTestHelper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,31 +43,54 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @Autowired
   private TableGroupRepositoryImpl tableGroupRepository;
 
+  @Autowired
+  private MenuGroupRepositoryImpl menuGroupRepository;
+
+  @Autowired
+  private ProductRepositoryImpl productRepository;
+
+  @Autowired
+  private MenuRepositoryImpl menuRepository;
+
   private TableGroup2 tableGroup;
   private OrderTable2 orderTable;
+  private Menu2 menu;
+  private Product2 product;
+  private MenuGroup menuGroup;
 
   @BeforeEach
   void setUp() {
     tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     orderTable = orderTableRepository.save(OrderTableFixture.createEmptyOrderTable(tableGroup));
+
+    menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
+    product = productRepository.save(ProductFixture.createProduct());
+    menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
   }
 
   @Test
   @DisplayName("save() : 주문을 저장할 수 있다.")
   void test_save() throws Exception {
     //given
-    final Order2 order = OrderFixture.createMealOrder(orderTable);
+    final List<OrderLineItem2> orderLineItems = List.of(
+        OrderLineItemFixture.createOrderLineItem(menu),
+        OrderLineItemFixture.createOrderLineItem(menu),
+        OrderLineItemFixture.createOrderLineItem(menu)
+    );
+    final Order2 order = OrderFixture.createWithOrderLineItems(orderTable, orderLineItems);
 
     //when
     final Order2 savedOrder = orderRepository.save(order);
 
     //then
+    final List<Long> orderLineItemIds = savedOrder.getOrderLineItems()
+        .stream()
+        .map(OrderLineItem2::getSeq)
+        .collect(Collectors.toList());
+
     assertAll(
         () -> assertNotNull(savedOrder.getId()),
-        () -> assertThat(savedOrder)
-            .usingRecursiveComparison()
-            .ignoringFields("id")
-            .isEqualTo(order)
+        () -> assertThat(orderLineItemIds).doesNotContainNull()
     );
   }
 

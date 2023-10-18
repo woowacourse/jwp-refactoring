@@ -9,7 +9,7 @@ public class OrderLineItemFixture {
 
   public static OrderLineItem2 createOrderLineItem(final Menu2 menu) {
     return new OrderLineItem2(
-        menu,
+        menu.getId(),
         4L
     );
   }
