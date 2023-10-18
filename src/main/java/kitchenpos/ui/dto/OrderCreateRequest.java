@@ -19,7 +19,7 @@ public class OrderCreateRequest {
 
     private void validateMenuIds(List<Long> menuIds) {
         if (CollectionUtils.isEmpty(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문할 메뉴가 존재하지 않습니다.");
         }
     }
 

@@ -14,7 +14,7 @@ public class OrderTables {
 
     public void validateSize(int size) {
         if (values.size() != size) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 존재하지 않습니다.");
         }
     }
 
@@ -22,7 +22,7 @@ public class OrderTables {
         values.stream()
                 .filter(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()))
                 .anyMatch(orderTable -> {
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException("주문 테이블이 비어있지 않거나 이미 그룹화된 테이블입니다.");
                 });
     }
 

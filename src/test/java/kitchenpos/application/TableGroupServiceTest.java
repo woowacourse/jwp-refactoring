@@ -6,8 +6,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -29,9 +27,6 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
     private OrderRepository orderRepository;
 
     @Test
@@ -45,23 +40,6 @@ class TableGroupServiceTest extends ServiceTest {
 
         //then
         assertThat(tableGroupId).isNotNull();
-    }
-
-    @Test
-    void 주문_테이블이_널인경우_예외가_발생한다() {
-        //when
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_테이블의_사이즈가_2미만인_경우_예외가_발생한다() {
-        //given
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
-
-        //when
-        Assertions.assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId())))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

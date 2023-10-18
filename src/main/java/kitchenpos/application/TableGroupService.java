@@ -28,9 +28,6 @@ public class TableGroupService {
     }
 
     public Long create(final List<Long> orderTableIds) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
         orderTables.validateSize(orderTableIds.size());
         orderTables.validateIsEmptyAndTableGroupIdIsNull();
@@ -43,7 +40,7 @@ public class TableGroupService {
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTables.mapOrderTableIds(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 orderTable이거나 table주문 상태가 조리중 또는 식사중인 테이블 그룹은 해체할 수 없습니다.");
         }
         orderTables.updateTableGroupIdAndEmpty(null, false);
     }

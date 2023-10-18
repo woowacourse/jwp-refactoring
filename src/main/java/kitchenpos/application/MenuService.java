@@ -44,7 +44,7 @@ public class MenuService {
             final List<Integer> counts
     ) {
         if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 
         final List<Product> findProducts = findProducts(productIds);

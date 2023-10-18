@@ -37,11 +37,11 @@ public class OrderService {
 
     public Long create(final List<Long> menuIds, final List<Integer> quantities, final Long orderTableId) {
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴가 존재하지 않습니다.");
         }
 
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalStateException("주문 테이블이 존재하지 않습니다."));
         orderTable.validateIsNotEmpty();
         
         final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
@@ -66,9 +66,9 @@ public class OrderService {
 
     public void changeOrderStatus(final Long orderId, final String status) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
         }
         final OrderStatus orderStatus = OrderStatus.valueOf(status);
         savedOrder.changeOrderStatus(orderStatus.name());

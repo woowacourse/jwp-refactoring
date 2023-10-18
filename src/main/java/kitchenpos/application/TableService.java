@@ -32,19 +32,17 @@ public class TableService {
     }
 
     public void changeEmpty(final Long orderTableId, final boolean isEmpty) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateTableGroupIdIsNull();
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("orderTable이 존재하지 않거나 조리중 또는 식사중인 주문 테이블은 empty 상태를 변경 할 수 없습니다.");
         }
         savedOrderTable.updateEmpty(isEmpty);
     }
 
     public void changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateIsNotEmpty();
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
     }

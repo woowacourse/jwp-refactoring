@@ -14,7 +14,7 @@ public class Products {
     public void validateSum(final List<Integer> counts, final BigDecimal price) {
         final BigDecimal sum = calculateSum(counts);
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 금액이 총 상품 금액보다 작을 수 없습니다.");
         }
     }
 

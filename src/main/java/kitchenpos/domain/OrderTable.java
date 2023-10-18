@@ -62,13 +62,13 @@ public class OrderTable {
 
     public void validateTableGroupIdIsNull() {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹이 존재하는 테이블은 empty를 변경할 수 없습니다.");
         }
     }
 
     public void validateIsNotEmpty() {
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블은 인원수를 변경할 수 없습니다.");
         }
     }
 }
