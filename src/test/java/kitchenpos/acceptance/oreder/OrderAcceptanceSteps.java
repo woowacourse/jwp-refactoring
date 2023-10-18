@@ -9,12 +9,12 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderCreateRequest.OrderLineItemInfo;
-import kitchenpos.application.dto.OrderStatusChangeRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemInfo;
+import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderAcceptanceSteps {

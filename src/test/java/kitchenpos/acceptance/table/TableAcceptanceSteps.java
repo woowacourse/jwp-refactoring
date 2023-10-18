@@ -5,9 +5,9 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.table.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.OrderTableCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableAcceptanceSteps {

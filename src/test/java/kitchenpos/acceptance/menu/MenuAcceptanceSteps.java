@@ -7,8 +7,8 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import kitchenpos.application.dto.MenuCreateRequest;
-import kitchenpos.application.dto.MenuCreateRequest.MenuProductInfo;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuCreateRequest.MenuProductInfo;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuAcceptanceSteps {

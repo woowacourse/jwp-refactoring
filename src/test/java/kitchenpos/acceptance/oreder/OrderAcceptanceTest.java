@@ -16,9 +16,9 @@ import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_등록
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.비어있음;
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.비어있지_않음;
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.테이블_등록후_생성된_ID를_가져온다;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 
 import kitchenpos.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.BeforeEach;

@@ -5,7 +5,7 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuGroupAcceptanceSteps {

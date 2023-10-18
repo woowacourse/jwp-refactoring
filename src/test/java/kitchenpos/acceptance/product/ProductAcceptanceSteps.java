@@ -6,7 +6,7 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
-import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class ProductAcceptanceSteps {
