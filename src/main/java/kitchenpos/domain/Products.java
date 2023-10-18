@@ -11,7 +11,14 @@ public class Products {
         this.values = values;
     }
 
-    public BigDecimal calculateSum(final List<Integer> counts) {
+    public void validateSum(final List<Integer> counts, final BigDecimal price) {
+        final BigDecimal sum = calculateSum(counts);
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private BigDecimal calculateSum(final List<Integer> counts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (int index = 0; index < values.size(); index++) {
             sum = sum.add(values.get(index).getPrice()

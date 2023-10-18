@@ -49,18 +49,18 @@ public class MenuService {
 
         final List<Product> findProducts = findProducts(productIds);
         final Products products = new Products(findProducts);
-        final BigDecimal sum = products.calculateSum(counts);
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        products.validateSum(counts, price);
 
         final Menu menu = menuRepository.save(new Menu(name, price, menuGroupId));
+        saveMenuProduct(counts, findProducts, menu);
+        return menu.getId();
+    }
+
+    private void saveMenuProduct(List<Integer> counts, List<Product> findProducts, Menu menu) {
         for (int index = 0; index < findProducts.size(); index++) {
             final MenuProduct menuProduct = new MenuProduct(menu.getId(), findProducts.get(index).getId(), counts.get(index));
             menuProductRepository.save(menuProduct);
         }
-        return menu.getId();
     }
 
     private List<Product> findProducts(List<Long> productIds) {
