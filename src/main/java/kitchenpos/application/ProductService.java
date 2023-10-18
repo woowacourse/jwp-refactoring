@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,19 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     public Product create(final ProductCreateRequest request) {
         final Product product = Product.of(request.getName(), request.getPrice());
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     @Transactional(readOnly = true)
     public List<Product> readAll() {
-        return productDao.findAll();
+        return productRepository.findAll();
     }
 }
