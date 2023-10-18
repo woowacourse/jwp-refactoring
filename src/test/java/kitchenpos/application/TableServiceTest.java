@@ -35,8 +35,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 .getId();
 
         // then
-        OrderTable savedOrderTableId = orderTableDao.findById(orderTableId)
-                .orElseThrow(NoSuchElementException::new);
+        OrderTable savedOrderTableId = orderTableDao.findById(orderTableId).get();
         assertThat(savedOrderTableId).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(orderTable);
@@ -143,8 +142,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         tableService.changeEmpty(savedOrderTable.getId(), emptyTrueOrderTable);
 
         // then
-        OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId())
-                .orElseThrow(NoSuchElementException::new);
+        OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
         assertAll(
                 () -> assertThat(changedOrderTable).usingRecursiveComparison()
                         .ignoringFields("empty")
@@ -216,8 +214,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable);
 
         // then
-        OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId())
-                .orElseThrow(NoSuchElementException::new);
+        OrderTable changedOrderTable = orderTableDao.findById(savedOrderTable.getId()).get();
         assertAll(
                 () -> assertThat(changedOrderTable).usingRecursiveComparison()
                         .ignoringFields("numberOfGuests")

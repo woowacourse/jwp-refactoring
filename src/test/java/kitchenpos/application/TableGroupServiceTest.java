@@ -105,12 +105,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
 
         // then
-        TableGroup savedTableGroup = tableGroupDao.findById(savedTableGroupId)
-                .orElseThrow(NoSuchElementException::new);
-        OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId())
-                .orElseThrow(NoSuchElementException::new);
-        OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId())
-                .orElseThrow(NoSuchElementException::new);
+        TableGroup savedTableGroup = tableGroupDao.findById(savedTableGroupId).get();
+        OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
+        OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
                 () -> assertThat(savedOrderTable1.getTableGroupId()).isEqualTo(savedTableGroup.getId()),
@@ -181,10 +178,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
 
         // when
         tableGroupService.ungroup(savedTableGroupId);
-        OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId())
-                .orElseThrow(NoSuchElementException::new);
-        OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId())
-                .orElseThrow(NoSuchElementException::new);
+        OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
+        OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
 
         // then
         assertAll(

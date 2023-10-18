@@ -34,8 +34,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
                 .getId();
 
         // then
-        Product savedProduct = productDao.findById(id)
-                .orElseThrow(NoSuchElementException::new);
+        Product savedProduct = productDao.findById(id).get();
         assertAll(
                 () -> assertThat(product.getName()).isEqualTo(savedProduct.getName()),
                 () -> assertThat(product.getPrice()).isEqualByComparingTo(savedProduct.getPrice())

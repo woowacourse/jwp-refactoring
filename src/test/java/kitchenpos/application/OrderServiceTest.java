@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -161,8 +159,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
                 .stream()
                 .filter(order -> order.getId().equals(savedOrder.getId()))
                 .findFirst()
-                .orElseThrow(NoSuchElementException::new);
-
+                .get();
         assertThat(changedOrder).usingRecursiveComparison()
                         .isEqualTo(savedOrder);
     }

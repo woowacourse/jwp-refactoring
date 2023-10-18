@@ -28,7 +28,7 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
 
         // then
         String savedName = menuGroupDao.findById(id)
-                .orElseThrow(NoSuchElementException::new)
+                .get()
                 .getName();
         assertThat(savedName).isEqualTo(menuGroup.getName());
     }
