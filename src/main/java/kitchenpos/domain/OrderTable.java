@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 public class OrderTable {
 
+    private static final int MIN_GUESTS_COUNTS = 0;
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -10,6 +12,7 @@ public class OrderTable {
     public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this(null, tableGroupId, numberOfGuests, empty);
     }
+
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -18,6 +21,12 @@ public class OrderTable {
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블에는 손님을 지정할 수 없습니다.");
+        }
+        if (numberOfGuests < MIN_GUESTS_COUNTS) {
+            throw new IllegalArgumentException("손님 수는 0보다 작을 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -45,7 +54,6 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
-
 
 
 }

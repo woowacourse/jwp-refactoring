@@ -60,19 +60,10 @@ public class TableService {
             final Long orderTableId,
             final UpdateTableGuestRequest updateTableGuestRequest
     ) {
-        final int numberOfGuests = updateTableGuestRequest.getGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+        final int numberOfGuests = updateTableGuestRequest.getGuests();
         orderTable.updateNumberOfGuests(numberOfGuests);
 
         return orderTableDao.save(orderTable);
