@@ -45,7 +45,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(isEmpty);
+        savedOrderTable.updateEmpty(isEmpty);
     }
 
     @Transactional
@@ -61,6 +61,6 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.updateNumberOfGuests(numberOfGuests);
     }
 }

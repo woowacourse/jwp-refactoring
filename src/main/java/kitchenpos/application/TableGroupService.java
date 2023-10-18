@@ -48,8 +48,8 @@ public class TableGroupService {
 
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroup.getId());
-            savedOrderTable.setEmpty(false);
+            savedOrderTable.updateTableGroupId(tableGroup.getId());
+            savedOrderTable.updateEmpty(false);
             orderTableRepository.save(savedOrderTable);
         }
 
@@ -70,8 +70,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.updateTableGroupId(null);
+            orderTable.updateEmpty(false);
         }
     }
 }
