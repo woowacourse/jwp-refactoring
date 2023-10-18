@@ -31,7 +31,7 @@ class ProductRepositoryTest {
             }
 
             // when
-            List<Product> actual = productRepository.findByIdIn(List.of(1L, 2L, 3L, 4L, 5L));
+            List<Product> actual = productRepository.findAllByIdIn(List.of(1L, 2L, 3L, 4L, 5L));
 
             // then
             assertThat(actual).hasSize(5);

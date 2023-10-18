@@ -79,7 +79,7 @@ class MenuServiceTest {
                 .willReturn(Optional.of(menuGroup));
 
             // when
-            given(productRepository.findByIdIn(anyList()))
+            given(productRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(
                     new Product(1L, "맥주", Money.from(500)),
                     new Product(2L, "소주", Money.from(500))
@@ -100,7 +100,7 @@ class MenuServiceTest {
             MenuGroup menuGroup = new MenuGroup(1L, "주류");
             given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
-            given(productRepository.findByIdIn(anyList()))
+            given(productRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(new Product(1L, "맥주", Money.from(999))));
             given(menuRepository.save(any(Menu.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
@@ -120,7 +120,7 @@ class MenuServiceTest {
             MenuGroup menuGroup = new MenuGroup(1L, "주류");
             given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
-            given(productRepository.findByIdIn(anyList()))
+            given(productRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(new Product(1L, "맥주", Money.from(1000))));
             given(menuRepository.save(any(Menu.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));

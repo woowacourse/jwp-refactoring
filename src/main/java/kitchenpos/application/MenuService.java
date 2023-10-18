@@ -68,7 +68,7 @@ public class MenuService {
     private List<Product> findProducts(List<MenuProductCreateRequest> requests) {
         return requests.stream()
             .map(MenuProductCreateRequest::getProductId)
-            .collect(collectingAndThen(toList(), productRepository::findByIdIn));
+            .collect(collectingAndThen(toList(), productRepository::findAllByIdIn));
     }
 
     private void validateNotExistProducts(List<Product> products, List<MenuProductCreateRequest> requests) {
