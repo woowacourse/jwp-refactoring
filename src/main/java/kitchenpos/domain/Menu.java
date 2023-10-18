@@ -1,10 +1,8 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,11 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import kitchenpos.domain.common.Name;
 import kitchenpos.domain.common.Price;
-import kitchenpos.domain.exception.InvalidMenuPriceException;
-import kitchenpos.domain.exception.InvalidMenuProductException;
 
 @Entity
 public class Menu {
@@ -35,8 +30,8 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
     public static Menu of(
             final String name,
@@ -46,30 +41,7 @@ public class Menu {
     ) {
         final Price menuPrice = new Price(price);
 
-        validateMenuProduct(menuProducts);
-        validateMenuProductPrice(menuPrice, menuProducts);
-
         return new Menu(name, menuPrice, menuGroup, menuProducts);
-    }
-
-    private static void validateMenuProductPrice(final Price menuPrice, final List<MenuProduct> menuProducts) {
-        final Price totalMenuProductPrice = calculateTotalMenuProductPrice(menuProducts);
-
-        if (menuPrice.compareTo(totalMenuProductPrice) > 0) {
-            throw new InvalidMenuPriceException();
-        }
-    }
-
-    private static Price calculateTotalMenuProductPrice(final List<MenuProduct> menuProducts) {
-        return menuProducts.stream()
-                           .map(menuProduct -> menuProduct.productPrice().times(menuProduct.getQuantity()))
-                           .reduce(Price.ZERO, Price::plus);
-    }
-
-    private static void validateMenuProduct(final List<MenuProduct> menuProducts) {
-        if (menuProducts == null || menuProducts.isEmpty()) {
-            throw new InvalidMenuProductException();
-        }
     }
 
     protected Menu() {
@@ -84,15 +56,11 @@ public class Menu {
         this.name = new Name(name);
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
-
-        initMenuForMenuProduct(menuProducts);
+        this.menuProducts = MenuProducts.of(this, menuProducts);
     }
 
-    private void initMenuForMenuProduct(final List<MenuProduct> menuProducts) {
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.initMenu(this);
-        }
+    public Price price() {
+        return price;
     }
 
     public Long getId() {
@@ -112,7 +80,7 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 
     @Override
