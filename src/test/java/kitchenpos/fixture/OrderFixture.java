@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
 
     public static Order 주문_생성(

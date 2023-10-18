@@ -3,6 +3,7 @@ package kitchenpos.fixture;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderLineItem;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderLineItemFixture {
 
     public static OrderLineItem 메뉴만을_가진_OrderLineItem_생성(Menu savedMenu, long quantity) {

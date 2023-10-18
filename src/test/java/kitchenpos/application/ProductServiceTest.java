@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.ProductFixture.루카_치킨_10000원;
 import static kitchenpos.fixture.ProductFixture.매튜_치킨_10000원;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 import static kitchenpos.fixture.ProductFixture.후추_칰힌_가격_책정;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
+@SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -67,8 +67,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         // given
         List<Product> products = List.of(
                 후추_치킨_10000원(),
-                매튜_치킨_10000원(),
-                루카_치킨_10000원()
+                매튜_치킨_10000원()
         );
         List<Product> savedProducts = new ArrayList<>();
         for (Product product : products) {

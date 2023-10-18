@@ -12,9 +12,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest extends ServiceIntegrationTest {
 
     @Autowired

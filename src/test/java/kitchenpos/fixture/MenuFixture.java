@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
 
     public static Menu 메뉴_생성(

@@ -3,6 +3,7 @@ package kitchenpos.fixture;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
 
     public static OrderTable 테이블_그룹이_있는_주문_테이블_생성(

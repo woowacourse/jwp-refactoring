@@ -30,6 +30,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceIntegrationTest {
 
     @Test

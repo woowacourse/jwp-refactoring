@@ -3,6 +3,7 @@ package kitchenpos.fixture;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class MenuProductFixture {
 
     public static MenuProduct 메뉴_상품(Product savedProduct, long quantity) {
