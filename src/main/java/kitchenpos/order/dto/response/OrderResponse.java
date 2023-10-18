@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderResponse {
 
@@ -22,8 +23,8 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(Order order) {
-        List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().stream()
+    public static OrderResponse from(Order order, List<OrderLineItem> orderLineItems) {
+        List<OrderLineItemResponse> orderLineItemResponses = orderLineItems.stream()
                 .map(OrderLineItemResponse::from)
                 .collect(Collectors.toList());
 

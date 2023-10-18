@@ -68,34 +68,6 @@ class OrderTest {
     }
 
     @Test
-    void 주문_항목들이_빈_경우_예외를_던진다() {
-        // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
-        Order order = new Order(orderTable, null, null);
-        List<OrderLineItem> orderLineItems = List.of();
-
-        // when, then
-        assertThatThrownBy(() -> order.setupOrderLineItem(orderLineItems))
-                .isInstanceOf(OrderLineEmptyException.class);
-    }
-
-    @Test
-    void 주문_항목들이_있다면_주문_항목들을_설정할_수_있다() {
-        // given
-        OrderTable orderTable = new OrderTable(null, 1, false);
-        Order order = new Order(orderTable, null, null);
-        List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(null, null, 1L)
-        );
-
-        // when
-        order.setupOrderLineItem(orderLineItems);
-
-        // then
-        assertThat(order.getOrderLineItems()).isEqualTo(orderLineItems);
-    }
-
-    @Test
     void 주문_상태가_완료가_아니라면_예외를_던진다() {
         // given
         OrderTable orderTable = new OrderTable(null, 1, false);
