@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     class Create {
@@ -32,7 +32,7 @@ class MenuGroupServiceTest {
         void 메뉴_그룹을_생성할_수_있다() {
             // given
             final MenuGroup expected = new MenuGroup("식사");
-            given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expected);
+            given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(expected);
 
             // when
             final MenuGroup actual = menuGroupService.create(expected);
@@ -48,10 +48,10 @@ class MenuGroupServiceTest {
         @Test
         void 메뉴_그룹을_전체_조회할_수_있다() {
             // when
-            menuGroupDao.findAll();
+            menuGroupRepository.findAll();
 
             // then
-            verify(menuGroupDao, only()).findAll();
+            verify(menuGroupRepository, only()).findAll();
         }
     }
 }

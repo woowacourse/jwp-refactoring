@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,16 +45,16 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Mock
-    MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private Menu noodle;
     private Menu potato;
@@ -79,13 +79,13 @@ class OrderServiceTest {
 
             final OrderTable orderTable = mock(OrderTable.class);
             final Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
-            given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
+            given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
 
             final Order spyOrder = spy(new Order(order.getOrderTable(), order.getOrderStatus(), order.getOrderedTime(), new ArrayList<>()));
-            given(orderDao.save(any(Order.class))).willReturn(spyOrder);
-            given(orderTableDao.findById(any())).willReturn(Optional.ofNullable(orderTable));
+            given(orderRepository.save(any(Order.class))).willReturn(spyOrder);
+            given(orderTableRepository.findById(any())).willReturn(Optional.ofNullable(orderTable));
 
-            given(orderLineItemDao.save(any(OrderLineItem.class)))
+            given(orderLineItemRepository.save(any(OrderLineItem.class)))
                     .willReturn(wooDong)
                     .willReturn(frenchFries);
 
@@ -126,7 +126,7 @@ class OrderServiceTest {
 
             // when
             final long incorrectMenuSize = order.getOrderLineItems().size() - 1;
-            when(menuDao.countByIdIn(anyList())).thenReturn(incorrectMenuSize);
+            when(menuRepository.countByIdIn(anyList())).thenReturn(incorrectMenuSize);
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
@@ -139,14 +139,14 @@ class OrderServiceTest {
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
             final Order order = spy(new Order(COMPLETION, LocalDateTime.now(), orderLineItems));
 
-            given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
+            given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
             final OrderTable mockOrderTable = mock(OrderTable.class);
             given(order.getOrderTable()).willReturn(mockOrderTable);
             final long orderTableId = 1L;
             given(mockOrderTable.getId()).willReturn(orderTableId);
 
             // when
-            when(orderTableDao.findById(any())).thenReturn(Optional.empty());
+            when(orderTableRepository.findById(any())).thenReturn(Optional.empty());
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
@@ -159,7 +159,7 @@ class OrderServiceTest {
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
             final Order order = spy(new Order(COMPLETION, LocalDateTime.now(), orderLineItems));
 
-            given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
+            given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
 
             final OrderTable mockOrderTable = mock(OrderTable.class);
             given(order.getOrderTable()).willReturn(mockOrderTable);
@@ -168,7 +168,7 @@ class OrderServiceTest {
 
             // when
             final OrderTable emptyOrderTable = new OrderTable(6, true);
-            when(orderTableDao.findById(any())).thenReturn(Optional.ofNullable(emptyOrderTable));
+            when(orderTableRepository.findById(any())).thenReturn(Optional.ofNullable(emptyOrderTable));
 
             // then
             assertThatThrownBy(() -> orderService.create(order))
@@ -185,11 +185,11 @@ class OrderServiceTest {
             final long orderId = 1L;
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
 
-            given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
+            given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(orderLineItems);
 
             final Order spyOrder = spy(new Order(COMPLETION, LocalDateTime.now(), new ArrayList<>()));
             given(spyOrder.getId()).willReturn(orderId);
-            given(orderDao.findAll()).willReturn(List.of(spyOrder));
+            given(orderRepository.findAll()).willReturn(List.of(spyOrder));
 
             // when
             final List<Order> actual = orderService.list();
@@ -218,7 +218,7 @@ class OrderServiceTest {
             final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(wooDong, frenchFries));
 
             final Order order = new Order(validedOrderStatus, LocalDateTime.now(), orderLineItems);
-            given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(order));
+            given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(order));
 
             // when
             final Order expected = new Order(COMPLETION, LocalDateTime.now(), orderLineItems);
@@ -236,7 +236,7 @@ class OrderServiceTest {
 
             final Order expected = new Order(COMPLETION, LocalDateTime.now(), orderLineItems);
             final Order actual = spy(new Order(expected.getOrderStatus(), expected.getOrderedTime(), new ArrayList<>()));
-            given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(actual));
+            given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(actual));
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, expected))

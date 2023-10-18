@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,16 +41,16 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Mock
-    MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class Create {
@@ -64,17 +64,17 @@ class MenuServiceTest {
             final MenuProduct frenchFries = menuProduct(potato, 1);
             final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
 
-            given(menuGroupDao.existsById(any())).willReturn(true);
-            given(productDao.findById(any()))
+            given(menuGroupRepository.existsById(any())).willReturn(true);
+            given(productRepository.findById(any()))
                     .willReturn(Optional.ofNullable(noodle))
                     .willReturn(Optional.ofNullable(potato));
 
             final Menu spyExpected = spy(new Menu(expected.getName(), expected.getPrice(), expected.getMenuGroup(), new ArrayList<>()));
-            given(menuDao.save(expected)).willReturn(spyExpected);
+            given(menuRepository.save(expected)).willReturn(spyExpected);
 
             final MenuProduct menuProduct1 = new MenuProduct(1L, expected, wooDong.getProduct(), frenchFries.getQuantity());
             final MenuProduct menuProduct2 = new MenuProduct(2L, expected, frenchFries.getProduct(), frenchFries.getQuantity());
-            given(menuProductDao.save(any(MenuProduct.class)))
+            given(menuProductRepository.save(any(MenuProduct.class)))
                     .willReturn(menuProduct1)
                     .willReturn(menuProduct2);
 
@@ -108,7 +108,7 @@ class MenuServiceTest {
             final MenuProduct wooDong = menuProduct(noodle(), 1);
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
-            BigDecimal nullPrice = null;
+            final BigDecimal nullPrice = null;
             final Menu expected = new Menu("우동세트", nullPrice, western(), List.of(wooDong, frenchFries));
 
             // when, then
@@ -125,7 +125,7 @@ class MenuServiceTest {
             final MenuGroup noneExistedMenuGroup = menuGroup("noneExistedMenuGroupId");
             final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), noneExistedMenuGroup, List.of(wooDong, frenchFries));
 
-            given(menuGroupDao.existsById(any())).willReturn(false);
+            given(menuGroupRepository.existsById(any())).willReturn(false);
 
             // when, then
             assertThatThrownBy(() -> menuService.create(expected))
@@ -140,8 +140,8 @@ class MenuServiceTest {
             final MenuProduct frenchFries = menuProduct(potato(), 1);
             final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
 
-            given(menuGroupDao.existsById(any())).willReturn(true);
-            given(productDao.findById(noneExistedProduct.getId())).willReturn(Optional.empty());
+            given(menuGroupRepository.existsById(any())).willReturn(true);
+            given(productRepository.findById(noneExistedProduct.getId())).willReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> menuService.create(expected))
@@ -156,13 +156,13 @@ class MenuServiceTest {
             final Product potato = potato();
             final MenuProduct frenchFries = menuProduct(potato, 1);
 
-            BigDecimal overSumOfProductPrice = noodle.getPrice()
+            final BigDecimal overSumOfProductPrice = noodle.getPrice()
                     .add(potato.getPrice())
                     .add(BigDecimal.valueOf(1000));
             final Menu expected = new Menu("우동세트", overSumOfProductPrice, western(), List.of(wooDong, frenchFries));
 
-            given(menuGroupDao.existsById(any())).willReturn(true);
-            given(productDao.findById(any()))
+            given(menuGroupRepository.existsById(any())).willReturn(true);
+            given(productRepository.findById(any()))
                     .willReturn(Optional.ofNullable(noodle))
                     .willReturn(Optional.ofNullable(potato));
 
@@ -184,10 +184,10 @@ class MenuServiceTest {
             final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), western(), new ArrayList<>());
             final Menu spyExpected = spy(expected);
 
-            given(menuDao.findAll()).willReturn(List.of(spyExpected));
+            given(menuRepository.findAll()).willReturn(List.of(spyExpected));
             given(spyExpected.getId()).willReturn(1L);
 
-            given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(wooDong, frenchFries));
+            given(menuProductRepository.findAllByMenuId(anyLong())).willReturn(List.of(wooDong, frenchFries));
 
             // when
             final List<Menu> actual = menuService.list();

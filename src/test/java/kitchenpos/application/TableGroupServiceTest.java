@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,13 +33,13 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Nested
     class Create {
@@ -51,10 +51,10 @@ class TableGroupServiceTest {
             final OrderTable orderTable2 = new OrderTable(5, true);
             final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
+            given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
             final TableGroup spyExpected = spy(new TableGroup(expected.getCreatedDate(), new ArrayList<>()));
-            given(tableGroupDao.save(any(TableGroup.class))).willReturn(spyExpected);
+            given(tableGroupRepository.save(any(TableGroup.class))).willReturn(spyExpected);
 
             // when
             final TableGroup actual = tableGroupService.create(expected);
@@ -93,7 +93,7 @@ class TableGroupServiceTest {
             final OrderTable orderTable2 = new OrderTable(5, true);
             final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
-            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(orderTable1));
+            given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(orderTable1));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -107,7 +107,7 @@ class TableGroupServiceTest {
             final OrderTable emptyOrderTable = new OrderTable(5, true);
             final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(notEmptyOrderTable, emptyOrderTable));
 
-            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(notEmptyOrderTable, emptyOrderTable));
+            given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(notEmptyOrderTable, emptyOrderTable));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -124,7 +124,7 @@ class TableGroupServiceTest {
             final List<OrderTable> orderTables = new ArrayList<>(List.of(alreadyHaveTableGroup, notHaveTableGroup));
             final TableGroup expected = new TableGroup(LocalDateTime.now(), orderTables);
 
-            given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(alreadyHaveTableGroup, notHaveTableGroup));
+            given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(alreadyHaveTableGroup, notHaveTableGroup));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -142,10 +142,10 @@ class TableGroupServiceTest {
             final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
             final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
 
-            given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
+            given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
             given(spyOrderTable1.getId()).willReturn(1L);
             given(spyOrderTable2.getId()).willReturn(1L);
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
             // when
             tableGroupService.ungroup(tableGroupId);
@@ -167,10 +167,10 @@ class TableGroupServiceTest {
             final OrderTable spyOrderTable1 = spy(new OrderTable(3, false));
             final OrderTable spyOrderTable2 = spy(new OrderTable(5, false));
 
-            given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
+            given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
             given(spyOrderTable1.getId()).willReturn(1L);
             given(spyOrderTable2.getId()).willReturn(1L);
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

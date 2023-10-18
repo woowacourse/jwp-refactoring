@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class Create {
@@ -35,7 +35,7 @@ class ProductServiceTest {
         void 상품을_생성할_수_있다() {
             // given
             final Product expected = new Product("치킨", BigDecimal.valueOf(20_000));
-            given(productDao.save(expected)).willReturn(expected);
+            given(productRepository.save(expected)).willReturn(expected);
 
             // when
             final Product actual = productService.create(expected);
@@ -77,7 +77,7 @@ class ProductServiceTest {
             productService.list();
 
             // then
-            verify(productDao, only()).findAll();
+            verify(productRepository, only()).findAll();
         }
     }
 }
