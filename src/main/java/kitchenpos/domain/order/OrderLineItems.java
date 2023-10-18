@@ -1,11 +1,18 @@
 package kitchenpos.domain.order;
 
+import javax.persistence.Embeddable;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class OrderLineItems {
 
-    private final List<OrderLineItem> collection;
+    @OneToMany
+    private List<OrderLineItem> collection;
+
+    public OrderLineItems() {
+    }
 
     public OrderLineItems(List<OrderLineItem> collection) {
         this.collection = collection;

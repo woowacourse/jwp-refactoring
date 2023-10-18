@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Table;
 import javax.persistence.metamodel.Type;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,15 +17,16 @@ import java.util.stream.Collectors;
 public class DatabaseCleaner {
 
     private final List<String> tableNames = new ArrayList<>();
+
     @PersistenceContext
     private EntityManager em;
 
     @PostConstruct
-    public void getTableNames() {
+    public void getTableNames() throws FileNotFoundException {
         List<String> tableNames = em.getMetamodel().getEntities().stream()
                 .map(Type::getJavaType)
-                .map(Class::getSimpleName)
-                .map(this::getTableName)
+                .map(clazz -> clazz.getAnnotation(javax.persistence.Table.class))
+                .map(Table::name)
                 .collect(Collectors.toList());
         this.tableNames.addAll(tableNames);
     }

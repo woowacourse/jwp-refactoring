@@ -1,15 +1,35 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.table.OrderTable;
+import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Table(name = "orders")
+@Entity
 public class Order {
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
+
+    @ManyToOne
     private OrderTable orderTable;
+
     private OrderStatus orderStatus;
+
+    @CreatedDate
     private LocalDateTime orderedTime;
+
+    @Embedded
     private OrderLineItems orderLineItems;
 
     public Order() {
