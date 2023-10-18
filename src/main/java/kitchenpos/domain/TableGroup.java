@@ -1,11 +1,13 @@
 package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
 import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,8 +39,21 @@ public class TableGroup {
     }
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
+        validateOrderTableSize(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTableCanGroup(orderTable);
+        }
+    }
+
+    private static void validateOrderTableSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new TableGroupException(ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY);
+        }
+    }
+
+    private static void validateOrderTableCanGroup(final OrderTable orderTable) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            throw new TableGroupException(ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED);
         }
     }
 
@@ -46,23 +61,15 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 
-    public void groupOrderTables(final List<OrderTable> savedOrderTables) {
+    private void groupOrderTables(final List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.changeEmpty(false);
             savedOrderTable.changeTableGroup(this);

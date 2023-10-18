@@ -98,6 +98,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("tableGroup안에 orderTable이 비어있지 않은 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotEmpty() {
             final List<OrderTableDto> orderTableDtos = 비어있지_않는_전쳬_주문_테이블_DTO();
+            //TODO: OrderTable을 추가하는 기능 넣기
 
             final TableGroupDto tableGroupDto
                 = new TableGroupDto(null, LocalDateTime.now(), orderTableDtos);
