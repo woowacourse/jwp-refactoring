@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,9 +48,9 @@ class TableGroupServiceTest {
             assertSoftly(softly -> {
                 softly.assertThat(savedTableGroup.getId()).isNotNull();
                 softly.assertThat(savedTableGroup.getOrderTables())
-                        .extracting("id", "tableGroupId")
-                        .containsOnly(tuple(orderTable1.getId(), savedTableGroup.getId()),
-                                tuple(orderTable2.getId(), savedTableGroup.getId()));
+                        .extracting("id", "tableGroup")
+                        .containsOnly(tuple(orderTable1.getId(), savedTableGroup),
+                                tuple(orderTable2.getId(), savedTableGroup));
             });
         }
 

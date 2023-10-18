@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import org.springframework.util.CollectionUtils;
 
@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -63,6 +64,7 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         validateOrderTableSize(orderTables);
+        validateOrderTableCondition(orderTables);
         this.orderTables = orderTables;
         for (OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(this);
@@ -72,6 +74,14 @@ public class TableGroup {
     private void validateOrderTableSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_TABLE_SIZE) {
             throw new IllegalArgumentException("단체 지정 테이블의 개수는 2개 이상이어야 합니다.");
+        }
+    }
+
+    private void validateOrderTableCondition(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new IllegalArgumentException("비어있지 않은 테이블이거나 이미 단체지정된 테이블입니다. 단체 지정할 수 없습니다.");
+            }
         }
     }
 

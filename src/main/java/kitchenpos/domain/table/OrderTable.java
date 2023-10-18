@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -47,17 +48,24 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void changeNumberOfGuest(int numberOfGuests) {
+    public void changeNumberOfGuest(final int numberOfGuests) {
         validateNumberOfGuest(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isEmpty() {
+        return empty;
     }
 
-    public Long getTableGroupId() {
-        return tableGroup.getId();
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("테이블이 이미 단체 지정되었습니다. 빈 테이블로 변경할 수 없습니다.");
+        }
+        this.empty = empty;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public TableGroup getTableGroup() {
@@ -73,11 +81,4 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
-    }
 }

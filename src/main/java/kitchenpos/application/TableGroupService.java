@@ -1,18 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.domain.TableGroupValidator;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static kitchenpos.domain.table.TableGroupValidator.validateGroupOrderTableExist;
+import static kitchenpos.domain.table.TableGroupValidator.validateUngroupTableOrderCondition;
 
 @Service
 public class TableGroupService {
@@ -33,7 +35,7 @@ public class TableGroupService {
         final List<Long> requestOrderTableIds = request.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllById(requestOrderTableIds);
 
-        TableGroupValidator.validateGroupOrderTables(orderTables, requestOrderTableIds);
+        validateGroupOrderTableExist(orderTables, requestOrderTableIds);
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         tableGroup.setOrderTables(orderTables);
 
@@ -49,7 +51,7 @@ public class TableGroupService {
         final List<Order> orders = orderTables.stream()
                 .flatMap(orderTable -> orderRepository.findByOrderTable(orderTable).stream())
                 .collect(Collectors.toList());
-        TableGroupValidator.validateUngroupTableOrders(orders);
+        validateUngroupTableOrderCondition(orders);
 
         tableGroup.unGroup();
     }
