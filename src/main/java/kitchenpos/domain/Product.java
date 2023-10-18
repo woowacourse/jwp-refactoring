@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Product {
 
+    private static final int MAX_NAME_LENGTH = 255;
+    private static final int MIN_PRICE = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,27 +28,40 @@ public class Product {
     public Product() {
     }
 
-    public Long getId() {
-        return id;
+    private Product(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public static Product create(String name, BigDecimal price) {
+        validateName(name);
+        validatePrice(price);
+
+        return new Product(name, price);
+    }
+
+    private static void validateName(String name) {
+        if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException("상품 이름은 1글자 이상, 255자 이하여야 합니다.");
+        }
+    }
+
+    private static void validatePrice(BigDecimal price) {
+        if (price.doubleValue() < MIN_PRICE) {
+            throw new IllegalArgumentException("상품 금액은 0원 이상이어야 합니다.");
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 }
