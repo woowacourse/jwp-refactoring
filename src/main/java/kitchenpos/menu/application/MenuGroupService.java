@@ -12,12 +12,12 @@ public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroupCreateRequest request) {
+    public MenuGroup create(MenuGroupCreateRequest request) {
         MenuGroup menuGroup = new MenuGroup(request.getName());
         return menuGroupRepository.save(menuGroup);
     }

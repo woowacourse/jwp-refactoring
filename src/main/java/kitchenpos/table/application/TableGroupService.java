@@ -2,7 +2,6 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.application.dto.TableGroupCreateRequest;
 import kitchenpos.table.application.dto.TableGroupCreateRequest.TableInfo;
 import kitchenpos.table.application.dto.TableGroupResponse;
@@ -16,16 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            OrderRepository orderRepository,
             OrderTableRepository orderTableRepository,
             TableGroupRepository tableGroupRepository
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }

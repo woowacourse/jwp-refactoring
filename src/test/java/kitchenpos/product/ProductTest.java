@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
-import kitchenpos.product.domain.InvalidProductPriceException;
+import kitchenpos.product.domain.ProductException;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -42,7 +42,7 @@ class ProductTest {
             // when & then
             assertThatThrownBy(() ->
                     new Product("말랑", price)
-            ).isInstanceOf(InvalidProductPriceException.class)
+            ).isInstanceOf(ProductException.class)
                     .hasMessage("상품의 가격은 0원 이상이어야 합니다.");
         }
     }

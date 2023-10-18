@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.InvalidMenuException;
+import kitchenpos.menu.domain.MenuException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -32,7 +32,7 @@ class MenuTest {
                     BigDecimal.valueOf(1000),
                     null,
                     List.of(new MenuProduct(new Product("말랑", BigDecimal.valueOf(1000)), 2L))
-            )).isInstanceOf(InvalidMenuException.class)
+            )).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴는 메뉴 그룹에 속해야 합니다.");
         }
 
@@ -44,7 +44,7 @@ class MenuTest {
                     BigDecimal.valueOf(1000),
                     new MenuGroup("메뉴그룹 1"),
                     List.of()
-            )).isInstanceOf(InvalidMenuException.class)
+            )).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴에는 최소 1개의 상품이 속해야 합니다.");
         }
 
@@ -56,7 +56,7 @@ class MenuTest {
                     BigDecimal.valueOf(-1),
                     new MenuGroup("메뉴그룹 1"),
                     List.of(new MenuProduct(new Product("말랑", BigDecimal.valueOf(1000)), 2L))
-            )).isInstanceOf(InvalidMenuException.class)
+            )).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴의 가격은 0원 이상이어야 합니다.");
         }
 
@@ -68,7 +68,7 @@ class MenuTest {
                     BigDecimal.valueOf(2001),
                     new MenuGroup("메뉴그룹 1"),
                     List.of(new MenuProduct(new Product("말랑", BigDecimal.valueOf(1000)), 2L))
-            )).isInstanceOf(InvalidMenuException.class)
+            )).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴의 가격은 메뉴에 포함된 상품들의 합 이하여야 합니다.");
         }
 

@@ -38,21 +38,17 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
+
     public Long getId() {
         return id;
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
-
-    public void ungroup() {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-        }
     }
 }

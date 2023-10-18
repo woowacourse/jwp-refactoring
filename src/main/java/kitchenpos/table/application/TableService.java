@@ -34,14 +34,14 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
+        OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.setEmpty(request.isEmpty());
         return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeNumberOfGuestsRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
+        OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.setNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }

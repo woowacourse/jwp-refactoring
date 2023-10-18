@@ -60,6 +60,13 @@ public class Order {
         }
     }
 
+    public void setOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new OrderException("이미 결제 완료된 주문은 상태를 변경할 수 없습니다.");
+        }
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,13 +77,6 @@ public class Order {
 
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new OrderException("이미 결제 완료된 주문은 상태를 변경할 수 없습니다.");
-        }
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
