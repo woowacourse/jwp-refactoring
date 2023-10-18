@@ -7,12 +7,12 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -39,7 +39,7 @@ class OrderServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -57,11 +57,12 @@ class OrderServiceTest {
         final MenuGroup menuGroup = new MenuGroup("테스트 메뉴 그룹");
         final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        final Menu menu = new Menu();
-        menu.setName("테스트 메뉴");
-        menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        mockMenu = menuDao.save(menu);
+        final Menu menu = new Menu(
+            "테스트 메뉴",
+            BigDecimal.valueOf(10000),
+            savedMenuGroup
+        );
+        mockMenu = menuRepository.save(menu);
     }
 
     @Test
@@ -91,7 +92,7 @@ class OrderServiceTest {
 
         // when then
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -110,7 +111,7 @@ class OrderServiceTest {
         // then
         assertThat(emptyOrder).isEmpty();
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -128,7 +129,7 @@ class OrderServiceTest {
 
         // then
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -146,7 +147,8 @@ class OrderServiceTest {
         updateStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         // when
-        final Order result = orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder);
+        final Order result = orderService.changeOrderStatus(createdOrder.getId(),
+            updateStatusOrder);
 
         // then
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -171,8 +173,9 @@ class OrderServiceTest {
         updateStatusOrder.setOrderStatus(orderStatus.name());
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -189,7 +192,7 @@ class OrderServiceTest {
 
         // then
         assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -211,7 +214,8 @@ class OrderServiceTest {
         updateStatusOrder.setOrderStatus(notExistOrderStatusName);
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

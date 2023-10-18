@@ -15,7 +15,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Sql(scripts = {"classpath:truncate.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ProductServiceTest {
@@ -26,7 +28,8 @@ class ProductServiceTest {
     @Test
     void 상품을_등록할_수_있다() {
         // given
-        final ProductCreateDto productCreateDto = new ProductCreateDto("테스트 상품", new BigDecimal(2000));
+        final ProductCreateDto productCreateDto = new ProductCreateDto("테스트 상품",
+            new BigDecimal(2000));
 
         // when
         final ProductDto result = productService.create(productCreateDto);
@@ -45,13 +48,14 @@ class ProductServiceTest {
 
         // given when then
         assertThatThrownBy(() -> productService.create(productCreateDto))
-                .isInstanceOf(NoPriceException.class);
+            .isInstanceOf(NoPriceException.class);
     }
 
     @Test
     void 상품조회를_할_수_있다() {
         // given
-        final ProductCreateDto productCreateDto = new ProductCreateDto("테스트 상품", new BigDecimal(2000));
+        final ProductCreateDto productCreateDto = new ProductCreateDto("테스트 상품",
+            new BigDecimal(2000));
         productService.create(productCreateDto);
 
         // when
