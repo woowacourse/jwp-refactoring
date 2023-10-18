@@ -42,6 +42,10 @@ public class TableGroup {
         this.orderTables.addAll(orderTables);
     }
 
+    public void ungroup() {
+        orderTables.forEach(OrderTable::unGroup);
+    }
+
     private void validate(List<OrderTable> orderTables) {
         if (orderTables.size() < MIN_ORDER_TABLE_SIZE) {
             throw new IllegalArgumentException(String.format("테이블 그룹은 최소 %s개 이상의 테이블이 필요합니다.", MIN_ORDER_TABLE_SIZE));

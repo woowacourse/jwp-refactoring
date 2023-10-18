@@ -35,14 +35,15 @@ public class TableGroupService {
             .map(OrderTableDto::getId)
             .collect(toList());
         List<OrderTable> savedOrderTables = getOrderTables(orderTableIds);
-        return getTableGroup(savedOrderTables);
+        return saveTableGroup(savedOrderTables);
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        validateUngroupable(orderTables);
-        orderTables.forEach(OrderTable::unGroup);
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문그룹입니다."));
+        validateUngroupable(tableGroup.getOrderTables());
+        tableGroup.ungroup();
     }
 
     private List<OrderTable> getOrderTables(List<Long> orderTableIds) {
@@ -53,7 +54,7 @@ public class TableGroupService {
         return savedOrderTables;
     }
 
-    private TableGroup getTableGroup(List<OrderTable> savedOrderTables) {
+    private TableGroup saveTableGroup(List<OrderTable> savedOrderTables) {
         TableGroup tableGroup = tableGroupRepository.save(TableGroup.createEmpty());
         tableGroup.group(savedOrderTables);
         return tableGroup;

@@ -127,5 +127,18 @@ class OrderTableTest {
         }
     }
 
-    //TODO: group 과 ungroup 테스트 짜기
+    @Test
+    void 테이블_그룹을_해제한다() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, 1L, 3, false);
+
+        // when
+        orderTable.unGroup();
+
+        // then
+        assertAll(
+            () -> assertThat(orderTable.getTableGroupId()).isNull(),
+            () -> assertThat(orderTable.isEmpty()).isTrue()
+        );
+    }
 }

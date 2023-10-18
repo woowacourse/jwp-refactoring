@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -78,4 +79,21 @@ class TableGroupTest {
                 .hasMessageContaining("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
     }
+
+    @Test
+    void 테이블_그룹을_해제한다() {
+        // given
+        TableGroup tableGroup = new TableGroup(1L);
+        tableGroup.group(List.of(new OrderTable(3, true), new OrderTable(2, true)));
+
+        // when
+        tableGroup.ungroup();
+
+        // then
+        assertThat(tableGroup.getOrderTables()).usingRecursiveComparison()
+            .isEqualTo(List.of(
+                new OrderTable(3, true),
+                new OrderTable(2, true)));
+    }
 }
+
