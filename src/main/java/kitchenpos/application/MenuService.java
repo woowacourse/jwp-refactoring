@@ -73,8 +73,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        return menus;
+        return menuRepository.findAll();
     }
 }

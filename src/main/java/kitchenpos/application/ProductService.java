@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -18,15 +18,11 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public Long create(final String name, final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         return productRepository.save(new Product(name, price)).getId();
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }

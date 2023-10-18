@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class Product {
@@ -15,10 +16,13 @@ public class Product {
     private String name;
     private BigDecimal price;
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(String name, BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
         this.name = name;
         this.price = price;
     }

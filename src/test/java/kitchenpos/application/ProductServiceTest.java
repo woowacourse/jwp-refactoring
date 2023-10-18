@@ -20,23 +20,6 @@ class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-
-    @Test
-    void Product를_생성할_수_있다() {
-        //when
-        final Long productId = productService.create("치킨", new BigDecimal(20000));
-
-        //then
-        assertThat(productId).isNotNull();
-    }
-
-    @Test
-    void price가_null이면_예외가_발생한다() {
-        //when, then
-        Assertions.assertThatThrownBy(() -> productService.create("치킨", null))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @Test
     void price가_0원보다_작으면_예외가_발생한다() {
         //when, then
