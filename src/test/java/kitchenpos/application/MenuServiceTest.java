@@ -126,7 +126,7 @@ class MenuServiceTest {
     void 메뉴의_목록을_조회할_수_있다() {
         Menu menu1 = menuRepository.save(new Menu("메뉴1", new BigDecimal("20000.00"), menuGroup));
         MenuProduct menuProduct = menuProductRepository.save(menuProductFixture(menu1, product, 4));
-        menu1.addMenuProducts(List.of(menuProduct));
+        menu1.setMenuProducts(List.of(menuProduct));
         Menu menu2 = menuRepository.save(menuFixture("메뉴2", new BigDecimal("30000.00"), menuGroup, List.of(menuProduct)));
 
         List<MenuResponse> menuList = menuService.list();

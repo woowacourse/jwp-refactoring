@@ -5,7 +5,6 @@ import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuPriceValidator;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.ui.dto.MenuProductDto;
@@ -25,7 +24,9 @@ public class MenuService {
     private final ProductRepository productRepository;
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuService(MenuRepository menuRepository, ProductRepository productRepository, MenuGroupRepository menuGroupRepository) {
+    public MenuService(final MenuRepository menuRepository,
+                       final ProductRepository productRepository,
+                       final MenuGroupRepository menuGroupRepository) {
         this.menuRepository = menuRepository;
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -33,26 +34,23 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다. 메뉴를 등록할 수 없습니다."));
+        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
+        final List<MenuProduct> menuProducts = getMenuProducts(menuRequest, menu);
 
-        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
-        List<MenuProduct> menuProducts = getMenuProducts(menuRequest, menu);
-        Menu savedMenu = menuRepository.save(menu);
-
-        MenuPriceValidator.validate(savedMenu, menuProducts);
-
-        savedMenu.addMenuProducts(menuProducts);
+        final Menu savedMenu = menuRepository.save(menu);
+        savedMenu.setMenuProducts(menuProducts);
 
         return MenuResponse.from(savedMenu);
     }
 
-    private List<MenuProduct> getMenuProducts(MenuRequest menuRequest, Menu menu) {
-        List<MenuProductDto> menuProductRequests = menuRequest.getMenuProducts();
-        List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProduct> getMenuProducts(final MenuRequest menuRequest, final Menu menu) {
+        final List<MenuProductDto> menuProductRequests = menuRequest.getMenuProducts();
+        final List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductDto request : menuProductRequests) {
-            Product product = productRepository.findById(request.getProductId())
+            final Product product = productRepository.findById(request.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴상품입니다. 메뉴를 등록할 수 없습니다."));
             menuProducts.add(new MenuProduct(request.getSeq(), menu, product, request.getQuantity()));
         }

@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class Fixture {
     public static Menu menuFixture(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         Menu menu = new Menu(name, price, menuGroup);
-        menu.addMenuProducts(menuProducts);
+        menu.setMenuProducts(menuProducts);
         return menu;
     }
 

@@ -1,5 +1,7 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.Product;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +35,10 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(final Long id,
+                final String name,
+                final BigDecimal price,
+                final MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -41,34 +46,39 @@ public class Menu {
         validate(price);
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
-    private void validate(BigDecimal price) {
+    private void validate(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("메뉴 가격은 0 이상이어야 합니다.");
         }
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
+    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+        validateMenuPrice(menuProducts);
         this.menuProducts.addAll(menuProducts);
+    }
+
+    private void validateMenuPrice(final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = menuProduct.getProduct();
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 포함한 메뉴 상품들의 가격 합보다 비쌀 수 없습니다.");
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public BigDecimal getPrice() {

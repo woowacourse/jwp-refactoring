@@ -29,7 +29,10 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+    public MenuProduct(final Long seq,
+                       final Menu menu,
+                       final Product product,
+                       final long quantity) {
         this.seq = seq;
         this.menu = menu;
         this.product = product;
