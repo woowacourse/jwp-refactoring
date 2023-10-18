@@ -4,7 +4,6 @@ import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
@@ -22,8 +21,6 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    // TODO DTO 로 반환하도록 하고 제거
-    @JsonIgnore
     @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY, cascade = {PERSIST, REMOVE})
     private List<OrderTable> orderTables;
 
