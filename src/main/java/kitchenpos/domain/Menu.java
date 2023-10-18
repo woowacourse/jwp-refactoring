@@ -18,10 +18,14 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
     private String name;
+
     private BigDecimal price;
+
     @OneToOne(fetch = LAZY)
     private MenuGroup menuGroup;
+
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 

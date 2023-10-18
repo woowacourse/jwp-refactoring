@@ -21,6 +21,7 @@ public class MenuProduct {
 
     @OneToOne(fetch = LAZY)
     private Product product;
+
     private long quantity;
 
     protected MenuProduct() {

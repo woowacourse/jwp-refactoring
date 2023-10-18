@@ -15,10 +15,13 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long seq;
+
     @ManyToOne(fetch = LAZY)
     private Order order;
+
     @OneToOne(fetch = LAZY)
     private Menu menu;
+
     private long quantity;
 
     protected OrderLineItem() {

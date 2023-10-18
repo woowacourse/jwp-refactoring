@@ -17,7 +17,9 @@ public class OrderTable {
 
     @ManyToOne(fetch = LAZY)
     private TableGroup tableGroup;
+
     private int numberOfGuests;
+
     private boolean empty;
 
     protected OrderTable() {

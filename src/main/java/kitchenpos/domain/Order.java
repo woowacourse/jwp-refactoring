@@ -19,11 +19,15 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
+
     @OneToOne(fetch = FetchType.LAZY)
     private OrderTable orderTable;
+
     @Enumerated(STRING)
     private OrderStatus orderStatus;
+
     private LocalDateTime orderedTime;
+
     @OneToMany
     private List<OrderLineItem> orderLineItems;
 
