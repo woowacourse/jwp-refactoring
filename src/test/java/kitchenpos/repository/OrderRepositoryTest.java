@@ -12,9 +12,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -63,64 +60,23 @@ class OrderRepositoryTest {
     }
 
     @Nested
-    class existsByOrderTableIdInAndOrderStatusIn {
-
-        @ParameterizedTest
-        @EnumSource(value = OrderStatus.class, mode = Mode.EXCLUDE, names = {"COMPLETION"})
-        void 주문_테이블_식별자_목록이_포함되고_주문_상태가_포함되면_true(OrderStatus status) {
-            // given
-            List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
-
-            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
-            List<Long> orderTableIds = List.of(4885L, 4886L, orderTable.getId());
-
-            Order order = new Order(null, status, orderedTime, orderTable);
-            orderRepository.save(order);
-
-            // when
-            boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatues);
-
-            // then
-            assertThat(actual).isTrue();
-        }
-
-        @ParameterizedTest
-        @EnumSource(value = OrderStatus.class, mode = Mode.EXCLUDE, names = {"COMPLETION"})
-        void 주문_테이블_식별자_목록에_포함이_되지_않고_주문_상태가_포함되면_false(OrderStatus status) {
-            // given
-            List<Long> orderTableIds = List.of(4885L, 4886L);
-            List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
-
-            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
-            Order order = new Order(null, status, orderedTime, orderTable);
-            orderRepository.save(order);
-
-            // when
-            boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatues);
-
-            // then
-            assertThat(actual).isFalse();
-        }
+    class findAllByOrderTableIdIn {
 
         @Test
-        void 주문_테이블_식별자_목록에_포함되고_주문_상태가_포함되지_않으면_false() {
+        void 식별자_목록으로_모든_엔티티_조회() {
             // given
-            List<OrderStatus> orderStatues = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
-
-            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
-            List<Long> orderTableIds = List.of(4885L, 4886L, orderTable.getId());
-
-            Order order = new Order(null, OrderStatus.COMPLETION, orderedTime, orderTable);
-            orderRepository.save(order);
+            for (int i = 0; i < 5; i++) {
+                LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+                OrderTable orderTable = orderTableRepository.save(new OrderTable(null, false, 0));
+                Order order = new Order(null, OrderStatus.COOKING, createdDate, orderTable);
+                orderRepository.save(order);
+            }
 
             // when
-            boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatues);
+            List<Order> actual = orderRepository.findAllByOrderTableIdIn(List.of(1L, 2L, 3L, 4L, 5L));
 
             // then
-            assertThat(actual).isFalse();
+            assertThat(actual).hasSize(5);
         }
     }
 }

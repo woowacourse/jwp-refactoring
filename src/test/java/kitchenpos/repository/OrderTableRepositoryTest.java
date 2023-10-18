@@ -2,8 +2,10 @@ package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +19,9 @@ class OrderTableRepositoryTest {
 
     @Autowired
     OrderTableRepository orderTableRepository;
+
+    @Autowired
+    TableGroupRepository tableGroupRepository;
 
     @Nested
     class findAllByIdIn {
@@ -44,15 +49,16 @@ class OrderTableRepositoryTest {
         @Test
         void 테이블_그룹_식별자로_모든_엔티티_조회() {
             // given
-            Long tableGroupId = 4885L;
+            LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+            TableGroup tableGroup = tableGroupRepository.save(new TableGroup(null, createdDate));
             for (int i = 0; i < 3; i++) {
                 OrderTable orderTable = new OrderTable(null, false, 0);
-                orderTable.changeTableGroupId(tableGroupId);
+                orderTable.changeTableGroup(tableGroup);
                 orderTableRepository.save(orderTable);
             }
 
             // when
-            List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(tableGroupId);
+            List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
             // then
             assertThat(actual).hasSize(3);

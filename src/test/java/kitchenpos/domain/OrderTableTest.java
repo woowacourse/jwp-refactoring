@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import kitchenpos.exception.KitchenPosException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -45,9 +46,11 @@ class OrderTableTest {
         void tableGroupId가_null이_아니면_예외() {
             // given
             OrderTable orderTable = new OrderTable(1L, false, 0);
+            LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+            TableGroup tableGroup = new TableGroup(1L, createdDate);
 
             // when
-            orderTable.changeTableGroupId(1L);
+            orderTable.changeTableGroup(tableGroup);
 
             // then
             assertThatThrownBy(() -> orderTable.changeEmpty(true))

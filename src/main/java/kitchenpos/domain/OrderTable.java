@@ -2,9 +2,12 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import kitchenpos.exception.KitchenPosException;
 
 @Entity
@@ -20,8 +23,9 @@ public class OrderTable {
     @Column(nullable = false)
     private int numberOfGuests;
 
-    @Column(nullable = true)
-    private Long tableGroupId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = true)
+    private TableGroup tableGroup;
 
     protected OrderTable() {
     }
@@ -39,12 +43,18 @@ public class OrderTable {
         }
     }
 
-    public void changeTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void changeTableGroup(TableGroup tableGroup) {
+        if (empty) {
+            throw new KitchenPosException("비어있는 상태의 주문 테이블은 테이블 그룹에 등록할 수 없습니다.");
+        }
+        if (this.tableGroup != null) {
+            throw new KitchenPosException("이미 테이블 그룹에 속해있는 주문 테이블 입니다.");
+        }
+        this.tableGroup = tableGroup;
     }
 
     public void changeEmpty(boolean empty) {
-        if (tableGroupId != null) {
+        if (tableGroup != null) {
             throw new KitchenPosException("테이블 그룹에 속한 테이블은 상태를 변경할 수 없습니다.");
         }
         this.empty = empty;
@@ -56,6 +66,10 @@ public class OrderTable {
             throw new KitchenPosException("비어있는 상태의 테이블은 방문한 손님 수를 변경할 수 없습니다.");
         }
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
     }
 
     public Long getId() {
@@ -71,6 +85,9 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroupId;
+        if (tableGroup == null) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 }
