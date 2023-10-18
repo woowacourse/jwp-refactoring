@@ -1,7 +1,10 @@
 package kitchenpos.ui.dto;
 
+import javax.validation.constraints.PositiveOrZero;
+
 public class GuestChangeRequest {
 
+    @PositiveOrZero
     private Integer numberOfGuests;
 
     public GuestChangeRequest() {

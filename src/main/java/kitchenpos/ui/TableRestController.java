@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody final GuestChangeRequest guestChangeRequest
+            @RequestBody @Valid final GuestChangeRequest guestChangeRequest
     ) {
         tableService.changeNumberOfGuests(orderTableId, guestChangeRequest.getNumberOfGuests());
         return ResponseEntity.ok().build();

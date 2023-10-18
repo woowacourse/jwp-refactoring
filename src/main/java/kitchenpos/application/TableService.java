@@ -43,9 +43,6 @@ public class TableService {
     }
 
     public void changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateIsNotEmpty();

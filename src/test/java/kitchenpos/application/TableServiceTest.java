@@ -97,15 +97,4 @@ class TableServiceTest extends ServiceTest {
         final OrderTable changedOrderTable = orderTableRepository.findById(orderTable.getId()).get();
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(3);
     }
-
-    @Test
-    void 손님의_수가_0미만인_경우_예외가_발생한다() {
-        //given
-        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
-
-        //when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), -1))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 }

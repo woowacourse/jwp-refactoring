@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 
 import static io.restassured.http.ContentType.JSON;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -91,5 +92,22 @@ class TableRestControllerTest extends ControllerTest {
 
         // then
         응답.then().assertThat().statusCode(OK.value());
+    }
+
+    @Test
+    void OrderTable의_손님_수를_0미만으로_변경하면_400을_반환한다() {
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
+        final var 요청_준비 = RestAssured.given()
+                .body(new GuestChangeRequest(-1))
+                .contentType(JSON);
+
+        // when
+        final var 응답 = 요청_준비
+                .when()
+                .put("/api/tables/" + 주문_테이블.getId() + "/number-of-guests");
+
+        // then
+        응답.then().assertThat().statusCode(BAD_REQUEST.value());
     }
 }
