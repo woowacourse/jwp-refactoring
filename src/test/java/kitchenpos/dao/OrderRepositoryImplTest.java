@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu2;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Order2;
 import kitchenpos.domain.OrderLineItem2;
 import kitchenpos.domain.OrderStatus;
@@ -26,7 +25,6 @@ import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.support.JdbcTestHelper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,18 +52,27 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
 
   private TableGroup2 tableGroup;
   private OrderTable2 orderTable;
-  private Menu2 menu;
+  private Menu2 menu1, menu2, menu3;
   private Product2 product;
   private MenuGroup menuGroup;
+  private List<OrderLineItem2> orderLineItems;
 
   @BeforeEach
   void setUp() {
-    tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     orderTable = orderTableRepository.save(OrderTableFixture.createEmptyOrderTable(tableGroup));
+    tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
 
     menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
     product = productRepository.save(ProductFixture.createProduct());
-    menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu3 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+
+    orderLineItems = List.of(
+        OrderLineItemFixture.createOrderLineItem(menu1),
+        OrderLineItemFixture.createOrderLineItem(menu2),
+        OrderLineItemFixture.createOrderLineItem(menu3)
+    );
   }
 
   @Test
@@ -73,11 +80,11 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   void test_save() throws Exception {
     //given
     final List<OrderLineItem2> orderLineItems = List.of(
-        OrderLineItemFixture.createOrderLineItem(menu),
-        OrderLineItemFixture.createOrderLineItem(menu),
-        OrderLineItemFixture.createOrderLineItem(menu)
+        OrderLineItemFixture.createOrderLineItem(menu1),
+        OrderLineItemFixture.createOrderLineItem(menu2),
+        OrderLineItemFixture.createOrderLineItem(menu3)
     );
-    final Order2 order = OrderFixture.createWithOrderLineItems(orderTable, orderLineItems);
+    final Order2 order = OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems);
 
     //when
     final Order2 savedOrder = orderRepository.save(order);
@@ -98,7 +105,7 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findById() : id를 통해 주문을 찾을 수 있다.")
   void test_findById() throws Exception {
     //given
-    final Order2 order = orderRepository.save(OrderFixture.createMealOrder(orderTable));
+    final Order2 order = orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
 
     //when
     final Optional<Order2> savedOrder = orderRepository.findById(order.getId());
@@ -116,9 +123,9 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findAll() : 모든 주문들을 조회할 수 있다.")
   void test_findAll() throws Exception {
     //given
-    final Order2 order1 = orderRepository.save(OrderFixture.createMealOrder(orderTable));
-    final Order2 order2 = orderRepository.save(OrderFixture.createMealOrder(orderTable));
-    final Order2 order3 = orderRepository.save(OrderFixture.createMealOrder(orderTable));
+    final Order2 order1 = orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
+    final Order2 order2 = orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
+    final Order2 order3 = orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
 
     //when
     final List<Order2> orders = orderRepository.findAll();
@@ -133,7 +140,7 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("existsByOrderTableIdAndOrderStatusIn() : 주문 id와 주문 상태를 만족하는 주문이 존재하는지 확인할 수 있다.")
   void test_existsByOrderTableIdAndOrderStatusIn() throws Exception {
     //given
-    final Order2 order = orderRepository.save(OrderFixture.createMealOrder(orderTable));
+    final Order2 order = orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
 
     //when & then
     assertAll(
@@ -152,12 +159,12 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("existsByOrderTableIdInAndOrderStatusIn() : 주문 id들과 주문 상태를 만족하는 주문들이 존재하는지 확인할 수 있다.")
   void test_existsByOrderTableIdInAndOrderStatusIn() throws Exception {
     //given
-    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup());
+    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
     final OrderTable2 orderTable2 = orderTableRepository.save(
         OrderTableFixture.createEmptyOrderTable(tableGroup2)
     );
 
-    orderRepository.save(OrderFixture.createMealOrder(orderTable));
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
     orderRepository.save(OrderFixture.createCompletionOrder(orderTable2));
 
     //when & then

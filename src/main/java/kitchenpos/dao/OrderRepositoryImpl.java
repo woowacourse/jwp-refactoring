@@ -107,17 +107,9 @@ public class OrderRepositoryImpl implements OrderRepository {
   private OrderTable2 mapToOrderTable(final OrderTableEntity entity) {
     return new OrderTable2(
         entity.getId(),
-        mapToTableGroup(entity),
+        entity.getTableGroupId(),
         entity.getNumberOfGuests(),
         entity.isEmpty());
-  }
-
-  private TableGroup2 mapToTableGroup(final OrderTableEntity orderTableEntity) {
-    return tableGroupDao.findById(orderTableEntity.getTableGroupId())
-        .map(entity -> new TableGroup2(
-            entity.getId(),
-            entity.getCreatedDate()))
-        .orElse(null);
   }
 
   @Override

@@ -36,7 +36,7 @@ public class OrderFixture {
     );
   }
 
-  public static Order2 createWithOrderLineItems(
+  public static Order2 createMealOrderWithOrderLineItems(
       final OrderTable2 orderTable,
       final List<OrderLineItem2> orderLineItems
   ) {

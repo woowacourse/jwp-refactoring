@@ -41,9 +41,6 @@ class OrderServiceTest extends ServiceIntegrationTest {
   private OrderService orderService;
 
   @Autowired
-  private OrderLineItemDao orderLineItemDao;
-
-  @Autowired
   private OrderTableRepositoryImpl orderTableRepository;
 
   @Autowired
@@ -57,9 +54,6 @@ class OrderServiceTest extends ServiceIntegrationTest {
 
   @Autowired
   private OrderRepositoryImpl orderRepository;
-
-  @Autowired
-  private OrderDao orderDao;
 
   private OrderTable2 orderTable;
 
@@ -89,7 +83,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 주문을 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final Order2 order = OrderFixture.createWithOrderLineItems(
+    final Order2 order = OrderFixture.createMealOrderWithOrderLineItems(
         orderTable, orderLineItems
     );
 
@@ -131,7 +125,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
         OrderTableFixture.createEmptySingleOrderTable()
     );
 
-    final Order2 order = OrderFixture.createWithOrderLineItems(
+    final Order2 order = OrderFixture.createMealOrderWithOrderLineItems(
         orderTable, orderLineItems
     );
 
@@ -144,10 +138,10 @@ class OrderServiceTest extends ServiceIntegrationTest {
   @DisplayName("list() : 모든 주문들을 조회할 수 있다.")
   void test_list() throws Exception {
     //given
-    orderRepository.save(OrderFixture.createWithOrderLineItems(orderTable, orderLineItems));
-    orderRepository.save(OrderFixture.createWithOrderLineItems(orderTable, orderLineItems));
-    orderRepository.save(OrderFixture.createWithOrderLineItems(orderTable, orderLineItems));
-    orderRepository.save(OrderFixture.createWithOrderLineItems(orderTable, orderLineItems));
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
 
     //when
     final List<Order2> savedOrders = orderService.list();
@@ -161,7 +155,7 @@ class OrderServiceTest extends ServiceIntegrationTest {
   void test_changeOrderStatus() throws Exception {
     //given
     final Order2 order = orderRepository.save(
-        OrderFixture.createWithOrderLineItems(orderTable, orderLineItems));
+        OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
 
     //when
     final Order2 updatedOrder = orderService.changeOrderStatus(order.getId(), order);

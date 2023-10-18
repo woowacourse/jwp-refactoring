@@ -3,28 +3,28 @@ package kitchenpos.domain;
 public class OrderTable2 {
 
   private Long id;
-  private TableGroup2 tableGroup;
+  private Long tableGroupId;
   private int numberOfGuests;
   private boolean empty;
 
   public OrderTable2(
       final Long id,
-      final TableGroup2 tableGroup,
+      final Long tableGroupId,
       final int numberOfGuests,
       final boolean empty
   ) {
     this.id = id;
-    this.tableGroup = tableGroup;
+    this.tableGroupId = tableGroupId;
     this.numberOfGuests = numberOfGuests;
     this.empty = empty;
   }
 
   public OrderTable2(
-      final TableGroup2 tableGroup,
+      final Long tableGroupId,
       final int numberOfGuests,
       final boolean empty
   ) {
-    this(null, tableGroup, numberOfGuests, empty);
+    this(null, tableGroupId, numberOfGuests, empty);
   }
 
   public OrderTable2(
@@ -35,7 +35,7 @@ public class OrderTable2 {
   }
 
   public boolean isNotBelongTableGroup() {
-    return tableGroup != null;
+    return tableGroupId != null;
   }
 
   public void changeEmpty(final boolean empty) {
@@ -54,8 +54,8 @@ public class OrderTable2 {
     return id;
   }
 
-  public TableGroup2 getTableGroup() {
-    return tableGroup;
+  public Long getTableGroupId() {
+    return tableGroupId;
   }
 
   public int getNumberOfGuests() {

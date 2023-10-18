@@ -63,7 +63,7 @@ class OrderLineItemRepositoryImplTest extends JdbcTestHelper {
     product = productRepository.save(ProductFixture.createProduct());
     menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
-    tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
+    tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
     orderTable = orderTableRepository.save(OrderTableFixture.createEmptyOrderTable(tableGroup));
     order = orderRepository.save(OrderFixture.createMealOrder(orderTable));
 
@@ -136,7 +136,7 @@ class OrderLineItemRepositoryImplTest extends JdbcTestHelper {
     final OrderLineItem2 orderLineItem2 = orderLineItemRepository.save(
         OrderLineItemFixture.createOrderLineItem(menu), order);
 
-    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup());
+    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
     final OrderTable2 orderTable2 = orderTableRepository.save(
         OrderTableFixture.createEmptyOrderTable(tableGroup2)
     );

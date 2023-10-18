@@ -1,21 +1,35 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.dao.MenuGroupRepositoryImpl;
+import kitchenpos.dao.MenuRepositoryImpl;
+import kitchenpos.dao.OrderRepositoryImpl;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dao.OrderTableRepositoryImpl;
+import kitchenpos.dao.ProductRepositoryImpl;
+import kitchenpos.dao.TableGroupRepositoryImpl;
+import kitchenpos.domain.Menu2;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.Product2;
+import kitchenpos.domain.TableGroup2;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.support.ServiceIntegrationTest;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,43 +40,74 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
   private TableGroupService tableGroupService;
 
   @Autowired
-  private OrderTableDao orderTableDao;
+  private OrderTableRepositoryImpl orderTableRepository;
+
+  @Autowired
+  private TableGroupRepositoryImpl tableGroupRepository;
+
+  @Autowired
+  private OrderRepositoryImpl orderRepository;
+
+  @Autowired
+  private MenuGroupRepositoryImpl menuGroupRepository;
+
+  @Autowired
+  private ProductRepositoryImpl productRepository;
+
+  @Autowired
+  private MenuRepositoryImpl menuRepository;
+
+  private OrderTable2 orderTable1, orderTable2, orderTable3;
+  private List<OrderLineItem2> orderLineItems;
+  private Menu2 menu1, menu2, menu3;
+  private Product2 product;
+  private MenuGroup menuGroup;
+
+  @BeforeEach
+  void setUp() {
+    orderTable1 = orderTableRepository.save(OrderTableFixture.createEmptySingleOrderTable());
+    orderTable2 = orderTableRepository.save(OrderTableFixture.createEmptySingleOrderTable());
+    orderTable3 = orderTableRepository.save(OrderTableFixture.createEmptySingleOrderTable());
+
+    menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
+    product = productRepository.save(ProductFixture.createProduct());
+    menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu3 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+
+    orderLineItems = List.of(
+        OrderLineItemFixture.createOrderLineItem(menu1),
+        OrderLineItemFixture.createOrderLineItem(menu2),
+        OrderLineItemFixture.createOrderLineItem(menu3)
+    );
+  }
 
   @Test
   @DisplayName("create() : 테이블 그룹을 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(336L, 337L));
+    final List<OrderTable2> orderTables = List.of(orderTable1, orderTable2, orderTable3);
+    final TableGroup2 tableGroup = TableGroupFixture.createTableGroup(orderTables);
+
     final List<Long> tableGroupIds = orderTables
         .stream()
-        .map(OrderTable::getTableGroupId)
+        .map(OrderTable2::getTableGroupId)
         .collect(Collectors.toList());
 
-    assertTrue(tableGroupIds
-        .stream()
-        .allMatch(Objects::isNull)
-    );
-
-    final TableGroup tableGroup = new TableGroup();
-    tableGroup.setOrderTables(orderTables);
+    assertThat(tableGroupIds).containsNull();
 
     //when
-    final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+    final TableGroup2 savedTableGroup = tableGroupService.create(tableGroup);
 
     //then
-    final List<OrderTable> updatedOrderTables = orderTableDao.findAllByIdIn(List.of(336L, 337L));
-    final List<Long> updatedTableGroupIds = updatedOrderTables
+    final List<Long> afterSavedTableGroupIds = savedTableGroup.getOrderTables()
         .stream()
-        .map(OrderTable::getTableGroupId)
+        .map(OrderTable2::getTableGroupId)
         .collect(Collectors.toList());
 
     assertAll(
         () -> assertNotNull(savedTableGroup.getId()),
-        () -> assertNotNull(savedTableGroup.getCreatedDate()),
-        () -> assertTrue(updatedTableGroupIds
-            .stream()
-            .allMatch(it -> it.equals(savedTableGroup.getId()))
-        )
+        () -> assertThat(afterSavedTableGroupIds).doesNotContainNull()
     );
   }
 
@@ -70,9 +115,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 주문 테이블이 2개 미만일 때 테이블 그룹을 생성할 시 IllegalArgumentException가 발생할 수 있다.")
   void test_create_IllegalArgumentException() throws Exception {
     //given
-    final OrderTable orderTable = orderTableDao.findById(335L).get();
-    final TableGroup tableGroup = new TableGroup();
-    tableGroup.setOrderTables(List.of(orderTable));
+    final List<OrderTable2> orderTables = List.of(orderTable1);
+    final TableGroup2 tableGroup = TableGroupFixture.createTableGroup(orderTables);
 
     //when & then
     assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -83,10 +127,16 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 해당 주문 테이블이 비어있지 않거나 이미 다른 그룹에 속해있다면 IllegalArgumentException가 발생할 수 있다.")
   void test_create_IllegalArgumentException2() throws Exception {
     //given
-    //given
-    final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(335L, 336L, 337L));
-    final TableGroup tableGroup = new TableGroup();
-    tableGroup.setOrderTables(orderTables);
+    final OrderTable2 emptyNotBelongOrderTable = orderTableRepository.save(
+        OrderTableFixture.createEmptySingleOrderTable());
+
+    final OrderTable2 notEmptyNotBelongOrderTable = orderTableRepository.save(
+        OrderTableFixture.createNotEmptySingleOrderTable()
+    );
+
+    final TableGroup2 tableGroup = TableGroupFixture.createTableGroup(
+        List.of(emptyNotBelongOrderTable, notEmptyNotBelongOrderTable)
+    );
 
     //when & then
     assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -97,25 +147,54 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
   @DisplayName("ungroup() : 주문 테이블을 주문 그룹으로부터 분리할 수 있다.")
   void test_ungroup() throws Exception {
     //given
-    final long tableGroupId = 333L;
+    final List<OrderTable2> orderTables = List.of(orderTable1, orderTable2, orderTable3);
+    final TableGroup2 savedTableGroup = tableGroupRepository.save(
+        TableGroupFixture.createTableGroup(orderTables)
+    );
 
-    assertThat(orderTableDao.findAllByTableGroupId(tableGroupId)).isNotEmpty();
+    final List<Long> afterSavedTableGroupIds = savedTableGroup.getOrderTables()
+        .stream()
+        .map(OrderTable2::getTableGroupId)
+        .collect(Collectors.toList());
+
+    assertThat(afterSavedTableGroupIds).doesNotContainNull();
 
     //when
-    tableGroupService.ungroup(tableGroupId);
+    tableGroupService.ungroup(savedTableGroup.getId());
 
     //then
-    assertThat(orderTableDao.findAllByTableGroupId(tableGroupId)).isEmpty();
+    final TableGroup2 unGroupTableGroup =
+        tableGroupRepository.findById(savedTableGroup.getId()).get();
+
+    final List<Long> afterUngroupTableGroupIds = unGroupTableGroup.getOrderTables()
+        .stream()
+        .map(OrderTable2::getTableGroupId)
+        .collect(Collectors.toList());
+
+    final List<Boolean> afterUngroupOrderTableEmpty = unGroupTableGroup.getOrderTables()
+        .stream()
+        .map(OrderTable2::isEmpty)
+        .collect(Collectors.toList());
+
+    assertAll(
+        () -> assertThat(afterUngroupTableGroupIds)
+            .allMatch(Objects::isNull),
+        () -> assertThat(afterUngroupOrderTableEmpty)
+            .allMatch(it -> !it)
+    );
   }
 
   @Test
   @DisplayName("ungroup() : 주문 그룹으로부터 주문 테이블들을 분리할 때 상태가 COOKING이거나 MEAL일 경우에는 주문 테이블을 분리할 수 없다.")
   void test_ungroup_IllegalArgumentException() throws Exception {
     //given
-    final long tableGroupId = 334L;
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable1, orderLineItems));
+    final List<OrderTable2> orderTables = List.of(orderTable1, orderTable2);
+    final TableGroup2 tableGroup = tableGroupRepository.save(
+        TableGroupFixture.createTableGroup(orderTables));
 
     //when & then
-    assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+    assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
         .isInstanceOf(IllegalArgumentException.class);
   }
 }

@@ -26,7 +26,8 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
   @Override
   public OrderTable2 save(final OrderTable2 orderTable) {
     final OrderTableEntity entity = new OrderTableEntity(
-        null,
+        orderTable.getId(),
+        orderTable.getTableGroupId(),
         orderTable.getNumberOfGuests(),
         orderTable.isEmpty()
     );
@@ -39,16 +40,10 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
   private OrderTable2 mapToOrderTable(final OrderTableEntity entity) {
     return new OrderTable2(
         entity.getId(),
-        mapToTableGroupFrom(entity),
+        entity.getTableGroupId(),
         entity.getNumberOfGuests(),
         entity.isEmpty()
     );
-  }
-
-  private TableGroup2 mapToTableGroupFrom(final OrderTableEntity savedEntity) {
-    return tableGroupDao.findById(savedEntity.getTableGroupId())
-        .map(entity -> new TableGroup2(entity.getId(), entity.getCreatedDate()))
-        .orElse(null);
   }
 
   @Override
