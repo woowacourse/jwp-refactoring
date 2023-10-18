@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.table.domain.OrderTable;
+import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
 @Entity
@@ -39,14 +40,22 @@ public class Order {
 
     public Order(
             OrderTable orderTable,
-            List<OrderLineItem> orderLineItems,
-            OrderValidator orderValidator
+            List<OrderLineItem> orderLineItems
     ) {
-        orderValidator.validateCreate(orderLineItems, orderTable);
+        validateCreate(orderTable, orderLineItems);
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateCreate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new OrderException("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
+        }
+        if (orderTable.isEmpty()) {
+            throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
+        }
     }
 
     public Long getId() {

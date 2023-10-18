@@ -3,13 +3,18 @@ package kitchenpos.order;
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderException;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -22,7 +27,53 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTest {
 
-    private final OrderValidator validator = mock(OrderValidator.class);
+    private final Menu menu = new Menu(
+            "말랑",
+            BigDecimal.valueOf(20),
+            new MenuGroup("메뉴그룹"),
+            List.of(new MenuProduct(new Product("말", BigDecimal.valueOf(10)), 2))
+    );
+
+    @Nested
+    class 주문_생성_시 {
+
+        @Test
+        void 주문_목록이_비어있는_경우_예외() {
+            // when & then
+            assertThatThrownBy(() ->
+                    new Order(
+                            new OrderTable(1, true),
+                            List.of()
+                    )
+            ).isInstanceOf(OrderException.class)
+                    .hasMessage("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
+        }
+
+        @Test
+        void 주문을_한_테이블이_비어있으면_예외() {
+            // when & then
+            assertThatThrownBy(() ->
+                    new Order(
+                            new OrderTable(1, true),
+                            List.of(
+                                    new OrderLineItem(menu, 10)
+                            ))
+            ).isInstanceOf(OrderException.class)
+                    .hasMessage("비어있는 테이블에서는 주문할 수 없습니다.");
+        }
+
+        @Test
+        void 주문_목록이_비어있지_않고_주문을_한_테이블이_비어있지_않은_경우_주문할_수_있다() {
+            // when & then
+            assertDoesNotThrow(() ->
+                    new Order(
+                            new OrderTable(1, false),
+                            List.of(
+                                    new OrderLineItem(menu, 10)
+                            ))
+            );
+        }
+    }
 
     @Nested
     class 상태_변경_시 {
@@ -30,7 +81,11 @@ class OrderTest {
         @Test
         void 결제되지_않은_주문의_상태를_변경한다() {
             // given
-            Order order = new Order(new OrderTable(1, false), List.of(), validator);
+            Order order = new Order(
+                    new OrderTable(1, false),
+                    List.of(
+                            new OrderLineItem(menu, 10)
+                    ));
 
             // when
             order.setOrderStatus(COMPLETION.name());
@@ -42,7 +97,11 @@ class OrderTest {
         @Test
         void 이미_결제_완료된_주문은_상태를_변경할_수_없다() {
             // given
-            Order order = new Order(new OrderTable(1, false), List.of(), validator);
+            Order order = new Order(
+                    new OrderTable(1, false),
+                    List.of(
+                            new OrderLineItem(menu, 10)
+                    ));
             order.setOrderStatus(COMPLETION.name());
 
             // when & then
