@@ -40,20 +40,6 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    @Test
-    void 테이블을_추가한다() {
-        //given, when
-        OrderTableResponse orderTable = tableService.create();
-
-        //then
-        assertSoftly(softly -> {
-            softly.assertThat(orderTable.getId()).isNotNull();
-            softly.assertThat(orderTable.getTableGroupResponse()).isNull();
-            softly.assertThat(orderTable.getNumberOfGuests()).isZero();
-            softly.assertThat(orderTable.isEmpty()).isTrue();
-        });
-    }
-
     @Nested
     class 테이블_목록_조회_시 {
 
@@ -79,6 +65,20 @@ class TableServiceTest extends ServiceTest {
             //then
             assertThat(orderTables).isEmpty();
         }
+    }
+
+    @Test
+    void 테이블을_추가한다() {
+        //given, when
+        OrderTableResponse orderTable = tableService.create();
+
+        //then
+        assertSoftly(softly -> {
+            softly.assertThat(orderTable.getId()).isNotNull();
+            softly.assertThat(orderTable.getTableGroupResponse()).isNull();
+            softly.assertThat(orderTable.getNumberOfGuests()).isZero();
+            softly.assertThat(orderTable.isEmpty()).isTrue();
+        });
     }
 
     @Nested

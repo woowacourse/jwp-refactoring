@@ -36,6 +36,48 @@ class MenuServiceTest extends ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Nested
+    class 메뉴_목록_조회_시 {
+
+        @Test
+        void 모든_메뉴_목록을_조회한다() {
+            //given
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
+            Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
+            MenuRequest menuRequestA = new MenuRequest(
+                    "기본 텐동",
+                    BigDecimal.valueOf(11000),
+                    menuGroup.getId(),
+                    List.of(new MenuProductRequest(product.getId(), 1))
+            );
+            MenuRequest menuRequestB = new MenuRequest(
+                    "할인 텐동",
+                    BigDecimal.valueOf(10000),
+                    menuGroup.getId(),
+                    List.of(new MenuProductRequest(product.getId(), 1))
+            );
+            MenuResponse menuResponseA = menuService.create(menuRequestA);
+            MenuResponse menuResponseB = menuService.create(menuRequestB);
+
+            //when
+            List<MenuResponse> menus = menuService.list();
+
+            //then
+            assertThat(menus).usingRecursiveComparison()
+                    .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+                    .isEqualTo(List.of(menuResponseA, menuResponseB));
+        }
+
+        @Test
+        void 메뉴가_존재하지_않으면_목록이_비어있다() {
+            //given, when
+            List<MenuResponse> menus = menuService.list();
+
+            //then
+            assertThat(menus).isEmpty();
+        }
+    }
+
+    @Nested
     class 메뉴_추가_시 {
 
         @Test
@@ -153,48 +195,6 @@ class MenuServiceTest extends ServiceTest {
             //when, then
             assertThatThrownBy(() -> menuService.create(menuRequest))
                     .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    @Nested
-    class 메뉴_목록_조회_시 {
-
-        @Test
-        void 모든_메뉴_목록을_조회한다() {
-            //given
-            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequestA = new MenuRequest(
-                    "기본 텐동",
-                    BigDecimal.valueOf(11000),
-                    menuGroup.getId(),
-                    List.of(new MenuProductRequest(product.getId(), 1))
-            );
-            MenuRequest menuRequestB = new MenuRequest(
-                    "할인 텐동",
-                    BigDecimal.valueOf(10000),
-                    menuGroup.getId(),
-                    List.of(new MenuProductRequest(product.getId(), 1))
-            );
-            MenuResponse menuResponseA = menuService.create(menuRequestA);
-            MenuResponse menuResponseB = menuService.create(menuRequestB);
-
-            //when
-            List<MenuResponse> menus = menuService.list();
-
-            //then
-            assertThat(menus).usingRecursiveComparison()
-                    .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
-                    .isEqualTo(List.of(menuResponseA, menuResponseB));
-        }
-
-        @Test
-        void 메뉴가_존재하지_않으면_목록이_비어있다() {
-            //given, when
-            List<MenuResponse> menus = menuService.list();
-
-            //then
-            assertThat(menus).isEmpty();
         }
     }
 }

@@ -63,6 +63,40 @@ class OrderServiceTest extends ServiceTest {
     private TestTransactional testTransactional;
 
     @Nested
+    class 주문_목록_조회_시 {
+
+        @Test
+        void 모든_주문_목록을_조회한다() {
+            //given
+            Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
+            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
+            Menu menu = menuRepository.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup));
+            menuProductRepository.save(메뉴_상품(menu, product, 1));
+
+            OrderTable orderTable = orderTableRepository.save(테이블(10, false));
+            OrderRequest request =
+                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderResponse orderResponseA = orderService.create(request);
+            OrderResponse orderResponseB = orderService.create(request);
+
+            //when
+            List<OrderResponse> orders = orderService.list();
+
+            //then
+            assertThat(orders).usingRecursiveComparison().isEqualTo(List.of(orderResponseA, orderResponseB));
+        }
+
+        @Test
+        void 주문이_존재하지_않으면_목록이_비어있다() {
+            //given, when
+            List<OrderResponse> orders = orderService.list();
+
+            //then
+            assertThat(orders).isEmpty();
+        }
+    }
+
+    @Nested
     class 주문_추가_시 {
 
         private Menu menu;
@@ -144,40 +178,6 @@ class OrderServiceTest extends ServiceTest {
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    @Nested
-    class 주문_목록_조회_시 {
-
-        @Test
-        void 모든_주문_목록을_조회한다() {
-            //given
-            Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            Menu menu = menuRepository.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup));
-            menuProductRepository.save(메뉴_상품(menu, product, 1));
-
-            OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderRequest request =
-                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
-            OrderResponse orderResponseA = orderService.create(request);
-            OrderResponse orderResponseB = orderService.create(request);
-
-            //when
-            List<OrderResponse> orders = orderService.list();
-
-            //then
-            assertThat(orders).usingRecursiveComparison().isEqualTo(List.of(orderResponseA, orderResponseB));
-        }
-
-        @Test
-        void 주문이_존재하지_않으면_목록이_비어있다() {
-            //given, when
-            List<OrderResponse> orders = orderService.list();
-
-            //then
-            assertThat(orders).isEmpty();
         }
     }
 

@@ -17,21 +17,6 @@ class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
-    @Test
-    void 메뉴_그룹을_추가한다() {
-        //given
-        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("일식");
-
-        //when
-        MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
-
-        //then
-        assertSoftly(softly -> {
-            softly.assertThat(menuGroupResponse.getId()).isNotNull();
-            softly.assertThat(menuGroupResponse.getName()).isEqualTo(menuGroupRequest.getName());
-        });
-    }
-
     @Nested
     class 메뉴_그룹_조회_시 {
 
@@ -59,5 +44,20 @@ class MenuGroupServiceTest extends ServiceTest {
             //then
             assertThat(menuGroups).isEmpty();
         }
+    }
+
+    @Test
+    void 메뉴_그룹을_추가한다() {
+        //given
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("일식");
+
+        //when
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
+
+        //then
+        assertSoftly(softly -> {
+            softly.assertThat(menuGroupResponse.getId()).isNotNull();
+            softly.assertThat(menuGroupResponse.getName()).isEqualTo(menuGroupRequest.getName());
+        });
     }
 }

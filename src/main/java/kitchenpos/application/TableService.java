@@ -31,14 +31,12 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse create() {
         OrderTable orderTable = new OrderTable(0, true);
         orderTableRepository.save(orderTable);
         return OrderTableResponse.from(orderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest orderTableRequest) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));

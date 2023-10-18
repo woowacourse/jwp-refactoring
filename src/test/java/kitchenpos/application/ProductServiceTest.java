@@ -23,6 +23,36 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Nested
+    class 상품_목록_조회_시 {
+
+        @Test
+        void 모든_상품_목록을_조회한다() {
+            //given
+            ProductRequest productRequestA = new ProductRequest("텐동", BigDecimal.valueOf(11000));
+            ProductRequest productRequestB = new ProductRequest("사케동", BigDecimal.valueOf(12000));
+            ProductResponse productResponseA = productService.create(productRequestA);
+            ProductResponse productResponseB = productService.create(productRequestB);
+
+            //when
+            List<ProductResponse> products = productService.list();
+
+            //then
+            assertThat(products).usingRecursiveComparison()
+                    .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+                    .isEqualTo(List.of(productResponseA, productResponseB));
+        }
+
+        @Test
+        void 상품이_존재하지_않으면_목록이_비어있다() {
+            //given, when
+            List<ProductResponse> products = productService.list();
+
+            //then
+            assertThat(products).isEmpty();
+        }
+    }
+
+    @Nested
     class 상품_추가_시 {
 
         @Test
@@ -60,36 +90,6 @@ class ProductServiceTest extends ServiceTest {
             //when, then
             assertThatThrownBy(() -> productService.create(productRequest))
                     .isInstanceOf(IllegalArgumentException.class);
-        }
-    }
-
-    @Nested
-    class 상품_목록_조회_시 {
-
-        @Test
-        void 모든_상품_목록을_조회한다() {
-            //given
-            ProductRequest productRequestA = new ProductRequest("텐동", BigDecimal.valueOf(11000));
-            ProductRequest productRequestB = new ProductRequest("사케동", BigDecimal.valueOf(12000));
-            ProductResponse productResponseA = productService.create(productRequestA);
-            ProductResponse productResponseB = productService.create(productRequestB);
-
-            //when
-            List<ProductResponse> products = productService.list();
-
-            //then
-            assertThat(products).usingRecursiveComparison()
-                    .withComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
-                    .isEqualTo(List.of(productResponseA, productResponseB));
-        }
-
-        @Test
-        void 상품이_존재하지_않으면_목록이_비어있다() {
-            //given, when
-            List<ProductResponse> products = productService.list();
-
-            //then
-            assertThat(products).isEmpty();
         }
     }
 }
