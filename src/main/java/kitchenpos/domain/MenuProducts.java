@@ -6,13 +6,15 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class MenuProducts {
 
     @OneToMany(cascade = CascadeType.ALL)
-    @Column(name = "menuId", updatable = false, nullable = false)
+    @JoinColumn(name = "menu_Id")
+    @Column(updatable = false, nullable = false)
     private List<MenuProduct> values = new ArrayList<>();
 
     protected MenuProducts() {
