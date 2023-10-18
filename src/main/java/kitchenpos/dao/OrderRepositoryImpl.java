@@ -66,7 +66,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         .map(entity -> new TableGroup2(
             entity.getId(),
             entity.getCreatedDate()))
-        .orElseThrow(IllegalArgumentException::new);
+        .orElse(null);
   }
 
   @Override

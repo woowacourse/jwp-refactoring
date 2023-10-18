@@ -28,8 +28,7 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("save() : 주문 테이블을 저장할 수 있다.")
   void test_save() throws Exception {
     //given
-    final TableGroup2 tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
-    final OrderTable2 orderTable = OrderTableFixture.createEmptyOrderTable(tableGroup);
+    final OrderTable2 orderTable = OrderTableFixture.createEmptySingleOrderTable();
 
     //when
     final OrderTable2 savedOrderTable = orderTableRepository.save(orderTable);
