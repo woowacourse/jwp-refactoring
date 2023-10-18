@@ -142,8 +142,10 @@ class MenuServiceTest extends MenuServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_메뉴1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_메뉴2);
+            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
+                          .isEqualTo(저장된_메뉴1);
+            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
+                          .isEqualTo(저장된_메뉴2);
         });
     }
 }

@@ -105,8 +105,10 @@ class OrderServiceTest extends OrderServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_주문1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_주문2);
+            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
+                          .isEqualTo(저장된_주문1);
+            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
+                          .isEqualTo(저장된_주문2);
         });
     }
 }

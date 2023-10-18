@@ -45,7 +45,8 @@ class ProductServiceTest extends ProductServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual).usingRecursiveComparison().isEqualTo(저장된_상품);
+            softAssertions.assertThat(actual).usingRecursiveComparison()
+                          .isEqualTo(저장된_상품);
         });
     }
 
@@ -81,8 +82,10 @@ class ProductServiceTest extends ProductServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_상품1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_상품2);
+            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
+                          .isEqualTo(저장된_상품1);
+            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
+                          .isEqualTo(저장된_상품2);
         });
     }
 }

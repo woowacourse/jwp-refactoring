@@ -66,9 +66,12 @@ class TableServiceTest extends TableServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(저장된_주문_테이블1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(저장된_주문_테이블2);
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison().isEqualTo(저장된_주문_테이블3);
+            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
+                          .isEqualTo(저장된_주문_테이블1);
+            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
+                          .isEqualTo(저장된_주문_테이블2);
+            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
+                          .isEqualTo(저장된_주문_테이블3);
         });
     }
 

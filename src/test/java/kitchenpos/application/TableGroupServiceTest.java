@@ -61,9 +61,11 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
                           .ignoringFields("id")
                           .isEqualTo(저장된_단체_지정);
 
-            softAssertions.assertThat(주문_테이블1.getTableGroupId()).isEqualTo(저장된_단체_지정.getId());
+            softAssertions.assertThat(주문_테이블1.getTableGroupId())
+                          .isEqualTo(저장된_단체_지정.getId());
             softAssertions.assertThat(주문_테이블1.isEmpty()).isFalse();
-            softAssertions.assertThat(주문_테이블2.getTableGroupId()).isEqualTo(저장된_단체_지정.getId());
+            softAssertions.assertThat(주문_테이블2.getTableGroupId())
+                          .isEqualTo(저장된_단체_지정.getId());
             softAssertions.assertThat(주문_테이블2.isEmpty()).isFalse();
         });
     }
