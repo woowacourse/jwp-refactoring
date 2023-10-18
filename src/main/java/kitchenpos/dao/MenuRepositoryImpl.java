@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +40,28 @@ public class MenuRepositoryImpl implements MenuRepository {
         )
     );
 
-    return mapToMenu(savedMenuEntity);
+    List<MenuProduct2> savedMenuProducts = new ArrayList<>();
+
+    for (final MenuProduct2 menuProduct : menu.getMenuProducts()) {
+      final MenuProductEntity savedEntity = menuProductDao.save(
+          new MenuProductEntity(
+              savedMenuEntity.getId(),
+              menuProduct.getProduct().getId(),
+              menuProduct.getQuantity()
+          ));
+
+      savedMenuProducts.add(
+          new MenuProduct2(savedEntity.getSeq(), menuProduct.getProduct(), savedEntity.getQuantity())
+      );
+    }
+
+    return new Menu2(
+        savedMenuEntity.getId(),
+        savedMenuEntity.getName(),
+        savedMenuEntity.getPrice(),
+        menu.getMenuGroup(),
+        savedMenuProducts
+    );
   }
 
   private Menu2 mapToMenu(final MenuEntity menuEntity) {

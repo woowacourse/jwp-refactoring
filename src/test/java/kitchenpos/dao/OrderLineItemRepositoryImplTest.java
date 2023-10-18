@@ -12,12 +12,14 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order2;
 import kitchenpos.domain.OrderLineItem2;
 import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.Product2;
 import kitchenpos.domain.TableGroup2;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.support.JdbcTestHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,16 +47,21 @@ class OrderLineItemRepositoryImplTest extends JdbcTestHelper {
   @Autowired
   private OrderTableRepositoryImpl orderTableRepository;
 
+  @Autowired
+  private ProductRepositoryImpl productRepository;
+
   private MenuGroup menuGroup;
   private Menu2 menu;
   private TableGroup2 tableGroup;
   private OrderTable2 orderTable;
   private Order2 order;
+  private Product2 product;
 
   @BeforeEach
   void setUp() {
     menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
-    menu = menuRepository.save(MenuFixture.createMenu(menuGroup));
+    product = productRepository.save(ProductFixture.createProduct());
+    menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
     tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     orderTable = orderTableRepository.save(OrderTableFixture.createEmptyOrderTable(tableGroup));

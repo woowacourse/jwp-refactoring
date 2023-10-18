@@ -48,8 +48,8 @@ class MenuProductRepositoryImplTest {
   void setUp() {
     product = productRepository.save(ProductFixture.createProduct());
     menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
-    menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup));
-    menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup));
+    menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
   }
 
   @Test
