@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -15,8 +14,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -48,22 +45,12 @@ public class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    private MenuGroup savedMenuGroup;
-    private Menu savedMenu;
     private OrderTable savedOrderTable;
     private Order savedOrder;
     private OrderLineItem savedOrderLineItem;
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = new MenuGroup(1L, "추천메뉴");
-
-        savedMenu = new Menu();
-        savedMenu.setId(1L);
-        savedMenu.setName("후라이드");
-        savedMenu.setPrice(BigDecimal.valueOf(19000));
-        savedMenu.setMenuGroupId(savedMenuGroup.getId());
-
         savedOrderTable = new OrderTable();
         savedOrderTable.setId(1L);
         savedOrderTable.setEmpty(false);
