@@ -1,4 +1,4 @@
-create table menu
+create table if not exists menu
 (
     id            bigint         not null auto_increment,
     name          varchar(255)   not null,
@@ -7,14 +7,14 @@ create table menu
     primary key (id)
 );
 
-create table menu_group
+create table if not exists menu_group
 (
     id   bigint       not null auto_increment,
     name varchar(255) not null,
     primary key (id)
 );
 
-create table menu_product
+create table if not exists menu_product
 (
     seq        bigint not null auto_increment,
     quantity   bigint not null,
@@ -23,7 +23,7 @@ create table menu_product
     primary key (seq)
 );
 
-create table order_line_item
+create table if not exists order_line_item
 (
     seq      bigint not null auto_increment,
     quantity bigint not null,
@@ -32,7 +32,7 @@ create table order_line_item
     primary key (seq)
 );
 
-create table orders
+create table if not exists orders
 (
     id             bigint       not null auto_increment,
     order_status   varchar(255) not null,
@@ -41,7 +41,7 @@ create table orders
     primary key (id)
 );
 
-create table order_table
+create table if not exists order_table
 (
     id               bigint  not null auto_increment,
     empty            bit     not null,
@@ -50,7 +50,7 @@ create table order_table
     primary key (id)
 );
 
-create table product
+create table if not exists product
 (
     id    bigint         not null auto_increment,
     name  varchar(255)   not null,
@@ -58,7 +58,7 @@ create table product
     primary key (id)
 );
 
-create table table_group
+create table if not exists table_group
 (
     id           bigint   not null auto_increment,
     created_date datetime not null,
@@ -66,37 +66,37 @@ create table table_group
 );
 
 alter table menu
-    add constraint fk_menu_to_menu_group
+    add constraint if not exists fk_menu_to_menu_group
         foreign key (menu_group_id)
             references menu_group (id);
 
 alter table menu_product
-    add constraint fk_menu_product_to_menu
+    add constraint if not exists fk_menu_product_to_menu
         foreign key (menu_id)
             references menu (id);
 
 alter table menu_product
-    add constraint fk_menu_product_to_product
+    add constraint if not exists fk_menu_product_to_product
         foreign key (product_id)
             references product (id);
 
 alter table order_line_item
-    add constraint fk_order_line_item_to_menu
+    add constraint if not exists fk_order_line_item_to_menu
         foreign key (menu_id)
             references menu (id);
 
 alter table order_line_item
-    add constraint fk_order_line_item_to_orders
+    add constraint if not exists fk_order_line_item_to_orders
         foreign key (order_id)
             references orders (id);
 
 alter table orders
-    add constraint fk_orders_to_order_table
+    add constraint if not exists fk_orders_to_order_table
         foreign key (order_table_id)
             references order_table (id);
 
 alter table order_table
-    add constraint fk_order_table_to_table_group
+    add constraint if not exists fk_order_table_to_table_group
         foreign key (table_group_id)
             references table_group (id);
 
