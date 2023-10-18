@@ -51,7 +51,7 @@ class MenuServiceTest extends MockServiceTest {
         MenuProduct onePizza = new MenuProduct(5L, menu, pizza, new MenuProductQuantity(1L));
         menu.addMenuProducts(List.of(twoChicken, onePizza));
 
-        BDDMockito.given(menuRepository.findAllUsingFetchJoin())
+        BDDMockito.given(menuRepository.findAllWithMenuProducts())
                 .willReturn(List.of(menu));
 
         // when

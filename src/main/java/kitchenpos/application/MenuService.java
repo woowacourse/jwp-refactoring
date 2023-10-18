@@ -70,7 +70,7 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public List<MenuDto> list() {
-        List<Menu> menus = menuRepository.findAllUsingFetchJoin();
+        List<Menu> menus = menuRepository.findAllWithMenuProducts();
         return menus.stream()
                 .map(MenuDto::from)
                 .collect(Collectors.toList());

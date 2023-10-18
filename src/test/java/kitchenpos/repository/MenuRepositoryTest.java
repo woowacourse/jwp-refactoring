@@ -42,7 +42,7 @@ class MenuRepositoryTest extends BaseTest {
         em.clear();
 
         // when
-        List<Menu> menus = menuRepository.findAllUsingFetchJoin();
+        List<Menu> menus = menuRepository.findAllWithMenuProducts();
         for (Menu findMenu : menus) {
             em.detach(findMenu);
         }

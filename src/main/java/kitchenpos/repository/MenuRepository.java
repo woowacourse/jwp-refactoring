@@ -9,5 +9,5 @@ import java.util.List;
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     @Query("select m from Menu m join fetch m.menuProducts")
-    List<Menu> findAllUsingFetchJoin();
+    List<Menu> findAllWithMenuProducts();
 }
