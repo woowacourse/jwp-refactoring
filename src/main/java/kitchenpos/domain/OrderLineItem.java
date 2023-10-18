@@ -12,7 +12,7 @@ public class OrderLineItem {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders orders;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "menu_id")
@@ -22,9 +22,9 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long id, Order order, Menu menu, long quantity) {
+    public OrderLineItem(Long id, Orders orders, Menu menu, long quantity) {
         this.id = id;
-        this.order = order;
+        this.orders = orders;
         this.menu = menu;
         this.quantity = quantity;
     }
@@ -33,8 +33,8 @@ public class OrderLineItem {
         return id;
     }
 
-    public Order getOrder() {
-        return order;
+    public Orders getOrder() {
+        return orders;
     }
 
     public Menu getMenu() {

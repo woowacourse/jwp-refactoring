@@ -8,7 +8,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class Order {
+public class Orders {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -18,19 +18,19 @@ public class Order {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.REMOVE)
     private List<OrderLineItem> orderLineItems;
 
-    protected Order() {
+    protected Orders() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    public Orders(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Orders(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -58,8 +58,8 @@ public class Order {
         return orderLineItems;
     }
 
-    public void updateOrderStatus(String orderStatus) {
-        this.orderStatus = OrderStatus.valueOf(orderStatus);
+    public void updateOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
 }

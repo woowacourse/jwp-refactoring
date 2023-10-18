@@ -3,17 +3,19 @@ package kitchenpos.application;
 import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.domain.fixture.MenuGroupFixture.인기_메뉴_생성;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
 
@@ -31,8 +33,9 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
             MenuGroup 인기_메뉴 = 인기_메뉴_생성();
 
             // when, then
-            assertDoesNotThrow(() -> menuGroupService.create(인기_메뉴));
+            assertDoesNotThrow(() -> menuGroupService.create(인기_메뉴.getName()));
         }
+
     }
 
     @Nested
@@ -47,12 +50,12 @@ class MenuGroupServiceIntegrateTest extends ServiceIntegrateTest {
         @Test
         void 모든_메뉴_그룹을_조회한다() {
             // when
-            List<MenuGroup> menuGroups = menuGroupService.list();
+            List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
             // then
             assertAll(
                     () -> assertThat(menuGroups).hasSize(1),
-                    () -> assertThat(menuGroups).extracting(MenuGroup::getName)
+                    () -> assertThat(menuGroups).extracting(MenuGroupResponse::getName)
                             .contains("인기 메뉴")
             );
         }

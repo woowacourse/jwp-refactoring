@@ -35,12 +35,11 @@ public class Menu {
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         this.name = name;
-        validatePrice(price);
         this.price = price;
         this.menuGroup = menuGroup;
     }
 
-    public void validatePrice(BigDecimal price) {
+    public void validatePriceIsNullOrMinus() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }

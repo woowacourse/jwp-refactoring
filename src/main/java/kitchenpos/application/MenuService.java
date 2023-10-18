@@ -29,6 +29,7 @@ public class MenuService {
         }
         MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        menu.validatePriceIsNullOrMinus();
         return menuRepository.save(menu).getId();
     }
 

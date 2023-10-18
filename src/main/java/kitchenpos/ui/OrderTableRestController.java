@@ -30,8 +30,8 @@ public class OrderTableRestController {
         return ResponseEntity.ok().body(responses);
     }
 
-    @PatchMapping("/api/order-tables/{orderTableId}")
-    public ResponseEntity<Void> updateStatus(
+    @PatchMapping("/api/order-tables/{orderTableId}/is-empty")
+    public ResponseEntity<Void> updateIsEmpty(
             @PathVariable final Long orderTableId,
             @RequestParam final boolean isEmpty
     ) {
@@ -39,12 +39,12 @@ public class OrderTableRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/api/order-tables/{orderTableId}")
-    public ResponseEntity<Void> updateStatus(
+    @PatchMapping("/api/order-tables/{orderTableId}/number-of-guests")
+    public ResponseEntity<Void> updateNumberOfGuest(
             @PathVariable final Long orderTableId,
-            @RequestParam final int numberOfGuest
+            @RequestParam final int numberOfGuests
     ) {
-        orderTableService.changeNumberOfGuests(orderTableId, numberOfGuest);
+        orderTableService.changeNumberOfGuests(orderTableId, numberOfGuests);
         return ResponseEntity.ok().build();
     }
 

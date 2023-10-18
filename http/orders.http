@@ -16,7 +16,7 @@ Content-Type: application/json
 GET {{host}}/api/orders
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT {{host}}/api/orders/1/orders-status
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT {{host}}/api/orders/1/orders-status
 Content-Type: application/json
 
 {

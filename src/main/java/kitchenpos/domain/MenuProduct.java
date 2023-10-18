@@ -11,10 +11,10 @@ public class MenuProduct {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menuId")
+    @JoinColumn(name = "menu_id")
     private Menu menu;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menuId")
+    @JoinColumn(name = "product_id")
     private Product product;
     private long quantity;
 

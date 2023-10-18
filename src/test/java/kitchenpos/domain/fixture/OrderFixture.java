@@ -1,17 +1,16 @@
 package kitchenpos.domain.fixture;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Orders;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
-import java.util.List;
+import static java.time.LocalDateTime.now;
 
 public class OrderFixture {
 
-    public static Order 주문_생성(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+    public static Orders 주문_생성(OrderTable orderTable) {
+        Orders orders = new Orders(orderTable, OrderStatus.COOKING, now());
+        return orders;
     }
 
 }

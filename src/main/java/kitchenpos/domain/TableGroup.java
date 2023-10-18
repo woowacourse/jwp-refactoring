@@ -31,6 +31,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    protected TableGroup() {
+
+    }
+
 
     public Long getId() {
         return id;

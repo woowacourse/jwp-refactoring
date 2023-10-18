@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.domain.OrderStatus.COOKING;
 
 @Service
 public class OrderService {
@@ -26,31 +28,32 @@ public class OrderService {
     }
 
     @Transactional
-    public Long create(final Long orderTableId, final OrderCreateRequest request) {
+    public Long create(final Long orderTableId) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        Order order = new Order(orderTable, request.getOrderStatus(), LocalDateTime.now());
-        return orderRepository.save(order).getId();
+        orderTable.validateIsEmpty();
+        Orders orders = new Orders(orderTable, COOKING, LocalDateTime.now());
+        return orderRepository.save(orders).getId();
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
+        final List<Orders> orders = orderRepository.findAll();
         return orders.stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final String orderStatus) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+        final Orders savedOrders = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(COMPLETION, savedOrders.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
-        savedOrder.updateOrderStatus(orderStatus);
-        orderRepository.save(savedOrder);
-        return OrderResponse.from(savedOrder);
+        savedOrders.updateOrderStatus(orderStatus);
+        orderRepository.save(savedOrders);
+        return OrderResponse.from(savedOrders);
     }
 
 }
