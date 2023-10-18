@@ -8,14 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -25,6 +18,12 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderGroupOrderTableRequest;
 import kitchenpos.ui.dto.request.CreateTableGroupRequest;
 import org.junit.jupiter.api.Test;
@@ -152,12 +151,9 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(persistTableGroup.getId());
 
         // then
-        final Optional<TableGroup> actual = tableGroupRepository.findById(persistTableGroup.getId());
-
         assertAll(
-                () -> assertThat(actual).isPresent(),
-                () -> assertThat(actual.get().getOrderTables().get(0).getTableGroup()).isNull(),
-                () -> assertThat(actual.get().getOrderTables().get(1).getTableGroup()).isNull()
+                () -> assertThat(persistOrderTable1.getTableGroup()).isNull(),
+                () -> assertThat(persistOrderTable2.getTableGroup()).isNull()
         );
     }
 
