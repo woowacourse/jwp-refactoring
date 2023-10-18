@@ -48,7 +48,7 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
             savedMenuGroups.add(menuGroupDao.save(menuGroup));
         }
 
-        // then
+        // when
         List<MenuGroup> results = menuGroupService.list()
                 .stream()
                 .filter(menuGroup ->
@@ -57,8 +57,9 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
                                 menuGroupInSavedMenuGroups ->
                                         menuGroupInSavedMenuGroups.getId().equals(menuGroup.getId())
                         )
-                )
-                .collect(Collectors.toList());
+                ).collect(Collectors.toList());
+
+        // then
         assertThat(results).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(menuGroups);

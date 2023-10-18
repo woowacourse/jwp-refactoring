@@ -89,8 +89,10 @@ class OrderServiceTest extends ServiceIntegrationTest {
 
     @Test
     void Order를_성공적으로_저장한다() {
-        // when
+        // given
         OrderTable savedOrderTable = orderTableDao.save(테이블_그룹이_없는_주문_테이블_생성(1, false));
+
+        // when
         Order savedOrder = 주문을_저장하고_반환받는다(savedOrderTable);
 
         // then

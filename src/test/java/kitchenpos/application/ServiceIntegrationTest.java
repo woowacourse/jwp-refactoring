@@ -69,6 +69,7 @@ public abstract class ServiceIntegrationTest {
 
     protected Order 주문의_상태를_변환한다(Order order, OrderStatus orderStatus) {
         order.setOrderStatus(orderStatus.name());
+
         return orderService.changeOrderStatus(order.getId(), order);
     }
 

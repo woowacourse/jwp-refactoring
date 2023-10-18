@@ -47,7 +47,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         // given
         Product product = 후추_칰힌_가격_책정(null);
 
-        // when
+        // when then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -57,7 +57,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         // given
         Product product = 후추_칰힌_가격_책정(BigDecimal.valueOf(-1));
 
-        // when
+        // when then
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -82,8 +82,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
                                 savedProducts,
                                 productInSavedProducts -> productInSavedProducts.getId().equals(product.getId())
                         )
-                )
-                .collect(Collectors.toList());
+                ).collect(Collectors.toList());
 
         // then
         assertThat(results).usingRecursiveComparison()
