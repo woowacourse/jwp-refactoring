@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/menu-products")
-public class MenuProductsController {
+public class MenuProductRestController {
 
     private final MenuProductService menuProductService;
 
-    public MenuProductsController(MenuProductService menuProductService) {
+    public MenuProductRestController(MenuProductService menuProductService) {
         this.menuProductService = menuProductService;
     }
 
