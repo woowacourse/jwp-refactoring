@@ -21,17 +21,19 @@ public class Product {
     @Column
     private BigDecimal price;
 
-    public Product(Long id, String name, BigDecimal price) {
+    public Product() {
+    }
+
+    public Product(final Long id,
+                   final String name,
+                   final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
         validate(price);
     }
 
-    public Product() {
-    }
-
-    public Product(String name, BigDecimal price) {
+    public Product(final String name, final BigDecimal price) {
         this(null, name, price);
     }
 

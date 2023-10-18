@@ -20,9 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.Fixture.Fixture.menuFixture;
-import static kitchenpos.Fixture.Fixture.menuGroupFixture;
 import static kitchenpos.Fixture.Fixture.menuProductFixture;
-import static kitchenpos.Fixture.Fixture.productFixture;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -53,8 +51,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.menuGroup = menuGroupRepository.save(menuGroupFixture("메뉴 그룹1"));
-        this.product = productRepository.save(productFixture("상품1", new BigDecimal(10000)));
+        this.menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        this.product = productRepository.save(new Product("상품1", new BigDecimal(10000)));
         this.menuProductDto = new MenuProductDto(1L, 1L, product.getId(), 4L);
     }
 
@@ -62,8 +60,8 @@ class MenuServiceTest {
     class 몌뉴등록 {
         @Test
         void 메뉴를_등록한다() {
-            MenuGroup menuGroup = menuGroupRepository.save(menuGroupFixture("메뉴 그룹1"));
-            Product product = productRepository.save(productFixture("productName", BigDecimal.valueOf(10000L)));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+            Product product = productRepository.save(new Product("productName", BigDecimal.valueOf(10000L)));
             MenuProductDto menuProductDto = new MenuProductDto(1L, product.getId(), product.getId(), 3L);
 
             MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(menuProductDto));
@@ -113,7 +111,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴의_가격이_메뉴_상품들의_가격_합보다_비싸면_등록할_수_없다() {
-            Product product1 = productFixture("상품2", new BigDecimal(10001));
+            Product product1 = new Product("상품2", new BigDecimal(10001));
             MenuProductDto menuProductDto2 = new MenuProductDto(null, product1.getId(), 1L, 1L);
             MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("50000.00"), menuGroup.getId(), List.of(menuProductDto, menuProductDto2));
 

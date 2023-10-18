@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.Fixture.Fixture.menuGroupFixture;
 import static kitchenpos.Fixture.Fixture.orderLineItemFixture;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.MEAL;
@@ -61,7 +60,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupRepository.save(menuGroupFixture("메뉴 그룹"));
+        menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(30000), menuGroup));
         orderTable = orderTableRepository.save(new OrderTable(null, 1, false));
         order = orderRepository.save(new Order(orderTable, MEAL.name(), LocalDateTime.now()));

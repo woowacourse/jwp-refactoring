@@ -14,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.Fixture.Fixture.productFixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -54,9 +53,9 @@ class ProductServiceTest {
 
     @Test
     void 상품의_목록을_조회할_수_있다() {
-        Product product1 = productFixture("product1", BigDecimal.ZERO);
-        Product product2 = productFixture("product2", BigDecimal.ONE);
-        Product product3 = productFixture("product3", new BigDecimal("1000"));
+        Product product1 = new Product("product1", BigDecimal.ZERO);
+        Product product2 = new Product("product2", BigDecimal.ONE);
+        Product product3 = new Product("product3", new BigDecimal("1000"));
         productRepository.save(product1);
         productRepository.save(product2);
         productRepository.save(product3);

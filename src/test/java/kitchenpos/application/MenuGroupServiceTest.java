@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.Fixture.Fixture;
 import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴_그룹을_등록한다() {
-        MenuGroup menuGroup = Fixture.menuGroupFixture("메뉴 그룹");
+        MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         MenuGroup saved = menuGroupService.create(menuGroup);
 
@@ -31,8 +30,8 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴_그룹들을_조회한다() {
-        MenuGroup group1 = menuGroupService.create(Fixture.menuGroupFixture("메뉴 그룹1"));
-        MenuGroup group2 = menuGroupService.create(Fixture.menuGroupFixture("메뉴 그룹2"));
+        MenuGroup group1 = menuGroupService.create(new MenuGroup("메뉴 그룹1"));
+        MenuGroup group2 = menuGroupService.create(new MenuGroup("메뉴 그룹2"));
 
         List<MenuGroup> actual = menuGroupService.list();
 
