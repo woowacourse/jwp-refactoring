@@ -2,7 +2,7 @@ package kitchenpos.application.table.dto;
 
 public class OrderTableChangeNumberOfGuestRequest {
 
-    private int numberOfGuests;
+    private Integer numberOfGuests;
 
     private OrderTableChangeNumberOfGuestRequest() {
     }

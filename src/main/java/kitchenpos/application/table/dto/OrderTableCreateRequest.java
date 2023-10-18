@@ -4,7 +4,7 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderTableCreateRequest {
 
-    private int numberOfGuests;
+    private Integer numberOfGuests;
     private boolean empty;
 
     private OrderTableCreateRequest() {

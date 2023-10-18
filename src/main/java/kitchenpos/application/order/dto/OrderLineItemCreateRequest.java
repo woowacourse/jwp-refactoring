@@ -3,7 +3,7 @@ package kitchenpos.application.order.dto;
 public class OrderLineItemCreateRequest {
 
     private Long menuId;
-    private long quantity;
+    private Long quantity;
 
     private OrderLineItemCreateRequest() {
     }
