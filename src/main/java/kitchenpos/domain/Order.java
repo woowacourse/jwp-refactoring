@@ -32,7 +32,7 @@ public class Order {
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        validate(orderTable, orderLineItems);
+        validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -55,8 +55,7 @@ public class Order {
         return orderStatus != OrderStatus.COMPLETION;
     }
 
-    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-
+    private void validate(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블은 주문 받을 수 없습니다.");
         }

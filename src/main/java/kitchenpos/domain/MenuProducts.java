@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -13,8 +12,7 @@ import javax.persistence.OneToMany;
 public class MenuProducts {
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "menu_Id")
-    @Column(updatable = false, nullable = false)
+    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
     private List<MenuProduct> values = new ArrayList<>();
 
     protected MenuProducts() {

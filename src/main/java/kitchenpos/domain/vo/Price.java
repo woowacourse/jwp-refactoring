@@ -16,7 +16,6 @@ public class Price {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("가격은 음수일 수 없습니다.");
         }
-
         this.value = value;
     }
 
