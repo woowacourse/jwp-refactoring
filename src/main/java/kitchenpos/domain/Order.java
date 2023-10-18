@@ -47,14 +47,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
-        }
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 주문 받을 수 없습니다.");
-        }
+    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable, OrderStatus.COOKING, orderLineItems);
     }
 
     public void changeOrderStatus(OrderStatus changedOrderStatus) {
@@ -66,6 +60,16 @@ public class Order {
 
     public boolean isNotCompletion() {
         return orderStatus != OrderStatus.COMPLETION;
+    }
+
+    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
+        }
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블은 주문 받을 수 없습니다.");
+        }
     }
 
     private boolean isCompletion() {

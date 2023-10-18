@@ -44,7 +44,7 @@ public class OrderService {
         validateOrderLineItemSize(orderLineItems);
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        return orderRepository.save(new Order(orderTable, OrderStatus.COOKING, orderLineItems));
+        return orderRepository.save(Order.cooking(orderTable, orderLineItems));
     }
 
     public List<Order> list() {
