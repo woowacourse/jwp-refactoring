@@ -9,9 +9,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -25,13 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableService tableService;
@@ -83,11 +83,11 @@ class TableServiceTest {
         OrderTable 주문_테이블1 = tableService.create(새로운_주문_테이블(null, 1, false));
         OrderTable 주문_테이블2 = tableService.create(새로운_주문_테이블(null, 2, false));
 
-        TableGroup 단체_지정 = tableGroupDao.save(새로운_단체_지정(LocalDateTime.now(), List.of(주문_테이블1, 주문_테이블2)));
+        TableGroup 단체_지정 = tableGroupRepository.save(새로운_단체_지정(LocalDateTime.now(), List.of(주문_테이블1, 주문_테이블2)));
         주문_테이블1.setTableGroupId(단체_지정.getId());
         주문_테이블2.setTableGroupId(단체_지정.getId());
-        orderTableDao.save(주문_테이블1);
-        orderTableDao.save(주문_테이블2);
+        orderTableRepository.save(주문_테이블1);
+        orderTableRepository.save(주문_테이블2);
 
         assertSoftly(softly -> {
             softly.assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블1.getId(), 주문_테이블1))
@@ -102,7 +102,7 @@ class TableServiceTest {
     void 주문_상태가_조리_또는_식사인_주문_테이블은_빈_테이블로_설정할_수_없다(OrderStatus orderStatus) {
         OrderTable 주문_테이블 = tableService.create(새로운_주문_테이블(null, 1, false));
         Order 주문 = 새로운_주문(주문_테이블.getId(), orderStatus.name(), LocalDateTime.now(), null);
-        orderDao.save(주문);
+        orderRepository.save(주문);
 
         assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블.getId(), 주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);

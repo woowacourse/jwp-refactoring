@@ -14,9 +14,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -30,13 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderService orderService;
@@ -48,9 +48,9 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        메뉴_그룹 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹"));
-        메뉴 = menuDao.save(새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), null));
-        주문_테이블 = orderTableDao.save(새로운_주문_테이블(null, 1, false));
+        메뉴_그룹 = menuGroupRepository.save(새로운_메뉴_그룹("메뉴 그룹"));
+        메뉴 = menuRepository.save(새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), null));
+        주문_테이블 = orderTableRepository.save(새로운_주문_테이블(null, 1, false));
         주문_항목 = 새로운_주문_항목(null, 메뉴.getId(), 1);
     }
 
@@ -89,7 +89,7 @@ class OrderServiceTest {
 
     @Test
     void 빈_테이블이_등록될_수_없다() {
-        Long 빈_테이블_ID = orderTableDao.save(새로운_주문_테이블(null, 1, true)).getId();
+        Long 빈_테이블_ID = orderTableRepository.save(새로운_주문_테이블(null, 1, true)).getId();
         Order 빈_테이블이_포함된_주문 = 새로운_주문(빈_테이블_ID, null, LocalDateTime.now(), List.of(주문_항목));
 
         assertThatThrownBy(() -> orderService.create(빈_테이블이_포함된_주문))

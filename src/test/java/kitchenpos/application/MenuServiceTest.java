@@ -10,8 +10,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -24,10 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuService menuService;
@@ -38,8 +38,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        this.메뉴_그룹 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹"));
-        this.상품 = productDao.save(새로운_상품("상품", new BigDecimal(10000)));
+        this.메뉴_그룹 = menuGroupRepository.save(새로운_메뉴_그룹("메뉴 그룹"));
+        this.상품 = productRepository.save(새로운_상품("상품", new BigDecimal(10000)));
         this.메뉴_상품 = 새로운_메뉴_상품(null, 상품.getId(), 3);
     }
 
