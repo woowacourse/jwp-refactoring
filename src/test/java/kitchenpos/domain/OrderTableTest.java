@@ -40,6 +40,36 @@ class OrderTableTest {
     }
 
     @Nested
+    class changeTableGroup {
+
+        @Test
+        void 테이블의_상태가_비어있으면_예외() {
+            OrderTable orderTable = new OrderTable(1L, true, 0);
+            LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+            TableGroup tableGroup = new TableGroup(1L, createdDate);
+
+            // when & then
+            assertThatThrownBy(() -> orderTable.changeTableGroup(tableGroup))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("비어있는 상태의 주문 테이블은 테이블 그룹에 등록할 수 없습니다.");
+        }
+
+        @Test
+        void 이미_테이블_그룹에_속해있으면_예외() {
+            OrderTable orderTable = new OrderTable(1L, false, 0);
+            LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+            TableGroup tableGroup = new TableGroup(1L, createdDate);
+            orderTable.changeTableGroup(tableGroup);
+
+
+            // when & then
+            assertThatThrownBy(() -> orderTable.changeTableGroup(tableGroup))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("이미 테이블 그룹에 속해있는 주문 테이블 입니다.");
+        }
+    }
+
+    @Nested
     class changeEmpty {
 
         @Test
@@ -48,11 +78,9 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(1L, false, 0);
             LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
             TableGroup tableGroup = new TableGroup(1L, createdDate);
-
-            // when
             orderTable.changeTableGroup(tableGroup);
 
-            // then
+            // when & then
             assertThatThrownBy(() -> orderTable.changeEmpty(true))
                 .isInstanceOf(KitchenPosException.class)
                 .hasMessage("테이블 그룹에 속한 테이블은 상태를 변경할 수 없습니다.");

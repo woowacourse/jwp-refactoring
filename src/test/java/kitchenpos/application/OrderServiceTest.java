@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.anyList;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -130,6 +131,37 @@ class OrderServiceTest {
             // then
             assertThat(actual.getOrderTableId()).isEqualTo(4885L);
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+        }
+    }
+
+    @Nested
+    class changeOrderStatus {
+
+        @Test
+        void 주문_식별자에_대한_주문이_없으면_예외() {
+            // given
+            given(orderRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+            // when
+            assertThatThrownBy(() -> orderService.changeOrderStatus(4885L, OrderStatus.COMPLETION))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("해당 주문이 없습니다. orderId=4885");
+        }
+
+        @Test
+        void 성공() {
+            // given
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            OrderTable orderTable = new OrderTable(1L, false, 0);
+            Order order = new Order(4885L, OrderStatus.COOKING, orderedTime, orderTable);
+            given(orderRepository.findById(anyLong()))
+                .willReturn(Optional.of(order));
+
+            // when
+            orderService.changeOrderStatus(4885L, OrderStatus.COMPLETION);
+
+            // then
+            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
         }
     }
 }

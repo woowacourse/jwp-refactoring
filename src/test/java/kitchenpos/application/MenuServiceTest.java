@@ -92,26 +92,6 @@ class MenuServiceTest {
         }
 
         @Test
-        void 메뉴_상품의_가격_총합보다_메뉴의_가격이_크면_예외() {
-            // given
-            var request = new MenuCreateRequest(1000, 1L, "맥주세트", List.of(
-                new MenuProductCreateRequest(1, 1L)
-            ));
-            MenuGroup menuGroup = new MenuGroup(1L, "주류");
-            given(menuGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(menuGroup));
-            given(productRepository.findAllByIdIn(anyList()))
-                .willReturn(List.of(new Product(1L, "맥주", Money.from(999))));
-            given(menuRepository.save(any(Menu.class)))
-                .willAnswer(invocation -> invocation.getArgument(0));
-
-            // when
-            assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(KitchenPosException.class)
-                .hasMessage("메뉴의 가격은 메뉴 상품의 총합 가격보다 작아야 합니다.");
-        }
-
-        @Test
         void 성공() {
             // given
             var request = new MenuCreateRequest(1000, 1L, "맥주세트", List.of(

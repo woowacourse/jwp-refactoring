@@ -83,6 +83,33 @@ class OrderTableServiceTest {
         }
 
         @Test
+        void 주문_테이블_식별자에_대한_주문_테이블이_없으면_예외() {
+            // given
+            given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("해당 주문 테이블이 없습니다. orderTableId=1");
+        }
+
+        @Test
+        void 주문_테이블_식별자에_대한_주문이_없으면_예외() {
+            // given
+            OrderTable orderTable = new OrderTable(1L, false, 0);
+            given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.of(orderTable));
+            given(orderRepository.findByOrderTableId(anyLong()))
+                .willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("해당 주문이 없습니다. orderTableId=1");
+        }
+
+        @Test
         void 테이블의_주문이_계산_완료이면_성공() {
             // given
             OrderTable orderTable = new OrderTable(1L, false, 0);
