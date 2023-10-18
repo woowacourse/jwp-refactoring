@@ -1,6 +1,7 @@
 package kitchenpos.application.exception;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.exception.KitchenPosException;
 
 public class MenuServiceException extends KitchenPosException {
 

@@ -1,8 +1,9 @@
 package kitchenpos.application.exception;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.exception.KitchenPosException;
 
-public class ProductServiceException extends KitchenPosException{
+public class ProductServiceException extends KitchenPosException {
 
     public ProductServiceException(String message) {
         super(message);

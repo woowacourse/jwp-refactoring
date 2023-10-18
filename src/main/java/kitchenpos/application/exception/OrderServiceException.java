@@ -1,5 +1,7 @@
 package kitchenpos.application.exception;
 
+import kitchenpos.domain.exception.KitchenPosException;
+
 public class OrderServiceException extends KitchenPosException {
 
     public OrderServiceException(final String message) {

@@ -1,4 +1,4 @@
-package kitchenpos.application.exception;
+package kitchenpos.domain.exception;
 
 public class KitchenPosException extends RuntimeException {
 

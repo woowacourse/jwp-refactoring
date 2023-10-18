@@ -39,28 +39,20 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new NoPriceException(price);
-        }
-
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new NotExistsMenuGroupException(menu.getMenuGroupId());
         }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
+        // 전달받은 product가 있는지 검증 -> 서비스 책임
+        // 전달받은 product의 가격 합 검증 -> 도메인 책임
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            productDao.findById(menuProduct.getProductId())
                     .orElseThrow(() -> new NotExistsProductException(menuProduct.getProductId()));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
+        } // repository에서 수정 필요
 
-        if (price.compareTo(sum) > 0) {
-            throw new PriceMoreThanProductsException(price, sum);
-        }
 
         final Menu savedMenu = menuDao.save(menu);
 

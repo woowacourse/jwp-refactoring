@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.exception.MenuServiceException.NotExistsMenuGroupException;
 import kitchenpos.application.exception.MenuServiceException.NotExistsProductException;
-import kitchenpos.application.exception.MenuServiceException.PriceMoreThanProductsException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -22,6 +21,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.MenuException.PriceMoreThanProductsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,18 +113,6 @@ class MenuServiceTest {
                 () -> verify(menuProductDao, times(1)).save(menuProduct1),
                 () -> verify(menuProductDao, times(1)).save(menuProduct2)
         );
-    }
-
-    @Test
-    @DisplayName("메뉴의 가격이 전체 상품의 가격보다 크면 예외가 발생한다.")
-    void create_fail_price3() {
-        menu.setPrice(BigDecimal.valueOf(PRODUCT1_PRICE * PRODUCT1_QUANTITY + PRODUCT2_PRICE * PRODUCT2_QUANTITY + 1));
-        when(menuGroupDao.existsById(menu.getMenuGroupId())).thenReturn(true);
-        when(productDao.findById(menuProduct1.getProductId())).thenReturn(Optional.ofNullable(product1));
-        when(productDao.findById(menuProduct2.getProductId())).thenReturn(Optional.ofNullable(product2));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(PriceMoreThanProductsException.class);
     }
 
     @Test

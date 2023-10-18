@@ -1,5 +1,7 @@
 package kitchenpos.application.exception;
 
+import kitchenpos.domain.exception.KitchenPosException;
+
 public class TableGroupServiceException extends KitchenPosException {
 
     public TableGroupServiceException(final String message) {

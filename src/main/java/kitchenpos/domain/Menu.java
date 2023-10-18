@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.application.exception.MenuServiceException.PriceMoreThanProductsException;
+import kitchenpos.domain.exception.MenuException.PriceMoreThanProductsException;
 
 @Entity
 public class Menu {

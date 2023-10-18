@@ -1,6 +1,8 @@
 package kitchenpos.application.exception;
 
-public class TableServiceException extends KitchenPosException{
+import kitchenpos.domain.exception.KitchenPosException;
+
+public class TableServiceException extends KitchenPosException {
 
     public TableServiceException(String message) {
         super(message);

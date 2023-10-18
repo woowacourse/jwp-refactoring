@@ -43,4 +43,13 @@ class PriceTest {
 
         assertThat(price1.equals(price2)).isEqualTo(expected);
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {"100,101,false", "100,100,false", "101,100,true"})
+    @DisplayName("현재가격이 주어진 가격보다 더 큰지를 알 수 있다.")
+    void isBiggerThan(BigDecimal one, BigDecimal other, boolean expected) {
+        Price price = Price.from(one);
+
+        assertThat(price.isBiggerThan(other)).isEqualTo(expected);
+    }
 }
