@@ -15,13 +15,6 @@ public class DataTestExecutionListener extends AbstractTestExecutionListener {
         truncateTables(jdbcTemplate, truncateQueries);
     }
 
-    @Override
-    public void afterTestMethod(final TestContext testContext) {
-        final JdbcTemplate jdbcTemplate = getJdbcTemplate(testContext);
-        final List<String> truncateQueries = getTruncateQueries(jdbcTemplate);
-        truncateTables(jdbcTemplate, truncateQueries);
-    }
-
     private List<String> getTruncateQueries(final JdbcTemplate jdbcTemplate) {
         return jdbcTemplate.queryForList(
                 "SELECT Concat('TRUNCATE TABLE ', TABLE_NAME, ';') AS q " +

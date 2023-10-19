@@ -2,7 +2,6 @@ package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
 import kitchenpos.config.JpaConfig;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -28,12 +27,10 @@ import org.springframework.test.context.TestExecutionListeners;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @DataJpaTest
-@Import({DaoConfig.class, JpaConfig.class}) // TODO: jpa로 다 변환하고 dao config 제거하기
+@Import(JpaConfig.class) // TODO: jpa로 다 변환하고 dao config 제거하기
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
 
@@ -51,9 +48,6 @@ public class ServiceTestConfig {
 
     @Autowired
     protected OrderRepository orderRepository;
-
-    @Autowired
-    protected OrderLineItemDao orderLineItemDao;
 
     @Autowired
     protected OrderTableRepository orderTableRepository;
