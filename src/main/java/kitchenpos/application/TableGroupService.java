@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Transactional(readOnly = true)
 @Service
 public class TableGroupService {
 
