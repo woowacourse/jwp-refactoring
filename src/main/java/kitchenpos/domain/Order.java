@@ -27,7 +27,6 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-
     protected Order() {
     }
 
@@ -56,18 +55,18 @@ public class Order {
         this.orderStatus = changedOrderStatus;
     }
 
-    public boolean isNotCompletion() {
-        return orderStatus != OrderStatus.COMPLETION;
-    }
-
     private void validate(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블은 주문 받을 수 없습니다.");
         }
     }
 
+    public boolean isNotCompletion() {
+        return orderStatus.isNotCompletion();
+    }
+
     private boolean isCompletion() {
-        return orderStatus == OrderStatus.COMPLETION;
+        return orderStatus.isCompletion();
     }
 
     public Long getId() {
