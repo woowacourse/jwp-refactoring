@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-public class JdbcTemplateMenuDaoTest {
+public class JdbcTemplateMenuRepositoryTest {
 
     @Autowired
-    private JdbcTemplateMenuDao menuDao;
+    private JdbcTemplateMenuRepository menuDao;
 
     private Menu menu;
 

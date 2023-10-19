@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.assertj.core.api.SoftAssertions;
@@ -28,18 +28,18 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
         tableGroup = tableGroupDao.save(TableGroupFixture.테이블그룹_생성(LocalDateTime.now(), null));
-        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, true));
-        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, true));
+        OrderTable orderTable1 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, true));
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
     }
 
@@ -78,8 +78,8 @@ class TableGroupServiceTest {
     @Test
     void 테이블그룹_생성시_테이블이_비워져있지_않으면_예외가_발생한다() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, false));
-        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, false));
+        OrderTable orderTable1 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, false));
+        OrderTable orderTable2 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, false));
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
         // when & then
@@ -90,8 +90,8 @@ class TableGroupServiceTest {
     @Test
     void 테이블그룹_생성시_테이블_이미_그룹화되어있으면_예외가_발생한다() {
         // given
-        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.주문테이블(tableGroup.getId(), 0, true));
-        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.주문테이블(tableGroup.getId(), 0, true));
+        OrderTable orderTable1 = orderTableRepository.save(OrderTableFixture.주문테이블(tableGroup.getId(), 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(OrderTableFixture.주문테이블(tableGroup.getId(), 0, true));
         tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
         // when & then

@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.order.OrderDao;
+import kitchenpos.domain.order.OrderLineItemRepository;
+import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -41,27 +41,27 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private Order order;
     private OrderLineItem orderLineItem;
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.음료());
-        Menu menu = menuDao.save(MenuFixture.아메리카노(menuGroup.getId(), null));
-        OrderTable orderTable = orderTableDao.save(OrderTableFixture.주문테이블(null, 0, false));
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.음료());
+        Menu menu = menuRepository.save(MenuFixture.아메리카노(menuGroup.getId(), null));
+        OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, false));
         order = orderDao.save(OrderFixture.주문(orderTable.getId(), "COOKING", now(), null));
-        orderLineItem = orderLineItemDao.save(OrderLineItemFixture.메뉴와_수량으로_주문_생성(order.getId(), menu.getId(), 3));
+        orderLineItem = orderLineItemRepository.save(OrderLineItemFixture.메뉴와_수량으로_주문_생성(order.getId(), menu.getId(), 3));
         order.setOrderLineItems(List.of(orderLineItem));
     }
 

@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class JdbcTemplateMenuGroupDaoTest {
+class JdbcTemplateMenuGroupRepositoryTest {
 
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private JdbcTemplateMenuGroupRepository menuGroupDao;
 
     private MenuGroup menuGroup;
 

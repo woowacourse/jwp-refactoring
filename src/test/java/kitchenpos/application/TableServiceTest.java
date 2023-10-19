@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderDao;
+import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
@@ -33,10 +33,10 @@ class TableServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupDao;
 
     private OrderTable orderTable;
 
@@ -104,7 +104,7 @@ class TableServiceTest {
         savedOrderTable.setTableGroupId(tableGroup.getId());
 
         // when
-        OrderTable savedOrderTableWithGroup = orderTableDao.save(savedOrderTable);
+        OrderTable savedOrderTableWithGroup = orderTableRepository.save(savedOrderTable);
         savedOrderTableWithGroup.setEmpty(false);
 
         // then

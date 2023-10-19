@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProductRepository;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -35,21 +35,21 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     private Menu menu;
 
     @BeforeEach
     void setUp() {
-        Product product = productDao.save(ProductFixture.아메리카노());
-        MenuProduct menuProduct = menuProductDao.save(MenuProductFixture.메뉴_재고(1L, product.getId(), 3));
-        MenuGroup menuGroup = menuGroupDao.save(MenuGroupFixture.음료());
+        Product product = productRepository.save(ProductFixture.아메리카노());
+        MenuProduct menuProduct = menuProductRepository.save(MenuProductFixture.메뉴_재고(1L, product.getId(), 3));
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.음료());
         menu = MenuFixture.아메리카노(menuGroup.getId(), List.of(menuProduct));
     }
 

@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;

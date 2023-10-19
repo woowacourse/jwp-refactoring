@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -21,10 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class JdbcTemplateProductDaoTest {
+class JdbcTemplateProductRepositoryTest {
 
     @Autowired
-    private JdbcTemplateProductDao productDao;
+    private JdbcTemplateProductRepository productDao;
 
     private Product product;
 

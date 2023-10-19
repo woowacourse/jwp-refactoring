@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;

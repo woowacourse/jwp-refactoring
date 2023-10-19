@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;

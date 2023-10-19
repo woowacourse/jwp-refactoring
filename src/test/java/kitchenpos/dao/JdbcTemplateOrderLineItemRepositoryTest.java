@@ -1,7 +1,7 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JdbcTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class JdbcTemplateOrderLineItemDaoTest {
+class JdbcTemplateOrderLineItemRepositoryTest {
 
     @Autowired
-    private JdbcTemplateOrderLineItemDao orderLineItemDao;
+    private JdbcTemplateOrderLineItemRepository orderLineItemDao;
 
     @Autowired
     private JdbcTemplateOrderDao orderDao;

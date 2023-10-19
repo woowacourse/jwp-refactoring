@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,14 +17,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
+public class JdbcTemplateMenuGroupRepository implements MenuGroupRepository {
     private static final String TABLE_NAME = "menu_group";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateMenuGroupDao(final DataSource dataSource) {
+    public JdbcTemplateMenuGroupRepository(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
