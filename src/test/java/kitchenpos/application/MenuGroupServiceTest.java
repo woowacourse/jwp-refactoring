@@ -22,8 +22,7 @@ class MenuGroupServiceTest {
     @Test
     void createMenuGroup() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("주인장 최애 메뉴");
+        final MenuGroup menuGroup = new MenuGroup("주인장 최애 메뉴");
 
         // when
         final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
