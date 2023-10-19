@@ -71,15 +71,15 @@ class OrderServiceTest extends OrderServiceFixture {
         given(menuDao.countByIdIn(any())).willReturn(2L);
         given(orderTableDao.findById(eq(유효하지_않은_주문_테이블_아이디))).willThrow(IllegalArgumentException.class);
 
-        assertThatThrownBy(() -> orderService.create(유효하지_않은_주문테이블_아이디를_갖는_주문));
+        assertThatThrownBy(() -> orderService.create(유효하지_않은_주문_테이블_아이디를_갖는_주문));
     }
 
     @Test
     void 주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다() {
         given(menuDao.countByIdIn(any())).willReturn(2L);
-        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디를_갖는_주문.getOrderTableId()))).willReturn(Optional.of(empty가_true인_주문테이블));
+        given(orderTableDao.findById(eq(유효하지_않은_주문_테이블_아이디를_갖는_주문.getOrderTableId()))).willReturn(Optional.of(empty가_true인_주문_테이블));
 
-        assertThatThrownBy(() -> orderService.create(유효하지_않은_주문테이블_아이디를_갖는_주문));
+        assertThatThrownBy(() -> orderService.create(유효하지_않은_주문_테이블_아이디를_갖는_주문));
     }
 
     @Test

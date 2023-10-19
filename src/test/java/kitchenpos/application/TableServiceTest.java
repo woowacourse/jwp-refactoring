@@ -34,20 +34,20 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 테이블을_등록할_수_있다() {
-        given(orderTableDao.save(요청한_주문테이블)).willReturn(생성한_주문테이블);
+        given(orderTableDao.save(요청한_주문_테이블)).willReturn(생성한_주문_테이블);
 
-        final OrderTable actual = tableService.create(요청한_주문테이블);
+        final OrderTable actual = tableService.create(요청한_주문_테이블);
 
-        assertThat(actual).isEqualTo(생성한_주문테이블);
+        assertThat(actual).isEqualTo(생성한_주문_테이블);
     }
 
     @Test
     void 모든_테이블을_조회한다() {
-        given(orderTableDao.findAll()).willReturn(생성한_주문테이블_리스트);
+        given(orderTableDao.findAll()).willReturn(생성한_주문_테이블_리스트);
 
         final List<OrderTable> actual = orderTableDao.findAll();
 
-        assertThat(actual).hasSize(생성한_주문테이블_리스트.size());
+        assertThat(actual).hasSize(생성한_주문_테이블_리스트.size());
     }
 
     @Test
@@ -70,7 +70,7 @@ class TableServiceTest extends TableServiceFixture {
     }
 
     @Test
-    void 테이블_아이디가_그룹_테이블에_포함되어_있다면_예외가_발생한다() {
+    void 주문_테이블_아이디가_그룹_테이블에_포함되어_있다면_예외가_발생한다() {
         given(orderTableDao.findById(eq(그룹테이블에_포함된_테이블.getId()))).willReturn(Optional.of(그룹테이블에_포함된_테이블));
 
         assertThatThrownBy(() -> tableService.changeEmpty(그룹테이블에_포함된_테이블.getId(), 그룹테이블에_포함된_테이블))
@@ -104,9 +104,9 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 유효하지_않은_주문_테이블_아이디를_전달_받은_경우_손님수를_변경하면_예외가_발생한다() {
-        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디))).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_주문_테이블_아이디))).willThrow(IllegalArgumentException.class);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(유효하지_않은_주문테이블_아이디, 유효하지_않은_주문테이블_아이디를_갖는_주문테이블))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(유효하지_않은_주문_테이블_아이디, 유효하지_않은_주문_테이블_아이디를_갖는_주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

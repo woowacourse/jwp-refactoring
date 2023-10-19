@@ -20,8 +20,8 @@ public class OrderServiceFixture {
     protected OrderLineItem 저장한_두번째_주문항목;
     protected Order 주문항목이_1개_미만인_주문;
     protected Order 주문항목이_2개인_주문;
-    protected Order 유효하지_않은_주문테이블_아이디를_갖는_주문;
-    protected OrderTable empty가_true인_주문테이블;
+    protected Order 유효하지_않은_주문_테이블_아이디를_갖는_주문;
+    protected OrderTable empty가_true인_주문_테이블;
     protected List<Order> 저장된_주문_리스트;
     protected Order 상태를_변경할_식사중인_주문;
     protected Order 식사중에서_완료로_상태변경된_주문;
@@ -67,17 +67,17 @@ public class OrderServiceFixture {
 
         // 유효하지_않은_주문_테이블_아이디라면_예외가_발생한다
         유효하지_않은_주문_테이블_아이디 = -999L;
-        유효하지_않은_주문테이블_아이디를_갖는_주문 = new Order();
-        유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderTableId(유효하지_않은_주문_테이블_아이디);
-        유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        유효하지_않은_주문_테이블_아이디를_갖는_주문 = new Order();
+        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderTableId(유효하지_않은_주문_테이블_아이디);
+        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
 
         // 주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다
-        empty가_true인_주문테이블 = new OrderTable();
-        empty가_true인_주문테이블.setId(1L);
-        empty가_true인_주문테이블.setEmpty(true);
-        유효하지_않은_주문테이블_아이디를_갖는_주문 = new Order();
-        유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderTableId(empty가_true인_주문테이블.getId());
-        유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        empty가_true인_주문_테이블 = new OrderTable();
+        empty가_true인_주문_테이블.setId(1L);
+        empty가_true인_주문_테이블.setEmpty(true);
+        유효하지_않은_주문_테이블_아이디를_갖는_주문 = new Order();
+        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderTableId(empty가_true인_주문_테이블.getId());
+        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
 
         // 모든 주문내역 조회
         저장된_주문_리스트 = List.of(저장한_주문);
