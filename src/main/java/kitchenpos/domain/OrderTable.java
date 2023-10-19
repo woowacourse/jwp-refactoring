@@ -26,6 +26,14 @@ public class OrderTable {
     protected OrderTable() {
     }
 
+    public void assignTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+    }
+
     public Long getId() {
         return id;
     }

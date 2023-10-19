@@ -7,11 +7,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     default Order getById(Long id) {
         return findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 주문이 존재하지 않습니다."));
-    };
+    }
 
     List<Order> findAll();
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
+    List<Order> findAllByOrderTableIn(List<OrderTable> orderTables);
 }

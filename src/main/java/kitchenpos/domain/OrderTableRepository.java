@@ -7,9 +7,17 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     default OrderTable getById(Long id) {
         return findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 주문 테이블이 없습니다."));
-    };
+    }
 
     List<OrderTable> findAll();
+
+    default List<OrderTable> getAllByIdIn(List<Long> ids) {
+        List<OrderTable> orderTables = findAllByIdIn(ids);
+        if (orderTables.size() != ids.size()) {
+            throw new IllegalArgumentException("존재하지 않는 주문 테이블의 ID가 포함되어 있습니다.");
+        }
+        return orderTables;
+    }
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
 

@@ -89,4 +89,10 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
+
+    public void checkOrderStatusIsCompletion() {
+        if (orderStatus == OrderStatus.MEAL || orderStatus == OrderStatus.COOKING) {
+            throw new IllegalStateException("주문 상태가 주문 완료가 아닙니다.");
+        }
+    }
 }
