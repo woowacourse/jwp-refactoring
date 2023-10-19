@@ -3,20 +3,19 @@ package kitchenpos.product.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.product.application.dto.ProductCreateRequest;
-import kitchenpos.product.application.dto.ProductPersistence;
 import kitchenpos.product.application.dto.ProductQueryResponse;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.persistence.ProductDao;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
 
-  private final ProductDao productDao;
+  private final ProductRepository productRepository;
 
-  public ProductService(final ProductDao productDao) {
-    this.productDao = productDao;
+  public ProductService(final ProductRepository productRepository) {
+    this.productRepository = productRepository;
   }
 
   @Transactional
@@ -24,14 +23,14 @@ public class ProductService {
     final Product product = request.toProduct();
     product.validatePrice();
 
-    return ProductQueryResponse.of(productDao.save(ProductPersistence.from(product)).toProduct());
+    return ProductQueryResponse.of(productRepository.save(product));
   }
 
   public List<ProductQueryResponse> list() {
-    return productDao.findAll()
+    return productRepository.findAll()
         .stream()
         .map(product -> new ProductQueryResponse(product.getId(), product.getName(),
-            product.getPrice()))
+            product.getPrice().getValue()))
         .collect(Collectors.toList());
   }
 }
