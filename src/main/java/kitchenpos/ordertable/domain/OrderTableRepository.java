@@ -1,11 +1,11 @@
 package kitchenpos.ordertable.domain;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
+public interface OrderTableRepository extends Repository<OrderTable, Long> {
 
     OrderTable save(OrderTable entity);
 
