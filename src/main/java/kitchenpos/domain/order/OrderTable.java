@@ -88,8 +88,9 @@ public class OrderTable {
     public void ungroup() {
         for (Order order : orders) {
             validateOrderStatus(order);
-            tableGroup = null;
         }
+        empty = false;
+        tableGroup = null;
     }
 
     public void validateOrderStatus(Order order) {
