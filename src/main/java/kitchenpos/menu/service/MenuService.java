@@ -1,5 +1,6 @@
 package kitchenpos.menu.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,21 +67,34 @@ public class MenuService {
     private MenuProduct saveMenuProduct(Menu menu, MenuProductRequest menuProductRequest) {
         Product product = productRepository.findById(menuProductRequest.getProductId())
                 .orElseThrow(ProductNotFoundException::new);
-        MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
+        MenuProduct menuProduct = new MenuProduct(product.getId(), menu, menuProductRequest.getQuantity());
 
         return menuProductRepository.save(menuProduct);
     }
 
     private void validateMenuPriceIsNotBiggerThanActualPrice(Menu menu, List<MenuProduct> menuProducts) {
-        Money actualPrice = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .map(Money::new)
-                .reduce(Money::add)
-                .orElse(Money.ZERO);
+        Money actualPrice = calculateActualPrice(menuProducts);
 
         if (menu.hasPriceGreaterThan(actualPrice)) {
             throw new MenuPriceIsBiggerThanActualPriceException();
         }
+    }
+
+    private Money calculateActualPrice(List<MenuProduct> menuProducts) {
+        Money actualPrice = Money.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            BigDecimal menuProductPrice = calculateMenuProductPrice(menuProduct);
+            actualPrice = actualPrice.add(new Money(menuProductPrice));
+        }
+        return actualPrice;
+    }
+
+    private BigDecimal calculateMenuProductPrice(MenuProduct menuProduct) {
+        Product product = productRepository.findById(menuProduct.getProductId())
+                .orElseThrow(ProductNotFoundException::new);
+
+        return product.getPrice()
+                .multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
     }
 
     public List<MenuResponse> findAll() {
