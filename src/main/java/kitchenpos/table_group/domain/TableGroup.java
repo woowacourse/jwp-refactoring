@@ -18,6 +18,15 @@ public class TableGroup {
     this.orderTables = orderTables;
   }
 
+  public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    this.createdDate = createdDate;
+    this.orderTables = orderTables;
+  }
+
+  public TableGroup(final LocalDateTime createdDate) {
+    this.createdDate = createdDate;
+  }
+
   public TableGroup(final Long id, final LocalDateTime createdDate) {
     this(id, createdDate, new ArrayList<>());
   }

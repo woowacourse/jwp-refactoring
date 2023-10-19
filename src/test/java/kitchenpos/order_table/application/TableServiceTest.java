@@ -4,7 +4,6 @@ import static kitchenpos.fixture.OrderFixture.getOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.application.OrderService;
@@ -15,7 +14,7 @@ import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.TableGroupService;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -99,14 +98,17 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블이 속한 단체 테이블이 있으면 예외를 반환한다.")
   void changeEmpty_fail_in_tableGroup() {
     //given
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
-        List.of(table1, table2));
-    tableGroupService.create(tableGroup);
+    final TableGroupCreateRequest request1 = new TableGroupCreateRequest(
+        List.of(
+            new kitchenpos.table_group.application.dto.OrderTableCreateRequest(table1.getId()),
+            new kitchenpos.table_group.application.dto.OrderTableCreateRequest(table2.getId())
+        ));
+    tableGroupService.create(request1);
 
-    final OrderTableEmptyModifyRequest request = new OrderTableEmptyModifyRequest(false);
+    final OrderTableEmptyModifyRequest request2 = new OrderTableEmptyModifyRequest(false);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), request);
+    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), request2);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);

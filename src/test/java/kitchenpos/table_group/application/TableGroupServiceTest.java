@@ -9,9 +9,12 @@ import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.persistence.OrderDao;
+import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.table_group.application.dto.OrderTableCreateRequest;
+import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
+import kitchenpos.table_group.application.dto.TableGroupQueryResponse;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,14 +47,17 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 등록할 수 있다.")
   void create_success() {
     //given
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
-        List.of(table1, table2));
+    final TableGroupCreateRequest request = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId()),
+            new OrderTableCreateRequest(table2.getId())
+        ));
 
     //when
-    final TableGroup actual = tableGroupService.create(tableGroup);
+    final TableGroupQueryResponse actual = tableGroupService.create(request);
     final Long emptyTableCount = actual.getOrderTables()
         .stream()
-        .filter(OrderTable::isEmpty)
+        .filter(OrderTableQueryResponse::isEmpty)
         .count();
 
     //then
@@ -66,10 +72,13 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 등록할 때 주문 테이블의 수가 2 미만이면 예외를 반환한다.")
   void create_fail_not_multiple_orderTable() {
     //given
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(), List.of(table1));
+    final TableGroupCreateRequest request = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId())
+        ));
 
     //when
-    final ThrowingCallable actual = () -> tableGroupService.create(tableGroup);
+    final ThrowingCallable actual = () -> tableGroupService.create(request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -79,12 +88,15 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 등록할 때 존재하지 않는 테이블이 포함되어 있다면 예외를 반환한다.")
   void create_fail_not_exist_orderTable() {
     //given
-    final OrderTable notExistTable = new OrderTable(999L, null);
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
-        List.of(table1, notExistTable));
+
+    final TableGroupCreateRequest request = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId()),
+            new OrderTableCreateRequest(999L)
+        ));
 
     //when
-    final ThrowingCallable actual = () -> tableGroupService.create(tableGroup);
+    final ThrowingCallable actual = () -> tableGroupService.create(request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -94,13 +106,17 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 등록할 때 비어있지 않은 테이블을 포함하고 있으면 예외를 반환한다.")
   void create_fail_not_empty_table() {
     //given
-    final OrderTable notEmptyTable1 = orderTableDao.save(
+    orderTableDao.save(
         new OrderTable(table1.getId(), null, 0, false));
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
-        List.of(notEmptyTable1, table2));
+
+    final TableGroupCreateRequest request = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId()),
+            new OrderTableCreateRequest(table2.getId())
+        ));
 
     //when
-    final ThrowingCallable actual = () -> tableGroupService.create(tableGroup);
+    final ThrowingCallable actual = () -> tableGroupService.create(request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -110,13 +126,20 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 등록할 때 이미 다른 단체 테이블에 포함된 테이블이 포함되어 있으면 예외를 반환한다.")
   void create_fail_already_in_other_tableGroup() {
     //given
-    final TableGroup tableGroup1 = new TableGroup(null, LocalDateTime.now(),
-        List.of(table1, table2));
-    final TableGroup tableGroup2 = new TableGroup(null, LocalDateTime.now(),
-        List.of(table2, table3));
-    tableGroupService.create(tableGroup1);
+    final TableGroupCreateRequest request1 = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId()),
+            new OrderTableCreateRequest(table2.getId())
+        ));
+    final TableGroupCreateRequest request2 = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table2.getId()),
+            new OrderTableCreateRequest(table3.getId())
+        ));
+    tableGroupService.create(request1);
+
     //when
-    final ThrowingCallable actual = () -> tableGroupService.create(tableGroup2);
+    final ThrowingCallable actual = () -> tableGroupService.create(request2);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -126,9 +149,12 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 삭제할 수 있다.")
   void ungroup_success() {
     //given
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
-        List.of(table1, table2));
-    final Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+    final TableGroupCreateRequest request = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId()),
+            new OrderTableCreateRequest(table2.getId())
+        ));
+    final Long savedTableGroupId = tableGroupService.create(request).getId();
 
     //when
     final Executable actual = () -> tableGroupService.ungroup(savedTableGroupId);
@@ -147,10 +173,13 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @DisplayName("단체 테이블을 삭제할 때 테이블들의 주문들 중 계산이 완료되지 않은 주문이 있으면 예외를 반환한다.")
   void ungroup_fail_not_COMPLETION_order() {
     //given
-    final TableGroup tableGroup = new TableGroup(null, LocalDateTime.now(),
-        List.of(table1, table2));
+    final TableGroupCreateRequest request = new TableGroupCreateRequest(
+        List.of(
+            new OrderTableCreateRequest(table1.getId()),
+            new OrderTableCreateRequest(table2.getId())
+        ));
 
-    final Long savedTableGroupId = tableGroupService.create(tableGroup).getId();
+    final Long savedTableGroupId = tableGroupService.create(request).getId();
 
     final Order order = new Order(null, table1.getId(), OrderStatus.COOKING.name(),
         LocalDateTime.now());

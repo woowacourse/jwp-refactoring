@@ -7,8 +7,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.persistence.OrderDao;
+import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
+import kitchenpos.table_group.application.dto.OrderTableCreateRequest;
+import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
+import kitchenpos.table_group.application.dto.TableGroupQueryResponse;
 import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.table_group.persistence.TableGroupDao;
 import org.springframework.stereotype.Service;
@@ -30,15 +34,15 @@ public class TableGroupService {
   }
 
   @Transactional
-  public TableGroup create(final TableGroup tableGroup) {
-    final List<OrderTable> orderTables = tableGroup.getOrderTables();
+  public TableGroupQueryResponse create(final TableGroupCreateRequest tableGroup) {
+    final List<OrderTableCreateRequest> orderTables = tableGroup.getOrderTables();
 
     if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
       throw new IllegalArgumentException();
     }
 
     final List<Long> orderTableIds = orderTables.stream()
-        .map(OrderTable::getId)
+        .map(OrderTableCreateRequest::getId)
         .collect(Collectors.toList());
 
     final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
@@ -54,7 +58,7 @@ public class TableGroupService {
     }
 
     final TableGroup savedTableGroup = tableGroupDao.save(
-        new TableGroup(tableGroup.getId(), LocalDateTime.now(), orderTables));
+        new TableGroup(LocalDateTime.now()));
     final Long tableGroupId = savedTableGroup.getId();
 
     final List<OrderTable> orderTables2 = savedOrderTables.stream()
@@ -69,7 +73,12 @@ public class TableGroupService {
     for (final OrderTable savedOrderTable : orderTables2) {
       orderTableDao.save(savedOrderTable);
     }
-    return new TableGroup(savedTableGroup.getId(), savedTableGroup.getCreatedDate(), orderTables2);
+    final List<OrderTableQueryResponse> orderTableQueryResponses =
+        orderTables2.stream()
+            .map(OrderTableQueryResponse::from)
+            .collect(Collectors.toList());
+    return new TableGroupQueryResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
+        orderTableQueryResponses);
   }
 
   @Transactional
