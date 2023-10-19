@@ -7,7 +7,7 @@
 - [x] menu group
 - [x] menu
 - [x] menu product
-- [ ] table group
+- [x] table group
 - [ ] order table
 - [ ] order
 - [ ] order line item

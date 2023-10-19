@@ -2,11 +2,8 @@ package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
 import kitchenpos.config.JpaConfig;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -19,12 +16,16 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ import java.util.List;
 @Import({DaoConfig.class, JpaConfig.class}) // TODO: jpa로 다 변환하고 dao config 제거하기
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
+
+    @PersistenceContext
+    protected EntityManager em;
 
     @Autowired
     protected ProductRepository productRepository;
@@ -51,10 +55,10 @@ public class ServiceTestConfig {
     protected OrderLineItemDao orderLineItemDao;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
 
     protected Product saveProduct() {
         final Product product = new Product("여우가 좋아하는 피자", new Price(BigDecimal.valueOf(10000)));
@@ -81,25 +85,26 @@ public class ServiceTestConfig {
         return orderDao.save(order);
     }
 
-    protected OrderTable saveOrderTable(final TableGroup tableGroup) {
+    protected OrderTable saveOccupiedOrderTable() {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(2);
         orderTable.setEmpty(false);
-        orderTable.setTableGroupId(tableGroup.getId());
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
-    protected OrderTable saveOrderTable() {
+    protected OrderTable saveEmptyOrderTable() {
         final OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
-        return orderTableDao.save(orderTable);
+        orderTable.setEmpty(true);
+        return orderTableRepository.save(orderTable);
     }
 
-    protected TableGroup saveTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
+    protected TableGroup saveTableGroup(List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup(orderTables);
+        // TODO: em 사용해보기, setter 제거
+        orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
         tableGroup.setCreatedDate(LocalDateTime.now().minusMinutes(30));
-        return tableGroupDao.save(tableGroup);
+        return tableGroupRepository.save(tableGroup);
     }
 
     // TODO: 사용하지 않으면 삭제

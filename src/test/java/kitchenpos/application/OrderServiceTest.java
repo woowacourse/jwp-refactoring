@@ -6,7 +6,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +25,7 @@ class OrderServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderDao, orderLineItemDao, orderTableDao);
+        orderService = new OrderService(menuRepository, orderDao, orderLineItemDao, orderTableRepository);
     }
 
     @DisplayName("주문 생성")
@@ -36,8 +35,7 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final OrderTable orderTable = saveOccupiedOrderTable();
 
             final Order orderInput = new Order();
             orderInput.setOrderTableId(orderTable.getId());
@@ -65,8 +63,7 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_OrderLineItems_is_empty() {
             // given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final OrderTable orderTable = saveOccupiedOrderTable();
 
             final Order orderInput = new Order();
             orderInput.setOrderTableId(orderTable.getId());
@@ -81,8 +78,7 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_not_exist_menu_in_orderLineItems() {
             // given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final OrderTable orderTable = saveOccupiedOrderTable();
 
             final Order orderInput = new Order();
             orderInput.setOrderTableId(orderTable.getId());
@@ -115,15 +111,11 @@ class OrderServiceTest extends ServiceTestConfig {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("OrderTable 이 주문을 등록할 수 없는 상태면 실패한다.")
+        @DisplayName("OrderTable 이 빈 테이블이면 실패한다.")
         @Test
         void fail_if_orderTable_is_empty() {
             // given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(2);
-            orderTable.setEmpty(true);
-            orderTable.setTableGroupId(tableGroup.getId());
+            final OrderTable orderTable = saveEmptyOrderTable();
 
             final Order orderInput = new Order();
             orderInput.setOrderTableId(orderTable.getId());
@@ -148,8 +140,7 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final OrderTable orderTable = saveEmptyOrderTable();
             final Order savedOrder = saveOrder(orderTable);
 
             // when
@@ -171,8 +162,7 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             //given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final OrderTable orderTable = saveEmptyOrderTable();
             final Order order = saveOrder(orderTable);
 
             final Order changing = new Order();
@@ -201,8 +191,7 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_order_status_of_original_order_is_complete() {
             //given
-            final TableGroup tableGroup = saveTableGroup();
-            final OrderTable orderTable = saveOrderTable(tableGroup);
+            final OrderTable orderTable = saveEmptyOrderTable();
             final Order order = saveOrder(orderTable);
             order.setOrderStatus(OrderStatus.COMPLETION.name());
             final Order completedOrder = orderDao.save(order);

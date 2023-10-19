@@ -26,3 +26,36 @@
 - 요청과 응답 DTO는 ui 패키지에 위치한다.
 - 클라이언트 <-> controller 간의 요청과 응답으로 간주한다.
 - 만약 controller <-> service 간의 DTO가 필요하면 application 패키지에 DTO를 생성한다.
+
+## API 수정 사항
+_23/10/19_
+### `GET /api/menus` 
+API 응답에 menuProducts 안에 불필요한 menuId 제거
+#### 변경 전
+
+
+#### 변경 후
+
+<br>
+
+### `POST /api/table-groups` 
+API 요청에 id를 객체로 감싸놓은 것을 언박싱
+#### 변경 전
+```json
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+```
+#### 변경 후
+```json
+{
+  "orderTableIds": [1, 2]
+}
+```

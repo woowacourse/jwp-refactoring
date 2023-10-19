@@ -2,12 +2,14 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -18,7 +20,7 @@ class TableServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
+        tableService = new TableService(orderDao, orderTableRepository);
     }
 
     @DisplayName("주문 테이블 생성")
@@ -50,7 +52,7 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final OrderTable savedOrderTable = saveOrderTable(saveTableGroup());
+            final OrderTable savedOrderTable = saveOccupiedOrderTable();
 
             // when
             final List<OrderTable> actual = tableService.list();
@@ -71,7 +73,7 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable savedOrderTable = saveOccupiedOrderTable();
             final OrderTable changing = new OrderTable();
             changing.setEmpty(false);
 
@@ -101,12 +103,15 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_tableGroup_is_exist() {
             // given
-            final OrderTable savedOrderTable = saveOrderTable(saveTableGroup());
+            final OrderTable orderTable1 = saveEmptyOrderTable();
+            final OrderTable orderTable2 = saveEmptyOrderTable();
+            saveTableGroup(List.of(orderTable1, orderTable2));
+
             final OrderTable changing = new OrderTable();
             changing.setEmpty(false);
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changing))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), changing))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,7 +119,7 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_orderStatus_is_not_COMPLETION() {
             // given
-            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable savedOrderTable = saveOccupiedOrderTable();
             saveOrder(savedOrderTable);
             final OrderTable changing = new OrderTable();
             changing.setEmpty(false);
@@ -132,7 +137,7 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable savedOrderTable = saveOccupiedOrderTable();
             final OrderTable changing = new OrderTable();
             changing.setNumberOfGuests(4);
 
@@ -142,7 +147,7 @@ class TableServiceTest extends ServiceTestConfig {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.getTableGroupId()).isEqualTo(changing.getTableGroupId());
+                softly.assertThat(actual.getTableGroup()).isEqualTo(changing.getTableGroup());
             });
         }
 
@@ -150,7 +155,7 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_numberOfGuests_are_under_zero() {
             // given
-            final OrderTable savedOrderTable = saveOrderTable();
+            final OrderTable savedOrderTable = saveOccupiedOrderTable();
             final OrderTable changing = new OrderTable();
             changing.setNumberOfGuests(-1);
 
@@ -175,9 +180,9 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_orderTable_is_empty() {
             // given
-            final OrderTable orderTable = saveOrderTable();
+            final OrderTable orderTable = saveOccupiedOrderTable();
             orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
             final OrderTable changing = new OrderTable();
             changing.setNumberOfGuests(4);
 
