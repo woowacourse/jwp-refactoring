@@ -40,6 +40,18 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
@@ -54,17 +66,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void changeGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public void changeEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 }

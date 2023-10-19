@@ -33,6 +33,10 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public void addOrderTables(final List<OrderTable> toAddOrderTables) {
+        this.orderTables.addAll(toAddOrderTables);
+    }
+
     public Long getId() {
         return id;
     }
@@ -43,9 +47,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void addOrderTables(final List<OrderTable> toAddOrderTables) {
-        this.orderTables.addAll(toAddOrderTables);
     }
 }

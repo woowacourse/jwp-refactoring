@@ -40,6 +40,10 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public void changeOrder(final Order order) {
+        this.order = order;
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -54,9 +58,5 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void changeOrder(final Order order) {
-        this.order = order;
     }
 }

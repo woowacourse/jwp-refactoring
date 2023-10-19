@@ -45,6 +45,10 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public void addMenuProducts(final List<MenuProduct> toAddMenuProducts) {
+        this.menuProducts.addAll(toAddMenuProducts);
+    }
+
     public Long getId() {
         return id;
     }
@@ -63,9 +67,5 @@ public class Menu {
 
     public MenuProducts getMenuProducts() {
         return menuProducts;
-    }
-
-    public void addMenuProducts(final List<MenuProduct> toAddMenuProducts) {
-        this.menuProducts.addAll(toAddMenuProducts);
     }
 }
