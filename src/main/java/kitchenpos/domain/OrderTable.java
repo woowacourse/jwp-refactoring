@@ -2,10 +2,12 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.vo.NumberOfGuests;
 
 @Entity
 public class OrderTable {
@@ -16,7 +18,9 @@ public class OrderTable {
 
     @Column(name = "table_group_id")
     private Long tableGroupId;
-    private int numberOfGuests;
+
+    @Embedded
+    private NumberOfGuests numberOfGuests;
     private boolean empty;
 
     protected OrderTable() {
@@ -29,7 +33,7 @@ public class OrderTable {
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
     }
 
@@ -42,14 +46,10 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("테이블 인원은 양수여야합니다.");
-        }
-
         if (empty) {
             throw new IllegalArgumentException("비어있는 테이블의 인원을 변경할 수 없습니다.");
         }
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     public void group(TableGroup tableGroup) {
@@ -78,7 +78,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {
