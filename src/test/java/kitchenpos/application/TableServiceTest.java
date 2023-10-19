@@ -14,9 +14,10 @@ import java.util.Optional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableEmptyChangeRequest;
+import kitchenpos.dto.request.OrderTableGuestChangeRequest;
 import kitchenpos.fixture.OrderTableFixture;
-import org.assertj.core.api.Assertions;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -48,20 +49,15 @@ class TableServiceTest {
     @Test
     void 테이블_생성() {
         // given
-        long id = 1L;
-        long tableGroupId = 1L;
-        boolean empty = true;
-        int numberOfGuests = 100;
+        OrderTableCreateRequest request = new OrderTableCreateRequest(100, true);
 
-        OrderTable orderTable = OrderTableFixture.builder()
-            .withId(id)
-            .withTableGroupId(tableGroupId)
-            .withEmpty(empty)
-            .withNumberOfGuests(numberOfGuests)
-            .build();
+        given(orderTableDao.save(any()))
+            .willReturn(
+                OrderTableFixture.builder()
+                    .build());
 
         // when
-        tableService.create(orderTable);
+        tableService.create(request);
 
         // then
         assertSoftly(softAssertions -> {
@@ -69,8 +65,8 @@ class TableServiceTest {
             OrderTable savedOrderTabled = orderTableArgumentCaptor.getValue();
             assertThat(savedOrderTabled.getId()).isNull();
             assertThat(savedOrderTabled.getTableGroupId()).isNull();
-            assertThat(savedOrderTabled.isEmpty()).isEqualTo(empty);
-            assertThat(savedOrderTabled.getNumberOfGuests()).isEqualTo(numberOfGuests);
+            assertThat(savedOrderTabled.isEmpty()).isEqualTo(true);
+            assertThat(savedOrderTabled.getNumberOfGuests()).isEqualTo(100);
         });
     }
 
@@ -82,18 +78,21 @@ class TableServiceTest {
         @Test
         void 존재하지_않는_테이블이면_예외() {
             // given
-            OrderTable reqeustOrderTable = OrderTableFixture.builder().build();
+            OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
+
             given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, reqeustOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_테이블_그룹에_포함되어_있다면_예외() {
             // given
+            OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
+
             OrderTable reqeustOrderTable = OrderTableFixture.builder()
                 .withTableGroupId(1L)
                 .build();
@@ -101,13 +100,15 @@ class TableServiceTest {
                 .willReturn(Optional.of(reqeustOrderTable));
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, reqeustOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_요리중_이거나_식사_중이면_에외() {
             // given
+            OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
+
             OrderTable reqeustOrderTable = OrderTableFixture.builder()
                 .build();
             given(orderTableDao.findById(anyLong()))
@@ -117,7 +118,7 @@ class TableServiceTest {
                 .willReturn(true);
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, reqeustOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -125,17 +126,23 @@ class TableServiceTest {
         void 변경_성공() {
             // given
             boolean changeEmpty = true;
-            OrderTable reqeustOrderTable = OrderTableFixture.builder()
-                .withEmpty(changeEmpty)
-                .build();
+            OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(changeEmpty);
+
             given(orderTableDao.findById(anyLong()))
-                .willReturn(Optional.of(reqeustOrderTable));
+                .willReturn(Optional.of(OrderTableFixture.builder()
+                    .withEmpty(!changeEmpty)
+                    .build()));
 
             given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(false);
 
+            given(orderTableDao.save(any()))
+                .willReturn(OrderTableFixture.builder()
+                    .withEmpty(changeEmpty)
+                    .build());
+
             // when
-            tableService.changeEmpty(orderTableId, reqeustOrderTable);
+            tableService.changeEmpty(orderTableId, request);
 
             // then
             assertSoftly(softAssertions -> {
@@ -154,33 +161,31 @@ class TableServiceTest {
         @Test
         void 손님_수가_음수면_예외() {
             // given
-            OrderTable requestOrderTable = OrderTableFixture.builder()
-                .withNumberOfGuests(-1)
-                .build();
+            OrderTableGuestChangeRequest request = new OrderTableGuestChangeRequest(-1);
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, requestOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_없으면_예외() {
             // given
-            OrderTable requestOrderTable = OrderTableFixture.builder()
-                .withNumberOfGuests(1)
-                .build();
+            OrderTableGuestChangeRequest request = new OrderTableGuestChangeRequest(1);
 
             given(orderTableDao.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, requestOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 빈_주문_테이블의_손님수를_바꾸면_예외() {
             // given
+            OrderTableGuestChangeRequest request = new OrderTableGuestChangeRequest(1);
+
             OrderTable requestOrderTable = OrderTableFixture.builder()
                 .withNumberOfGuests(1)
                 .build();
@@ -192,25 +197,31 @@ class TableServiceTest {
                         .build()));
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, requestOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 변경_성공() {
             // given
+            OrderTableGuestChangeRequest request = new OrderTableGuestChangeRequest(1);
+
             OrderTable requestOrderTable = OrderTableFixture.builder()
                 .withNumberOfGuests(1)
                 .build();
 
+            OrderTable orderTable = OrderTableFixture.builder()
+                .withEmpty(false)
+                .build();
+
             given(orderTableDao.findById(anyLong()))
-                .willReturn(Optional.of(
-                    OrderTableFixture.builder()
-                        .withEmpty(false)
-                        .build()));
+                .willReturn(Optional.of(orderTable));
+
+            given(orderTableDao.save(any()))
+                .willReturn(orderTable);
 
             // when
-            OrderTable actual = tableService.changeNumberOfGuests(orderTableId, requestOrderTable);
+            tableService.changeNumberOfGuests(orderTableId, request);
 
             // then
             assertSoftly(softAssertions -> {

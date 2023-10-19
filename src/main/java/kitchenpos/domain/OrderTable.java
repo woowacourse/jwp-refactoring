@@ -22,6 +22,24 @@ public class OrderTable {
         empty = false;
     }
 
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumbersOfGuests(int numberOfGuests) {
+        validate(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validate(int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블은 손님 수를 바꿀 수 없ㅅ브니다");
+        }
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수는 0보다 커야합니다");
+        }
+    }
+
     public Long getId() {
         return id;
     }
