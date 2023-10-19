@@ -9,6 +9,6 @@ public enum OrderStatus {
         return Arrays.stream(OrderStatus.values())
                 .filter(orderStatus -> orderStatus.name().equalsIgnoreCase(status))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("주문 상태가 존재하지 않습니다."));
     }
 }

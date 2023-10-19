@@ -47,19 +47,19 @@ public class Order {
 
     private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 비어있으면 생성할 수 없다.");
         }
     }
 
     private void validateOrderLineItems(OrderLineItems orderLineItems) {
         if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목이 비어있으면 생성할 수 없다.");
         }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 완료된 주문은 변경할 수 없다.");
         }
         this.orderStatus = orderStatus;
     }

@@ -25,7 +25,7 @@ public class MenuService {
     public Menu create(final Menu menu) {
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 
         return menuDao.save(menu);
