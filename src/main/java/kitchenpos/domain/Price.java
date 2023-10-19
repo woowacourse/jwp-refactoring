@@ -5,12 +5,14 @@ import static kitchenpos.domain.exception.PriceExceptionType.PRICE_IS_NULL;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import kitchenpos.domain.exception.PriceException;
 
 @Embeddable
 public class Price {
 
+    @Column(name = "price")
     private final BigDecimal value;
 
     protected Price() {
@@ -29,6 +31,14 @@ public class Price {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
             throw new PriceException(PRICE_IS_LOWER_THAN_ZERO);
         }
+    }
+
+    public boolean isBigger(final Price price) {
+        return this.value.compareTo(price.value) > 0;
+    }
+
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override
