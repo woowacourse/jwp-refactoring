@@ -1,14 +1,14 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuProductFixture.*;
+import static kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
