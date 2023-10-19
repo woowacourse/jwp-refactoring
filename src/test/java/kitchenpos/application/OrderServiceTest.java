@@ -1,6 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu_group.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order_line_item.OrderLineItem;
+import kitchenpos.domain.order_table.OrderTable;
 import kitchenpos.domain.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,13 +52,14 @@ class OrderServiceTest {
                 .setEmpty(false)
                 .build());
 
-        final List<Order> expect = List.of(orderRepository
-                .save(new OrderBuilder()
-                        .setOrderLineItems(List.of(orderLineItem))
-                        .setOrderTableId(table)
-                        .build()
-                )
-        );
+        final List<Order> expect = orderRepository.findAll();
+        final Order newOrder = new OrderBuilder()
+                .setOrderLineItems(List.of(orderLineItem))
+                .setOrderTableId(table)
+                .build();
+        expect.add(newOrder);
+
+        orderRepository.save(newOrder);
 
         // when
         final List<Order> actual = orderService.list();
