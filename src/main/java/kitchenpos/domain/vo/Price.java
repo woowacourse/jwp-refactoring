@@ -8,13 +8,15 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
+    public static final Price ZERO = new Price("0");
+
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 
     protected Price() {
     }
 
-    protected Price(final BigDecimal value) {
+    public Price(final BigDecimal value) {
         this.value = value;
     }
 
@@ -22,8 +24,12 @@ public class Price {
         this.value = new BigDecimal(value);
     }
 
-    public Price multiply(final BigDecimal other) {
-        return new Price(value.multiply(other));
+    public Price multiply(final Quantity quantity) {
+        return new Price(value.multiply(new BigDecimal(quantity.getValue())));
+    }
+
+    public boolean isGreaterThan(final Price otherPrice) {
+        return value.compareTo(otherPrice.value) == 1;
     }
 
     public BigDecimal getValue() {
@@ -41,12 +47,5 @@ public class Price {
     @Override
     public int hashCode() {
         return Objects.hash(value);
-    }
-
-    @Override
-    public String toString() {
-        return "Price{" +
-               "value=" + value +
-               '}';
     }
 }
