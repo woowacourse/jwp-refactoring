@@ -1,54 +1,49 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
 
-    public MenuProduct() {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private Product product;
+    private int quantity;
+
+    protected MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this(null, null, productId, quantity);
+    public MenuProduct(Product product, int quantity) {
+        this(null, product, quantity);
     }
 
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
-        this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+    public MenuProduct(Long id, Product product, int quantity) {
+        this.id = id;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
+    public BigDecimal getPrice() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Long getId() {
+        return id;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
+    public int getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

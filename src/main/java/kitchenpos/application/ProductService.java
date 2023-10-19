@@ -1,35 +1,27 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import java.util.List;
+import kitchenpos.application.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(Product product) {
-        BigDecimal price = product.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(product);
+    public Product create(ProductCreateRequest request) {
+        return productRepository.save(new Product(request.getName(), request.getPrice()));
     }
 
     public List<Product> list() {
-        return productDao.findAll();
+        return productRepository.findAll();
     }
 }

@@ -5,132 +5,160 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.request.MenuCreateRequest;
+import kitchenpos.application.request.MenuProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.MenuRepository;
+import kitchenpos.persistence.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class MenuServiceTest extends ServiceTest {
+@ServiceTest
+class MenuServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuService menuService;
 
     @Nested
-    class 생성 {
+    class 메뉴_생성시 {
 
         @Test
         void 성공() {
             // given
-            Product productA = productDao.save(new Product("치킨", BigDecimal.valueOf(10000.00)));
-            Product productB = productDao.save(new Product("치즈볼", BigDecimal.valueOf(1000.00)));
-            Long menuGroupId = menuGroupDao.save(new MenuGroup("스폐셜")).getId();
-            MenuProduct menuProductA = new MenuProduct(productA.getId(), 2);
-            MenuProduct menuProductB = new MenuProduct(productB.getId(), 2);
-            Menu menu = new Menu("고추바사삭 스폐셜 세트", BigDecimal.valueOf(22000.00), menuGroupId, Arrays.asList(menuProductA, menuProductB));
+            var productA = getProduct("치킨", 15000L);
+            var productB = getProduct("치즈볼", 5000L);
+            var menuGroup = getMenuGroup("세트");
+            var menuProducts = List.of(
+                new MenuProductCreateRequest(productA.getId(), 1),
+                new MenuProductCreateRequest(productB.getId(), 1));
+            var request = getMenuCreateRequest("치즈볼 세트", 18000L, menuGroup, menuProducts);
 
             // when
-            Menu actual = menuService.create(menu);
+            Menu actual = menuService.create(request);
 
             // then
             assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
                 () -> assertThat(actual.getMenuProducts())
-                    .allSatisfy(it -> assertThat(it.getSeq()).isPositive())
+                    .allSatisfy(it -> assertThat(it.getId()).isPositive())
             );
         }
 
-        @Test
-        void 가격이_음수면_예외() {
+        @ParameterizedTest
+        @ValueSource(longs = {-20000L, -1L})
+        void 가격이_음수면_예외(Long menuPrice) {
             // given
-            Long menuGroupId = menuGroupDao.save(new MenuGroup("순살")).getId();
-            Menu menu = new Menu("고추바사삭", BigDecimal.valueOf(-2000L), menuGroupId, Collections.emptyList());
+            var productA = getProduct("치킨", 15000L);
+            var productB = getProduct("치즈볼", 5000L);
+            var menuGroup = getMenuGroup("세트");
+            var menuProducts = List.of(
+                new MenuProductCreateRequest(productA.getId(), 1),
+                new MenuProductCreateRequest(productB.getId(), 1));
+            MenuCreateRequest request = getMenuCreateRequest("치즈볼 세트", menuPrice, menuGroup, menuProducts);
 
             // when && then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 해당하는_아이디의_메뉴그룹이_없으면_예외() {
             // given
-            Menu menu = new Menu("고추바사삭", BigDecimal.valueOf(2000L), 1L, Collections.emptyList());
+            var productA = getProduct("치킨", 15000L);
+            var productB = getProduct("치즈볼", 5000L);
+            var menuProducts = List.of(
+                new MenuProductCreateRequest(productA.getId(), 1),
+                new MenuProductCreateRequest(productB.getId(), 1));
+            var request = getMenuCreateRequest("치즈볼 세트", 18000L, new MenuGroup(-1L, "없는 메뉴그룹"), menuProducts);
 
             // when && then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 해당하는_상품이_없으면_예외() {
             // given
-            Long menuGroupId = menuGroupDao.save(new MenuGroup("순살")).getId();
-            MenuProduct menuProduct = new MenuProduct(1L, 2);
-            Menu menu = new Menu("고추바사삭", BigDecimal.valueOf(20000.00), menuGroupId, Arrays.asList(menuProduct));
+            var menuGroup = getMenuGroup("세트");
+            var menuProducts = List.of(new MenuProductCreateRequest(-1L, 1));
+            var request = getMenuCreateRequest("치즈볼 세트", 18000L, menuGroup, menuProducts);
 
             // when && then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴상품_가격의_합이_메뉴_가격보다_크면_예외() {
             // given
-            Long menuGroupId = menuGroupDao.save(new MenuGroup("순살")).getId();
-            Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000.00)));
-            MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-            Menu menu = new Menu("고추바사삭", BigDecimal.valueOf(21000.00), menuGroupId, Arrays.asList(menuProduct));
+            var productA = getProduct("치킨", 15000L);
+            var productB = getProduct("치즈볼", 5000L);
+            var menuGroup = getMenuGroup("세트");
+            var menuProducts = List.of(
+                new MenuProductCreateRequest(productA.getId(), 1),
+                new MenuProductCreateRequest(productB.getId(), 1));
+            var request = getMenuCreateRequest("치즈볼 세트", 20001L, menuGroup, menuProducts);
 
             // when && then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("메뉴의 가격은 개별 상품 가격의 합보다 같거나 적어야합니다.");
         }
     }
 
     @Test
     void 모든_메뉴를_반환() {
         // given
-        Product productA = productDao.save(new Product("치킨", BigDecimal.valueOf(10000.00)));
-        Product productB = productDao.save(new Product("치즈볼", BigDecimal.valueOf(2000.00)));
-        Product productC = productDao.save(new Product("감튀", BigDecimal.valueOf(1000.00)));
-
-        MenuProduct menuProductA = new MenuProduct(productA.getId(), 2);
-        MenuProduct menuProductB = new MenuProduct(productB.getId(), 2);
-        MenuProduct menuProductC = new MenuProduct(productC.getId(), 2);
-
-        Long menuGroupIdA = menuGroupDao.save(new MenuGroup("치즈볼 세트")).getId();
-        Long menuGroupIdB = menuGroupDao.save(new MenuGroup("감튀 세트")).getId();
-        Menu menuA = new Menu("고추바사삭 스폐셜 세트", BigDecimal.valueOf(24000.00), menuGroupIdA, Arrays.asList(menuProductA, menuProductB));
-        Menu menuB = new Menu("고추바사삭 스폐셜 세트", BigDecimal.valueOf(22000.00), menuGroupIdB, Arrays.asList(menuProductA, menuProductC));
-        List<Menu> expected = new ArrayList<>();
-
-        expected.add(menuService.create(menuA));
-        expected.add(menuService.create(menuB));
+        var productA = getProduct("치킨", 15000L);
+        var productB = getProduct("치즈볼", 5000L);
+        var productC = getProduct("감튀", 3000L);
+        var menuGroupId = getMenuGroup("세트").getId();
+        var menuProductsA = List.of(new MenuProduct(productA, 1), new MenuProduct(productB, 1));
+        var menuProductsB = List.of(new MenuProduct(productA, 1), new MenuProduct(productC, 1));
+        var menuA = menuRepository.save(new Menu("치즈볼 세트", BigDecimal.valueOf(18000L), menuGroupId, menuProductsA));
+        var menuB = menuRepository.save(new Menu("감튀 세트", BigDecimal.valueOf(17000L), menuGroupId, menuProductsB));
 
         // when
         List<Menu> actual = menuService.list();
 
         // then
         assertThat(actual).usingRecursiveComparison()
-            .isEqualTo(expected);
+            .ignoringFields("menuProducts.product")
+            .isEqualTo(List.of(menuA, menuB));
+    }
+
+    private Product getProduct(String name, long price) {
+        return productRepository.save(new Product(name, BigDecimal.valueOf(price)));
+    }
+
+    private MenuGroup getMenuGroup(String name) {
+        return menuGroupRepository.save(new MenuGroup(name));
+    }
+
+    private MenuCreateRequest getMenuCreateRequest(String name, Long price, MenuGroup menuGroup,
+                                                   List<MenuProductCreateRequest> menuProducts) {
+        return new MenuCreateRequest(name, BigDecimal.valueOf(price), menuGroup.getId(), menuProducts);
     }
 }

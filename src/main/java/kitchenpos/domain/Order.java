@@ -1,79 +1,88 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+
+@Entity(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private OrderTable orderTable;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private OrderLineItems orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus.name(), LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus.name(), orderedTime, orderLineItems);
-    }
-
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+        validate(orderTable, orderLineItems);
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
+    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+    }
+
+    public void changeOrderStatus(OrderStatus changedOrderStatus) {
+        if (isCompletion()) {
+            throw new IllegalArgumentException("주문이 완료 상태면 변경할 수 없습니다.");
+        }
+        this.orderStatus = changedOrderStatus;
+    }
+
+    public boolean isNotCompletion() {
+        return orderStatus != OrderStatus.COMPLETION;
+    }
+
+    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블은 주문 받을 수 없습니다.");
+        }
+    }
+
+    private boolean isCompletion() {
+        return orderStatus == OrderStatus.COMPLETION;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        return orderLineItems.getValues();
     }
 }

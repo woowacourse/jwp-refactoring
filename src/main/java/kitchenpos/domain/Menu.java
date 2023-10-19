@@ -2,16 +2,29 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import kitchenpos.domain.vo.Price;
 
+@Entity
 public class Menu {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    @Embedded
+    private Price price;
+
+    private Long menuGroupId;
+
+    private MenuProducts menuProducts;
+
+    protected Menu() {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -21,48 +34,28 @@ public class Menu {
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = MenuProducts.create(menuProducts, price);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        return menuProducts.getValues();
     }
 }
