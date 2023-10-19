@@ -35,7 +35,11 @@ public class OrderLineItem {
     public void setOrderId(final Long orderId) {
         this.order = new Order();
         this.order.setId(orderId);
-}
+    }
+
+    public void setOrder(final Order order) {
+        this.order = order;
+    }
 
     public Long getMenuId() {
         return menuId;

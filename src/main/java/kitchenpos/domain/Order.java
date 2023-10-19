@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class Order {
@@ -24,8 +27,31 @@ public class Order {
     private OrderStatus orderStatus;
     @Column
     private LocalDateTime orderedTime;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    private Order(final OrderTable orderTable,
+                 final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime,
+                 final List<OrderLineItem> orderLineItems) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+        this.orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
+    }
+
+    public static Order of(final OrderTable orderTable,
+                           final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new EmptyOrderLineItemsException();
+        }
+
+        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
 
     public Long getId() {
         return id;
@@ -44,8 +70,8 @@ public class Order {
         this.orderTable.setTableGroupId(orderTableId);
     }
 
-    public String getOrderStatus() {
-        return orderStatus.name();
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
     public void setOrderStatus(final String orderStatus) {
