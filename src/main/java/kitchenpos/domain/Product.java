@@ -18,28 +18,24 @@ public class Product {
     @Embedded
     private Price price;
 
-    public Long getId() {
-        return id;
+    protected Product() {
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Product(final String name, final Price price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price.getPrice();
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = new Price(price);
     }
 
     @Override

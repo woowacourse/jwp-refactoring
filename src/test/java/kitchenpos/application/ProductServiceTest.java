@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.supports.ProductFixture;
 import kitchenpos.supports.IntegrationTest;
+import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,9 +32,7 @@ class ProductServiceTest {
         @ValueSource(ints = {0, 10000})
         void createProduct(int price) {
             // given
-            final Product product = new Product();
-            product.setName("알리오 올리오");
-            product.setPrice(BigDecimal.valueOf(price));
+            final Product product = new Product("알리오 올리오", new Price(BigDecimal.valueOf(price)));
 
             // when
             final Product savedProduct = productService.create(product);
