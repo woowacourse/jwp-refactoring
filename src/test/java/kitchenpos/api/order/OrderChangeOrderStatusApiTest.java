@@ -1,13 +1,10 @@
 package kitchenpos.api.order;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.ui.dto.request.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.response.OrderLineItemResponse;
 import kitchenpos.ui.dto.response.OrderResponse;
-import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

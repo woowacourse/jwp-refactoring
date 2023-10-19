@@ -1,13 +1,11 @@
 package kitchenpos.api.table;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

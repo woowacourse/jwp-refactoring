@@ -1,8 +1,6 @@
 package kitchenpos.api.order;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.ui.dto.response.OrderLineItemResponse;
 import kitchenpos.ui.dto.response.OrderResponse;

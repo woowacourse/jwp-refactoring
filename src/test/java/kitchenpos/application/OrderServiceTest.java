@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderChangeStatusRequest;

@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.request.ProductCreateRequest;
 import kitchenpos.ui.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;

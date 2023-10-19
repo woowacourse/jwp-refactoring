@@ -3,8 +3,6 @@ package kitchenpos.api.menu;
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.ui.dto.response.MenuProductResponse;
 import kitchenpos.ui.dto.response.MenuResponse;
