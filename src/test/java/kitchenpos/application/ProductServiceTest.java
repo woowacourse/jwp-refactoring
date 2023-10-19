@@ -1,13 +1,11 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
-import kitchenpos.application.exception.ProductServiceException.NoPriceException;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +21,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private Product product = new Product();
 
@@ -37,7 +35,7 @@ class ProductServiceTest {
     void create_success() {
         productService.create(product);
 
-        verify(productDao, times(1)).save(product);
+        verify(productRepository, times(1)).save(product);
     }
 
     @Test
@@ -45,6 +43,6 @@ class ProductServiceTest {
     void list_success() {
         productService.list();
 
-        verify(productDao, times(1)).findAll();
+        verify(productRepository, times(1)).findAll();
     }
 }
