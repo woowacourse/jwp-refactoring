@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_NOT_COMPLETION;
 import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
 import static kitchenpos.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
@@ -12,15 +13,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.TableGroupDto;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exception.OrderException;
 import kitchenpos.domain.exception.TableGroupException;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +39,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("Table Group을 추가한다.")
@@ -149,7 +152,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
             //when
             final Long tableGroupId = savedTableGroupDto.getId();
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderException.class)
+                .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
         }
 
         private List<OrderTableDto> createOrderTableContainNoCompletion() {
@@ -163,11 +167,13 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         }
 
         private void saveOrderMeal(final OrderTable savedOrderTable) {
-            final Order order = new Order();
-            order.setOrderStatus(OrderStatus.MEAL.name());
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
-            orderDao.save(order);
+            final Order order = new Order(
+                savedOrderTable.getId(),
+                OrderStatus.MEAL,
+                LocalDateTime.now(),
+                Map.of()
+            );
+            orderRepository.save(order);
         }
     }
 

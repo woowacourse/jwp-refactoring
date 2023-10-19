@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exception.OrderException;
+import kitchenpos.domain.exception.OrderExceptionType;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,12 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableRepository orderTableRepository,
+        final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -52,9 +54,13 @@ public class TableService {
     }
 
     private void validateContainedTablesOrderStatusIsNotCompletion(final Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+        orderRepository.findByOrderTableId(orderTableId)
+            .ifPresent(this::validateOrderIsNotCompletion);
+    }
+
+    private void validateOrderIsNotCompletion(final Order order) {
+        if (order.isNotAlreadyCompletion()) {
+            throw new OrderException(OrderExceptionType.ORDER_IS_NOT_COMPLETION);
         }
     }
 

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_NOT_COMPLETION;
 import static kitchenpos.domain.exception.OrderTableExceptionType.NUMBER_OF_GUEST_LOWER_THAN_ZERO;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_EMPTY_ALREADY_IN_GROUP;
 import static kitchenpos.domain.exception.OrderTableExceptionType.TABLE_CANT_CHANGE_NUMBER_OF_GUESTS_EMPTY;
@@ -10,12 +11,14 @@ import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이�
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuDto;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.exception.OrderException;
 import kitchenpos.domain.exception.OrderTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -93,17 +96,22 @@ class TableServiceTest extends ServiceIntegrationTest {
             final Long orderTableId = savedOrderTableDto.getId();
             assertThatThrownBy(
                 () -> tableService.changeEmpty(orderTableId, savedOrderTableDto)
-            ).isInstanceOf(IllegalArgumentException.class);
+            ).isInstanceOf(OrderException.class)
+                .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
         }
 
         private void createOrderSuccessfully(final OrderTableDto orderTableDto) {
             final MenuDto menuDto = createMenu();
-            final OrderLineItem orderLineItem = createOrderLineItem(menuDto.getId(), 1L);
+            final OrderLineItemDto orderLineItemDto = createOrderLineItem(menuDto.getId(), 1L);
 
-            final Order order = new Order();
-            order.setOrderLineItems(List.of(orderLineItem));
-            order.setOrderTableId(orderTableDto.getId());
-            orderService.create(order);
+            final OrderDto orderDto = new OrderDto(
+                null,
+                orderTableDto.getId(),
+                null,
+                LocalDateTime.now(),
+                List.of(orderLineItemDto)
+            );
+            orderService.create(orderDto);
         }
     }
 
