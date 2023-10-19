@@ -11,14 +11,16 @@ import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이�
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -51,15 +53,19 @@ public abstract class ServiceIntegrationTest {
         return menuService.create(menuDto);
     }
 
-    protected Order createOrderSuccessfully() {
+    protected OrderDto createOrderSuccessfully() {
         final MenuDto menuDto = createMenu();
-        final OrderLineItem orderLineItem = createOrderLineItem(menuDto.getId(), 1L);
+        final OrderLineItemDto orderLineItemDto = createOrderLineItem(menuDto.getId(), 1L);
         final OrderTableDto savedOrderTableDto = createNotEmptyOrderTable();
 
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTableDto.getId());
-        return orderService.create(order);
+        final OrderDto orderDto = new OrderDto(
+            null,
+            savedOrderTableDto.getId(),
+            null,
+            LocalDateTime.now(),
+            List.of(orderLineItemDto)
+        );
+        return orderService.create(orderDto);
     }
 
     protected OrderTableDto createNotEmptyOrderTable() {
