@@ -2,8 +2,11 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -23,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -49,20 +53,27 @@ class MenuServiceTest {
         final Product product = new Product(1L, "testProduct", BigDecimal.valueOf(1000));
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
         final MenuGroup menuGroup = new MenuGroup(1L, "testMenuGroup");
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
         final Menu menu = new Menu("testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
-                menuGroup.getId(), List.of(menuProduct));
+                menuGroup.getId(), menuProducts);
 
-        when(menuGroupDao.existsById(menuGroup.getId()))
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(it -> new MenuProductRequest(1L, 2))
+                .collect(Collectors.toList());
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest("testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
+                menuGroup.getId(), menuProductRequests);
+
+        when(menuGroupDao.existsById(any()))
                 .thenReturn(true);
-        when(productDao.findById(product.getId()))
+        when(productDao.findById(any()))
                 .thenReturn(Optional.of(product));
-        when(menuDao.save(menu))
+        when(menuDao.save(any()))
                 .thenReturn(new Menu(1L, menu.getName(), menu.getPrice(), menu.getMenuGroupId(), null));
-        when(menuProductDao.save(menuProduct))
+        when(menuProductDao.save(any()))
                 .thenReturn(menuProduct);
 
         //when
-        final Menu result = menuService.create(menu);
+        final Menu result = menuService.create(menuCreateRequest);
 
         //then
         final Menu expected = new Menu(1L, "testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
@@ -74,11 +85,19 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성 시 가격이 null일 경우 예외가 발생한다")
     void testCreateWhenMenuPriceIsNullFailure() {
         //given
-        final Menu menu = new Menu("testMenu", null, null, null);
+        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
+        final MenuGroup menuGroup = new MenuGroup(1L, "testMenuGroup");
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
+
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(it -> new MenuProductRequest(1L, 2))
+                .collect(Collectors.toList());
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest("testMenu", null,
+                menuGroup.getId(), menuProductRequests);
 
         //when
         //then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -86,11 +105,19 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성 시 가격이 0보다 작을 경우 예외가 발생한다")
     void testCreateWhenMenuPriceIsLowerThanZeroFailure() {
         //given
-        final Menu menu = new Menu("testMenu", BigDecimal.valueOf(-1), null, null);
+        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
+        final MenuGroup menuGroup = new MenuGroup(1L, "testMenuGroup");
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
+
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(it -> new MenuProductRequest(1L, 2))
+                .collect(Collectors.toList());
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest("testMenu", BigDecimal.valueOf(-1),
+                menuGroup.getId(), menuProductRequests);
 
         //when
         //then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,13 +125,23 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성 시 메뉴 그룹이 존재하지 않을 경우 예외가 발생한다")
     void testCreateWhenMenuGroupNotExistFailure() {
         //given
-        final Menu menu = new Menu("testMenu", BigDecimal.valueOf(2000), 1L, null);
-        when(menuGroupDao.existsById(menu.getMenuGroupId()))
+        final Product product = new Product(1L, "testProduct", BigDecimal.valueOf(1000));
+        final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
+        final MenuGroup menuGroup = new MenuGroup(1L, "testMenuGroup");
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
+
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(it -> new MenuProductRequest(1L, 2))
+                .collect(Collectors.toList());
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest("testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
+                menuGroup.getId(), menuProductRequests);
+
+        when(menuGroupDao.existsById(any()))
                 .thenReturn(false);
 
         //when
         //then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -115,17 +152,22 @@ class MenuServiceTest {
         final Product product = new Product(1L, "testProduct", BigDecimal.valueOf(1000));
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
         final MenuGroup menuGroup = new MenuGroup(1L, "testMenuGroup");
-        final Menu menu = new Menu("testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
-                menuGroup.getId(), List.of(menuProduct));
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
 
-        when(menuGroupDao.existsById(menuGroup.getId()))
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(it -> new MenuProductRequest(1L, 2))
+                .collect(Collectors.toList());
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest("testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
+                menuGroup.getId(), menuProductRequests);
+
+        when(menuGroupDao.existsById(any()))
                 .thenReturn(true);
-        when(productDao.findById(product.getId()))
+        when(productDao.findById(any()))
                 .thenReturn(Optional.empty());
 
         //when
         //then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -136,17 +178,23 @@ class MenuServiceTest {
         final Product product = new Product(1L, "testProduct", BigDecimal.valueOf(1000));
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 2);
         final MenuGroup menuGroup = new MenuGroup(1L, "testMenuGroup");
-        final Menu menu = new Menu("testMenu", BigDecimal.valueOf(price),
-                menuGroup.getId(), List.of(menuProduct));
+        final List<MenuProduct> menuProducts = List.of(menuProduct);
 
-        when(menuGroupDao.existsById(menuGroup.getId()))
+
+        final List<MenuProductRequest> menuProductRequests = menuProducts.stream()
+                .map(it -> new MenuProductRequest(1L, 2))
+                .collect(Collectors.toList());
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest("testMenu", BigDecimal.valueOf(price),
+                menuGroup.getId(), menuProductRequests);
+
+        when(menuGroupDao.existsById(any()))
                 .thenReturn(true);
-        when(productDao.findById(product.getId()))
+        when(productDao.findById(any()))
                 .thenReturn(Optional.of(product));
 
         //when
         //then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -168,11 +216,11 @@ class MenuServiceTest {
 
         when(menuDao.findAll())
                 .thenReturn(List.of(menu1, menu2, menu3));
-        when(menuProductDao.findAllByMenuId(menu1.getId()))
+        when(menuProductDao.findAllByMenuId(any()))
                 .thenReturn(List.of(menuProduct1));
-        when(menuProductDao.findAllByMenuId(menu2.getId()))
+        when(menuProductDao.findAllByMenuId(any()))
                 .thenReturn(List.of(menuProduct2));
-        when(menuProductDao.findAllByMenuId(menu3.getId()))
+        when(menuProductDao.findAllByMenuId(any()))
                 .thenReturn(List.of(menuProduct3));
 
         //when

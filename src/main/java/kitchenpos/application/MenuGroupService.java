@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.mapper.MenuGroupMapper;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -16,7 +17,8 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
+    public MenuGroup create(final MenuGroupCreateRequest menuGroupCreateRequest) {
+        final MenuGroup menuGroup = MenuGroupMapper.mapToMenuGroup(menuGroupCreateRequest);
         return menuGroupDao.save(menuGroup);
     }
 

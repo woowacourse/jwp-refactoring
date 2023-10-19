@@ -10,7 +10,11 @@ public class MenuProduct {
         this(null, null, null, 0);
     }
 
-    public MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, null, productId, quantity);
+    }
+
+    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;

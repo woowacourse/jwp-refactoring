@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -9,7 +11,6 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +30,9 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
+    public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
+        final TableGroup tableGroup = TableGroupMapper.mapToTableGroup(tableGroupCreateRequest);
+
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {

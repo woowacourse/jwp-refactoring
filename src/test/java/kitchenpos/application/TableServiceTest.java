@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
+import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -34,15 +36,18 @@ class TableServiceTest {
     @DisplayName("테이블을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
-        final OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
-        when(orderTableDao.save(orderTable))
-                .thenReturn(orderTable);
+        final OrderTable savedOrderTable = new OrderTable(1L, 1L, 1, false);
+
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(1, false);
+
+        when(orderTableDao.save(any()))
+                .thenReturn(savedOrderTable);
 
         //when
-        final OrderTable result = tableService.create(orderTable);
+        final OrderTable result = tableService.create(orderTableCreateRequest);
 
         //then
-        assertThat(result).isEqualTo(orderTable);
+        assertThat(result).isEqualTo(savedOrderTable);
     }
 
     @Test
@@ -52,6 +57,7 @@ class TableServiceTest {
         final OrderTable orderTable1 = new OrderTable(1L, 1L, 1, false);
         final OrderTable orderTable2 = new OrderTable(2L, 2L, 1, false);
         final OrderTable orderTable3 = new OrderTable(3L, 3L, 1, false);
+
         when(tableService.list())
                 .thenReturn(List.of(orderTable1, orderTable2, orderTable3));
 
@@ -67,37 +73,42 @@ class TableServiceTest {
     void testChangeEmptySuccess() {
         // given
         final Long orderTableId = 1L;
-        final OrderTable inputOrderTable = new OrderTable(1L, 1, true);
-
         final OrderTable savedOrderTable = new OrderTable(1L, null, 1, false);
 
-        when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(savedOrderTable));
+        final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(
+                1L, 1, true);
+
+        when(orderTableDao.findById(any()))
+                .thenReturn(Optional.of(savedOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(Long.class), anyList()))
                 .thenReturn(false);
-        when(orderTableDao.save(savedOrderTable))
+        when(orderTableDao.save(any()))
                 .thenReturn(savedOrderTable);
 
         // when
-        final OrderTable resultOrderTable = tableService.changeEmpty(orderTableId, inputOrderTable);
+        final OrderTable resultOrderTable = tableService.changeEmpty(orderTableId, orderTableChangeEmptyRequest);
 
         // then
         assertThat(resultOrderTable).isEqualTo(savedOrderTable);
     }
 
     @Test
-    @DisplayName("테이블을 빈 상태로 변경 시 테이블 그룹이 있으면 예외가 발생한다")
+    @DisplayName("테이블을 빈 상태로 변경 시 테이블 그룹이 null일 경우 예외가 발생한다")
     void testChangeEmptyWhenTableGroupIdNotNullFailure() {
         // given
         final Long orderTableId = 1L;
-        final OrderTable inputOrderTable = new OrderTable(1L, 1, true);
 
         final OrderTable savedOrderTable = new OrderTable(1L, 1L, 1, false);
 
-        when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(savedOrderTable));
+        final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(
+                null, 1, true);
+
+        when(orderTableDao.findById(any()))
+                .thenReturn(Optional.of(savedOrderTable));
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableChangeEmptyRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -106,17 +117,19 @@ class TableServiceTest {
     void testChangeEmptyWhenOrderAlreadyCookOrMealFailure() {
         // given
         final Long orderTableId = 1L;
-        final OrderTable inputOrderTable = new OrderTable(1L, 1, true);
-
         final OrderTable savedOrderTable = new OrderTable(1L, null, 1, false);
 
-        when(orderTableDao.findById(orderTableId)).thenReturn(Optional.of(savedOrderTable));
+        final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(
+                null, 1, true);
+
+        when(orderTableDao.findById(any()))
+                .thenReturn(Optional.of(savedOrderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(Long.class), anyList()))
                 .thenReturn(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableChangeEmptyRequest))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -131,9 +144,9 @@ class TableServiceTest {
         final OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
         final OrderTable savedOrderTable = new OrderTable(1L, numberOfGuests, false);
 
-        when(orderTableDao.findById(orderTableId))
+        when(orderTableDao.findById(any()))
                 .thenReturn(Optional.of(savedOrderTable));
-        when(orderTableDao.save(savedOrderTable))
+        when(orderTableDao.save(any()))
                 .thenReturn(savedOrderTable);
 
         // when
@@ -169,7 +182,7 @@ class TableServiceTest {
         final OrderTable orderTable = new OrderTable(1L, numberOfGuests, true);
         final OrderTable savedOrderTable = new OrderTable(1L, numberOfGuests, true);
 
-        when(orderTableDao.findById(orderTableId))
+        when(orderTableDao.findById(any()))
                 .thenReturn(Optional.of(savedOrderTable));
 
         // when
@@ -187,7 +200,7 @@ class TableServiceTest {
 
         final OrderTable orderTable = new OrderTable(1L, numberOfGuests, false);
 
-        when(orderTableDao.findById(orderTableId))
+        when(orderTableDao.findById(any()))
                 .thenReturn(Optional.empty());
 
         // when

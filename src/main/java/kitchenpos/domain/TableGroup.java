@@ -13,6 +13,10 @@ public class TableGroup {
         this(null, null, null);
     }
 
+    public TableGroup(final List<OrderTable> orderTables) {
+        this(null, null, orderTables);
+    }
+
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }

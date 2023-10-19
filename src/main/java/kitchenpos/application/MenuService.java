@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -9,7 +11,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,9 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public Menu create(final MenuCreateRequest menuCreateRequest) {
+        final Menu menu = MenuMapper.mapToMenu(menuCreateRequest);
+        
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {

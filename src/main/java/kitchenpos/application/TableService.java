@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.mapper.OrderTableMapper;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +24,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
+    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
+        final OrderTable orderTable = OrderTableMapper.mapToOrderTable(orderTableCreateRequest);
+
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
@@ -34,7 +38,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
+        final OrderTable orderTable = OrderTableMapper.mapToOrderTable(orderTableChangeEmptyRequest);
+
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 

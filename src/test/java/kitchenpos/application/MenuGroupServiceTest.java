@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -28,11 +29,14 @@ class MenuGroupServiceTest {
     void testCreateSuccess() {
         //given
         final MenuGroup expected = new MenuGroup(1L, "test");
+
+        final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("test");
+
         when(menuGroupDao.save(any()))
                 .thenReturn(expected);
 
         //when
-        final MenuGroup result = menuGroupService.create(any());
+        final MenuGroup result = menuGroupService.create(menuGroupCreateRequest);
 
         //then
         assertThat(result).isEqualTo(expected);

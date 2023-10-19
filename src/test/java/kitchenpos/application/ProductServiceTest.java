@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -28,13 +30,15 @@ class ProductServiceTest {
     @DisplayName("제품을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
-        final Product product = new Product("test", BigDecimal.valueOf(1000));
         final Product expected = new Product(1L, "test", BigDecimal.valueOf(1000));
-        when(productDao.save(product))
+
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("test", BigDecimal.valueOf(1000));
+
+        when(productDao.save(any()))
                 .thenReturn(expected);
 
         //when
-        final Product result = productService.create(product);
+        final Product result = productService.create(productCreateRequest);
 
         //then
         assertThat(result).isEqualTo(expected);
@@ -44,11 +48,11 @@ class ProductServiceTest {
     @DisplayName("제품 생성 시 가격이 null일 경우 예외가 발생한다")
     void testCreateWhenPriceNullFailure() {
         //given
-        final Product product = new Product("test", null);
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("test", null);
 
         //when
         //then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -56,11 +60,11 @@ class ProductServiceTest {
     @DisplayName("제품 생성 시 가격이 0보다 작을 경우 예외가 발생한다")
     void testCreateWhenPriceLowerThanZeroFailure() {
         //given
-        final Product product = new Product("test", BigDecimal.valueOf(-1));
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("test", BigDecimal.valueOf(-1));
 
         //when
         //then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -72,7 +76,8 @@ class ProductServiceTest {
         final Product product2 = new Product(2L, "test2", BigDecimal.valueOf(1000));
         final Product product3 = new Product(3L, "test3", BigDecimal.valueOf(1000));
 
-        when(productDao.findAll()).thenReturn(List.of(product1, product2, product3));
+        when(productDao.findAll())
+                .thenReturn(List.of(product1, product2, product3));
 
         //when
         final List<Product> results = productService.list();
