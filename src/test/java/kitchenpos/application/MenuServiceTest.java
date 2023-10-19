@@ -13,6 +13,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.ProductFixture;
+import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("메뉴 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class MenuServiceTest {
 
     private static final long INVALID_ID = -1L;

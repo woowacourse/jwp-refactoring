@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.supports;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,6 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 @Retention(RetentionPolicy.RUNTIME)
 @Sql(value = "/truncate.sql")
 @SpringBootTest
-public @interface ServiceTest {
+public @interface IntegrationTest {
 
 }

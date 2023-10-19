@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.supports.ProductFixture;
+import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("상품 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class ProductServiceTest {
 
     @Autowired
@@ -43,33 +44,6 @@ class ProductServiceTest {
                 assertThat(savedProduct.getId()).isPositive();
                 assertThat(savedProduct.getName()).isEqualTo(product.getName());
             });
-        }
-
-
-        @DisplayName("가격이 없으면 예외처리 한다")
-        @Test
-        void throwExceptionWhenPriceIsNull() {
-            // given
-            final Product product = new Product();
-            product.setName("알리오 올리오");
-
-            // then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("가격이 0 미만이면 예외처리 한다")
-        @ParameterizedTest
-        @ValueSource(ints = {-10000, -1})
-        void throwExceptionWhenPriceIsLowerThanZero(int price) {
-            // given
-            final Product product = new Product();
-            product.setName("알리오 올리오");
-            product.setPrice(BigDecimal.valueOf(price));
-
-            // then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

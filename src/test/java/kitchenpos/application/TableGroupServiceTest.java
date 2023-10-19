@@ -16,6 +16,7 @@ import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
+import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +26,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("단체 지정 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class TableGroupServiceTest {
 
     private static final long INVALID_ID = -1L;

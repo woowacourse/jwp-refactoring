@@ -3,16 +3,16 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.supports.MenuGroupFixture;
+import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("메뉴 그룹 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class MenuGroupServiceTest {
 
     @Autowired

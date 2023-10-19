@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -16,13 +15,14 @@ import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
+import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("주문 서비스 테스트")
-@ServiceTest
+@IntegrationTest
 class OrderServiceTest {
 
     private static final long INVALID_ID = -1L;
