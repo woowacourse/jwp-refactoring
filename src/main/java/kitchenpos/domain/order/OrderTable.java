@@ -2,7 +2,15 @@ package kitchenpos.domain.order;
 
 import kitchenpos.exception.OrderTableException;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +47,7 @@ public class OrderTable {
     }
 
     public void changeTableGroup(TableGroup tableGroup) {
+        this.empty = Boolean.FALSE;
         this.tableGroup = tableGroup;
     }
 
@@ -52,12 +61,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private boolean existsTableGroup() {
+    public boolean existsTableGroup() {
         return Objects.nonNull(tableGroup);
     }
 
     private void validateOrderStatusWhenChangeEmpty(Order order) {
-        if (order.getOrderStatus() == OrderStatus.COOKING || order.getOrderStatus() == OrderStatus.MEAL) {
+        if (!order.isCompleted()) {
             throw new OrderTableException("주문테이블에 속한 주문이 요리중 또는 식사중이므로 상태를 변경할 수 없습니다.");
         }
     }
@@ -76,6 +85,19 @@ public class OrderTable {
         this.orders.addAll(orders);
     }
 
+    public void ungroup() {
+        for (Order order : orders) {
+            validateOrderStatus(order);
+            tableGroup = null;
+        }
+    }
+
+    public void validateOrderStatus(Order order) {
+        if (!order.isCompleted()) {
+            throw new OrderTableException("주문테이블에 속한 주문이 요리중 또는 식사중이므로 상태를 변경할 수 없습니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -90,6 +112,10 @@ public class OrderTable {
 
     public Boolean getEmpty() {
         return empty;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     @Override
