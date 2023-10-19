@@ -4,6 +4,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -122,7 +123,7 @@ class TableServiceTest extends ApplicationTestConfig {
                     new Name("테스트용 메뉴명"),
                     new Price("0"),
                     savedMenuGroup,
-                    new ArrayList<>()
+                    MenuProducts.empty()
             ));
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));

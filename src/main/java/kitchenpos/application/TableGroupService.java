@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -33,40 +34,27 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+    public TableGroup create(final TableGroupCreateRequest request) {
+        final List<Long> requestOrderTableIds = request.getOrderTableIds();
+        if (CollectionUtils.isEmpty(requestOrderTableIds) || requestOrderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(requestOrderTableIds);
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (requestOrderTableIds.size() != findOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
+        for (final OrderTable savedOrderTable : findOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.changeOrderTableFull();
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.addOrderTablesAndChangeEmptyFull(savedOrderTables);
+        final TableGroup newTableGroup = new TableGroup(LocalDateTime.now(), findOrderTables);
+        final TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
+        savedTableGroup.addOrderTablesAndChangeEmptyFull(findOrderTables);
 
         return savedTableGroup;
     }

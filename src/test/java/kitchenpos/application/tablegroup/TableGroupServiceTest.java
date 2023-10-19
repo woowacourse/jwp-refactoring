@@ -5,6 +5,7 @@ import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -15,6 +16,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -62,13 +64,14 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             );
 
             // when
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), savedOrderTables);
-            final TableGroup actual = tableGroupService.create(expected);
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+            final TableGroup actual = tableGroupService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getCreatedDate()).isEqualTo(expected.getCreatedDate());
+                softly.assertThat(actual.getCreatedDate()).isBefore(LocalDateTime.now());
                 softly.assertThat(actual.getOrderTables())
                         .usingRecursiveComparison()
                         .ignoringExpectedNullFields()
@@ -87,10 +90,11 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final List<OrderTable> savedOrderTables = notEnoughOrderTables.stream()
                     .map(orderTableRepository::save)
                     .collect(Collectors.toList());
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -110,13 +114,11 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final OrderTable unsavedOrderTable = new OrderTable(null, 5, true);
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
 
-            final TableGroup tableGroup = new TableGroup(
-                    LocalDateTime.now(),
-                    List.of(unsavedOrderTable, savedOrderTable)
-            );
+            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(unsavedOrderTable, savedOrderTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -128,13 +130,12 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
             // when
             final OrderTable savedOrderTableNotEmpty = orderTableRepository.save(new OrderTable(null, 5, false));
-            final TableGroup tableGroup = new TableGroup(
-                    LocalDateTime.now(),
-                    List.of(savedOrderTableNotEmpty, savedOrderTableEmpty)
-            );
+
+            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableEmpty, savedOrderTableNotEmpty));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -151,17 +152,16 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             savedTableGroup.addOrderTablesAndChangeEmptyFull(savedOrderTables);
 
             // when
-            final TableGroup tableGroup = new TableGroup(
-                    LocalDateTime.now(),
-                    savedOrderTables
-            );
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-    }
 
+    }
     @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("단체 지정 해제")
     @Nested
@@ -176,16 +176,14 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                     orderTableRepository.save(new OrderTable(null, 10, true))
             );
 
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+            final TableGroup savedTableGroup = tableGroupService.create(request);
 
             // when
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            final List<Long> savedOrderTableIds = savedOrderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toList());
             final List<OrderTable> actual = orderTableRepository.findAllByIdIn(savedOrderTableIds);
 
             assertThat(actual).usingRecursiveComparison()
@@ -205,9 +203,10 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final Menu savedMenu = createMenu(savedProduct);
             final OrderTable savedOrderTableWithFiveGuests = createOrder(orderStatus, savedMenu, 5);
             final OrderTable savedOrderTableWithTenGuests = createOrder(orderStatus, savedMenu, 10);
-            final TableGroup savedTableGroup = tableGroupService.create(
-                    new TableGroup(LocalDateTime.now(), List.of(savedOrderTableWithFiveGuests, savedOrderTableWithTenGuests))
-            );
+
+            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableWithTenGuests, savedOrderTableWithFiveGuests));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+            final TableGroup savedTableGroup = tableGroupService.create(request);
 
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -241,9 +240,9 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final Menu savedMenu = menuRepository.save(
                     new Menu(
                             new Name("테스트용 메뉴명"),
-                            new Price("10000"),
+                            Price.ZERO,
                             savedMenuGroup,
-                            new ArrayList<>()
+                            MenuProducts.empty()
                     )
             );
             final MenuProduct menuProduct = new MenuProduct(null, savedProduct, new Quantity(10));
@@ -251,5 +250,13 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
             return savedMenu;
         }
+
+    }
+
+    private List<Long> collectOrderTableIds(final List<OrderTable> savedOrderTables) {
+        final List<Long> savedOrderTableIds = savedOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        return savedOrderTableIds;
     }
 }
