@@ -40,13 +40,13 @@ public class OrderTables {
   }
 
   public List<OrderTable> ungrouping() {
-    return new ArrayList<>(orderTables.stream()
+    return orderTables.stream()
         .map(orderTable -> new OrderTable(
             orderTable.getId(),
             null,
             orderTable.getNumberOfGuests(),
             false))
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList());
   }
 
   public List<OrderTable> getOrderTables() {

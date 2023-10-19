@@ -10,6 +10,9 @@ import kitchenpos.domain.Product;
 
 public class MenuMapper {
 
+  private MenuMapper() {
+  }
+
   public static MenuProduct mapToMenuProduct(
       final MenuProductEntity entity,
       final Product product

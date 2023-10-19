@@ -11,6 +11,9 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderMapper {
 
+  private OrderMapper() {
+  }
+
   public static OrderLineItem mapToOrderLineItem(final OrderLineItemEntity entity) {
     return new OrderLineItem(
         entity.getSeq(),

@@ -7,6 +7,9 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupMapper {
 
+  private TableGroupMapper() {
+  }
+
   public static TableGroup mapToTableGroup(
       final TableGroupEntity entity,
       final List<OrderTable> orderTables
