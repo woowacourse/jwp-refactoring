@@ -47,7 +47,7 @@ class MenuServiceTest implements ServiceTest {
     }
 
     @Test
-    void 메뉴가_메뉴_그룹에_속하지_않으면_예외가_발생한다() {
+    void 메뉴_생성_시_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
         // given
         final Menu menu = 메뉴(
                 null,
