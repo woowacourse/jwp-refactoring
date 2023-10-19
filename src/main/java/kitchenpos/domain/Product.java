@@ -1,8 +1,19 @@
 package kitchenpos.domain;
 
+import kitchenpos.common.BaseDate;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 
-public class Product {
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class Product extends BaseDate {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;
