@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu_product.MenuProduct;
 import kitchenpos.domain.product.Product;
-import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
@@ -20,16 +19,13 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
-    private final MenuGroupRepository menuGroupRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
             final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
@@ -42,7 +38,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupRepository.existsById(menu.getMenuGroup().getId())) {
+        if (Objects.isNull(menu.getMenuGroup().getId())) {
             throw new IllegalArgumentException();
         }
 

@@ -151,10 +151,7 @@ class MenuServiceTest {
         @DisplayName("MenuGroup이 존재하지 않으면 IllegalArgumentException이 발생한다.")
         void invalidGroupIdTest() {
             // given
-            final long invalidId = -1L;
-
             final MenuGroup notSavedMenuGroup = new MenuGroupBuilder()
-                    .setId(invalidId)
                     .build();
 
             menu.setMenuGroup(notSavedMenuGroup);
