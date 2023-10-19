@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.supports.ServiceTestContext;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -23,6 +22,7 @@ import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.exception.OrderIsCompletedException;
 import kitchenpos.order.exception.OrderLineEmptyException;
 import kitchenpos.order.exception.OrderNotFoundException;
+import kitchenpos.supports.ServiceTestContext;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
@@ -175,7 +175,6 @@ class OrderServiceTest extends ServiceTestContext {
         orderTableRepository.save(orderTable);
         Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
-
 
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
 
