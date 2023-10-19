@@ -4,19 +4,22 @@ import kitchenpos.application.MenuService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
-import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -44,23 +47,25 @@ class MenuServiceTest extends ApplicationTestConfig {
             // given
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
-            final Menu expected = new Menu(
-                    new Name("테스트용 메뉴명"),
-                    new Price("0"),
-                    savedMenuGroup,
+            final MenuCreateRequest request = new MenuCreateRequest(
+                    "테스트용 메뉴명",
+                    new BigDecimal("0"),
+                    savedMenuGroup.getId(),
                     Collections.emptyList()
             );
 
             // when
-            final Menu actual = menuService.create(expected);
+            final Menu actual = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-                softly.assertThat(actual.getPrice()).isEqualTo(expected.getPrice());
-                softly.assertThat(actual.getMenuGroup()).isEqualTo(expected.getMenuGroup());
-                softly.assertThat(actual.getMenuProducts()).isEqualTo(expected.getMenuProducts());
+                softly.assertThat(actual.getName().getValue()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice().getValue()).isEqualByComparingTo(request.getPrice());
+                softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
+                softly.assertThat(actual.getMenuProducts())
+                        .usingRecursiveComparison()
+                        .isEqualTo(MenuProducts.empty());
             });
         }
 
@@ -71,15 +76,15 @@ class MenuServiceTest extends ApplicationTestConfig {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             // when
-            final Menu expected = new Menu(
-                    new Name("테스트용 메뉴명"),
-                    new Price("10000"),
-                    savedMenuGroup,
+            final MenuCreateRequest request = new MenuCreateRequest(
+                    "테스트용 메뉴명",
+                    new BigDecimal("10000"),
+                    savedMenuGroup.getId(),
                     Collections.emptyList()
             );
 
             // then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -95,15 +100,15 @@ class MenuServiceTest extends ApplicationTestConfig {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             // when
-            final Menu expected = new Menu(
-                    new Name("테스트용 메뉴명"),
-                    new Price("10000"),
-                    savedMenuGroup,
+            final MenuCreateRequest request = new MenuCreateRequest(
+                    "테스트용 메뉴명",
+                    new BigDecimal("10000"),
+                    savedMenuGroup.getId(),
                     Collections.emptyList()
             );
 
             // then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -118,34 +123,44 @@ class MenuServiceTest extends ApplicationTestConfig {
             // given
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
-            final List<MenuProduct> menuProducts = new ArrayList<>();
+            final List<MenuProductCreateRequest> menuProductCreateRequests = new ArrayList<>();
             for (int count = 1; count <= 10; count++) {
                 final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
-                menuProducts.add(new MenuProduct(null, savedProduct, new Quantity(10)));
+                menuProductCreateRequests.add(new MenuProductCreateRequest(savedProduct.getId(), 10));
             }
 
-            final Menu expected = new Menu(
-                    new Name("테스트용 메뉴명"),
-                    new Price("0"),
-                    savedMenuGroup,
-                    new ArrayList<>()
+            final MenuCreateRequest request = new MenuCreateRequest(
+                    "테스트용 메뉴명",
+                    new BigDecimal("10000"),
+                    savedMenuGroup.getId(),
+                    menuProductCreateRequests
             );
-            expected.addMenuProducts(menuProducts);
 
             // when
-            final Menu actual = menuService.create(expected);
+            final Menu actual = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-                softly.assertThat(actual.getPrice()).isEqualTo(expected.getPrice());
-                softly.assertThat(actual.getMenuGroup()).isEqualTo(expected.getMenuGroup());
-                softly.assertThat(actual.getMenuProducts())
+                softly.assertThat(actual.getName().getValue()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice().getValue()).isEqualByComparingTo(request.getPrice());
+                softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
+
+                final List<MenuProductCreateRequest> actualMenuProductCreateRequests = convertToMenuProductCreateRequest(actual);
+                softly.assertThat(actualMenuProductCreateRequests)
                         .usingRecursiveComparison()
-                        .ignoringExpectedNullFields()
-                        .isEqualTo(expected.getMenuProducts());
+                        .isEqualTo(request.getMenuProducts());
             });
+        }
+
+        private List<MenuProductCreateRequest> convertToMenuProductCreateRequest(final Menu menu) {
+            return menu.getMenuProducts()
+                    .getMenuProductItems()
+                    .stream()
+                    .map(menuProduct -> new MenuProductCreateRequest(
+                            menuProduct.getProduct().getId(),
+                            menuProduct.getQuantity().getValue()
+                    )).collect(Collectors.toList());
         }
     }
 }
