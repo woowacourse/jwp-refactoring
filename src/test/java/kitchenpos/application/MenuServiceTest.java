@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.application.fixture.MenuFixture.menu;
 import static kitchenpos.application.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.application.fixture.MenuGroupFixture.western;
 import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
@@ -63,14 +64,14 @@ class MenuServiceTest {
             final Product potato = potato();
             final MenuProduct wooDong = menuProduct(noodle, 1);
             final MenuProduct frenchFries = menuProduct(potato, 1);
-            final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
+            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
 
             given(menuGroupRepository.existsById(any())).willReturn(true);
             given(productRepository.findById(any()))
                     .willReturn(Optional.ofNullable(noodle))
                     .willReturn(Optional.ofNullable(potato));
 
-            final Menu spyExpected = spy(new Menu(expected.getName(), expected.getPrice(), expected.getMenuGroup(), new ArrayList<>()));
+            final Menu spyExpected = spy(menu(expected.getName(), expected.getPrice(), expected.getMenuGroup(), new ArrayList<>()));
             given(menuRepository.save(expected)).willReturn(spyExpected);
 
             final MenuProduct menuProduct1 = new MenuProduct(1L, expected, wooDong.getProduct(), frenchFries.getQuantity());
@@ -96,7 +97,7 @@ class MenuServiceTest {
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
             final BigDecimal underZeroPrice = BigDecimal.valueOf(-1);
-            final Menu expected = new Menu("우동세트", underZeroPrice, western(), List.of(wooDong, frenchFries));
+            final Menu expected = menu("우동세트", underZeroPrice, western(), List.of(wooDong, frenchFries));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(expected))
@@ -110,7 +111,7 @@ class MenuServiceTest {
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
             final BigDecimal nullPrice = null;
-            final Menu expected = new Menu("우동세트", nullPrice, western(), List.of(wooDong, frenchFries));
+            final Menu expected = menu("우동세트", nullPrice, western(), List.of(wooDong, frenchFries));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(expected))
@@ -124,7 +125,7 @@ class MenuServiceTest {
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
             final MenuGroup noneExistedMenuGroup = menuGroup("noneExistedMenuGroupId");
-            final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), noneExistedMenuGroup, List.of(wooDong, frenchFries));
+            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), noneExistedMenuGroup, List.of(wooDong, frenchFries));
 
             given(menuGroupRepository.existsById(any())).willReturn(false);
 
@@ -139,7 +140,7 @@ class MenuServiceTest {
             final Product noneExistedProduct = product("noneExistedProduct", BigDecimal.valueOf(-1));
             final MenuProduct wooDong = menuProduct(noneExistedProduct, 1);
             final MenuProduct frenchFries = menuProduct(potato(), 1);
-            final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
+            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
 
             given(menuGroupRepository.existsById(any())).willReturn(true);
             given(productRepository.findById(noneExistedProduct.getId())).willReturn(Optional.empty());
@@ -160,7 +161,7 @@ class MenuServiceTest {
             final BigDecimal overSumOfProductPrice = noodle.getPrice()
                     .add(potato.getPrice())
                     .add(BigDecimal.valueOf(1000));
-            final Menu expected = new Menu("우동세트", overSumOfProductPrice, western(), List.of(wooDong, frenchFries));
+            final Menu expected = menu("우동세트", overSumOfProductPrice, western(), List.of(wooDong, frenchFries));
 
             given(menuGroupRepository.existsById(any())).willReturn(true);
             given(productRepository.findById(any()))
@@ -182,7 +183,7 @@ class MenuServiceTest {
             final MenuProduct wooDong = menuProduct(noodle(), 1);
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
-            final Menu expected = new Menu("우동세트", BigDecimal.valueOf(9000), western(), new ArrayList<>());
+            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), new ArrayList<>());
             final Menu spyExpected = spy(expected);
 
             given(menuRepository.findAll()).willReturn(List.of(spyExpected));
