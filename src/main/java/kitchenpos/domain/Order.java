@@ -7,7 +7,7 @@ public class Order {
 
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
@@ -18,7 +18,7 @@ public class Order {
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
@@ -28,7 +28,10 @@ public class Order {
     }
 
     public void updateStatus(final String status) {
-        this.orderStatus = status;
+        if (this.orderStatus.isCompleted()) {
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+        }
+        this.orderStatus = OrderStatus.valueOf(status);
     }
 
     public Long getId() {
@@ -40,7 +43,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

@@ -50,7 +50,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        orderTable.updateStatusEmpty(updateTableStatusRequest.getEmpty());
+        orderTable.updateStatus(updateTableStatusRequest.getEmpty());
 
         return orderTableDao.save(orderTable);
     }

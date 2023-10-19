@@ -151,7 +151,8 @@ class OrderServiceTest {
 
         // when
         assertThatThrownBy(() -> orderService.changeOrderStatus(expected.getId(), updateOrderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("이미 완료된 주문입니다.");
     }
 
     @Test

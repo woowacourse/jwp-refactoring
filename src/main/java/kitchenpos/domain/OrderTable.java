@@ -30,7 +30,7 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void updateStatusEmpty(final boolean empty) {
+    public void updateStatus(final boolean empty) {
         this.empty = empty;
     }
 
@@ -54,6 +54,4 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
-
-
 }
