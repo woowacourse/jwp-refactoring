@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 public class TableRestController {
+
     private final TableService tableService;
 
     public TableRestController(final TableService tableService) {
