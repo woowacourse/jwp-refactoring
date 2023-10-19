@@ -6,6 +6,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +36,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         final Menu savedMenu = persistMenu(new Menu(new Name("테스트용 메뉴명"), new Price("10000"), savedMenuGroup, Collections.emptyList()));
         persistMenuProduct(new MenuProduct(savedMenu, savedProduct, new Quantity(1)));
         final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, true));
-        final Order savedOrder = persistOrder(new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList()));
+        final Order savedOrder = persistOrder(new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(), new OrderLineItems(new ArrayList<>())));
         persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, new Quantity(1)));
         persistOrderLineItem(new OrderLineItem(savedOrder, savedMenu, new Quantity(1)));
 

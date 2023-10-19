@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -49,7 +50,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     savedOrderTable,
                     OrderStatus.COOKING,
                     LocalDateTime.now(),
-                    new ArrayList<>()
+                    new OrderLineItems(new ArrayList<>())
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             expected.addOrderLineItems(orderLineItems);
@@ -76,7 +77,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
             // when
-            final List<OrderLineItem> wrongOrderLineItems = Collections.emptyList();
+            final OrderLineItems wrongOrderLineItems = new OrderLineItems(Collections.emptyList());
             final Order expected = new Order(
                     savedOrderTable,
                     OrderStatus.COOKING,
@@ -107,7 +108,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     savedOrderTable,
                     OrderStatus.COOKING,
                     LocalDateTime.now(),
-                    orderLineItems
+                    new OrderLineItems(orderLineItems)
             );
 
             // then
@@ -127,7 +128,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     savedOrderTable,
                     OrderStatus.COOKING,
                     LocalDateTime.now(),
-                    Collections.emptyList()
+                    new OrderLineItems(Collections.emptyList())
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             expected.addOrderLineItems(orderLineItems);
@@ -168,7 +169,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     savedOrderTable,
                     OrderStatus.COOKING,
                     LocalDateTime.now(),
-                    new ArrayList<>()
+                    new OrderLineItems(new ArrayList<>())
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             order.addOrderLineItems(orderLineItems);
@@ -222,7 +223,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                     savedOrderTable,
                     OrderStatus.COOKING,
                     LocalDateTime.now(),
-                    new ArrayList<>()
+                    new OrderLineItems(new ArrayList<>())
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             order.addOrderLineItems(orderLineItems);

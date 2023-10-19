@@ -40,7 +40,7 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order requestOrder) {
-        final List<OrderLineItem> requestOrderLineItems = requestOrder.getOrderLineItems();
+        final List<OrderLineItem> requestOrderLineItems = requestOrder.getOrderLineItems().getValues();
 
         if (CollectionUtils.isEmpty(requestOrderLineItems)) {
             throw new IllegalArgumentException();

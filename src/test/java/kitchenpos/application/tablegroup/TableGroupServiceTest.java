@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -227,7 +228,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                             savedOrderTable,
                             orderStatus,
                             LocalDateTime.now(),
-                            new ArrayList<>()
+                            new OrderLineItems(new ArrayList<>())
                     )
             );
             savedOrder.addOrderLineItems(List.of(orderLineItem));

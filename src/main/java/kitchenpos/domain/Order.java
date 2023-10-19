@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,8 +34,8 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
@@ -44,7 +43,7 @@ public class Order {
     public Order(final OrderTable orderTable,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems
+                 final OrderLineItems orderLineItems
     ) {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
@@ -53,7 +52,7 @@ public class Order {
                  final OrderTable orderTable,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems
+                 final OrderLineItems orderLineItems
     ) {
         this.id = id;
         this.orderTable = orderTable;
@@ -63,9 +62,11 @@ public class Order {
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems.stream()
+        final List<OrderLineItem> orderLineItemsWithCurrentOrder = orderLineItems.stream()
                 .map(orderLineItem -> new OrderLineItem(this, orderLineItem.getMenu(), orderLineItem.getQuantity()))
                 .collect(Collectors.toList());
+
+        this.orderLineItems = new OrderLineItems(orderLineItemsWithCurrentOrder);
     }
 
     public Long getId() {
@@ -84,7 +85,7 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 

@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -70,7 +71,7 @@ class TableServiceTest extends ApplicationTestConfig {
             // given
             final TableGroup noTableGroup = null;
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
-            orderRepository.save(new Order(savedOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(), Collections.emptyList()));
+            orderRepository.save(new Order(savedOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(), new OrderLineItems(Collections.emptyList())));
 
             // when
             final OrderTable emptyStatus = new OrderTable(null, 0, true);
@@ -102,7 +103,7 @@ class TableServiceTest extends ApplicationTestConfig {
                         savedOrderTable,
                         OrderStatus.COOKING,
                         LocalDateTime.now(),
-                        Collections.emptyList()
+                        new OrderLineItems(Collections.emptyList())
                 ));
             }
 
@@ -130,7 +131,7 @@ class TableServiceTest extends ApplicationTestConfig {
                             savedOrderTable,
                             orderStatus,
                             LocalDateTime.now(),
-                            new ArrayList<>()
+                            new OrderLineItems(new ArrayList<>())
                     )
             );
             savedOrder.addOrderLineItems(orderLineItems);
