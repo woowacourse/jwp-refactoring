@@ -1,8 +1,12 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.exception.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL;
+import static kitchenpos.exception.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
+import static kitchenpos.exception.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
+import static kitchenpos.exception.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -14,9 +18,7 @@ import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsRespo
 import kitchenpos.application.dto.ordertable.CreateOrderTableCommand;
 import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
 import kitchenpos.application.dto.ordertable.SearchOrderTableResponse;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Nested;
@@ -39,10 +41,8 @@ class TableServiceTest extends IntegrationTest {
     @Test
     void 주문_테이블들을_조회한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(0, false);
-        OrderTable orderTable2 = new OrderTable(0, false);
-        OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+        OrderTable orderTable1 = 주문테이블저장(주문테이블(0, false));
+        OrderTable orderTable2 = 주문테이블저장(주문테이블(0, false));
 
         // when
         List<SearchOrderTableResponse> result = tableService.list();
@@ -50,8 +50,8 @@ class TableServiceTest extends IntegrationTest {
         // then
         assertAll(
                 () -> assertThat(result).hasSize(2),
-                () -> assertThat(result.get(0).id()).isEqualTo(savedOrderTable1.id()),
-                () -> assertThat(result.get(1).id()).isEqualTo(savedOrderTable2.id())
+                () -> assertThat(result.get(0).id()).isEqualTo(orderTable1.id()),
+                () -> assertThat(result.get(1).id()).isEqualTo(orderTable2.id())
         );
     }
 
@@ -75,41 +75,40 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 지정된_단체가_있는_테이블을_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, true);
-            OrderTable orderTable2 = new OrderTable(0, true);
+            OrderTable 주문테이블 = 주문테이블(0, true);
+            테이블그룹저장(테이블그룹(주문테이블, 주문테이블(0, true)));
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), true);
 
-            TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
-            TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeEmpty(command)
+            ).exceptionType();
 
-            orderTable1.setTableGroup(savedTableGroup);
-            Long id = orderTableRepository.save(orderTable1).id();
-
-            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(id, true);
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE);
         }
 
         @Test
         void 조리중이거나_식사중인_테이블을_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, false);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            주문(savedOrderTable1, OrderStatus.COOKING, 맛있는_메뉴());
-            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(savedOrderTable1.id(), true);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, false));
+            주문저장(주문(주문테이블, COOKING, 주문항목(맛있는_메뉴_저장(), 0)));
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), true);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeEmpty(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL);
         }
 
         @Test
         void 주문_테이블_상태를_변경한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, true);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(savedOrderTable1.id(), false);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, true));
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), false);
 
             // when
             ChangeOrderTableEmptyResponse result = tableService.changeEmpty(command);
@@ -125,21 +124,24 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 손님_숫자가_0보다_작으면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, false);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            ChangeOrderTableNumberOfGuestsCommand command =
-                    new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), -1);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, false));
+            ChangeOrderTableNumberOfGuestsCommand command = new ChangeOrderTableNumberOfGuestsCommand(주문테이블.id(), -1);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeNumberOfGuests(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE);
         }
 
         @Test
         void 존재하지_않는_테이블을_변경하면_예외가_발생한다() {
             // given
+            Long noExistOrderTableId = -1L;
             ChangeOrderTableNumberOfGuestsCommand command =
-                    new ChangeOrderTableNumberOfGuestsCommand(1L, 2);
+                    new ChangeOrderTableNumberOfGuestsCommand(noExistOrderTableId, 2);
 
             // when
             BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
@@ -153,23 +155,23 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 비어있는_테이블을_변경하면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, true);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            ChangeOrderTableNumberOfGuestsCommand command =
-                    new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), 2);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, true));
+            ChangeOrderTableNumberOfGuestsCommand command = new ChangeOrderTableNumberOfGuestsCommand(주문테이블.id(), 2);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(command))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeNumberOfGuests(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE);
         }
 
         @Test
         void 손님_숫자를_변경한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(0, false);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            ChangeOrderTableNumberOfGuestsCommand command =
-                    new ChangeOrderTableNumberOfGuestsCommand(savedOrderTable1.id(), 2);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, false));
+            ChangeOrderTableNumberOfGuestsCommand command = new ChangeOrderTableNumberOfGuestsCommand(주문테이블.id(), 2);
 
             // when
             ChangeOrderTableNumberOfGuestsResponse result = tableService.changeNumberOfGuests(command);

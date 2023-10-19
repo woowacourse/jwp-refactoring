@@ -1,10 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
@@ -128,38 +125,9 @@ public class IntegrationTest {
         return tableGroupRepository.save(테이블그룹);
     }
 
-    protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
-        List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)
-                .map(this::toOrderLineItem)
-                .collect(Collectors.toList());
-        Order order = new Order(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
-        return orderRepository.save(order);
-    }
-
-    private OrderLineItem toOrderLineItem(Menu 메뉴) {
-        return new OrderLineItem(null, null, 메뉴, 0);
-    }
-
-    protected Menu 맛있는_메뉴() {
-        return 메뉴(메뉴_그룹(),
-                BigDecimal.valueOf(5),
-                "맛있는 메뉴",
-                new MenuProduct(상품("상품1", BigDecimal.valueOf(1)), 3),
-                new MenuProduct(상품("상품2", BigDecimal.valueOf(2)), 2)
-        );
-    }
-
-    protected Menu 메뉴(MenuGroup 메뉴_그룹, BigDecimal 가격, String 이름, MenuProduct... 메뉴_상품들) {
-        Menu menu = new Menu(이름, new Price(가격), 메뉴_그룹, Arrays.asList(메뉴_상품들));
-        return menuRepository.save(menu);
-    }
-
-    protected MenuGroup 메뉴_그룹() {
-        return menuGroupRepository.save(new MenuGroup("추천메뉴"));
-    }
-
-    protected Product 상품(String 이름, BigDecimal 가격) {
-        Product product = new Product(이름, new Price(가격));
-        return productRepository.save(product);
+    protected Menu 맛있는_메뉴_저장() {
+        MenuGroup 메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
+        Product 상품 = 상품저장(상품("상품1", 가격(1)));
+        return 메뉴저장(메뉴("메뉴", 가격(3), 메뉴그룹, 메뉴상품(상품, 3)));
     }
 }

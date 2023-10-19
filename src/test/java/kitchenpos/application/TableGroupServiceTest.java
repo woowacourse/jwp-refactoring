@@ -15,10 +15,7 @@ import java.util.Optional;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupResponse;
 import kitchenpos.application.dto.tablegroup.UngroupTableGroupCommand;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
@@ -29,15 +26,11 @@ class TableGroupServiceTest extends IntegrationTest {
 
     private OrderTable 비어있는_테이블1;
     private OrderTable 비어있는_테이블2;
-    private Menu 메뉴;
 
     @BeforeEach
     void setUp() {
         비어있는_테이블1 = 주문테이블저장(주문테이블(0, true));
         비어있는_테이블2 = 주문테이블저장(주문테이블(0, true));
-        MenuGroup 메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
-        Product 상품 = 상품저장(상품("상품1", 가격(1)));
-        메뉴 = 메뉴저장(메뉴("메뉴", 가격(3), 메뉴그룹, 메뉴상품(상품, 3)));
     }
 
     @Test
@@ -136,7 +129,7 @@ class TableGroupServiceTest extends IntegrationTest {
         OrderTable 주문테이블1 = 주문테이블(0, true);
         OrderTable 주문테이블2 = 주문테이블(0, true);
         TableGroup 테이블그룹 = 테이블그룹저장(테이블그룹(주문테이블1, 주문테이블2));
-        주문저장(주문(주문테이블1, COOKING, 주문항목(메뉴, 1)));
+        주문저장(주문(주문테이블1, COOKING, 주문항목(맛있는_메뉴_저장(), 1)));
         UngroupTableGroupCommand command = new UngroupTableGroupCommand(테이블그룹.id());
 
         // when

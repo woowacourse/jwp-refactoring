@@ -21,10 +21,8 @@ import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.application.dto.order.SearchOrderResponse;
 import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,14 +31,10 @@ import org.junit.jupiter.api.Test;
 class OrderServiceTest extends IntegrationTest {
 
     private OrderTable 안비어있는_테이블;
-    private Menu 메뉴;
 
     @BeforeEach
     void setUp() {
         안비어있는_테이블 = 주문테이블저장(주문테이블(0, false));
-        MenuGroup 메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
-        Product 상품 = 상품저장(상품("상품1", 가격(1)));
-        메뉴 = 메뉴저장(메뉴("메뉴", 가격(3), 메뉴그룹, 메뉴상품(상품, 3)));
     }
 
     @Test
@@ -106,6 +100,7 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 주문을_저장한다() {
         // given
+        Menu 메뉴 = 맛있는_메뉴_저장();
         OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(메뉴.id(), 0);
         CreateOrderCommand command = new CreateOrderCommand(안비어있는_테이블.id(), List.of(orderLineItemCommand));
 
@@ -122,6 +117,7 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 주문들을_조회한다() {
         // given
+        Menu 메뉴 = 맛있는_메뉴_저장();
         Order order1 = 주문저장(주문(안비어있는_테이블, COOKING, 주문항목(메뉴, 0)));
         Order order2 = 주문저장(주문(안비어있는_테이블, COOKING, 주문항목(메뉴, 0)));
 
@@ -154,6 +150,7 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 완료된_주문의_상태를_변경하면_예외가_발생한다() {
         // given
+        Menu 메뉴 = 맛있는_메뉴_저장();
         Order 완료된주문 = 주문저장(주문(안비어있는_테이블, COMPLETION, 주문항목(메뉴, 0)));
         ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(완료된주문.id(), COOKING);
 
@@ -169,6 +166,7 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void 주문의_상태를_변경한다() {
         // given
+        Menu 메뉴 = 맛있는_메뉴_저장();
         Order order = 주문저장(주문(안비어있는_테이블, COOKING, 주문항목(메뉴, 0)));
         ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), MEAL);
 
