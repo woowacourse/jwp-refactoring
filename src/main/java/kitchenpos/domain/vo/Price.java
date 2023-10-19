@@ -24,6 +24,10 @@ public class Price {
         this.value = new BigDecimal(value);
     }
 
+    public Price sum(final Price otherPrice) {
+        return new Price(value.add(otherPrice.value));
+    }
+
     public Price multiply(final Quantity quantity) {
         return new Price(value.multiply(new BigDecimal(quantity.getValue())));
     }

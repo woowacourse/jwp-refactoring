@@ -6,7 +6,6 @@ import org.hibernate.annotations.BatchSize;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,19 +30,12 @@ public class MenuProducts {
     public Price getTotalPrice() {
         return menuProductItems.stream()
                 .map(MenuProduct::getTotalPrice)
-                .map(Price::getValue)
-                .reduce(BigDecimal::add)
-                .map(Price::new)
+                .reduce(Price::sum)
                 .orElse(Price.ZERO);
     }
 
-    public void add(final Menu menu, final List<MenuProduct> otherMenuProducts) {
-        otherMenuProducts.stream()
-                .map(menuProductWithoutMenu -> new MenuProduct(
-                        menu,
-                        menuProductWithoutMenu.getProduct(),
-                        menuProductWithoutMenu.getQuantity()
-                )).forEach(menuProductWithMenu -> menuProductItems.add(menuProductWithMenu));
+    public void add(final List<MenuProduct> otherMenuProducts) {
+        menuProductItems.addAll(otherMenuProducts);
     }
 
     public List<MenuProduct> getMenuProductItems() {

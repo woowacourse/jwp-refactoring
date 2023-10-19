@@ -4,7 +4,6 @@ import kitchenpos.application.TableService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -119,12 +118,13 @@ class TableServiceTest extends ApplicationTestConfig {
         void throwException_when_changeEmpty_orderStatus_isCookieOrMeal(final OrderStatus orderStatus) {
             // given
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-            final Menu savedMenu = menuRepository.save(new Menu(
-                    new Name("테스트용 메뉴명"),
-                    new Price("0"),
-                    savedMenuGroup,
-                    MenuProducts.empty()
-            ));
+            final Menu savedMenu = menuRepository.save(
+                    Menu.ofEmptyMenuProducts(
+                            new Name("테스트용 메뉴명"),
+                            new Price("0"),
+                            savedMenuGroup
+                    )
+            );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
             final Order savedOrder = orderRepository.save(

@@ -146,12 +146,13 @@ class OrderServiceTest extends ApplicationTestConfig {
 
     private Menu createMenu() {
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        return menuRepository.save(new Menu(
-                new Name("테스트용 메뉴명"),
-                new Price("0"),
-                savedMenuGroup,
-                Collections.emptyList()
-        ));
+        return menuRepository.save(
+                Menu.ofEmptyMenuProducts(
+                        new Name("테스트용 메뉴명"),
+                        new Price("0"),
+                        savedMenuGroup
+                )
+        );
     }
 
     @DisplayName("주문 상태 변경")

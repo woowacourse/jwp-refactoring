@@ -19,6 +19,19 @@ class PriceTest {
                 .doesNotThrowAnyException();
     }
 
+    @DisplayName("[SUCCESS] 가격을 합한다.")
+    @Test
+    void success_sum() {
+        // given
+        final Price price = new Price("1000");
+
+        // when
+        final Price actual = price.sum(new Price("9000"));
+
+        // then
+        assertThat(actual.getValue()).isEqualByComparingTo(new BigDecimal("10000"));
+    }
+
     @DisplayName("[SUCCESS] 가격을 수랑만큼 곱한다.")
     @Test
     void success_multiply() {
