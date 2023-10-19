@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableEmptyUpdateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -35,22 +34,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
+        final Order findOrder = orderRepository.findOrderByOrderTableId(orderTableId);
+        findOrder.changeOrderTableEmpty(request.isEmpty());
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.changeEmpty(orderTable);
-
-        return orderTableRepository.save(savedOrderTable);
+        return findOrder.getOrderTable();
     }
 
     @Transactional

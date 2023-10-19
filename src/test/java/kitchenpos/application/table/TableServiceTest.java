@@ -12,6 +12,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderTableEmptyUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -72,8 +73,7 @@ class TableServiceTest extends ApplicationTestConfig {
             savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when
-            final OrderTable emptyStatus = new OrderTable(null, 0, true);
-            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), emptyStatus);
+            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
 
             // then
             assertSoftly(softly -> {
@@ -101,7 +101,7 @@ class TableServiceTest extends ApplicationTestConfig {
             }
 
             // expect
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), savedOrderTableWithFiveGuests))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), new OrderTableEmptyUpdateRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -124,7 +124,7 @@ class TableServiceTest extends ApplicationTestConfig {
             savedOrder.addOrderLineItems(orderLineItems);
 
             // expect
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

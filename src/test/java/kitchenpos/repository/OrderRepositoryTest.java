@@ -21,16 +21,70 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class OrderRepositoryTest extends RepositoryTestConfig {
 
     @Autowired
     private OrderRepository orderRepository;
 
+    @DisplayName("[SUCCESS] 주문 식별자값으로 주문 조회를 실패할 경우 예외가 발생한다.")
+    @Test
+    void success_findOrderById() {
+        // given
+        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 5, true));
+        final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
+
+        em.flush();
+        em.close();
+
+        // when
+        final Order actual = orderRepository.findOrderByOrderTableId(savedOrderTable.getId());
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(actual.getId()).isEqualTo(expected.getId());
+            softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
+            softly.assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
+            softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
+            softly.assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems());
+        });
+    }
+
     @DisplayName("[EXCEPTION] 주문 식별자값으로 주문 조회를 실패할 경우 예외가 발생한다.")
     @Test
-    void throwException_when_notFount() {
+    void throwException_findOrderById_when_notFount() {
         assertThatThrownBy(() -> orderRepository.findOrderById(0L))
+                .isInstanceOf(EmptyResultDataAccessException.class);
+    }
+
+    @DisplayName("[SUCCESS] 주문 테이블 식별자값으로 주문을 조회한다.")
+    @Test
+    void success_findOrderByOrderTableId() {
+        // given
+        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 5, true));
+        final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
+
+        em.flush();
+        em.close();
+
+        // when
+        final Order actual = orderRepository.findOrderByOrderTableId(savedOrderTable.getId());
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(actual.getId()).isEqualTo(expected.getId());
+            softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
+            softly.assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
+            softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
+            softly.assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems());
+        });
+    }
+
+    @DisplayName("[EXCEPTION] 주문 테이블 식별자값으로 주문 조회를 실패할 경우 예외가 발생한다.")
+    @Test
+    void throwException_findOrderByOrderTableId_when_notFount() {
+        assertThatThrownBy(() -> orderRepository.findOrderByOrderTableId(0L))
                 .isInstanceOf(EmptyResultDataAccessException.class);
     }
 
