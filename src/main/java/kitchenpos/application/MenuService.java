@@ -24,17 +24,18 @@ public class MenuService {
 
   @Transactional
   public Menu create(final Menu menu) {
+    validateExistedMenuGroup(menu);
+
+    final MenuProducts menuProducts = new MenuProducts(menu.getMenuProducts());
+    menuProducts.validateSumLowerThan(menu.getPrice());
+
+    return menuRepository.save(menu);
+  }
+
+  private void validateExistedMenuGroup(final Menu menu) {
     if (!menuGroupRepository.existsById(menu.getMenuGroup().getId())) {
       throw new IllegalArgumentException();
     }
-
-    final MenuProducts menuProducts = new MenuProducts(menu.getMenuProducts());
-
-    if (menuProducts.isSumLowerThan(menu.getPrice())) {
-      throw new IllegalArgumentException();
-    }
-
-    return menuRepository.save(menu);
   }
 
   public List<Menu> list() {

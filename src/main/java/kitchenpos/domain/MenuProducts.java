@@ -11,11 +11,13 @@ public class MenuProducts {
     this.menuProducts = menuProducts;
   }
 
-  public boolean isSumLowerThan(final BigDecimal price) {
-    return price.compareTo(sum()) > 0;
+  public void validateSumLowerThan(final BigDecimal price) {
+    if (price.compareTo(sumProductsPrice()) > 0) {
+      throw new IllegalArgumentException();
+    }
   }
 
-  private BigDecimal sum() {
+  private BigDecimal sumProductsPrice() {
     BigDecimal sum = BigDecimal.ZERO;
 
     for (final MenuProduct menuProduct : menuProducts) {
