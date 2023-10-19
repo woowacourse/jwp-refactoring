@@ -46,6 +46,7 @@ public class Menu {
     }
 
     public void addMenuProducts(final List<MenuProduct> toAddMenuProducts) {
+        toAddMenuProducts.forEach(menuProduct -> menuProduct.changeMenu(this));
         this.menuProducts.addAll(toAddMenuProducts);
     }
 
