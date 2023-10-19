@@ -1,6 +1,9 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_NOT_COMPLETION;
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
 import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
 import static kitchenpos.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
@@ -23,6 +26,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderException;
 import kitchenpos.domain.exception.TableGroupException;
+import kitchenpos.domain.exception.TableGroupExceptionType;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -93,19 +97,23 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
                 = new TableGroupDto(null, LocalDateTime.now(), 비어있지_않는_전쳬_주문_테이블_DTO());
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(TableGroupException.class)
+                .hasMessage(ORDER_TABLE_IS_NOT_PRESENT_ALL.getMessage());
         }
 
         @Test
         @DisplayName("tableGroup안에 orderTable이 비어있지 않은 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotEmpty() {
-            final List<OrderTableDto> orderTableDtos = 비어있지_않는_전쳬_주문_테이블_DTO();
+            final List<OrderTableDto> orderTableDtos = 비어있지_않는_전쳬_주문_테이블_DTO().stream()
+                .map(tableService::create)
+                .collect(toUnmodifiableList());
 
             final TableGroupDto tableGroupDto
                 = new TableGroupDto(null, LocalDateTime.now(), orderTableDtos);
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(TableGroupException.class)
+                .hasMessage(ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED.getMessage());
         }
     }
 
