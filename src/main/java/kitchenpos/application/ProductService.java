@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.ProductRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -19,24 +19,16 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(Product product) {
-        if (product.getName().length() > 255) {
-            throw new IllegalArgumentException();
-        }
-
-        BigDecimal price = product.getPrice();
-
-        if (Objects.isNull(price) ||
-                (price.compareTo(BigDecimal.ZERO) < 0) ||
-                (price.compareTo(BigDecimal.valueOf(Math.pow(10, 20))) >= 0)
-        ) {
-            throw new IllegalArgumentException();
-        }
-
-        return productRepository.save(product);
+    public ProductResponse create(ProductCreateRequest request) {
+        Product product = new Product(request.getName(), request.getPrice());
+        Product savedProduct = productRepository.save(product);
+        return ProductResponse.from(savedProduct);
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public List<ProductResponse> readAll() {
+        List<Product> allProducts = productRepository.findAll();
+        return allProducts.stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
     }
 }

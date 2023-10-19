@@ -56,7 +56,7 @@ public class Menu {
 
     private void validateName(String name) {
         if (name.isBlank() || name.length() > 255) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴의 이름이 유효하지 않습니다.");
         }
     }
 
@@ -68,7 +68,7 @@ public class Menu {
                 || menuPrice.compareTo(BigDecimal.valueOf(Math.pow(10, 20))) >= 0
                 || menuPrice.compareTo(sumOfProductPrices) > 0
         ) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴의 가격이 유효하지 않습니다.");
         }
     }
 

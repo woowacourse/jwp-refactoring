@@ -59,7 +59,7 @@ class ProductServiceTest {
     void 상품의_목록을_조회한다() {
         Product 등록된_상품 = productService.create(새로운_상품("상품", new BigDecimal(10000)));
 
-        List<Product> 상품의_목록 = productService.list();
+        List<Product> 상품의_목록 = productService.readAll();
 
         assertThat(상품의_목록).hasSize(1)
                 .usingRecursiveFieldByFieldElementComparator()
