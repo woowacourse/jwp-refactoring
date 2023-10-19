@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.PriceExceptionType.PRICE_IS_LOWER_THAN_ZERO;
 import static kitchenpos.fixture.MenuFixture.createMenuProductDto;
 import static kitchenpos.fixture.MenuFixture.한마리메뉴_DTO;
 import static kitchenpos.fixture.MenuFixture.후라이드치킨_DTO;
@@ -14,6 +15,7 @@ import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.ProductDto;
+import kitchenpos.domain.exception.PriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -58,17 +60,20 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
             //when
             assertThatThrownBy(() -> menuService.create(menuDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(PriceException.class)
+                .hasMessage(PRICE_IS_LOWER_THAN_ZERO.getMessage());
         }
 
         @Test
         @DisplayName("product가 저장되지 않은 경우 예외처리")
         void throwExceptionProductIsNotExist() {
-            final ProductDto unSavedProductDto = 후라이드_DTO();
+            final long unsavedId = Long.MIN_VALUE;
+            final ProductDto unSavedProductDto
+                = new ProductDto(unsavedId, "양념치킨", BigDecimal.valueOf(16000));
             final MenuProductDto menuProductDto = createMenuProductDto(unSavedProductDto, 1L);
             final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
             final MenuDto menuDto = 후라이드치킨_DTO(
-                savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(-16000)
+                savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(16000)
             );
 
             //when

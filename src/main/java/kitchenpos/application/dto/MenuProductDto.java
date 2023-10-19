@@ -41,5 +41,4 @@ public class MenuProductDto {
     public Long getQuantity() {
         return quantity;
     }
-
 }

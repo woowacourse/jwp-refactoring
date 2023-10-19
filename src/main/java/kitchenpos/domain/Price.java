@@ -13,10 +13,9 @@ import kitchenpos.domain.exception.PriceException;
 public class Price {
 
     @Column(name = "price")
-    private final BigDecimal value;
+    private BigDecimal value;
 
     protected Price() {
-        this(null);
     }
 
     public Price(final BigDecimal value) {

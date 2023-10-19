@@ -36,7 +36,7 @@ public class MenuDto {
         return new MenuDto(
             savedMenu.getId(),
             savedMenu.getName(),
-            savedMenu.getPrice(),
+            savedMenu.getPrice().getValue(),
             savedMenu.getMenuGroupId(),
             menuProductDtos
         );

@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuProductDto;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -23,15 +23,13 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
     public MenuService(final MenuRepository menuRepository,
         final MenuGroupRepository menuGroupRepository,
-        final MenuProductDao menuProductDao, final ProductRepository productRepository) {
+        final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
     }
 
@@ -40,16 +38,12 @@ public class MenuService {
         return menuRepository.findAll()
             .stream()
             .map(MenuDto::from)
-            .collect(Collectors.toUnmodifiableList());
+            .collect(toUnmodifiableList());
     }
 
     @Transactional
     public MenuDto create(final MenuDto menuDto) {
-        final BigDecimal price = menuDto.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        final Price price = new Price(menuDto.getPrice());
 
         if (!menuGroupRepository.existsById(menuDto.getMenuGroupId())) {
             throw new IllegalArgumentException();
@@ -58,11 +52,11 @@ public class MenuService {
         final List<Long> productIds = menuDto.getMenuProducts()
             .stream()
             .map(MenuProductDto::getProductId)
-            .collect(Collectors.toUnmodifiableList());
+            .collect(toUnmodifiableList());
         final List<Product> products = productRepository.findAllById(productIds);
         validatePrice(menuDto.getMenuProducts(), price, products);
 
-        final Menu menu = new Menu(menuDto.getName(), menuDto.getPrice(), menuDto.getMenuGroupId());
+        final Menu menu = new Menu(menuDto.getName(), price, menuDto.getMenuGroupId());
         final Map<Long, Long> productQuantityMap = menuDto.getMenuProducts()
             .stream()
             .collect(toUnmodifiableMap(MenuProductDto::getProductId, MenuProductDto::getQuantity));
@@ -72,26 +66,31 @@ public class MenuService {
         return MenuDto.from(savedMenu);
     }
 
-    private void validatePrice(final List<MenuProductDto> menuProductDtos, final BigDecimal price,
+    private void validatePrice(final List<MenuProductDto> menuProductDtos, final Price price,
         final List<Product> products) {
-        final BigDecimal sum = sumMenuProductPrices(products, menuProductDtos);
+        if (menuProductDtos.size() != products.size()) {
+            throw new IllegalArgumentException();
+        }
 
-        if (price.compareTo(sum) > 0) {
+        final Price sum = sumMenuProductPrices(products, menuProductDtos);
+
+        if (price.isBigger(sum)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private BigDecimal sumMenuProductPrices(
+    private Price sumMenuProductPrices(
         final List<Product> products,
         final List<MenuProductDto> menuProducts
     ) {
         final Map<Long, BigDecimal> productPriceMap = products.stream()
             .collect(Collectors.toMap(Product::getId, Product::getPrice));
 
-        return menuProducts.stream()
+        final BigDecimal value = menuProducts.stream()
             .map(menuProductDto -> productPriceMap.get(menuProductDto.getProductId())
                 .multiply(BigDecimal.valueOf(menuProductDto.getQuantity())
                 ))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new Price(value);
     }
 }
