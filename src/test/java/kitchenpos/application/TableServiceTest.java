@@ -63,9 +63,9 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 유효하지_않은_테이블_아이디를_전달_받은_경우_예외가_발생한다() {
-        given(orderTableDao.findById(eq(유효하지_않은_테이블아이디의_주문_테이블.getId()))).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_주문_테이블의_테이블아이디))).willThrow(IllegalArgumentException.class);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(유효하지_않은_테이블아이디의_주문_테이블.getId(), 유효하지_않은_테이블아이디의_주문_테이블))
+        assertThatThrownBy(() -> tableService.changeEmpty(유효하지_않은_주문_테이블의_테이블아이디, 유효하지_않은_테이블아이디의_주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -104,9 +104,9 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 유효하지_않은_주문_테이블_아이디를_전달_받은_경우_손님수를_변경하면_예외가_발생한다() {
-        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디를_갖는_주문테이블.getId()))).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디))).willThrow(IllegalArgumentException.class);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(유효하지_않은_주문테이블_아이디를_갖는_주문테이블.getId(), 유효하지_않은_주문테이블_아이디를_갖는_주문테이블))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(유효하지_않은_주문테이블_아이디, 유효하지_않은_주문테이블_아이디를_갖는_주문테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -27,6 +27,10 @@ public class OrderServiceFixture {
     protected Order 식사중에서_완료로_상태변경된_주문;
     protected Order 완료_상태인_주문;
     protected Order 잘못된_상태로_수정하고자_하는_주문;
+    protected Order 수정된_잘못된_상태로_수정하고자_하는_주문;
+    protected long 잘못된_상태로_수정하고자_하는_주문_아이디;
+    protected long 유효하지_않은_주문_아이디;
+    protected long 유효하지_않은_주문_테이블_아이디;
 
     @BeforeEach
     void setUp() {
@@ -62,9 +66,9 @@ public class OrderServiceFixture {
         주문항목이_2개인_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
 
         // 유효하지_않은_주문_테이블_아이디라면_예외가_발생한다
-        final long invalidTableId = -999L;
+        유효하지_않은_주문_테이블_아이디 = -999L;
         유효하지_않은_주문테이블_아이디를_갖는_주문 = new Order();
-        유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderTableId(invalidTableId);
+        유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderTableId(유효하지_않은_주문_테이블_아이디);
         유효하지_않은_주문테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
 
         // 주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다
@@ -94,6 +98,7 @@ public class OrderServiceFixture {
         식사중에서_완료로_상태변경된_주문.setOrderLineItems(상태를_변경할_식사중인_주문.getOrderLineItems());
 
         // 유효하지_않은_주문_번호를_입력한_경우_예외가_발생한다
+        유효하지_않은_주문_아이디 = -999L;
         완료_상태인_주문 = new Order();
         완료_상태인_주문.setId(1L);
         완료_상태인_주문.setOrderStatus("COMPLETION");
@@ -102,11 +107,11 @@ public class OrderServiceFixture {
         완료_상태인_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
 
         // order_status가_잘못_입력된_경우_예외가_발생한다
-        잘못된_상태로_수정하고자_하는_주문 = new Order();
-        잘못된_상태로_수정하고자_하는_주문.setId(1L);
-        잘못된_상태로_수정하고자_하는_주문.setOrderStatus("INVALID STATUS");
-        잘못된_상태로_수정하고자_하는_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        잘못된_상태로_수정하고자_하는_주문.setOrderedTime(LocalDateTime.now());
-        잘못된_상태로_수정하고자_하는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        잘못된_상태로_수정하고자_하는_주문_아이디 = 1L;
+        수정된_잘못된_상태로_수정하고자_하는_주문 = new Order();
+        수정된_잘못된_상태로_수정하고자_하는_주문.setOrderTableId(잘못된_상태로_수정하고자_하는_주문_아이디);
+        수정된_잘못된_상태로_수정하고자_하는_주문.setOrderStatus("INVALID STATUS");
+        수정된_잘못된_상태로_수정하고자_하는_주문.setOrderedTime(LocalDateTime.now());
+        수정된_잘못된_상태로_수정하고자_하는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
     }
 }

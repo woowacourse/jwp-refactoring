@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -67,7 +68,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
 
     @Test
     void 단체_테이블을_삭제할_수_있다() {
-        given(orderTableDao.findAllByTableGroupId(any())).willReturn(삭제할_주문테이블_리스트);
+        given(orderTableDao.findAllByTableGroupId(eq(삭제할_테이블그룹.getId()))).willReturn(삭제할_주문테이블_리스트);
 
         tableGroupService.ungroup(삭제할_테이블그룹.getId());
 

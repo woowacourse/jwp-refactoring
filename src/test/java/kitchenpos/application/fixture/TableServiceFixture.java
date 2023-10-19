@@ -21,8 +21,10 @@ public class TableServiceFixture {
     protected OrderTable 손님이_한_명인_테이블;
     protected OrderTable 손님_수가_2명으로_변경된_테이블;
     protected OrderTable 손님수가_음수인_주문_테이블;
+    protected long 유효하지_않은_주문테이블_아이디;
     protected OrderTable 유효하지_않은_주문테이블_아이디를_갖는_주문테이블;
     protected OrderTable 주문_불가능한_상태의_주문_테이블;
+    protected long 유효하지_않은_주문_테이블의_테이블아이디;
 
     @BeforeEach
     void setUp() {
@@ -48,9 +50,9 @@ public class TableServiceFixture {
         수정_요청한_사용_불가능한_상태의_테이블.setNumberOfGuests(사용_불가능한_상태의_테이블.getNumberOfGuests());
 
         // 유효하지_않은_테이블_아이디를_전달_받은_경우_예외가_발생한다
-        final long invalidOrderTableId = -999L;
+        유효하지_않은_주문_테이블의_테이블아이디 = -999L;
         유효하지_않은_테이블아이디의_주문_테이블 = new OrderTable();
-        유효하지_않은_테이블아이디의_주문_테이블.setId(invalidOrderTableId);
+        유효하지_않은_테이블아이디의_주문_테이블.setId(유효하지_않은_주문_테이블의_테이블아이디);
 
         // 테이블_아이디가_그룹_테이블에_포함되어_있다면_예외가_발생한다
         그룹테이블에_포함된_테이블 = new OrderTable();
@@ -83,8 +85,9 @@ public class TableServiceFixture {
         손님수가_음수인_주문_테이블.setNumberOfGuests(-1);
 
         // 유효하지_않은_주문_테이블_아이디를_전달_받은_경우_예외가_발생한다
+        유효하지_않은_주문테이블_아이디 = -999L;
         유효하지_않은_주문테이블_아이디를_갖는_주문테이블 = new OrderTable();
-        유효하지_않은_주문테이블_아이디를_갖는_주문테이블.setId(invalidOrderTableId);
+        유효하지_않은_주문테이블_아이디를_갖는_주문테이블.setId(유효하지_않은_주문테이블_아이디);
 
         // 주문_테이블이_사용_불가능한_테이블인_경우_예외가_발생한다
         주문_불가능한_상태의_주문_테이블 = new OrderTable();

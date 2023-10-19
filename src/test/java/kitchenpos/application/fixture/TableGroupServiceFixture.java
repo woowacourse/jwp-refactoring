@@ -72,9 +72,9 @@ public class TableGroupServiceFixture {
         final OrderTable 삭제할_주문테이블1 = new OrderTable();
         final OrderTable 삭제할_주문테이블2 = new OrderTable();
         삭제할_주문테이블1.setId(1L);
-        삭제할_주문테이블1.setEmpty(false);
+        삭제할_주문테이블1.setEmpty(true);
         삭제할_주문테이블2.setId(2L);
-        삭제할_주문테이블2.setEmpty(false);
+        삭제할_주문테이블2.setEmpty(true);
 
         삭제할_주문테이블_리스트 = List.of(삭제할_주문테이블1, 삭제할_주문테이블2);
         삭제할_테이블그룹 = new TableGroup();

@@ -69,7 +69,7 @@ class OrderServiceTest extends OrderServiceFixture {
     @Test
     void 유효하지_않은_주문_테이블_아이디라면_예외가_발생한다() {
         given(menuDao.countByIdIn(any())).willReturn(2L);
-        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디를_갖는_주문.getId()))).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_주문_테이블_아이디))).willThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> orderService.create(유효하지_않은_주문테이블_아이디를_갖는_주문));
     }
@@ -104,9 +104,9 @@ class OrderServiceTest extends OrderServiceFixture {
 
     @Test
     void 유효하지_않은_주문_번호를_입력한_경우_예외가_발생한다() {
-        given(orderDao.findById(any())).willReturn(Optional.of(완료_상태인_주문));
+        given(orderDao.findById(eq(유효하지_않은_주문_아이디))).willReturn(Optional.of(완료_상태인_주문));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(완료_상태인_주문.getId(), 완료_상태인_주문))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(유효하지_않은_주문_아이디, 완료_상태인_주문))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
