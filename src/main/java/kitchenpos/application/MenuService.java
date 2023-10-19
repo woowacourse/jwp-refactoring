@@ -1,37 +1,36 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import kitchenpos.dao.JpaMenuGroupRepository;
+import kitchenpos.dao.JpaMenuProductRepository;
+import kitchenpos.dao.JpaMenuRepository;
+import kitchenpos.dao.JpaProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final JpaMenuRepository jpaMenuRepository;
+    private final JpaMenuGroupRepository jpaMenuGroupRepository;
+    private final JpaMenuProductRepository jpaMenuProductRepository;
+    private final JpaProductRepository jpaProductRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+            final JpaMenuRepository jpaMenuRepository,
+            final JpaMenuGroupRepository jpaMenuGroupRepository,
+            final JpaMenuProductRepository jpaMenuProductRepository,
+            final JpaProductRepository jpaProductRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.jpaMenuRepository = jpaMenuRepository;
+        this.jpaMenuGroupRepository = jpaMenuGroupRepository;
+        this.jpaMenuProductRepository = jpaMenuProductRepository;
+        this.jpaProductRepository = jpaProductRepository;
     }
 
     @Transactional
@@ -42,7 +41,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!jpaMenuGroupRepository.existsById(menu.getMenuGroup().getId())) {
             throw new IllegalArgumentException();
         }
 
@@ -50,7 +49,7 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = jpaProductRepository.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
@@ -59,13 +58,12 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = jpaMenuRepository.save(menu);
 
-        final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            menuProduct.setMenu(savedMenu);
+            savedMenuProducts.add(jpaMenuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -73,10 +71,10 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = jpaMenuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(jpaMenuProductRepository.findAllByMenuId(menu.getId()));
         }
 
         return menus;

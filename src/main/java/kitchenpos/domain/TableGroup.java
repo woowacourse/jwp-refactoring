@@ -1,11 +1,26 @@
 package kitchenpos.domain;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import org.springframework.data.annotation.CreatedDate;
 
+@Entity
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @CreatedDate
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public Long getId() {

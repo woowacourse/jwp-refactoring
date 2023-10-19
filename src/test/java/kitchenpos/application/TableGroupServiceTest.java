@@ -19,15 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    OrderDao orderDao;
-
-    @Autowired
-    OrderTableDao orderTableDao;
-
-    @Autowired
-    TableGroupDao tableGroupDao;
-
-    @Autowired
     Fixtures fixtures;
 
     @Autowired
@@ -146,8 +137,8 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            assertThat(orderTableA.getTableGroupId()).isNull();
-            assertThat(orderTableB.getTableGroupId()).isNull();
+            assertThat(orderTableA.getTableGroup()).isNull();
+            assertThat(orderTableB.getTableGroup()).isNull();
         }
 
         @Test
@@ -156,8 +147,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTableA = fixtures.빈_테이블_저장();
             OrderTable orderTableB = fixtures.빈_테이블_저장();
 
-            fixtures.주문_저장(orderTableA.getId(), OrderStatus.COOKING);
-            fixtures.주문_저장(orderTableB.getId(), OrderStatus.COMPLETION);
+            fixtures.주문_저장(orderTableA, OrderStatus.COOKING);
+            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
 
             TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(orderTableA, orderTableB));

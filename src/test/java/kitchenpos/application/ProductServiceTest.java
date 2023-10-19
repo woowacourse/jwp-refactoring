@@ -20,9 +20,6 @@ class ProductServiceTest extends ServiceTest {
     ProductService productService;
 
     @Autowired
-    ProductDao productDao;
-
-    @Autowired
     Fixtures fixtures;
 
     @Nested

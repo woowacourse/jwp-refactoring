@@ -2,14 +2,14 @@ package kitchenpos.fixtures;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.JpaMenuGroupRepository;
+import kitchenpos.dao.JpaMenuProductRepository;
+import kitchenpos.dao.JpaMenuRepository;
+import kitchenpos.dao.JpaOrderLineItemRepository;
+import kitchenpos.dao.JpaOrderRepository;
+import kitchenpos.dao.JpaOrderTableRepository;
+import kitchenpos.dao.JpaProductRepository;
+import kitchenpos.dao.JpaTableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -26,109 +26,109 @@ import org.springframework.stereotype.Component;
 public class Fixtures {
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    JpaMenuGroupRepository jpaMenuGroupRepository;
 
     @Autowired
-    MenuProductDao menuProductDao;
+    JpaMenuProductRepository jpaMenuProductRepository;
 
     @Autowired
-    MenuDao menuDao;
+    JpaMenuRepository jpaMenuRepository;
 
     @Autowired
-    OrderDao orderDao;
+    JpaOrderRepository jpaOrderRepository;
 
     @Autowired
-    OrderLineItemDao orderLineItemDao;
+    JpaOrderLineItemRepository jpaOrderLineItemRepository;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    JpaOrderTableRepository jpaOrderTableRepository;
 
     @Autowired
-    ProductDao productDao;
+    JpaProductRepository jpaProductRepository;
 
     @Autowired
-    TableGroupDao tableGroupDao;
+    JpaTableGroupRepository jpaTableGroupRepository;
 
-    public Menu 메뉴_저장(Long menuGroupId, String name, Long price) {
+    public Menu 메뉴_저장(MenuGroup menuGroup, String name, Long price) {
         Menu menu = new Menu();
-        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuGroup(menuGroup);
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(price));
-        return menuDao.save(menu);
+        return jpaMenuRepository.save(menu);
     }
 
     public MenuGroup 메뉴_그룹_저장(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
-        return menuGroupDao.save(menuGroup);
+        return jpaMenuGroupRepository.save(menuGroup);
     }
 
-    public MenuProduct 메뉴_상품_저장(Long menuId, Long productId, Long quantity) {
+    public MenuProduct 메뉴_상품_저장(Menu menu, Product product, Long quantity) {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
+        menuProduct.setMenu(menu);
+        menuProduct.setProduct(product);
         menuProduct.setQuantity(quantity);
-        return menuProductDao.save(menuProduct);
+        return jpaMenuProductRepository.save(menuProduct);
     }
 
-    public Order 주문_저장(Long orderTableId, OrderStatus orderStatus) {
+    public Order 주문_저장(OrderTable orderTable, OrderStatus orderStatus) {
         Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus.name());
+        order.setOrderTable(orderTable);
+        order.setOrderStatus(orderStatus);
         order.setOrderedTime(LocalDateTime.now());
-        return orderDao.save(order);
+        return jpaOrderRepository.save(order);
     }
 
-    public Order 주문_저장(Long orderTableId) {
-        return 주문_저장(orderTableId, OrderStatus.COOKING);
+    public Order 주문_저장(OrderTable orderTable) {
+        return 주문_저장(orderTable, OrderStatus.COOKING);
     }
 
     public OrderTable 주문_테이블_저장() {
         OrderTable orderTable = new OrderTable();
-        return orderTableDao.save(orderTable);
+        return jpaOrderTableRepository.save(orderTable);
     }
 
     public OrderTable 빈_테이블_저장() {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
-        return orderTableDao.save(orderTable);
+        return jpaOrderTableRepository.save(orderTable);
     }
 
-    public OrderTable 주문_테이블_저장(Long tableGroupId, boolean isEmpty) {
+    public OrderTable 주문_테이블_저장(TableGroup tableGroup, boolean isEmpty) {
         OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setTableGroup(tableGroup);
         orderTable.setEmpty(isEmpty);
-        return orderTableDao.save(orderTable);
+        return jpaOrderTableRepository.save(orderTable);
     }
 
-    public OrderTable 주문_테이블_저장(Long tableGroupId, boolean isEmpty, int numberOfGuests) {
+    public OrderTable 주문_테이블_저장(TableGroup tableGroup, boolean isEmpty, int numberOfGuests) {
         OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setTableGroup(tableGroup);
         orderTable.setEmpty(isEmpty);
         orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTableDao.save(orderTable);
+        return jpaOrderTableRepository.save(orderTable);
     }
 
-    public OrderLineItem 주문_항목_저장(Long orderId, Long menuId, Long quantity, Long seq) {
+    public OrderLineItem 주문_항목_저장(Order order, Menu menu, Long quantity, Long seq) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
+        orderLineItem.setOrder(order);
+        orderLineItem.setMenu(menu);
         orderLineItem.setQuantity(quantity);
         orderLineItem.setSeq(seq);
-        return orderLineItemDao.save(orderLineItem);
+        return jpaOrderLineItemRepository.save(orderLineItem);
     }
 
     public Product 상품_저장(String name, Long price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
-        return productDao.save(product);
+        return jpaProductRepository.save(product);
     }
 
     public TableGroup 단체_지정_저장() {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroupDao.save(tableGroup);
+        return jpaTableGroupRepository.save(tableGroup);
     }
 
 }

@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -21,12 +19,6 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     Fixtures fixtures;
-
-    @Autowired
-    OrderDao orderDao;
-
-    @Autowired
-    OrderTableDao orderTableDao;
 
     @Autowired
     TableService tableService;
@@ -83,6 +75,7 @@ class TableServiceTest extends ServiceTest {
         void 존재하지_않는_주문_테이블을_설정하는_경우_예외가_발생한다() {
             // given
             OrderTable orderTable = new OrderTable();
+            orderTable.setId(-1L);
 
             OrderTable newOrderTable = new OrderTable();
             newOrderTable.setEmpty(true);
@@ -96,7 +89,7 @@ class TableServiceTest extends ServiceTest {
         void 주문_테이블이_단체_지정이_되어있는_경우_예외가_발생한다() {
             // given
             TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTable = fixtures.주문_테이블_저장(tableGroup.getId(), false);
+            OrderTable orderTable = fixtures.주문_테이블_저장(tableGroup, false);
 
             OrderTable newOrderTable = new OrderTable();
             newOrderTable.setEmpty(true);
@@ -111,7 +104,7 @@ class TableServiceTest extends ServiceTest {
         void 주문_테이블의_상태가_계산완료_상태가_아닌_경우_예외가_발생한다(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = fixtures.주문_테이블_저장();
-            fixtures.주문_저장(orderTable.getId(), orderStatus);
+            fixtures.주문_저장(orderTable, orderStatus);
 
             OrderTable newOrderTable = new OrderTable();
             newOrderTable.setEmpty(true);
@@ -159,6 +152,7 @@ class TableServiceTest extends ServiceTest {
         void 존재하지_않는_주문_테이블을_설정하는_경우_예외가_발생한다() {
             // given
             OrderTable orderTable = new OrderTable();
+            orderTable.setId(-1L);
 
             OrderTable newOrderTable = new OrderTable();
             newOrderTable.setNumberOfGuests(2);
