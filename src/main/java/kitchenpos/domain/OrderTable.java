@@ -47,7 +47,7 @@ public class OrderTable {
     }
 
     public void changeOrderTableEmpty(final boolean isEmpty) {
-        if (tableGroup != null) {
+        if (isEmpty && tableGroup != null) {
             throw new IllegalArgumentException("단체 지정이 되어 있으므로 주문 테이블 상태를 비어있게 할 수 없습니다.");
         }
 
