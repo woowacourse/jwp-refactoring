@@ -1,10 +1,34 @@
 package kitchenpos.domain;
 
 public class OrderLineItem {
+
     private Long seq;
     private Long orderId;
     private Long menuId;
     private long quantity;
+
+    public OrderLineItem() {
+    }
+
+    public OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+        this.seq = seq;
+        this.orderId = orderId;
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
+    public OrderLineItem(final Long menuId, final long quantity) {
+        validateQuantity(quantity);
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
+    private void validateQuantity(final long quantity) {
+        // TODO: OrderLineItem readme 작성하기 (validate)
+        if (quantity < 0) {
+            throw new IllegalArgumentException("주문 항목의 수량은 0개 이상이어야 합니다.");
+        }
+    }
 
     public Long getSeq() {
         return seq;

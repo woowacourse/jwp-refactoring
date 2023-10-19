@@ -107,7 +107,7 @@ class OrderServiceTest extends ServiceTest {
 
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(0);
+        orderTable.changeNumberOfGuests(0);
         주문테이블 = orderTableDao.save(orderTable);
 
         후1양1_수량1 = new OrderLineItem();
@@ -233,7 +233,7 @@ class OrderServiceTest extends ServiceTest {
 
         Order 주문 = orderService.create(order);
         OrderStatus 변경할_주문_상태 = OrderStatus.MEAL;
-        주문.setOrderStatus(변경할_주문_상태.name());
+        주문.changeOrderStatus(변경할_주문_상태.name());
 
         // when
         Order 주문상태가_변경된_주문 = orderService.changeOrderStatus(주문.getId(), 주문);
@@ -252,7 +252,7 @@ class OrderServiceTest extends ServiceTest {
 
         Order 주문 = orderService.create(order);
         OrderStatus 변경할_주문_상태 = OrderStatus.MEAL;
-        주문.setOrderStatus(변경할_주문_상태.name());
+        주문.changeOrderStatus(변경할_주문_상태.name());
 
         Long invalidOrderId = 100L;
 
@@ -270,7 +270,7 @@ class OrderServiceTest extends ServiceTest {
         order.setOrderLineItems(List.of(후1양1_수량1, 간1양1_수량1));
 
         OrderStatus 유효하지_않은_주문_상태 = OrderStatus.COMPLETION;
-        order.setOrderStatus(유효하지_않은_주문_상태.name());
+        order.changeOrderStatus(유효하지_않은_주문_상태.name());
         order.setOrderedTime(LocalDateTime.now());
 
         Order 주문 = orderDao.save(order);

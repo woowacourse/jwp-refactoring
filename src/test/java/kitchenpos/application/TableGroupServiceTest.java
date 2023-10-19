@@ -46,13 +46,14 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
+        // TODO: empty가 true인 상태에서 방문자 수 변경해서 발생한 문제 -> 생성자로 변경 필요
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(0);
+        orderTable1.changeNumberOfGuests(0);
 
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setEmpty(true);
-        orderTable2.setNumberOfGuests(0);
+        orderTable2.changeNumberOfGuests(0);
 
         주문테이블1 = orderTableDao.save(orderTable1);
         주문테이블2 = orderTableDao.save(orderTable2);
@@ -120,7 +121,7 @@ class TableGroupServiceTest extends ServiceTest {
         // given
         OrderTable orderTable3 = new OrderTable();
         orderTable3.setEmpty(false);
-        orderTable3.setNumberOfGuests(0);
+        orderTable3.changeNumberOfGuests(0);
 
         OrderTable 비어있지_않은_주문테이블 = orderTableDao.save(orderTable3);
 
@@ -141,7 +142,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         OrderTable orderTable3 = new OrderTable();
         orderTable3.setEmpty(false);
-        orderTable3.setNumberOfGuests(0);
+        orderTable3.changeNumberOfGuests(0);
         orderTable3.setTableGroupId(tableGroupService.create(existingTableGroup).getId());
 
         OrderTable 이미_테이블그룹에_속한_주문테이블 = orderTableDao.save(orderTable3);
@@ -190,7 +191,7 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroup 테이블그룹 = tableGroupService.create(tableGroup);
 
         Order order = new Order();
-        order.setOrderStatus(invalidOrderStatus);
+        order.changeOrderStatus(invalidOrderStatus);
         order.setOrderTableId(주문테이블1.getId());
         order.setOrderedTime(LocalDateTime.now());
         orderDao.save(order);
