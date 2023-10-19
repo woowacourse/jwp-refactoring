@@ -3,6 +3,7 @@ package kitchenpos.domain.order.service;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,18 +41,18 @@ public class OrderService {
         validateOrderLineItems(order);
         validateOrderTable(order);
 
-        final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems().stream()
+        final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems().getOrderLineItems().stream()
                 .map(orderLineItemRepository::save)
                 .collect(toList());
 
-        final Order savedOrder = orderRepository.save(new Order(order.getOrderTable(), COOKING, LocalDateTime.now(), new ArrayList<>()));
+        final Order savedOrder = orderRepository.save(new Order(order.getOrderTable(), COOKING, LocalDateTime.now(), new OrderLineItems()));
         savedOrder.addAllOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
     }
 
     private void validateOrderLineItems(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = order.getOrderLineItems().getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();

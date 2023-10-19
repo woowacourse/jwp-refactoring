@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
+import static kitchenpos.application.fixture.OrderFixture.order;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -82,10 +83,10 @@ class OrderServiceTest {
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
 
             final OrderTable orderTable = mock(OrderTable.class);
-            final Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
+            final Order order = order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
             given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
 
-            final Order spyOrder = spy(new Order(order.getOrderTable(), order.getOrderStatus(), order.getOrderedTime(), new ArrayList<>()));
+            final Order spyOrder = spy(order(order.getOrderTable(), order.getOrderStatus(), order.getOrderedTime(), new ArrayList<>()));
             given(orderRepository.save(any(Order.class))).willReturn(spyOrder);
             given(orderTableRepository.findById(any())).willReturn(Optional.ofNullable(orderTable));
 
@@ -107,7 +108,7 @@ class OrderServiceTest {
                     () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getOrderTable()).isEqualTo(orderTable),
                     () -> assertThat(actual.getOrderStatus()).isEqualTo(COOKING),
-                    () -> assertThat(actual.getOrderLineItems())
+                    () -> assertThat(actual.getOrderLineItems().getOrderLineItems())
                             .usingRecursiveFieldByFieldElementComparator()
                             .containsExactly(wooDong, frenchFries)
             );
@@ -116,7 +117,7 @@ class OrderServiceTest {
         @Test
         void 주문_항목이_없으면_예외가_발생한다() {
             // given
-            final Order order = new Order(COMPLETION, LocalDateTime.now(), emptyList());
+            final Order order = order(COMPLETION, LocalDateTime.now(), emptyList());
 
             // when, then
             assertThatThrownBy(() -> orderService.create(order))
@@ -126,10 +127,10 @@ class OrderServiceTest {
         @Test
         void 주문_항목의_총합과_메뉴의_총합이_다르면_예외를_발생한다() {
             // given
-            final Order order = new Order(COMPLETION, LocalDateTime.now(), List.of(wooDong, frenchFries));
+            final Order order = order(COMPLETION, LocalDateTime.now(), List.of(wooDong, frenchFries));
 
             // when
-            final long incorrectMenuSize = order.getOrderLineItems().size() - 1;
+            final long incorrectMenuSize = order.getOrderLineItems().getOrderLineItems().size() - 1;
             when(menuRepository.countByIdIn(anyList())).thenReturn(incorrectMenuSize);
 
             // then
@@ -141,7 +142,7 @@ class OrderServiceTest {
         void 주문에_있는_주문_테이블이_없으면_예외가_발생한다() {
             // given
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(COMPLETION, LocalDateTime.now(), orderLineItems));
+            final Order order = spy(order(COMPLETION, LocalDateTime.now(), orderLineItems));
 
             given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
             final OrderTable mockOrderTable = mock(OrderTable.class);
@@ -161,7 +162,7 @@ class OrderServiceTest {
         void 주문에_있는_주문_테이블이_비어있으면_예외가_발생한다() {
             // given
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(COMPLETION, LocalDateTime.now(), orderLineItems));
+            final Order order = spy(order(COMPLETION, LocalDateTime.now(), orderLineItems));
 
             given(menuRepository.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
 
@@ -191,7 +192,7 @@ class OrderServiceTest {
 
             given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(orderLineItems);
 
-            final Order spyOrder = spy(new Order(COMPLETION, LocalDateTime.now(), new ArrayList<>()));
+            final Order spyOrder = spy(order(COMPLETION, LocalDateTime.now(), new ArrayList<>()));
             given(spyOrder.getId()).willReturn(orderId);
             given(orderRepository.findAll()).willReturn(List.of(spyOrder));
 
@@ -203,7 +204,7 @@ class OrderServiceTest {
                     () -> assertThat(actual).hasSize(1)
                             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "orderLineItems")
                             .containsExactly(spyOrder),
-                    () -> assertThat(actual.get(0).getOrderLineItems())
+                    () -> assertThat(actual.get(0).getOrderLineItems().getOrderLineItems())
                             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
                             .containsExactly(wooDong, frenchFries)
             );
@@ -221,11 +222,11 @@ class OrderServiceTest {
             final long orderId = 1;
             final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(wooDong, frenchFries));
 
-            final Order order = new Order(validedOrderStatus, LocalDateTime.now(), orderLineItems);
+            final Order order = order(validedOrderStatus, LocalDateTime.now(), orderLineItems);
             given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(order));
 
             // when
-            final Order expected = new Order(COMPLETION, LocalDateTime.now(), orderLineItems);
+            final Order expected = order(COMPLETION, LocalDateTime.now(), orderLineItems);
             final Order actual = orderService.changeOrderStatus(orderId, expected);
 
             // then
@@ -238,8 +239,8 @@ class OrderServiceTest {
             final long orderId = 1;
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
 
-            final Order expected = new Order(COMPLETION, LocalDateTime.now(), orderLineItems);
-            final Order actual = spy(new Order(expected.getOrderStatus(), expected.getOrderedTime(), new ArrayList<>()));
+            final Order expected = order(COMPLETION, LocalDateTime.now(), orderLineItems);
+            final Order actual = spy(order(expected.getOrderStatus(), expected.getOrderedTime(), new ArrayList<>()));
             given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(actual));
 
             // when, then

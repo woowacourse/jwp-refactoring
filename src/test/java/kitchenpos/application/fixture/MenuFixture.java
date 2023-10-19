@@ -13,7 +13,10 @@ public abstract class MenuFixture {
     private MenuFixture() {
     }
 
-    public static Menu menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
-        return new Menu(name, price, menuGroup, new MenuProducts(menuProducts));
+    public static Menu menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> toAddMenuProducts) {
+        final MenuProducts menuProducts = new MenuProducts();
+        menuProducts.addAll(toAddMenuProducts);
+
+        return new Menu(name, price, menuGroup, menuProducts);
     }
 }

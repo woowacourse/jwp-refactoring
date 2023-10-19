@@ -9,13 +9,9 @@ import java.util.List;
 public class MenuProducts {
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
 
     public MenuProducts() {
-    }
-
-    public MenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     public void addAll(final List<MenuProduct> toAddMenuProducts) {
