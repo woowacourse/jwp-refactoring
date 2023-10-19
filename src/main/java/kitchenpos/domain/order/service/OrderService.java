@@ -1,12 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.domain.order.service;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 
 @Service
 @Transactional(readOnly = true)

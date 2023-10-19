@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
+import kitchenpos.domain.order.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

@@ -1,11 +1,12 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderLineItemRepositoryTest extends RepositoryTestConfig {

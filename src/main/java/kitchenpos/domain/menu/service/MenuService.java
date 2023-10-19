@@ -1,12 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.domain.menu.service;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.repository.MenuGroupRepository;
+import kitchenpos.domain.menu.repository.MenuProductRepository;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.menu.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

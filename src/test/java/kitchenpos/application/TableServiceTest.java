@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
+import kitchenpos.domain.order.service.TableService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

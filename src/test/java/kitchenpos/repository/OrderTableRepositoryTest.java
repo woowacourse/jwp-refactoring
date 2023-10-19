@@ -1,7 +1,8 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
