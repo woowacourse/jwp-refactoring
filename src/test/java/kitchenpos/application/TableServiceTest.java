@@ -83,7 +83,7 @@ class TableServiceTest extends MockServiceTest {
                 1L,
                 new GuestNumber(1),
                 false);
-        ordertable.addOrders(List.of(order));
+        ordertable.addOrder(order);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(ordertable));
@@ -127,7 +127,7 @@ class TableServiceTest extends MockServiceTest {
 
         Order order = new Order(LocalDateTime.now());
         order.completeOrder();
-        ordertable.addOrders(List.of(order));
+        ordertable.addOrder(order);
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         ordertable.changeTableGroup(tableGroup);
@@ -152,7 +152,7 @@ class TableServiceTest extends MockServiceTest {
                 false);
 
         Order order = new Order(LocalDateTime.now());
-        ordertable.addOrders(List.of(order));
+        ordertable.addOrder(order);
 
         BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(ordertable));

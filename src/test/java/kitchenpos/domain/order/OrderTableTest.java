@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 class OrderTableTest extends BaseTest {
 
@@ -25,9 +24,9 @@ class OrderTableTest extends BaseTest {
     @Test
     void 주문_테이블에_포함된_주문_중_요리나_식사_상태의_주문이_있으면_주문_상태를_바꾸지_못한다() {
         // given
-        OrderTable orderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable orderTable = new OrderTable(new GuestNumber(1), false);
         Order order = new Order(LocalDateTime.now());
-        orderTable.addOrders(List.of(order));
+        orderTable.addOrder(order);
 
         // when, then
         Assertions.assertThatThrownBy(() -> orderTable.changeEmpty(false))

@@ -179,9 +179,9 @@ class TableGroupServiceTest extends MockServiceTest {
         // given
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
-        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
+        OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), false);
         Order order = new Order(LocalDateTime.now());
-        firstOrderTable.addOrders(List.of(order));
+        firstOrderTable.addOrder(order);
 
         BDDMockito.given(tableGroupRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(tableGroup));
