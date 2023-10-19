@@ -53,7 +53,6 @@ class MenuGroupServiceTest extends ServiceTestConfig {
             final List<MenuGroupResponse> actual = menuGroupService.list();
 
             // then
-            // FIXME: equals&hashcode 적용
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
                 softly.assertThat(actual.get(0).getId()).isEqualTo(savedMenuGroup.getId());

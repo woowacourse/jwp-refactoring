@@ -30,7 +30,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @DataJpaTest
-@Import(JpaConfig.class) // TODO: jpa로 다 변환하고 dao config 제거하기
+@Import(JpaConfig.class)
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
 
