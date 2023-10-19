@@ -38,10 +38,9 @@ class MenuProductsTest {
         final Quantity quantity = new Quantity(10);
 
         // when
+        final List<MenuProduct> menuProductItems = List.of(MenuProduct.ofWithoutMenu(product, quantity));
         final MenuProducts actual = MenuProducts.empty();
-        actual.add(List.of(
-                MenuProduct.ofWithoutMenu(product, quantity)
-        ));
+        actual.add(new MenuProducts(menuProductItems));
 
         // then
         assertSoftly(softly -> {
@@ -58,12 +57,12 @@ class MenuProductsTest {
     @Test
     void success_getTotalPrice() {
         // given
-        final MenuProducts menuProducts = MenuProducts.empty();
-        menuProducts.add(List.of(
+        final List<MenuProduct> menuProductItems = List.of(
                 MenuProduct.ofWithoutMenu(new Product(new Name("테스트용 상품명"), new Price("10000")), new Quantity(1)),
                 MenuProduct.ofWithoutMenu(new Product(new Name("테스트용 상품명"), new Price("5000")), new Quantity(2)),
                 MenuProduct.ofWithoutMenu(new Product(new Name("테스트용 상품명"), new Price("2000")), new Quantity(5))
-        ));
+        );
+        final MenuProducts menuProducts = new MenuProducts(menuProductItems);
 
         // when
         final Price actual = menuProducts.getTotalPrice();

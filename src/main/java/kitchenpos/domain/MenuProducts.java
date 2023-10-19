@@ -34,8 +34,8 @@ public class MenuProducts {
                 .orElse(Price.ZERO);
     }
 
-    public void add(final List<MenuProduct> otherMenuProducts) {
-        menuProductItems.addAll(otherMenuProducts);
+    public void add(final MenuProducts otherMenuProducts) {
+        menuProductItems.addAll(otherMenuProducts.getMenuProductItems());
     }
 
     public List<MenuProduct> getMenuProductItems() {

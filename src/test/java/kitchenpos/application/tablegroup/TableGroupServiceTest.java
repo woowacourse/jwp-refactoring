@@ -5,7 +5,6 @@ import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -162,6 +161,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         }
 
     }
+
     @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
     @DisplayName("단체 지정 해제")
     @Nested
@@ -244,7 +244,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                             savedMenuGroup
                     )
             );
-            final MenuProduct menuProduct = new MenuProduct(null, savedProduct, new Quantity(10));
+            final MenuProduct menuProduct = MenuProduct.ofWithoutMenu(savedProduct, new Quantity(10));
             savedMenu.addMenuProducts(List.of(menuProduct));
 
             return savedMenu;
