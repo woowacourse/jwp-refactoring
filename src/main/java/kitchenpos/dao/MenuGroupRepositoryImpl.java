@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.MenuGroupEntity;
+import kitchenpos.dao.mapper.MenuGroupMapper;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import org.springframework.stereotype.Repository;
@@ -25,23 +26,20 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepository {
         )
     );
 
-    return new MenuGroup(
-        entity.getId(),
-        entity.getName()
-    );
+    return MenuGroupMapper.mapToMenuGroup(entity);
   }
 
   @Override
   public Optional<MenuGroup> findById(final Long id) {
     return menuGroupDao.findById(id)
-        .map(menuGroupEntity -> new MenuGroup(menuGroupEntity.getId(), menuGroupEntity.getName()));
+        .map(MenuGroupMapper::mapToMenuGroup);
   }
 
   @Override
   public List<MenuGroup> findAll() {
     return menuGroupDao.findAll()
         .stream()
-        .map(menuGroupEntity -> new MenuGroup(menuGroupEntity.getId(), menuGroupEntity.getName()))
+        .map(MenuGroupMapper::mapToMenuGroup)
         .collect(Collectors.toList());
   }
 
