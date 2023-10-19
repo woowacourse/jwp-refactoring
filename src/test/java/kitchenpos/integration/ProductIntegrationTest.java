@@ -18,9 +18,7 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void 상품_생성을_요청한다() {
         // given
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(BigDecimal.valueOf(1000));
+        final Product product = new Product("상품", BigDecimal.valueOf(1000));
         final HttpEntity<Product> request = new HttpEntity<>(product);
 
         // when
@@ -40,9 +38,7 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void 모든_상품_목록을_조회한다() {
         // given
-        final Product product = new Product();
-        product.setName("상품");
-        product.setPrice(BigDecimal.valueOf(1000));
+        final Product product = new Product("상품", BigDecimal.valueOf(1000));
         final HttpEntity<Product> request = new HttpEntity<>(product);
 
         createProduct(request);

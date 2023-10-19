@@ -96,9 +96,7 @@ class MenuIntegrationTest extends IntegrationTest {
     }
 
     private Product createProduct(final String name, final int price) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
+        final Product product = new Product(name, BigDecimal.valueOf(price));
         final HttpEntity<Product> request = new HttpEntity<>(product);
 
         return testRestTemplate

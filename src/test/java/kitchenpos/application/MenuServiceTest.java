@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +39,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -52,14 +52,12 @@ class MenuServiceTest {
             final Menu savedMenu = new Menu();
             savedMenu.setId(1L);
 
-            final Product savedProduct = new Product();
-            savedProduct.setPrice(new BigDecimal(1000));
-
+            final Product savedProduct = new Product("상품", BigDecimal.valueOf(1000));
             final MenuProduct savedMenuProduct = new MenuProduct();
 
             when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(true);
-            when(productDao.findById(anyLong()))
+            when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));
             when(menuDao.save(any(Menu.class)))
                     .thenReturn(savedMenu);
@@ -123,7 +121,7 @@ class MenuServiceTest {
             // given
             when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(true);
-            when(productDao.findById(anyLong()))
+            when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.empty());
 
             // when
@@ -143,12 +141,11 @@ class MenuServiceTest {
         @Test
         void 메뉴를_생성할_때_전달한_가격과_메뉴_상품들의_가격의_합이_일치하지_않으면_실패한다() {
             // given
-            final Product savedProduct = new Product();
-            savedProduct.setPrice(new BigDecimal(500));
+            final Product savedProduct = new Product("상품", BigDecimal.valueOf(500));
 
             when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(true);
-            when(productDao.findById(anyLong()))
+            when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));
 
             // when
