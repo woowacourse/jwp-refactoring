@@ -8,10 +8,18 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        validateGuest(numberOfGuests);
+
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validateGuest(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("게스트는 음수일 수 없습니다.");
+        }
     }
 
     public OrderTable(final Long id, final Long tableGroupId) {

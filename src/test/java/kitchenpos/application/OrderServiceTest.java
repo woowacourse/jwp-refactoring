@@ -40,7 +40,9 @@ class OrderServiceTest {
     @Test
     void 주문_아이템이_존재하지_않는_경우_예외가_발생한다() {
         Order 주문1번 = OrderFixtures.주문1번();
-        assertThatThrownBy(() -> orderService.create(주문1번)).isInstanceOf(IllegalArgumentException.class);
+        주문1번.setOrderLineItems(List.of(OrderLineItemFixtures.로제떡볶이_주문항목()));
+        assertThatThrownBy(() -> orderService.create(주문1번))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -90,6 +92,7 @@ class OrderServiceTest {
         Order 주문1번 = OrderFixtures.주문1번();
         Order 주문2번 = OrderFixtures.주문2번();
         when(orderDao.findAll()).thenReturn(List.of(주문1번, 주문2번));
+        when(orderLineItemDao.findAllByOrderId(anyLong())).thenReturn(List.of(OrderLineItemFixtures.로제떡볶이_주문항목()));
 
         orderService.list();
 
@@ -124,7 +127,7 @@ class OrderServiceTest {
         주문1번.setOrderStatus(OrderStatus.COOKING);
 
         when(orderDao.findById(주문1번.getId())).thenReturn(Optional.of(주문1번));
-
+        when(orderLineItemDao.findAllByOrderId(anyLong())).thenReturn(List.of(OrderLineItemFixtures.로제떡볶이_주문항목()));
         orderService.changeOrderStatus(주문1번.getId(), 주문1번);
 
         verify(orderDao).save(주문1번);

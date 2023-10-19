@@ -7,7 +7,7 @@ public class Price {
     private final BigDecimal price;
 
     private Price(final BigDecimal price) {
-        validate(price);
+        validatePrice(price);
         this.price = price;
     }
 
@@ -19,7 +19,7 @@ public class Price {
         return new Price(price);
     }
 
-    private void validate(final BigDecimal price) {
+    private void validatePrice(final BigDecimal price) {
         if (price == null) {
             throw new IllegalArgumentException("가격은 NULL이 될 수 없습니다.");
         }

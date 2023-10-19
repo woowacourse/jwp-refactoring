@@ -2,7 +2,8 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.annotation.processing.Completion;
+import java.util.stream.Collectors;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
     private Long id;
@@ -35,7 +36,7 @@ public class Order {
         return orderTableId;
     }
 
-    public boolean isOrderStatusCompletion(OrderStatus orderStatus) {
+    public boolean isOrderStatusCompletion() {
         return this.orderStatus==OrderStatus.COMPLETION;
     }
 
@@ -55,7 +56,17 @@ public class Order {
         return orderLineItems;
     }
 
+    public List<Long> getOrderLineItemsMenuIds() {
+        return orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+    }
+
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
+        }
         this.orderLineItems = orderLineItems;
     }
+
 }

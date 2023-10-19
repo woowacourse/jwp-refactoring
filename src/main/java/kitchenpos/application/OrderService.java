@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -12,7 +11,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -35,20 +33,14 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(order);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTable orderTable = getOrderTable(order);
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+        return saveOrder(orderTable, orderLineItems);
+    }
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
+    private OrderTable getOrderTable(final Order order) {
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -56,6 +48,20 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
+        return orderTable;
+    }
+
+    private List<OrderLineItem> getOrderLineItems(final Order order) {
+        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+
+        if (orderLineItems.size() != menuDao.countByIdIn(order.getOrderLineItemsMenuIds())) {
+            throw new IllegalArgumentException();
+        }
+
+        return orderLineItems;
+    }
+
+    private Order saveOrder(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
         final Order savedOrder = orderDao.save(new Order(null, orderTable.getId()));
 
         final Long orderId = savedOrder.getId();
@@ -84,7 +90,7 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (order.isOrderStatusCompletion(savedOrder.getOrderStatus())) {
+        if (savedOrder.isOrderStatusCompletion()) {
             throw new IllegalArgumentException();
         }
 
