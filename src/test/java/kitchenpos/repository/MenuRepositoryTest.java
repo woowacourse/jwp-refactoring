@@ -29,11 +29,9 @@ class MenuRepositoryTest {
         em.clear(); // 1차 캐시 삭제
 
         Long lastMenuProductMenuId = menuProduct.getMenu().getId();
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(menuProduct);
 
         System.out.println("=---------------------------");
-        menu.setMenuProducts(menuProducts);
+        menu.addMenuProducts(menuProduct);
         Menu savedMenu = menuRepository.save(menu);
         em.flush(); // save 데이터 베이스 반영
         System.out.println("=---------------------------");

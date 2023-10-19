@@ -23,11 +23,11 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
 
-    private Product product = new Product();
+    private Product product;
 
     @BeforeEach
     void init() {
-        product.setPrice(BigDecimal.valueOf(1000));
+        product = Product.of("kong", BigDecimal.valueOf(1000));
     }
 
     @Test

@@ -68,11 +68,6 @@ public class Order {
         return orderTable.getId();
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTable = new OrderTable();
-        this.orderTable.setTableGroupId(orderTableId);
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -88,15 +83,7 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

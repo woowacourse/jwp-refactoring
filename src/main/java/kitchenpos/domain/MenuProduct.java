@@ -26,8 +26,7 @@ public class MenuProduct {
 
     public MenuProduct() {}
 
-    public MenuProduct(final Menu menu, final Product product, final long quantity) {
-        this.menu = menu;
+    public MenuProduct(final Product product, final long quantity) {
         this.product = product;
         this.quantity = quantity;
     }
@@ -56,16 +55,15 @@ public class MenuProduct {
         return product.getId();
     }
 
-    public void setProductId(final Long productId) {
-        this.product = new Product();
-        this.product.setId(productId);
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

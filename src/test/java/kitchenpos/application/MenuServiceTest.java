@@ -1,25 +1,16 @@
 package kitchenpos.application;
 
-import static kitchenpos.Fixture.getMenu;
-import static kitchenpos.Fixture.getMenuProduct1;
-import static kitchenpos.Fixture.getMenuProduct2;
-import static kitchenpos.Fixture.getProduct1;
-import static kitchenpos.Fixture.getProduct2;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.application.exception.MenuServiceException.NotExistsMenuGroupException;
 import kitchenpos.application.exception.MenuServiceException.NotExistsProductException;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
@@ -29,8 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -57,16 +46,24 @@ class MenuServiceTest {
     @Mock
     private ProductRepository productRepository;
 
-    private Menu menu = getMenu();
-    private MenuProduct menuProduct1 = getMenuProduct1();
-    private MenuProduct menuProduct2 = getMenuProduct2();
+    private Menu menu;
+    private MenuProduct menuProduct1;
+    private MenuProduct menuProduct2;
 
     @BeforeEach
     void init() {
-        menuProduct1.setProductId(1L);
-        menuProduct2.setProductId(2L);
-        menu.setMenuGroupId(MENU_GROUP_ID);
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
+        Product kong = Product.of("kong", BigDecimal.valueOf(1000));
+        Product wuga = Product.of("wuga", BigDecimal.valueOf(5000));
+        kong.setId(1L);
+        wuga.setId(2L);
+
+        menuProduct1 = new MenuProduct(kong, 10);
+        menuProduct2 = new MenuProduct(wuga, 3);
+
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
+        menuGroup.setId(1L);
+
+        this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup, List.of(menuProduct1, menuProduct2));
     }
 
     @Test

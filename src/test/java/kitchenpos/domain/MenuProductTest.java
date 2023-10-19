@@ -10,7 +10,7 @@ class MenuProductTest {
     @Test
     @DisplayName("메뉴상품의 가격 총합을 구할 수 있다.")
     void getMenuProductPrice_success() {
-        MenuProduct wuga = new MenuProduct(new Menu(), Product.of("wuga", BigDecimal.valueOf(1000)), 10);
+        MenuProduct wuga = new MenuProduct(Product.of("wuga", BigDecimal.valueOf(1000)), 10);
 
         Assertions.assertThat(wuga.getMenuProductPrice()).isEqualTo(BigDecimal.valueOf(10000));
     }

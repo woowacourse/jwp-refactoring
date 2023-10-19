@@ -24,18 +24,11 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
 
     public Long getOrderId() {
         return order.getId();
     }
 
-    public void setOrderId(final Long orderId) {
-        this.order = new Order();
-        this.order.setId(orderId);
-    }
 
     public void setOrder(final Order order) {
         this.order = order;
@@ -51,9 +44,5 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

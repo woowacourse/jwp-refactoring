@@ -86,7 +86,7 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("주문 테이블은 매핑된 테이블 그룹의 번호가 있으면 예외가 발생한다.")
     void create_fail_cannot_assign_tableGroup1() {
-        orderTable1.setTableGroupId(100L);
+        orderTable1.setTableGroup(new TableGroup());
 
         assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1, orderTable2)))
                 .isInstanceOf(CannotAssignOrderTableException.class);
