@@ -19,6 +19,8 @@ public abstract class MenuFixture {
         menuProducts.addAll(toAddMenuProducts);
 
         final Price menuPrice = new Price(price);
+        menuPrice.add(price);
+
         return new Menu(name, menuPrice, menuGroup, menuProducts);
     }
 

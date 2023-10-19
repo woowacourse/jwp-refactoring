@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 @Transactional(readOnly = true)
 public class MenuService {
@@ -39,13 +37,7 @@ public class MenuService {
         validateMenu(menu);
 
         final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = menu.getMenuProducts().getMenuProducts().stream()
-                .map(menuProduct -> menuProductRepository.save(
-                        new MenuProduct(menu, menuProduct.getProduct(), menuProduct.getQuantity())
-                ))
-                .collect(toList());
-        savedMenu.addMenuProducts(savedMenuProducts);
+        savedMenu.addMenuProducts(menu.getMenuProducts().getMenuProducts());
 
         return savedMenu;
     }

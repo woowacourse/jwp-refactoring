@@ -75,12 +75,6 @@ class MenuServiceTest {
             final Menu spyExpected = spy(menu(expected.getName(), expected.getPrice().getPrice(), expected.getMenuGroup(), new ArrayList<>()));
             given(menuRepository.save(expected)).willReturn(spyExpected);
 
-            final MenuProduct menuProduct1 = new MenuProduct(1L, expected, wooDong.getProduct(), frenchFries.getQuantity());
-            final MenuProduct menuProduct2 = new MenuProduct(2L, expected, frenchFries.getProduct(), frenchFries.getQuantity());
-            given(menuProductRepository.save(any(MenuProduct.class)))
-                    .willReturn(menuProduct1)
-                    .willReturn(menuProduct2);
-
             // when
             final Menu actual = menuService.create(expected);
 
