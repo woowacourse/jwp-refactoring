@@ -75,8 +75,16 @@ public class Order {
         return orderLineItems;
     }
 
+    public boolean isAlreadyCompletion(){
+        return this.orderStatus == OrderStatus.COMPLETION;
+    }
+
+    public boolean isNotAlreadyCompletion(){
+        return !isAlreadyCompletion();
+    }
+
     public void changeOrderStatus(final OrderStatus orderStatus) {
-        if (OrderStatus.COMPLETION == this.orderStatus) {
+        if (isAlreadyCompletion()) {
             throw new OrderException(ORDER_IS_ALREADY_COMPLETION);
         }
         this.orderStatus = orderStatus;
