@@ -101,7 +101,7 @@ class MenuServiceTest {
         @Test
         void 메뉴_상품이_존재하지_않으면_등록할_수_없다() {
             long notExistMenuId = Long.MIN_VALUE;
-            MenuProductDto notExistMenuProduct = new MenuProductDto(null, notExistMenuId, 1L, 2L);
+            MenuProductDto notExistMenuProduct = new MenuProductDto(notExistMenuId, 1L, 2L);
             MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(notExistMenuProduct));
 
             assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -112,7 +112,7 @@ class MenuServiceTest {
         @Test
         void 메뉴의_가격이_메뉴_상품들의_가격_합보다_비싸면_등록할_수_없다() {
             Product product1 = new Product("상품2", new BigDecimal(10001));
-            MenuProductDto menuProductDto2 = new MenuProductDto(null, product1.getId(), 1L, 1L);
+            MenuProductDto menuProductDto2 = new MenuProductDto(product1.getId(), 1L, 1L);
             MenuRequest menuRequest = new MenuRequest("메뉴", new BigDecimal("50000.00"), menuGroup.getId(), List.of(menuProductDto, menuProductDto2));
 
             assertThatThrownBy(() -> menuService.create(menuRequest))

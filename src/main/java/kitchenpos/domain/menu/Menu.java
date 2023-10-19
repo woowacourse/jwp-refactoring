@@ -19,6 +19,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 public class Menu {
 
+    private static final int MIN_MENU_PRICE = 0;
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -43,15 +45,15 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        validate(price);
+        validatePriceRange(price);
     }
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
-    private void validate(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+    private void validatePriceRange(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < MIN_MENU_PRICE) {
             throw new IllegalArgumentException("메뉴 가격은 0 이상이어야 합니다.");
         }
     }

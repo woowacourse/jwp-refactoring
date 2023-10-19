@@ -18,6 +18,10 @@ public class MenuProductDto {
         this.quantity = quantity;
     }
 
+    public MenuProductDto(Long menuId, Long productId, long quantity) {
+        this(null, menuId, productId, quantity);
+    }
+
     public static List<MenuProductDto> of(List<MenuProduct> menuProducts) {
         return menuProducts.stream()
                 .map(MenuProductDto::from)

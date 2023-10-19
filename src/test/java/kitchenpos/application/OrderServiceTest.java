@@ -113,7 +113,8 @@ class OrderServiceTest {
 
         @Test
         void 해당하는_주문_테이블이_존재하지_않으면_등록할_수_없다() {
-            OrderRequest orderRequest = new OrderRequest(Long.MIN_VALUE, null, LocalDateTime.now(), List.of(orderLineItem));
+            long notExistId = Long.MIN_VALUE;
+            OrderRequest orderRequest = new OrderRequest(notExistId, null, LocalDateTime.now(), List.of(orderLineItem));
 
             assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
