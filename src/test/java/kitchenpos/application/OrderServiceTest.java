@@ -149,7 +149,7 @@ class OrderServiceTest {
             {
                 // given
                 OrderLineRequest firstOrderLineRequest = new OrderLineRequest(1L, 10L);
-                OrderLineRequest secondOrderLineRequest = new OrderLineRequest(1L, 5L);
+                OrderLineRequest secondOrderLineRequest = new OrderLineRequest(2L, 5L);
                 OrderCreateRequest request = new OrderCreateRequest(1L,
                     OrderStatus.COOKING.name(),
                     LocalDateTime.now(),
