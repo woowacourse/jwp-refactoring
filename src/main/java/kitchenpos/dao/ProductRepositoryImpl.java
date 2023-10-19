@@ -19,6 +19,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
   @Override
   public Product save(final Product product) {
+
     final ProductEntity entity = productDao.save(
         new ProductEntity(
             product.getName(),
@@ -36,14 +37,20 @@ public class ProductRepositoryImpl implements ProductRepository {
   @Override
   public Optional<Product> findById(final Long id) {
     return productDao.findById(id)
-        .map(productEntity -> new Product(productEntity.getName(), productEntity.getPrice()));
+        .map(this::mapToProduct);
+  }
+
+  private Product mapToProduct(final ProductEntity entity) {
+    return new Product(
+        entity.getName(),
+        entity.getPrice());
   }
 
   @Override
   public List<Product> findAll() {
     return productDao.findAll()
         .stream()
-        .map(productEntity -> new Product(productEntity.getName(), productEntity.getPrice()))
+        .map(this::mapToProduct)
         .collect(Collectors.toList());
   }
 }
