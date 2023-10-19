@@ -64,6 +64,9 @@ public class Menu {
         if (this.price.compareTo(totalMenuProductsPrice) > 0) {
             throw new IllegalArgumentException();
         }
+
+        menuProducts.stream()
+                .forEach(menuProduct -> menuProduct.changeMenu(this));
         this.menuProducts.addAll(menuProducts);
     }
 
