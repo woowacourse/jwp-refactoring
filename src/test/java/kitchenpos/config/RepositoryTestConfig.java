@@ -9,9 +9,11 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import javax.persistence.EntityManager;
 
+@Sql("/truncate.sql")
 @DataJpaTest
 public abstract class RepositoryTestConfig {
 

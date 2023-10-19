@@ -4,9 +4,9 @@ import kitchenpos.config.RepositoryTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class MenuGroupRepositoryTest extends RepositoryTestConfig {
 
@@ -17,6 +17,6 @@ class MenuGroupRepositoryTest extends RepositoryTestConfig {
     @Test
     void throwException_when_notFound() {
         assertThatThrownBy(() -> menuGroupRepository.findMenuGroupById(-1L))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EmptyResultDataAccessException.class);
     }
 }
