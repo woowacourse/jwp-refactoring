@@ -129,6 +129,6 @@
     - [x] Menu
     - [ ] Order
     - [x] Product
-    - [ ] TableGroup
+    - [x] TableGroup
     - [x] OrderTable
     - [ ] OrderStatus

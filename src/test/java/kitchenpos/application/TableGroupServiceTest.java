@@ -7,7 +7,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.TableGroupFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -20,8 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
+import static kitchenpos.fixture.TableGroupFixture.REQUEST;
+import static kitchenpos.fixture.TableGroupFixture.TABLE_GROUP;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.*;
@@ -51,13 +53,20 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_생성한다() {
             // given
-            CreateTableGroupRequest request = TableGroupFixture.REQUEST.주문_테이블_그룹_생성_요청();
-            TableGroup tableGroup = TableGroupFixture.TABLE_GROUP.테이블_그룹();
+            CreateTableGroupRequest request = REQUEST.주문_테이블_그룹_생성_요청();
+            TableGroup tableGroup = TABLE_GROUP.테이블_그룹();
             given(tableGroupDao.save(any(TableGroup.class)))
                     .willReturn(tableGroup);
 
-            given(orderTableDao.findAllByIdIn(any()))
-                    .willReturn(tableGroup.getOrderTables());
+            given(orderTableDao.findById(anyLong()))
+                    .willReturn(Optional.of(ORDER_TABLE.비어있는_테이블()));
+
+            given(orderTableDao.save(any(OrderTable.class)))
+                    .willReturn(OrderTable.builder()
+                            .id(1L)
+                            .tableGroupId(tableGroup.getId())
+                            .empty(true)
+                            .build());
 
             // when
             CreateTableGroupResponse response = tableGroupService.create(request);
@@ -96,10 +105,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_중_비어있지_않은_테이블이_존재하면_예외() {
             // given
-            CreateTableGroupRequest request = TableGroupFixture.REQUEST.주문_테이블_그룹_생성_요청();
-
-            given(orderTableDao.findAllByIdIn(anyList()))
-                    .willReturn(List.of(ORDER_TABLE.비어있는_테이블(), ORDER_TABLE.주문_테이블_1_비어있는가(false)));
+            CreateTableGroupRequest request = REQUEST.주문_테이블_그룹_생성_요청();
 
             // when & then
             Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
@@ -109,10 +115,7 @@ class TableGroupServiceTest {
         @Test
         void 실제_존재하는_주문_테이블과_개수가_맞지_않으면_예외() {
             // given
-            CreateTableGroupRequest request = TableGroupFixture.REQUEST.주문_테이블_그룹_생성_요청();
-
-            given(orderTableDao.findAllByIdIn(anyList()))
-                    .willReturn(List.of());
+            CreateTableGroupRequest request = REQUEST.주문_테이블_그룹_생성_요청();
 
             // when & then
             Assertions.assertThatThrownBy(() -> tableGroupService.create(request))

@@ -10,7 +10,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -33,45 +32,42 @@ public class TableGroupService {
 
     @Transactional
     public CreateTableGroupResponse create(final CreateTableGroupRequest request) {
-        List<Long> orderTableIds = request.getOrderTableIds();
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        TableGroup updatedTableGroup = TableGroup.builder()
+        final List<OrderTable> orderTableEntities = getOrderTables(request.getOrderTableIds());
+        TableGroup tableGroup = TableGroup.builder()
                 .createdDate(LocalDateTime.now())
-                .orderTables(savedOrderTables)
+                .orderTables(orderTableEntities)
                 .build();
+        final TableGroup entity = tableGroupDao.save(tableGroup);
+        final Long tableGroupId = entity.getId();
 
-        final TableGroup savedTableGroup = tableGroupDao.save(updatedTableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            OrderTable updated = savedOrderTable.fillTable(tableGroupId);
-            orderTableDao.save(updated);
-        }
-
-        TableGroup saved = savedTableGroup.updateOrderTables(savedOrderTables);
-        return CreateTableGroupResponse.from(saved);
+        List<OrderTable> orderTables = getFilledOrderTables(orderTableEntities, tableGroupId);
+        TableGroup updated = entity.updateOrderTables(orderTables);
+        return CreateTableGroupResponse.from(updated);
     }
 
-    private List<OrderTable> getOrderTables(CreateTableGroupRequest tableGroup) {
-        return tableGroup.getOrderTableIds().stream()
+    private List<OrderTable> getFilledOrderTables(List<OrderTable> orderTableEntities, Long tableGroupId) {
+        return orderTableEntities.stream()
+                .map(savedOrderTable -> savedOrderTable.fillTable(tableGroupId))
+                .map(orderTableDao::save)
+                .collect(Collectors.toList());
+    }
+
+    private List<OrderTable> getOrderTables(List<Long> orderTableIds) {
+        List<OrderTable> orderTables = orderTableIds.stream()
                 .map(orderTableDao::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+        validateOrderTables(orderTables);
+        return orderTables;
+    }
+
+    private static void validateOrderTables(List<OrderTable> orderTables) {
+        for (final OrderTable savedOrderTable : orderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     @Transactional

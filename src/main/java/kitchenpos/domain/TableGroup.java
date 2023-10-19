@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,9 +11,16 @@ public class TableGroup {
     private final List<OrderTable> orderTables;
 
     private TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validate(orderTables);
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validate(List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -24,10 +33,6 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public TableGroup updateCrateDate(LocalDateTime now) {
-        return new TableGroup(id, now, orderTables);
     }
 
     public static TableGroupBuilder builder() {

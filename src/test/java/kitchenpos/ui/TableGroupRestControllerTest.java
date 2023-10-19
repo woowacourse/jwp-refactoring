@@ -37,13 +37,11 @@ class TableGroupRestControllerTest {
     private TableGroupService tableGroupService;
 
     private TableGroup tableGroup;
-    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
-        orderTable = OrderTable.builder()
+        OrderTable orderTable = OrderTable.builder()
                 .id(1L)
-                .tableGroupId(1L)
                 .numberOfGuests(0)
                 .empty(true)
                 .build();
@@ -51,7 +49,7 @@ class TableGroupRestControllerTest {
         tableGroup = TableGroup.builder()
                 .id(1L)
                 .createdDate(LocalDateTime.of(2023, Month.APRIL, 1, 0, 0, 0, 0))
-                .orderTables(List.of(orderTable))
+                .orderTables(List.of(orderTable, orderTable))
                 .build();
     }
 
