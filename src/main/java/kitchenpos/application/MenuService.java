@@ -17,7 +17,9 @@ import java.util.Objects;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;

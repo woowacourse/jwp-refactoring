@@ -65,3 +65,4 @@
   - [x] menu 관련해서 JPA로 바꾼다.
   - [x] order 관련해서 JPA로 바꾼다.
 - [x] DAO를 지우고 Repository로 변경한다.
+- [x] Transaction readonly를 적용한다.
