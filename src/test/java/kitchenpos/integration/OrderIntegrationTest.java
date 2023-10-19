@@ -149,8 +149,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     private MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = new MenuGroup(name);
         final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
 
         return testRestTemplate

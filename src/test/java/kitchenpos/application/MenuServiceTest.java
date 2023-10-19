@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.MenuGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class MenuServiceTest {
     private MenuDao menuDao;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
     private MenuProductDao menuProductDao;
@@ -57,7 +57,7 @@ class MenuServiceTest {
 
             final MenuProduct savedMenuProduct = new MenuProduct();
 
-            when(menuGroupDao.existsById(anyLong()))
+            when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(true);
             when(productDao.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));
@@ -110,7 +110,7 @@ class MenuServiceTest {
             menu.setPrice(new BigDecimal(1000));
             menu.setMenuGroupId(1L);
 
-            when(menuGroupDao.existsById(anyLong()))
+            when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(false);
 
             // when, then
@@ -121,7 +121,7 @@ class MenuServiceTest {
         @Test
         void 메뉴를_생성할_때_존재하지_않는_상품_아이디를_전달하면_실패한다() {
             // given
-            when(menuGroupDao.existsById(anyLong()))
+            when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(true);
             when(productDao.findById(anyLong()))
                     .thenReturn(Optional.empty());
@@ -146,7 +146,7 @@ class MenuServiceTest {
             final Product savedProduct = new Product();
             savedProduct.setPrice(new BigDecimal(500));
 
-            when(menuGroupDao.existsById(anyLong()))
+            when(menuGroupRepository.existsById(anyLong()))
                     .thenReturn(true);
             when(productDao.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));

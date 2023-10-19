@@ -17,8 +17,7 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     @Test
     void 메뉴_그룹_생성을_요청한다() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("양식");
+        final MenuGroup menuGroup = new MenuGroup("양식");
         final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
 
         // when
@@ -56,8 +55,7 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     }
 
     private MenuGroup createMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = new MenuGroup(name);
         final HttpEntity<MenuGroup> request = new HttpEntity<>(menuGroup);
 
         return testRestTemplate
