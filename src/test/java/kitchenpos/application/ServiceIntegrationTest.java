@@ -10,21 +10,21 @@ import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.DatabaseCleanup;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,16 +36,16 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class ServiceIntegrationTest {
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
+    protected MenuProductRepository menuProductRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
 
     @Autowired
     protected OrderTableDao orderTableDao;
@@ -68,10 +68,10 @@ public abstract class ServiceIntegrationTest {
     }
 
     protected Order 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
-        Product savedProduct = productDao.save(후추_치킨_10000원());
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
+        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
@@ -83,6 +83,5 @@ public abstract class ServiceIntegrationTest {
 
         return orderService.changeOrderStatus(order.getId(), order);
     }
-
 
 }

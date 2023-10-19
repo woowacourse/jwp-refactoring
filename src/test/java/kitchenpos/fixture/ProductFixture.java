@@ -7,15 +7,15 @@ import kitchenpos.domain.Product;
 public class ProductFixture {
 
     public static Product 후추_치킨_10000원() {
-        return new Product("후추_칰힌", BigDecimal.valueOf(10000));
+        return Product.of("후추_칰힌", 10000L);
     }
 
     public static Product 매튜_치킨_10000원() {
-        return new Product("매튜_칰힌", BigDecimal.valueOf(10000));
+        return Product.of("매튜_칰힌", 10000L);
     }
 
-    public static Product 후추_칰힌_가격_책정(BigDecimal price) {
-        return new Product("후추_칰힌", price);
+    public static Product 후추_칰힌_가격_책정(Long price) {
+        return Product.of("후추_칰힌", price);
     }
 
 }

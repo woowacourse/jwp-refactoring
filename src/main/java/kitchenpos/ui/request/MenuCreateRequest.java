@@ -5,13 +5,13 @@ import java.util.List;
 public class MenuCreateRequest {
 
     private String name;
-    private Integer price;
+    private Long price;
     private Long menuGroupId;
     private List<MenuProductCreateRequest> menuProductCreateRequests;
 
     public MenuCreateRequest(
             String name,
-            Integer price,
+            Long price,
             Long menuGroupId,
             List<MenuProductCreateRequest> menuProductCreateRequests
     ) {
@@ -25,7 +25,7 @@ public class MenuCreateRequest {
         return name;
     }
 
-    public Integer getPrice() {
+    public Long getPrice() {
         return price;
     }
 

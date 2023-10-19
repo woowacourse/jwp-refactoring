@@ -7,11 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +31,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
                 .getId();
 
         // then
-        Product savedProduct = productDao.findById(id).get();
+        Product savedProduct = productRepository.findById(id).get();
         assertAll(
                 () -> assertThat(product.getName()).isEqualTo(savedProduct.getName()),
                 () -> assertThat(product.getPrice()).isEqualByComparingTo(savedProduct.getPrice())
@@ -54,7 +51,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
     @Test
     void price가_음수인_경우_상품_저장에_실패한다() {
         // given
-        Product product = 후추_칰힌_가격_책정(BigDecimal.valueOf(-1));
+        Product product = 후추_칰힌_가격_책정(-1L);
 
         // expect
         assertThatThrownBy(() -> productService.create(product))
@@ -70,7 +67,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
         );
         List<Product> expected = new ArrayList<>();
         for (Product product : products) {
-            expected.add(productDao.save(product));
+            expected.add(productRepository.save(product));
         }
 
         // when

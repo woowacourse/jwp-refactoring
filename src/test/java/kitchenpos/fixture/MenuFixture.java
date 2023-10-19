@@ -10,26 +10,26 @@ import kitchenpos.domain.MenuProduct;
 public class MenuFixture {
 
     public static Menu 메뉴_생성(
-            BigDecimal price,
+            Long price,
             MenuGroup savedMenuGroup,
             MenuProduct menuProduct
     ) {
-        return new Menu(
+        return Menu.ofWithMenuProducts(
                 "메뉴",
                 price,
-                savedMenuGroup.getId(),
+                savedMenuGroup,
                 List.of(menuProduct)
         );
     }
 
     public static Menu 존재하지_않는_메뉴_그룹을_가진_메뉴_생성(
-            BigDecimal price,
+            Long price,
             MenuProduct savedMenuProduct
     ) {
-        return new Menu(
+        return Menu.ofWithMenuProducts(
                 "메뉴",
                 price,
-                Long.MAX_VALUE,
+                MenuGroupFixture.떠오르는_메뉴_그룹(),
                 List.of(savedMenuProduct)
         );
     }

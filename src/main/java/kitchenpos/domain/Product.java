@@ -2,10 +2,12 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Product {
@@ -17,20 +19,28 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     public Product() {
     }
 
-    public Product(String name, BigDecimal price) {
+    public Product(String name, Price price) {
         this(null, name, price);
     }
 
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(Long id, String name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public static Product of(String name, BigDecimal price) {
+        return new Product(name, Price.from(price));
+    }
+
+    public static Product of(String name, Long price) {
+        return new Product(name, Price.from(price));
     }
 
     public Long getId() {
@@ -44,7 +54,7 @@ public class Product {
 
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
 }

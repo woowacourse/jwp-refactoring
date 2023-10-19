@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,7 +33,7 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<MenuProduct> menuProducts;
 
     public Menu() {
@@ -63,7 +64,7 @@ public class Menu {
 
     public static Menu of(
             String name,
-            BigDecimal price,
+            Long price,
             MenuGroup menuGroup
     ) {
         return new Menu(
@@ -74,14 +75,38 @@ public class Menu {
         );
     }
 
+    public static Menu ofWithMenuProducts(
+            String name,
+            Long price,
+            MenuGroup menuGroup,
+            List<MenuProduct> menuProducts
+    ) {
+        Menu menu = Menu.of(name, price, menuGroup);
+        menuProducts.forEach(menu::addMenuProduct);
+        validateTotalPrice(Price.from(price), menuProducts);
+
+        return menu;
+    }
+
     public void addMenuProduct(MenuProduct menuProduct) {
-
-//        if (a.getMenu().equals(find)) {
-//            return;
-//        }
-
-//        menuProducts.add(menuProduct);
+        menuProducts.add(menuProduct);
         menuProduct.registerMenu(this);
+    }
+
+    public void addAllMenuProducts(List<MenuProduct> menuProducts) {
+        menuProducts.forEach(this::addMenuProduct);
+        validateTotalPrice(price, menuProducts);
+    }
+
+    private static void validateTotalPrice(Price price, List<MenuProduct> menuProducts) {
+        Price totalPrice = menuProducts
+                .stream()
+                .map(MenuProduct::totalPrice)
+                .reduce(Price.ZERO, Price::add);
+
+        if (price.moreExpensiveThan(totalPrice)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -91,7 +116,6 @@ public class Menu {
     public String getName() {
         return name;
     }
-
 
     public BigDecimal getPrice() {
         return price.getValue();

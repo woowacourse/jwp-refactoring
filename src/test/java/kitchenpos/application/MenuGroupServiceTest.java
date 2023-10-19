@@ -27,7 +27,7 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
         Long id = menuGroupService.create(menuGroup).getId();
 
         // then
-        String savedName = menuGroupDao.findById(id)
+        String savedName = menuGroupRepository.findById(id)
                 .get()
                 .getName();
         assertThat(savedName).isEqualTo(menuGroup.getName());
@@ -43,7 +43,7 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
         );
         List<MenuGroup> expected = new ArrayList<>();
         for (MenuGroup menuGroup : menuGroups) {
-            expected.add(menuGroupDao.save(menuGroup));
+            expected.add(menuGroupRepository.save(menuGroup));
         }
 
         // when

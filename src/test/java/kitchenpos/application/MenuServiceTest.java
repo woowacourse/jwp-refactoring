@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuFixture.존재하지_않는_메뉴_그룹을_가진_메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.MenuProductFixture.존재하지_않는_상품을_가진_메뉴_상품;
@@ -13,10 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,65 +31,80 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     void 메뉴를_성공적으로_저장한다() {
         // given
-        Product savedProduct = productDao.save(후추_치킨_10000원());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-        Menu menu = 메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, menuProduct);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
+        MenuCreateRequest request = new MenuCreateRequest(
+                "메뉴",
+                19000L,
+                savedMenuGroup.getId(),
+                List.of(toMenuProductCreateRequest(menuProduct))
+        );
 
         // when
-        Long savedMenuId = menuService.create(menu)
-                .getId();
+        Long savedMenuId = menuService.create(request).getId();
 
         // then
-        Menu savedMenu = menuService.list()
-                .stream()
-                .filter(inquiryMenu -> inquiryMenu.getId().equals(savedMenuId))
-                .findAny()
-                .get();
+        Menu actual = menuRepository.findById(savedMenuId).get();
+        Menu expected = 메뉴_생성(19000L, savedMenuGroup, menuProduct);
         assertAll(
-                () -> assertThat(savedMenu).usingRecursiveComparison()
-                        .ignoringFields("id", "menuProducts.seq")
-                        .ignoringFieldsOfTypes(BigDecimal.class)
-                        .isEqualTo(menu),
-                () -> assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice())
+                () -> assertThat(actual).usingRecursiveComparison()
+                        .ignoringFieldsOfTypes(Long.class, BigDecimal.class)
+                        .isEqualTo(expected),
+                () -> assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice())
         );
     }
 
     @Test
     void 가격이_null_이라서_메뉴_저장에_실패한다() {
         // given
-        Product savedProduct = productDao.save(후추_치킨_10000원());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-        Menu menu = 메뉴_생성(null, savedMenuGroup, menuProduct);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
+        MenuCreateRequest request = new MenuCreateRequest(
+                "메뉴",
+                null,
+                savedMenuGroup.getId(),
+                List.of(toMenuProductCreateRequest(menuProduct))
+        );
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 가격이_음수여서_메뉴_저장에_실패한다() {
         // given
-        Product savedProduct = productDao.save(후추_치킨_10000원());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-        Menu menu = 메뉴_생성(BigDecimal.valueOf(-1), savedMenuGroup, menuProduct);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
+        MenuCreateRequest request = new MenuCreateRequest(
+                "메뉴",
+                -1L,
+                savedMenuGroup.getId(),
+                List.of(toMenuProductCreateRequest(menuProduct))
+        );
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴_그룹이_존재하지_않아_저장에_실패한다() {
         // given
-        Product savedProduct = productDao.save(후추_치킨_10000원());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu menu = 존재하지_않는_메뉴_그룹을_가진_메뉴_생성(BigDecimal.valueOf(19000), menuProduct);
+        MenuCreateRequest request = new MenuCreateRequest(
+                "메뉴",
+                19000L,
+                Long.MAX_VALUE,
+                List.of(toMenuProductCreateRequest(menuProduct))
+        );
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -95,24 +112,34 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void 메뉴_상품에_있는_상품이_존재하지_않는_메뉴이면_저장에_실패한다() {
         // given
         MenuProduct invalidMenuProduct = 존재하지_않는_상품을_가진_메뉴_상품();
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-        Menu menu = 메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, invalidMenuProduct);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
+        MenuCreateRequest request = new MenuCreateRequest(
+                "메뉴",
+                19000L,
+                savedMenuGroup.getId(),
+                List.of(toMenuProductCreateRequest(invalidMenuProduct))
+        );
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴_상품의_가격_합이_메뉴의_가격보다_낮으면_저장에_실패한다() {
         // given
-        Product savedProduct = productDao.save(후추_치킨_10000원());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-        Menu menu = 메뉴_생성(BigDecimal.valueOf(10000 + 10000 + 1), savedMenuGroup, menuProduct);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
+        MenuCreateRequest request = new MenuCreateRequest(
+                "메뉴",
+                10000L + 10000L + 1L,
+                savedMenuGroup.getId(),
+                List.of(toMenuProductCreateRequest(menuProduct))
+        );
 
         // expect
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -121,11 +148,16 @@ class MenuServiceTest extends ServiceIntegrationTest {
         // given
         List<Menu> expected = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            Product savedProduct = productDao.save(후추_치킨_10000원());
+            Product savedProduct = productRepository.save(후추_치킨_10000원());
             MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-            MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
-            Menu menu = 메뉴_생성(BigDecimal.valueOf(19000), savedMenuGroup, menuProduct);
-            expected.add(menuService.create(menu));
+            MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
+            MenuCreateRequest request = new MenuCreateRequest(
+                    "메뉴",
+                    19000L,
+                    savedMenuGroup.getId(),
+                    List.of(toMenuProductCreateRequest(menuProduct))
+            );
+            expected.add(menuService.create(request));
         }
 
         // when
@@ -133,8 +165,18 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
         // then
         assertThat(actual).usingRecursiveComparison()
-                .ignoringFields("id", "price", "menuProducts.seq")
+                .ignoringFieldsOfTypes(Long.class, BigDecimal.class)
                 .isEqualTo(expected);
+    }
+
+    private MenuProductCreateRequest toMenuProductCreateRequest(MenuProduct menuProduct) {
+        Long productId = Optional.ofNullable(menuProduct.getProduct())
+                .map(Product::getId)
+                .orElse(Long.MAX_VALUE);
+        return new MenuProductCreateRequest(
+                productId,
+                menuProduct.getQuantity()
+        );
     }
 
 }

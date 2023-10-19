@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import java.math.BigDecimal;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 
 @Entity
@@ -61,11 +62,17 @@ public class MenuProduct {
         );
     }
 
+    public Price totalPrice() {
+        BigDecimal quantity = BigDecimal.valueOf(this.quantity.getValue());
+
+        return Price.from(
+                product.getPrice()
+                        .multiply(quantity)
+        );
+    }
+
     public void registerMenu(Menu menu) {
-        menu.
-//        if ()
-//        this.menu = menu;
-//        menu.addMenuProduct(this);
+        this.menu = menu;
     }
 
     public Long getSeq() {
@@ -82,26 +89,6 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity.getValue();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        MenuProduct that = (MenuProduct) o;
-        return Objects.equals(seq, that.seq) && Objects.equals(menu, that.menu)
-                && Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq, menu, product, quantity);
     }
 
 }

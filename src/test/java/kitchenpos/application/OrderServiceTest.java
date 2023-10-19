@@ -57,10 +57,10 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void 주문_테이블이_존재하지_않으면_저장에_실패한다() {
         // given
-        Product savedProduct = productDao.save(후추_치킨_10000원());
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
+        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         Order order = 존재하지_않는_주문_테이블을_가진_주문_생성(List.of(orderLineItem));
 
@@ -73,10 +73,10 @@ class OrderServiceTest extends ServiceIntegrationTest {
     void 주문이_불가능한_상태라면_주문이_불가능하다() {
         // given
         OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, true));
-        Product savedProduct = productDao.save(후추_치킨_10000원());
-        MenuGroup savedMenuGroup = menuGroupDao.save(추천_메뉴_그룹());
+        Product savedProduct = productRepository.save(후추_치킨_10000원());
+        MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
-        Menu savedMenu = menuDao.save(메뉴_생성(BigDecimal.valueOf(20000), savedMenuGroup, menuProduct));
+        Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
         Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
