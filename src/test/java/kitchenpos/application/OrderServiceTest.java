@@ -1,148 +1,98 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.order.OrderDao;
-import kitchenpos.domain.order.OrderLineItemRepository;
-import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
-import kitchenpos.fixture.OrderTableFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-class OrderServiceTest {
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
-    private Order order;
-    private OrderLineItem orderLineItem;
-
-    @BeforeEach
-    void setUp() {
-        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.음료());
-        Menu menu = menuRepository.save(MenuFixture.아메리카노(menuGroup.getId(), null));
-        OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, false));
-        order = orderDao.save(OrderFixture.주문(orderTable.getId(), "COOKING", now(), null));
-        orderLineItem = orderLineItemRepository.save(OrderLineItemFixture.메뉴와_수량으로_주문_생성(order.getId(), menu.getId(), 3));
-        order.setOrderLineItems(List.of(orderLineItem));
-    }
+class OrderServiceTest extends ServiceTestHelper{
 
     @Test
     void 주문을_등록한다() {
-        // when
-        Order savedOrder = orderService.create(order);
+        final Order order = 주문_요청(손님있는_테이블, 이달의음료세트);
 
-        // then
-        assertSoftly(softly -> {
-            softly.assertThat(savedOrder.getOrderStatus()).isNotNull();
-            softly.assertThat(savedOrder.getOrderLineItems()).hasSize(1);
-            softly.assertThat(savedOrder.getOrderLineItems().get(0).getQuantity())
-                    .isEqualTo(orderLineItem.getQuantity());
-        });
+        final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems();
+
+        assertAll(
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(savedOrderLineItems).extracting("menuId")
+                        .containsExactly(이달의음료세트.getId())
+        );
     }
 
     @Test
     void 주문_항목이_없는_주문을_등록하면_예외가_발생한다() {
-        // given
-        order.setOrderLineItems(null);
-
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.create(order));
+                .isThrownBy(() -> 주문_요청(손님있는_테이블));
     }
 
     @Test
-    void 주문_항목의_메뉴id가_존재하지_않는_메뉴면_예외가_발생한다() {
+    void 주문_항목의_메뉴가_존재하지_않는_메뉴면_예외가_발생한다() {
         // given
-        order.getOrderLineItems().get(0).setMenuId(-1L);
+        final Menu notExistMenu = new Menu();
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.create(order));
+                .isThrownBy(() -> 주문_요청(손님있는_테이블, notExistMenu));
     }
 
     @Test
-    void 주문_항목의_주문테이블id가_존재하지_않는_주문테이블이면_예외가_발생한다() {
+    void 주문_항목의_주문테이블이_존재하지_않는_주문테이블이면_예외가_발생한다() {
         // given
-        order.setOrderTableId(-1L);
+        final OrderTable notExistTable = new OrderTable();
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.create(order));
+                .isThrownBy(() -> 주문_요청(notExistTable, 이달의음료세트));
     }
 
     @Test
-    void 주문_목록을_조회한다() {
+    void 주문_상태를_식사중으로_변경한다() {
         // given
-        int originSize = orderService.list().size();
-        orderService.create(order);
+        final Order order = 주문_요청(손님있는_테이블, 이달의음료세트);
 
         // when
-        List<Order> orders = orderService.list();
+        final Order mealOrder = 주문_식사_상태로_변경(order);
 
         // then
-        assertThat(orders).hasSize(originSize + 1);
+        assertThat(mealOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
     @Test
-    void 주문_상태를_변경한다() {
+    void 주문_상태를_완료로_변경한다() {
         // given
-        Order savedOrder = orderService.create(order);
-        savedOrder.setOrderStatus("MEAL");
+        final Order order = 주문_요청(손님있는_테이블, 이달의음료세트);
 
         // when
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+        final Order completedOrder = 주문_완료_상태로_변경(order);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
+        assertThat(completedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
     @Test
-    void 주문_상태_변경시_존재하지_않는_주문일_경우_예외가_발생한다() {
+    void 주문상태가_완료일_때_변경할_경우_예외가_발생한다() {
         // given
-        Order savedOrder = orderService.create(order);
-        savedOrder.setOrderStatus("MEAL");
+        final Order order = 주문_요청(손님있는_테이블, 이달의음료세트);
 
-        // when & then
+        // when
+        final Order completedOrder = 주문_완료_상태로_변경(order);
+
+        // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.changeOrderStatus(-1L, savedOrder));
+                .isThrownBy(() -> 주문_완료_상태로_변경(completedOrder));
     }
 }

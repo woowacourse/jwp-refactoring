@@ -1,21 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderDao;
-import kitchenpos.domain.order.OrderTableRepository;
-import kitchenpos.domain.table.TableGroupRepository;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.table.TableGroup;
-import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
-import org.junit.jupiter.api.BeforeEach;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,160 +13,84 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-class TableServiceTest {
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private TableGroupRepository tableGroupDao;
-
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = OrderTableFixture.주문테이블(null, 0, true);
-    }
+class TableServiceTest extends ServiceTestHelper {
 
     @Test
     void 주문_테이블을_생성한다() {
-        // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        // then
-        assertThat(savedOrderTable).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(orderTable);
-    }
-
-    @Test
-    void 전체_주문_테이블을_조회한다() {
         // given
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTable savedOrderTable1 = 테이블_등록();
+        final OrderTable savedOrderTable2 = 테이블_등록();
+        final OrderTable savedOrderTable3 = 테이블_등록();
 
         // when
-        List<OrderTable> orderTables = tableService.list();
+        final List<OrderTable> orderTables = 테이블_목록_조회();
 
         // then
-        assertThat(orderTables.get(orderTables.size() - 1))
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(savedOrderTable);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(orderTables).usingElementComparatorIgnoringFields()
+                    .contains(savedOrderTable1, savedOrderTable2, savedOrderTable3);
+            softly.assertThat(savedOrderTable1.getTableGroupId()).isNull();
+        });
     }
 
     @Test
     void 주문_테이블_비움_상태_변경() {
-        // given
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        savedOrderTable.setEmpty(false);
+        // when
+        OrderTable orderTable = 테이블_채움(빈_테이블1.getId());
 
         // when
-        OrderTable emptyOrderTable = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
-
-        // then
-        assertThat(emptyOrderTable.isEmpty()).isFalse();
-    }
-
-    @Test
-    void 주문_테이블_비움상태_변경시_존재하지_않는_주문_테이블id로_조회할_경우_예외가_발생한다() {
-        // given
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        savedOrderTable.setEmpty(false);
-        Long notExistId = -1L;
-
-        // when & then
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(notExistId, savedOrderTable));
+        assertThat(orderTable.isEmpty()).isFalse();
     }
 
     @Test
     void 주문_테이블_비움상태_변경시_그룹화되어있으면_예외가_발생한다() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(TableGroupFixture.테이블그룹_생성(LocalDateTime.now(), null));
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        savedOrderTable.setTableGroupId(tableGroup.getId());
-
-        // when
-        OrderTable savedOrderTableWithGroup = orderTableRepository.save(savedOrderTable);
-        savedOrderTableWithGroup.setEmpty(false);
-
-        // then
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(savedOrderTableWithGroup.getId(), savedOrderTableWithGroup));
-    }
-
-    @Test
-    void 주문_테이블_비움상태_변경시_주문_상태가_조리중_또는_식사중이면_예외가_발생한다() {
-        // given
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        savedOrderTable.setEmpty(false);
-        orderDao.save(OrderFixture.주문(savedOrderTable.getId(), "COOKING", LocalDateTime.now(), null));
+        테이블_그룹화(빈_테이블1, 빈_테이블2);
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable));
+                .isThrownBy(() -> 테이블_채움(빈_테이블1.getId()));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> 테이블_비움(빈_테이블2.getId()));
+    }
+
+    @Test
+    void 주문_테이블_비움상태_변경시_주문_상태가_조리중이면_예외가_발생한다() {
+        // given
+        주문_요청(손님있는_테이블, 이달의음료세트);
+
+        // when & then
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeEmpty(손님있는_테이블.getId(), 손님있는_테이블));
+    }
+
+    @Test
+    void 주문_테이블_비움상태_변경시_주문_상태가_식사중이면_예외가_발생한다() {
+        // when & then
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableService.changeEmpty(손님있는_식사중_테이블.getId(), 손님있는_식사중_테이블));
     }
 
     @Test
     void 주문_테이블의_손님수를_변경한다() {
         // given
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable orderTable = 테이블_손님_수_변경(손님있는_테이블.getId(), 5);
 
-        // when
-        savedOrderTable.setNumberOfGuests(5);
-        OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable);
-
-        // then
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(5);
+        // when & then
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(5);
     }
 
     @Test
     void 주문_테이블의_손님수를_음수로_지정하면_예외가_발생한다() {
-        // given
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        // when
-        savedOrderTable.setNumberOfGuests(-1);
-
-        // then
+        // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable));
-    }
-
-    @Test
-    void 주문_테이블의_손님수_변경시_존재하지않는_주문테이블id로_조회하면_예외가_발생한다() {
-        // given
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        Long notExistId = -1L;
-
-        // when
-        savedOrderTable.setNumberOfGuests(5);
-
-        // then
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeNumberOfGuests(notExistId, savedOrderTable));
+                .isThrownBy(() ->  테이블_손님_수_변경(손님있는_테이블.getId(), -1));
     }
 
     @Test
     void 주문_테이블의_손님수_변경시_테이블이_비어있으면_예외가_발생한다() {
-        // given
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        // when
-        savedOrderTable.setNumberOfGuests(5);
-
-        // then
+        // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable));
+                .isThrownBy(() ->  테이블_손님_수_변경(빈_테이블1.getId(), 20));
     }
 }

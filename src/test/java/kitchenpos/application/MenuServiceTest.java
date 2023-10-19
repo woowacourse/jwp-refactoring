@@ -1,113 +1,98 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuProductRepository;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
-import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.MenuProductFixture;
-import kitchenpos.fixture.ProductFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-class MenuServiceTest {
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    private Menu menu;
-
-    @BeforeEach
-    void setUp() {
-        Product product = productRepository.save(ProductFixture.아메리카노());
-        MenuProduct menuProduct = menuProductRepository.save(MenuProductFixture.메뉴_재고(1L, product.getId(), 3));
-        MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.음료());
-        menu = MenuFixture.아메리카노(menuGroup.getId(), List.of(menuProduct));
-    }
+class MenuServiceTest extends ServiceTestHelper {
 
     @Test
     void 메뉴를_등록한다() {
+        // given
+        final Menu menu1 = 메뉴_등록("어른세트", 10500L, 세트, 아메리카노, 자바칩프라페);
+        final Menu menu2 = 메뉴_등록("딸기에이드", 5500L, 에이드, 딸기에이드);
+
         // when
-        Menu savedMenu = menuService.create(menu);
+        final List<Menu> findMenus = 메뉴_목록_조회();
+        final Menu findMenu1 = 메뉴_찾기(menu1.getId());
+        final Menu findMenu2 = 메뉴_찾기(menu2.getId());
 
         // then
-        assertThat(savedMenu).usingRecursiveComparison()
-                .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                .ignoringFields("id", "menuProducts.seq")
-                .isEqualTo(menu);
+        assertSoftly(softly -> {
+            softly.assertThat(findMenus).usingElementComparatorIgnoringFields("menuProducts")
+                    .contains(menu1, menu2);
+            softly.assertThat(findMenu1.getMenuProducts()).extracting("productId")
+                    .containsExactly(아메리카노.getId(), 자바칩프라페.getId());
+            softly.assertThat(findMenu2.getMenuProducts()).extracting("productId")
+                    .containsExactly(딸기에이드.getId());
+        });
     }
 
     @Test
     void 메뉴_가격이_null이면_등록할_수_없다() {
-        // given
-        menu.setPrice(null);
-
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> menuService.create(menu));
+                .isThrownBy(() -> 메뉴_등록("어른세트", null, 세트, 아메리카노, 자바칩프라페));
     }
 
     @Test
     void 메뉴_그룹이_존재하지_않으면_등록할_수_없다() {
         // given
-        menu.setMenuGroupId(-1L);
+        final MenuGroup emptyMenuGroup = new MenuGroup();
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> menuService.create(menu));
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {-5, -1, 18000, 20000})
-    void 메뉴_가격이_0보다_작거나_재고_가격보다_크면_등록할_수_없다(int price) {
-        // given
-        menu.setPrice(BigDecimal.valueOf(price));
-
-        // when & then
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> menuService.create(menu));
+                .isThrownBy(() -> 메뉴_등록("어른세트", 15000L, emptyMenuGroup, 아메리카노, 자바칩프라페));
     }
 
     @Test
-    void 메뉴_목록을_조회한다() {
+    void 메뉴상품_중_상품에_등록되어있지_않으면_예외가_발생한다() {
         // given
-        Menu savedMenu = menuService.create(menu);
+        final Product emptyProduct = new Product();
 
+        // when & then
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> 메뉴_등록("어른세트", 15000L, 세트, emptyProduct));
+    }
+
+    @Test
+    void 메뉴가격이_메뉴상품_가격의_합보다_크면_예외가_발생한다() {
+        // when & then
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> 메뉴_등록("어른세트", 19001L, 세트, 아메리카노, 자바칩프라페));
+    }
+
+    @Test
+    void 메뉴등록시_메뉴상품도_함께_등록된다() {
         // when
-        List<Menu> menus = menuService.list();
+        final Menu menu = 메뉴_등록("어른세트", 9000L, 세트, 아메리카노, 자바칩프라페);
+        final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         // then
-        assertThat(menus.get(menus.size() - 1))
-                .usingRecursiveComparison()
-                .ignoringFields("id", "menuProducts.seq")
-                .isEqualTo(savedMenu);
+        assertThat(menuProducts).extracting("productId")
+                .contains(아메리카노.getId(), 자바칩프라페.getId());
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-5, -1})
+    void 메뉴_가격이_0보다_작으면_등록할_수_없다(long price) {
+        // when & then
+        assertThatThrownBy(() -> 메뉴_등록("어른세트", price, 세트, 아메리카노, 자바칩프라페))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

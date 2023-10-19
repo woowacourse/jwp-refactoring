@@ -1,101 +1,90 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderTableRepository;
-import kitchenpos.domain.table.TableGroupRepository;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.table.TableGroup;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-class TableGroupServiceTest {
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
-    private TableGroupRepository tableGroupDao;
-
-    @Autowired
-    private OrderTableRepository orderTableRepository;
-
-    private TableGroup tableGroup;
-
-    @BeforeEach
-    void setUp() {
-        tableGroup = tableGroupDao.save(TableGroupFixture.테이블그룹_생성(LocalDateTime.now(), null));
-        OrderTable orderTable1 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, true));
-        OrderTable orderTable2 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, true));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-    }
+class TableGroupServiceTest extends ServiceTestHelper {
 
     @Test
-    void 테이블그룹을_생성한다() {
+    void 테이블을_그룹으로_묶는다() {
+        // given
+        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         // then
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(savedTableGroup.getId()).isNotNull();
-            softly.assertThat(savedTableGroup.getCreatedDate()).isNotNull();
-            softly.assertThat(savedTableGroup.getOrderTables()).hasSize(2);
+        assertSoftly(softly -> {
+            softly.assertThat(orderTables).extracting("id")
+                    .contains(빈_테이블1.getId(), 빈_테이블2.getId());
+            softly.assertThat(orderTables).extracting("tableGroupId")
+                    .contains(tableGroup.getId(), tableGroup.getId());
         });
     }
 
     @Test
-    void 테이블그룹을_생성할_때_주문테이블이_없으면_예외가_발생한다() {
-        // given
-        tableGroup.setOrderTables(null);
-
+    void 채워진_테이블을_그룹으로_묶을경우_예외가_발생한다() {
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> 테이블_그룹화(손님있는_테이블, 손님있는_식사중_테이블));
     }
 
     @Test
     void 테이블그룹을_생성할_때_주문테이블이_1개면_예외가_발생한다() {
-        // given
-        tableGroup.setOrderTables(List.of(tableGroup.getOrderTables().get(0)));
-
         // when & then
-        assertThatIllegalArgumentException().isThrownBy(() -> tableGroupService.create(tableGroup));
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> 테이블_그룹화(빈_테이블1));
     }
 
     @Test
-    void 테이블그룹_생성시_테이블이_비워져있지_않으면_예외가_발생한다() {
+    void 조리중인_테이블의_그룹을_해제할경우_예외가_발생한다() {
         // given
-        OrderTable orderTable1 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, false));
-        OrderTable orderTable2 = orderTableRepository.save(OrderTableFixture.주문테이블(null, 0, false));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
 
-        // when & then
+        // when
+        주문_요청(빈_테이블1, 이달의음료세트);
+
+        // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> 테이블_그룹해제(tableGroup));
     }
 
     @Test
-    void 테이블그룹_생성시_테이블_이미_그룹화되어있으면_예외가_발생한다() {
+    void 식사중인_테이블의_그룹을_해제할경우_예외가_발생한다() {
         // given
-        OrderTable orderTable1 = orderTableRepository.save(OrderTableFixture.주문테이블(tableGroup.getId(), 0, true));
-        OrderTable orderTable2 = orderTableRepository.save(OrderTableFixture.주문테이블(tableGroup.getId(), 0, true));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        final Order order = 주문_요청(빈_테이블1, 이달의음료세트);
 
-        // when & then
+        // when
+        주문_식사_상태로_변경(order);
+
+        // then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableGroupService.create(tableGroup));
+                .isThrownBy(() -> 테이블_그룹해제(tableGroup));
+    }
+
+    @Test
+    void 테이블이_그룹으로_묶여지면_채워진다() {
+        // given
+        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+
+        // when
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+
+        // then
+        assertThat(orderTables).extracting("empty")
+                .contains(false, false);
     }
 }
