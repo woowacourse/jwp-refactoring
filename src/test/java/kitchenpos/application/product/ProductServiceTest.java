@@ -2,8 +2,8 @@ package kitchenpos.application.product;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,13 +27,13 @@ class ProductServiceTest extends ApplicationTestConfig {
         final ProductCreateRequest expected = new ProductCreateRequest("테스트용 상품명", "10000");
 
         // when
-        final Product actual = productService.create(expected);
+        final ProductResponse actual = productService.create(expected);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(actual.getId()).isPositive();
-            softly.assertThat(actual.getName().getValue()).isEqualTo(expected.getName());
-            softly.assertThat(actual.getPrice().getValue()).isEqualTo(expected.getPrice());
+            softly.assertThat(actual.getProductId()).isPositive();
+            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
+            softly.assertThat(actual.getPrice()).isEqualTo(expected.getPrice());
         });
     }
 }
