@@ -5,7 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.menu.MenuGroupCreateRequest;
+import kitchenpos.dto.menu.MenuGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ class MenuGroupServiceTest extends ServiceTest {
             MenuGroupCreateRequest request = new MenuGroupCreateRequest("한식");
 
             // when
-            MenuGroup savedMenuGroup = menuGroupService.create(request);
+            MenuGroupResponse menuGroupResponse = menuGroupService.create(request);
 
             // then
-            assertThat(savedMenuGroup.getName()).isEqualTo(request.getName());
+            assertThat(menuGroupResponse.getName()).isEqualTo(request.getName());
         }
     }
 
@@ -40,7 +41,7 @@ class MenuGroupServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             MenuGroupCreateRequest request = new MenuGroupCreateRequest("중식");
-            MenuGroup savedMenuGroup = menuGroupService.create(request);
+            MenuGroupResponse menuGroupResponse = menuGroupService.create(request);
 
             // when
             List<MenuGroup> menuGroups = menuGroupService.readAll();
@@ -48,7 +49,7 @@ class MenuGroupServiceTest extends ServiceTest {
             // then
             assertThat(menuGroups)
                     .extracting(MenuGroup::getName)
-                    .contains(savedMenuGroup.getName());
+                    .contains(menuGroupResponse.getName());
         }
     }
 }

@@ -130,8 +130,8 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             TableGroup tableGroup = createTableGroup(savedOrderTable1, savedOrderTable2);
             TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-            Order order = createOrder(savedOrderTable1.getId(), orderStatus);
-            orderDao.save(order);
+            Order order = createOrder(savedOrderTable1, orderStatus);
+            orderRepository.save(order);
 
             // when, then
             assertThatThrownBy(
@@ -144,12 +144,8 @@ class TableGroupServiceTest extends ServiceTest {
         return TableGroup.of(LocalDateTime.now(), Arrays.asList(orderTables));
     }
 
-    private Order createOrder(final Long orderTableId,
+    private Order createOrder(final OrderTable orderTable,
                               final OrderStatus status) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(status.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
+        return Order.of(orderTable, status.name(), LocalDateTime.now());
     }
 }

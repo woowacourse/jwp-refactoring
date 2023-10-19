@@ -3,9 +3,9 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao,
+    public TableService(final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -36,19 +36,23 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateTableGroup(savedOrderTable);
+        validateOrderStatus(savedOrderTable);
+        savedOrderTable.updateEmpty(orderTable.isEmpty());
+        return orderTableRepository.save(savedOrderTable);
+    }
 
+    private void validateTableGroup(OrderTable savedOrderTable) {
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException("이미 속해있는 table group이 있습니다.");
         }
+    }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+    private void validateOrderStatus(final OrderTable savedOrderTable) {
+        if (orderRepository.existsByOrderTableAndOrderStatusIn(
+                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.updateEmpty(orderTable.isEmpty());
-
-        return orderTableRepository.save(savedOrderTable);
     }
 
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {

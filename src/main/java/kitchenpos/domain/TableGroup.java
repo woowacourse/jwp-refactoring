@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +43,10 @@ public class TableGroup {
 
     public static TableGroup of(final LocalDateTime createdDate) {
         return new TableGroup(null, createdDate, new ArrayList<>());
+    }
+
+    public void ungroup() {
+        orderTables.forEach(orderTable -> orderTable.updateTableGroup(null));
     }
 
     public Long getId() {

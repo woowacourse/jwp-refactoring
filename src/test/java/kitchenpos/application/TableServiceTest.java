@@ -115,8 +115,8 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = OrderTable.of(null, 0, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-            Order order = createOrder(savedOrderTable.getId(), status);
-            orderDao.save(order);
+            Order order = createOrder(savedOrderTable, status);
+            orderRepository.save(order);
 
             OrderTable newOrderTable = OrderTable.of(null, 0, false);
 
@@ -193,12 +193,8 @@ class TableServiceTest extends ServiceTest {
         }
     }
 
-    private Order createOrder(final Long orderTableId,
+    private Order createOrder(final OrderTable orderTable,
                               final OrderStatus status) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(status.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
+        return Order.of(orderTable, status.name(), LocalDateTime.now());
     }
 }

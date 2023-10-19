@@ -1,8 +1,8 @@
 package kitchenpos;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -27,7 +27,7 @@ public abstract class ServiceTest {
     protected MenuRepository menuRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
     protected OrderTableRepository orderTableRepository;

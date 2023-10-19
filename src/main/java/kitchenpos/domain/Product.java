@@ -53,6 +53,13 @@ public class Product {
         }
     }
 
+    public BigDecimal multiplyPrice(final Long quantity) {
+        if (quantity == null) {
+            throw new IllegalArgumentException("수량은 null일 수 없습니다.");
+        }
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getId() {
         return id;
     }

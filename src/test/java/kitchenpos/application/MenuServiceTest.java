@@ -6,12 +6,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
-import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -100,7 +101,7 @@ class MenuServiceTest extends ServiceTest {
             // when, then
             assertThatThrownBy(
                     () -> menuService.create(request)
-            ).isInstanceOf(IllegalArgumentException.class);
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test

@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,7 +40,7 @@ public class Menu {
                  final BigDecimal price,
                  final MenuGroup menuGroup,
                  final List<MenuProduct> menuProducts) {
-        validatePrice(price);
+        validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -77,13 +76,13 @@ public class Menu {
         }
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+    private void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public boolean isGreaterThanByPrice(final BigDecimal other) {
+    public boolean isGreaterThan(final BigDecimal other) {
         return price.compareTo(other) > 0;
     }
 
