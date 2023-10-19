@@ -6,8 +6,10 @@ import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,18 +35,6 @@ class TableRestControllerTest {
 
     @MockBean
     private TableService tableService;
-
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = OrderTable.builder()
-                .id(1L)
-                .tableGroupId(1L)
-                .numberOfGuests(0)
-                .empty(true)
-                .build();
-    }
 
     @Nested
     class 정상_요청_테스트 {

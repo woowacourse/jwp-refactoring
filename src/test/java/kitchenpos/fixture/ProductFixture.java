@@ -1,11 +1,11 @@
 package kitchenpos.fixture;
 
-import java.math.BigDecimal;
-
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Product;
+
+import java.math.BigDecimal;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class ProductFixture {

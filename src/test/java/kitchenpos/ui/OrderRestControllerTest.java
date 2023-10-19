@@ -5,7 +5,6 @@ import kitchenpos.application.dto.request.CreateOrderRequest;
 import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.application.dto.response.CreateOrderResponse;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.Order;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -17,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static kitchenpos.fixture.OrderFixture.ORDER.주문_요청_조리중;
 import static kitchenpos.fixture.OrderFixture.RESPONSE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -43,7 +41,6 @@ class OrderRestControllerTest {
         @Test
         void 주문_생성() throws Exception {
             // given
-            Order order = 주문_요청_조리중();
             CreateOrderResponse response = RESPONSE.주문_생성_응답_조리중();
             given(orderService.create(any(CreateOrderRequest.class)))
                     .willReturn(response);

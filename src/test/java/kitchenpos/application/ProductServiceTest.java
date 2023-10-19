@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 
-import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;

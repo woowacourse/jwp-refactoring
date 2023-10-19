@@ -11,7 +11,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
