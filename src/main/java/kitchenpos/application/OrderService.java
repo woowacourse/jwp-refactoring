@@ -41,7 +41,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("메뉴가 존재하지 않습니다.");
+            throw new IllegalArgumentException("한번의 주문에서 중복 메뉴를 주문할 수 없습니다.");
         }
 
         orderTableDao.findById(order.getOrderTable().getId())
