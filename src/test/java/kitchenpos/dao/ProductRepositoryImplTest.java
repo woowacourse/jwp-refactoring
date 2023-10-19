@@ -5,10 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.math.BigDecimal;
-import kitchenpos.domain.Product2;
+import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +24,10 @@ class ProductRepositoryImplTest {
   @DisplayName("create() : 물품을 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final Product2 product = ProductFixture.createProduct();
+    final Product product = ProductFixture.createProduct();
 
     //when
-    final Product2 savedProduct = productRepository.save(product);
+    final Product savedProduct = productRepository.save(product);
 
     //then
     assertAll(

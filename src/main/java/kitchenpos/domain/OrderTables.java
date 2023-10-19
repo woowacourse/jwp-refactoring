@@ -2,20 +2,19 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
 
-  private final List<OrderTable2> orderTables;
+  private final List<OrderTable> orderTables;
 
-  public OrderTables(final List<OrderTable2> orderTables) {
+  public OrderTables(final List<OrderTable> orderTables) {
     validateOrderTables(orderTables);
     this.orderTables = orderTables;
   }
 
-  private void validateOrderTables(final List<OrderTable2> orderTables) {
+  private void validateOrderTables(final List<OrderTable> orderTables) {
     if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
       throw new IllegalArgumentException();
     }
@@ -23,7 +22,7 @@ public class OrderTables {
 
   public List<Long> getOrderTableIds() {
     return orderTables.stream()
-        .map(OrderTable2::getId)
+        .map(OrderTable::getId)
         .collect(Collectors.toList());
   }
 
@@ -36,9 +35,9 @@ public class OrderTables {
         .anyMatch(orderTable -> !orderTable.isEmpty() || orderTable.isNotBelongTableGroup());
   }
 
-  public List<OrderTable2> ungrouping() {
+  public List<OrderTable> ungrouping() {
     return new ArrayList<>(orderTables.stream()
-        .map(orderTable -> new OrderTable2(
+        .map(orderTable -> new OrderTable(
             orderTable.getId(),
             null,
             orderTable.getNumberOfGuests(),
@@ -46,7 +45,7 @@ public class OrderTables {
         .collect(Collectors.toList()));
   }
 
-  public List<OrderTable2> getOrderTables() {
+  public List<OrderTable> getOrderTables() {
     return new ArrayList<>(orderTables);
   }
 }

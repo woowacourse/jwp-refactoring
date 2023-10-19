@@ -7,24 +7,24 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderEntity;
 import kitchenpos.dao.entity.OrderLineItemEntity;
 import kitchenpos.dao.entity.OrderTableEntity;
-import kitchenpos.domain.Order2;
-import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
 
-  private final OrderDao2 orderDao;
-  private final OrderTableDao2 orderTableDao;
-  private final OrderLineItemDao2 orderLineItemDao;
+  private final OrderDao orderDao;
+  private final OrderTableDao orderTableDao;
+  private final OrderLineItemDao orderLineItemDao;
 
   public OrderRepositoryImpl(
-      final OrderDao2 orderDao,
-      final OrderTableDao2 orderTableDao,
-      final OrderLineItemDao2 orderLineItemDao
+      final OrderDao orderDao,
+      final OrderTableDao orderTableDao,
+      final OrderLineItemDao orderLineItemDao
   ) {
     this.orderDao = orderDao;
     this.orderTableDao = orderTableDao;
@@ -32,7 +32,7 @@ public class OrderRepositoryImpl implements OrderRepository {
   }
 
   @Override
-  public Order2 save(final Order2 order) {
+  public Order save(final Order order) {
     final OrderEntity entity = new OrderEntity(
         order.getOrderTable().getId(),
         order.getOrderStatus().name(),
@@ -41,9 +41,9 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     final OrderEntity savedOrderEntity = orderDao.save(entity);
 
-    final List<OrderLineItem2> savedOrderLineItems = new ArrayList<>();
+    final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
 
-    for (final OrderLineItem2 orderLineItem : order.getOrderLineItems()) {
+    for (final OrderLineItem orderLineItem : order.getOrderLineItems()) {
       final OrderLineItemEntity savedEntity = orderLineItemDao.save(
           new OrderLineItemEntity(
               savedOrderEntity.getId(),
@@ -53,7 +53,7 @@ public class OrderRepositoryImpl implements OrderRepository {
       );
 
       savedOrderLineItems.add(
-          new OrderLineItem2(
+          new OrderLineItem(
               savedEntity.getSeq(),
               orderLineItem.getMenuId(),
               savedEntity.getQuantity()
@@ -61,7 +61,7 @@ public class OrderRepositoryImpl implements OrderRepository {
       );
     }
 
-    return new Order2(
+    return new Order(
         savedOrderEntity.getId(),
         order.getOrderTable(),
         order.getOrderStatus(),
@@ -70,8 +70,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     );
   }
 
-  private Order2 mapToOrder(final OrderEntity savedOrderEntity) {
-    return new Order2(
+  private Order mapToOrder(final OrderEntity savedOrderEntity) {
+    return new Order(
         savedOrderEntity.getId(),
         findOrderTable(savedOrderEntity),
         OrderStatus.valueOf(savedOrderEntity.getOrderStatus()),
@@ -80,27 +80,27 @@ public class OrderRepositoryImpl implements OrderRepository {
     );
   }
 
-  private OrderTable2 findOrderTable(final OrderEntity savedOrderEntity) {
+  private OrderTable findOrderTable(final OrderEntity savedOrderEntity) {
     return orderTableDao.findById(savedOrderEntity.getOrderTableId())
         .map(this::mapToOrderTable)
         .orElseThrow(IllegalArgumentException::new);
   }
 
-  private List<OrderLineItem2> findOrderLineItem(final OrderEntity savedOrderEntity) {
+  private List<OrderLineItem> findOrderLineItem(final OrderEntity savedOrderEntity) {
     return orderLineItemDao.findAllByOrderId(savedOrderEntity.getId())
         .stream()
         .map(this::mapToOrderLineItem)
         .collect(Collectors.toList());
   }
 
-  private OrderLineItem2 mapToOrderLineItem(final OrderLineItemEntity orderLineItemEntity) {
-    return new OrderLineItem2(orderLineItemEntity.getSeq(),
+  private OrderLineItem mapToOrderLineItem(final OrderLineItemEntity orderLineItemEntity) {
+    return new OrderLineItem(orderLineItemEntity.getSeq(),
         orderLineItemEntity.getMenuId(),
         orderLineItemEntity.getQuantity());
   }
 
-  private OrderTable2 mapToOrderTable(final OrderTableEntity entity) {
-    return new OrderTable2(
+  private OrderTable mapToOrderTable(final OrderTableEntity entity) {
+    return new OrderTable(
         entity.getId(),
         entity.getTableGroupId(),
         entity.getNumberOfGuests(),
@@ -108,13 +108,13 @@ public class OrderRepositoryImpl implements OrderRepository {
   }
 
   @Override
-  public Optional<Order2> findById(final Long id) {
+  public Optional<Order> findById(final Long id) {
     return orderDao.findById(id)
         .map(this::mapToOrder);
   }
 
   @Override
-  public List<Order2> findAll() {
+  public List<Order> findAll() {
     return orderDao.findAll()
         .stream()
         .map(this::mapToOrder)

@@ -1,16 +1,15 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuGroup;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.entity.MenuGroupEntity;
 
 public interface MenuGroupDao {
-    MenuGroup save(MenuGroup entity);
+    MenuGroupEntity save(MenuGroupEntity entity);
 
-    Optional<MenuGroup> findById(Long id);
+    Optional<MenuGroupEntity> findById(Long id);
 
-    List<MenuGroup> findAll();
+    List<MenuGroupEntity> findAll();
 
     boolean existsById(Long id);
 }

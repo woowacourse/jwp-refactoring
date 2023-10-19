@@ -3,11 +3,11 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order2;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class OrderService {
   }
 
   @Transactional
-  public Order2 create(final Order2 order) {
+  public Order create(final Order order) {
     final OrderLineItems orderLineItems = new OrderLineItems(order.getOrderLineItems());
 
     final List<Long> menuIds = orderLineItems.getMenuIds();
@@ -39,14 +39,14 @@ public class OrderService {
       throw new IllegalArgumentException();
     }
 
-    final OrderTable2 orderTable = orderTableRepository.findById(order.getOrderTable().getId())
+    final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
         .orElseThrow(IllegalArgumentException::new);
 
     if (orderTable.isEmpty()) {
       throw new IllegalArgumentException();
     }
 
-    final Order2 saveOrder = new Order2(
+    final Order saveOrder = new Order(
         orderTable,
         OrderStatus.COOKING,
         LocalDateTime.now(),
@@ -56,13 +56,13 @@ public class OrderService {
     return orderRepository.save(saveOrder);
   }
 
-  public List<Order2> list() {
+  public List<Order> list() {
     return orderRepository.findAll();
   }
 
   @Transactional
-  public Order2 changeOrderStatus(final Long orderId, final Order2 order) {
-    final Order2 savedOrder = orderRepository.findById(orderId)
+  public Order changeOrderStatus(final Long orderId, final Order order) {
+    final Order savedOrder = orderRepository.findById(orderId)
         .orElseThrow(IllegalArgumentException::new);
 
     if (savedOrder.isCompletion()) {

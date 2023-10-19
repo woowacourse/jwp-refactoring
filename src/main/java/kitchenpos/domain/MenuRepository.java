@@ -2,15 +2,14 @@ package kitchenpos.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.entity.MenuEntity;
 
 public interface MenuRepository {
 
-  Menu2 save(Menu2 menu);
+  Menu save(Menu menu);
 
-  Optional<Menu2> findById(Long id);
+  Optional<Menu> findById(Long id);
 
-  List<Menu2> findAll();
+  List<Menu> findAll();
 
   long countByIdIn(List<Long> ids);
 }

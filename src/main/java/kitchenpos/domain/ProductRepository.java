@@ -5,9 +5,9 @@ import java.util.Optional;
 
 public interface ProductRepository {
 
-  Product2 save(Product2 product2);
+  Product save(Product product);
 
-  Optional<Product2> findById(Long id);
+  Optional<Product> findById(Long id);
 
-  List<Product2> findAll();
+  List<Product> findAll();
 }

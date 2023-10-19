@@ -2,15 +2,15 @@ package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order2;
-import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 
 public class OrderFixture {
 
-  public static Order2 createCookingOrder(final OrderTable2 orderTable) {
-    return new Order2(
+  public static Order createCookingOrder(final OrderTable orderTable) {
+    return new Order(
         orderTable,
         OrderStatus.COOKING,
         LocalDateTime.now(),
@@ -18,8 +18,8 @@ public class OrderFixture {
     );
   }
 
-  public static Order2 createCompletionOrder(final OrderTable2 orderTable) {
-    return new Order2(
+  public static Order createCompletionOrder(final OrderTable orderTable) {
+    return new Order(
         orderTable,
         OrderStatus.COMPLETION,
         LocalDateTime.now(),
@@ -27,11 +27,11 @@ public class OrderFixture {
     );
   }
 
-  public static Order2 createCompletionOrderWithOrderLineItems(
-      final OrderTable2 orderTable,
-      final List<OrderLineItem2> orderLineItems
+  public static Order createCompletionOrderWithOrderLineItems(
+      final OrderTable orderTable,
+      final List<OrderLineItem> orderLineItems
   ) {
-    return new Order2(
+    return new Order(
         orderTable,
         OrderStatus.COMPLETION,
         LocalDateTime.now(),
@@ -39,8 +39,8 @@ public class OrderFixture {
     );
   }
 
-  public static Order2 createMealOrder(final OrderTable2 orderTable) {
-    return new Order2(
+  public static Order createMealOrder(final OrderTable orderTable) {
+    return new Order(
         orderTable,
         OrderStatus.MEAL,
         LocalDateTime.now(),
@@ -48,11 +48,11 @@ public class OrderFixture {
     );
   }
 
-  public static Order2 createMealOrderWithOrderLineItems(
-      final OrderTable2 orderTable,
-      final List<OrderLineItem2> orderLineItems
+  public static Order createMealOrderWithOrderLineItems(
+      final OrderTable orderTable,
+      final List<OrderLineItem> orderLineItems
   ) {
-    return new Order2(
+    return new Order(
         null,
         orderTable,
         OrderStatus.MEAL,

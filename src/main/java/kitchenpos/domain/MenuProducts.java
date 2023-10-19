@@ -5,9 +5,9 @@ import java.util.List;
 
 public class MenuProducts {
 
-  private final List<MenuProduct2> menuProducts;
+  private final List<MenuProduct> menuProducts;
 
-  public MenuProducts(final List<MenuProduct2> menuProducts) {
+  public MenuProducts(final List<MenuProduct> menuProducts) {
     this.menuProducts = menuProducts;
   }
 
@@ -18,8 +18,8 @@ public class MenuProducts {
   private BigDecimal sum() {
     BigDecimal sum = BigDecimal.ZERO;
 
-    for (final MenuProduct2 menuProduct : menuProducts) {
-      final Product2 product = menuProduct.getProduct();
+    for (final MenuProduct menuProduct : menuProducts) {
+      final Product product = menuProduct.getProduct();
       sum = sum.add(product.getPrice()
           .multiply(BigDecimal.valueOf(menuProduct.getQuantity()))
       );

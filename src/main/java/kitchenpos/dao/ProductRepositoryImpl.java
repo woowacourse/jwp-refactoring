@@ -4,29 +4,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.ProductEntity;
-import kitchenpos.domain.Product2;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
 
-  private final ProductDao2 productDao2;
+  private final ProductDao productDao;
 
-  public ProductRepositoryImpl(final ProductDao2 productDao2) {
-    this.productDao2 = productDao2;
+  public ProductRepositoryImpl(final ProductDao productDao) {
+    this.productDao = productDao;
   }
 
   @Override
-  public Product2 save(final Product2 product2) {
-    final ProductEntity entity = productDao2.save(
+  public Product save(final Product product) {
+    final ProductEntity entity = productDao.save(
         new ProductEntity(
-            product2.getName(),
-            product2.getPrice()
+            product.getName(),
+            product.getPrice()
         )
     );
 
-    return new Product2(
+    return new Product(
         entity.getId(),
         entity.getName(),
         entity.getPrice()
@@ -34,16 +34,16 @@ public class ProductRepositoryImpl implements ProductRepository {
   }
 
   @Override
-  public Optional<Product2> findById(final Long id) {
-    return productDao2.findById(id)
-        .map(productEntity -> new Product2(productEntity.getName(), productEntity.getPrice()));
+  public Optional<Product> findById(final Long id) {
+    return productDao.findById(id)
+        .map(productEntity -> new Product(productEntity.getName(), productEntity.getPrice()));
   }
 
   @Override
-  public List<Product2> findAll() {
-    return productDao2.findAll()
+  public List<Product> findAll() {
+    return productDao.findAll()
         .stream()
-        .map(productEntity -> new Product2(productEntity.getName(), productEntity.getPrice()))
+        .map(productEntity -> new Product(productEntity.getName(), productEntity.getPrice()))
         .collect(Collectors.toList());
   }
 }

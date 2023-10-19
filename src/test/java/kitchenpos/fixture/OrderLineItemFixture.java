@@ -1,14 +1,12 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu2;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.Order2;
-import kitchenpos.domain.OrderLineItem2;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemFixture {
 
-  public static OrderLineItem2 createOrderLineItem(final Menu2 menu) {
-    return new OrderLineItem2(
+  public static OrderLineItem createOrderLineItem(final Menu menu) {
+    return new OrderLineItem(
         menu.getId(),
         4L
     );

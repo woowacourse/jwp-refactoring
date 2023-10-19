@@ -6,34 +6,34 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderTableEntity;
 import kitchenpos.dao.entity.TableGroupEntity;
-import kitchenpos.domain.OrderTable2;
-import kitchenpos.domain.TableGroup2;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class TableGroupRepositoryImpl implements TableGroupRepository {
 
-  private final TableGroupDao2 tableGroupDao;
-  private final OrderTableDao2 orderTableDao;
+  private final TableGroupDao tableGroupDao;
+  private final OrderTableDao orderTableDao;
 
-  public TableGroupRepositoryImpl(final TableGroupDao2 tableGroupDao,
-      final OrderTableDao2 orderTableDao) {
+  public TableGroupRepositoryImpl(final TableGroupDao tableGroupDao,
+      final OrderTableDao orderTableDao) {
     this.tableGroupDao = tableGroupDao;
     this.orderTableDao = orderTableDao;
   }
 
   @Override
-  public TableGroup2 save(final TableGroup2 tableGroup) {
+  public TableGroup save(final TableGroup tableGroup) {
     final TableGroupEntity tableGroupEntity = tableGroupDao.save(
         new TableGroupEntity(
             tableGroup.getCreatedDate()
         )
     );
 
-    List<OrderTable2> savedOrderTables = new ArrayList<>();
+    List<OrderTable> savedOrderTables = new ArrayList<>();
 
-    for (final OrderTable2 orderTable : tableGroup.getOrderTables()) {
+    for (final OrderTable orderTable : tableGroup.getOrderTables()) {
       final OrderTableEntity savedOrderTableEntity = orderTableDao.save(
           new OrderTableEntity(
               orderTable.getId(),
@@ -44,7 +44,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
       );
 
       savedOrderTables.add(
-          new OrderTable2(
+          new OrderTable(
               savedOrderTableEntity.getId(),
               tableGroupEntity.getId(),
               savedOrderTableEntity.getNumberOfGuests(),
@@ -53,7 +53,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
       );
     }
 
-    return new TableGroup2(
+    return new TableGroup(
         tableGroupEntity.getId(),
         tableGroupEntity.getCreatedDate(),
         savedOrderTables
@@ -61,14 +61,14 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
   }
 
   @Override
-  public Optional<TableGroup2> findById(final Long id) {
+  public Optional<TableGroup> findById(final Long id) {
     return Optional.ofNullable(tableGroupDao.findById(id)
         .map(this::mapToTableGroup)
         .orElseThrow(IllegalArgumentException::new));
   }
 
-  private TableGroup2 mapToTableGroup(final TableGroupEntity entity) {
-    return new TableGroup2(
+  private TableGroup mapToTableGroup(final TableGroupEntity entity) {
+    return new TableGroup(
         entity.getId(),
         entity.getCreatedDate(),
         orderTableDao.findAllByTableGroupId(entity.getId())
@@ -78,8 +78,8 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
     );
   }
 
-  private OrderTable2 mapToOrderTable(final OrderTableEntity orderTableEntity) {
-    return new OrderTable2(
+  private OrderTable mapToOrderTable(final OrderTableEntity orderTableEntity) {
+    return new OrderTable(
         orderTableEntity.getId(),
         orderTableEntity.getTableGroupId(),
         orderTableEntity.getNumberOfGuests(),
@@ -88,7 +88,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
   }
 
   @Override
-  public List<TableGroup2> findAll() {
+  public List<TableGroup> findAll() {
     return tableGroupDao.findAll()
         .stream()
         .map(this::mapToTableGroup)

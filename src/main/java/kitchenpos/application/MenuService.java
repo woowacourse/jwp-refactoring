@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Menu2;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.MenuRepository;
@@ -23,7 +23,7 @@ public class MenuService {
   }
 
   @Transactional
-  public Menu2 create(final Menu2 menu) {
+  public Menu create(final Menu menu) {
     if (!menuGroupRepository.existsById(menu.getMenuGroup().getId())) {
       throw new IllegalArgumentException();
     }
@@ -37,7 +37,7 @@ public class MenuService {
     return menuRepository.save(menu);
   }
 
-  public List<Menu2> list() {
+  public List<Menu> list() {
     return menuRepository.findAll();
   }
 }

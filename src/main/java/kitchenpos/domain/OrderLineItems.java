@@ -6,14 +6,14 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderLineItems {
 
-  private final List<OrderLineItem2> orderLineItems;
+  private final List<OrderLineItem> orderLineItems;
 
-  public OrderLineItems(final List<OrderLineItem2> orderLineItems) {
+  public OrderLineItems(final List<OrderLineItem> orderLineItems) {
     validateOrderLineItems(orderLineItems);
     this.orderLineItems = orderLineItems;
   }
 
-  private void validateOrderLineItems(final List<OrderLineItem2> orderLineItems) {
+  private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
     if (CollectionUtils.isEmpty(orderLineItems)) {
       throw new IllegalArgumentException();
     }
@@ -21,7 +21,7 @@ public class OrderLineItems {
 
   public List<Long> getMenuIds() {
     return orderLineItems.stream()
-        .map(OrderLineItem2::getMenuId)
+        .map(OrderLineItem::getMenuId)
         .collect(Collectors.toList());
   }
 

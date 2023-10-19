@@ -11,12 +11,12 @@ import kitchenpos.dao.OrderRepositoryImpl;
 import kitchenpos.dao.OrderTableRepositoryImpl;
 import kitchenpos.dao.ProductRepositoryImpl;
 import kitchenpos.dao.TableGroupRepositoryImpl;
-import kitchenpos.domain.Menu2;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderLineItem2;
-import kitchenpos.domain.OrderTable2;
-import kitchenpos.domain.Product2;
-import kitchenpos.domain.TableGroup2;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -53,13 +53,13 @@ class TableServiceTest extends ServiceIntegrationTest {
   @Autowired
   private MenuRepositoryImpl menuRepository;
 
-  private TableGroup2 tableGroup;
-  private OrderTable2 orderTable;
+  private TableGroup tableGroup;
+  private OrderTable orderTable;
 
-  private Menu2 menu1, menu2, menu3;
-  private Product2 product;
+  private Menu menu1, menu, menu3;
+  private Product product;
   private MenuGroup menuGroup;
-  private List<OrderLineItem2> orderLineItems;
+  private List<OrderLineItem> orderLineItems;
 
 
   @BeforeEach
@@ -70,12 +70,12 @@ class TableServiceTest extends ServiceIntegrationTest {
     menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
     product = productRepository.save(ProductFixture.createProduct());
     menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
-    menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
     menu3 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
     orderLineItems = List.of(
         OrderLineItemFixture.createOrderLineItem(menu1),
-        OrderLineItemFixture.createOrderLineItem(menu2),
+        OrderLineItemFixture.createOrderLineItem(menu),
         OrderLineItemFixture.createOrderLineItem(menu3)
     );
   }
@@ -84,10 +84,10 @@ class TableServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 주문 테이블을 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final OrderTable2 orderTable = OrderTableFixture.createNotEmptySingleOrderTable();
+    final OrderTable orderTable = OrderTableFixture.createNotEmptySingleOrderTable();
 
     //when
-    final OrderTable2 savedOrderTable = tableService.create(orderTable);
+    final OrderTable savedOrderTable = tableService.create(orderTable);
 
     //then
     assertNotNull(savedOrderTable.getId());
@@ -103,7 +103,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     orderTableRepository.save(OrderTableFixture.createNotEmptySingleOrderTable());
 
     //when
-    final List<OrderTable2> orderTables = tableService.list();
+    final List<OrderTable> orderTables = tableService.list();
 
     //then
     assertEquals(5, orderTables.size());
@@ -113,12 +113,12 @@ class TableServiceTest extends ServiceIntegrationTest {
   @DisplayName("changeEmpty() : 주문 테이블의 empty 상태를 변경할 수 있다.")
   void test_changeEmpty() throws Exception {
     //given
-    final OrderTable2 orderTable = orderTableRepository.save(
+    final OrderTable orderTable = orderTableRepository.save(
         OrderTableFixture.createNotEmptySingleOrderTable()
     );
 
     //when
-    final OrderTable2 updatedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
+    final OrderTable updatedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
 
     //then
     assertEquals(orderTable.isEmpty(), updatedOrderTable.isEmpty());
@@ -139,7 +139,7 @@ class TableServiceTest extends ServiceIntegrationTest {
   @DisplayName("changeNumberOfGuests() : 주문 테이블의 인원 수를 수정할 수 있다.")
   void test_changeNumberOfGuests() throws Exception {
     //when
-    final OrderTable2 updatedOrderTable = tableService.changeNumberOfGuests(
+    final OrderTable updatedOrderTable = tableService.changeNumberOfGuests(
         orderTable.getId(), orderTable
     );
 
@@ -151,7 +151,7 @@ class TableServiceTest extends ServiceIntegrationTest {
   @DisplayName("changeNumberOfGuests() : 특정 주문 테이블이 비어있으면 인원 수를 수정할 수 없다.")
   void test_changeNumberOfGuests_IllegalArgumentException() throws Exception {
     //given
-    final OrderTable2 orderTable = orderTableRepository.save(
+    final OrderTable orderTable = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable());
 
     //when & then

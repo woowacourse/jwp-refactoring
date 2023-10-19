@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup2;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class TableGroupService {
   }
 
   @Transactional
-  public TableGroup2 create(final TableGroup2 tableGroup) {
+  public TableGroup create(final TableGroup tableGroup) {
     final OrderTables orderTables = new OrderTables(tableGroup.getOrderTables());
 
     final List<Long> orderTableIds = orderTables.getOrderTableIds();
@@ -49,7 +49,7 @@ public class TableGroupService {
     }
 
     return tableGroupRepository.save(
-        new TableGroup2(
+        new TableGroup(
             LocalDateTime.now(),
             savedOrderTables.getOrderTables()
         )
@@ -69,9 +69,9 @@ public class TableGroupService {
       throw new IllegalArgumentException();
     }
 
-    final List<OrderTable2> ungroupingOrderTables = orderTables.ungrouping();
+    final List<OrderTable> ungroupingOrderTables = orderTables.ungrouping();
 
-    for (OrderTable2 ungroupingOrderTable : ungroupingOrderTables) {
+    for (OrderTable ungroupingOrderTable : ungroupingOrderTables) {
       orderTableRepository.save(ungroupingOrderTable);
     }
   }

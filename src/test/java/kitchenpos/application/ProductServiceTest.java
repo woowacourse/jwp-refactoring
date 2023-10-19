@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import kitchenpos.dao.ProductRepositoryImpl;
-import kitchenpos.domain.Product2;
+import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -25,10 +25,10 @@ class ProductServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 물품을 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final Product2 product = ProductFixture.createProduct();
+    final Product product = ProductFixture.createProduct();
 
     //when
-    final Product2 savedProduct = productService.create(product);
+    final Product savedProduct = productService.create(product);
 
     //then
     assertAll(
@@ -49,7 +49,7 @@ class ProductServiceTest extends ServiceIntegrationTest {
     productRepository.save(ProductFixture.createProduct());
 
     //when
-    final List<Product2> products = productService.list();
+    final List<Product> products = productService.list();
 
     //then
     assertEquals(5, products.size());

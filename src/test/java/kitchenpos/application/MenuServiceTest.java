@@ -11,9 +11,8 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.MenuRepositoryImpl;
 import kitchenpos.dao.ProductRepositoryImpl;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Menu2;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product2;
+import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -30,9 +29,6 @@ class MenuServiceTest extends ServiceIntegrationTest {
   private MenuService menuService;
 
   @Autowired
-  private MenuProductDao menuProductDao;
-
-  @Autowired
   private ProductRepositoryImpl productRepository;
 
   @Autowired
@@ -41,7 +37,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
   @Autowired
   private MenuRepositoryImpl menuRepository;
 
-  private Product2 product;
+  private Product product;
   private MenuGroup menuGroup;
 
   @BeforeEach
@@ -54,10 +50,10 @@ class MenuServiceTest extends ServiceIntegrationTest {
   @DisplayName("create() : 메뉴를 생성할 수 있다.")
   void test_create() throws Exception {
     //given
-    final Menu2 menu = MenuFixture.createMenu(menuGroup, product);
+    final Menu menu = MenuFixture.createMenu(menuGroup, product);
 
     //when
-    final Menu2 savedMenu = menuService.create(menu);
+    final Menu savedMenu = menuService.create(menu);
 
     //then
     assertAll(
@@ -68,22 +64,13 @@ class MenuServiceTest extends ServiceIntegrationTest {
     );
   }
 
-  private Menu createMenu(final int price) {
-    final Menu menu = new Menu();
-    menu.setMenuGroupId(3L);
-    menu.setName("menu1MenuGroup3");
-    menu.setPrice(BigDecimal.valueOf(price));
-    menu.setMenuProducts(menuProductDao.findAll());
-    return menu;
-  }
-
   @Test
   @DisplayName("create() : 메뉴 가격은 메뉴 상품들의 합보다 크거나 같으면 IllegalArgumentException이 발생할 수 있다.")
   void test_create_IllegalArgumentException() throws Exception {
     //given
     //메뉴 상품 가격 합 : 10
     //메뉴 가격 : 100000000
-    final Menu2 menu = MenuFixture.createExceedPriceMenu(menuGroup, product);
+    final Menu menu = MenuFixture.createExceedPriceMenu(menuGroup, product);
 
     //when & then
     Assertions.assertThatThrownBy(() -> menuService.create(menu))
@@ -100,7 +87,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
     //when
-    final List<Menu2> menus = menuService.list();
+    final List<Menu> menus = menuService.list();
 
     //then
     assertEquals(4, menus.size());

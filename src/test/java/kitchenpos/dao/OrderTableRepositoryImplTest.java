@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.OrderTable2;
-import kitchenpos.domain.TableGroup2;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.support.JdbcTestHelper;
@@ -28,10 +28,10 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("save() : 주문 테이블을 저장할 수 있다.")
   void test_save() throws Exception {
     //given
-    final OrderTable2 orderTable = OrderTableFixture.createEmptySingleOrderTable();
+    final OrderTable orderTable = OrderTableFixture.createEmptySingleOrderTable();
 
     //when
-    final OrderTable2 savedOrderTable = orderTableRepository.save(orderTable);
+    final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
     //then
     assertAll(
@@ -47,12 +47,12 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findById() : id를 통해 주문 테이블을 조회할 수 있다.")
   void test_findById() throws Exception {
     //given
-    final OrderTable2 orderTable = orderTableRepository.save(
+    final OrderTable orderTable = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
 
     //when
-    final Optional<OrderTable2> savedOrderTable = orderTableRepository.findById(orderTable.getId());
+    final Optional<OrderTable> savedOrderTable = orderTableRepository.findById(orderTable.getId());
 
     //then
     assertAll(
@@ -67,61 +67,62 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findAll() : 모든 주문 테이블을 조회할 수 있다.")
   void test_findAll() throws Exception {
     //given
-    final OrderTable2 orderTable1 = orderTableRepository.save(
+    final OrderTable orderTable1 = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
-    final OrderTable2 orderTable2 = orderTableRepository.save(
+    final OrderTable orderTable = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
 
     //when
-    final List<OrderTable2> orderTables = orderTableRepository.findAll();
+    final List<OrderTable> orderTables = orderTableRepository.findAll();
 
     //then
     assertThat(orderTables)
         .usingRecursiveFieldByFieldElementComparator()
-        .containsExactlyInAnyOrderElementsOf(List.of(orderTable1, orderTable2));
+        .containsExactlyInAnyOrderElementsOf(List.of(orderTable1, orderTable));
   }
 
   @Test
   @DisplayName("findAllByIdIn() : ids를 통해 주문 테이블들을 조회할 수 있다.")
   void test_findAllByIdIn() throws Exception {
-    final OrderTable2 orderTable1 = orderTableRepository.save(
+    final OrderTable orderTable1 = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
-    final OrderTable2 orderTable2 = orderTableRepository.save(
+    final OrderTable orderTable = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
     final long notExistedId = 3333L;
 
     //when
-    final List<OrderTable2> orderTables = orderTableRepository.findAllByIdIn(
-        List.of(orderTable1.getId(), orderTable2.getId(), notExistedId)
+    final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(
+        List.of(orderTable1.getId(), orderTable.getId(), notExistedId)
     );
 
     //then
     assertThat(orderTables)
         .usingRecursiveFieldByFieldElementComparator()
-        .containsExactlyInAnyOrderElementsOf(List.of(orderTable1, orderTable2));
+        .containsExactlyInAnyOrderElementsOf(List.of(orderTable1, orderTable));
   }
 
   @Test
   @DisplayName("findAllByTableGroupId() : 같은 테이블 그룹에 속한 주문 테이블을 조회할 수 있다.")
   void test_findAllByTableGroupId() throws Exception {
-    final OrderTable2 orderTable1 = orderTableRepository.save(
+    final OrderTable orderTable1 = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
-    final OrderTable2 orderTable2 = orderTableRepository.save(
+    final OrderTable orderTable = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
-    final OrderTable2 orderTable3 = orderTableRepository.save(
+    final OrderTable orderTable3 = orderTableRepository.save(
         OrderTableFixture.createEmptySingleOrderTable()
     );
-    final TableGroup2 tableGroup1 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable1, orderTable2)));
-    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable3)));
+    final TableGroup tableGroup1 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable1,
+        orderTable)));
+    final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable3)));
 
     //when
-    final List<OrderTable2> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup2.getId());
+    final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
     //then
     assertThat(orderTables)

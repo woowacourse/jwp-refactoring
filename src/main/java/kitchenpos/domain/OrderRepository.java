@@ -5,11 +5,11 @@ import java.util.Optional;
 
 public interface OrderRepository {
 
-  Order2 save(Order2 order);
+  Order save(Order order);
 
-  Optional<Order2> findById(Long id);
+  Optional<Order> findById(Long id);
 
-  List<Order2> findAll();
+  List<Order> findAll();
 
   boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 

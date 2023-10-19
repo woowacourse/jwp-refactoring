@@ -8,10 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Menu2;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product2;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -21,9 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Repository;
 
 class MenuRepositoryImplTest extends JdbcTestHelper {
 
@@ -35,7 +31,7 @@ class MenuRepositoryImplTest extends JdbcTestHelper {
   private ProductRepositoryImpl productRepository;
 
   private MenuGroup menuGroup;
-  private Product2 product;
+  private Product product;
 
   @BeforeEach
   void setUp() {
@@ -47,10 +43,10 @@ class MenuRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("save() : 메뉴를 저장할 수 있다.")
   void test_save() throws Exception {
     //given
-    final Menu2 menu = MenuFixture.createMenu(menuGroup, product);
+    final Menu menu = MenuFixture.createMenu(menuGroup, product);
 
     //when
-    final Menu2 savedMenu = menuRepository.save(menu);
+    final Menu savedMenu = menuRepository.save(menu);
 
     //then
     assertAll(
@@ -67,10 +63,10 @@ class MenuRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findById() : 메뉴를 조회할 수 있다.")
   void test_findById() throws Exception {
     //given
-    final Menu2 menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    final Menu menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
     //when
-    final Optional<Menu2> savedMenu = menuRepository.findById(menu.getId());
+    final Optional<Menu> savedMenu = menuRepository.findById(menu.getId());
 
     //then
     assertAll(
@@ -85,18 +81,18 @@ class MenuRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findAll() : 모든 메뉴를 조회할 수 있다.")
   void test_findAll() throws Exception {
     //given
-    final Menu2 menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
-    final Menu2 menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    final Menu menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    final Menu menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
     //when
-    final List<Menu2> menus = menuRepository.findAll();
+    final List<Menu> menus = menuRepository.findAll();
 
     //then
     assertAll(
         () -> assertEquals(2, menus.size()),
         () -> Assertions.assertThat(menus)
             .usingRecursiveFieldByFieldElementComparator()
-            .containsExactlyInAnyOrderElementsOf(List.of(menu1, menu2))
+            .containsExactlyInAnyOrderElementsOf(List.of(menu1, menu))
     );
   }
 
@@ -104,10 +100,10 @@ class MenuRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("countByIdIn() : 특정 메뉴들이 존재하는 갯수를 확인할 수 있다.")
   void test_countByIdIn() throws Exception {
     //given
-    final Menu2 menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
-    final Menu2 menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    final Menu menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    final Menu menu = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
 
-    final List<Long> ids = List.of(menu1.getId(), menu2.getId(), 9999L);
+    final List<Long> ids = List.of(menu1.getId(), menu.getId(), 9999L);
 
     //when
     final long actual = menuRepository.countByIdIn(ids);

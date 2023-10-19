@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Product2;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +16,11 @@ public class ProductService {
   }
 
   @Transactional
-  public Product2 create(final Product2 product) {
+  public Product create(final Product product) {
     return productRepository.save(product);
   }
 
-  public List<Product2> list() {
+  public List<Product> list() {
     return productRepository.findAll();
   }
 }

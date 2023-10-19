@@ -1,15 +1,14 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu2;
-import kitchenpos.domain.MenuProduct2;
-import kitchenpos.domain.Product2;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuProductFixture {
 
-  public static MenuProduct2 createMenuProduct(
-      final Product2 product
+  public static MenuProduct createMenuProduct(
+      final Product product
   ) {
-    return new MenuProduct2(
+    return new MenuProduct(
         product,
         4L
     );

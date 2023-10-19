@@ -11,15 +11,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class MenuGroupRepositoryImpl implements MenuGroupRepository {
 
-  private final MenuGroupDao2 menuGroupDao2;
+  private final MenuGroupDao menuGroupDao;
 
-  public MenuGroupRepositoryImpl(final MenuGroupDao2 menuGroupDao2) {
-    this.menuGroupDao2 = menuGroupDao2;
+  public MenuGroupRepositoryImpl(final MenuGroupDao menuGroupDao) {
+    this.menuGroupDao = menuGroupDao;
   }
 
   @Override
   public MenuGroup save(final MenuGroup menuGroup) {
-    final MenuGroupEntity entity = menuGroupDao2.save(
+    final MenuGroupEntity entity = menuGroupDao.save(
         new MenuGroupEntity(
             menuGroup.getName()
         )
@@ -33,13 +33,13 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepository {
 
   @Override
   public Optional<MenuGroup> findById(final Long id) {
-    return menuGroupDao2.findById(id)
+    return menuGroupDao.findById(id)
         .map(menuGroupEntity -> new MenuGroup(menuGroupEntity.getId(), menuGroupEntity.getName()));
   }
 
   @Override
   public List<MenuGroup> findAll() {
-    return menuGroupDao2.findAll()
+    return menuGroupDao.findAll()
         .stream()
         .map(menuGroupEntity -> new MenuGroup(menuGroupEntity.getId(), menuGroupEntity.getName()))
         .collect(Collectors.toList());
@@ -47,6 +47,6 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepository {
 
   @Override
   public boolean existsById(final Long id) {
-    return menuGroupDao2.existsById(id);
+    return menuGroupDao.existsById(id);
   }
 }
