@@ -8,6 +8,5 @@ import org.springframework.test.context.TestConstructor.AutowireMode;
 
 @SpringBootTest
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@TestConstructor(autowireMode = AutowireMode.ALL)
 public interface ServiceTest {
 }
