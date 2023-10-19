@@ -1,7 +1,10 @@
 package kitchenpos.ui.dto;
 
 public class OrderTableIdDto {
-    private final Long id;
+    private Long id;
+
+    public OrderTableIdDto() {
+    }
 
     public OrderTableIdDto(Long id) {
         this.id = id;

@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -26,30 +29,38 @@ class ProductServiceTest {
     @Mock
     private ProductDao productDao;
 
-
     @Nested
     class CreateTest {
+        final ProductRequest request = mock(ProductRequest.class);
+
         @Test
-        @DisplayName("가격이 null이면 예외가 발생한다.")
+        @DisplayName("가격을 입력하지 않으면 예외가 발생한다.")
         void priceIsNull() {
-            final ProductRequest request = new ProductRequest("product", null);
+            // given
+            given(request.getPrice()).willReturn(null);
+
+            // when, then
             assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("가격이 음수이면 예외가 발생한다.")
         void priceIsNegative() {
-            final ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(-1));
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // given
+            given(request.getPrice()).willReturn(BigDecimal.valueOf(-1));
+
+            // when, then
+            assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         @DisplayName("상품을 생성한다.")
         void createProduct() {
             // given
-            final ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(10_000));
-            final Product product = new Product(1L, "product", BigDecimal.valueOf(10_000));
+            final Product product = new Product(1L, new ProductName("product"), new ProductPrice(BigDecimal.valueOf(10_000)));
+
+            given(request.getPrice()).willReturn(product.getPrice());
+            given(request.getName()).willReturn("productName");
             given(productDao.save(any())).willReturn(product);
 
             // when
@@ -65,9 +76,9 @@ class ProductServiceTest {
     void list() {
         // given
         final List<Product> products = List.of(
-                new Product(1L, "product1", BigDecimal.valueOf(10_000)),
-                new Product(2L, "product2", BigDecimal.valueOf(20_000)),
-                new Product(3L, "product3", BigDecimal.valueOf(30_000))
+                new Product(new ProductName("product1"), new ProductPrice(BigDecimal.valueOf(10_000))),
+                new Product(new ProductName("product2"), new ProductPrice(BigDecimal.valueOf(20_000))),
+                new Product(new ProductName("product3"), new ProductPrice(BigDecimal.valueOf(30_000)))
         );
         given(productDao.findAll()).willReturn(products);
 

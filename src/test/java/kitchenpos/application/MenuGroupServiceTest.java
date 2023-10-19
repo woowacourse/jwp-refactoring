@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupName;
 import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,8 @@ class MenuGroupServiceTest {
     void create() {
         // given
         final MenuGroupRequest request = new MenuGroupRequest("menuGroup");
-        final MenuGroup menuGroup = new MenuGroup(1L, "menuGroup");
+        final MenuGroupName menuGroupName = new MenuGroupName("menuGroup");
+        final MenuGroup menuGroup = new MenuGroup(menuGroupName);
         given(menuGroupDao.save(any())).willReturn(menuGroup);
 
         // when
@@ -42,10 +44,9 @@ class MenuGroupServiceTest {
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        final List<MenuGroup> menuGroups = List.of(
-                new MenuGroup(1L, "group1"),
-                new MenuGroup(2L, "group2")
-        );
+        final MenuGroupName menuGroupName1 = new MenuGroupName("group1");
+        final MenuGroupName menuGroupName2 = new MenuGroupName("group2");
+        final List<MenuGroup> menuGroups = List.of(new MenuGroup(menuGroupName1), new MenuGroup(menuGroupName2));
         given(menuGroupDao.findAll()).willReturn(menuGroups);
 
         // when

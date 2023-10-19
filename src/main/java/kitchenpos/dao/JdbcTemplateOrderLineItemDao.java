@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Quantity;
+import kitchenpos.domain.orderlineitem.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -73,7 +74,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("order_id"),
                 resultSet.getLong("menu_id"),
-                resultSet.getLong("quantity")
+                new Quantity(resultSet.getLong("quantity"))
         );
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Quantity;
+import kitchenpos.domain.menuproduct.MenuProduct;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -73,7 +74,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
                 resultSet.getLong(KEY_COLUMN_NAME),
                 resultSet.getLong("menu_id"),
                 resultSet.getLong("product_id"),
-                resultSet.getLong("quantity")
+                new Quantity(resultSet.getLong("quantity"))
         );
     }
 }

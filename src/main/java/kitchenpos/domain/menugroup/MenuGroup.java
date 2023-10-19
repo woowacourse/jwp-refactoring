@@ -1,16 +1,16 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menugroup;
 
 import java.util.Objects;
 
 public class MenuGroup {
     private Long id;
-    private String name;
+    private MenuGroupName name;
 
-    public MenuGroup(String name) {
+    public MenuGroup(final MenuGroupName name) {
         this(null, name);
     }
 
-    public MenuGroup(final Long id, final String name) {
+    public MenuGroup(final Long id, final MenuGroupName name) {
         this.id = id;
         this.name = name;
     }
@@ -20,7 +20,7 @@ public class MenuGroup {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     @Override
