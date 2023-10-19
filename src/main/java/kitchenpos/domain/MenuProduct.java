@@ -1,12 +1,14 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
+import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.vo.Quantity;
 
 @Entity
 public class MenuProduct {
@@ -23,17 +25,17 @@ public class MenuProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(nullable = false, columnDefinition = "0")
-    private long quantity = 0;
+    @Embedded
+    private Quantity quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Product product, long quantity) {
+    public MenuProduct(Product product, Quantity quantity) {
         this(null, null, product, quantity);
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
+    public MenuProduct(Menu menu, Product product, Quantity quantity) {
         this(null, menu, product, quantity);
     }
 
@@ -41,7 +43,7 @@ public class MenuProduct {
             Long seq,
             Menu menu,
             Product product,
-            long quantity
+            Quantity quantity
     ) {
         this.seq = seq;
         this.menu = menu;
@@ -49,23 +51,57 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public static MenuProduct of(
+            Product product,
+            long quantity
+    ) {
+        return new MenuProduct(
+                product,
+                Quantity.from(quantity)
+        );
+    }
+
+    public void registerMenu(Menu menu) {
+        menu.
+//        if ()
+//        this.menu = menu;
+//        menu.addMenuProduct(this);
+    }
+
     public Long getSeq() {
         return seq;
     }
-
 
     public Menu getMenu() {
         return menu;
     }
 
-
     public Product getProduct() {
         return product;
     }
 
-
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        MenuProduct that = (MenuProduct) o;
+        return Objects.equals(seq, that.seq) && Objects.equals(menu, that.menu)
+                && Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seq, menu, product, quantity);
     }
 
 }

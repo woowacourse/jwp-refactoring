@@ -17,6 +17,7 @@ import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,20 +43,18 @@ public class MenuService {
 
     @Transactional
     public Menu create(MenuCreateRequest request) {
-        findMenuGroup();
+        Menu menu = Menu.of(
+                request.getName(),
+                BigDecimal.valueOf(request.getPrice()),
+                findMenuGroup(request.getMenuGroupId())
+        );
 
-        Menu menu = new Menu(); // 일단 먼저 price 가 먼저 들어가야할까? 아니면 menuGorupId 가 먼저 들어가야할까?
-        BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+        for (MenuProductCreateRequest menuProductCreateRequest : request.getMenuProductCreateRequests()) {
+            menu.addMenuProduct(createMenuProduct(menuProductCreateRequest));
         }
+        for (MenuProduct menuProduct : menu.getMenuProducts()) {
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
         }
-
-        List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
@@ -81,8 +80,20 @@ public class MenuService {
         return savedMenu;
     }
 
+    private MenuProduct createMenuProduct(MenuProductCreateRequest menuProductCreateRequest) {
+        return MenuProduct.of(
+                findProduct(menuProductCreateRequest.getProductId()),
+                menuProductCreateRequest.getQuantity()
+        );
+    }
+
     private MenuGroup findMenuGroup(Long menuGroupId) {
         return menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private Product findProduct(Long productId) {
+        return productRepository.findById(productId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
