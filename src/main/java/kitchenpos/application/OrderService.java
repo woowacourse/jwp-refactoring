@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.menu.Menu;
@@ -67,9 +66,7 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(NotFoundMenuException::new);
-            final OrderLineItem orderLineItem = new OrderLineItem(menu, orderLineItemRequest.getQuantity());
-            orderLineItem.confirmOrder(savedOrder);
-            orderLineItemRepository.save(orderLineItem);
+            savedOrder.confirmOrderLineItem(menu, orderLineItemRequest.getQuantity());
         }
     }
 

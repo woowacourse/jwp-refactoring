@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.exception.OrderException;
 
 @Entity
@@ -35,8 +37,8 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {}
 
@@ -55,6 +57,11 @@ public class Order {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new OrderException.CannotChangeOrderStatusByCurrentOrderStatusException();
         }
+    }
+
+    public void confirmOrderLineItem(final Menu menu, final long quantity) {
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, quantity);
+        orderLineItem.confirmOrder(this);
     }
 
     public Long getId() {
