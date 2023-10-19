@@ -1,7 +1,7 @@
 package kitchenpos.support;
 
 import kitchenpos.refactoring.application.MenuGroupService;
-import kitchenpos.application.MenuService;
+import kitchenpos.refactoring.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.refactoring.application.ProductService;
 import kitchenpos.application.TableGroupService;

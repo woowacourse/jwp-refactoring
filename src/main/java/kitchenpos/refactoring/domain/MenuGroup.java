@@ -7,7 +7,7 @@ public class MenuGroup {
     private Long id;
     private String name;
 
-    public MenuGroup() {
+    private MenuGroup() {
     }
 
     public MenuGroup(String name) {

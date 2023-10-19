@@ -5,10 +5,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductRepository extends CrudRepository<Product, Long> {
+public interface MenuRepository extends CrudRepository<Menu, Long> {
 
-    List<Product> findAll();
+    List<Menu> findAll();
 
-    List<Product> findAllByIdIn(List<Long> ids);
-
+    long countByIdIn(List<Long> ids);
 }

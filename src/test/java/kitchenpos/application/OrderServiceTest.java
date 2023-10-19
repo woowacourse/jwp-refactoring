@@ -3,21 +3,25 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.refactoring.domain.Menu;
 import kitchenpos.refactoring.domain.MenuGroup;
 import kitchenpos.refactoring.domain.MenuGroupRepository;
+import kitchenpos.refactoring.domain.MenuProduct;
+import kitchenpos.refactoring.domain.MenuRepository;
+import kitchenpos.refactoring.domain.Price;
+import kitchenpos.refactoring.domain.Product;
+import kitchenpos.refactoring.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -30,9 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private OrderTableDao orderTableDao;
 
@@ -43,7 +49,15 @@ class OrderServiceTest extends ServiceTest {
     void init() {
         orderTable = orderTableDao.save(OrderTableFixture.create(false, 4));
         MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("Leo's Pick"));
-        menu = menuDao.save(MenuFixture.create("후라이드", 1000, savedMenuGroup.getId(), null));
+        Price price = new Price(BigDecimal.valueOf(1000));
+        Product product = productRepository.save(new Product("치킨", price));
+        menu = menuRepository.save(
+                new Menu("후라이드",
+                        price,
+                        savedMenuGroup.getId(),
+                        List.of(new MenuProduct(product.getId(), 1L))
+                )
+        );
     }
 
     @Nested
