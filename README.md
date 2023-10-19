@@ -77,7 +77,7 @@
     - [x] menu
     - [x] order
     - [ ] table group
-    - [ ] table
+    - [x] table
 - [ ] 도메인 객체 캡슐화
 - [ ] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정
 - [ ] command 서비스 & query 서비스 분리

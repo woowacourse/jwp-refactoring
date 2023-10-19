@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order_table.application.dto.OrderTableCreateRequest;
+import kitchenpos.order_table.application.dto.OrderTableEmptyModifyRequest;
+import kitchenpos.order_table.application.dto.OrderTableNumberOfGuestModifyRequest;
+import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.TableGroupService;
@@ -42,10 +46,10 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블을 등록할 수 있다.")
   void create_success() {
     //given
-    final OrderTable table = new OrderTable(null, null, 0, true);
+    final OrderTableCreateRequest request = new OrderTableCreateRequest(0, true);
 
     //when
-    final OrderTable actual = tableService.create(table);
+    final OrderTableQueryResponse actual = tableService.create(request);
 
     //then
     assertThat(actual).isNotNull();
@@ -56,7 +60,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블 목록을 조회할 수 있다.")
   void list_success() {
     //given, when
-    final List<OrderTable> actual = tableService.list();
+    final List<OrderTableQueryResponse> actual = tableService.list();
 
     //then
     assertThat(actual).hasSize(8);
@@ -69,10 +73,10 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeEmpty_success() {
     //given
     final boolean expected = false;
-    final OrderTable changedTable = new OrderTable(null, null, 0, expected);
+    final OrderTableEmptyModifyRequest request = new OrderTableEmptyModifyRequest(expected);
 
     //when
-    final boolean actual = tableService.changeEmpty(table1.getId(), changedTable).isEmpty();
+    final boolean actual = tableService.changeEmpty(table1.getId(), request).isEmpty();
 
     //then
     assertThat(actual).isEqualTo(expected);
@@ -82,10 +86,10 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블이 존재하지 않으면 예외를 반환한다.")
   void changeEmpty_fail_not_exist_table() {
     //given
-    final OrderTable changedTable = new OrderTable(null, null, 0, false);
+    final OrderTableEmptyModifyRequest request = new OrderTableEmptyModifyRequest(false);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeEmpty(999L, changedTable);
+    final ThrowingCallable actual = () -> tableService.changeEmpty(999L, request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -99,10 +103,10 @@ class TableServiceTest extends ServiceIntegrateTest {
         List.of(table1, table2));
     tableGroupService.create(tableGroup);
 
-    final OrderTable changedTable = new OrderTable(null, null, 0, false);
+    final OrderTableEmptyModifyRequest request = new OrderTableEmptyModifyRequest(false);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), changedTable);
+    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -115,10 +119,10 @@ class TableServiceTest extends ServiceIntegrateTest {
     orderTableDao.save(new OrderTable(1L, null, 4, false));
 
     orderService.create(getOrderRequest(table1.getId()));
-    final OrderTable changedTable = new OrderTable(null, null, 0, true);
+    final OrderTableEmptyModifyRequest request = new OrderTableEmptyModifyRequest(true);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), changedTable);
+    final ThrowingCallable actual = () -> tableService.changeEmpty(table1.getId(), request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -129,11 +133,12 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeNumberOfGuests_success() {
     //given
     final int expected = 4;
-    final OrderTable changedTable = orderTableDao.save(
-        new OrderTable(table1.getId(), null, expected, false));
+    orderTableDao.save(new OrderTable(table1.getId(), null, expected, false));
+    final OrderTableNumberOfGuestModifyRequest request =
+        new OrderTableNumberOfGuestModifyRequest(expected);
 
     //when
-    final int actual = tableService.changeNumberOfGuests(table1.getId(), changedTable)
+    final int actual = tableService.changeNumberOfGuests(table1.getId(), request)
         .getNumberOfGuests();
 
     //then
@@ -144,11 +149,12 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 때 변경하려는 손님 수가 0 이하면 예외를 반환한다.")
   void changeNumberOfGuests_fail_not_multiple() {
     //given
-    final OrderTable changedTable = new OrderTable(null, null, -1, false);
+    final OrderTableNumberOfGuestModifyRequest request =
+        new OrderTableNumberOfGuestModifyRequest(-1);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(table1.getId(),
-        changedTable);
+        request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -158,10 +164,11 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 때 대상 테이블이 존재하지 않으면 예외를 반환한다.")
   void changeNumberOfGuests_fail_not_exist_table() {
     //given
-    final OrderTable changedTable = new OrderTable(null, null, 4, false);
+    final OrderTableNumberOfGuestModifyRequest request =
+        new OrderTableNumberOfGuestModifyRequest(4);
 
     //when
-    final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(999L, changedTable);
+    final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(999L, request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
@@ -171,11 +178,12 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블의 손님 수를 변경할 때 대상 테이블이 비어있으면 예외를 반환한다.")
   void changeNumberOfGuests_fail_empty_table() {
     //given
-    final OrderTable changedTable = new OrderTable(null, null, 4, false);
+    final OrderTableNumberOfGuestModifyRequest request =
+        new OrderTableNumberOfGuestModifyRequest(4);
 
     //when
     final ThrowingCallable actual = () -> tableService.changeNumberOfGuests(table1.getId(),
-        changedTable);
+        request);
 
     //then
     assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
