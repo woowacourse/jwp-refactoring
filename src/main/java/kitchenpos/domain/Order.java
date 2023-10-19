@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class Order {
 
@@ -13,6 +14,10 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
+        // todo
+//        if (CollectionUtils.isEmpty(orderLineItems)) {
+//            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
+//        }
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -36,7 +41,7 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final String orderStatus) {
         if (this.orderStatus.equals(orderStatus)) {
             throw new IllegalArgumentException("같은 상태로 변경할 수 없습니다.");
         }

@@ -16,6 +16,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -79,7 +81,9 @@ class OrderServiceTest extends ServiceTest {
         void 주문에_포함된_상품이_없으면_예외가_발생한다() {
             //given
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
-            CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), emptyList());
+            CreateOrderCommand 커맨드 = mock(CreateOrderCommand.class);
+            when(커맨드.getOrderLineItems()).thenReturn(emptyList());
+            when(커맨드.getOrderTableId()).thenReturn(테이블.getId());
 
             //expect
             assertThatThrownBy(() -> orderService.create(커맨드))
@@ -177,7 +181,7 @@ class OrderServiceTest extends ServiceTest {
         void 주문_상태가_COMPLETION이면_예외가_발생한다() {
             //given
             Order 주문 = 주문_생성();
-            주문.setOrderStatus(OrderStatus.COMPLETION.name());
+            주문.changeOrderStatus(OrderStatus.COMPLETION.name());
             orderDao.save(주문);
 
             ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(주문.getId(),

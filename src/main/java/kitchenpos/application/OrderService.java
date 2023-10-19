@@ -46,30 +46,25 @@ public class OrderService {
 
         final List<Long> menuIds = command.getMenuIds();
         if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문항목은 각각 다른 메뉴이며 존재해야합니다.");
         }
 
-
+        // todo: order repository save (return orderRepository.save(order))
         final OrderTable orderTable = orderTableDao.findById(command.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        // todo: order repository save (return orderRepository.save(order))
-        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+                .map(request -> request.toDomain(null))
+                .collect(Collectors.toList());
+        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderDao.save(order);
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = orderLineItemRequests.stream()
-                .map(request -> {
-                    final OrderLineItem orderLineItem = new OrderLineItem();
-                    orderLineItem.setOrderId(orderId);
-                    orderLineItem.setMenuId(request.getMenuId());
-                    orderLineItem.setQuantity(request.getQuantity());
-                    return orderLineItemDao.save(orderLineItem);
-                })
-                .collect(Collectors.toList());
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+        for (final var orderLineItem : orderLineItems) {
+            orderLineItem.setOrderId(orderId);
+            orderLineItemDao.save(orderLineItem);
+        }
         return savedOrder;
     }
 
@@ -90,7 +85,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(command.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         // todo: repository save (return orderRepository.save(order))
         orderDao.save(savedOrder);

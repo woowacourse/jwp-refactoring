@@ -162,10 +162,7 @@ class TableServiceTest extends ServiceTest {
 
         private OrderLineItem 주문_상품_만들기() {
             final var 메뉴 = menuDao.findAll().get(0);
-            OrderLineItem 주문상품 = new OrderLineItem();
-            주문상품.setMenuId(메뉴.getId());
-            주문상품.setQuantity(1);
-            return 주문상품;
+            return new OrderLineItem(null, null, 메뉴.getId(), 1);
         }
 
         @Test

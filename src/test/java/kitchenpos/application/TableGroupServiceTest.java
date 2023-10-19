@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.application.dto.CreateTableGroupCommand;
 import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static java.time.LocalDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -86,7 +88,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            Order 주문 = new Order(null, 테이블.getId(), OrderStatus.COMPLETION.name(), now(), null);
+            Order 주문 = new Order(null, 테이블.getId(), OrderStatus.COMPLETION.name(), now(), List.of(mock(OrderLineItem.class), mock(
+                    OrderLineItem.class)));
             orderDao.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup(null, now(), List.of(테이블, 빈_테이블_생성()));
