@@ -53,19 +53,8 @@ public class Menu {
         if (menuPrice.compareTo(totalMenuProductsPrice) > 0) {
             throw new IllegalArgumentException();
         }
-        this.menuProducts.addAll(menuProducts);
-    }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        BigDecimal totalMenuProductsPrice = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (this.price.compareTo(totalMenuProductsPrice) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        menuProducts.stream()
+        menuProducts
                 .forEach(menuProduct -> menuProduct.changeMenu(this));
         this.menuProducts.addAll(menuProducts);
     }
