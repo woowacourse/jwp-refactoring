@@ -1,12 +1,13 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.common.Price;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-import java.math.BigDecimal;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -20,7 +21,8 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @OneToOne(fetch = LAZY)
     private MenuGroup menuGroup;
@@ -31,11 +33,11 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public Menu(final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -51,7 +53,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

@@ -1,5 +1,6 @@
 package kitchenpos.application.fixture;
 
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -17,6 +18,14 @@ public abstract class MenuFixture {
         final MenuProducts menuProducts = new MenuProducts();
         menuProducts.addAll(toAddMenuProducts);
 
-        return new Menu(name, price, menuGroup, menuProducts);
+        final Price menuPrice = new Price(price);
+        return new Menu(name, menuPrice, menuGroup, menuProducts);
+    }
+
+    public static Menu menu(final String name, final Price menuPrice, final MenuGroup menuGroup, final List<MenuProduct> toAddMenuProducts) {
+        final MenuProducts menuProducts = new MenuProducts();
+        menuProducts.addAll(toAddMenuProducts);
+
+        return new Menu(name, menuPrice, menuGroup, menuProducts);
     }
 }

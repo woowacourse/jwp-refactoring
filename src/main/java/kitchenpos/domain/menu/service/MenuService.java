@@ -1,5 +1,6 @@
 package kitchenpos.domain.menu.service;
 
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
@@ -50,9 +51,9 @@ public class MenuService {
     }
 
     private void validateMenu(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+        final Price price = menu.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(price) || price.isUnderZero()) {
             throw new IllegalArgumentException();
         }
 
@@ -63,12 +64,12 @@ public class MenuService {
         validatePrice(menu.getMenuProducts(), price);
     }
 
-    private void validatePrice(final MenuProducts menuProducts, final BigDecimal price) {
-        BigDecimal sum = BigDecimal.ZERO;
+    private void validatePrice(final MenuProducts menuProducts, final Price price) {
+        Price sum = Price.zero();
         for (final MenuProduct menuProduct : menuProducts.getMenuProducts()) {
             final Product product = productRepository.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getPrice().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {

@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
+import static kitchenpos.application.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,7 +36,7 @@ class ProductServiceTest {
         @Test
         void 상품을_생성할_수_있다() {
             // given
-            final Product expected = new Product("치킨", BigDecimal.valueOf(20_000));
+            final Product expected = product("치킨", BigDecimal.valueOf(20_000));
             given(productRepository.save(expected)).willReturn(expected);
 
             // when
@@ -61,7 +62,7 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0보다_작으면_상품을_생성할_수_없다() {
             // given
-            final Product expected = new Product("치킨", BigDecimal.valueOf(-1));
+            final Product expected = product("치킨", BigDecimal.valueOf(-1));
 
             // when, then
             assertThatThrownBy(() -> productService.create(expected))

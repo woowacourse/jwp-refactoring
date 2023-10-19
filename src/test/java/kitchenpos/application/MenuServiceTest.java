@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -71,7 +72,7 @@ class MenuServiceTest {
                     .willReturn(Optional.ofNullable(noodle))
                     .willReturn(Optional.ofNullable(potato));
 
-            final Menu spyExpected = spy(menu(expected.getName(), expected.getPrice(), expected.getMenuGroup(), new ArrayList<>()));
+            final Menu spyExpected = spy(menu(expected.getName(), expected.getPrice().getPrice(), expected.getMenuGroup(), new ArrayList<>()));
             given(menuRepository.save(expected)).willReturn(spyExpected);
 
             final MenuProduct menuProduct1 = new MenuProduct(1L, expected, wooDong.getProduct(), frenchFries.getQuantity());
@@ -110,7 +111,7 @@ class MenuServiceTest {
             final MenuProduct wooDong = menuProduct(noodle(), 1);
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
-            final BigDecimal nullPrice = null;
+            final Price nullPrice = null;
             final Menu expected = menu("우동세트", nullPrice, western(), List.of(wooDong, frenchFries));
 
             // when, then
@@ -158,9 +159,7 @@ class MenuServiceTest {
             final Product potato = potato();
             final MenuProduct frenchFries = menuProduct(potato, 1);
 
-            final BigDecimal overSumOfProductPrice = noodle.getPrice()
-                    .add(potato.getPrice())
-                    .add(BigDecimal.valueOf(1000));
+            final Price overSumOfProductPrice = noodle.getPrice().add(potato.getPrice().getPrice()).add(BigDecimal.valueOf(1000));
             final Menu expected = menu("우동세트", overSumOfProductPrice, western(), List.of(wooDong, frenchFries));
 
             given(menuGroupRepository.existsById(any())).willReturn(true);
