@@ -6,11 +6,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderEntity;
 import kitchenpos.dao.entity.OrderLineItemEntity;
-import kitchenpos.dao.entity.OrderTableEntity;
+import kitchenpos.dao.mapper.OrderMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Repository;
 
@@ -41,83 +40,73 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     final OrderEntity savedOrderEntity = orderDao.save(entity);
 
-    final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+    final List<OrderLineItem> savedOrderLineItems = savedOrderLineItems(order, savedOrderEntity);
 
-    for (final OrderLineItem orderLineItem : order.getOrderLineItems()) {
-      final OrderLineItemEntity savedEntity = orderLineItemDao.save(
-          new OrderLineItemEntity(
-              savedOrderEntity.getId(),
-              orderLineItem.getMenuId(),
-              orderLineItem.getQuantity()
-          )
-      );
-
-      savedOrderLineItems.add(
-          new OrderLineItem(
-              savedEntity.getSeq(),
-              orderLineItem.getMenuId(),
-              savedEntity.getQuantity()
-          )
-      );
-    }
-
-    return new Order(
-        savedOrderEntity.getId(),
+    return OrderMapper.mapToOrder(
+        savedOrderEntity,
         order.getOrderTable(),
-        order.getOrderStatus(),
-        order.getOrderedTime(),
         savedOrderLineItems
     );
   }
 
-  private Order mapToOrder(final OrderEntity savedOrderEntity) {
-    return new Order(
-        savedOrderEntity.getId(),
-        findOrderTable(savedOrderEntity),
-        OrderStatus.valueOf(savedOrderEntity.getOrderStatus()),
-        savedOrderEntity.getOrderedTime(),
-        findOrderLineItem(savedOrderEntity)
+  private List<OrderLineItem> savedOrderLineItems(
+      final Order order,
+      final OrderEntity savedOrderEntity
+  ) {
+    final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+
+    for (final OrderLineItem orderLineItem : order.getOrderLineItems()) {
+      savedOrderLineItems.add(saveOrderLineItem(orderLineItem, savedOrderEntity));
+    }
+
+    return savedOrderLineItems;
+  }
+
+  private OrderLineItem saveOrderLineItem(
+      final OrderLineItem orderLineItem,
+      final OrderEntity orderEntity
+  ) {
+    return OrderMapper.mapToOrderLineItem(
+        orderLineItemDao.save(
+            new OrderLineItemEntity(
+                orderEntity.getId(),
+                orderLineItem.getMenuId(),
+                orderLineItem.getQuantity()
+            )
+        )
     );
+  }
+
+  @Override
+  public Optional<Order> findById(final Long id) {
+    return orderDao.findById(id)
+        .map(entity -> OrderMapper.mapToOrder(
+            entity,
+            findOrderTable(entity),
+            findOrderLineItem(entity)));
   }
 
   private OrderTable findOrderTable(final OrderEntity savedOrderEntity) {
     return orderTableDao.findById(savedOrderEntity.getOrderTableId())
-        .map(this::mapToOrderTable)
+        .map(OrderMapper::mapToOrderTable)
         .orElseThrow(IllegalArgumentException::new);
   }
 
   private List<OrderLineItem> findOrderLineItem(final OrderEntity savedOrderEntity) {
     return orderLineItemDao.findAllByOrderId(savedOrderEntity.getId())
         .stream()
-        .map(this::mapToOrderLineItem)
+        .map(OrderMapper::mapToOrderLineItem)
         .collect(Collectors.toList());
-  }
-
-  private OrderLineItem mapToOrderLineItem(final OrderLineItemEntity orderLineItemEntity) {
-    return new OrderLineItem(orderLineItemEntity.getSeq(),
-        orderLineItemEntity.getMenuId(),
-        orderLineItemEntity.getQuantity());
-  }
-
-  private OrderTable mapToOrderTable(final OrderTableEntity entity) {
-    return new OrderTable(
-        entity.getId(),
-        entity.getTableGroupId(),
-        entity.getNumberOfGuests(),
-        entity.isEmpty());
-  }
-
-  @Override
-  public Optional<Order> findById(final Long id) {
-    return orderDao.findById(id)
-        .map(this::mapToOrder);
   }
 
   @Override
   public List<Order> findAll() {
     return orderDao.findAll()
         .stream()
-        .map(this::mapToOrder)
+        .map(entity -> OrderMapper.mapToOrder(
+            entity,
+            findOrderTable(entity),
+            findOrderLineItem(entity)))
         .collect(Collectors.toList());
   }
 
