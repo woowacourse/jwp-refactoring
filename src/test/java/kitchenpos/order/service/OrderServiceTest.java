@@ -156,9 +156,8 @@ class OrderServiceTest extends ServiceTestContext {
     void 이미_완료된_주문이라면_상태를_변경할_수_없다() {
         // given
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
-        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
-
         orderTableRepository.save(orderTable);
+        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
 
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
@@ -173,10 +172,10 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문을_정상적으로_변경하는_경우_변경한_주문이_반환된다() {
         // given
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
-        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
-
         orderTableRepository.save(orderTable);
+        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
+
 
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
 

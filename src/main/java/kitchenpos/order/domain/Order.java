@@ -1,18 +1,16 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.order.exception.OrderIsCompletedException;
 import kitchenpos.order.exception.OrderIsNotCompletedException;
-import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -22,9 +20,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -34,15 +31,10 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        orderTable.validateIsNotEmpty();
-        this.orderTable = orderTable;
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-    }
-
-    public static Order issue(OrderTable orderTable) {
-        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        this.orderTableId = orderTableId;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -66,15 +58,15 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 }

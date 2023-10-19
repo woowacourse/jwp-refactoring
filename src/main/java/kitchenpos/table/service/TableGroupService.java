@@ -60,7 +60,11 @@ public class TableGroupService {
     }
 
     private void validateAllOrderCompleted(List<OrderTable> orderTables) {
-        List<Order> orders = orderRepository.findByOrderTableIn(orderTables);
+        List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+        List<Order> orders = orderRepository.findByOrderTableIdIn(orderTableIds);
+
         for (Order order : orders) {
             order.validateOrderIsCompleted();
         }

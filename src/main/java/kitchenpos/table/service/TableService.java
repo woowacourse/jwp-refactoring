@@ -54,7 +54,7 @@ public class TableService {
     }
 
     private void validateOrdersCompleted(OrderTable orderTable) {
-        List<Order> orders = orderRepository.findByOrderTable(orderTable);
+        List<Order> orders = orderRepository.findByOrderTableId(orderTable.getId());
         for (Order order : orders) {
             order.validateOrderIsCompleted();
         }
