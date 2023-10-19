@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -14,6 +15,11 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public void ungroup() {
+        tableGroupId = null;
+        empty = false;
     }
 
     public Long getId() {

@@ -2,8 +2,12 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableGroup {
+
+    private static final int MIN_ORDER_TABLE_SIZE = 2;
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
@@ -15,6 +19,53 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public void addOrderTables(List<OrderTable> orderTables) {
+        validate(orderTables);
+        this.orderTables = orderTables.stream()
+            .map(orderTable -> {
+                orderTable.setTableGroupId(id);
+                orderTable.setEmpty(false);
+                return orderTable;
+            }).collect(Collectors.toList());
+    }
+
+    private void validate(List<OrderTable> orderTables) {
+        checkIdentified();
+        checkMinOrderTable(orderTables);
+        checkEmpty(orderTables);
+        checkNotGrouped(orderTables);
+    }
+
+    private void checkIdentified() {
+        if (id == null) {
+            throw new IllegalStateException("TableGroup 의 식별자가 정의되지 않았습니다.");
+        }
+    }
+
+    private void checkMinOrderTable(List<OrderTable> orderTables) {
+        if (orderTables.size() < MIN_ORDER_TABLE_SIZE) {
+            throw new IllegalArgumentException(String.format("주문 테이블은 최소 %d개 이상입니다.", MIN_ORDER_TABLE_SIZE));
+        }
+    }
+
+    private void checkEmpty(List<OrderTable> orderTables) {
+        orderTables.stream()
+            .filter(orderTable -> !orderTable.isEmpty())
+            .findAny()
+            .ifPresent(orderTable -> {
+                throw new IllegalArgumentException("그룹화하기 위해서는 모든 테이블은 빈 테이블이여야 합니다.");
+            });
+    }
+
+    private void checkNotGrouped(List<OrderTable> orderTables) {
+        orderTables.stream()
+            .filter(orderTable -> orderTable.getTableGroupId() != null)
+            .findAny()
+            .ifPresent(orderTable -> {
+                throw new IllegalArgumentException("주문 테이블이 이미 그룹화 되어 있습니다.");
+            });
     }
 
     public Long getId() {
