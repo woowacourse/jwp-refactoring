@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
@@ -34,7 +34,7 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
     private MenuProductRepository menuProductRepository;
@@ -59,7 +59,7 @@ class MenuServiceTest {
         MenuProduct menuProduct = new MenuProduct(product, 1);
         Menu menu = new Menu(1L, menuName, menuPrice, menuGroupId, List.of(menuProduct));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
@@ -85,7 +85,7 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
 
         // when, then
@@ -103,7 +103,7 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
-        given(menuGroupDao.existsById(1L))
+        given(menuGroupRepository.existsById(1L))
                 .willReturn(true);
 
         // when, then
@@ -139,7 +139,7 @@ class MenuServiceTest {
 
         Product product = new Product("치킨", BigDecimal.TEN);
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
 
         given(productRepository.findById(anyLong()))
@@ -163,7 +163,7 @@ class MenuServiceTest {
 
         Product product = new Product("치킨", BigDecimal.TEN);
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
 
         // 예외 상황: 존재하지 않는 상품
