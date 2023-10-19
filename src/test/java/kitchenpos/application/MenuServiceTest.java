@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.MenuExceptionType.MENU_PRODUCT_IS_CONTAIN_NOT_SAVED_PRODUCT;
+import static kitchenpos.domain.exception.MenuExceptionType.PRICE_IS_BIGGER_THAN_MENU_PRODUCT_PRICES_SUM;
 import static kitchenpos.domain.exception.PriceExceptionType.PRICE_IS_LOWER_THAN_ZERO;
 import static kitchenpos.fixture.MenuFixture.createMenuProductDto;
 import static kitchenpos.fixture.MenuFixture.한마리메뉴_DTO;
@@ -15,6 +17,7 @@ import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.ProductDto;
+import kitchenpos.domain.exception.MenuException;
 import kitchenpos.domain.exception.PriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -78,7 +81,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
             //when
             assertThatThrownBy(() -> menuService.create(menuDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuException.class)
+                .hasMessage(MENU_PRODUCT_IS_CONTAIN_NOT_SAVED_PRODUCT.getMessage());
         }
 
         @Test
@@ -93,7 +97,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
             //when
             assertThatThrownBy(() -> menuService.create(menuDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuException.class)
+                .hasMessage(PRICE_IS_BIGGER_THAN_MENU_PRODUCT_PRICES_SUM.getMessage());
         }
     }
 
