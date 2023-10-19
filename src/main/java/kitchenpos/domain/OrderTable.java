@@ -32,6 +32,12 @@ public class OrderTable {
     }
   }
 
+  public void validateNotBelongTableGroup() {
+    if (tableGroupId != null) {
+      throw new IllegalArgumentException();
+    }
+  }
+
   public boolean isNotBelongTableGroup() {
     return tableGroupId != null;
   }
