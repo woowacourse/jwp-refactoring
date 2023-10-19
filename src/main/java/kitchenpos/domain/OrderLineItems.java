@@ -19,6 +19,12 @@ public class OrderLineItems {
     }
   }
 
+  public void validateSameMenuSize(final Long menuIdSize) {
+    if (orderLineItems.size() != menuIdSize) {
+      throw new IllegalArgumentException();
+    }
+  }
+
   public List<Long> getMenuIds() {
     return orderLineItems.stream()
         .map(OrderLineItem::getMenuId)

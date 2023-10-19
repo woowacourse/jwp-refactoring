@@ -32,19 +32,12 @@ public class OrderService {
   @Transactional
   public Order create(final Order order) {
     final OrderLineItems orderLineItems = new OrderLineItems(order.getOrderLineItems());
-
-    final List<Long> menuIds = orderLineItems.getMenuIds();
-
-    if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-      throw new IllegalArgumentException();
-    }
+    orderLineItems.validateSameMenuSize(menuRepository.countByIdIn(orderLineItems.getMenuIds()));
 
     final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
         .orElseThrow(IllegalArgumentException::new);
 
-    if (orderTable.isEmpty()) {
-      throw new IllegalArgumentException();
-    }
+    orderTable.validateEmpty();
 
     final Order saveOrder = new Order(
         orderTable,
@@ -64,10 +57,6 @@ public class OrderService {
   public Order changeOrderStatus(final Long orderId, final Order order) {
     final Order savedOrder = orderRepository.findById(orderId)
         .orElseThrow(IllegalArgumentException::new);
-
-    if (savedOrder.isCompletion()) {
-      throw new IllegalArgumentException();
-    }
 
     savedOrder.changeStatus(order.getOrderStatus());
 

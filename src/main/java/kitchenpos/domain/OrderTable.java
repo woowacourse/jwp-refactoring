@@ -20,26 +20,20 @@ public class OrderTable {
   }
 
   public OrderTable(
-      final Long tableGroupId,
-      final int numberOfGuests,
-      final boolean empty
-  ) {
-    this(null, tableGroupId, numberOfGuests, empty);
-  }
-
-  public OrderTable(
       final int numberOfGuests,
       final boolean empty
   ) {
     this(null, null, numberOfGuests, empty);
   }
 
-  public boolean isNotBelongTableGroup() {
-    return tableGroupId != null;
+  public void validateEmpty() {
+    if (empty) {
+      throw new IllegalArgumentException();
+    }
   }
 
-  public void changeEmpty(final boolean empty) {
-    this.empty = empty;
+  public boolean isNotBelongTableGroup() {
+    return tableGroupId != null;
   }
 
   public void changeNumberOfGuests(final int numberOfGuests) {
@@ -48,6 +42,10 @@ public class OrderTable {
     }
 
     this.numberOfGuests = numberOfGuests;
+  }
+
+  public void changeEmpty(final boolean empty) {
+    this.empty = empty;
   }
 
   public Long getId() {

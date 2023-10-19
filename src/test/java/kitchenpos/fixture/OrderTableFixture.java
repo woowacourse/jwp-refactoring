@@ -6,7 +6,6 @@ public class OrderTableFixture {
 
   public static OrderTable createEmptySingleOrderTable() {
     return new OrderTable(
-        null,
         5,
         true
     );
@@ -14,7 +13,6 @@ public class OrderTableFixture {
 
   public static OrderTable createNotEmptySingleOrderTable() {
     return new OrderTable(
-        null,
         5,
         false
     );

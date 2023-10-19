@@ -32,11 +32,11 @@ public class Order {
     this(null, orderTable, orderStatus, orderedTime, orderLineItems);
   }
 
-  public boolean isCompletion() {
-    return orderStatus == OrderStatus.COMPLETION;
-  }
-
   public void changeStatus(final OrderStatus orderStatus) {
+    if (this.orderStatus == OrderStatus.COMPLETION) {
+      throw new IllegalArgumentException();
+    }
+
     this.orderStatus = orderStatus;
   }
 
