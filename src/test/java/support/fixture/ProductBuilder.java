@@ -8,27 +8,27 @@ public class ProductBuilder {
 
     private static int sequence = 1;
 
-    private final Product product;
+    private String name;
+    private BigDecimal price;
 
     public ProductBuilder() {
-        product = new Product();
-        product.setName("상품" + sequence);
-        product.setPrice(BigDecimal.valueOf(1000L * sequence));
+        this.name = "상품" + sequence;
+        this.price = BigDecimal.valueOf(sequence * 1000);
 
         sequence++;
     }
 
     public ProductBuilder setName(final String name) {
-        product.setName(name);
+        this.name = name;
         return this;
     }
 
     public ProductBuilder setPrice(final BigDecimal price) {
-        product.setPrice(price);
+        this.price = price;
         return this;
     }
 
     public Product build() {
-        return product;
+        return new Product(name, price);
     }
 }

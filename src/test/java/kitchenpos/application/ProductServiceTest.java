@@ -75,9 +75,9 @@ class ProductServiceTest {
         @DisplayName("상품 가격이 null이 아니고 0 이상일 경우 상품이 정상적으로 저장된다.")
         void should_create_when_price_is_not_null_and_greater_or_equal_then_zero(final BigDecimal price) {
             // given
-            final Product product = new Product();
-            product.setName("상품");
-            product.setPrice(price);
+            final Product product = new ProductBuilder()
+                    .setPrice(price)
+                    .build();
 
             // when
             final Product expect = productService.create(product);
