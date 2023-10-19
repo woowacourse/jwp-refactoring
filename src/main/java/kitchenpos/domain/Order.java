@@ -13,14 +13,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Table(name = "orders")
 @Entity
 public class Order {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JoinColumn(name = "order_table_id")
@@ -37,22 +38,22 @@ public class Order {
     @Embedded
     private OrderLineItems orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
-    public Order(final OrderTable orderTable,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final OrderLineItems orderLineItems
+    protected Order(final OrderTable orderTable,
+                    final OrderStatus orderStatus,
+                    final LocalDateTime orderedTime,
+                    final OrderLineItems orderLineItems
     ) {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(final Long id,
-                 final OrderTable orderTable,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final OrderLineItems orderLineItems
+    protected Order(final Long id,
+                    final OrderTable orderTable,
+                    final OrderStatus orderStatus,
+                    final LocalDateTime orderedTime,
+                    final OrderLineItems orderLineItems
     ) {
         this.id = id;
         this.orderTable = orderTable;
@@ -61,12 +62,22 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        final List<OrderLineItem> orderLineItemsWithCurrentOrder = orderLineItems.stream()
-                .map(orderLineItem -> new OrderLineItem(this, orderLineItem.getMenu(), orderLineItem.getQuantity()))
-                .collect(Collectors.toList());
+    public static Order ofEmptyOrderLineItems(final OrderTable requestOrderTable) {
+        return new Order(
+                requestOrderTable,
+                OrderStatus.COOKING,
+                LocalDateTime.now(),
+                new OrderLineItems(new ArrayList<>())
+        );
+    }
 
-        this.orderLineItems = new OrderLineItems(orderLineItemsWithCurrentOrder);
+    public void addOrderLineItems(final List<OrderLineItem> requestOrderLineItems) {
+        requestOrderLineItems.forEach(orderLineItem -> orderLineItem.assignOrder(this));
+        this.orderLineItems = new OrderLineItems(requestOrderLineItems);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -95,10 +106,6 @@ public class Order {
 
     public void setOrderTable(final OrderTable orderTable) {
         this.orderTable = orderTable;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public void setOrderedTime(final LocalDateTime orderedTime) {

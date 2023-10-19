@@ -7,7 +7,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -26,7 +25,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -221,15 +219,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
         private OrderTable createOrder(final OrderStatus orderStatus, final Menu menu, final int numberOfGuests) {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, numberOfGuests, true));
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, new Quantity(1));
-            final Order savedOrder = orderRepository.save(
-                    new Order(
-                            savedOrderTable,
-                            orderStatus,
-                            LocalDateTime.now(),
-                            new OrderLineItems(new ArrayList<>())
-                    )
-            );
+            final OrderLineItem orderLineItem = OrderLineItem.ofWithoutOrder(menu, new Quantity(1));
+            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(List.of(orderLineItem));
 
             return savedOrderTable;

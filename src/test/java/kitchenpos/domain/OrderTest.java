@@ -27,7 +27,24 @@ class OrderTest {
                 .doesNotThrowAnyException();
     }
 
-    @DisplayName("[SUCCESS] 주문 항목을 추가할 경우 자신을 주문 항목에 주입한다.")
+    @DisplayName(("[SUCCESS] 주문 상태가 COOKING 에 비어있는 주문 상품 항목 상태로 주문을 생성한다."))
+    @Test
+    void ofEmptyOrderLineItems() {
+        // given
+        final OrderTable orderTable = new OrderTable(null, 10, true);
+        final Order actual = Order.ofEmptyOrderLineItems(orderTable);
+
+        // expect
+        assertSoftly(softly -> {
+            softly.assertThat(actual.getId()).isNull();
+            softly.assertThat(actual.getOrderTable()).isEqualTo(orderTable);
+            softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+            softly.assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now());
+            softly.assertThat(actual.getOrderLineItems().getOrderLineItems()).isEmpty();
+        });
+    }
+
+    @DisplayName("[SUCCESS] 주문 항목을 추가할 경우 자신을 주문 항목에 추가한다.")
     @Test
     void success_addOrderLineItems() {
         // given
@@ -43,7 +60,7 @@ class OrderTest {
         ));
 
         // when
-        final List<OrderLineItem> actual = order.getOrderLineItems().getValues();
+        final List<OrderLineItem> actual = order.getOrderLineItems().getOrderLineItems();
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
             final OrderLineItem actualOrderLineItem = actual.get(0);

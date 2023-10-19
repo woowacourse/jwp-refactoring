@@ -6,7 +6,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -24,9 +23,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -71,7 +68,8 @@ class TableServiceTest extends ApplicationTestConfig {
             // given
             final TableGroup noTableGroup = null;
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
-            orderRepository.save(new Order(savedOrderTable, OrderStatus.COMPLETION, LocalDateTime.now(), new OrderLineItems(Collections.emptyList())));
+            final Order savedOrderStatus = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when
             final OrderTable emptyStatus = new OrderTable(null, 0, true);
@@ -99,12 +97,7 @@ class TableServiceTest extends ApplicationTestConfig {
             for (final OrderTable savedOrderTable : savedOrderTables) {
                 savedOrderTable.setTableGroup(savedTableGroup);
                 orderTableRepository.save(savedOrderTable);
-                orderRepository.save(new Order(
-                        savedOrderTable,
-                        OrderStatus.COOKING,
-                        LocalDateTime.now(),
-                        new OrderLineItems(Collections.emptyList())
-                ));
+                orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             }
 
             // expect
@@ -125,16 +118,9 @@ class TableServiceTest extends ApplicationTestConfig {
                             savedMenuGroup
                     )
             );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
+            final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10)));
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-            final Order savedOrder = orderRepository.save(
-                    new Order(
-                            savedOrderTable,
-                            orderStatus,
-                            LocalDateTime.now(),
-                            new OrderLineItems(new ArrayList<>())
-                    )
-            );
+            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(orderLineItems);
 
             // expect
