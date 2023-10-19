@@ -16,7 +16,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.mapper.OrderMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,40 +45,18 @@ public class OrderService {
 
     @Transactional
     public CreateOrderResponse create(final CreateOrderRequest request) {
-        List<Long> menuIds = request.getOrderLineItemIds();
-
-        if (CollectionUtils.isEmpty(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
+        final OrderTable entity = orderTableDao.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
+        if (entity.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        List<OrderLineItem> orderLineItems = menuIds.stream()
-                .map(orderLineItemDao::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-
-        Order entity = OrderMapper.toOrder(request, orderLineItems);
-        Order updatedOrder = entity.updateOrder(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(updatedOrder);
-
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItemIds());
+        final Order order = OrderMapper.toOrder(request, orderLineItems);
+        final Order savedOrder = orderDao.save(order.updateOrder(entity.getId(), OrderStatus.COOKING.name(), LocalDateTime.of(2021, 1, 1, 0, 0, 0)));
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            OrderLineItem updated = orderLineItem.updateOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(updated));
-        }
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, orderId);
 
         return CreateOrderResponse.of(
                 savedOrder.updateOrderLineItems(savedOrderLineItems),
@@ -87,6 +64,25 @@ public class OrderService {
                         .map(OrderLineItemResponse::from)
                         .collect(Collectors.toList())
         );
+    }
+
+    private List<OrderLineItem> saveOrderLineItems(List<OrderLineItem> orderLineItems, Long orderId) {
+        return orderLineItems.stream()
+                .map(orderLineItem -> orderLineItem.updateOrderId(orderId))
+                .map(orderLineItemDao::save)
+                .collect(Collectors.toList());
+    }
+
+    private List<OrderLineItem> getOrderLineItems(List<Long> menuIds) {
+        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
+
+        return menuIds.stream()
+                .map(orderLineItemDao::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {

@@ -113,9 +113,6 @@ class OrderServiceTest {
             // given
             CreateOrderRequest request = REQUEST.주문_생성_요청();
 
-            given(menuDao.countByIdIn(anyList()))
-                    .willReturn(request.getOrderLineItemIds().size() + 3L);
-
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -126,8 +123,6 @@ class OrderServiceTest {
             // given
             CreateOrderRequest request = REQUEST.주문_생성_요청();
 
-            given(menuDao.countByIdIn(anyList()))
-                    .willReturn((long) request.getOrderLineItemIds().size());
             given(orderTableDao.findById(request.getOrderTableId()))
                     .willReturn(Optional.empty());
 
@@ -141,8 +136,6 @@ class OrderServiceTest {
             // given
             CreateOrderRequest request = REQUEST.주문_생성_요청();
 
-            given(menuDao.countByIdIn(anyList()))
-                    .willReturn((long) request.getOrderLineItemIds().size());
             given(orderTableDao.findById(request.getOrderTableId()))
                     .willReturn(Optional.of(ORDER_TABLE.주문_테이블_1_비어있는가(true)));
 

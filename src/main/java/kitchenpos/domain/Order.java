@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -11,6 +13,7 @@ public class Order {
     private final List<OrderLineItem> orderLineItems;
 
     private Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        validate(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -18,28 +21,14 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    private void validate(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Order updateOrder(Long orderTableId, String name, LocalDateTime now) {
-        return new Order(null, orderTableId, name, now, null);
+        return new Order(id, orderTableId, name, now, orderLineItems);
     }
 
     public Order updateOrderLineItems(List<OrderLineItem> savedOrderLineItems) {
@@ -92,5 +81,25 @@ public class Order {
         public Order build() {
             return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }

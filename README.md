@@ -124,11 +124,10 @@
     - [x] POST /api/orders
     - [x] PUT /api/orders/{orderId}/order-status
 
-- [ ] 도메인이 비즈니스 로직을 가지게 한다.
+- [x] 도메인이 비즈니스 로직을 가지게 한다.
     - [x] MenuGroup
     - [x] Menu
-    - [ ] Order
+    - [x] Order
     - [x] Product
     - [x] TableGroup
     - [x] OrderTable
-    - [ ] OrderStatus
