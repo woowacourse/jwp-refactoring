@@ -45,13 +45,4 @@ public class TableServiceException extends KitchenPosException {
             super(INVALID_NUMBER_OF_GUESTS_MESSAGE + numberOfGuests);
         }
     }
-
-    public static class EmptyTableException extends TableServiceException {
-
-        private static final String EMPTY_TABLE_MESSAGE = "지정한 주문 테이블은 빈 테이블입니다.";
-
-        public EmptyTableException() {
-            super(EMPTY_TABLE_MESSAGE);
-        }
-    }
 }

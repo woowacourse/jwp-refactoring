@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import kitchenpos.application.exception.TableServiceException.InvalidNumberOfGuestsException;
+import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
+import kitchenpos.domain.exception.OrderTableException.ExistsTableGroupException;
 
 @Entity
 public class OrderTable {
@@ -20,10 +23,27 @@ public class OrderTable {
     @Column
     private boolean empty = true;
 
-    public OrderTable() {}
+    public OrderTable() {
+    }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests) {
-        this.tableGroup = tableGroup;
+    public OrderTable(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        if (tableGroup != null) {
+            throw new ExistsTableGroupException();
+        }
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuest(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new InvalidNumberOfGuestsException(numberOfGuests);
+        }
+        if (empty) {
+            throw new EmptyTableException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
