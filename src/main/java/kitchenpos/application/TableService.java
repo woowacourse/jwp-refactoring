@@ -1,9 +1,14 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.TableChangeEmptyDto;
+import kitchenpos.dto.TableChangeNumberOfGuestsDto;
+import kitchenpos.dto.TableCreateDto;
+import kitchenpos.dto.TableDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +27,27 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
+    public TableDto create(final TableCreateDto request) {
+        OrderTable orderTable = request.toDomain();
+
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
-        return orderTableDao.save(orderTable);
+        OrderTable savedTable = orderTableDao.save(orderTable);
+
+        return TableDto.toDto(savedTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<TableDto> list() {
+        List<OrderTable> orderTables = orderTableDao.findAll();
+
+        return orderTables.stream()
+                .map(TableDto::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public TableDto changeEmpty(final Long orderTableId, final TableChangeEmptyDto request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -47,14 +60,15 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(request.isEmpty());
+        OrderTable updated = orderTableDao.save(savedOrderTable);
 
-        return orderTableDao.save(savedOrderTable);
+        return TableDto.toDto(updated);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public TableDto changeNumberOfGuests(final Long orderTableId, final TableChangeNumberOfGuestsDto request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -68,7 +82,8 @@ public class TableService {
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
+        OrderTable updated = orderTableDao.save(savedOrderTable);
 
-        return orderTableDao.save(savedOrderTable);
+        return TableDto.toDto(updated);
     }
 }
