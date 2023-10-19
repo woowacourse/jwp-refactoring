@@ -14,16 +14,24 @@ public class Fixture {
     public static int MENU_PRODUCT_1_QUANTITY = 10;
     public static int MENU_PRODUCT_2_QUANTITY = 3;
 
+    public static Product getProduct1() {
+        return Product.of("wuga", MENU_PRODUCT_1_PRICE);
+    }
+
+    public static Product getProduct2() {
+        return Product.of("kong", MENU_PRODUCT_2_PRICE);
+    }
+
     public static MenuProduct getMenuProduct1() {
         return new MenuProduct(
                 new Menu(),
-                Product.of("wuga", MENU_PRODUCT_1_PRICE),
+                getProduct1(),
                 MENU_PRODUCT_1_QUANTITY);
     }
     public static MenuProduct getMenuProduct2() {
         return new MenuProduct(
                 new Menu(),
-                Product.of("wuga", MENU_PRODUCT_2_PRICE),
+                getProduct2(),
                 MENU_PRODUCT_2_QUANTITY);
     }
 
