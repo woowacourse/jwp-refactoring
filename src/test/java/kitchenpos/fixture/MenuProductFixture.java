@@ -7,10 +7,10 @@ import kitchenpos.domain.Product2;
 public class MenuProductFixture {
 
   public static MenuProduct2 createMenuProduct(
-      final Product2 product2
+      final Product2 product
   ) {
     return new MenuProduct2(
-        product2,
+        product,
         4L
     );
   }

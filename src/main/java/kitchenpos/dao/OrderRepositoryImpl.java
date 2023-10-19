@@ -12,7 +12,6 @@ import kitchenpos.domain.OrderLineItem2;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable2;
-import kitchenpos.domain.TableGroup2;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -20,20 +19,16 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   private final OrderDao2 orderDao;
   private final OrderTableDao2 orderTableDao;
-  private final TableGroupDao2 tableGroupDao;
   private final OrderLineItemDao2 orderLineItemDao;
-  private final MenuDao2 menuDao;
 
   public OrderRepositoryImpl(
       final OrderDao2 orderDao,
       final OrderTableDao2 orderTableDao,
-      final TableGroupDao2 tableGroupDao,
-      final OrderLineItemDao2 orderLineItemDao, final MenuDao2 menuDao) {
+      final OrderLineItemDao2 orderLineItemDao
+  ) {
     this.orderDao = orderDao;
     this.orderTableDao = orderTableDao;
-    this.tableGroupDao = tableGroupDao;
     this.orderLineItemDao = orderLineItemDao;
-    this.menuDao = menuDao;
   }
 
   @Override

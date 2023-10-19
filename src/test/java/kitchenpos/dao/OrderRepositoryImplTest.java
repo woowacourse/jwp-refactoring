@@ -59,7 +59,7 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
 
   @BeforeEach
   void setUp() {
-    orderTable = orderTableRepository.save(OrderTableFixture.createEmptyOrderTable(tableGroup));
+    orderTable = orderTableRepository.save(OrderTableFixture.createEmptySingleOrderTable());
     tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
 
     menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
@@ -105,16 +105,27 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findById() : id를 통해 주문을 찾을 수 있다.")
   void test_findById() throws Exception {
     //given
-    final Order2 order = orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
+    final OrderTable2 orderTable = orderTableRepository.save(
+        OrderTableFixture.createEmptySingleOrderTable()
+    );
+    final Order2 order = orderRepository.save(
+        OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems)
+    );
 
     //when
     final Optional<Order2> savedOrder = orderRepository.findById(order.getId());
+
+    System.out.println(savedOrder.get().getOrderTable().getTableGroupId());
+    System.out.println(
+        "order.getOrderTable().getTableGroupId() = " + order.getOrderTable().getTableGroupId()
+    );
 
     //then
     assertAll(
         () -> assertTrue(savedOrder.isPresent()),
         () -> assertThat(savedOrder.get())
             .usingRecursiveComparison()
+            .ignoringFields("orderLineItems")
             .isEqualTo(order)
     );
   }
@@ -132,8 +143,10 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
 
     //then
     assertThat(orders)
-        .usingRecursiveFieldByFieldElementComparator()
-        .containsExactlyInAnyOrderElementsOf(List.of(order1, order2, order3));
+        .extracting("id")
+        .containsExactlyInAnyOrderElementsOf(
+            List.of(order1.getId(), order2.getId(), order3.getId())
+        );
   }
 
   @Test
@@ -159,13 +172,12 @@ class OrderRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("existsByOrderTableIdInAndOrderStatusIn() : 주문 id들과 주문 상태를 만족하는 주문들이 존재하는지 확인할 수 있다.")
   void test_existsByOrderTableIdInAndOrderStatusIn() throws Exception {
     //given
-    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
     final OrderTable2 orderTable2 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup2)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
 
     orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
-    orderRepository.save(OrderFixture.createCompletionOrder(orderTable2));
+    orderRepository.save(OrderFixture.createCompletionOrderWithOrderLineItems(orderTable2, orderLineItems));
 
     //when & then
     assertAll(

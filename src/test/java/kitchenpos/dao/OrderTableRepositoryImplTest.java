@@ -47,9 +47,9 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findById() : id를 통해 주문 테이블을 조회할 수 있다.")
   void test_findById() throws Exception {
     //given
-    final TableGroup2 tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     final OrderTable2 orderTable = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup));
+        OrderTableFixture.createEmptySingleOrderTable()
+    );
 
     //when
     final Optional<OrderTable2> savedOrderTable = orderTableRepository.findById(orderTable.getId());
@@ -67,12 +67,11 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @DisplayName("findAll() : 모든 주문 테이블을 조회할 수 있다.")
   void test_findAll() throws Exception {
     //given
-    final TableGroup2 tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     final OrderTable2 orderTable1 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
     final OrderTable2 orderTable2 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
 
     //when
@@ -87,12 +86,11 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @Test
   @DisplayName("findAllByIdIn() : ids를 통해 주문 테이블들을 조회할 수 있다.")
   void test_findAllByIdIn() throws Exception {
-    final TableGroup2 tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     final OrderTable2 orderTable1 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
     final OrderTable2 orderTable2 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
     final long notExistedId = 3333L;
 
@@ -110,24 +108,24 @@ class OrderTableRepositoryImplTest extends JdbcTestHelper {
   @Test
   @DisplayName("findAllByTableGroupId() : 같은 테이블 그룹에 속한 주문 테이블을 조회할 수 있다.")
   void test_findAllByTableGroupId() throws Exception {
-    final TableGroup2 tableGroup1 = tableGroupRepository.save(TableGroupFixture.createTableGroup());
-    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup());
     final OrderTable2 orderTable1 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup1)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
     final OrderTable2 orderTable2 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup1)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
     final OrderTable2 orderTable3 = orderTableRepository.save(
-        OrderTableFixture.createEmptyOrderTable(tableGroup2)
+        OrderTableFixture.createEmptySingleOrderTable()
     );
+    final TableGroup2 tableGroup1 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable1, orderTable2)));
+    final TableGroup2 tableGroup2 = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable3)));
 
     //when
     final List<OrderTable2> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup2.getId());
 
     //then
     assertThat(orderTables)
-        .usingRecursiveFieldByFieldElementComparator()
+        .usingRecursiveFieldByFieldElementComparatorIgnoringFields("tableGroupId")
         .containsExactlyInAnyOrderElementsOf(List.of(orderTable3));
   }
 }

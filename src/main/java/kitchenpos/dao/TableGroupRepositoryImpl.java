@@ -46,7 +46,7 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
       savedOrderTables.add(
           new OrderTable2(
               savedOrderTableEntity.getId(),
-              savedOrderTableEntity.getTableGroupId(),
+              tableGroupEntity.getId(),
               savedOrderTableEntity.getNumberOfGuests(),
               savedOrderTableEntity.isEmpty()
           )

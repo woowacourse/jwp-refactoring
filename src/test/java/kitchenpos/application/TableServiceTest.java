@@ -5,13 +5,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
+import kitchenpos.dao.MenuGroupRepositoryImpl;
+import kitchenpos.dao.MenuRepositoryImpl;
 import kitchenpos.dao.OrderRepositoryImpl;
 import kitchenpos.dao.OrderTableRepositoryImpl;
+import kitchenpos.dao.ProductRepositoryImpl;
 import kitchenpos.dao.TableGroupRepositoryImpl;
+import kitchenpos.domain.Menu2;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderLineItem2;
 import kitchenpos.domain.OrderTable2;
+import kitchenpos.domain.Product2;
 import kitchenpos.domain.TableGroup2;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,14 +44,39 @@ class TableServiceTest extends ServiceIntegrationTest {
   @Autowired
   private OrderRepositoryImpl orderRepository;
 
+  @Autowired
+  private MenuGroupRepositoryImpl menuGroupRepository;
+
+  @Autowired
+  private ProductRepositoryImpl productRepository;
+
+  @Autowired
+  private MenuRepositoryImpl menuRepository;
+
   private TableGroup2 tableGroup;
   private OrderTable2 orderTable;
 
+  private Menu2 menu1, menu2, menu3;
+  private Product2 product;
+  private MenuGroup menuGroup;
+  private List<OrderLineItem2> orderLineItems;
+
+
   @BeforeEach
   void setUp() {
-    tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup());
-    orderTable = orderTableRepository.save(
-        OrderTableFixture.createNotEmptyOrderTable(tableGroup)
+    orderTable = orderTableRepository.save(OrderTableFixture.createNotEmptySingleOrderTable());
+    tableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroup(List.of(orderTable)));
+
+    menuGroup = menuGroupRepository.save(MenuGroupFixture.createMenuGroup());
+    product = productRepository.save(ProductFixture.createProduct());
+    menu1 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu2 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+    menu3 = menuRepository.save(MenuFixture.createMenu(menuGroup, product));
+
+    orderLineItems = List.of(
+        OrderLineItemFixture.createOrderLineItem(menu1),
+        OrderLineItemFixture.createOrderLineItem(menu2),
+        OrderLineItemFixture.createOrderLineItem(menu3)
     );
   }
 
@@ -78,7 +114,7 @@ class TableServiceTest extends ServiceIntegrationTest {
   void test_changeEmpty() throws Exception {
     //given
     final OrderTable2 orderTable = orderTableRepository.save(
-        OrderTableFixture.createNotEmptyOrderTable(tableGroup)
+        OrderTableFixture.createNotEmptySingleOrderTable()
     );
 
     //when
@@ -92,7 +128,7 @@ class TableServiceTest extends ServiceIntegrationTest {
   @DisplayName("changeEmpty() : 주문 테이블에 주문이 존재하고 그 상태가 COOKING이나 MEAL이면 empty를 변경할 수 없다.")
   void test_changeEmpty_IllegalArgumentException() throws Exception {
     //given
-    orderRepository.save(OrderFixture.createMealOrder(orderTable));
+    orderRepository.save(OrderFixture.createMealOrderWithOrderLineItems(orderTable, orderLineItems));
 
     //when & then
     assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))

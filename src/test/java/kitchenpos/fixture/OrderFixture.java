@@ -27,6 +27,18 @@ public class OrderFixture {
     );
   }
 
+  public static Order2 createCompletionOrderWithOrderLineItems(
+      final OrderTable2 orderTable,
+      final List<OrderLineItem2> orderLineItems
+  ) {
+    return new Order2(
+        orderTable,
+        OrderStatus.COMPLETION,
+        LocalDateTime.now(),
+        orderLineItems
+    );
+  }
+
   public static Order2 createMealOrder(final OrderTable2 orderTable) {
     return new Order2(
         orderTable,
