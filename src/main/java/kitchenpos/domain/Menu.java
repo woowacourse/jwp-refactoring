@@ -1,14 +1,29 @@
 package kitchenpos.domain;
 
+import kitchenpos.common.BaseDate;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Menu {
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class Menu extends BaseDate {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Long getId() {
         return id;

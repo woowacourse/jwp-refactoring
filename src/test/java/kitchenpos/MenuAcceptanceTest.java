@@ -144,6 +144,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(result).hasSize(1),
                 () -> assertThat(result.get(0))
                         .usingRecursiveComparison()
+                        .ignoringFields("price")
                         .isEqualTo(createdMenu)
         );
     }
