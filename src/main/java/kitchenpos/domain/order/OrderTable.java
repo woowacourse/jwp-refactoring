@@ -2,7 +2,6 @@ package kitchenpos.domain.order;
 
 import kitchenpos.exception.OrderTableException;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,7 +29,7 @@ public class OrderTable {
 
     private Boolean empty;
 
-    @OneToMany(mappedBy = "orderTable", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "orderTable")
     private List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
@@ -78,11 +77,12 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void addOrders(List<Order> orders) {
-        for (Order order : orders) {
-            order.changeOrderTable(this);
+    public void addOrder(Order order) {
+        if (empty) {
+            throw new OrderTableException("주문테이블이 주문을 할 수 없는 상태라 주문을 추가할 수 없습니다.");
         }
-        this.orders.addAll(orders);
+        order.changeOrderTable(this);
+        this.orders.add(order);
     }
 
     public void ungroup() {
