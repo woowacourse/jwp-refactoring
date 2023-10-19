@@ -12,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.exception.OrderTableException;
@@ -97,8 +97,8 @@ class TableServiceTest extends ServiceIntegrationTest {
         }
 
         private void createOrderSuccessfully(final OrderTableDto orderTableDto) {
-            final Menu menu = createMenu();
-            final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
+            final MenuDto menuDto = createMenu();
+            final OrderLineItem orderLineItem = createOrderLineItem(menuDto.getId(), 1L);
 
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));

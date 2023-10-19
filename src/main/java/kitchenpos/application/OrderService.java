@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +20,14 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class OrderService {
 
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(final MenuDao menuDao, final OrderDao orderDao,
-        final OrderLineItemDao orderLineItemDao,
-        final OrderTableRepository orderTableRepository) {
-        this.menuDao = menuDao;
+    public OrderService(final MenuRepository menuRepository, final OrderDao orderDao,
+        final OrderLineItemDao orderLineItemDao, final OrderTableRepository orderTableRepository) {
+        this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableRepository = orderTableRepository;
@@ -46,7 +45,7 @@ public class OrderService {
             .map(OrderLineItem::getMenuId)
             .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 

@@ -6,9 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -30,8 +30,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
         @DisplayName("order를 성공적으로 생성한다.")
         void success() {
             //given
-            final Menu menu = createMenu();
-            final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
+            final MenuDto menuDto = createMenu();
+            final OrderLineItem orderLineItem = createOrderLineItem(menuDto.getId(), 1L);
             final OrderTableDto savedOrderTable = createNotEmptyOrderTable();
 
             final Order order = new Order();
@@ -52,8 +52,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
         @DisplayName("orderLineItem에 있는 menu가 존재하지 않는 경우 예외처리")
         void throwExceptionOrderLineItemsIsEmpty() {
             //given
-            final Menu menu = createMenu();
-            final OrderLineItem orderLineItem = createOrderLineItem(menu.getId() + 1, 1L);
+            final MenuDto menuDto = createMenu();
+            final OrderLineItem orderLineItem = createOrderLineItem(menuDto.getId() + 1, 1L);
             final OrderTableDto savedOrderTable = createNotEmptyOrderTable();
 
             final Order order = new Order();
@@ -69,8 +69,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
         @DisplayName("orderTable이 비어있는 경우 예외처리")
         void throwExceptionOrderTableIsEmpty() {
             //given
-            final Menu menu = createMenu();
-            final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
+            final MenuDto menuDto = createMenu();
+            final OrderLineItem orderLineItem = createOrderLineItem(menuDto.getId(), 1L);
             final OrderTableDto savedOrderTable = tableService.create(비어있는_주문_테이블_DTO());
 
             final Order order = new Order();

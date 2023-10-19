@@ -1,53 +1,70 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
-import java.util.List;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Menu {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
+
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
+
+    protected Menu() {
+    }
+
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void addProducts(
+        final List<Product> products,
+        final Map<Long, Long> productIdQuantityMap
+    ) {
+        products.stream()
+            .map(product ->
+                new MenuProduct(this, product.getId(), productIdQuantityMap.get(product.getId()))
+            )
+            .forEach(menuProducts::add);
     }
 }

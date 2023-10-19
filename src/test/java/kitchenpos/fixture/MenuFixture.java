@@ -2,11 +2,11 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.ProductDto;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
 
@@ -42,23 +42,27 @@ public class MenuFixture {
         return new MenuGroupDto(null, "신메뉴");
     }
 
-    public static Menu 후라이드치킨(
+    public static MenuDto 후라이드치킨_DTO(
         final MenuGroupDto savedMenuGroupDto,
-        final List<MenuProduct> menuProduct
+        final List<MenuProductDto> menuProductDtos,
+        final BigDecimal price
     ) {
-        final Menu menu = new Menu();
-        menu.setName("후라이드치킨");
-        menu.setPrice(BigDecimal.valueOf(16000));
-        menu.setMenuGroupId(savedMenuGroupDto.getId());
-        menu.setMenuProducts(menuProduct);
-        return menu;
+        return new MenuDto(
+            null,
+            "후라이드치킨",
+            price,
+            savedMenuGroupDto.getId(),
+            menuProductDtos
+        );
     }
 
-    public static MenuProduct createMenuProduct(final ProductDto savedProductDto,
+    public static MenuProductDto createMenuProductDto(final ProductDto savedProductDto,
         final Long quantity) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(quantity);
-        menuProduct.setProductId(savedProductDto.getId());
-        return menuProduct;
+        return new MenuProductDto(
+            null,
+            null,
+            savedProductDto.getId(),
+            quantity
+        );
     }
 }
