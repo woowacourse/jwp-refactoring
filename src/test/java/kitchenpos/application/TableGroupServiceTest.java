@@ -6,7 +6,6 @@ import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.OrderFixture.주문;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.fixture.ProductFixture.상품;
-import static kitchenpos.fixture.TableGroupFixture.테이블_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -15,6 +14,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.application.dto.tablegroup.TableGroupCreateRequest.OrderTableRequest;
+import kitchenpos.application.dto.tablegroup.TableGroupCreateResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -28,7 +30,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -99,10 +100,13 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_정상적으로_등록한다() {
             // given
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장된_주문_테이블2.getId()))
+            );
 
             // when
-            final TableGroup 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+            final TableGroupCreateResponse 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹_요청값);
 
             // then
             assertThat(저장된_테이블_그룹.getOrderTables().get(0).getTableGroupId())
@@ -112,20 +116,24 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_비어있으면_예외가_발생한다() {
             // given
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, Collections.emptyList());
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    Collections.emptyList()
+            );
 
             // expected
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹))
+            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블의_개수가_2미만이면_예외가_발생한다() {
             // given
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1));
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()))
+            );
 
             // expected
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹))
+            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -133,10 +141,13 @@ class TableGroupServiceTest {
         void 입력받은_주문_테이블의_개수와_조회한_주문_테이블의_개수가_다르면_예외가_발생한다() {
             // given
             final OrderTable 저장되지_않은_주문_테이블 = 주문_테이블(null, null, 0, true);
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장되지_않은_주문_테이블));
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장되지_않은_주문_테이블.getId()))
+            );
 
             // expected
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹))
+            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -144,10 +155,13 @@ class TableGroupServiceTest {
         void 입력받은_주문_테이블이_비어있지_않으면_예외가_발생한다() {
             // given
             final OrderTable 저장된_주문_테이블1 = orderTableDao.save(주문_테이블(null, null, 2, false));
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장된_주문_테이블2.getId()))
+            );
 
             // expected
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹))
+            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -155,12 +169,19 @@ class TableGroupServiceTest {
         void 입력받은_주문_테이블이_이미_테이블_그룹에_등록되어_있으면_예외가_발생한다() {
             // given
             final OrderTable 저장된_주문_테이블1 = orderTableDao.save(주문_테이블(null, null, 2, true));
-            tableGroupService.create(테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2)));
+            final TableGroupCreateRequest 테이블_그룹_요청값1 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장된_주문_테이블2.getId()))
+            );
+            tableGroupService.create(테이블_그룹_요청값1);
 
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
+            final TableGroupCreateRequest 테이블_그룹_요청값2 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장된_주문_테이블2.getId()))
+            );
 
             // expected
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹))
+            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값2))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -171,8 +192,11 @@ class TableGroupServiceTest {
         @Test
         void 테이블_그룹을_정상적으로_해제한다() {
             // given
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
-            final TableGroup 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장된_주문_테이블2.getId()))
+            );
+            final TableGroupCreateResponse 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹_요청값);
 
             // expected
             assertDoesNotThrow(() -> tableGroupService.ungroup(저장된_테이블_그룹.getId()));
@@ -182,8 +206,11 @@ class TableGroupServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void 주문_상태가_COOKING_또는_MEAL인_경우_예외가_발생한다(final OrderStatus 주문_상태) {
             // given
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
-            final TableGroup 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
+                    List.of(new OrderTableRequest(저장된_주문_테이블1.getId()),
+                            new OrderTableRequest(저장된_주문_테이블2.getId()))
+            );
+            final TableGroupCreateResponse 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹_요청값);
 
             final Order 주문 = 주문(null, 저장된_주문_테이블1.getId(), null, null, Collections.emptyList());
             주문.setOrderStatus(주문_상태.name());
