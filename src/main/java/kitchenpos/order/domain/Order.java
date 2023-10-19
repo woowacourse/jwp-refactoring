@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Order {
 
-  private Long id;
-  private Long orderTableId;
-  private String orderStatus;
-  private LocalDateTime orderedTime;
-  private List<OrderLineItem> orderLineItems;
+  private final Long id;
+  private final Long orderTableId;
+  private final String orderStatus;
+  private final LocalDateTime orderedTime;
+  private final List<OrderLineItem> orderLineItems;
 
   public Order(final Long id, final Long orderTableId, final String orderStatus,
       final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
@@ -22,8 +22,7 @@ public class Order {
   }
 
   public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-    this.orderTableId = orderTableId;
-    this.orderLineItems = orderLineItems;
+    this(null, orderTableId, null, null, orderLineItems);
   }
 
   public Order(final Long id, final Long orderTableId, final String orderStatus,

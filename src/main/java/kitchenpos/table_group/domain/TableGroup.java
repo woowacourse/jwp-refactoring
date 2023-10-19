@@ -7,9 +7,9 @@ import kitchenpos.order_table.domain.OrderTable;
 
 public class TableGroup {
 
-  private Long id;
-  private LocalDateTime createdDate;
-  private List<OrderTable> orderTables;
+  private final Long id;
+  private final LocalDateTime createdDate;
+  private final List<OrderTable> orderTables;
 
   public TableGroup(final Long id, final LocalDateTime createdDate,
       final List<OrderTable> orderTables) {
@@ -18,17 +18,12 @@ public class TableGroup {
     this.orderTables = orderTables;
   }
 
-  public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-    this.createdDate = createdDate;
-    this.orderTables = orderTables;
+  public TableGroup(final Long id, final LocalDateTime createdDate) {
+    this(id, createdDate, new ArrayList<>());
   }
 
   public TableGroup(final LocalDateTime createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public TableGroup(final Long id, final LocalDateTime createdDate) {
-    this(id, createdDate, new ArrayList<>());
+    this(null, createdDate, new ArrayList<>());
   }
 
   public Long getId() {

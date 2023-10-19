@@ -81,7 +81,7 @@
 - [ ] 도메인 객체 캡슐화
 - [x] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정
 - [ ] command 서비스 & query 서비스 분리
-- [ ] 생성자 중복 초기화 구문을 this로 리팩토링
+- [x] 생성자 중복 초기화 구문을 this로 리팩토링
 
 ## 용어 사전
 
