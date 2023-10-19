@@ -18,6 +18,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -68,7 +69,7 @@ class OrderServiceTest extends OrderServiceFixture {
     @Test
     void 유효하지_않은_주문_테이블_아이디라면_예외가_발생한다() {
         given(menuDao.countByIdIn(any())).willReturn(2L);
-        given(orderTableDao.findById(any())).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디를_갖는_주문.getId()))).willThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> orderService.create(유효하지_않은_주문테이블_아이디를_갖는_주문));
     }
@@ -76,7 +77,7 @@ class OrderServiceTest extends OrderServiceFixture {
     @Test
     void 주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다() {
         given(menuDao.countByIdIn(any())).willReturn(2L);
-        given(orderTableDao.findById(any())).willReturn(Optional.of(empty가_true인_주문테이블));
+        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디를_갖는_주문.getOrderTableId()))).willReturn(Optional.of(empty가_true인_주문테이블));
 
         assertThatThrownBy(() -> orderService.create(유효하지_않은_주문테이블_아이디를_갖는_주문));
     }
@@ -111,7 +112,7 @@ class OrderServiceTest extends OrderServiceFixture {
 
     @Test
     void order_status가_잘못_입력된_경우_예외가_발생한다() {
-        given(orderDao.findById(any())).willReturn(Optional.of(잘못된_상태로_수정하고자_하는_주문));
+        given(orderDao.findById(eq(잘못된_상태로_수정하고자_하는_주문.getId()))).willReturn(Optional.of(잘못된_상태로_수정하고자_하는_주문));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(잘못된_상태로_수정하고자_하는_주문.getId(), 잘못된_상태로_수정하고자_하는_주문))
                 .isInstanceOf(IllegalArgumentException.class);

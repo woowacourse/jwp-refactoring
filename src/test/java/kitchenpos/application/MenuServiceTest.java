@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -67,7 +68,7 @@ class MenuServiceTest extends MenuServiceFixture {
 
     @Test
     void 유효하지_않은_메뉴_그룹_아이디를_전달_받으면_예외가_발생한다() {
-        given(menuGroupDao.existsById(anyLong())).willThrow(IllegalArgumentException.class);
+        given(menuGroupDao.existsById(eq(유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴.getId()))).willThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> menuService.create(유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -76,7 +77,7 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 유효하지_않은_메뉴_상품_아이디를_전달_받으면_예외가_발생한다() {
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
-        given(productDao.findById(anyLong())).willThrow(IllegalArgumentException.class);
+        given(productDao.findById(eq(유효하지_않은_메뉴_상품_아이디를_갖는_메뉴.getId()))).willThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> menuService.create(유효하지_않은_메뉴_상품_아이디를_갖는_메뉴))
                 .isInstanceOf(IllegalArgumentException.class);

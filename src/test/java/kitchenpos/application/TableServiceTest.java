@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -62,7 +63,7 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 유효하지_않은_테이블_아이디를_전달_받은_경우_예외가_발생한다() {
-        given(orderTableDao.findById(any())).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_테이블아이디의_주문_테이블.getId()))).willThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> tableService.changeEmpty(유효하지_않은_테이블아이디의_주문_테이블.getId(), 유효하지_않은_테이블아이디의_주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -70,7 +71,7 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 테이블_아이디가_그룹_테이블에_포함되어_있다면_예외가_발생한다() {
-        given(orderTableDao.findById(any())).willReturn(Optional.of(그룹테이블에_포함된_테이블));
+        given(orderTableDao.findById(eq(그룹테이블에_포함된_테이블.getId()))).willReturn(Optional.of(그룹테이블에_포함된_테이블));
 
         assertThatThrownBy(() -> tableService.changeEmpty(그룹테이블에_포함된_테이블.getId(), 그룹테이블에_포함된_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -79,7 +80,7 @@ class TableServiceTest extends TableServiceFixture {
     @Test
     void 만약_주문_테이블_아이디에_해당하는_테이블의_주문_상태가_COOKING_또는_MEAL_인_경우_예외가_발생한다() {
         given(orderTableDao.findById(any())).willReturn(Optional.of(주문_상태가_COOKING인_주문_테이블));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(true);
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(주문_상태가_COOKING인_주문_테이블.getId()), any())).willReturn(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(주문_상태가_COOKING인_주문_테이블.getId(), 주문_상태가_COOKING인_주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -103,7 +104,7 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 유효하지_않은_주문_테이블_아이디를_전달_받은_경우_손님수를_변경하면_예외가_발생한다() {
-        given(orderTableDao.findById(any())).willThrow(IllegalArgumentException.class);
+        given(orderTableDao.findById(eq(유효하지_않은_주문테이블_아이디를_갖는_주문테이블.getId()))).willThrow(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(유효하지_않은_주문테이블_아이디를_갖는_주문테이블.getId(), 유효하지_않은_주문테이블_아이디를_갖는_주문테이블))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -111,7 +112,7 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 주문_테이블이_사용_불가능한_테이블인_경우_예외가_발생한다() {
-        given(orderTableDao.findById(any())).willReturn(Optional.of(주문_불가능한_상태의_주문_테이블));
+        given(orderTableDao.findById(eq(주문_불가능한_상태의_주문_테이블.getId()))).willReturn(Optional.of(주문_불가능한_상태의_주문_테이블));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_불가능한_상태의_주문_테이블.getId(), 주문_불가능한_상태의_주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);

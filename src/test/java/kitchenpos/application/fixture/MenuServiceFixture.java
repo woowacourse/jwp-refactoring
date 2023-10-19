@@ -52,6 +52,7 @@ public class MenuServiceFixture {
         final MenuProduct 유효하지_않은_상품 = new MenuProduct();
         final long 유효하지_않은_상품_아이디 = -999L;
         유효하지_않은_상품.setProductId(유효하지_않은_상품_아이디);
+        유효하지_않은_메뉴_상품_아이디를_갖는_메뉴.setId(-999L);
         유효하지_않은_메뉴_상품_아이디를_갖는_메뉴.setName("후라이드");
         유효하지_않은_메뉴_상품_아이디를_갖는_메뉴.setPrice(BigDecimal.valueOf(19_000));
         유효하지_않은_메뉴_상품_아이디를_갖는_메뉴.setMenuGroupId(1L);
