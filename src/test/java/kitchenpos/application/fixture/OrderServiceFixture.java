@@ -26,7 +26,6 @@ public class OrderServiceFixture {
     protected Order 식사중에서_완료로_상태변경된_주문;
     protected Order 완료_상태인_주문;
     protected Order 잘못된_상태로_수정하고자_하는_주문;
-    protected Order 수정된_잘못된_상태로_수정하고자_하는_주문;
     protected long 잘못된_상태로_수정하고자_하는_주문_아이디;
     protected long 유효하지_않은_주문_아이디;
     protected long 유효하지_않은_주문_테이블_아이디;
