@@ -4,11 +4,13 @@ import kitchenpos.application.OrderService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
@@ -36,14 +38,19 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
     void success_findAll() {
         // given
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu savedMenu = menuRepository.save(new Menu(
+        final Menu menu = Menu.ofEmptyMenuProducts(
                 new Name("테스트용 메뉴명"),
                 new Price("0"),
-                savedMenuGroup,
-                Collections.emptyList()
-        ));
-        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+                savedMenuGroup
+        );
 
+        final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
+        menu.addMenuProducts(List.of(
+                MenuProduct.ofWithoutMenu(savedProduct, new Quantity(10)),
+                MenuProduct.ofWithoutMenu(savedProduct, new Quantity(10))
+        ));
+        final Menu savedMenu = menuRepository.save(menu);
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
         final Order order = new Order(
                 savedOrderTable,

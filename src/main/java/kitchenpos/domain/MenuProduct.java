@@ -39,7 +39,7 @@ public class MenuProduct {
         this(null, menu, product, quantity);
     }
 
-    public MenuProduct(final Long seq,
+    protected MenuProduct(final Long seq,
                        final Menu menu,
                        final Product product,
                        final Quantity quantity

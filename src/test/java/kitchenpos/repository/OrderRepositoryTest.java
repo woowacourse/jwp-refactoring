@@ -13,12 +13,12 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,12 +28,13 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     @Autowired
     private OrderRepository orderRepository;
 
+    @DisplayName("[SUCCESS] 주문 테이블 식별자값과 주문 상태 목록 조건에 해당하는 주문이 존재하는지 확인한다.")
     @Test
-    void existsByOrderTableIdAndOrderStatusIn() {
+    void success_existsByOrderTableIdAndOrderStatusIn() {
         // given
         final Product savedProduct = persistProduct(new Product(new Name("테스트용 상품명"), new Price("10000")));
         final MenuGroup savedMenuGroup = persistMenuGroup(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu savedMenu = persistMenu(new Menu(new Name("테스트용 메뉴명"), new Price("10000"), savedMenuGroup, Collections.emptyList()));
+        final Menu savedMenu = persistMenu(Menu.ofEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, savedMenuGroup));
         persistMenuProduct(new MenuProduct(savedMenu, savedProduct, new Quantity(1)));
         final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, true));
         final Order savedOrder = persistOrder(new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now(), new OrderLineItems(new ArrayList<>())));

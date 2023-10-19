@@ -2,9 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
-import org.hibernate.annotations.BatchSize;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,16 +11,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
 public class Menu {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Embedded
@@ -35,26 +32,25 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
 
-    @BatchSize(size = 10)
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
-    public Menu(final Name name,
-                final Price price,
-                final MenuGroup menuGroup,
-                final List<MenuProduct> menuProducts
+    protected Menu(final Name name,
+                   final Price price,
+                   final MenuGroup menuGroup,
+                   final MenuProducts menuProducts
     ) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(final Long id,
-                final Name name,
-                final Price price,
-                final MenuGroup menuGroup,
-                final List<MenuProduct> menuProducts
+    protected Menu(final Long id,
+                   final Name name,
+                   final Price price,
+                   final MenuGroup menuGroup,
+                   final MenuProducts menuProducts
     ) {
         validate(price);
         this.id = id;
@@ -74,14 +70,24 @@ public class Menu {
         return price == null || price.getValue().compareTo(BigDecimal.ZERO) < 0;
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts.stream()
-                .map(menuProduct -> new MenuProduct(this, menuProduct.getProduct(), menuProduct.getQuantity()))
-                .collect(Collectors.toList());
+    public static Menu ofEmptyMenuProducts(final Name name, final Price price, final MenuGroup menuGroup) {
+        return new Menu(name, price, menuGroup, MenuProducts.empty());
     }
 
-    public boolean isGreaterThan(final BigDecimal otherPrice) {
-        return price.getValue().compareTo(otherPrice) > 0;
+    public void addMenuProducts(final List<MenuProduct> otherMenuProducts) {
+        final MenuProducts requestMenuProducts = new MenuProducts(mappingMenuProductsByMenu(otherMenuProducts));
+        final Price requestTotalSum = menuProducts.getTotalPrice().sum(requestMenuProducts.getTotalPrice());
+        if (price.isGreaterThan(requestTotalSum)) {
+            throw new IllegalArgumentException("메뉴의 가격은 모든 메뉴 상품의 가격 합보다 클 수 없습니다.");
+        }
+
+        this.menuProducts.add(requestMenuProducts);
+    }
+
+    private List<MenuProduct> mappingMenuProductsByMenu(final List<MenuProduct> otherMenuProducts) {
+        return otherMenuProducts.stream()
+                .map(menuProduct -> new MenuProduct(this, menuProduct.getProduct(), menuProduct.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -100,7 +106,7 @@ public class Menu {
         return menuGroup;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 }
