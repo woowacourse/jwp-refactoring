@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -79,7 +80,7 @@ class MenuServiceTest extends MenuServiceFixture {
         void 유효하지_않은_메뉴_그룹_아이디를_전달_받으면_예외가_발생한다() {
             유효하지_않은_메뉴_그룹_아이디를_전달_받으면_예외가_발생한다_픽스처_생성();
 
-            given(menuGroupDao.existsById(eq(유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴.getId()))).willThrow(IllegalArgumentException.class);
+            when(menuGroupDao.existsById(eq(유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴.getMenuGroupId()))).thenReturn(false);
 
             assertThatThrownBy(() -> menuService.create(유효하지_않은_메뉴_그룹_아이디를_갖는_메뉴))
                     .isInstanceOf(IllegalArgumentException.class);

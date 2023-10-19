@@ -40,6 +40,8 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
 
         @Test
         void 단체_테이블을_등록할_수_있다() {
+            단체_테이블을_등록할_수_있다_픽스처_생성();
+
             given(orderTableDao.findAllByIdIn(any())).willReturn(그룹화할_주문_테이블_리스트);
             given(tableGroupDao.save(any())).willReturn(생성한_테이블그룹);
             given(orderTableDao.save(any())).willReturn(그룹화할_주문_테이블_리스트.get(0))
@@ -52,18 +54,24 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
 
         @Test
         void 주문_테이블_아이디가_입력되지_않은_경우_예외가_발생한다() {
+            주문_테이블_아이디가_입력되지_않은_경우_예외가_발생한다_픽스처_생성();
+
             assertThatThrownBy(() -> tableGroupService.create(주문_테이블이_없는_테이블그룹))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블_아이디가_1개인_경우_예외가_발생한다() {
+            주문_테이블_아이디가_1개인_경우_예외가_발생한다_픽스처_생성();
+
             assertThatThrownBy(() -> tableGroupService.create(주문_테이블이_1개인_테이블그룹))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_사용가능한_테이블인_경우_예외가_발생한다() {
+            주문_테이블이_사용가능한_테이블인_경우_예외가_발생한다_픽스처_생성();
+
             given(orderTableDao.findAllByIdIn(any())).willReturn(사용가능한_테이블을_포함한_주문_테이블_리스트);
 
             assertThatThrownBy(() -> tableGroupService.create(사용가능한_테이블을_포함한_테이블그룹))
@@ -76,6 +84,8 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
 
         @Test
         void 단체_테이블을_삭제할_수_있다() {
+            단체_테이블을_삭제할_수_있다_픽스처_생성();
+
             given(orderTableDao.findAllByTableGroupId(eq(삭제할_테이블그룹.getId()))).willReturn(삭제할_주문_테이블_리스트);
 
             tableGroupService.ungroup(삭제할_테이블그룹.getId());
@@ -90,6 +100,8 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
 
         @Test
         void 단체_테이블에_포함된_주문_테이블_중_주문_상태가_조리_또는_식사인_경우_예외가_발생한다() {
+            단체_테이블에_포함된_주문_테이블_중_주문_상태가_조리_또는_식사인_경우_예외가_발생한다_픽스처_생성();
+
             given(orderTableDao.findAllByTableGroupId(any())).willReturn(그룹화할_주문_테이블_리스트);
             given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).willReturn(true);
 
