@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private final Long id;
     private final Long tableGroupId;
@@ -7,10 +9,17 @@ public class OrderTable {
     private final boolean empty;
 
     private OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        validate(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validate(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -42,10 +51,16 @@ public class OrderTable {
     }
 
     public OrderTable updateEmpty(boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable updateNumberOfGuests(int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
         return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 

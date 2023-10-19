@@ -130,5 +130,5 @@
     - [ ] Order
     - [x] Product
     - [ ] TableGroup
-    - [ ] Table
+    - [x] OrderTable
     - [ ] OrderStatus

@@ -7,7 +7,6 @@ import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.mapper.OrderTableMapper;
 import org.springframework.stereotype.Service;
@@ -15,8 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 
 @Service
 public class TableService {
@@ -30,10 +31,8 @@ public class TableService {
 
     @Transactional
     public CreateOrderTableResponse create(final CreateOrderTableRequest request) {
-
         OrderTable entity = OrderTableMapper.toOrderTable(request);
         OrderTable saved = orderTableDao.save(entity);
-
         return CreateOrderTableResponse.from(saved);
     }
 
@@ -45,41 +44,22 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable entity = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        OrderTable updated = savedOrderTable.updateEmpty(request.isEmpty());
+        OrderTable updated = entity.updateEmpty(request.isEmpty());
         OrderTable save = orderTableDao.save(updated);
-
         return OrderTableResponse.from(save);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final UpdateOrderTableGuestsRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable entity = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        OrderTable updated = savedOrderTable.updateNumberOfGuests(numberOfGuests);
-
+        final OrderTable updated = entity.updateNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.from(orderTableDao.save(updated));
     }
 }
