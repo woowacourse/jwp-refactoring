@@ -53,7 +53,7 @@ class MenuServiceTest extends ServiceTestHelper {
     @Test
     void 메뉴_그룹이_존재하지_않으면_등록할_수_없다() {
         // given
-        final MenuGroup emptyMenuGroup = new MenuGroup();
+        final MenuGroup emptyMenuGroup = new MenuGroup(-1L, "존재하지않는메뉴그룹");
 
         // when & then
         assertThatIllegalArgumentException()

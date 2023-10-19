@@ -70,9 +70,9 @@ public class JdbcTemplateMenuGroupRepository implements MenuGroupRepository {
     }
 
     private MenuGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuGroup entity = new MenuGroup();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        return entity;
+        return new MenuGroup(
+                resultSet.getLong("id"),
+                resultSet.getString("name")
+        );
     }
 }
