@@ -36,6 +36,7 @@ public class TableGroupService {
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroup.addOrderTables(orderTables);
+        tableGroupRepository.save(tableGroup);
 
         return TableGroupDto.from(tableGroup);
     }
@@ -50,12 +51,11 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        TableGroup tableGroup = findTableGroup(tableGroupId);
+        findTableGroup(tableGroupId);
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupIdWithOrders(tableGroupId);
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
-        tableGroupRepository.delete(tableGroup);
     }
 
     private TableGroup findTableGroup(Long tableGroupId) {
