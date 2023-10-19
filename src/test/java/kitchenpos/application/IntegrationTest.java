@@ -100,6 +100,10 @@ public class IntegrationTest {
         return new OrderLineItem(메뉴, 수량);
     }
 
+    protected TableGroup 테이블그룹(OrderTable... 주문테이블) {
+        return new TableGroup(Arrays.asList(주문테이블));
+    }
+
     protected Product 상품저장(Product 상품) {
         return productRepository.save(상품);
     }
@@ -120,15 +124,8 @@ public class IntegrationTest {
         return orderRepository.save(주문);
     }
 
-    protected TableGroup 빈_테이블들을_그룹으로_지정한다() {
-        OrderTable orderTable1 = new OrderTable(0, true);
-        OrderTable orderTable2 = new OrderTable(0, true);
-        return 테이블_그룹(orderTable1, orderTable2);
-    }
-
-    protected TableGroup 테이블_그룹(OrderTable... 주문_테이블들) {
-        TableGroup tableGroup = new TableGroup(Arrays.asList(주문_테이블들));
-        return tableGroupRepository.save(tableGroup);
+    protected TableGroup 테이블그룹저장(TableGroup 테이블그룹) {
+        return tableGroupRepository.save(테이블그룹);
     }
 
     protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
@@ -141,11 +138,6 @@ public class IntegrationTest {
 
     private OrderLineItem toOrderLineItem(Menu 메뉴) {
         return new OrderLineItem(null, null, 메뉴, 0);
-    }
-
-    protected OrderTable 주문_테이블(boolean empty) {
-        OrderTable orderTable = new OrderTable(0, empty);
-        return orderTableRepository.save(orderTable);
     }
 
     protected Menu 맛있는_메뉴() {

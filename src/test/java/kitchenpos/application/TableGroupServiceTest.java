@@ -1,59 +1,77 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
+import static kitchenpos.exception.TableGroupExceptionType.ORDER_TABLES_CAN_NOT_LESS_THAN_TWO;
+import static kitchenpos.exception.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.exception.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupCommand;
 import kitchenpos.application.dto.tablegroup.CreateTableGroupResponse;
 import kitchenpos.application.dto.tablegroup.UngroupTableGroupCommand;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
-import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TableGroupServiceTest extends IntegrationTest {
+
+    private OrderTable 비어있는_테이블1;
+    private OrderTable 비어있는_테이블2;
+    private Menu 메뉴;
+
+    @BeforeEach
+    void setUp() {
+        비어있는_테이블1 = 주문테이블저장(주문테이블(0, true));
+        비어있는_테이블2 = 주문테이블저장(주문테이블(0, true));
+        MenuGroup 메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
+        Product 상품 = 상품저장(상품("상품1", 가격(1)));
+        메뉴 = 메뉴저장(메뉴("메뉴", 가격(3), 메뉴그룹, 메뉴상품(상품, 3)));
+    }
 
     @Test
     void 주문_테이블들이_없으면_예외가_발생한다() {
         // given
         CreateTableGroupCommand command = new CreateTableGroupCommand(List.of());
 
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.create(command))
-                .isInstanceOf(IllegalArgumentException.class);
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                tableGroupService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLES_CAN_NOT_LESS_THAN_TWO);
     }
 
     @Test
     void 주문_테이블들이_하나면_예외가_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(0, false);
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(savedOrderTable.id()));
+        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(비어있는_테이블1.id()));
 
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.create(command))
-                .isInstanceOf(IllegalArgumentException.class);
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                tableGroupService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLES_CAN_NOT_LESS_THAN_TWO);
     }
 
     @Test
     void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
         // given
-        OrderTable orderTable1 = new OrderTable(1L, null, 0, false);
-        OrderTable orderTable2 = new OrderTable(2L, null, 0, false);
-        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(orderTable1.id(), orderTable2.id()));
+        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(-1L, -2L));
 
         // when & then
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
@@ -64,108 +82,86 @@ class TableGroupServiceTest extends IntegrationTest {
         assertThat(exceptionType).isEqualTo(ORDER_TABLE_NOT_FOUND);
     }
 
-    @Nested
-    class 주문_테이블들이_있는경우 {
+    @Test
+    void 주문_테이블이_비어있지_않으면_예외가_발생한다() {
+        // given
+        OrderTable 안비어있는_테이블1 = 주문테이블저장(주문테이블(0, false));
+        OrderTable 안비어있는_테이블2 = 주문테이블저장(주문테이블(0, false));
+        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(안비어있는_테이블1.id(), 안비어있는_테이블2.id()));
 
-        @Test
-        void 주문_테이블이_비어있지_않으면_예외가_발생한다() {
-            // given
-            OrderTable orderTable1 = new OrderTable(0, false);
-            OrderTable orderTable2 = new OrderTable(0, false);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-            CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
-                    savedOrderTable1.id(), savedOrderTable2.id()
-            ));
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                tableGroupService.create(command)
+        ).exceptionType();
 
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(command))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_EMPTY);
+    }
 
-        @Test
-        void 단체를_지정한다() {
-            // given
-            OrderTable orderTable1 = new OrderTable(0, true);
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            OrderTable orderTable2 = new OrderTable(0, true);
-            OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-            CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
-                    savedOrderTable1.id(), savedOrderTable2.id()
-            ));
+    @Test
+    void 단체를_지정한다() {
+        // given
+        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(비어있는_테이블1.id(), 비어있는_테이블2.id()));
 
-            // when
-            CreateTableGroupResponse result = tableGroupService.create(command);
+        // when
+        CreateTableGroupResponse result = tableGroupService.create(command);
 
-            // then
-            assertAll(
-                    () -> assertThat(result.id()).isPositive(),
-                    () -> assertThat(result.orderTableResponses()).hasSize(2)
-            );
-        }
+        // then
+        assertAll(
+                () -> assertThat(result.id()).isPositive(),
+                () -> assertThat(result.orderTableResponses()).hasSize(2)
+        );
+    }
 
-        @Nested
-        class 단체가_지정되어_있는경우 {
+    @Test
+    void 주문_테이블에_이미_지정된_단체가_있으면_예외가_발생한다() {
+        // given
+        TableGroup 테이블그룹 = 테이블그룹저장(테이블그룹(주문테이블(0, true), 주문테이블(0, true)));
+        OrderTable orderTable1 = 주문테이블저장(new OrderTable(null, 테이블그룹, 0, true));
+        OrderTable orderTable2 = 주문테이블저장(주문테이블(0, true));
+        CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(orderTable1.id(), orderTable2.id()));
 
-            @Test
-            void 주문_테이블에_이미_지정된_단체가_있으면_예외가_발생한다() {
-                // given
-                TableGroup 지정된_그룹 = 빈_테이블들을_그룹으로_지정한다();
-                OrderTable orderTable1 = new OrderTable(null, 지정된_그룹, 0, true);
-                OrderTable orderTable2 = new OrderTable(0, true);
-                OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-                OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-                CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
-                        savedOrderTable1.id(), savedOrderTable2.id()
-                ));
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                tableGroupService.create(command)
+        ).exceptionType();
 
-                // when & then
-                assertThatThrownBy(() -> tableGroupService.create(command))
-                        .isInstanceOf(IllegalArgumentException.class);
-            }
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP);
+    }
 
-            @Test
-            void 조리중이거나_식사중인_테이블의_그룹을_해제하면_예외가_발생한다() {
-                // given
-                OrderTable orderTable1 = new OrderTable(0, true);
-                OrderTable orderTable2 = new OrderTable(0, true);
-                TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
-                TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+    @Test
+    void 조리중이거나_식사중인_테이블의_그룹을_해제하면_예외가_발생한다() {
+        // given
+        OrderTable 주문테이블1 = 주문테이블(0, true);
+        OrderTable 주문테이블2 = 주문테이블(0, true);
+        TableGroup 테이블그룹 = 테이블그룹저장(테이블그룹(주문테이블1, 주문테이블2));
+        주문저장(주문(주문테이블1, COOKING, 주문항목(메뉴, 1)));
+        UngroupTableGroupCommand command = new UngroupTableGroupCommand(테이블그룹.id());
 
-                Menu 맛있는_메뉴 = 맛있는_메뉴();
-                OrderLineItem orderLineItem = new OrderLineItem(맛있는_메뉴, 1);
-                Order order = new Order(null, orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(orderLineItem));
-                orderRepository.save(order);
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                tableGroupService.ungroup(command)
+        ).exceptionType();
 
-                UngroupTableGroupCommand command = new UngroupTableGroupCommand(savedTableGroup.id());
+        // then
+        assertThat(exceptionType).isEqualTo(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
+    }
 
-                // when
-                BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                        tableGroupService.ungroup(command)
-                ).exceptionType();
+    @Test
+    void 그룹을_해제한다() {
+        // given
+        OrderTable 주문테이블1 = 주문테이블(0, true);
+        OrderTable 주문테이블2 = 주문테이블(0, true);
+        TableGroup 테이블그룹 = 테이블그룹저장(테이블그룹(주문테이블1, 주문테이블2));
+        UngroupTableGroupCommand command = new UngroupTableGroupCommand(테이블그룹.id());
 
-                // then
-                assertThat(exceptionType).isEqualTo(CAN_NOT_UNGROUP_COOKING_OR_MEAL);
-            }
+        // when
+        tableGroupService.ungroup(command);
+        Optional<TableGroup> result = tableGroupRepository.findById(테이블그룹.id());
 
-            @Test
-            void 그룹을_해제한다() {
-                // given
-                OrderTable orderTable1 = new OrderTable(0, true);
-                OrderTable orderTable2 = new OrderTable(0, true);
-                TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
-                Long tableGroupId = tableGroupRepository.save(tableGroup).id();
-                UngroupTableGroupCommand command = new UngroupTableGroupCommand(tableGroupId);
-
-                // when
-                tableGroupService.ungroup(command);
-                Optional<TableGroup> result = tableGroupRepository.findById(tableGroupId);
-
-                // then
-                assertThat(result).isPresent();
-                assertThat(result.get().orderTables()).isEmpty();
-            }
-        }
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().orderTables()).isEmpty();
     }
 }

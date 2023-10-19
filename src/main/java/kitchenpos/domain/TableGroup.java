@@ -4,6 +4,9 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.exception.TableGroupExceptionType.CAN_NOT_UNGROUP_COOKING_OR_MEAL;
+import static kitchenpos.exception.TableGroupExceptionType.ORDER_TABLES_CAN_NOT_LESS_THAN_TWO;
+import static kitchenpos.exception.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.exception.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,11 +52,14 @@ public class TableGroup {
 
     private void validate(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new TableGroupException(ORDER_TABLES_CAN_NOT_LESS_THAN_TWO);
         }
         for (OrderTable orderTable : orderTables) {
-            if (!orderTable.empty() || Objects.nonNull(orderTable.tableGroup())) {
-                throw new IllegalArgumentException();
+            if (!orderTable.empty()) {
+                throw new TableGroupException(ORDER_TABLE_CAN_NOT_EMPTY);
+            }
+            if (Objects.nonNull(orderTable.tableGroup())) {
+                throw new TableGroupException(ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP);
             }
         }
     }
