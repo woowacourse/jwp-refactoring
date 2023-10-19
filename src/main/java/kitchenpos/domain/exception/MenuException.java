@@ -1,9 +1,8 @@
 package kitchenpos.domain.exception;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Menu;
 
-public class MenuException extends KitchenPosException{
+public abstract class MenuException extends KitchenPosException {
 
     public MenuException(String message) {
         super(message);

@@ -18,7 +18,14 @@ public class OrderTable {
     @Column
     private int numberOfGuests;
     @Column
-    private boolean empty;
+    private boolean empty = true;
+
+    public OrderTable() {}
+
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests) {
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+    }
 
     public Long getId() {
         return id;
@@ -26,6 +33,14 @@ public class OrderTable {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public Long getTableGroupId() {

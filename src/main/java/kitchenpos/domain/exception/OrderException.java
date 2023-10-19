@@ -1,6 +1,6 @@
 package kitchenpos.domain.exception;
 
-public class OrderException extends KitchenPosException {
+public abstract class OrderException extends KitchenPosException {
 
     public OrderException(String message) {
         super(message);
