@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.times;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Mock
     private OrderDao orderDao;
     @Mock
@@ -52,7 +52,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
 
         // then
-        then(menuDao).should(never()).countByIdIn(anyList());
+        then(menuRepository).should(never()).countByIdIn(anyList());
     }
 
     @Test
@@ -63,7 +63,7 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
 
         // 존재하지 않는 상품
-        given(menuDao.countByIdIn(anyList()))
+        given(menuRepository.countByIdIn(anyList()))
                 .willReturn(0L);
         // when
         assertThatThrownBy(() -> orderService.create(order))
@@ -81,7 +81,7 @@ class OrderServiceTest {
         // 중복 아이템 존재
         order.setOrderLineItems(List.of(orderLineItem, orderLineItem));
 
-        given(menuDao.countByIdIn(anyList()))
+        given(menuRepository.countByIdIn(anyList()))
                 .willReturn(1L);
 
         // when
@@ -99,7 +99,7 @@ class OrderServiceTest {
         order.setOrderTableId(1L);
         order.setOrderLineItems(List.of(new OrderLineItem(), new OrderLineItem()));
 
-        given(menuDao.countByIdIn(anyList()))
+        given(menuRepository.countByIdIn(anyList()))
                 .willReturn(2L);
 
         OrderTable orderTable = new OrderTable();
@@ -123,7 +123,7 @@ class OrderServiceTest {
         List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(), new OrderLineItem());
         order.setOrderLineItems(orderLineItems);
 
-        given(menuDao.countByIdIn(anyList()))
+        given(menuRepository.countByIdIn(anyList()))
                 .willReturn(2L);
 
         OrderTable orderTable = new OrderTable();
