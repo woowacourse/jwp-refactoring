@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.ProductEntity;
+import kitchenpos.dao.mapper.ProductMapper;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Repository;
@@ -27,30 +28,20 @@ public class ProductRepositoryImpl implements ProductRepository {
         )
     );
 
-    return new Product(
-        entity.getId(),
-        entity.getName(),
-        entity.getPrice()
-    );
+    return ProductMapper.mapToProduct(entity);
   }
 
   @Override
   public Optional<Product> findById(final Long id) {
     return productDao.findById(id)
-        .map(this::mapToProduct);
-  }
-
-  private Product mapToProduct(final ProductEntity entity) {
-    return new Product(
-        entity.getName(),
-        entity.getPrice());
+        .map(ProductMapper::mapToProduct);
   }
 
   @Override
   public List<Product> findAll() {
     return productDao.findAll()
         .stream()
-        .map(this::mapToProduct)
+        .map(ProductMapper::mapToProduct)
         .collect(Collectors.toList());
   }
 }
