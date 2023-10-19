@@ -61,6 +61,7 @@ public abstract class RepositoryTestConfig {
         em.persist(tableGroup);
         return tableGroup;
     }
+
     protected OrderTable createOrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = orderTable(tableGroup, numberOfGuests, empty);
         em.persist(orderTable);

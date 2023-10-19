@@ -83,7 +83,7 @@ class TableServiceTest {
             given(emptyTableGroup.getId()).willReturn(emptyTableGroupId);
 
             final long orderTableId = 1L;
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name(), MEAL.name()))).willReturn(false);
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))).willReturn(false);
 
             // when
             tableService.changeEmpty(orderTableId, spyOrderTable);
@@ -122,7 +122,7 @@ class TableServiceTest {
             given(emptyTableGroup.getId()).willReturn(emptyTableGroupId);
 
             final long orderTableId = 1L;
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name(), MEAL.name()))).willReturn(true);
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))).willReturn(true);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
