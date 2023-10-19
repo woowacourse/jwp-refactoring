@@ -71,7 +71,7 @@ public class OrderService {
     private OrderLineItem saveOrderLineItem(Order order, OrderLineItemRequest orderLineItemRequest) {
         Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
-        OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemRequest.getQuantity());
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), order, orderLineItemRequest.getQuantity());
 
         return orderLineItemRepository.save(orderLineItem);
     }
