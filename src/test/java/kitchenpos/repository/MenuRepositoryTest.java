@@ -1,5 +1,7 @@
 package kitchenpos.repository;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -10,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 class MenuRepositoryTest {
@@ -39,9 +40,9 @@ class MenuRepositoryTest {
 
         Long nowMenuProductMenuId = savedMenu.getMenuProducts().get(0).getMenu().getId();
 
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(lastMenuProductMenuId).isNotEqualTo(menu.getId());
-            softly.assertThat(nowMenuProductMenuId).isEqualTo(menu.getId());
+        assertSoftly(softAssertions -> {
+            softAssertions.assertThat(lastMenuProductMenuId).isNotEqualTo(menu.getId());
+            softAssertions.assertThat(nowMenuProductMenuId).isEqualTo(menu.getId());
         });
     }
 }
