@@ -107,10 +107,6 @@ public class ControllerTest {
         return new TableGroup(id, null, List.of(orderTable1, orderTable2));
     }
 
-    protected OrderTable 주문_테이블() {
-        return new OrderTable(null, null, 0, true);
-    }
-
     protected OrderTable 주문_테이블(Long id) {
         return new OrderTable(id, null, 0, true);
     }

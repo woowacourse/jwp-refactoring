@@ -66,11 +66,6 @@ public class Menu {
         }
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
-        menuProduct.setMenu(this);
-    }
-
     public Long id() {
         return id;
     }

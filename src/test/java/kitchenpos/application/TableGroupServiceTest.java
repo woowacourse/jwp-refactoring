@@ -39,7 +39,7 @@ class TableGroupServiceTest extends IntegrationTest {
     @Test
     void 주문_테이블들이_하나면_예외가_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, null, 0, false);
+        OrderTable orderTable = new OrderTable(0, false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(savedOrderTable.id()));
 
@@ -70,8 +70,8 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void 주문_테이블이_비어있지_않으면_예외가_발생한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(null, null, 0, false);
-            OrderTable orderTable2 = new OrderTable(null, null, 0, false);
+            OrderTable orderTable1 = new OrderTable(0, false);
+            OrderTable orderTable2 = new OrderTable(0, false);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
             CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
@@ -86,9 +86,9 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void 단체를_지정한다() {
             // given
-            OrderTable orderTable1 = new OrderTable(null, null, 0, true);
+            OrderTable orderTable1 = new OrderTable(0, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            OrderTable orderTable2 = new OrderTable(null, null, 0, true);
+            OrderTable orderTable2 = new OrderTable(0, true);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
             CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
                     savedOrderTable1.id(), savedOrderTable2.id()
@@ -112,7 +112,7 @@ class TableGroupServiceTest extends IntegrationTest {
                 // given
                 TableGroup 지정된_그룹 = 빈_테이블들을_그룹으로_지정한다();
                 OrderTable orderTable1 = new OrderTable(null, 지정된_그룹, 0, true);
-                OrderTable orderTable2 = new OrderTable(null, null, 0, true);
+                OrderTable orderTable2 = new OrderTable(0, true);
                 OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
                 OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
                 CreateTableGroupCommand command = new CreateTableGroupCommand(List.of(
@@ -127,8 +127,8 @@ class TableGroupServiceTest extends IntegrationTest {
             @Test
             void 조리중이거나_식사중인_테이블의_그룹을_해제하면_예외가_발생한다() {
                 // given
-                OrderTable orderTable1 = new OrderTable(null, null, 0, true);
-                OrderTable orderTable2 = new OrderTable(null, null, 0, true);
+                OrderTable orderTable1 = new OrderTable(0, true);
+                OrderTable orderTable2 = new OrderTable(0, true);
                 TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
                 TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
@@ -152,8 +152,8 @@ class TableGroupServiceTest extends IntegrationTest {
             @Test
             void 그룹을_해제한다() {
                 // given
-                OrderTable orderTable1 = new OrderTable(null, null, 0, true);
-                OrderTable orderTable2 = new OrderTable(null, null, 0, true);
+                OrderTable orderTable1 = new OrderTable(0, true);
+                OrderTable orderTable2 = new OrderTable(0, true);
                 TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
                 Long tableGroupId = tableGroupRepository.save(tableGroup).id();
                 UngroupTableGroupCommand command = new UngroupTableGroupCommand(tableGroupId);

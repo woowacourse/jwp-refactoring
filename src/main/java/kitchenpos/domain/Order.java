@@ -50,6 +50,10 @@ public class Order {
     protected Order() {
     }
 
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+    }
+
     public Order(
             Long id,
             OrderTable orderTable,

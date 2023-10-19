@@ -76,6 +76,10 @@ public class IntegrationTest {
         return new Product(이름, 가격);
     }
 
+    protected OrderTable 주문테이블(int 손님숫자, boolean 비어있는지) {
+        return new OrderTable(손님숫자, 비어있는지);
+    }
+
     protected MenuGroup 메뉴그룹(String 이름) {
         return new MenuGroup(이름);
     }
@@ -88,8 +92,20 @@ public class IntegrationTest {
         return new Menu(메뉴이름, 가격, 메뉴그룹, Arrays.asList(메뉴상품));
     }
 
+    protected Order 주문(OrderTable 주문테이블, OrderStatus 주문상태, OrderLineItem... 주문항목) {
+        return new Order(주문테이블, 주문상태, Arrays.asList(주문항목));
+    }
+
+    protected OrderLineItem 주문항목(Menu 메뉴, long 수량) {
+        return new OrderLineItem(메뉴, 수량);
+    }
+
     protected Product 상품저장(Product 상품) {
         return productRepository.save(상품);
+    }
+
+    protected OrderTable 주문테이블저장(OrderTable 주문테이블) {
+        return orderTableRepository.save(주문테이블);
     }
 
     protected MenuGroup 메뉴그룹저장(MenuGroup 메뉴그룹) {
@@ -100,19 +116,13 @@ public class IntegrationTest {
         return menuRepository.save(메뉴);
     }
 
-    protected Order 맛있는_메뉴_주문() {
-        OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, OrderStatus.COOKING, 맛있는_메뉴());
-    }
-
-    protected Order 완료된_주문() {
-        OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, OrderStatus.COMPLETION, 맛있는_메뉴());
+    protected Order 주문저장(Order 주문) {
+        return orderRepository.save(주문);
     }
 
     protected TableGroup 빈_테이블들을_그룹으로_지정한다() {
-        OrderTable orderTable1 = new OrderTable(null, null, 0, true);
-        OrderTable orderTable2 = new OrderTable(null, null, 0, true);
+        OrderTable orderTable1 = new OrderTable(0, true);
+        OrderTable orderTable2 = new OrderTable(0, true);
         return 테이블_그룹(orderTable1, orderTable2);
     }
 
@@ -134,7 +144,7 @@ public class IntegrationTest {
     }
 
     protected OrderTable 주문_테이블(boolean empty) {
-        OrderTable orderTable = new OrderTable(null, null, 0, empty);
+        OrderTable orderTable = new OrderTable(0, empty);
         return orderTableRepository.save(orderTable);
     }
 

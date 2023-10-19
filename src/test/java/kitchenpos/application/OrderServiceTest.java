@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.exception.MenuExceptionType.MENU_NOT_FOUND;
 import static kitchenpos.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
 import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
@@ -18,16 +21,27 @@ import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.application.dto.order.SearchOrderResponse;
 import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class OrderServiceTest extends IntegrationTest {
+
+    private OrderTable 안비어있는_테이블;
+    private Menu 메뉴;
+
+    @BeforeEach
+    void setUp() {
+        안비어있는_테이블 = 주문테이블저장(주문테이블(0, false));
+        MenuGroup 메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
+        Product 상품 = 상품저장(상품("상품1", 가격(1)));
+        메뉴 = 메뉴저장(메뉴("메뉴", 가격(3), 메뉴그룹, 메뉴상품(상품, 3)));
+    }
 
     @Test
     void 존재하지_않는_주문테이블로_주문하면_예외가_발생한다() {
@@ -44,135 +58,124 @@ class OrderServiceTest extends IntegrationTest {
         assertThat(exceptionType).isEqualTo(ORDER_TABLE_NOT_FOUND);
     }
 
-    @Nested
-    class 주문테이블이_있는경우 {
+    @Test
+    void 존재하지_않는_메뉴를_주문하면_예외가_발생한다() {
+        // given
+        Long noExistMenuId = 1L;
+        OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(noExistMenuId, 0);
+        CreateOrderCommand command = new CreateOrderCommand(안비어있는_테이블.id(), List.of(orderLineItemCommand));
 
-        private OrderTable orderTable;
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderService.create(command)
+        ).exceptionType();
 
-        @BeforeEach
-        void setUp() {
-            orderTable = 주문_테이블(false);
-        }
+        // when
+        assertThat(exceptionType).isEqualTo(MENU_NOT_FOUND);
+    }
 
-        @Test
-        void 존재하지_않는_메뉴를_주문하면_예외가_발생한다() {
-            // given
-            Long noExistMenuId = 1L;
-            OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(noExistMenuId, 0);
-            CreateOrderCommand command = new CreateOrderCommand(orderTable.id(), List.of(orderLineItemCommand));
+    @Test
+    void 주문_테이블이_비어있으면_예외가_발생한다() {
+        // given
+        OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, true));
+        CreateOrderCommand command = new CreateOrderCommand(주문테이블.id(), List.of());
 
-            // when
-            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.create(command)
-            ).exceptionType();
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderService.create(command)
+        ).exceptionType();
 
-            // when
-            assertThat(exceptionType).isEqualTo(MENU_NOT_FOUND);
-        }
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_EMPTY);
+    }
 
-        @Test
-        void 주문_테이블이_비어있으면_예외가_발생한다() {
-            // given
-            OrderTable 주문_테이블 = 주문_테이블(true);
-            CreateOrderCommand command = new CreateOrderCommand(주문_테이블.id(), List.of());
+    @Test
+    void 주문_항목이_없으면_예외가_발생한다() {
+        // given
+        CreateOrderCommand command = new CreateOrderCommand(안비어있는_테이블.id(), List.of());
 
-            // when
-            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.create(command)
-            ).exceptionType();
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderService.create(command)
+        ).exceptionType();
 
-            // then
-            assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_EMPTY);
-        }
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
+    }
 
-        @Test
-        void 주문_항목이_없으면_예외가_발생한다() {
-            // given
-            CreateOrderCommand command = new CreateOrderCommand(orderTable.id(), List.of());
+    @Test
+    void 주문을_저장한다() {
+        // given
+        OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(메뉴.id(), 0);
+        CreateOrderCommand command = new CreateOrderCommand(안비어있는_테이블.id(), List.of(orderLineItemCommand));
 
-            // when
-            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.create(command)
-            ).exceptionType();
+        // when
+        CreateOrderResponse result = orderService.create(command);
 
-            // then
-            assertThat(exceptionType).isEqualTo(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
-        }
+        // then
+        assertAll(
+                () -> assertThat(result.id()).isPositive(),
+                () -> assertThat(result.orderLineItemResponses().get(0).orderId()).isEqualTo(result.id())
+        );
+    }
 
-        @Test
-        void 주문을_저장한다() {
-            // given
-            Menu 맛있는_메뉴 = 맛있는_메뉴();
-            OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(맛있는_메뉴.id(), 0);
-            CreateOrderCommand command = new CreateOrderCommand(orderTable.id(), List.of(orderLineItemCommand));
+    @Test
+    void 주문들을_조회한다() {
+        // given
+        Order order1 = 주문저장(주문(안비어있는_테이블, COOKING, 주문항목(메뉴, 0)));
+        Order order2 = 주문저장(주문(안비어있는_테이블, COOKING, 주문항목(메뉴, 0)));
 
-            // when
-            CreateOrderResponse result = orderService.create(command);
+        // when
+        List<SearchOrderResponse> result = orderService.list();
 
-            // then
-            assertAll(
-                    () -> assertThat(result.id()).isPositive(),
-                    () -> assertThat(result.orderLineItemResponses().get(0).orderId()).isEqualTo(result.id())
-            );
-        }
+        // then
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).id()).isEqualTo(order1.id()),
+                () -> assertThat(result.get(1).id()).isEqualTo(order2.id())
+        );
+    }
 
-        @Test
-        void 주문들을_조회한다() {
-            // given
-            Order order1 = 맛있는_메뉴_주문();
-            Order order2 = 맛있는_메뉴_주문();
+    @Test
+    void 주문이_존재하지_않으면_예외가_발생한다() {
+        // given
+        Long noExistOrderId = -1L;
+        ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(noExistOrderId, null);
 
-            // when
-            List<SearchOrderResponse> result = orderService.list();
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderService.changeOrderStatus(command)
+        ).exceptionType();
 
-            // then
-            assertAll(
-                    () -> assertThat(result).hasSize(2),
-                    () -> assertThat(result.get(0).id()).isEqualTo(order1.id()),
-                    () -> assertThat(result.get(1).id()).isEqualTo(order2.id())
-            );
-        }
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_NOT_FOUND);
+    }
 
-        @Test
-        void 주문이_존재하지_않으면_예외가_발생한다() {
-            // given
-            ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(1L, null);
+    @Test
+    void 완료된_주문의_상태를_변경하면_예외가_발생한다() {
+        // given
+        Order 완료된주문 = 주문저장(주문(안비어있는_테이블, COMPLETION, 주문항목(메뉴, 0)));
+        ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(완료된주문.id(), COOKING);
 
-            // when
-            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.changeOrderStatus(command)
-            ).exceptionType();
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderService.changeOrderStatus(command)
+        ).exceptionType();
 
-            // then
-            assertThat(exceptionType).isEqualTo(ORDER_NOT_FOUND);
-        }
+        // then
+        assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS);
+    }
 
-        @Test
-        void 완료된_주문의_상태를_변경하면_예외가_발생한다() {
-            // given
-            Order order = 완료된_주문();
-            ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), OrderStatus.COOKING);
+    @Test
+    void 주문의_상태를_변경한다() {
+        // given
+        Order order = 주문저장(주문(안비어있는_테이블, COOKING, 주문항목(메뉴, 0)));
+        ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), MEAL);
 
-            // when
-            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                    orderService.changeOrderStatus(command)
-            ).exceptionType();
+        // when
+        ChangeOrderStatusResponse result = orderService.changeOrderStatus(command);
 
-            // then
-            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS);
-        }
-
-        @Test
-        void 주문의_상태를_변경한다() {
-            // given
-            Order order = 맛있는_메뉴_주문();
-            ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(order.id(), OrderStatus.MEAL);
-
-            // when
-            ChangeOrderStatusResponse result = orderService.changeOrderStatus(command);
-
-            // then
-            assertThat(result.orderStatus()).isEqualTo(OrderStatus.MEAL.name());
-        }
+        // then
+        assertThat(result.orderStatus()).isEqualTo(MEAL.name());
     }
 }
