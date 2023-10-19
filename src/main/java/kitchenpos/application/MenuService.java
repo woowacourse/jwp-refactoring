@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -36,9 +38,9 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
         final Menu menu = MenuMapper.mapToMenu(menuCreateRequest);
-        
+
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -72,16 +74,18 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return MenuMapper.mapToResponse(savedMenu);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
-        return menus;
+        return menus.stream()
+                .map(MenuMapper::mapToResponse)
+                .collect(Collectors.toList());
     }
 }

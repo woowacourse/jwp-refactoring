@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.application.mapper.ProductMapper;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -19,7 +21,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductCreateRequest productCreateRequest) {
+    public ProductResponse create(final ProductCreateRequest productCreateRequest) {
         final Product product = ProductMapper.mapToProduct(productCreateRequest);
 
         final BigDecimal price = product.getPrice();
@@ -28,10 +30,14 @@ public class ProductService {
             throw new IllegalArgumentException();
         }
 
-        return productDao.save(product);
+        final Product savedProduct = productDao.save(product);
+        return ProductMapper.mapToResponse(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        return productDao.findAll()
+                .stream()
+                .map(ProductMapper::mapToResponse)
+                .collect(Collectors.toList());
     }
 }

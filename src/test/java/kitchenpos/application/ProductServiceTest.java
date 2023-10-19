@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.application.mapper.ProductMapper;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -30,18 +34,18 @@ class ProductServiceTest {
     @DisplayName("제품을 성공적으로 생성한다")
     void testCreateSuccess() {
         //given
-        final Product expected = new Product(1L, "test", BigDecimal.valueOf(1000));
+        final Product product = new Product(1L, "test", BigDecimal.valueOf(1000));
 
         final ProductCreateRequest productCreateRequest = new ProductCreateRequest("test", BigDecimal.valueOf(1000));
 
         when(productDao.save(any()))
-                .thenReturn(expected);
+                .thenReturn(product);
 
         //when
-        final Product result = productService.create(productCreateRequest);
+        final ProductResponse result = productService.create(productCreateRequest);
 
         //then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(ProductMapper.mapToResponse(product));
     }
 
     @Test
@@ -80,9 +84,12 @@ class ProductServiceTest {
                 .thenReturn(List.of(product1, product2, product3));
 
         //when
-        final List<Product> results = productService.list();
+        final List<ProductResponse> results = productService.list();
 
         //then
-        assertThat(results).isEqualTo(List.of(product1, product2, product3));
+        final List<ProductResponse> expected = Stream.of(product1, product2, product3)
+                .map(ProductMapper::mapToResponse)
+                .collect(Collectors.toList());
+        assertThat(results).isEqualTo(expected);
     }
 }

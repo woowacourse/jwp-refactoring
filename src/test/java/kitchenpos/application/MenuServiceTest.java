@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -27,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -73,12 +76,12 @@ class MenuServiceTest {
                 .thenReturn(menuProduct);
 
         //when
-        final Menu result = menuService.create(menuCreateRequest);
+        final MenuResponse result = menuService.create(menuCreateRequest);
 
         //then
-        final Menu expected = new Menu(1L, "testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
+        final Menu expectedMenu = new Menu(1L, "testMenu", product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())),
                 menuGroup.getId(), List.of(menuProduct));
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(MenuMapper.mapToResponse(expectedMenu));
     }
 
     @Test
@@ -224,12 +227,18 @@ class MenuServiceTest {
                 .thenReturn(List.of(menuProduct3));
 
         //when
-        final List<Menu> result = menuService.list();
+        final List<MenuResponse> result = menuService.list();
 
         //then
-        menu1.setMenuProducts(List.of(menuProduct1));
-        menu2.setMenuProducts(List.of(menuProduct2));
-        menu3.setMenuProducts(List.of(menuProduct3));
-        assertThat(result).isEqualTo(List.of(menu1, menu2, menu3));
+        final Menu expectedMenu1 = new Menu(1L, "testMenu1", BigDecimal.valueOf(2000),
+                1L, List.of(menuProduct1));
+        final Menu expectedMenu2 = new Menu(2L, "testMenu2", BigDecimal.valueOf(2000),
+                1L, List.of(menuProduct2));
+        final Menu expectedMenu3 = new Menu(3L, "testMenu3", BigDecimal.valueOf(2000),
+                1L, List.of(menuProduct3));
+        final List<MenuResponse> expected = Stream.of(menu1, menu2, menu3)
+                .map(MenuMapper::mapToResponse)
+                .collect(Collectors.toList());
+        assertThat(result).isEqualTo(expected);
     }
 }

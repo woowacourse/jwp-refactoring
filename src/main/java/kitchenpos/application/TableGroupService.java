@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -30,7 +31,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final TableGroup tableGroup = TableGroupMapper.mapToTableGroup(tableGroupCreateRequest);
 
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
@@ -66,10 +67,9 @@ public class TableGroupService {
             orderTableDao.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return TableGroupMapper.mapToResponse(savedTableGroup);
     }
-
+    
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);

@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -29,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -76,10 +79,10 @@ class OrderServiceTest {
                 .thenReturn(orderLineItem);
 
         //when
-        final Order result = orderService.create(orderCreateRequest);
+        final OrderResponse result = orderService.create(orderCreateRequest);
 
         //then
-        assertThat(result).isEqualTo(new Order(1L, order.getOrderStatus(), order.getOrderedTime(), order.getOrderLineItems()));
+        assertThat(result).isEqualTo(OrderMapper.mapToResponse(new Order(1L, order.getOrderStatus(), order.getOrderedTime(), order.getOrderLineItems())));
     }
 
     @Test
@@ -198,11 +201,13 @@ class OrderServiceTest {
                 .thenReturn(List.of(orderLineItem3));
 
         //when
-        final List<Order> result = orderService.list();
+        final List<OrderResponse> result = orderService.list();
 
         //then
-        assertThat(result).isEqualTo(List.of(order1, order2, order3));
-        assertThat(result.get(0).getOrderLineItems().get(0)).isEqualTo(orderLineItem3);
+        final List<OrderResponse> orderResponses = Stream.of(order1, order2, order3)
+                .map(OrderMapper::mapToResponse)
+                .collect(Collectors.toList());
+        assertThat(result).isEqualTo(orderResponses);
     }
 
     @Test

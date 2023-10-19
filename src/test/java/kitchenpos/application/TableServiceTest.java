@@ -8,6 +8,8 @@ import static org.mockito.Mockito.when;
 
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.application.mapper.OrderTableMapper;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -19,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
@@ -44,10 +48,10 @@ class TableServiceTest {
                 .thenReturn(savedOrderTable);
 
         //when
-        final OrderTable result = tableService.create(orderTableCreateRequest);
+        final OrderTableResponse result = tableService.create(orderTableCreateRequest);
 
         //then
-        assertThat(result).isEqualTo(savedOrderTable);
+        assertThat(result).isEqualTo(OrderTableMapper.mapToResponse(savedOrderTable));
     }
 
     @Test
@@ -58,14 +62,17 @@ class TableServiceTest {
         final OrderTable orderTable2 = new OrderTable(2L, 2L, 1, false);
         final OrderTable orderTable3 = new OrderTable(3L, 3L, 1, false);
 
-        when(tableService.list())
+        when(orderTableDao.findAll())
                 .thenReturn(List.of(orderTable1, orderTable2, orderTable3));
 
         //when
-        final List<OrderTable> result = tableService.list();
+        final List<OrderTableResponse> result = tableService.list();
 
         //then
-        assertThat(result).isEqualTo(List.of(orderTable1, orderTable2, orderTable3));
+        final List<OrderTableResponse> expected = Stream.of(orderTable1, orderTable2, orderTable3)
+                .map(OrderTableMapper::mapToResponse)
+                .collect(Collectors.toList());
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -86,10 +93,10 @@ class TableServiceTest {
                 .thenReturn(savedOrderTable);
 
         // when
-        final OrderTable resultOrderTable = tableService.changeEmpty(orderTableId, orderTableChangeEmptyRequest);
+        final OrderTableResponse result = tableService.changeEmpty(orderTableId, orderTableChangeEmptyRequest);
 
         // then
-        assertThat(resultOrderTable).isEqualTo(savedOrderTable);
+        assertThat(result).isEqualTo(OrderTableMapper.mapToResponse(savedOrderTable));
     }
 
     @Test
@@ -150,11 +157,11 @@ class TableServiceTest {
                 .thenReturn(savedOrderTable);
 
         // when
-        final OrderTable resultOrderTable = tableService.changeNumberOfGuests(orderTableId, orderTable);
+        final OrderTableResponse result = tableService.changeNumberOfGuests(orderTableId, orderTable);
 
         // then
-        assertThat(resultOrderTable).isNotNull();
-        assertThat(resultOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
+        assertThat(result).isNotNull();
+        assertThat(result.getNumberOfGuests()).isEqualTo(numberOfGuests);
     }
 
     @Test

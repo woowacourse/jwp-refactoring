@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import kitchenpos.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.mapper.MenuGroupMapper;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
@@ -36,24 +39,27 @@ class MenuGroupServiceTest {
                 .thenReturn(expected);
 
         //when
-        final MenuGroup result = menuGroupService.create(menuGroupCreateRequest);
+        final MenuGroupResponse result = menuGroupService.create(menuGroupCreateRequest);
 
         //then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).isEqualTo(MenuGroupMapper.mapToResponse(expected));
     }
 
     @Test
     @DisplayName("메뉴 그룹 리스트 조회한다")
     void testListSuccess() {
         //given
-        final List<MenuGroup> expected = List.of(new MenuGroup(1L, "test"));
+        final List<MenuGroup> menuGroups = List.of(new MenuGroup(1L, "test"));
         when(menuGroupDao.findAll())
-                .thenReturn(expected);
+                .thenReturn(menuGroups);
 
         //when
-        final List<MenuGroup> result = menuGroupService.list();
+        final List<MenuGroupResponse> result = menuGroupService.list();
 
         //then
+        final List<MenuGroupResponse> expected = menuGroups.stream()
+                .map(MenuGroupMapper::mapToResponse)
+                .collect(Collectors.toList());
         assertThat(result).isEqualTo(expected);
     }
 }

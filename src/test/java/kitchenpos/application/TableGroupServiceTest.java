@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 
 import kitchenpos.application.dto.request.OrderTableRequest;
 import kitchenpos.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -59,10 +61,11 @@ class TableGroupServiceTest {
 
 
         //when
-        final TableGroup result = tableGroupService.create(tableGroupCreateRequest);
+        final TableGroupResponse result = tableGroupService.create(tableGroupCreateRequest);
 
         //then
-        assertThat(result).isEqualTo(new TableGroup(1L, now, List.of(orderTable1, orderTable2)));
+        final TableGroupResponse expected = TableGroupMapper.mapToResponse(new TableGroup(1L, now, List.of(orderTable1, orderTable2)));
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test

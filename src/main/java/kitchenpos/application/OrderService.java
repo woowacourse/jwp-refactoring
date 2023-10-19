@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.application.dto.request.OrderStatusChangeRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -40,7 +41,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest orderCreateRequest) {
+    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         final Order order = OrderMapper.mapToOrder(orderCreateRequest);
 
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
@@ -80,17 +81,19 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return OrderMapper.mapToResponse(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return orders.stream()
+                .map(OrderMapper::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional

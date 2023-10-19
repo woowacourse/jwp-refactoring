@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.mapper.OrderTableMapper;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -24,21 +26,25 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
+    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
         final OrderTable orderTable = OrderTableMapper.mapToOrderTable(orderTableCreateRequest);
 
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
-        return orderTableDao.save(orderTable);
+        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        return OrderTableMapper.mapToResponse(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll()
+                .stream()
+                .map(OrderTableMapper::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
         final OrderTable orderTable = OrderTableMapper.mapToOrderTable(orderTableChangeEmptyRequest);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
@@ -54,12 +60,12 @@ public class TableService {
         }
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+        orderTableDao.save(savedOrderTable);
+        return OrderTableMapper.mapToResponse(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
@@ -75,6 +81,7 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        orderTableDao.save(savedOrderTable);
+        return OrderTableMapper.mapToResponse(savedOrderTable);
     }
 }
