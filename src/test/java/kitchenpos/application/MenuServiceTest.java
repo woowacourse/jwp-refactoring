@@ -17,6 +17,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -25,28 +26,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest implements ServiceTest {
 
+    private MenuProduct menuProduct;
+    private MenuGroup menuGroup;
     @Autowired
     private ProductDao productDao;
-
     @Autowired
     private MenuProductDao menuProductDao;
-
     @Autowired
     private MenuDao menuDao;
-
     @Autowired
     private MenuGroupDao menuGroupDao;
-
     @Autowired
     private MenuService menuService;
+
+    @BeforeEach
+    void setUp(){
+        final Product product = productDao.save(상품("100%뼈치킨", BigDecimal.valueOf(18_000)));
+        this.menuProduct = 메뉴_상품(null, product.getId(), 1L);
+        this.menuGroup = menuGroupDao.save(메뉴_그룹("치킨"));
+    }
 
     @Test
     void 메뉴가_메뉴_그룹에_속하지_않으면_예외가_발생한다() {
         // given
         final Menu menu = 메뉴(
                 null,
-                "두마리치킨",
-                menuProductDao.findAll(),
+                "두 마리인 척하는 한마리 치킨",
+                List.of(menuProduct),
                 BigDecimal.valueOf(0)
         );
 
@@ -60,9 +66,9 @@ class MenuServiceTest implements ServiceTest {
     void 메뉴_생성_시_메뉴의_가격은_0원_이상_이어야_한다(final long price) {
         // given
         final Menu menu = 메뉴(
-                menuGroupDao.findAll().get(0).getId(),
-                "두마리치킨",
-                menuProductDao.findAll(),
+                menuGroup.getId(),
+                "두 마리인 척하는 한마리 치킨",
+                List.of(menuProduct),
                 BigDecimal.valueOf(price)
         );
 
@@ -75,9 +81,9 @@ class MenuServiceTest implements ServiceTest {
     void 메뉴_생성_시_메뉴의_가격이_없다면_예외가_발생한다() {
         // given
         final Menu menu = 메뉴(
-                menuGroupDao.findAll().get(0).getId(),
-                "두마리치킨",
-                menuProductDao.findAll(),
+                menuGroup.getId(),
+                "두 마리인 척하는 한마리 치킨",
+                List.of(menuProduct),
                 null
         );
 
@@ -90,9 +96,9 @@ class MenuServiceTest implements ServiceTest {
     void 메뉴_생성_시_가격과_실제_메뉴_상품들의_가격의_총합이_다르면_예외가_발생한다() {
         // given
         final Menu menu = 메뉴(
-                menuGroupDao.findAll().get(0).getId(),
-                "두마리치킨",
-                menuProductDao.findAll(),
+                menuGroup.getId(),
+                "두 마리인 척하는 한마리 치킨",
+                List.of(menuProduct),
                 BigDecimal.valueOf(Long.MAX_VALUE)
         );
 
@@ -104,7 +110,6 @@ class MenuServiceTest implements ServiceTest {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(메뉴_그룹("치킨"));
         final Product product = productDao.save(상품("100%뼈치킨", BigDecimal.valueOf(18_000)));
         final Menu menu = menuDao.save(메뉴(menuGroup.getId(), "100%뼈치킨메뉴", BigDecimal.valueOf(18_000)));
         final MenuProduct menuProduct = menuProductDao.save(메뉴_상품(menu.getId(), product.getId(), 1L));
