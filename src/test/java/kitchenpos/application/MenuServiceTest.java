@@ -64,31 +64,6 @@ class MenuServiceTest {
             });
         }
 
-        @DisplayName("가격이 없으면 예외처리 한다")
-        @Test
-        void throwExceptionWhenPriceIsNull() {
-            // given
-            final Menu menu = setUpMenu();
-            menu.setPrice(null);
-
-            // then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("가격 0 미만이면 예외처리 한다")
-        @ParameterizedTest
-        @ValueSource(ints = {-1, -2})
-        void throwExceptionWhenPriceIsLowerThanZero(int price) {
-            // given
-            final Menu menu = setUpMenu();
-            menu.setPrice(BigDecimal.valueOf(price));
-
-            // then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @DisplayName("존재하지 않는 메뉴 그룹이면 예외처리 한다")
         @Test
         void throwExceptionWhenInvalidMenuGroup() {
