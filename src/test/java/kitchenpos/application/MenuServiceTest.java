@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductRepository;
@@ -50,17 +51,17 @@ class MenuServiceTest {
         // given
         String menuName = "menu";
         BigDecimal menuPrice = BigDecimal.TEN;
-        long menuGroupId = 1L;
 
         BigDecimal productPrice = BigDecimal.TEN;
         String productName = "치킨";
         Product product = new Product(productName, productPrice);
-
         MenuProduct menuProduct = new MenuProduct(product, 1);
-        Menu menu = new Menu(1L, menuName, menuPrice, menuGroupId, List.of(menuProduct));
 
-        given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
+        MenuGroup menuGroup = new MenuGroup(1L, "한식");
+        Menu menu = new Menu(1L, menuName, menuPrice, menuGroup, List.of(menuProduct));
+
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
         given(menuRepository.save(any(Menu.class)))
@@ -68,7 +69,7 @@ class MenuServiceTest {
 
         // when
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 1);
-        MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, menuGroupId, List.of(menuProductRequest));
+        MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, 1L, List.of(menuProductRequest));
         menuService.create(menuRequest);
 
         // then
@@ -85,8 +86,8 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
-        given(menuGroupRepository.existsById(1L))
-                .willReturn(true);
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(minusPriceMenu))
@@ -103,9 +104,8 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
-        given(menuGroupRepository.existsById(1L))
-                .willReturn(true);
-
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -139,8 +139,8 @@ class MenuServiceTest {
 
         Product product = new Product("치킨", BigDecimal.TEN);
 
-        given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
 
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
@@ -163,8 +163,8 @@ class MenuServiceTest {
 
         Product product = new Product("치킨", BigDecimal.TEN);
 
-        given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
 
         // 예외 상황: 존재하지 않는 상품
         given(productRepository.findById(anyLong()))

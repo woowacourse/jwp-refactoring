@@ -5,6 +5,7 @@ import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductRepository;
@@ -39,19 +40,18 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        findMenuGroup(menuRequest);
+        MenuGroup menuGroup = findMenuGroup(menuRequest);
         final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
         List<MenuProduct> menuProducts = createMenuProducts(menuProductRequests);
-        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(), menuProducts);
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
 
         final Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
     }
 
-    private void findMenuGroup(MenuRequest menuRequest) {
-        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+    private MenuGroup findMenuGroup(MenuRequest menuRequest) {
+        return menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private List<MenuProduct> createMenuProducts(List<MenuProductRequest> menuProductRequests) {
@@ -73,7 +73,7 @@ public class MenuService {
             List<MenuProductResponse> menuProductResponses = menuProducts.stream()
                     .map(MenuProductResponse::toDto)
                     .collect(Collectors.toList());
-            menuResponse.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses));
+            menuResponse.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menuProductResponses));
         }
 
         return menuResponse;

@@ -12,13 +12,13 @@ class MenuTest {
 
     @Test
     void 메뉴의_가격이_음수면_예외발생() {
-        assertThatThrownBy(() -> new Menu("menu", BigDecimal.valueOf(-1), 1L, Collections.emptyList()))
+        assertThatThrownBy(() -> new Menu("menu", BigDecimal.valueOf(-1), new MenuGroup("한식"), Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 메뉴에_가격_정보가_없으면_예외발생() {
-        assertThatThrownBy(() -> new Menu("menu", null, 1L, Collections.emptyList()))
+        assertThatThrownBy(() -> new Menu("menu", null, new MenuGroup("한식"), Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -28,7 +28,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "menu",
                 BigDecimal.valueOf(1000000),
-                1L,
+                new MenuGroup("한식"),
                 List.of(new MenuProduct(product, 3)))
         )
                 .isInstanceOf(IllegalArgumentException.class);

@@ -17,8 +17,13 @@ public class MenuGroup {
     public MenuGroup() {
     }
 
-    public MenuGroup(String name) {
+    public MenuGroup(Long id, String name) {
+        this.id = id;
         this.name = name;
+    }
+
+    public MenuGroup(String name) {
+        this(null, name);
     }
 
     public Long getId() {
