@@ -3,6 +3,7 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,8 +29,8 @@ public class Menu {
     @JoinColumn(nullable = false)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {}
 
@@ -54,6 +55,11 @@ public class Menu {
                     return product.calculateTotalPrice(menuProduct.getQuantity()).intValue();
                 }).reduce(0, Integer::sum);
         return BigDecimal.valueOf(menuProductPrice);
+    }
+
+    public void confirmMenuProduct(final Product product, final long quantity) {
+        final MenuProduct menuProduct = new MenuProduct(product, quantity);
+        menuProduct.confirmMenu(this);
     }
 
     public Long getId() {

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
@@ -49,8 +48,7 @@ public class MenuService {
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(NotFoundProductException::new);
-            final MenuProduct menuProduct = new MenuProduct(product, menuProductRequest.getQuantity());
-            menuProduct.confirmMenu(savedMenu);
+            savedMenu.confirmMenuProduct(product, menuProductRequest.getQuantity());
         }
     }
 
