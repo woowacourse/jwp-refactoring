@@ -14,6 +14,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+/**
+ * TODO 추후 Persistence DTO 만들 예정
+ */
 @Repository
 public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
 

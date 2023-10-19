@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.application.dto.MenuPersistence;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -33,14 +33,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
   }
 
   @Override
-  public Menu save(final Menu entity) {
+  public MenuPersistence save(final MenuPersistence entity) {
     final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
     final Number key = jdbcInsert.executeAndReturnKey(parameters);
     return select(key.longValue());
   }
 
   @Override
-  public Optional<Menu> findById(final Long id) {
+  public Optional<MenuPersistence> findById(final Long id) {
     try {
       return Optional.of(select(id));
     } catch (final EmptyResultDataAccessException e) {
@@ -49,7 +49,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
   }
 
   @Override
-  public List<Menu> findAll() {
+  public List<MenuPersistence> findAll() {
     final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
     return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
   }
@@ -62,7 +62,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     return jdbcTemplate.queryForObject(sql, parameters, Long.class);
   }
 
-  private Menu select(final Long id) {
+  private MenuPersistence select(final Long id) {
     final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("id", id);
@@ -70,12 +70,12 @@ public class JdbcTemplateMenuDao implements MenuDao {
         (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private Menu toEntity(final ResultSet resultSet) throws SQLException {
+  private MenuPersistence toEntity(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong("id");
     final String name = resultSet.getString("name");
     final BigDecimal price = resultSet.getBigDecimal("price");
     final Long menuGroupId = resultSet.getLong("menu_group_id");
 
-    return new Menu(id, name, price, menuGroupId);
+    return new MenuPersistence(id, name, price, menuGroupId);
   }
 }

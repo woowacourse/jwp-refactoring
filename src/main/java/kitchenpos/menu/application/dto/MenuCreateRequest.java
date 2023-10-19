@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.product.domain.Price;
 
 public class MenuCreateRequest {
 
@@ -42,7 +43,7 @@ public class MenuCreateRequest {
   public Menu toMenu() {
     return new Menu(
         name,
-        price,
+        new Price(price),
         menuGroupId,
         menuProducts.stream()
             .map(MenuProductCreateRequest::toMenuProduct)

@@ -1,6 +1,7 @@
 package kitchenpos.product.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.product.application.dto.ProductPersistence;
 import kitchenpos.product.domain.Price;
@@ -17,8 +18,12 @@ public class ProductRepository {
     this.productDao = productDao;
   }
 
-  public Product save(Product entity) {
+  public Product save(final Product entity) {
     return productDao.save(ProductPersistence.from(entity)).toProduct();
+  }
+
+  public Optional<Product> findById(final Long id) {
+    return productDao.findById(id).map(ProductPersistence::toProduct);
   }
 
   public List<Product> findAll() {

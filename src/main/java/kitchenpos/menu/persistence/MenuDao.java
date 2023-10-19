@@ -2,15 +2,15 @@ package kitchenpos.menu.persistence;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.application.dto.MenuPersistence;
 
 public interface MenuDao {
 
-  Menu save(Menu entity);
+  MenuPersistence save(MenuPersistence entity);
 
-  Optional<Menu> findById(Long id);
+  Optional<MenuPersistence> findById(Long id);
 
-  List<Menu> findAll();
+  List<MenuPersistence> findAll();
 
   long countByIdIn(List<Long> ids);
 }

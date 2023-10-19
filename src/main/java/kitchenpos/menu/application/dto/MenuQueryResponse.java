@@ -2,6 +2,7 @@ package kitchenpos.menu.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.menu.domain.Menu;
 
 public class MenuQueryResponse {
 
@@ -42,5 +43,11 @@ public class MenuQueryResponse {
 
   public List<MenuProductQueryResponse> getMenuProducts() {
     return menuProducts;
+  }
+
+  public static MenuQueryResponse of(final Menu menu,
+      final List<MenuProductQueryResponse> menuProducts) {
+    return new MenuQueryResponse(menu.getId(), menu.getName(),
+        menu.getPrice().getValue(), menu.getMenuGroupId(), menuProducts);
   }
 }

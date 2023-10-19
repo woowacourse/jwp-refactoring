@@ -29,7 +29,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   void create_success() {
     //given, when
     final MenuQueryResponse savedMenu = menuService.create(getMenu(BigDecimal.valueOf(19000), 1L));
-    final Menu actual = menuDao.findById(savedMenu.getId()).get();
+    final Menu actual = menuDao.findById(savedMenu.getId()).get().toMenu();
 
     //then
     Assertions.assertAll(
