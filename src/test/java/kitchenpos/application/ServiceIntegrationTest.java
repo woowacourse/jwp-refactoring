@@ -11,7 +11,6 @@ import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이�
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.MenuGroupDto;
 import kitchenpos.application.dto.MenuProductDto;
@@ -20,7 +19,6 @@ import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.application.dto.ProductDto;
 import kitchenpos.application.dto.TableGroupDto;
-import kitchenpos.domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;

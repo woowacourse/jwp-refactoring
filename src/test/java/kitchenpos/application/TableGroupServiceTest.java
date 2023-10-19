@@ -26,7 +26,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderException;
 import kitchenpos.domain.exception.TableGroupException;
-import kitchenpos.domain.exception.TableGroupExceptionType;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
