@@ -41,7 +41,7 @@ public class TableGroup {
     public void addOrderTablesAndChangeEmptyFull(final List<OrderTable> orderTables) {
         orderTables.forEach(orderTable -> {
             orderTable.setTableGroup(this);
-            orderTable.changeOrderTableFull();
+            orderTable.changeOrderTableEmpty(false);
         });
         this.orderTables = orderTables;
     }
