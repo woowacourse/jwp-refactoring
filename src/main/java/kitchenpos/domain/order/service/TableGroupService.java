@@ -2,6 +2,7 @@ package kitchenpos.domain.order.service;
 
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.OrderTables;
 import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
@@ -31,30 +32,24 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        final OrderTables orderTables = tableGroup.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (
+                Objects.isNull(orderTables) ||
+                CollectionUtils.isEmpty(orderTables.getOrderTables()) ||
+                orderTables.size() < 2
+        ) {
             throw new IllegalArgumentException();
         }
 
-        return createTableGroup(tableGroup, orderTables);
-    }
-
-    private TableGroup createTableGroup(final TableGroup tableGroup, final List<OrderTable> orderTables) {
-        final List<OrderTable> savedOrderTables = findOrderTables(orderTables);
-
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedOrderTables.forEach(savedOrderTable -> {
-            savedOrderTable.changeGroup(savedTableGroup);
-            savedOrderTable.changeEmpty(false);
-        });
-        savedTableGroup.addOrderTables(savedOrderTables);
+        savedTableGroup.addOrderTables(findOrderTables(orderTables));
 
         return savedTableGroup;
     }
 
-    private List<OrderTable> findOrderTables(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
+    private List<OrderTable> findOrderTables(final OrderTables orderTables) {
+        final List<Long> orderTableIds = orderTables.getOrderTables().stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 

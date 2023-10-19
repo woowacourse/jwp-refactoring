@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.OrderTables;
 import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
@@ -50,25 +51,25 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(3, true);
             final OrderTable orderTable2 = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+            final TableGroup expected = tableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(orderTable1, orderTable2));
 
-            final TableGroup spyExpected = spy(new TableGroup(expected.getCreatedDate(), new ArrayList<>()));
+            final TableGroup spyExpected = spy(tableGroup(expected.getCreatedDate(), new ArrayList<>()));
             given(tableGroupRepository.save(any(TableGroup.class))).willReturn(spyExpected);
 
             // when
             final TableGroup actual = tableGroupService.create(expected);
 
             // then
-            assertThat(actual.getOrderTables()).containsExactly(orderTable1, orderTable2);
+            assertThat(actual.getOrderTables().getOrderTables()).containsExactly(orderTable1, orderTable2);
         }
 
         @Test
         void 주문_테이블이_null이면_예외가_발생한다() {
             // given
-            final List<OrderTable> nullOrderTables = null;
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), nullOrderTables);
+            final OrderTables nullOrderTables = null;
+            final TableGroup expected = tableGroup(LocalDateTime.now(), nullOrderTables);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -80,7 +81,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable = new OrderTable(3, true);
             final List<OrderTable> oneOrderTable = List.of(orderTable);
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), oneOrderTable);
+            final TableGroup expected = tableGroup(LocalDateTime.now(), oneOrderTable);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(expected))
@@ -92,7 +93,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(3, true);
             final OrderTable orderTable2 = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
+            final TableGroup expected = tableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2));
 
             given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(orderTable1));
 
@@ -106,7 +107,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable notEmptyOrderTable = new OrderTable(3, false);
             final OrderTable emptyOrderTable = new OrderTable(5, true);
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), List.of(notEmptyOrderTable, emptyOrderTable));
+            final TableGroup expected = tableGroup(LocalDateTime.now(), List.of(notEmptyOrderTable, emptyOrderTable));
 
             given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(notEmptyOrderTable, emptyOrderTable));
 
@@ -123,7 +124,7 @@ class TableGroupServiceTest {
             alreadyHaveTableGroup.changeGroup(tableGroup);
             final OrderTable notHaveTableGroup = new OrderTable(5, true);
             final List<OrderTable> orderTables = new ArrayList<>(List.of(alreadyHaveTableGroup, notHaveTableGroup));
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), orderTables);
+            final TableGroup expected = tableGroup(LocalDateTime.now(), orderTables);
 
             given(orderTableRepository.findAllByIdIn(anyList())).willReturn(List.of(alreadyHaveTableGroup, notHaveTableGroup));
 
