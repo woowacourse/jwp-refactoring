@@ -3,8 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 
-import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @InjectMocks
     private ProductService productService;
 
@@ -26,13 +25,13 @@ class ProductServiceTest {
 
         productService.create(로제떡볶이);
 
-        verify(productDao).save(로제떡볶이);
+        verify(productRepository).save(로제떡볶이);
     }
 
     @Test
     void 전체_상품_조회할_수_있다() {
         productService.list();
 
-        verify(productDao).findAll();
+        verify(productRepository).findAll();
     }
 }

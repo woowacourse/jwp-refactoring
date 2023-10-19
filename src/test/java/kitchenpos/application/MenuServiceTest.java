@@ -6,13 +6,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -32,7 +31,7 @@ class MenuServiceTest {
     @Mock
     private MenuProductDao menuProductDao;
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @InjectMocks
     private MenuService menuService;
 
@@ -52,7 +51,7 @@ class MenuServiceTest {
         분식메뉴.setMenuProducts(List.of(메뉴상품));
 
         when(menuGroupDao.existsById(1L)).thenReturn(true);
-        when(productDao.findById(1L)).thenReturn(Optional.empty());
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> menuService.create(분식메뉴)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -67,10 +66,10 @@ class MenuServiceTest {
         when(menuGroupDao.existsById(1L)).thenReturn(true);
 
         Product 로제떡볶이 = ProductFixtures.로제떡볶이();
-        when(productDao.findById(메뉴상품_로제떡볶이.getProductId())).thenReturn(Optional.of(로제떡볶이));
+        when(productRepository.findById(메뉴상품_로제떡볶이.getProductId())).thenReturn(Optional.of(로제떡볶이));
 
         Product 짜장떡볶이 = ProductFixtures.짜장떡볶이();
-        when(productDao.findById(메뉴상품_짜장떡볶이.getProductId())).thenReturn(Optional.of(짜장떡볶이));
+        when(productRepository.findById(메뉴상품_짜장떡볶이.getProductId())).thenReturn(Optional.of(짜장떡볶이));
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -86,13 +85,13 @@ class MenuServiceTest {
         when(menuGroupDao.existsById(1L)).thenReturn(true);
 
         Product 로제떡볶이 = ProductFixtures.로제떡볶이();
-        when(productDao.findById(메뉴상품_로제떡볶이.getProductId())).thenReturn(Optional.of(로제떡볶이));
+        when(productRepository.findById(메뉴상품_로제떡볶이.getProductId())).thenReturn(Optional.of(로제떡볶이));
 
         Product 짜장떡볶이 = ProductFixtures.짜장떡볶이();
-        when(productDao.findById(메뉴상품_짜장떡볶이.getProductId())).thenReturn(Optional.of(짜장떡볶이));
+        when(productRepository.findById(메뉴상품_짜장떡볶이.getProductId())).thenReturn(Optional.of(짜장떡볶이));
 
         Product 마라떡볶이 = ProductFixtures.마라떡볶이();
-        when(productDao.findById(메뉴상품_마라떡볶이.getProductId())).thenReturn(Optional.of(마라떡볶이));
+        when(productRepository.findById(메뉴상품_마라떡볶이.getProductId())).thenReturn(Optional.of(마라떡볶이));
 
 
         when(menuDao.save(menu)).thenReturn(menu);
