@@ -3,10 +3,10 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +38,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -50,9 +50,7 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.TEN);
         menu.setMenuGroupId(1L);
 
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(BigDecimal.TEN);
+        Product product = new Product("치킨", BigDecimal.TEN);
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
@@ -62,7 +60,7 @@ class MenuServiceTest {
 
         given(menuGroupDao.existsById(1L))
                 .willReturn(true);
-        given(productDao.findById(1L))
+        given(productRepository.findById(1L))
                 .willReturn(Optional.of(product));
         given(menuDao.save(menu))
                 .willReturn(menu);
@@ -111,7 +109,7 @@ class MenuServiceTest {
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(productDao).should(never()).findById(anyLong());
+        then(productRepository).should(never()).findById(anyLong());
     }
 
     @Test
@@ -140,13 +138,12 @@ class MenuServiceTest {
 
         menu.setMenuProducts(List.of(menuProduct));
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
+        Product product = new Product("치킨", BigDecimal.TEN);
 
         given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
 
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
 
         // when, then
@@ -168,14 +165,13 @@ class MenuServiceTest {
 
         menu.setMenuProducts(List.of(menuProduct));
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
+        Product product = new Product("치킨", BigDecimal.TEN);
 
         given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
 
         // 예외 상황: 존재하지 않는 상품
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
@@ -197,13 +193,12 @@ class MenuServiceTest {
 
         menu.setMenuProducts(List.of(menuProduct));
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.ZERO);
+        Product product = new Product("치킨", BigDecimal.ZERO);
 
         given(menuGroupDao.existsById(anyLong()))
                 .willReturn(true);
 
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
 
         // when, then
