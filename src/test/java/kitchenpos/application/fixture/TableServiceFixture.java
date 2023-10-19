@@ -20,7 +20,7 @@ public class TableServiceFixture {
     protected Order COOKING_상태인_주문;
     protected OrderTable 손님이_한_명인_테이블;
     protected OrderTable 손님_수가_2명으로_변경된_테이블;
-    protected OrderTable 손님이_0명인_주문_테이블;
+    protected OrderTable 손님수가_음수인_주문_테이블;
     protected OrderTable 유효하지_않은_주문테이블_아이디를_갖는_주문테이블;
     protected OrderTable 주문_불가능한_상태의_주문_테이블;
 
@@ -78,9 +78,9 @@ public class TableServiceFixture {
         손님_수가_2명으로_변경된_테이블.setNumberOfGuests(2);
 
         // 입력_받은_손님_수가_0보다_작으면_예외가_발생한다
-        손님이_0명인_주문_테이블 = new OrderTable();
-        손님이_0명인_주문_테이블.setId(1L);
-        손님이_0명인_주문_테이블.setNumberOfGuests(0);
+        손님수가_음수인_주문_테이블 = new OrderTable();
+        손님수가_음수인_주문_테이블.setId(1L);
+        손님수가_음수인_주문_테이블.setNumberOfGuests(-1);
 
         // 유효하지_않은_주문_테이블_아이디를_전달_받은_경우_예외가_발생한다
         유효하지_않은_주문테이블_아이디를_갖는_주문테이블 = new OrderTable();

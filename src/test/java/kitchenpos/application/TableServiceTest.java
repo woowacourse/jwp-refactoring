@@ -98,7 +98,7 @@ class TableServiceTest extends TableServiceFixture {
 
     @Test
     void 입력_받은_손님_수가_0보다_작으면_예외가_발생한다() {
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(손님이_0명인_주문_테이블.getId(), 손님이_0명인_주문_테이블))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(손님수가_음수인_주문_테이블.getId(), 손님수가_음수인_주문_테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
