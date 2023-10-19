@@ -3,6 +3,9 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_NOT_FOUND;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_LINE_ITEM_DTOS_EMPTY;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_LINE_ITEM_IS_NOT_PRESENT_ALL;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_TABLE_IS_EMPTY;
 import static kitchenpos.domain.exception.OrderTableExceptionType.ORDER_TABLE_IS_NOT_FOUND;
 
 import java.time.LocalDateTime;
@@ -43,8 +46,23 @@ public class OrderService {
     public OrderDto create(final OrderDto orderDto) {
         final List<OrderLineItemDto> orderLineItemDtos = orderDto.getOrderLineItems();
 
+        final OrderTable orderTable = validateRequest(orderDto, orderLineItemDtos);
+
+        final Map<Long, Long> menuIdQuantityMap = orderLineItemDtos.stream()
+            .collect(toUnmodifiableMap(OrderLineItemDto::getMenuId, OrderLineItemDto::getQuantity));
+
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING
+            , LocalDateTime.now(), menuIdQuantityMap);
+        final Order savedOrder = orderRepository.save(order);
+
+        return OrderDto.from(savedOrder);
+    }
+
+    private OrderTable validateRequest(
+        final OrderDto orderDto, final List<OrderLineItemDto> orderLineItemDtos
+    ) {
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new IllegalArgumentException();
+            throw new OrderException(ORDER_LINE_ITEM_DTOS_EMPTY);
         }
 
         final List<Long> menuIds = orderLineItemDtos.stream()
@@ -52,29 +70,16 @@ public class OrderService {
             .collect(toUnmodifiableList());
 
         if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new OrderException(ORDER_LINE_ITEM_IS_NOT_PRESENT_ALL);
         }
 
         final OrderTable orderTable = orderTableRepository.findById(orderDto.getOrderTableId())
             .orElseThrow(() -> new OrderTableException(ORDER_TABLE_IS_NOT_FOUND));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new OrderException(ORDER_TABLE_IS_EMPTY);
         }
-
-        //요까지 함
-        final Map<Long, Long> menuIdQuantityMap = orderLineItemDtos.stream()
-            .collect(toUnmodifiableMap(OrderLineItemDto::getMenuId, OrderLineItemDto::getQuantity));
-
-        final Order order = new Order(
-            orderTable.getId(),
-            OrderStatus.COOKING,
-            LocalDateTime.now(),
-            menuIdQuantityMap
-        );
-        final Order savedOrder = orderRepository.save(order);
-
-        return OrderDto.from(savedOrder);
+        return orderTable;
     }
 
     @Transactional(readOnly = true)

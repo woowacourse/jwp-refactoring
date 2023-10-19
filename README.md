@@ -40,29 +40,29 @@
     - [x] table 방문 손님 수 변경
         - [x] 입력된 손님 수가 0미만인 경우 예외처리
         - [x] ordertable이 비어있으면 예외처리
-- [ ] setter 메서드 제거
+- [x] setter 메서드 제거
     - [x] Menu
     - [x] MenuGroup
     - [x] MenuProduct
-    - [ ] Order
+    - [x] Order
     - [x] OrderTable
     - [x] TableGroup
-    - [ ] OrderLineItem
+    - [x] OrderLineItem
     - [x] Product
-- [ ] dao에 의존적인 로직을 도메인 로직으로 변경
+- [x] dao에 의존적인 로직을 도메인 로직으로 변경
     - [x] MenuGroupService
     - [x] MenuService
     - [x] TableService
     - [x] TableGroupService
     - [x] ProductService
-    - [ ] OrderService
+    - [x] OrderService
 - [x] dto를 사용하도록 리팩터링
     - [x] MenuGroupService
     - [x] MenuService
     - [x] TableService
     - [x] TableGroupService
     - [x] ProductService
-    - [ ] OrderService
+    - [x] OrderService
 
 ## 용어 사전
 

@@ -2,12 +2,16 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_ALREADY_COMPLETION;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_LINE_ITEM_DTOS_EMPTY;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_LINE_ITEM_IS_NOT_PRESENT_ALL;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_TABLE_IS_EMPTY;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
 import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.MenuDto;
 import kitchenpos.application.dto.OrderDto;
@@ -16,7 +20,6 @@ import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.exception.OrderException;
-import kitchenpos.domain.exception.OrderExceptionType;
 import kitchenpos.domain.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -59,8 +62,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
         @DisplayName("orderLineItem에 있는 menu가 존재하지 않는 경우 예외처리")
         void throwExceptionOrderLineItemsIsEmpty() {
             //given
-            final MenuDto menuDto = createMenu();
-            final OrderLineItemDto orderLineItemDto = createOrderLineItem(menuDto.getId() + 1, 1L);
+            final long invalidatedId = Long.MIN_VALUE;
+            final OrderLineItemDto orderLineItemDto = createOrderLineItem(invalidatedId, 1L);
             final OrderTableDto savedOrderTable = createNotEmptyOrderTable();
 
             final OrderDto orderDto = new OrderDto(
@@ -69,7 +72,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
 
             //when
             assertThatThrownBy(() -> orderService.create(orderDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderException.class)
+                .hasMessage(ORDER_LINE_ITEM_IS_NOT_PRESENT_ALL.getMessage());
         }
 
         @Test
@@ -86,7 +90,24 @@ class OrderServiceTest extends ServiceIntegrationTest {
 
             //when
             assertThatThrownBy(() -> orderService.create(orderDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderException.class)
+                .hasMessage(ORDER_TABLE_IS_EMPTY.getMessage());
+        }
+
+        @Test
+        @DisplayName("orderLineItemDto가 비어있으면 예외처리")
+        void throwExceptionOrderLineItemDtoIsEmpty() {
+            //given
+            final OrderTableDto savedOrderTable = tableService.create(비어있는_주문_테이블_DTO());
+
+            final OrderDto orderDto = new OrderDto(
+                null, savedOrderTable.getId(), null, LocalDateTime.now(), Collections.emptyList()
+            );
+
+            //when
+            assertThatThrownBy(() -> orderService.create(orderDto))
+                .isInstanceOf(OrderException.class)
+                .hasMessage(ORDER_LINE_ITEM_DTOS_EMPTY.getMessage());
         }
     }
 
