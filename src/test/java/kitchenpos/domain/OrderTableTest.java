@@ -1,42 +1,44 @@
 package kitchenpos.domain;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderTableTest {
 
-    @DisplayName("[SUCCESS] 입력 받은 주문 테이블로 주문 상태를 변경한다.")
+    @DisplayName("[SUCCESS] 주문 테이블이 빈 상태를 변경한다.")
     @ParameterizedTest
-    @CsvSource(value = {
-            "false:false:false",
-            "false:true:true",
-            "true:false:false",
-            "true:true:true",
-    }, delimiter = ':')
-    void changeOrderTableEmpty(final boolean original, final boolean actual, final boolean expected) {
+    @ValueSource(booleans = {true, false})
+    void success_changeOrderTableFull(final boolean expected) {
         // given
-        final OrderTable orderTable = new OrderTable(null, 5, original);
+        final OrderTable orderTable = new OrderTable(null, 5, true);
 
         // when
-        final OrderTable status = new OrderTable(null, 5, actual);
-        orderTable.changeEmpty(status);
+        orderTable.changeOrderTableEmpty(expected);
 
         // then
         assertThat(orderTable.isEmpty()).isEqualTo(expected);
     }
 
-    @DisplayName("[SUCCESS] 주문 테이블 상태를 비어있지 않음으로 변경한다.")
-    void changeOrderTableFull() {
+    @DisplayName("[EXCEPTION] 단체 지정이 되어있을 경우 주문 테이블을 비어있는 상태로 변경할 수 없다.")
+    @Test
+    void throwException_changeOrderTableEmpty_when_tableGroupIsNotNull() {
         // given
-        final OrderTable orderTable = new OrderTable(null, 5, true);
+        final OrderTable orderTable = new OrderTable(
+                new TableGroup(LocalDateTime.now(), new ArrayList<>()),
+                5,
+                false
+        );
 
-        // when
-        orderTable.changeOrderTableFull();
-
-        // then
-        assertThat(orderTable.isEmpty()).isFalse();
+        // expect
+        assertThatThrownBy(() -> orderTable.changeOrderTableEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

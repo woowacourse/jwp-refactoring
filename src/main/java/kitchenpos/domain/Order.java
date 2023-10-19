@@ -83,6 +83,14 @@ public class Order {
         this.orderStatus = requestOrderStatus;
     }
 
+    public void changeOrderTableEmpty(final boolean isEmpty) {
+        if (isEmpty && orderStatus != OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("현재 주문이 완료된 상태가 아니므로 주문 테이블을 비울 수 없습니다.");
+        }
+
+        orderTable.changeOrderTableEmpty(isEmpty);
+    }
+
     public Long getId() {
         return id;
     }
