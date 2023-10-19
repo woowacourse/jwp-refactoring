@@ -90,10 +90,6 @@ class OrderServiceTest {
             given(orderRepository.save(any(Order.class))).willReturn(spyOrder);
             given(orderTableRepository.findById(any())).willReturn(Optional.ofNullable(orderTable));
 
-            given(orderLineItemRepository.save(any(OrderLineItem.class)))
-                    .willReturn(wooDong)
-                    .willReturn(frenchFries);
-
             final long orderTableId = 1L;
             given(orderTable.getId()).willReturn(orderTableId);
 

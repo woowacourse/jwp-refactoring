@@ -41,12 +41,8 @@ public class OrderService {
         validateOrderLineItems(order);
         validateOrderTable(order);
 
-        final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems().getOrderLineItems().stream()
-                .map(orderLineItemRepository::save)
-                .collect(toList());
-
         final Order savedOrder = orderRepository.save(new Order(order.getOrderTable(), COOKING, LocalDateTime.now(), new OrderLineItems()));
-        savedOrder.addAllOrderLineItems(savedOrderLineItems);
+        savedOrder.addAllOrderLineItems(order.getOrderLineItems().getOrderLineItems());
 
         return savedOrder;
     }
