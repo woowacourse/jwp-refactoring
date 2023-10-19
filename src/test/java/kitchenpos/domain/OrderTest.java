@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderFixture.계산완료된_주문;
+import static kitchenpos.domain.OrderFixture.조리중인_주문;
 import static kitchenpos.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
 import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
@@ -10,22 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
-
-    private Order 조리중인_주문;
-    private Order 계산완료된_주문;
-
-    @BeforeEach
-    void setUp() {
-        OrderTable orderTable = new OrderTable(0, false);
-        OrderLineItem orderLineItem = new OrderLineItem(null, 0);
-        조리중인_주문 = new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem));
-        계산완료된_주문 = new Order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem));
-    }
-
+    
     @Test
     void 주문테이블이_비어있으면_예외가_발생한다() {
         // given
@@ -83,7 +73,7 @@ class OrderTest {
     @Test
     void 주문상태가_조리중이거나_식사중이면_true를_반환한다() {
         // when
-        boolean result = 조리중인_주문.isCookingOrMeal();
+        boolean result = 조리중인_주문().isCookingOrMeal();
 
         // then
         assertThat(result).isTrue();
@@ -92,7 +82,7 @@ class OrderTest {
     @Test
     void 주문상태가_조리중이거나_식사중이_아니면_false를_반환한다() {
         // when
-        boolean result = 계산완료된_주문.isCookingOrMeal();
+        boolean result = 계산완료된_주문().isCookingOrMeal();
 
         // then
         assertThat(result).isFalse();
@@ -102,7 +92,7 @@ class OrderTest {
     void 주문상태가_계산완료이면_주문상태를_변경할때_예외가_발생한다() {
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                계산완료된_주문.changeOrderStatus(OrderStatus.MEAL)
+                계산완료된_주문().changeOrderStatus(OrderStatus.MEAL)
         ).exceptionType();
 
         // then
@@ -112,6 +102,7 @@ class OrderTest {
     @Test
     void 주문상태가_계산완료가_아니면_주문상태를_변경한다() {
         // when
+        Order 조리중인_주문 = 조리중인_주문();
         조리중인_주문.changeOrderStatus(OrderStatus.MEAL);
 
         // then

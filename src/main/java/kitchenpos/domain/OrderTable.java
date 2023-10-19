@@ -53,6 +53,14 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    protected OrderTable(Long id, TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.orders = orders;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public boolean hasOrderOfCookingOrMeal() {
         return orders.stream()
                 .anyMatch(Order::isCookingOrMeal);
@@ -89,10 +97,6 @@ public class OrderTable {
 
     public void setEmpty(boolean empty) {
         this.empty = empty;
-    }
-
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public Long id() {
