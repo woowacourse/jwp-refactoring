@@ -6,7 +6,6 @@ import static kitchenpos.domain.exception.MenuExceptionType.MENU_GROUP_IS_NOT_FO
 import static kitchenpos.domain.exception.MenuExceptionType.MENU_PRODUCT_IS_CONTAIN_NOT_SAVED_PRODUCT;
 import static kitchenpos.domain.exception.MenuExceptionType.PRICE_IS_BIGGER_THAN_MENU_PRODUCT_PRICES_SUM;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -102,14 +101,12 @@ public class MenuService {
         final List<Product> products,
         final List<MenuProductDto> menuProducts
     ) {
-        final Map<Long, BigDecimal> productPriceMap = products.stream()
+        final Map<Long, Price> productPriceMap = products.stream()
             .collect(Collectors.toMap(Product::getId, Product::getPrice));
 
-        final BigDecimal value = menuProducts.stream()
+        return menuProducts.stream()
             .map(menuProductDto -> productPriceMap.get(menuProductDto.getProductId())
-                .multiply(BigDecimal.valueOf(menuProductDto.getQuantity())
-                ))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return new Price(value);
+                .multiply(menuProductDto.getQuantity()))
+            .reduce(Price.ZERO, Price::add);
     }
 }

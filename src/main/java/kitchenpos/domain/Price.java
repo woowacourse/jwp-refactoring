@@ -12,6 +12,8 @@ import kitchenpos.domain.exception.PriceException;
 @Embeddable
 public class Price {
 
+    public static final Price ZERO = new Price(BigDecimal.valueOf(0));
+
     @Column(name = "price")
     private BigDecimal value;
 
@@ -34,6 +36,14 @@ public class Price {
 
     public boolean isBigger(final Price price) {
         return this.value.compareTo(price.value) > 0;
+    }
+
+    public Price add(final Price price) {
+        return new Price(this.value.add(price.value));
+    }
+
+    public Price multiply(final Long quantity) {
+        return new Price(this.value.multiply(BigDecimal.valueOf(quantity)));
     }
 
     public BigDecimal getValue() {
