@@ -106,7 +106,7 @@ class TableServiceTest {
         @DisplayName("Table의 그룹 id가 존재할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_tableGroupId_is_exists() {
             // given
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder(List.of()).build());
+            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder().build());
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setTableGroup(tableGroup)

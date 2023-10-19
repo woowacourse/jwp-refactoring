@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -36,34 +35,27 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+        for (final OrderTable orderTable : orderTables) {
+            if (Objects.isNull(orderTable.getId())) {
                 throw new IllegalArgumentException();
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new IllegalArgumentException();
+            }
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        tableGroupRepository.save(tableGroup);
+
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(tableGroup);
+            orderTable.setEmpty(false);
+            orderTableRepository.save(orderTable);
+        }
+
+        return tableGroup;
     }
 
     @Transactional

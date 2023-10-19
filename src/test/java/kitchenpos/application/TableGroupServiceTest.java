@@ -58,7 +58,9 @@ class TableGroupServiceTest {
             final OrderTable table1 = orderTableRepository.save(new TableBuilder().build());
             final OrderTable table2 = orderTableRepository.save(new TableBuilder().build());
 
-            final TableGroup tableGroup = new TableGroupBuilder(List.of(table1, table2)).build();
+            final TableGroup tableGroup = new TableGroupBuilder()
+                    .setOrderTables(List.of(table1, table2))
+                    .build();
 
             // when
             final TableGroup expectTableGroup = tableGroupService.create(tableGroup);
@@ -92,10 +94,11 @@ class TableGroupServiceTest {
         @DisplayName("OrderTable이 2개 미만일 경우 IllegalArgumentException이 발생한다.")
         void createWithEmptySmallerThenTwoTablesTest(final List<OrderTable> tables) {
             // given
-            tables.forEach(table -> orderTableRepository.save(table));
+            orderTableRepository.saveAll(tables);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(tables);
+            final TableGroup tableGroup = new TableGroupBuilder()
+                    .setOrderTables(tables)
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
@@ -111,7 +114,9 @@ class TableGroupServiceTest {
             final OrderTable notSavedTable = new TableBuilder().build();
 
             final List<OrderTable> tables = List.of(savedTable1, savedTable2, notSavedTable);
-            final TableGroup tableGroup = new TableGroupBuilder(tables).build();
+            final TableGroup tableGroup = new TableGroupBuilder()
+                    .setOrderTables(tables)
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
@@ -129,7 +134,9 @@ class TableGroupServiceTest {
 
             final List<OrderTable> tables = List.of(emptyTable, notEmptyTable);
 
-            final TableGroup tableGroup = new TableGroupBuilder(tables).build();
+            final TableGroup tableGroup = new TableGroupBuilder()
+                    .setOrderTables(tables)
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
@@ -147,7 +154,9 @@ class TableGroupServiceTest {
                     .build();
             final OrderTable table = orderTableRepository.save(new TableBuilder().build());
 
-            final TableGroup tableGroup = new TableGroupBuilder(List.of(groupedTable, table)).build();
+            final TableGroup tableGroup = new TableGroupBuilder()
+                    .setOrderTables(List.of(groupedTable, table))
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
@@ -163,8 +172,7 @@ class TableGroupServiceTest {
         @DisplayName("테이블 그룹을 해제하면 그룹에 속하는 모든 테이블의 그룹 id를 null로 설정하고 empty를 true로 설정한다.")
         void ungroupTest() {
             // given
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder(List.of())
-                    .build());
+            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder().build());
 
             final OrderTable table1 = orderTableRepository.save(new TableBuilder()
                     .setTableGroup(tableGroup)
@@ -202,8 +210,7 @@ class TableGroupServiceTest {
         @DisplayName("주문 상태가 COOKING 또는 MEAL일 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_order_status_is_cooking_or_meal(final OrderStatus orderStatus) {
             // given
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder(List.of())
-                    .build());
+            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder().build());
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setTableGroup(tableGroup)
