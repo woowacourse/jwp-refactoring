@@ -10,7 +10,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.persistence.MenuRepository;
-import kitchenpos.persistence.OrderLineItemRepository;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -21,18 +20,15 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-        final MenuRepository menuRepository,
-        final OrderRepository orderRepository,
-        final OrderLineItemRepository orderLineItemRepository,
-        final OrderTableRepository orderTableRepository
+        MenuRepository menuRepository,
+        OrderRepository orderRepository,
+        OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -47,16 +43,16 @@ public class OrderService {
         return orderRepository.save(Order.cooking(orderTable, orderLineItems, LocalDateTime.now()));
     }
 
-    public List<Order> list() {
-        return orderRepository.findAllWithFetch();
-    }
-
     @Transactional
     public Order changeOrderStatus(Long orderId, OrderStatus changedOrderStatus) {
         Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
         savedOrder.changeOrderStatus(changedOrderStatus);
         return savedOrder;
+    }
+
+    public List<Order> list() {
+        return orderRepository.findAllWithFetch();
     }
 
     private void validateOrderLineItemSize(List<OrderLineItem> orderLineItems) {

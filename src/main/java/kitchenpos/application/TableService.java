@@ -25,10 +25,6 @@ public class TableService {
         return orderTableRepository.save(new OrderTable(request.getNumberOfGuests(), request.getEmpty()));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
-    }
-
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, boolean changedStatus) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
@@ -44,6 +40,10 @@ public class TableService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문테이블입니다."));
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    public List<OrderTable> list() {
+        return orderTableRepository.findAll();
     }
 
     private void validateIsCompletionOrder(Long orderTableId) {
