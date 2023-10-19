@@ -95,39 +95,3 @@
 | 단체 지정    | table group      | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목    | order line item  | 주문에 속하는 수량이 있는 메뉴             |
 | 매장 식사    | eat in           | 포장하지 않고 매장에서 식사하는 것           |
-
-## 리팩터링 요구사항
-
-- [x] 도메인의 setter를 제거한다.
-    - [x] Menu
-    - [x] Order
-    - [x] Product
-    - [x] OrderTable
-    - [x] OrderLineItem
-    - [x] TableGroup
-    - [x] MenuGroup
-    - [x] MenuProduct
-
-- [x] 요청, 응답을 도메인이 아닌 Dto를 활용한다.
-    - [x] GET /api/products
-    - [x] POST /api/products
-    - [x] GET /api/menus
-    - [x] POST /api/menus
-    - [x] GET /api/tables
-    - [x] POST /api/tables
-    - [x] PUT /api/tables/{orderTableId}/empty
-    - [x] PUT /api/tables/{orderTableId}/number-of-guests
-    - [x] GET /api/menu-groups
-    - [x] POST /api/menu-groups
-    - [x] POST /api/table-groups
-    - [x] GET /api/orders
-    - [x] POST /api/orders
-    - [x] PUT /api/orders/{orderId}/order-status
-
-- [x] 도메인이 비즈니스 로직을 가지게 한다.
-    - [x] MenuGroup
-    - [x] Menu
-    - [x] Order
-    - [x] Product
-    - [x] TableGroup
-    - [x] OrderTable
