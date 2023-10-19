@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.exception.OrderException.CompletionOrderException;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,5 +31,30 @@ class OrderTest {
     void init_fail1() {
         assertThatThrownBy(() -> Order.of(new OrderTable(), Collections.EMPTY_LIST))
                 .isInstanceOf(EmptyOrderLineItemsException.class);
+    }
+
+    @Test
+    @DisplayName("주문을 변경할 수 있다.")
+    void changeOrderStatus_success() {
+        Order order = Order.of(new OrderTable(), List.of(new OrderLineItem()));
+        OrderStatus lastOrderStatus = order.getOrderStatus();
+
+        order.changeOrderStatus(OrderStatus.MEAL);
+        OrderStatus newOrderStatus = order.getOrderStatus();
+
+        assertSoftly(softAssertions -> {
+            softAssertions.assertThat(lastOrderStatus).isEqualTo(OrderStatus.COOKING);
+            softAssertions.assertThat(newOrderStatus).isEqualTo(OrderStatus.MEAL);
+        });
+    }
+
+    @Test
+    @DisplayName("주문이 완료된 경우에는 주문을 변경할 수 없다.")
+    void changeOrderStatus_fail2() {
+        Order order = Order.of(new OrderTable(), List.of(new OrderLineItem()));
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
+                .isInstanceOf(CompletionOrderException.class);
     }
 }

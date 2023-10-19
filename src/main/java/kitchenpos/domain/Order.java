@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import kitchenpos.domain.exception.OrderException.CompletionOrderException;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
 import org.springframework.util.CollectionUtils;
 
@@ -74,8 +75,11 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = OrderStatus.valueOf(orderStatus);
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new CompletionOrderException();
+        }
+        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
