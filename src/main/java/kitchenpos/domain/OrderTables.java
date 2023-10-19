@@ -26,13 +26,17 @@ public class OrderTables {
         .collect(Collectors.toList());
   }
 
-  public boolean isNotSameSize(final OrderTables orderTables) {
-    return this.orderTables.size() != orderTables.orderTables.size();
+  public void validateMatchingOrderTableSize(final int orderTableSize) {
+    if (orderTables.size() != orderTableSize) {
+      throw new IllegalArgumentException();
+    }
   }
 
-  public boolean isNotEmptyOrNotBelongTableGroup() {
-    return orderTables.stream()
-        .anyMatch(orderTable -> !orderTable.isEmpty() || orderTable.isNotBelongTableGroup());
+  public void validateNotEmptyOrNotBelongTableGroup() {
+    if (orderTables.stream()
+        .anyMatch(orderTable -> !orderTable.isEmpty() || orderTable.isNotBelongTableGroup())) {
+      throw new IllegalArgumentException();
+    }
   }
 
   public List<OrderTable> ungrouping() {

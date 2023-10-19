@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -32,21 +32,17 @@ public class TableGroupService {
 
   @Transactional
   public TableGroup create(final TableGroup tableGroup) {
-    final OrderTables orderTables = new OrderTables(tableGroup.getOrderTables());
-
-    final List<Long> orderTableIds = orderTables.getOrderTableIds();
+    final List<Long> orderTableIds = tableGroup.getOrderTables()
+        .stream()
+        .map(OrderTable::getId)
+        .collect(Collectors.toList());
 
     final OrderTables savedOrderTables = new OrderTables(
         orderTableRepository.findAllByIdIn(orderTableIds)
     );
 
-    if (orderTables.isNotSameSize(savedOrderTables)) {
-      throw new IllegalArgumentException();
-    }
-
-    if (savedOrderTables.isNotEmptyOrNotBelongTableGroup()) {
-      throw new IllegalArgumentException();
-    }
+    savedOrderTables.validateMatchingOrderTableSize(orderTableIds.size());
+    savedOrderTables.validateNotEmptyOrNotBelongTableGroup();
 
     return tableGroupRepository.save(
         new TableGroup(
@@ -58,21 +54,25 @@ public class TableGroupService {
 
   @Transactional
   public void ungroup(final Long tableGroupId) {
-    final OrderTables orderTables = new OrderTables(
+    final OrderTables savedOrderTables = new OrderTables(
         orderTableRepository.findAllByTableGroupId(tableGroupId)
     );
 
-    final List<Long> orderTableIds = orderTables.getOrderTableIds();
+    final List<Long> orderTableIds = savedOrderTables.getOrderTableIds();
 
-    if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-        orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-      throw new IllegalArgumentException();
-    }
+    validateOrderTableCompletion(orderTableIds);
 
-    final List<OrderTable> ungroupingOrderTables = orderTables.ungrouping();
-
+    final List<OrderTable> ungroupingOrderTables = savedOrderTables.ungrouping();
     for (OrderTable ungroupingOrderTable : ungroupingOrderTables) {
       orderTableRepository.save(ungroupingOrderTable);
+    }
+  }
+
+  private void validateOrderTableCompletion(final List<Long> orderTableIds) {
+    if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+        orderTableIds, OrderStatus.notCompletion())
+    ) {
+      throw new IllegalArgumentException();
     }
   }
 }
