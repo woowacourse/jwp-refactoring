@@ -51,6 +51,13 @@ public class TableGroup {
         return new TableGroup(LocalDateTime.now(), orderTables);
     }
 
+    public void ungroup() {
+        orderTables.forEach(orderTable -> {
+            orderTable.setTableGroup(null);
+            orderTable.setEmpty(false);
+        });
+    }
+
     public Long getId() {
         return id;
     }

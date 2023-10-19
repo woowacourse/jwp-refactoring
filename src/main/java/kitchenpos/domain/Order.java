@@ -10,19 +10,21 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import kitchenpos.domain.exception.OrderException.CompletionOrderException;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
 import org.springframework.util.CollectionUtils;
 
-@Entity
+@Entity(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne
+    @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -35,9 +37,9 @@ public class Order {
     }
 
     private Order(final OrderTable orderTable,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                  final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime,
+                  final List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;

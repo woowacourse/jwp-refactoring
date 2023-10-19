@@ -8,6 +8,15 @@ public class TableGroupServiceException extends KitchenPosException {
         super(message);
     }
 
+    public static class NotExistsTableGroupException extends TableGroupServiceException {
+
+        private static final String INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE = "테이블 그룹이 없습니다. 현재 테이블 그룹: ";
+
+        public NotExistsTableGroupException(final Long tableGroupId) {
+            super(INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE + tableGroupId);
+        }
+    }
+
     public static class InsufficientOrderTableSizeException extends TableGroupServiceException {
 
         private static final String INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE = "주문 테이블의 개수는 2개 이상이어야합니다.";

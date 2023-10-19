@@ -6,7 +6,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.util.List;
 import kitchenpos.domain.exception.TableGroupException.CannotAssignOrderTableException;
 import kitchenpos.domain.exception.TableGroupException.InsufficientOrderTableSizeException;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,5 +49,18 @@ class TableGroupTest {
 
         assertThatThrownBy(() -> TableGroup.from(List.of(AssignedTableGroupOrderTable, new OrderTable())))
                 .isInstanceOf(CannotAssignOrderTableException.class);
+    }
+
+    @Test
+    @DisplayName("테이블 그룹을 해제할 수 있다.")
+    void ungroup_success() {
+        TableGroup tableGroup = TableGroup.from(List.of(new OrderTable(), new OrderTable()));
+
+        tableGroup.ungroup();
+
+        assertSoftly(softAssertions -> {
+            softAssertions.assertThat(tableGroup.getOrderTables().get(0).getTableGroup()).isEqualTo(null);
+            softAssertions.assertThat(tableGroup.getOrderTables().get(0).isEmpty()).isEqualTo(false);
+        });
     }
 }
