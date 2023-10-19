@@ -38,8 +38,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order
-    create(final Order order) {
+    public Order create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
