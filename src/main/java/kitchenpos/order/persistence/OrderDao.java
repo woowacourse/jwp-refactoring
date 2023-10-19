@@ -2,15 +2,15 @@ package kitchenpos.order.persistence;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.order.domain.Order;
+import kitchenpos.order.application.dto.OrderPersistence;
 
 public interface OrderDao {
 
-  Order save(Order entity);
+  OrderPersistence save(OrderPersistence entity);
 
-  Optional<Order> findById(Long id);
+  Optional<OrderPersistence> findById(Long id);
 
-  List<Order> findAll();
+  List<OrderPersistence> findAll();
 
   boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 

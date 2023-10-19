@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.helper.ServiceIntegrateTest;
-import kitchenpos.order.domain.Order;
+import kitchenpos.order.application.dto.OrderPersistence;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.persistence.OrderDao;
 import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
@@ -181,8 +181,8 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
 
     final Long savedTableGroupId = tableGroupService.create(request).getId();
 
-    final Order order = new Order(null, table1.getId(), OrderStatus.COOKING.name(),
-        LocalDateTime.now());
+    final OrderPersistence order = new OrderPersistence(null, table1.getId(),
+        OrderStatus.COOKING.name(), LocalDateTime.now());
     orderDao.save(order);
 
     //when
