@@ -3,10 +3,15 @@ package kitchenpos.application;
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.request.OrderTableChangeGuestNumberRequest;
+import kitchenpos.ui.dto.request.OrderTableCreateRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +35,15 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final OrderTable orderTableInput = new OrderTable();
-            orderTableInput.setNumberOfGuests(1);
-            orderTableInput.setEmpty(true);
+            final OrderTableCreateRequest request = new OrderTableCreateRequest(1, true);
 
             // when
-            final OrderTable actual = tableService.create(orderTableInput);
+            final OrderTableResponse actual = tableService.create(request);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(orderTableInput.getNumberOfGuests());
-                softly.assertThat(actual.isEmpty()).isEqualTo(orderTableInput.isEmpty());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+                softly.assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
             });
         }
     }
@@ -55,13 +58,12 @@ class TableServiceTest extends ServiceTestConfig {
             final OrderTable savedOrderTable = saveOccupiedOrderTable();
 
             // when
-            final List<OrderTable> actual = tableService.list();
+            final List<OrderTableResponse> actual = tableService.list();
 
             // then
-            // FIXME: equals&hashcode 적용
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
-//                softly.assertThat(actual).containsExactly(savedProduct);
+                softly.assertThat(actual.get(0).getId()).isEqualTo(savedOrderTable.getId());
             });
         }
     }
@@ -74,16 +76,15 @@ class TableServiceTest extends ServiceTestConfig {
         void success() {
             // given
             final OrderTable savedOrderTable = saveOccupiedOrderTable();
-            final OrderTable changing = new OrderTable();
-            changing.setEmpty(false);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             // when
-            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), changing);
+            final OrderTableResponse actual = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.isEmpty()).isEqualTo(changing.isEmpty());
+                softly.assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
             });
         }
 
@@ -91,12 +92,12 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_invalid_orderTable_id() {
             // given
-            final OrderTable changing = new OrderTable();
-            changing.setEmpty(false);
+            final Long invalidOrderTableId = -111L;
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(-111L, changing))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, request))
+                    .isInstanceOfAny(IllegalArgumentException.class, InvalidDataAccessApiUsageException.class);
         }
 
         @DisplayName("주문 테이블에 TableGroup 이 존재하면 실패한다.")
@@ -107,25 +108,23 @@ class TableServiceTest extends ServiceTestConfig {
             final OrderTable orderTable2 = saveEmptyOrderTable();
             saveTableGroup(List.of(orderTable1, orderTable2));
 
-            final OrderTable changing = new OrderTable();
-            changing.setEmpty(false);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), changing))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("주문이 들어간 상태이며 주문 상태가 COOKING 인 경우라면 실패한다.")
+        @DisplayName("주문 상태가 COOKING 인 경우라면 실패한다.")
         @Test
         void fail_if_orderStatus_is_not_COMPLETION() {
             // given
             final OrderTable savedOrderTable = saveOccupiedOrderTable();
             saveOrder(savedOrderTable);
-            final OrderTable changing = new OrderTable();
-            changing.setEmpty(false);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changing))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -138,16 +137,15 @@ class TableServiceTest extends ServiceTestConfig {
         void success() {
             // given
             final OrderTable savedOrderTable = saveOccupiedOrderTable();
-            final OrderTable changing = new OrderTable();
-            changing.setNumberOfGuests(4);
+            final OrderTableChangeGuestNumberRequest request = new OrderTableChangeGuestNumberRequest(4);
 
             // when
-            final OrderTable actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), changing);
+            final OrderTableResponse actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.getTableGroup()).isEqualTo(changing.getTableGroup());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
             });
         }
 
@@ -156,11 +154,10 @@ class TableServiceTest extends ServiceTestConfig {
         void fail_if_numberOfGuests_are_under_zero() {
             // given
             final OrderTable savedOrderTable = saveOccupiedOrderTable();
-            final OrderTable changing = new OrderTable();
-            changing.setNumberOfGuests(-1);
+            final OrderTableChangeGuestNumberRequest request = new OrderTableChangeGuestNumberRequest(-1);
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changing))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -168,26 +165,23 @@ class TableServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_invalid_orderTable_id() {
             // given
-            final OrderTable changing = new OrderTable();
-            changing.setNumberOfGuests(4);
+            final Long invalidOrderTableId = -111L;
+            final OrderTableChangeGuestNumberRequest request = new OrderTableChangeGuestNumberRequest(4);
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-111L, changing))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, request))
+                    .isInstanceOfAny(IllegalArgumentException.class, InvalidDataAccessApiUsageException.class);
         }
 
         @DisplayName("주문 등록이 불가능한 상태면 실패한다.")
         @Test
         void fail_if_orderTable_is_empty() {
             // given
-            final OrderTable orderTable = saveOccupiedOrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-            final OrderTable changing = new OrderTable();
-            changing.setNumberOfGuests(4);
+            final OrderTable emptyOrderTable = saveEmptyOrderTable();
+            final OrderTableChangeGuestNumberRequest request = new OrderTableChangeGuestNumberRequest(4);
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changing))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

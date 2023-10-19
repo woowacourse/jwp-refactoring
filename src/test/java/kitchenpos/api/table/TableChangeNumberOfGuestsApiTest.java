@@ -2,6 +2,8 @@ package kitchenpos.api.table;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableChangeGuestNumberRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,25 +22,19 @@ class TableChangeNumberOfGuestsApiTest extends ApiTestConfig {
     @Test
     void changeNumberOfGuestsTable() throws Exception {
         // given
-        final String request = "{\n" +
-                "  \"numberOfGuests\": 4\n" +
-                "}";
+        final OrderTableChangeGuestNumberRequest request = new OrderTableChangeGuestNumberRequest(4);
 
         // when
-        // FIXME: domain -> dto 로 변경
         final Long orderTableId = 1L;
-        final int numberOfGuests = 4;
-        final OrderTable expectedOrderTable = new OrderTable();
-        expectedOrderTable.setId(orderTableId);
-        expectedOrderTable.setNumberOfGuests(numberOfGuests);
-        when(tableService.changeNumberOfGuests(eq(orderTableId), any(OrderTable.class))).thenReturn(expectedOrderTable);
+        final OrderTableResponse response = new OrderTableResponse(orderTableId, request.getNumberOfGuests(), false, null);
+        when(tableService.changeNumberOfGuests(eq(orderTableId), eq(request))).thenReturn(response);
 
         // then
         mockMvc.perform(put("/api/tables/{id}/number-of-guests", orderTableId)
                         .contentType(APPLICATION_JSON_VALUE)
-                        .content(request))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(orderTableId.intValue())))
-                .andExpect(jsonPath("$.numberOfGuests", is(expectedOrderTable.getNumberOfGuests())));
+                .andExpect(jsonPath("$.id", is(response.getId().intValue())))
+                .andExpect(jsonPath("$.numberOfGuests", is(response.getNumberOfGuests())));
     }
 }

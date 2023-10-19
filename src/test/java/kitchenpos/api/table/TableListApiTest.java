@@ -21,23 +21,18 @@ class TableListApiTest extends ApiTestConfig {
     @Test
     void listTable() throws Exception {
         // when
-        // FIXME: domain -> dto 로 변경
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setTableGroupId(null);
+        final OrderTableResponse response = new OrderTableResponse(1L, 1, false, null);
 
-        when(tableService.list()).thenReturn(List.of(orderTable));
+        when(tableService.list()).thenReturn(List.of(response));
 
         // then
         mockMvc.perform(get("/api/tables"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].id", is(orderTable.getId().intValue())))
-//                .andExpect(jsonPath("$[0].tableGroupId", is(orderTable.getTableGroup().getId().intValue())))
-                .andExpect(jsonPath("$[0].numberOfGuests", is(orderTable.getNumberOfGuests())))
-                .andExpect(jsonPath("$[0].empty", is(orderTable.isEmpty())));
+                .andExpect(jsonPath("$[0].id", is(response.getId().intValue())))
+                .andExpect(jsonPath("$[0].tableGroupId", is(response.getTableGroupId())))
+                .andExpect(jsonPath("$[0].numberOfGuests", is(response.getNumberOfGuests())))
+                .andExpect(jsonPath("$[0].empty", is(response.isEmpty())));
     }
 }

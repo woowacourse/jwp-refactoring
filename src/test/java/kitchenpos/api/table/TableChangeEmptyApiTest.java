@@ -1,12 +1,12 @@
 package kitchenpos.api.table;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -20,24 +20,19 @@ class TableChangeEmptyApiTest extends ApiTestConfig {
     @Test
     void changeEmptyTable() throws Exception {
         // given
-        final String request = "{\n" +
-                "  \"empty\": false\n" +
-                "}";
+        final Long orderTableId = 1L;
+        final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
         // when
-        // FIXME: domain -> dto 로 변경
-        final Long orderTableId = 1L;
-        final OrderTable expectedOrderTable = new OrderTable();
-        expectedOrderTable.setId(orderTableId);
-        expectedOrderTable.setEmpty(false);
-        when(tableService.changeEmpty(eq(orderTableId), any(OrderTable.class))).thenReturn(expectedOrderTable);
+        final OrderTableResponse response = new OrderTableResponse(orderTableId, 1, request.isEmpty(), null);
+        when(tableService.changeEmpty(eq(orderTableId), eq(request))).thenReturn(response);
 
         // then
         mockMvc.perform(put("/api/tables/{id}/empty", orderTableId)
                         .contentType(APPLICATION_JSON_VALUE)
-                        .content(request))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(orderTableId.intValue())))
-                .andExpect(jsonPath("$.empty", is(expectedOrderTable.isEmpty())));
+                .andExpect(jsonPath("$.id", is(response.getId().intValue())))
+                .andExpect(jsonPath("$.empty", is(response.isEmpty())));
     }
 }

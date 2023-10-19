@@ -8,7 +8,7 @@
 - [x] menu
 - [x] menu product
 - [x] table group
-- [ ] order table
+- [x] order table
 - [ ] order
 - [ ] order line item
 

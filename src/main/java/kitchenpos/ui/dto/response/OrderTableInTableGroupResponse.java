@@ -15,7 +15,11 @@ public class OrderTableInTableGroupResponse {
     }
 
     public static OrderTableInTableGroupResponse from(final OrderTable orderTable) {
-        return new OrderTableInTableGroupResponse(orderTable.getId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        return new OrderTableInTableGroupResponse(
+                orderTable.getId(),
+                orderTable.getNumberOfGuests().getNumber(),
+                orderTable.isEmpty()
+        );
     }
 
     public Long getId() {

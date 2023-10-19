@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.NumberOfGuests;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -18,8 +21,8 @@ public class OrderTable {
     @Id
     private Long id;
 
-    @Column
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @Column
     private boolean empty;
@@ -28,13 +31,35 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id", foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
     private TableGroup tableGroup;
 
+    protected OrderTable() {
+    }
+
+    private OrderTable(final Long id, final NumberOfGuests numberOfGuests, final boolean empty, final TableGroup tableGroup) {
+        this.id = id;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+        this.tableGroup = tableGroup;
+    }
+
+    public OrderTable(final NumberOfGuests numberOfGuests, final boolean empty) {
+        this(null, numberOfGuests, empty, null);
+    }
+
     public void ungroup() {
         empty = false;
         tableGroup = null;
     }
 
+    public void changeNumberOfGuests(final NumberOfGuests numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public void changeToOccupied() {
         empty = false;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
     }
 
     public Long getId() {
@@ -53,12 +78,12 @@ public class OrderTable {
         this.tableGroup = null;
     }
 
-    public int getNumberOfGuests() {
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     public boolean isEmpty() {

@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.NumberOfGuests;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -86,17 +87,11 @@ public class ServiceTestConfig {
     }
 
     protected OrderTable saveOccupiedOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
-        return orderTableRepository.save(orderTable);
+        return orderTableRepository.save(new OrderTable(new NumberOfGuests(2), false));
     }
 
     protected OrderTable saveEmptyOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(true);
-        return orderTableRepository.save(orderTable);
+        return orderTableRepository.save(new OrderTable(new NumberOfGuests(2), true));
     }
 
     protected TableGroup saveTableGroup(List<OrderTable> orderTables) {
