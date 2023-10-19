@@ -12,7 +12,6 @@ import java.util.Optional;
 import kitchenpos.application.dto.product.CreateProductCommand;
 import kitchenpos.application.dto.product.CreateProductResponse;
 import kitchenpos.application.dto.product.SearchProductResponse;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
@@ -68,10 +67,8 @@ class ProductServiceTest extends IntegrationTest {
     @Test
     void 상품들을_조회한다() {
         // given
-        Product product1 = new Product("상품1", new Price(BigDecimal.ONE));
-        productRepository.save(product1);
-        Product product2 = new Product("상품2", new Price(BigDecimal.TEN));
-        productRepository.save(product2);
+        상품저장(상품("상품1", 가격(1)));
+        상품저장(상품("상품2", 가격(10)));
 
         // when
         List<SearchProductResponse> result = productService.list();
