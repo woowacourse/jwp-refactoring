@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 
 import javax.persistence.Embedded;
@@ -28,7 +29,7 @@ public class MenuProduct {
     @Embedded
     private Quantity quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(final Menu menu,
@@ -47,6 +48,14 @@ public class MenuProduct {
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
+    }
+
+    public static MenuProduct ofWithoutMenu(final Product product, final Quantity quantity) {
+        return new MenuProduct(null, product, quantity);
+    }
+
+    public Price getTotalPrice() {
+        return product.getPrice().multiply(quantity);
     }
 
     public Long getSeq() {
