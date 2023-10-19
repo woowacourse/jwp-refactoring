@@ -87,6 +87,7 @@ class ProductServiceTest {
         assertSoftly(softly -> {
             assertThat(list).hasSize(2);
             assertThat(list)
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .usingRecursiveComparison()
                     .isEqualTo(List.of(product1, product2));
         });

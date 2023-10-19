@@ -154,6 +154,7 @@ class MenuServiceTest {
         assertSoftly(softly -> {
             assertThat(list).hasSize(1);
             assertThat(list.get(0))
+                    .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .usingRecursiveComparison()
                     .isEqualTo(savedMenu);
         });
