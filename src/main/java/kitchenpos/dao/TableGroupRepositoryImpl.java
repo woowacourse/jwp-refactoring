@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderTableEntity;
 import kitchenpos.dao.entity.TableGroupEntity;
+import kitchenpos.dao.mapper.OrderTableMapper;
+import kitchenpos.dao.mapper.TableGroupMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
@@ -17,8 +19,10 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
   private final TableGroupDao tableGroupDao;
   private final OrderTableDao orderTableDao;
 
-  public TableGroupRepositoryImpl(final TableGroupDao tableGroupDao,
-      final OrderTableDao orderTableDao) {
+  public TableGroupRepositoryImpl(
+      final TableGroupDao tableGroupDao,
+      final OrderTableDao orderTableDao
+  ) {
     this.tableGroupDao = tableGroupDao;
     this.orderTableDao = orderTableDao;
   }
@@ -34,64 +38,42 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
     List<OrderTable> savedOrderTables = new ArrayList<>();
 
     for (final OrderTable orderTable : tableGroup.getOrderTables()) {
-      final OrderTableEntity savedOrderTableEntity = orderTableDao.save(
-          new OrderTableEntity(
-              orderTable.getId(),
-              tableGroupEntity.getId(),
-              orderTable.getNumberOfGuests(),
-              orderTable.isEmpty()
-          )
-      );
-
-      savedOrderTables.add(
-          new OrderTable(
-              savedOrderTableEntity.getId(),
-              tableGroupEntity.getId(),
-              savedOrderTableEntity.getNumberOfGuests(),
-              savedOrderTableEntity.isEmpty()
-          )
-      );
+      savedOrderTables.add(updateOrderTable(orderTable, tableGroupEntity.getId()));
     }
 
-    return new TableGroup(
-        tableGroupEntity.getId(),
-        tableGroupEntity.getCreatedDate(),
-        savedOrderTables
+    return TableGroupMapper.mapToTableGroup(tableGroupEntity, savedOrderTables);
+  }
+
+  public OrderTable updateOrderTable(final OrderTable orderTable, final Long tableGroupId) {
+    final OrderTableEntity orderTableEntity = new OrderTableEntity(
+        orderTable.getId(),
+        tableGroupId,
+        orderTable.getNumberOfGuests(),
+        orderTable.isEmpty()
     );
+
+    return OrderTableMapper.mapToOrderTable(orderTableEntity);
   }
 
   @Override
   public Optional<TableGroup> findById(final Long id) {
     return Optional.ofNullable(tableGroupDao.findById(id)
-        .map(this::mapToTableGroup)
+        .map(entity -> TableGroupMapper.mapToTableGroup(entity, findOrderTables(entity)))
         .orElseThrow(IllegalArgumentException::new));
   }
 
-  private TableGroup mapToTableGroup(final TableGroupEntity entity) {
-    return new TableGroup(
-        entity.getId(),
-        entity.getCreatedDate(),
-        orderTableDao.findAllByTableGroupId(entity.getId())
-            .stream()
-            .map(this::mapToOrderTable)
-            .collect(Collectors.toList())
-    );
-  }
-
-  private OrderTable mapToOrderTable(final OrderTableEntity orderTableEntity) {
-    return new OrderTable(
-        orderTableEntity.getId(),
-        orderTableEntity.getTableGroupId(),
-        orderTableEntity.getNumberOfGuests(),
-        orderTableEntity.isEmpty()
-    );
+  private List<OrderTable> findOrderTables(final TableGroupEntity entity) {
+    return orderTableDao.findAllByTableGroupId(entity.getId())
+        .stream()
+        .map(OrderTableMapper::mapToOrderTable)
+        .collect(Collectors.toList());
   }
 
   @Override
   public List<TableGroup> findAll() {
     return tableGroupDao.findAll()
         .stream()
-        .map(this::mapToTableGroup)
+        .map(entity -> TableGroupMapper.mapToTableGroup(entity, findOrderTables(entity)))
         .collect(Collectors.toList());
   }
 }
