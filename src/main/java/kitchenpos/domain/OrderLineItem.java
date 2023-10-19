@@ -1,6 +1,18 @@
 package kitchenpos.domain;
 
-public class OrderLineItem {
+import kitchenpos.common.BaseDate;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class OrderLineItem extends BaseDate {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long seq;
     private Long orderId;
     private Long menuId;
