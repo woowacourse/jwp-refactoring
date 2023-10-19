@@ -21,10 +21,10 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public CreateMenuGroupResponse create(final CreateMenuGroupRequest menuGroup) {
-        MenuGroup entity = MenuGroupMapper.toMenuGroup(menuGroup);
-        MenuGroup save = menuGroupDao.save(entity);
-        return CreateMenuGroupResponse.from(save);
+    public CreateMenuGroupResponse create(final CreateMenuGroupRequest request) {
+        MenuGroup menuGroup = MenuGroupMapper.toMenuGroup(request);
+        MenuGroup entity = menuGroupDao.save(menuGroup);
+        return CreateMenuGroupResponse.from(entity);
     }
 
     public List<MenuGroupResponse> list() {

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.application;
 
 
 import kitchenpos.application.ProductService;
@@ -6,6 +6,7 @@ import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;

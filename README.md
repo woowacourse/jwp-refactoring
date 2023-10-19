@@ -126,7 +126,7 @@
 
 - [ ] 도메인이 비즈니스 로직을 가지게 한다.
     - [ ] MenuGroup
-    - [ ] Menu
+    - [x] Menu
     - [ ] Order
     - [x] Product
     - [ ] TableGroup

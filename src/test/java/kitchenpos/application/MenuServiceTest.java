@@ -1,14 +1,17 @@
-package kitchenpos.domain;
+package kitchenpos.application;
 
-import kitchenpos.application.MenuService;
-import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.application.dto.response.MenuProductResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
@@ -19,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -86,25 +88,6 @@ class MenuServiceTest {
             });
         }
 
-        @ParameterizedTest(name = "메뉴의 가격이 {0}이면 예외")
-        @ValueSource(longs = {-1, -100})
-        void 메뉴의_가격이_잘못되면_예외(Long price) {
-            // given
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청(price);
-
-            // when & then
-            Assertions.assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴의_가격이_Null이면_예외() {
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청(null);
-
-            Assertions.assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @Test
         void 메뉴_그룹이_존재하지_않으면_예외() {
             // given
@@ -132,10 +115,10 @@ class MenuServiceTest {
         }
 
         @ParameterizedTest(name = "메뉴가 {0}원이고 상품이 {1}원이면 예외")
-        @CsvSource(value = {"17000,16999", "17000,10000", "17000,1000", "17000,1", "17000,0", "17000,-1", "17000,-100"})
+        @CsvSource(value = {"17000,16999", "17000,10000", "17000,1000", "17000,1", "15123,0"})
         void 메뉴_가격이_상품들의_가격_합보다_크면_예외(Long menuPrice, Long productPrice) {
             // given
-            CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청(menuPrice);
+            CreateMenuRequest menu = REQUEST.후라이드_치킨_N원_1마리_등록_요청(menuPrice);
             Product product = ProductFixture.PRODUCT.후라이드_치킨(productPrice);
 
             given(menuGroupDao.existsById(anyLong()))

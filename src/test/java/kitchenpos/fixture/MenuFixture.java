@@ -28,7 +28,7 @@ public class MenuFixture {
                     .build();
         }
 
-        public static CreateMenuRequest 후라이드_치킨_16000원_1마리_등록_요청(Long price) {
+        public static CreateMenuRequest 후라이드_치킨_N원_1마리_등록_요청(Long price) {
             return CreateMenuRequest.builder()
                     .id(1L)
                     .name("후라이드치킨")
@@ -69,6 +69,16 @@ public class MenuFixture {
                     .id(1L)
                     .name("후라이드치킨")
                     .price(BigDecimal.valueOf(16000L))
+                    .menuGroupId(1L)
+                    .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
+                    .build();
+        }
+
+        public static Menu 후라이드_치킨_N원_1마리(long price) {
+            return Menu.builder()
+                    .id(1L)
+                    .name("후라이드치킨")
+                    .price(BigDecimal.valueOf(price))
                     .menuGroupId(1L)
                     .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
                     .build();
