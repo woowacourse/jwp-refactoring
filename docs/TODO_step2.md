@@ -9,8 +9,8 @@
 - [x] menu product
 - [x] table group
 - [x] order table
-- [ ] order
-- [ ] order line item
+- [x] order
+- [x] order line item
 
 ## RequestDTO
 - [ ] request body를 domain -> request dto 로 변경

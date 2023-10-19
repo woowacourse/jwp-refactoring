@@ -59,3 +59,21 @@ API 요청에 id를 객체로 감싸놓은 것을 언박싱
   "orderTableIds": [1, 2]
 }
 ```
+
+<br>
+
+### `GET /api/orders`
+API 응답에 orderLineItems 안에 불필요한 orderId 제거
+#### 변경 전
+
+
+#### 변경 후
+
+<br>
+
+### `PUT /api/orders/{id}/order-status`
+API 응답에 orderLineItems 안에 불필요한 orderId 제거
+#### 변경 전
+
+
+#### 변경 후

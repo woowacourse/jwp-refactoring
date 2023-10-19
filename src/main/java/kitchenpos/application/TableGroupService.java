@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.TableGroupCreateRequest;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,16 +18,16 @@ import java.util.stream.Collectors;
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderDao orderDao,
+            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository
     ) {
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -67,17 +65,18 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findMandatoryById(tableGroupId);
         final List<OrderTable> orderTables = orderTableRepository.findByTableGroup(tableGroup);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        // TODO: orderRepository 로 변경
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        validateMealCompletion(orderTables);
         orderTables.forEach(OrderTable::ungroup);
         orderTableRepository.saveAll(orderTables);
+    }
+
+    private void validateMealCompletion(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toUnmodifiableList());
+        final Long completionMealCount = orderRepository.countCompletionOrderByOrderTableIds(orderTableIds);
+        if (orderTables.size() != completionMealCount) {
+            throw new IllegalArgumentException();
+        }
     }
 }

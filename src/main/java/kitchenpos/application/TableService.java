@@ -1,10 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.NumberOfGuests;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeGuestNumberRequest;
@@ -13,7 +11,6 @@ import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,11 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -60,8 +57,7 @@ public class TableService {
     }
 
     private void validateOrderStatusCompletion(final OrderTable orderTable) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (!orderRepository.existsByOrderTableIdAndCompletion(orderTable.getId())) {
             throw new IllegalArgumentException();
         }
     }

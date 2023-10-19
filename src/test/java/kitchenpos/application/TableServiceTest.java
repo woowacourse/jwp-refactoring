@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.dto.request.OrderTableChangeGuestNumberRequest;
 import kitchenpos.ui.dto.request.OrderTableCreateRequest;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -25,7 +25,7 @@ class TableServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableRepository);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("주문 테이블 생성")
@@ -68,7 +68,7 @@ class TableServiceTest extends ServiceTestConfig {
         }
     }
 
-    @DisplayName("주문 테이블 주문 가능 여부 변경")
+    @DisplayName("주문 테이블 상태 변경")
     @Nested
     class ChangeEmpty {
         @DisplayName("성공한다.")
@@ -76,6 +76,8 @@ class TableServiceTest extends ServiceTestConfig {
         void success() {
             // given
             final OrderTable savedOrderTable = saveOccupiedOrderTable();
+            final Order order = saveOrder(savedOrderTable);
+            order.changeStatus(OrderStatus.COMPLETION);
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             // when

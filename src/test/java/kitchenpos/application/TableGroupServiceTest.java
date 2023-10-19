@@ -23,7 +23,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableRepository, tableGroupRepository);
+        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
     }
 
     @DisplayName("주문 테이블 그룹 생성")

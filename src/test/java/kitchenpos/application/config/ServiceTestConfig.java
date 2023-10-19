@@ -2,7 +2,6 @@ package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
 import kitchenpos.config.JpaConfig;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -17,6 +16,7 @@ import kitchenpos.domain.vo.NumberOfGuests;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -50,7 +50,7 @@ public class ServiceTestConfig {
     protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
     protected OrderLineItemDao orderLineItemDao;
@@ -78,12 +78,11 @@ public class ServiceTestConfig {
     }
 
     protected Order saveOrder(final OrderTable orderTable) {
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now().minusMinutes(10));
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(new ArrayList<>());
-        return orderDao.save(order);
+        final Order order = new Order(OrderStatus.COOKING, orderTable);
+        final Menu menu = saveMenu(saveMenuGroup(), saveProduct());
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, order, menu);
+        order.addOrderLineItems(List.of(orderLineItem));
+        return orderRepository.save(order);
     }
 
     protected OrderTable saveOccupiedOrderTable() {
@@ -98,16 +97,6 @@ public class ServiceTestConfig {
         final TableGroup tableGroup = new TableGroup(orderTables);
         // TODO: em 사용해보기, setter 제거
         orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
-        tableGroup.setCreatedDate(LocalDateTime.now().minusMinutes(30));
         return tableGroupRepository.save(tableGroup);
-    }
-
-    // TODO: 사용하지 않으면 삭제
-    protected OrderLineItem saveOrderLineItem(final Order order, final Menu menu) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(1L);
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setMenuId(menu.getId());
-        return orderLineItemDao.save(orderLineItem);
     }
 }
