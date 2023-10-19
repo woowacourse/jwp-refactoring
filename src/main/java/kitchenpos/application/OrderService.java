@@ -2,16 +2,19 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Collectors.toUnmodifiableMap;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_NOT_FOUND;
+import static kitchenpos.domain.exception.OrderTableExceptionType.ORDER_TABLE_IS_NOT_FOUND;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderDto;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exception.OrderException;
+import kitchenpos.domain.exception.OrderTableException;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -46,14 +49,14 @@ public class OrderService {
 
         final List<Long> menuIds = orderLineItemDtos.stream()
             .map(OrderLineItemDto::getMenuId)
-            .collect(Collectors.toList());
+            .collect(toUnmodifiableList());
 
         if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
         final OrderTable orderTable = orderTableRepository.findById(orderDto.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new OrderTableException(ORDER_TABLE_IS_NOT_FOUND));
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -85,7 +88,7 @@ public class OrderService {
     @Transactional
     public OrderDto changeOrderStatus(final Long orderId, final OrderDto order) {
         final Order savedOrder = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new OrderException(ORDER_IS_NOT_FOUND));
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);

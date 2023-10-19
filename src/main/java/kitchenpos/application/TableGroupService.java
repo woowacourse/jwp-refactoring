@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
 import static kitchenpos.domain.exception.TableGroupExceptionType.TABLE_GROUP_NOT_FOUND;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,10 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.OrderException;
 import kitchenpos.domain.exception.OrderExceptionType;
+import kitchenpos.domain.exception.OrderTableException;
+import kitchenpos.domain.exception.OrderTableExceptionType;
 import kitchenpos.domain.exception.TableGroupException;
+import kitchenpos.domain.exception.TableGroupExceptionType;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -51,7 +55,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         if (orderTableDtos.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new TableGroupException(ORDER_TABLE_IS_NOT_PRESENT_ALL);
         }
         return savedOrderTables;
     }

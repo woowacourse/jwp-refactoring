@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.exception.OrderTableExceptionType.ORDER_TABLE_IS_NOT_FOUND;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableDto;
@@ -7,6 +9,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderException;
 import kitchenpos.domain.exception.OrderExceptionType;
+import kitchenpos.domain.exception.OrderTableException;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -47,7 +50,7 @@ public class TableService {
     @Transactional
     public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new OrderTableException(ORDER_TABLE_IS_NOT_FOUND));
         validateContainedTablesOrderStatusIsNotCompletion(orderTableId);
         savedOrderTable.changeEmpty(orderTableDto.getEmpty());
         return OrderTableDto.from(savedOrderTable);
@@ -70,7 +73,7 @@ public class TableService {
         final int numberOfGuests = orderTableDto.getNumberOfGuests();
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new OrderTableException(ORDER_TABLE_IS_NOT_FOUND));
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 

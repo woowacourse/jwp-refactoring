@@ -5,7 +5,8 @@ import kitchenpos.basic.BasicExceptionType;
 public enum OrderExceptionType implements BasicExceptionType {
 
     ORDER_IS_ALREADY_COMPLETION("이미 완료 상태의 주문입니다."),
-    ORDER_IS_NOT_COMPLETION("완료되지 않은 상태의 주문입니다.");
+    ORDER_IS_NOT_COMPLETION("완료되지 않은 상태의 주문입니다."),
+    ORDER_IS_NOT_FOUND("요청한 Order를 찾을 수 없습니다.");
 
     private final String message;
 
