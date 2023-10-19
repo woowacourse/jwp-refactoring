@@ -14,7 +14,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class OrderLineItem {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @JoinColumn(name = "order_id")
@@ -28,18 +29,26 @@ public class OrderLineItem {
     @Embedded
     private Quantity quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final Quantity quantity) {
+    protected OrderLineItem(final Order order, final Menu menu, final Quantity quantity) {
         this(null, order, menu, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final Quantity quantity) {
+    protected OrderLineItem(final Long seq, final Order order, final Menu menu, final Quantity quantity) {
         this.seq = seq;
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
+    }
+
+    public static OrderLineItem ofWithoutOrder(final Menu menu, final Quantity quantity) {
+        return new OrderLineItem(null, menu, quantity);
+    }
+
+    public void assignOrder(final Order requestOrder) {
+        this.order = requestOrder;
     }
 
     public Long getSeq() {

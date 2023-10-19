@@ -9,16 +9,16 @@ import java.util.List;
 public class OrderLineItems {
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "order")
-    private List<OrderLineItem> values;
+    private List<OrderLineItem> orderLineItems;
 
     protected OrderLineItems() {
     }
 
-    public OrderLineItems(final List<OrderLineItem> values) {
-        this.values = values;
+    public OrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 
-    public List<OrderLineItem> getValues() {
-        return values;
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }
