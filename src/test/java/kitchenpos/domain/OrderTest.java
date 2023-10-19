@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class OrderTest {
@@ -54,12 +55,12 @@ class OrderTest {
         final OrderTable orderTable = new OrderTable(null, 10, true);
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new OrderLineItems(new ArrayList<>()));
 
-        // then
+        // when
         order.addOrderLineItems(List.of(
                 new OrderLineItem(null, menu, new Quantity(10))
         ));
 
-        // when
+        // then
         final List<OrderLineItem> actual = order.getOrderLineItems().getOrderLineItems();
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
@@ -69,5 +70,18 @@ class OrderTest {
                     .usingRecursiveComparison()
                     .isEqualTo(new OrderLineItem(order, menu, new Quantity(10)));
         });
+    }
+
+    @DisplayName("[EXCEPTION] 주문 완료 상태에서 주문 완료 상태로 변경할 경우 예외가 발생한다.")
+    @Test
+    void throwException_when_changeOrderStatus_Completion_to_Completion() {
+        // given
+        final OrderTable orderTable = new OrderTable(null, 10, true);
+        final Order order = Order.ofEmptyOrderLineItems(orderTable);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+
+        // expect
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COMPLETION))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

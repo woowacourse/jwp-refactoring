@@ -76,8 +76,11 @@ public class Order {
         this.orderLineItems = new OrderLineItems(requestOrderLineItems);
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void changeOrderStatus(final OrderStatus requestOrderStatus) {
+        if (orderStatus == OrderStatus.COMPLETION && requestOrderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("주문 완료 상태에서 주문 완료 상태로 변경할 수 없습니다.");
+        }
+        this.orderStatus = requestOrderStatus;
     }
 
     public Long getId() {

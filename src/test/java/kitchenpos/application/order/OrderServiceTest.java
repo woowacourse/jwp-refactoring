@@ -6,17 +6,19 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderCreateOrderLineItemRequest;
+import kitchenpos.dto.OrderCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,16 +46,10 @@ class OrderServiceTest extends ApplicationTestConfig {
         void success_create() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = createTableOrder(5, false);
-
-            final Order expected = new Order(
-                    savedOrderTable,
-                    OrderStatus.COOKING,
-                    LocalDateTime.now(),
-                    new OrderLineItems(new ArrayList<>())
-            );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
-            expected.addOrderLineItems(orderLineItems);
+            final OrderTable savedOrderTable = createOrderTable(5, false);
+            final OrderCreateRequest expected = new OrderCreateRequest(savedOrderTable.getId(), List.of(
+                    new OrderCreateOrderLineItemRequest(savedMenu.getId(), 10)
+            ));
 
             // when
             final Order actual = orderService.create(expected);
@@ -61,12 +57,10 @@ class OrderServiceTest extends ApplicationTestConfig {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
-                softly.assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
-                softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
-                softly.assertThat(actual.getOrderLineItems())
-                        .usingRecursiveComparison()
-                        .isEqualTo(expected.getOrderLineItems());
+                softly.assertThat(actual.getOrderTable().getId()).isEqualTo(expected.getOrderTableId());
+                softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+                softly.assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now());
+                softly.assertThat(actual.getOrderLineItems().getOrderLineItems()).hasSize(expected.getOrderLineItems().size());
             });
         }
 
@@ -77,16 +71,12 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
             // when
-            final OrderLineItems wrongOrderLineItems = new OrderLineItems(Collections.emptyList());
-            final Order expected = new Order(
-                    savedOrderTable,
-                    OrderStatus.COOKING,
-                    LocalDateTime.now(),
-                    wrongOrderLineItems
-            );
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of(
+                    new OrderCreateOrderLineItemRequest(0, 10)
+            ));
 
             // then
-            assertThatThrownBy(() -> orderService.create(expected))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -98,21 +88,13 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
             // when
-            final List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(null, savedMenu, new Quantity(10)),
-                    new OrderLineItem(null, savedMenu, new Quantity(10)),
-                    new OrderLineItem(null, savedMenu, new Quantity(10))
-            );
-
-            final Order expected = new Order(
-                    savedOrderTable,
-                    OrderStatus.COOKING,
-                    LocalDateTime.now(),
-                    new OrderLineItems(orderLineItems)
-            );
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of(
+                    new OrderCreateOrderLineItemRequest(savedMenu.getId(), 10),
+                    new OrderCreateOrderLineItemRequest(-1L, 10)
+            ));
 
             // then
-            assertThatThrownBy(() -> orderService.create(expected))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -121,27 +103,17 @@ class OrderServiceTest extends ApplicationTestConfig {
         void throwException_create_order_when_orderTableIsNotExists() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = createTableOrder(10, true);
+            final OrderTable savedOrderTable = createOrderTable(10, true);
 
             // when
-            final Order expected = new Order(
-                    savedOrderTable,
-                    OrderStatus.COOKING,
-                    LocalDateTime.now(),
-                    new OrderLineItems(Collections.emptyList())
-            );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
-            expected.addOrderLineItems(orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(0, List.of(
+                    new OrderCreateOrderLineItemRequest(savedMenu.getId(), 10)
+            ));
 
             // then
-            assertThatThrownBy(() -> orderService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(EmptyResultDataAccessException.class);
         }
-    }
-
-    private OrderTable createTableOrder(final int numberOfGuests, final boolean empty) {
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), Collections.emptyList()));
-        return orderTableRepository.save(new OrderTable(savedTableGroup, numberOfGuests, empty));
     }
 
     private Menu createMenu() {
@@ -155,6 +127,11 @@ class OrderServiceTest extends ApplicationTestConfig {
         );
     }
 
+    private OrderTable createOrderTable(final int numberOfGuests, final boolean empty) {
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), Collections.emptyList()));
+        return orderTableRepository.save(new OrderTable(savedTableGroup, numberOfGuests, empty));
+    }
+
     @DisplayName("주문 상태 변경")
     @Nested
     class ChangeOrderStatus {
@@ -164,33 +141,21 @@ class OrderServiceTest extends ApplicationTestConfig {
         void success_changeOrderStatus() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = createTableOrder(5, false);
+            final OrderTable savedOrderTable = createOrderTable(5, false);
 
-            final Order order = new Order(
-                    savedOrderTable,
-                    OrderStatus.COOKING,
-                    LocalDateTime.now(),
-                    new OrderLineItems(new ArrayList<>())
-            );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
+            final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
             final Order expected = orderRepository.save(order);
 
             // when
-            final Order status = new Order(
-                    null,
-                    OrderStatus.COMPLETION,
-                    null,
-                    null
-            );
-
-            final Order actual = orderService.changeOrderStatus(expected.getId(), status);
+            final Order actual = orderService.changeOrderStatus(expected.getId(), OrderStatus.MEAL.name());
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
                 softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
-                softly.assertThat(actual.getOrderStatus()).isEqualTo(status.getOrderStatus());
+                softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
                 softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
                 softly.assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems());
             });
@@ -199,18 +164,9 @@ class OrderServiceTest extends ApplicationTestConfig {
         @DisplayName("[EXCEPTION] 주문이 존재하지 않을 경우 예외가 발생한다.")
         @Test
         void throwException_when_order_isNotExists() {
-            // given
-            final Order status = new Order(
-                    null,
-                    OrderStatus.COMPLETION,
-                    null,
-                    null
-            );
-
-            // then
             final Long wrongOrderId = -1L;
-            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, status))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, OrderStatus.COOKING.name()))
+                    .isInstanceOf(EmptyResultDataAccessException.class);
         }
 
         @DisplayName("[EXCEPTION] 주문이 완료 상태에서 완료 상태로 변경할 경우 예외가 발생한다.")
@@ -218,30 +174,18 @@ class OrderServiceTest extends ApplicationTestConfig {
         void throwException_when_orderStatus_is_COMPLETION() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = createTableOrder(5, false);
+            final OrderTable savedOrderTable = createOrderTable(5, false);
 
-            final Order order = new Order(
-                    savedOrderTable,
-                    OrderStatus.COOKING,
-                    LocalDateTime.now(),
-                    new OrderLineItems(new ArrayList<>())
-            );
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
+            final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
-            final Order expected = orderRepository.save(order);
-
-            final Order completionStatus = new Order(
-                    null,
-                    OrderStatus.COMPLETION,
-                    null,
-                    null
-            );
+            final Order savedOrder = orderRepository.save(order);
 
             // when
-            orderService.changeOrderStatus(expected.getId(), completionStatus);
+            orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.COMPLETION.name());
 
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(expected.getId(), completionStatus))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.COMPLETION.name()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

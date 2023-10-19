@@ -7,8 +7,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
@@ -18,8 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -52,16 +48,11 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
         final Menu savedMenu = menuRepository.save(menu);
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
 
-        final Order order = new Order(
-                savedOrderTable,
-                OrderStatus.COOKING,
-                LocalDateTime.now(),
-                new OrderLineItems(Collections.emptyList())
-        );
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu, new Quantity(10)));
+        final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
+        final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10)));
         order.addOrderLineItems(orderLineItems);
 
-        final Order expected = orderService.create(order);
+        final Order expected = orderRepository.save(order);
 
         // when
         final List<Order> actual = orderService.list();
