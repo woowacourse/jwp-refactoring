@@ -2,16 +2,11 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import kitchenpos.domain.menuproduct.MenuProduct;
 
 public final class MenuFactory {
 
     private MenuFactory() {
-    }
-
-    public static Menu createMenuOf(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        final Menu menu = createMenuOf(name, price, menuGroupId);
-        menu.setId(id);
-        return menu;
     }
 
     public static Menu createMenuOf(final String name, final BigDecimal price, final Long menuGroupId) {

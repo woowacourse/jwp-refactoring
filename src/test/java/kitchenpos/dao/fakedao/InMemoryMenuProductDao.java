@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menuproduct.MenuProduct;
 
 public class InMemoryMenuProductDao implements MenuProductDao {
 
