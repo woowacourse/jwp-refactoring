@@ -4,7 +4,6 @@ import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.OrderFixture.주문;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static kitchenpos.fixture.TableGroupFixture.테이블_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +14,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.table.OrderTableCreateRequest;
+import kitchenpos.application.dto.table.OrderTableCreateResponse;
+import kitchenpos.application.dto.table.OrderTableEmptyRequest;
+import kitchenpos.application.dto.table.OrderTableNumberOfGuestsRequest;
+import kitchenpos.application.dto.table.OrderTableResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -74,32 +78,38 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_정상적으로_등록한다() {
         // given
-        final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
+        final OrderTableCreateRequest 주문_테이블_요청값 = new OrderTableCreateRequest(2, false);
 
         // when
-        final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+        final OrderTableCreateResponse 주문_테이블_응답값 = tableService.create(주문_테이블_요청값);
 
         // then
+        final OrderTableCreateResponse 예상_응답값 = OrderTableCreateResponse.of(new OrderTable(2, false));
+
         assertAll(
-                () -> assertThat(저장된_주문_테이블.getId()).isNotNull(),
-                () -> assertThat(저장된_주문_테이블).usingRecursiveComparison()
+                () -> assertThat(주문_테이블_응답값.getId()).isNotNull(),
+                () -> assertThat(주문_테이블_응답값).usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(주문_테이블)
+                        .isEqualTo(예상_응답값)
         );
     }
 
     @Test
     void 주문_테이블_목록을_정상적으로_조회한다() {
         // given
-        final OrderTable 주문_테이블1 = tableService.create(주문_테이블(null, null, 2, false));
-        final OrderTable 주문_테이블2 = tableService.create(주문_테이블(null, null, 5, false));
+        tableService.create(new OrderTableCreateRequest(2, false));
+        tableService.create(new OrderTableCreateRequest(5, false));
 
         // when
-        final List<OrderTable> 주문_테이블들 = tableService.list();
+        final List<OrderTableResponse> 주문_테이블들 = tableService.list();
 
         // then
+        final OrderTableResponse 주문_테이블1_응답값 = OrderTableResponse.of(new OrderTable(2, false));
+        final OrderTableResponse 주문_테이블2_응답값 = OrderTableResponse.of(new OrderTable(5, false));
+
         assertThat(주문_테이블들).usingRecursiveComparison()
-                .isEqualTo(List.of(주문_테이블1, 주문_테이블2));
+                .ignoringFields("id")
+                .isEqualTo(List.of(주문_테이블1_응답값, 주문_테이블2_응답값));
     }
 
     @Nested
@@ -108,12 +118,11 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_빈_테이블로_변경한다() {
             // given
-            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+            final OrderTableCreateResponse 저장된_주문_테이블 = tableService.create(new OrderTableCreateRequest(2, false));
 
             // when
-            final OrderTable 빈_테이블로_변경된_주문_테이블 = tableService.changeEmpty(저장된_주문_테이블.getId(),
-                    주문_테이블(null, null, 0, true));
+            final OrderTableResponse 빈_테이블로_변경된_주문_테이블 = tableService.changeEmpty(저장된_주문_테이블.getId(),
+                    new OrderTableEmptyRequest(true));
 
             // then
             assertThat(빈_테이블로_변경된_주문_테이블.isEmpty()).isTrue();
@@ -122,31 +131,33 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+            final OrderTableCreateResponse 저장된_주문_테이블 = tableService.create(new OrderTableCreateRequest(2, false));
 
             // expected
-            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId() + 1, 주문_테이블(null, null, 0, true)))
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId() + 1, new OrderTableEmptyRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_이미_테이블_그룹에_속해있으면_예외가_발생한다() {
             // given
-            final OrderTable 저장된_주문_테이블1 = tableService.create(주문_테이블(null, null, 2, false));
-            final OrderTable 저장된_주문_테이블2 = tableService.create(주문_테이블(null, null, 3, false));
+            final OrderTableCreateResponse 저장된_주문_테이블1 = tableService.create(new OrderTableCreateRequest(2, false));
+            final OrderTableCreateResponse 저장된_주문_테이블2 = tableService.create(new OrderTableCreateRequest(3, false));
 
-            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(저장된_주문_테이블1, 저장된_주문_테이블2));
+            final OrderTable 주문_테이블1 = new OrderTable(저장된_주문_테이블1.getId(), null, 2, false);
+            final OrderTable 주문_테이블2 = new OrderTable(저장된_주문_테이블2.getId(), null, 3, false);
+            final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(주문_테이블1, 주문_테이블2));
             테이블_그룹.setCreatedDate(LocalDateTime.now());
-            final TableGroup 저장된_테이블_그룹 = tableGroupDao.save(테이블_그룹);
-            저장된_주문_테이블1.setTableGroupId(저장된_테이블_그룹.getId());
-            저장된_주문_테이블2.setTableGroupId(저장된_테이블_그룹.getId());
 
-            orderTableDao.save(저장된_주문_테이블1);
-            orderTableDao.save(저장된_주문_테이블2);
+            final TableGroup 저장된_테이블_그룹 = tableGroupDao.save(테이블_그룹);
+            주문_테이블1.setTableGroupId(저장된_테이블_그룹.getId());
+            주문_테이블2.setTableGroupId(저장된_테이블_그룹.getId());
+
+            orderTableDao.save(주문_테이블1);
+            orderTableDao.save(주문_테이블2);
 
             // expected
-            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블1.getId(), 주문_테이블(null, null, 0, true)))
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블1.getId(), new OrderTableEmptyRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -154,13 +165,12 @@ class TableServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void 주문_상태가_COOKING_또는_MEAL이면_예외가_발생한다(final OrderStatus 주문_상태) {
             // given
-            final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-            final OrderTable 저장된_주문_테이블 = tableService.create(주문_테이블);
+            final OrderTableCreateResponse 저장된_주문_테이블 = tableService.create(new OrderTableCreateRequest(2, false));
 
             주문_등록(저장된_주문_테이블, 주문_상태.name());
 
             // expected
-            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), 주문_테이블(null, null, 0, true)))
+            assertThatThrownBy(() -> tableService.changeEmpty(저장된_주문_테이블.getId(), new OrderTableEmptyRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -171,11 +181,11 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_방문_손님수를_정상적으로_변경한다() {
             // given
-            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, 5, false);
+            final OrderTableCreateResponse 주문_테이블 = tableService.create(new OrderTableCreateRequest(2, false));
+            final OrderTableNumberOfGuestsRequest 변경할_주문_테이블 = new OrderTableNumberOfGuestsRequest(5);
 
             // when
-            final OrderTable 방문_손님수가_변경된_주문_테이블 = tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블);
+            final OrderTableResponse 방문_손님수가_변경된_주문_테이블 = tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블);
 
             // then
             assertThat(방문_손님수가_변경된_주문_테이블.getNumberOfGuests()).isEqualTo(5);
@@ -184,8 +194,8 @@ class TableServiceTest {
         @Test
         void 변경할_수가_0보다_작으면_예외가_발생한다() {
             // given
-            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, false);
+            final OrderTableCreateResponse 주문_테이블 = tableService.create(new OrderTableCreateRequest(2, false));
+            final OrderTableNumberOfGuestsRequest 변경할_주문_테이블 = new OrderTableNumberOfGuestsRequest(-1);
 
             // expected
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블))
@@ -195,8 +205,8 @@ class TableServiceTest {
         @Test
         void 변경할_주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, false);
+            final OrderTableCreateResponse 주문_테이블 = tableService.create(new OrderTableCreateRequest(2, false));
+            final OrderTableNumberOfGuestsRequest 변경할_주문_테이블 = new OrderTableNumberOfGuestsRequest(5);
 
             // expected
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId() + 1, 변경할_주문_테이블))
@@ -206,17 +216,17 @@ class TableServiceTest {
         @Test
         void 입력받은_주문_테이블이_비어있으면_예외가_발생한다() {
             // given
-            final OrderTable 주문_테이블 = tableService.create(주문_테이블(null, null, 2, false));
-            final OrderTable 변경할_주문_테이블 = 주문_테이블(null, null, -1, true);
+            final OrderTableCreateResponse 주문_테이블 = tableService.create(new OrderTableCreateRequest(2, true));
+            final OrderTableNumberOfGuestsRequest 변경할_주문_테이블 = new OrderTableNumberOfGuestsRequest(5);
 
             // expected
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId() + 1, 변경할_주문_테이블))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블.getId(), 변경할_주문_테이블))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
     }
 
-    private void 주문_등록(final OrderTable 저장된_주문_테이블, final String 주문_상태) {
+    private void 주문_등록(final OrderTableCreateResponse 저장된_주문_테이블, final String 주문_상태) {
         final MenuGroup 메뉴_그룹 = 메뉴_그룹(null, "양념 반 후라이드 반");
         final MenuGroup 저장된_메뉴_그룹 = menuGroupDao.save(메뉴_그룹);
 

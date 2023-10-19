@@ -1,5 +1,11 @@
 package kitchenpos.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.sql.DataSource;
 import kitchenpos.domain.OrderTable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -9,15 +15,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
+
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -94,11 +94,10 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+        final Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        final Long tableGroupId = resultSet.getObject("table_group_id", Long.class);
+        final int numberOfGuests = resultSet.getInt("number_of_guests");
+        final boolean empty = resultSet.getBoolean("empty");
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }
