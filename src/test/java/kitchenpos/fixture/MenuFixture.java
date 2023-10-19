@@ -1,10 +1,10 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.menu.dto.MenuCreateRequest;
-import kitchenpos.application.menu.dto.MenuProductCreateRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuProductCreateRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 import java.util.List;
 import java.util.stream.Collectors;

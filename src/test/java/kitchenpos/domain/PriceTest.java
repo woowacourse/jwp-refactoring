@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.PriceEmptyException;
+import kitchenpos.common.domain.Price;
+import kitchenpos.common.exception.PriceEmptyException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

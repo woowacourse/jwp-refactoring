@@ -1,10 +1,10 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.table.dto.OrderTableCreateRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {

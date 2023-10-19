@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.product.dto.ProductCreateRequest;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class ProductFixture {

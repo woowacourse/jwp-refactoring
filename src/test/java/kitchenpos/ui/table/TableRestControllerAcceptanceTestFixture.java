@@ -3,12 +3,12 @@ package kitchenpos.ui.table;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.application.table.TableService;
-import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.application.table.dto.OrderTableCreateRequest;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.ui.table.dto.OrderTableResponse;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.ui.dto.OrderTableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

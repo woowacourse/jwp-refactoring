@@ -1,8 +1,8 @@
 package kitchenpos.ui.table;
 
-import kitchenpos.application.table.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.table.dto.OrderTableChangeNumberOfGuestRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

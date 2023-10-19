@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.order.domain.OrderLineItem;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderLineItemFixture {

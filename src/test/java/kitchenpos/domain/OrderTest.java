@@ -1,8 +1,10 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.OrderLineItemEmptyException;
-import kitchenpos.exception.OrderStatusAlreadyCompletionException;
-import kitchenpos.exception.OrderTableEmptyException;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.exception.OrderLineItemEmptyException;
+import kitchenpos.order.exception.OrderStatusAlreadyCompletionException;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.exception.OrderTableEmptyException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -10,11 +12,11 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
+import static kitchenpos.order.domain.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.OrderStatus.COOKING;
+import static kitchenpos.order.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

@@ -1,8 +1,8 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.tablegroup.dto.TableGroupCreateRequest;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 import java.util.List;
 import java.util.stream.Collectors;

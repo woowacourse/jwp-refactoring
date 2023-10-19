@@ -3,12 +3,12 @@ package kitchenpos.ui.tablegroup;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
-import kitchenpos.application.tablegroup.TableGroupService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.helper.IntegrationTestHelper;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.ui.tablegroup.dto.TableGroupResponse;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.ui.dto.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 

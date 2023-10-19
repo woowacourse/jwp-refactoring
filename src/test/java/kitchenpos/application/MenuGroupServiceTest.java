@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.application.menugroup.MenuGroupService;
-import kitchenpos.application.menugroup.dto.MenuGroupCreateRequest;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.helper.IntegrationTestHelper;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
