@@ -96,11 +96,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menu.setMenuGroupId(menuGroupId);
             menu.setMenuProducts(List.of(menuProduct));
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            order.setOrderLineItems(List.of());
 
             final ExtractableResponse<Response> response = 주문_생성_요청(order);
 
