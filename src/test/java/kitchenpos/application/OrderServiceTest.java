@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +43,7 @@ class OrderServiceTest extends ServiceTestHelper{
     @Test
     void 주문_항목의_메뉴가_존재하지_않는_메뉴면_예외가_발생한다() {
         // given
-        final Menu notExistMenu = new Menu();
+        final Menu notExistMenu = new Menu(-1L, "존재하지않는메뉴", BigDecimal.valueOf(10000L), -1L);
 
         // when & then
         assertThatIllegalArgumentException()
