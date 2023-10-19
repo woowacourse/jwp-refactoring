@@ -1,6 +1,6 @@
 package kitchenpos.test.fixtures;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 public enum MenuGroupFixtures {
     EMPTY("empty"),

@@ -1,6 +1,6 @@
 package kitchenpos.test.fixtures;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProduct;
 
 public enum MenuProductFixtures {
     EMPTY(0L, 0L, 0L, 0L),

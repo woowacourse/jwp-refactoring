@@ -1,6 +1,6 @@
 package kitchenpos.test.fixtures;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.vo.OrderLineItem;
 
 public enum OrderLineItemFixtures {
     EMPTY(0L, 0L, 0L, 0L),

@@ -1,6 +1,6 @@
 package kitchenpos.test.fixtures;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public enum OrderTableFixtures {
     EMPTY(0L, 0, true),

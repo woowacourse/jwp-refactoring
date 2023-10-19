@@ -3,9 +3,9 @@ package kitchenpos.test.fixtures;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.vo.OrderLineItem;
+import kitchenpos.order.domain.vo.OrderStatus;
 
 public enum OrderFixtures {
     EMPTY(0L, OrderStatus.MEAL.name(), LocalDateTime.now(), Collections.emptyList()),

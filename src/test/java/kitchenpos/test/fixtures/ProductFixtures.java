@@ -1,7 +1,7 @@
 package kitchenpos.test.fixtures;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 public enum ProductFixtures {
     EMPTY("empty", new BigDecimal("0")),

@@ -2,11 +2,10 @@ package kitchenpos.test.fixtures;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public enum TableGroupFixtures {
     EMPTY(LocalDateTime.now(), Collections.emptyList()),
