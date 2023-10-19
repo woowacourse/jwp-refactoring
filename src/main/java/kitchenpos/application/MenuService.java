@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Price;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +31,7 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         menuGroupService.validateExistenceById(request.getMenuGroupId());
 
-        if (calculateSumOfPrice(request).compareTo(request.getPrice()) < 0) {
+        if (request.getPrice().isBiggerThan(calculateSumOfPrice(request))) {
             throw new IllegalArgumentException("메뉴 가격은 상품 가격들의 합보다 클 수 없습니다.");
         }
 
@@ -39,11 +39,13 @@ public class MenuService {
         return MenuResponse.from(menu);
     }
 
-    private BigDecimal calculateSumOfPrice(final MenuCreateRequest request) {
+    private Price calculateSumOfPrice(final MenuCreateRequest request) {
         return request.getMenuProducts().stream()
-                .map(menuProduct -> productService.calculatePrice(
-                        menuProduct.getProductId(), menuProduct.getQuantity()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(menuProduct ->
+                        productService.calculatePrice(
+                                menuProduct.getProductId(),
+                                menuProduct.getQuantity()))
+                .reduce(Price.ZERO, Price::add);
     }
 
     public List<MenuResponse> list() {

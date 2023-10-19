@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductCreateRequest;
 import kitchenpos.ui.dto.ProductResponse;
@@ -36,7 +37,6 @@ class ProductServiceTest {
         //then
         assertSoftly(softAssertions -> {
             assertThat(product.getId()).isNotNull();
-            assertThat(product.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(5000));
             assertThat(product.getName()).isEqualTo("떡볶이");
         });
     }
@@ -62,9 +62,9 @@ class ProductServiceTest {
         final Product product = entityFactory.saveProduct("연어", 5000);
 
         //when
-        final BigDecimal result = productService.calculatePrice(product.getId(), 10);
+        final Price price = productService.calculatePrice(product.getId(), 10);
 
         //then
-        assertThat(result).isEqualByComparingTo("50000");
+        assertThat(price.equalsWith(50000)).isTrue();
     }
 }

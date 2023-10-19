@@ -12,6 +12,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,14 +76,15 @@ public class EntityFactory {
         final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
         final MenuGroup menuGroup = saveMenuGroup("일식");
 
-        final Menu request = new Menu("떡볶이 세트", BigDecimal.valueOf(16000), menuGroup.getId(),
+        final Menu request = new Menu("떡볶이 세트", new Price(BigDecimal.valueOf(16000)), menuGroup.getId(),
                 singletonList(menuProduct));
 
         return menuRepository.save(request);
     }
 
-    public Product saveProduct(final String name, final int price) {
-        final Product product = new Product(name, BigDecimal.valueOf(price));
+    public Product saveProduct(final String name, final int value) {
+        final Price price = new Price(BigDecimal.valueOf(value));
+        final Product product = new Product(name, price);
         return productRepository.save(product);
     }
 

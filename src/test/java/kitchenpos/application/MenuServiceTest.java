@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuProductRequest;
@@ -84,7 +85,7 @@ class MenuServiceTest {
         @Test
         @DisplayName("메뉴를 생성할 때 실제 상품이 존재하지 않으면 예외가 발생한다")
         void create_fail3() {
-            final Product product = new Product(0L, "연어", BigDecimal.TEN);
+            final Product product = new Product(0L, "연어", new Price(BigDecimal.TEN));
             final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 4);
             final MenuGroup menuGroup = entityFactory.saveMenuGroup("일식");
 
