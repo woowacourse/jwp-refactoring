@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderTableEntity;
+import kitchenpos.dao.mapper.OrderTableMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Repository;
@@ -28,29 +29,20 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
 
     final OrderTableEntity savedEntity = orderTableDao.save(entity);
 
-    return mapToOrderTable(savedEntity);
-  }
-
-  private OrderTable mapToOrderTable(final OrderTableEntity entity) {
-    return new OrderTable(
-        entity.getId(),
-        entity.getTableGroupId(),
-        entity.getNumberOfGuests(),
-        entity.isEmpty()
-    );
+    return OrderTableMapper.mapToOrderTable(savedEntity);
   }
 
   @Override
   public Optional<OrderTable> findById(final Long id) {
     return orderTableDao.findById(id)
-        .map(this::mapToOrderTable);
+        .map(OrderTableMapper::mapToOrderTable);
   }
 
   @Override
   public List<OrderTable> findAll() {
     return orderTableDao.findAll()
         .stream()
-        .map(this::mapToOrderTable)
+        .map(OrderTableMapper::mapToOrderTable)
         .collect(Collectors.toList());
   }
 
@@ -58,7 +50,7 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
   public List<OrderTable> findAllByIdIn(final List<Long> ids) {
     return orderTableDao.findAllByIdIn(ids)
         .stream()
-        .map(this::mapToOrderTable)
+        .map(OrderTableMapper::mapToOrderTable)
         .collect(Collectors.toList());
   }
 
@@ -66,7 +58,7 @@ public class OrderTableRepositoryImpl implements OrderTableRepository {
   public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
     return orderTableDao.findAllByTableGroupId(tableGroupId)
         .stream()
-        .map(this::mapToOrderTable)
+        .map(OrderTableMapper::mapToOrderTable)
         .collect(Collectors.toList());
   }
 }
