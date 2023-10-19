@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -76,15 +77,16 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 메뉴는_반드시_메뉴_그룹에_속해야_한다() {
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Product product = 스키야키();
+            final Long productId = 상품_생성_요청하고_아이디_반환(product);
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
             menuProduct.setQuantity(1L);
 
             final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(-1));
+            menu.setName(product.getName());
+            menu.setPrice(product.getPrice());
             menu.setMenuProducts(List.of(menuProduct));
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
@@ -94,15 +96,20 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 메뉴의_가격은_메뉴에_속하는_상품_곱하기_수량의_합_이하여야_한다() {
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final MenuGroup menuGroup = 일식();
+            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
+
+            final Product product = 스키야키();
+            final Long productId = 상품_생성_요청하고_아이디_반환(product);
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
             menuProduct.setQuantity(2L);
 
             final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(100_000));
+            menu.setName(product.getName());
+            menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN));
+            menu.setMenuGroupId(menuGroupId);
             menu.setMenuProducts(List.of(menuProduct));
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);

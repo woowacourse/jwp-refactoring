@@ -167,12 +167,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             orderLineItem1.setQuantity(1L);
             orderLineItem1.setMenuId(menuId);
 
-            final OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setQuantity(1L);
-            orderLineItem2.setMenuId(menuId);
-
             final Order order = new Order();
-            order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
+            order.setOrderLineItems(List.of(orderLineItem1));
 
             final ExtractableResponse<Response> response = 주문_생성_요청(order);
 
