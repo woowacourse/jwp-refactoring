@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -66,6 +67,6 @@ class OrderTest {
 
     private Order getOrder(OrderStatus orderStatus) {
         List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-        return new Order(new OrderTable(5, false), orderStatus, orderLineItems);
+        return new Order(new OrderTable(5, false), orderStatus, orderLineItems, LocalDateTime.now());
     }
 }

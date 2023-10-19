@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.request.OrderTableCreateRequest;
@@ -128,7 +129,8 @@ class TableServiceTest {
         void 해당하는_주문테이블의_주문이_완료되지_않았으면_예외(OrderStatus orderStatus) {
             // given
             OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
-            orderRepository.save(new Order(orderTable, orderStatus, List.of(new OrderLineItem(1L, 5))));
+            Order order = new Order(orderTable, orderStatus, List.of(new OrderLineItem(1L, 5)), LocalDateTime.now());
+            orderRepository.save(order);
 
             // when && then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))

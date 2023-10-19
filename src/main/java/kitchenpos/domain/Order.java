@@ -21,20 +21,22 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderTable orderTable;
     private OrderStatus orderStatus;
-    private LocalDateTime orderedTime;
 
     @Embedded
     private OrderLineItems orderLineItems;
 
+    private LocalDateTime orderedTime;
+
+
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems, LocalDateTime orderedTime) {
+        this(null, orderTable, orderStatus, orderLineItems, orderedTime);
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems,
+                 LocalDateTime orderedTime) {
         validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;
@@ -43,8 +45,8 @@ public class Order {
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
-    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems, LocalDateTime orderedTime) {
+        return new Order(orderTable, OrderStatus.COOKING, orderLineItems, orderedTime);
     }
 
     public void changeOrderStatus(OrderStatus changedOrderStatus) {

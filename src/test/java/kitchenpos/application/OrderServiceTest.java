@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -132,7 +133,7 @@ class OrderServiceTest {
         List<Order> expected = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
-            expected.add(orderRepository.save(new Order(orderTable, COOKING, List.of(new OrderLineItem(1L, 5)))));
+            expected.add(saveOrder(orderTable, COOKING));
         }
 
         // when
@@ -151,9 +152,8 @@ class OrderServiceTest {
         @CsvSource(value = {"COOKING : MEAL", "MEAL : COOKING"}, delimiter = ':')
         void 성공(OrderStatus originStatus, OrderStatus changedStatus) {
             // given
-            OrderTable orderTableA = orderTableRepository.save(new OrderTable(5, false));
-            Order order = new Order(orderTableA, originStatus, List.of(new OrderLineItem(1L, 5)));
-            Long orderId = orderRepository.save(order).getId();
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
+            Long orderId = saveOrder(orderTable, originStatus).getId();
 
             // when
             Order actual = orderService.changeOrderStatus(orderId, changedStatus);
@@ -165,13 +165,18 @@ class OrderServiceTest {
         @Test
         void 바꿀려는_주문의_상태가_완료면_예외() {
             // given
-            OrderTable orderTableA = orderTableRepository.save(new OrderTable(5, false));
-            Order order = new Order(orderTableA, COMPLETION, List.of(new OrderLineItem(1L, 5)));
-            Long orderId = orderRepository.save(order).getId();
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(5, false));
+            Long orderId = saveOrder(orderTable, COMPLETION).getId();
 
             // when && then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
         }
+
+    }
+
+    private Order saveOrder(OrderTable orderTable, OrderStatus orderStatus) {
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 5));
+        return orderRepository.save(new Order(orderTable, orderStatus, orderLineItems, LocalDateTime.now()));
     }
 }

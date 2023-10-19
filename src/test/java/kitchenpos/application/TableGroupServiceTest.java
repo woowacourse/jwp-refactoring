@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.request.OrderTableDto;
 import kitchenpos.application.request.TableGroupCreateRequest;
@@ -164,12 +165,17 @@ class TableGroupServiceTest {
                 List.of(new OrderTableDto(orderTableA.getId()), new OrderTableDto(orderTableB.getId()))));
             orderTableA.changeEmpty(false);
             orderTableB.changeEmpty(false);
-            orderRepository.save(new Order(orderTableA, orderStatus, List.of(new OrderLineItem(menu.getId(), 2))));
-            orderRepository.save(new Order(orderTableB, orderStatus, List.of(new OrderLineItem(menu.getId(), 3))));
+            saveOrder(orderTableA, orderStatus);
+            saveOrder(orderTableB, orderStatus);
 
             // when && then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private void saveOrder(OrderTable orderTable, OrderStatus orderStatus) {
+            List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(), 3));
+            orderRepository.save(new Order(orderTable, orderStatus, orderLineItems, LocalDateTime.now()));
         }
     }
 

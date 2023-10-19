@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.request.OrderCreateRequest;
 import kitchenpos.domain.Order;
@@ -43,7 +44,7 @@ public class OrderService {
         validateOrderLineItemSize(orderLineItems);
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        return orderRepository.save(Order.cooking(orderTable, orderLineItems));
+        return orderRepository.save(Order.cooking(orderTable, orderLineItems, LocalDateTime.now()));
     }
 
     public List<Order> list() {
