@@ -9,9 +9,9 @@ import kitchenpos.order_table.application.dto.OrderTableNumberOfGuestModifyReque
 import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,7 +39,7 @@ public class TableRestController {
         .body(tableService.list());
   }
 
-  @PutMapping("/api/tables/{orderTableId}/empty")
+  @PatchMapping("/api/tables/{orderTableId}/empty")
   public ResponseEntity<OrderTableQueryResponse> changeEmpty(
       @PathVariable final Long orderTableId,
       @RequestBody final OrderTableEmptyModifyRequest request
@@ -48,7 +48,7 @@ public class TableRestController {
         .body(tableService.changeEmpty(orderTableId, request));
   }
 
-  @PutMapping("/api/tables/{orderTableId}/number-of-guests")
+  @PatchMapping("/api/tables/{orderTableId}/number-of-guests")
   public ResponseEntity<OrderTableQueryResponse> changeNumberOfGuests(
       @PathVariable final Long orderTableId,
       @RequestBody final OrderTableNumberOfGuestModifyRequest request
