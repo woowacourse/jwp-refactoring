@@ -5,7 +5,6 @@ import java.util.List;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductCreateRequest;
 import kitchenpos.product.application.dto.ProductQueryResponse;
-import kitchenpos.product.domain.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,18 +21,17 @@ public class ProductRestController {
   }
 
   @PostMapping("/api/products")
-  public ResponseEntity<Product> create(@RequestBody final ProductCreateRequest request) {
-    final Product created = productService.create(request);
+  public ResponseEntity<ProductQueryResponse> create(
+      @RequestBody final ProductCreateRequest request) {
+    final ProductQueryResponse created = productService.create(request);
     final URI uri = URI.create("/api/products/" + created.getId());
     return ResponseEntity.created(uri)
-        .body(created)
-        ;
+        .body(created);
   }
 
   @GetMapping("/api/products")
   public ResponseEntity<List<ProductQueryResponse>> list() {
     return ResponseEntity.ok()
-        .body(productService.list())
-        ;
+        .body(productService.list());
   }
 }

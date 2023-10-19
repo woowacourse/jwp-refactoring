@@ -1,9 +1,9 @@
 package kitchenpos.product.application;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductPersistence;
 import kitchenpos.product.application.dto.ProductQueryResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.persistence.ProductDao;
@@ -20,17 +20,18 @@ public class ProductService {
   }
 
   @Transactional
-  public Product create(final ProductCreateRequest request) {
-    final BigDecimal price = request.getPrice();
+  public ProductQueryResponse create(final ProductCreateRequest request) {
+    final Product product = request.toProduct();
+    product.validatePrice();
 
-    if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-      throw new IllegalArgumentException();
-    }
-
-    return productDao.save(request.toProduct());
+    return ProductQueryResponse.of(productDao.save(ProductPersistence.from(product)).toProduct());
   }
 
   public List<ProductQueryResponse> list() {
-    return ProductQueryResponse.of(productDao.findAll());
+    return productDao.findAll()
+        .stream()
+        .map(product -> new ProductQueryResponse(product.getId(), product.getName(),
+            product.getPrice()))
+        .collect(Collectors.toList());
   }
 }

@@ -29,9 +29,9 @@ class ProductServiceTest extends ServiceIntegrateTest {
   void create_success() {
     //given, when
     final String name = "아마란스 무침";
-    final Product savedProduct = productService.create(
+    final ProductQueryResponse savedProduct = productService.create(
         new ProductCreateRequest(name, BigDecimal.valueOf(10000)));
-    final Product actual = productDao.findById(savedProduct.getId()).get();
+    final Product actual = productDao.findById(savedProduct.getId()).get().toProduct();
 
     //then
     Assertions.assertAll(
