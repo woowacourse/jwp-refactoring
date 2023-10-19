@@ -143,8 +143,8 @@
 
 - 의존성 리팩토링 전
 
-<img src = images/before.png style="width:50%; height:50%">
+<img src = images/before.png>
 
 - 의존성 리팩토링 후
 
-<img src = images/after.png style="width:50%; height:50%">
+<img src = images/after.png>
