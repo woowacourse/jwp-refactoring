@@ -53,11 +53,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        final int numberOfGuests = getNumberOfGuests(orderTable);
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -68,6 +64,16 @@ public class TableService {
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        return savedOrderTable;
+    }
+
+    private int getNumberOfGuests(final OrderTable orderTable) {
+        final int numberOfGuests = orderTable.getNumberOfGuests();
+
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        return numberOfGuests;
     }
 }

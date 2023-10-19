@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -16,7 +15,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,7 +26,6 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
@@ -37,6 +38,20 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order order) {
+        validateOrderLineItems(order);
+        validateOrderTable(order);
+
+        final List<OrderLineItem> savedOrderLineItems = order.getOrderLineItems().stream()
+                .map(orderLineItemRepository::save)
+                .collect(toList());
+
+        final Order savedOrder = orderRepository.save(new Order(order.getOrderTable(), COOKING, LocalDateTime.now(), new ArrayList<>()));
+        savedOrder.addAllOrderLineItems(savedOrderLineItems);
+
+        return savedOrder;
+    }
+
+    private void validateOrderLineItems(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
@@ -45,29 +60,20 @@ public class OrderService {
 
         final List<Long> menuIds = orderLineItems.stream()
                 .map(orderLineItem -> orderLineItem.getMenu().getId())
-                .collect(Collectors.toList());
+                .collect(toList());
 
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void validateOrderTable(final Order order) {
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        final Order savedOrder = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>()));
-
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.changeOrder(savedOrder);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.addAllOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
     }
 
     public List<Order> list() {
@@ -85,14 +91,11 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
+        if (Objects.equals(COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
         savedOrder.changeOrderStatus(order.getOrderStatus());
-
-        orderRepository.save(savedOrder);
-
         savedOrder.addAllOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return savedOrder;

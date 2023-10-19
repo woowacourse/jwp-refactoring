@@ -53,7 +53,10 @@ public class Order {
     }
 
     public void addAllOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.changeOrder(this);
+            this.orderLineItems.add(orderLineItem);
+        }
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

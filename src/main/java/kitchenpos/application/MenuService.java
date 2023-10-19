@@ -34,6 +34,21 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
+        validateMenu(menu);
+
+        final Menu savedMenu = menuRepository.save(menu);
+
+        final List<MenuProduct> savedMenuProducts = menu.getMenuProducts().stream()
+                .map(menuProduct -> menuProductRepository.save(
+                        new MenuProduct(menu, menuProduct.getProduct(), menuProduct.getQuantity())
+                ))
+                .collect(toList());
+        savedMenu.addMenuProducts(savedMenuProducts);
+
+        return savedMenu;
+    }
+
+    private void validateMenu(final Menu menu) {
         final BigDecimal price = menu.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -44,8 +59,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        validatePrice(menu.getMenuProducts(), price);
+    }
 
+    private void validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProduct().getId())
@@ -56,15 +73,6 @@ public class MenuService {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = menuProducts.stream()
-                .map(menuProduct -> menuProductRepository.save(new MenuProduct(menu, menuProduct.getProduct(), menuProduct.getQuantity())))
-                .collect(toList());
-        savedMenu.addMenuProducts(savedMenuProducts);
-
-        return savedMenu;
     }
 
     public List<Menu> list() {

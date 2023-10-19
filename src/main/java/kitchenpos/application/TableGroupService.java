@@ -37,6 +37,23 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
+        return createTableGroup(tableGroup, orderTables);
+    }
+
+    private TableGroup createTableGroup(final TableGroup tableGroup, final List<OrderTable> orderTables) {
+        final List<OrderTable> savedOrderTables = findOrderTables(orderTables);
+
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        savedOrderTables.forEach(savedOrderTable -> {
+            savedOrderTable.changeGroup(savedTableGroup);
+            savedOrderTable.changeEmpty(false);
+        });
+        savedTableGroup.addOrderTables(savedOrderTables);
+
+        return savedTableGroup;
+    }
+
+    private List<OrderTable> findOrderTables(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -47,22 +64,15 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
+        savedOrderTables.forEach(this::validateOrderTable);
+
+        return savedOrderTables;
+    }
+
+    private void validateOrderTable(final OrderTable savedOrderTable) {
+        if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
         }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.changeGroup(savedTableGroup);
-            savedOrderTable.changeEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.addOrderTables(savedOrderTables);
-
-        return savedTableGroup;
     }
 
     @Transactional
@@ -78,10 +88,9 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
+        orderTables.forEach(orderTable -> {
             orderTable.changeGroup(null);
             orderTable.changeEmpty(false);
-            orderTableRepository.save(orderTable);
-        }
+        });
     }
 }

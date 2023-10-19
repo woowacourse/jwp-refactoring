@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -136,15 +137,17 @@ class TableServiceTest {
         @Test
         void 게스트의_수를_변경할_수_있다() {
             // given
-            final OrderTable target = spy(new OrderTable(5, false));
+            final OrderTable chnagedOrderTable = new OrderTable(5, false);
+
+            final OrderTable expected = spy(new OrderTable(1, false));
             final long orderTableId = 1L;
-            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(target));
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(expected));
 
             // when
-            tableService.changeNumberOfGuests(orderTableId, target);
+            final OrderTable actual = tableService.changeNumberOfGuests(orderTableId, chnagedOrderTable);
 
             // then
-            verify(orderTableRepository, times(1)).save(target);
+            assertThat(actual.getNumberOfGuests()).isEqualTo(5);
         }
 
         @Test
