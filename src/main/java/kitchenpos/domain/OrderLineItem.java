@@ -29,4 +29,29 @@ public class OrderLineItem {
 
     protected OrderLineItem() {
     }
+
+    public OrderLineItem(Menu menu, long quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public void assignOrder(Order order) {
+        this.order = order;
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

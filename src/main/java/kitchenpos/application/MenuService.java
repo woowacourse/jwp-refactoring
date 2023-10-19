@@ -46,7 +46,7 @@ public class MenuService {
         Long menuGroupId = request.getMenuGroupId();
         MenuGroup menuGroup = menuGroupRepository.getById(menuGroupId);
 
-        List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProductCreateRequests();
+        List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProducts();
         List<MenuProduct> menuProducts = createMenuProducts(menuProductCreateRequests);
 
         Menu menu = new Menu(name, price, menuGroup, menuProducts);

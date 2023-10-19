@@ -1,12 +1,13 @@
 package kitchenpos.domain;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
-    Optional<OrderTable> findById(Long id);
+    default OrderTable getById(Long id) {
+        return findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 주문 테이블이 없습니다."));
+    };
 
     List<OrderTable> findAll();
 

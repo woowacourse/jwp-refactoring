@@ -101,7 +101,7 @@ class OrderServiceTest {
         Order 주문1 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
         Order 주문2 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
 
-        List<Order> 주문_목록 = orderService.list();
+        List<Order> 주문_목록 = orderService.readAll();
 
         assertThat(주문_목록).hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("orderLineItems")
@@ -113,14 +113,14 @@ class OrderServiceTest {
         Order 주문 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
         주문.setOrderStatus(MEAL.name());
 
-        Order 변경된_주문 = orderService.changeOrderStatus(주문.getId(), 주문);
+        Order 변경된_주문 = orderService.updateOrderStatus(주문.getId(), 주문);
 
         assertThat(변경된_주문.getOrderStatus()).isEqualTo(MEAL.name());
     }
 
     @Test
     void 존재하지_않는_주문의_상태를_변경할_수_없다() {
-        assertThatThrownBy(() -> orderService.changeOrderStatus(Long.MIN_VALUE, null))
+        assertThatThrownBy(() -> orderService.updateOrderStatus(Long.MIN_VALUE, null))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -128,9 +128,9 @@ class OrderServiceTest {
     void 완료된_주문의_상태를_변경할_수_없다() {
         Order 주문 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
         주문.setOrderStatus(COMPLETION.name());
-        orderService.changeOrderStatus(주문.getId(), 주문);
+        orderService.updateOrderStatus(주문.getId(), 주문);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(주문.getId(), 주문))
+        assertThatThrownBy(() -> orderService.updateOrderStatus(주문.getId(), 주문))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -25,4 +25,20 @@ public class OrderTable {
 
     protected OrderTable() {
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
 }
