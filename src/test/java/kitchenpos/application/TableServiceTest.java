@@ -9,13 +9,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import kitchenpos.application.exception.TableServiceException.ExistsNotCompletionOrderException;
-import kitchenpos.application.exception.TableServiceException.InvalidNumberOfGuestsException;
-import kitchenpos.application.exception.TableServiceException.NotExistsOrderTableException;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
+import kitchenpos.domain.exception.OrderTableException.ExistsNotCompletionOrderException;
 import kitchenpos.domain.exception.OrderTableException.ExistsTableGroupException;
+import kitchenpos.domain.exception.OrderTableException.InvalidNumberOfGuestsException;
+import kitchenpos.domain.exception.OrderTableException.NotExistsOrderTableException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +51,7 @@ class TableServiceTest {
     void changeEmpty_fail_no_order_table() {
         OrderTable changeEmptyOrderTable = new OrderTable();
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.empty()); // db에 저장 x
+        when(orderTableRepository.getById(orderTable.getId())).thenThrow(new NotExistsOrderTableException()); // db에 저장 x
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
                 .isInstanceOf(NotExistsOrderTableException.class);
@@ -63,7 +63,7 @@ class TableServiceTest {
         orderTable.setTableGroup(new TableGroup()); // 테이블 그룹에 포함
         OrderTable changeEmptyOrderTable = new OrderTable();
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.ofNullable(orderTable));
+        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
                 .isInstanceOf(ExistsTableGroupException.class);
@@ -75,7 +75,7 @@ class TableServiceTest {
         orderTable.setTableGroup(null);
         OrderTable changeEmptyOrderTable = new OrderTable();
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.ofNullable(orderTable));
+        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
         when(orderRepository.existsByOrderTableAndOrderStatusIn(any(), any())).thenReturn(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
@@ -90,7 +90,7 @@ class TableServiceTest {
         changeNumberOrderTable.setNumberOfGuests(changeNumberOfGuests);
         orderTable.changeEmpty(false);
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.ofNullable(orderTable));
+        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
         int beforeNumberOfGuests = orderTable.getNumberOfGuests();
 
@@ -109,7 +109,7 @@ class TableServiceTest {
     void changeNumberOfGuests_fail_number_of_guest_less_than_zero() {
         orderTable.setNumberOfGuests(-1);
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.ofNullable(orderTable));
+        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
                 .isInstanceOf(InvalidNumberOfGuestsException.class);
@@ -121,7 +121,7 @@ class TableServiceTest {
         OrderTable changeNumberOrderTable = new OrderTable();
         changeNumberOrderTable.setNumberOfGuests(10);
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.empty());
+        when(orderTableRepository.getById(orderTable.getId())).thenThrow(new NotExistsOrderTableException());
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOrderTable))
                 .isInstanceOf(NotExistsOrderTableException.class);
@@ -134,7 +134,7 @@ class TableServiceTest {
         OrderTable changeNumberOrderTable = new OrderTable();
         changeNumberOrderTable.setNumberOfGuests(10);
 
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.ofNullable(orderTable));
+        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOrderTable))
                 .isInstanceOf(EmptyTableException.class);

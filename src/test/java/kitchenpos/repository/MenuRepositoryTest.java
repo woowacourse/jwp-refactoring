@@ -26,7 +26,6 @@ class MenuRepositoryTest {
     void save() {
         Menu menu = em.find(Menu.class, 1L);
         MenuProduct menuProduct = em.find(MenuProduct.class, 3L);
-        em.clear(); // 1차 캐시 삭제
 
         Long lastMenuProductMenuId = menuProduct.getMenu().getId();
 

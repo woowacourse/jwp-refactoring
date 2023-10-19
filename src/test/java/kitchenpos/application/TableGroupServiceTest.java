@@ -10,11 +10,11 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.application.exception.TableGroupServiceException.ExistsNotCompletionOrderException;
-import kitchenpos.application.exception.TableGroupServiceException.NotExistsOrderTableException;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.exception.OrderTableException.NotExistsOrderTableException;
 import kitchenpos.domain.exception.TableGroupException.CannotAssignOrderTableException;
+import kitchenpos.domain.exception.TableGroupException.ExistsNotCompletionOrderException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -106,7 +106,7 @@ class TableGroupServiceTest {
     void ungroup_success() {
         TableGroup tableGroup = TableGroup.from(List.of(orderTable1, orderTable2));
 
-        when(tableGroupRepository.findById(1L)).thenReturn(Optional.ofNullable(tableGroup));
+        when(tableGroupRepository.getById(1L)).thenReturn(tableGroup);
         when(orderRepository.existsByOrderTableInAndOrderStatusIn(anyList(), anyList())).thenReturn(false);
 
         // ungroup 이전
@@ -127,7 +127,7 @@ class TableGroupServiceTest {
     void ungroup_fail() {
         long tableGroupId = 1L;
         TableGroup tableGroup = TableGroup.from(List.of(orderTable1, orderTable2));
-        when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.ofNullable(tableGroup));
+        when(tableGroupRepository.getById(1L)).thenReturn(tableGroup);
         when(orderRepository.existsByOrderTableInAndOrderStatusIn(anyList(), anyList())).thenReturn(true);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

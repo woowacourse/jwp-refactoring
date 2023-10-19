@@ -7,12 +7,12 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.exception.MenuServiceException.NotExistsMenuGroupException;
-import kitchenpos.application.exception.MenuServiceException.NotExistsProductException;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.MenuException.NotExistsMenuGroupException;
+import kitchenpos.domain.exception.MenuException.NotExistsProductException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -26,15 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
-
-    private static final int MENU_PRICE = 20000;
-    private static final long MENU_GROUP_ID = 1L;
-    private static final long PRODUCT1_ID = 1L;
-    private static final int PRODUCT1_QUANTITY = 2;
-    private static final long PRODUCT2_ID = 2L;
-    private static final int PRODUCT2_QUANTITY = 3;
-    private static final int PRODUCT1_PRICE = 1000;
-    private static final int PRODUCT2_PRICE = 10000;
 
     @InjectMocks
     private MenuService menuService;

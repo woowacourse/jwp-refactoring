@@ -2,10 +2,9 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.exception.TableServiceException.ExistsNotCompletionOrderException;
-import kitchenpos.application.exception.TableServiceException.NotExistsOrderTableException;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exception.OrderTableException.ExistsNotCompletionOrderException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -33,12 +32,11 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new NotExistsOrderTableException(orderTableId));
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
         if (orderRepository.existsByOrderTableAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new ExistsNotCompletionOrderException();
+            throw new ExistsNotCompletionOrderException(orderTableId);
         }
 
         savedOrderTable.changeEmpty(orderTable.isEmpty());
@@ -48,8 +46,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new NotExistsOrderTableException(orderTableId));
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
         final int numberOfGuests = orderTable.getNumberOfGuests();
 

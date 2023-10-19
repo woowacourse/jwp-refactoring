@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import kitchenpos.application.exception.TableServiceException.InvalidNumberOfGuestsException;
 import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
 import kitchenpos.domain.exception.OrderTableException.ExistsTableGroupException;
+import kitchenpos.domain.exception.OrderTableException.InvalidNumberOfGuestsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

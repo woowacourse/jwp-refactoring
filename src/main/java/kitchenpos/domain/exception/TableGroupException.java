@@ -23,4 +23,22 @@ public abstract class TableGroupException extends KitchenPosException {
             super(INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE);
         }
     }
+
+    public static class NotExistsTableGroupException extends TableGroupException {
+
+        private static final String INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE = "테이블 그룹이 없습니다. 현재 테이블 그룹: ";
+
+        public NotExistsTableGroupException(final Long tableGroupId) {
+            super(INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE + tableGroupId);
+        }
+    }
+
+    public static class ExistsNotCompletionOrderException extends TableGroupException {
+
+        private static final String EXISTS_NOT_COMPLETION_ORDER_MESSAGE = "완료되지 않은 주문이 있습니다.";
+
+        public ExistsNotCompletionOrderException() {
+            super(EXISTS_NOT_COMPLETION_ORDER_MESSAGE);
+        }
+    }
 }

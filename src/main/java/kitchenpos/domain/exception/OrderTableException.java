@@ -1,6 +1,6 @@
 package kitchenpos.domain.exception;
 
-public class OrderTableException extends KitchenPosException{
+public class OrderTableException extends KitchenPosException {
 
     public OrderTableException(String message) {
         super(message);
@@ -30,6 +30,24 @@ public class OrderTableException extends KitchenPosException{
 
         public EmptyTableException() {
             super(EMPTY_TABLE_MESSAGE);
+        }
+    }
+
+    public static class NotExistsOrderTableException extends OrderTableException {
+
+        private static final String NOT_EXISTS_ORDER_TABLE_MESSAGE = "주문에 포함된 주문 테이블이 존재하지 않습니다.";
+
+        public NotExistsOrderTableException() {
+            super(NOT_EXISTS_ORDER_TABLE_MESSAGE);
+        }
+    }
+
+    public static class ExistsNotCompletionOrderException extends OrderTableException {
+
+        private static final String EXISTS_NOT_COMPLETION_ORDER_MESSAGE = "완료되지 않은 주문이 있습니다. 완료되지 않은 주문 테이블 번호: ";
+
+        public ExistsNotCompletionOrderException(final Long orderTableId) {
+            super(EXISTS_NOT_COMPLETION_ORDER_MESSAGE + orderTableId);
         }
     }
 }

@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.exception.MenuServiceException.NotExistsMenuGroupException;
-import kitchenpos.application.exception.MenuServiceException.NotExistsProductException;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.exception.MenuException.NotExistsMenuGroupException;
+import kitchenpos.domain.exception.MenuException.NotExistsProductException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;

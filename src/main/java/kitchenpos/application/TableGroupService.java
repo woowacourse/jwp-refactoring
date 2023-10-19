@@ -2,12 +2,11 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.exception.TableGroupServiceException.ExistsNotCompletionOrderException;
-import kitchenpos.application.exception.TableGroupServiceException.NotExistsOrderTableException;
-import kitchenpos.application.exception.TableGroupServiceException.NotExistsTableGroupException;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.exception.OrderTableException.NotExistsOrderTableException;
+import kitchenpos.domain.exception.TableGroupException.ExistsNotCompletionOrderException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -36,14 +35,12 @@ public class TableGroupService {
     public TableGroup create(final List<OrderTable> orderTables) {
         TableGroup tableGroup = TableGroup.from(orderTables);
 
-        validateTableGroup(tableGroup);
+        validateTableGroup(tableGroup.getOrderTables());
 
         return tableGroupRepository.save(tableGroup);
     }
 
-    private void validateTableGroup(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
+    private void validateTableGroup(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -55,8 +52,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new NotExistsTableGroupException(tableGroupId));
+        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
 
         validateUngroup(tableGroup);
 
@@ -65,8 +61,8 @@ public class TableGroupService {
 
     private void validateUngroup(final TableGroup tableGroup) {
         // 아래의 검증 로직을 객체 필드로 가져오면 쿼리 조회횟수가 많아지기에 성능이 떨어지기에 서비스에서 이를 처리
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(tableGroup.getOrderTables(),
-                CANNOT_UNGROUP_ORDER_STATUSES)) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                tableGroup.getOrderTables(), CANNOT_UNGROUP_ORDER_STATUSES)) {
             throw new ExistsNotCompletionOrderException();
         }
     }
