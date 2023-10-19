@@ -26,10 +26,9 @@ public class MenuProducts {
     }
 
     private static void validate(List<MenuProduct> menuProducts, BigDecimal price) {
-        BigDecimal sumOfEachPrice = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sumOfEachPrice = sumOfEachPrice.add(menuProduct.getPrice());
-        }
+        BigDecimal sumOfEachPrice = menuProducts.stream()
+            .map(MenuProduct::getPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (price.compareTo(sumOfEachPrice) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 개별 상품 가격의 합보다 같거나 적어야합니다.");
