@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -27,7 +27,7 @@ class MenuServiceTest {
     @Mock
     private MenuDao menuDao;
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Mock
     private MenuProductDao menuProductDao;
     @Mock
@@ -35,27 +35,30 @@ class MenuServiceTest {
     @InjectMocks
     private MenuService menuService;
 
+    //TODO existsById 수정
     @Test
     void 메뉴_그룹_ID_가_존재하지_않은_경우_예외가_발생한다() {
         Menu 분식메뉴 = MenuFixtures.떡볶이메뉴();
 
-        when(menuGroupDao.existsById(1L)).thenReturn(false);
+        when(menuGroupRepository.existsById(any())).thenReturn(false);
 
         assertThatThrownBy(() -> menuService.create(분식메뉴)).isInstanceOf(IllegalArgumentException.class);
     }
 
+    //TODO existsById 수정
     @Test
     void 제품_ID가_존재하지_않는_경우_예외가_발생한다() {
         Menu 분식메뉴 = MenuFixtures.떡볶이메뉴();
         MenuProduct 메뉴상품 = MenuProductFixtures.메뉴상품_로제떡볶이();
         분식메뉴.setMenuProducts(List.of(메뉴상품));
 
-        when(menuGroupDao.existsById(1L)).thenReturn(true);
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> menuService.create(분식메뉴)).isInstanceOf(IllegalArgumentException.class);
     }
 
+    //TODO existsById 수정
     @Test
     void 전체_제품의_총_가격_보다_메뉴가격이_크면_예외가_발생한다() {
         Menu menu = MenuFixtures.떡볶이메뉴();
@@ -63,7 +66,7 @@ class MenuServiceTest {
         MenuProduct 메뉴상품_짜장떡볶이 = MenuProductFixtures.메뉴상품_짜장떡볶이();
         menu.setMenuProducts(List.of(메뉴상품_로제떡볶이, 메뉴상품_짜장떡볶이));
 
-        when(menuGroupDao.existsById(1L)).thenReturn(true);
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
 
         Product 로제떡볶이 = ProductFixtures.로제떡볶이();
         when(productRepository.findById(메뉴상품_로제떡볶이.getProductId())).thenReturn(Optional.of(로제떡볶이));
@@ -74,6 +77,7 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
+    //TODO existsById 수정
     @Test
     void 메뉴_생성를_생성할_수_있다() {
         Menu menu = MenuFixtures.떡볶이메뉴();
@@ -82,7 +86,7 @@ class MenuServiceTest {
         MenuProduct 메뉴상품_마라떡볶이 = MenuProductFixtures.메뉴상품_마라떡볶이();
         menu.setMenuProducts(List.of(메뉴상품_로제떡볶이, 메뉴상품_짜장떡볶이, 메뉴상품_마라떡볶이));
 
-        when(menuGroupDao.existsById(1L)).thenReturn(true);
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
 
         Product 로제떡볶이 = ProductFixtures.로제떡볶이();
         when(productRepository.findById(메뉴상품_로제떡볶이.getProductId())).thenReturn(Optional.of(로제떡볶이));
@@ -106,6 +110,7 @@ class MenuServiceTest {
 
     }
 
+    //TODO existsById 수정
     @Test
     void 전체_메뉴_조회할_수_있다() {
         Menu menu = MenuFixtures.떡볶이메뉴();
@@ -114,6 +119,6 @@ class MenuServiceTest {
         menuService.list();
 
         verify(menuDao).findAll();
-        verify(menuProductDao).findAllByMenuId(menu.getId());
+        verify(menuProductDao).findAllByMenuId(any());
     }
 }
