@@ -91,6 +91,7 @@ class OrderServiceTest implements ServiceTest {
         final OrderTable orderTable = orderTableDao.save(주문_테이블(10, true));
         final Order order = 주문(orderTable.getId(), orderLineItem);
 
+        //expected
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
