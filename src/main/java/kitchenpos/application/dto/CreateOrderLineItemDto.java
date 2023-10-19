@@ -1,11 +1,12 @@
 package kitchenpos.application.dto;
 
-import java.math.BigDecimal;
-
 public class CreateOrderLineItemDto {
 
     private Long menuId;
     private Long quantity;
+
+    public CreateOrderLineItemDto() {
+    }
 
     public CreateOrderLineItemDto(Long menuId, Long quantity) {
         this.menuId = menuId;

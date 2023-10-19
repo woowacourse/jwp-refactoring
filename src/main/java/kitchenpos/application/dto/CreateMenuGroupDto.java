@@ -4,6 +4,9 @@ public class CreateMenuGroupDto {
 
     private String name;
 
+    public CreateMenuGroupDto() {
+    }
+
     public CreateMenuGroupDto(String name) {
         this.name = name;
     }

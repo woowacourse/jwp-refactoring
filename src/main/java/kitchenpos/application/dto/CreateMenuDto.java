@@ -10,6 +10,9 @@ public class CreateMenuDto {
     private Long menuGroupId;
     private List<CreateMenuProductDto> menuProducts;
 
+    public CreateMenuDto() {
+    }
+
     public CreateMenuDto(String name, BigDecimal price, Long menuGroupId, List<CreateMenuProductDto> menuProducts) {
         this.name = name;
         this.price = price;

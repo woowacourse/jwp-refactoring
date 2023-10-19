@@ -6,6 +6,9 @@ public class CreateTableGroupDto {
 
     private List<CreateOrderTableIdDto> orderTables;
 
+    public CreateTableGroupDto() {
+    }
+
     public CreateTableGroupDto(List<CreateOrderTableIdDto> orderTables) {
         this.orderTables = orderTables;
     }

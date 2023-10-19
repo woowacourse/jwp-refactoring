@@ -5,6 +5,9 @@ public class UpdateOrderStatusDto {
     private Long orderId;
     private String orderStatus;
 
+    public UpdateOrderStatusDto() {
+    }
+
     public UpdateOrderStatusDto(Long orderId, String orderStatus) {
         this.orderId = orderId;
         this.orderStatus = orderStatus;

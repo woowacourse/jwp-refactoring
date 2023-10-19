@@ -5,6 +5,9 @@ public class UpdateOrderTableEmptyDto {
     private Long id;
     private Boolean empty;
 
+    public UpdateOrderTableEmptyDto() {
+    }
+
     public UpdateOrderTableEmptyDto(Long id, Boolean empty) {
         this.id = id;
         this.empty = empty;

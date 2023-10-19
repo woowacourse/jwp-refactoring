@@ -7,6 +7,9 @@ public class CreateProductDto {
     private String name;
     private BigDecimal price;
 
+    public CreateProductDto() {
+    }
+
     public CreateProductDto(String name, BigDecimal price) {
         this.name = name;
         this.price = price;

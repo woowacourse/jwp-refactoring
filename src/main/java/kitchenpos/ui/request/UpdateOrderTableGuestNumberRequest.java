@@ -4,6 +4,9 @@ public class UpdateOrderTableGuestNumberRequest {
 
     private Integer numberOfGuests;
 
+    public UpdateOrderTableGuestNumberRequest() {
+    }
+
     public UpdateOrderTableGuestNumberRequest(Integer numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
