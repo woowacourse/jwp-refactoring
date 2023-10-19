@@ -5,22 +5,25 @@ import kitchenpos.domain.OrderTable;
 public class OrderTableCreateRequest {
 
     private int numberOfGuests;
+    private boolean empty;
 
     protected OrderTableCreateRequest() {
     }
 
-    public OrderTableCreateRequest(final int numberOfGuests) {
+    public OrderTableCreateRequest(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public OrderTable toEntity() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTable;
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

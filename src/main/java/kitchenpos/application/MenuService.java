@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional(readOnly = true)
 @Service
 public class MenuService {
 
@@ -49,5 +50,11 @@ public class MenuService {
         return menuRepository.findAll().stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    public void validateExistenceByIds(final List<Long> menuIds) {
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("존재하지 않는 주문 항목입니다.");
+        }
     }
 }

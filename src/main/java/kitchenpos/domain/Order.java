@@ -16,10 +16,17 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.CascadeType.REMOVE;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 @Table(name = "orders")
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Order {
+
+    private static final OrderStatus INITIAL_ORDER_STATUS = OrderStatus.COOKING;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,50 +35,61 @@ public class Order {
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
+
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    @JoinColumn(name = "orderId")
-    @OneToMany
+    @JoinColumn(name = "order_id")
+    @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
+
+    protected Order() {
+    }
+
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        if (isNull(orderTableId)) {
+            throw new IllegalArgumentException("주문 테이블 ID가 필요합니다.");
+        }
+        if (isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 필요합니다.");
+        }
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, INITIAL_ORDER_STATUS, null, orderLineItems);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION == this.orderStatus) {
+            throw new IllegalStateException("완료된 주문은 변경할 수 없습니다.");
+        }
+
+        this.orderStatus = orderStatus;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

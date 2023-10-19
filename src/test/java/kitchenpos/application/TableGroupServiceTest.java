@@ -75,7 +75,8 @@ class TableGroupServiceTest {
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("그룹 지정은 주문 테이블이 최소 2개여야 합니다.");
         }
 
         @Test
@@ -83,7 +84,7 @@ class TableGroupServiceTest {
         void create_fail2() {
             //given
             final OrderTable orderTable1 = entityFactory.saveOrderTable();
-            final OrderTable orderTable2 = new OrderTable();
+            final OrderTable orderTable2 = new OrderTable(0L, null, 4, false);
 
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(new TableGroupOrderTableRequest(orderTable1.getId()),
@@ -91,7 +92,8 @@ class TableGroupServiceTest {
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
@@ -107,7 +109,8 @@ class TableGroupServiceTest {
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 빈 테이블이 아니거나 이미 그룹 지정된 테이블입니다.");
         }
 
         @Test
@@ -126,7 +129,8 @@ class TableGroupServiceTest {
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 빈 테이블이 아니거나 이미 그룹 지정된 테이블입니다.");
         }
     }
 

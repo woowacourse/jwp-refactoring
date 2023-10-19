@@ -1,9 +1,7 @@
 package kitchenpos;
 
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
@@ -13,7 +11,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -29,10 +25,6 @@ import static java.util.Collections.singletonList;
 @Component
 public class EntityFactory {
 
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-    @Autowired
-    private MenuProductRepository menuProductRepository;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
@@ -47,81 +39,35 @@ public class EntityFactory {
     private TableGroupRepository tableGroupRepository;
 
     public OrderTable saveOrderTable() {
-        final OrderTable request = new OrderTable();
-        request.setNumberOfGuests(5);
-        request.setEmpty(true);
-
+        final OrderTable request = new OrderTable(5, true);
         return orderTableRepository.save(request);
     }
 
     public OrderTable saveOrderTableWithNotEmpty() {
-        final OrderTable request = new OrderTable();
-        request.setNumberOfGuests(5);
-
-        return orderTableRepository.save(request);
-    }
-
-    public OrderTable saveOrderTableWithTableGroup(final TableGroup tableGroup) {
-        final OrderTable request = new OrderTable();
-        request.setNumberOfGuests(5);
-        request.setTableGroupId(tableGroup.getId());
-
+        final OrderTable request = new OrderTable(5, false);
         return orderTableRepository.save(request);
     }
 
     public TableGroup saveTableGroup(final OrderTable orderTable1, final OrderTable orderTable2) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-
-        return tableGroupRepository.save(tableGroup);
-    }
-
-    public TableGroup saveTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        final TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
         return tableGroupRepository.save(tableGroup);
     }
 
     public Order saveOrder(final OrderTable orderTable) {
         final Menu menu = saveMenu();
-        final OrderLineItem orderLineItem = createOrderLineItem(menu, 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
-        final Order request = new Order();
-        request.setOrderTableId(orderTable.getId());
-        request.setOrderStatus(OrderStatus.COOKING);
-        final Order order = orderRepository.save(request);
-
-        orderLineItem.setOrderId(order.getId());
-        final OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-
-        return orderRepository.save(order);
+        final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
+        return orderRepository.save(request);
     }
 
     public Order saveOrder() {
         final OrderTable orderTable = saveOrderTableWithNotEmpty();
         final Menu menu = saveMenu();
-        final OrderLineItem orderLineItem = createOrderLineItem(menu, 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
-        final Order request = new Order();
-        request.setOrderTableId(orderTable.getId());
-        request.setOrderStatus(OrderStatus.COOKING);
-        final Order order = orderRepository.save(request);
-
-        orderLineItem.setOrderId(order.getId());
-        final OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-
+        final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);
-    }
-
-    public OrderLineItem createOrderLineItem(final Menu menu, final int quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
     }
 
     public Menu saveMenu() {
@@ -141,9 +87,7 @@ public class EntityFactory {
     }
 
     public MenuGroup saveMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
+        final MenuGroup menuGroup = new MenuGroup(name);
         return menuGroupRepository.save(menuGroup);
     }
 }

@@ -37,7 +37,7 @@ class OrderTableServiceTest {
     @DisplayName("주문 테이블을 생성할 수 있다")
     void create() {
         //given
-        final OrderTableCreateRequest request = new OrderTableCreateRequest(5);
+        final OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
 
         //when
         final OrderTableResponse orderTable = orderTableService.create(request);
@@ -82,21 +82,24 @@ class OrderTableServiceTest {
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeEmpty(0L, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
         @DisplayName("주문 테이블의 빈 테이블 여부를 변경할 때 단체 지정이 존재하면 예외가 발생한다")
         void changeEmpty_fail2() {
             //given
-            final TableGroup tableGroup = entityFactory.saveTableGroup();
-            final OrderTable orderTable = entityFactory.saveOrderTableWithTableGroup(tableGroup);
+            final OrderTable orderTable1 = entityFactory.saveOrderTable();
+            final OrderTable orderTable2 = entityFactory.saveOrderTable();
+            final TableGroup tableGroup = entityFactory.saveTableGroup(orderTable1, orderTable2);
 
             final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 
             //when, then
-            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable1.getId(), request))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("그룹 지정된 테이블은 빈 테이블 여부를 바꿀 수 없습니다.");
         }
 
         @ParameterizedTest
@@ -114,7 +117,8 @@ class OrderTableServiceTest {
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 조리 중이거나 식사 중입니다.");
         }
     }
 
@@ -146,7 +150,8 @@ class OrderTableServiceTest {
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("방문자 수는 음수일 수 없습니다.");
         }
 
         @Test
@@ -157,7 +162,8 @@ class OrderTableServiceTest {
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(0L, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
@@ -170,7 +176,8 @@ class OrderTableServiceTest {
 
             //when, then
             assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("빈 테이블의 방문자 수를 바꿀 수 없습니다.");
         }
     }
 }
