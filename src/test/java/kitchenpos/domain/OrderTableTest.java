@@ -5,9 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -32,7 +29,7 @@ class OrderTableTest {
     void throwException_changeOrderTableEmpty_when_tableGroupIsNotNull() {
         // given
         final OrderTable orderTable = new OrderTable(
-                new TableGroup(LocalDateTime.now(), new ArrayList<>()),
+                TableGroup.emptyOrderTables(),
                 5,
                 false
         );

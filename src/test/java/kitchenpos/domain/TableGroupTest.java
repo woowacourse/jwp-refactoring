@@ -3,8 +3,6 @@ package kitchenpos.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -15,7 +13,7 @@ class TableGroupTest {
     @DisplayName("[SUCCESS] 생성한다.")
     @Test
     void success_create() {
-        assertThatCode(() -> new TableGroup(LocalDateTime.now(), new ArrayList<>()))
+        assertThatCode(() -> TableGroup.emptyOrderTables())
                 .doesNotThrowAnyException();
     }
 
@@ -23,11 +21,11 @@ class TableGroupTest {
     @Test
     void success_addOrderTablesAndChangeEmptyFull() {
         // given
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), new ArrayList<>());
+        final TableGroup tableGroup = TableGroup.emptyOrderTables();
         final OrderTable orderTable = new OrderTable(null, 10, true);
 
         // when
-        tableGroup.addOrderTablesAndChangeEmptyFull(List.of(orderTable));
+        tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
 
         // then
         assertSoftly(softly -> {

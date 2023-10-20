@@ -46,6 +46,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public boolean isTableGroupExists() {
+        return tableGroup != null;
+    }
+
     public void changeOrderTableEmpty(final boolean isEmpty) {
         if (isEmpty && tableGroup != null) {
             throw new IllegalArgumentException("단체 지정이 되어 있으므로 주문 테이블 상태를 비어있게 할 수 없습니다.");
@@ -54,7 +58,7 @@ public class OrderTable {
         this.empty = isEmpty;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void assignTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 

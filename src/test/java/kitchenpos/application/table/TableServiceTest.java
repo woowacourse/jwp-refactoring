@@ -23,7 +23,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -93,9 +92,9 @@ class TableServiceTest extends ApplicationTestConfig {
                     savedOrderTableWithFiveGuests,
                     orderTableRepository.save(new OrderTable(null, 10, true))
             );
-            final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+            final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.emptyOrderTables());
             for (final OrderTable savedOrderTable : savedOrderTables) {
-                savedOrderTable.setTableGroup(savedTableGroup);
+                savedOrderTable.assignTableGroup(savedTableGroup);
                 orderTableRepository.save(savedOrderTable);
                 orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             }

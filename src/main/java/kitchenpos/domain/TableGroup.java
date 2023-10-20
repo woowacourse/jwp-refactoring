@@ -1,16 +1,11 @@
 package kitchenpos.domain;
 
-import org.hibernate.annotations.BatchSize;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 public class TableGroup {
@@ -21,29 +16,28 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @BatchSize(size = 10)
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    protected TableGroup(final LocalDateTime createdDate, final OrderTables orderTables) {
         this(null, createdDate, orderTables);
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    protected TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public void addOrderTablesAndChangeEmptyFull(final List<OrderTable> orderTables) {
-        orderTables.forEach(orderTable -> {
-            orderTable.setTableGroup(this);
-            orderTable.changeOrderTableEmpty(false);
-        });
-        this.orderTables = orderTables;
+    public static TableGroup emptyOrderTables() {
+        return new TableGroup(LocalDateTime.now(), OrderTables.empty());
+    }
+
+    public void addOrderTablesAndChangeEmptyFull(final OrderTables orderTables) {
+        this.orderTables.addOrderTables(orderTables);
+        orderTables.assignTableGroup(this);
     }
 
     public Long getId() {
@@ -54,7 +48,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 

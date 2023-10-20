@@ -22,7 +22,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -128,7 +127,7 @@ class OrderServiceTest extends ApplicationTestConfig {
     }
 
     private OrderTable createOrderTable(final int numberOfGuests, final boolean empty) {
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), Collections.emptyList()));
+        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.emptyOrderTables());
         return orderTableRepository.save(new OrderTable(savedTableGroup, numberOfGuests, empty));
     }
 

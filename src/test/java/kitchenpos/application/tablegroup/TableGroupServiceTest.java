@@ -9,6 +9,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
@@ -69,7 +70,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
                 softly.assertThat(actual.getCreatedDate()).isBefore(LocalDateTime.now());
-                softly.assertThat(actual.getOrderTables())
+                softly.assertThat(actual.getOrderTables().getOrderTableItems())
                         .usingRecursiveComparison()
                         .ignoringExpectedNullFields()
                         .isEqualTo(List.of(
@@ -145,8 +146,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                     orderTableRepository.save(new OrderTable(null, 10, true))
             );
 
-            final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
-            savedTableGroup.addOrderTablesAndChangeEmptyFull(savedOrderTables);
+            final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.emptyOrderTables());
+            savedTableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(savedOrderTables));
 
             // when
             final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
@@ -222,6 +223,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             final OrderLineItem orderLineItem = OrderLineItem.ofWithoutOrder(menu, new Quantity(1));
             final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(List.of(orderLineItem));
+            savedOrder.changeOrderStatus(orderStatus);
 
             return savedOrderTable;
         }
@@ -244,9 +246,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
     }
 
     private List<Long> collectOrderTableIds(final List<OrderTable> savedOrderTables) {
-        final List<Long> savedOrderTableIds = savedOrderTables.stream()
+        return savedOrderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        return savedOrderTableIds;
     }
 }

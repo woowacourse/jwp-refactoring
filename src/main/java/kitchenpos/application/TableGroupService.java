@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.repository.OrderRepository;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -52,11 +52,10 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup newTableGroup = new TableGroup(LocalDateTime.now(), findOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
-        savedTableGroup.addOrderTablesAndChangeEmptyFull(findOrderTables);
+        final TableGroup newTableGroup = TableGroup.emptyOrderTables();
+        newTableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(findOrderTables));
 
-        return savedTableGroup;
+        return tableGroupRepository.save(newTableGroup);
     }
 
     @Transactional
@@ -73,7 +72,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
+            orderTable.assignTableGroup(null);
             orderTable.changeOrderTableEmpty(false);
             orderTableRepository.save(orderTable);
         }
