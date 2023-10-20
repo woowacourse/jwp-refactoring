@@ -75,30 +75,17 @@ public class Menu {
         );
     }
 
-    public static Menu ofWithMenuProducts(
-            String name,
-            Long price,
-            MenuGroup menuGroup,
-            List<MenuProduct> menuProducts
-    ) {
-        Menu menu = Menu.of(name, price, menuGroup);
-        menuProducts.forEach(menu::addMenuProduct);
-        validateTotalPrice(Price.from(price), menuProducts);
-
-        return menu;
-    }
-
-    public void addMenuProduct(MenuProduct menuProduct) {
+    private void addMenuProduct(MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
         menuProduct.registerMenu(this);
     }
 
     public void addAllMenuProducts(List<MenuProduct> menuProducts) {
         menuProducts.forEach(this::addMenuProduct);
-        validateTotalPrice(price, menuProducts);
+        validateTotalPrice();
     }
 
-    private static void validateTotalPrice(Price price, List<MenuProduct> menuProducts) {
+    private void validateTotalPrice() {
         Price totalPrice = menuProducts
                 .stream()
                 .map(MenuProduct::totalPrice)

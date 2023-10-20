@@ -41,7 +41,7 @@ public class MenuService {
                 request.getPrice(),
                 findMenuGroup(request.getMenuGroupId())
         );
-        
+
         List<MenuProduct> menuProducts = request.getMenuProductCreateRequests()
                 .stream()
                 .map(this::createMenuProduct)

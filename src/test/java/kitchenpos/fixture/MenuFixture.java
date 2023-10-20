@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -14,24 +13,28 @@ public class MenuFixture {
             MenuGroup savedMenuGroup,
             MenuProduct menuProduct
     ) {
-        return Menu.ofWithMenuProducts(
+        Menu menu = Menu.of(
                 "메뉴",
                 price,
-                savedMenuGroup,
-                List.of(menuProduct)
+                savedMenuGroup
         );
+
+        menu.addAllMenuProducts(List.of(menuProduct));
+        return menu;
     }
 
     public static Menu 존재하지_않는_메뉴_그룹을_가진_메뉴_생성(
             Long price,
-            MenuProduct savedMenuProduct
+            MenuProduct menuProduct
     ) {
-        return Menu.ofWithMenuProducts(
+        Menu menu = Menu.of(
                 "메뉴",
                 price,
-                MenuGroupFixture.떠오르는_메뉴_그룹(),
-                List.of(savedMenuProduct)
+                MenuGroupFixture.떠오르는_메뉴_그룹()
         );
+
+        menu.addAllMenuProducts(List.of(menuProduct));
+        return menu;
     }
 
 }
