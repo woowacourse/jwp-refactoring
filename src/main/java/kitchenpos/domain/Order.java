@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
+    // TODO EnumType으로 변경
     @Column(nullable = false)
     private String orderStatus;
     @Column
@@ -39,6 +41,7 @@ public class Order {
     public Order(final OrderTable orderTable,
                  final LocalDateTime orderedTime) {
         this.orderTable = orderTable;
+        orderTable.addOrder(this);
         this.orderStatus = COOKING.name();
         this.orderedTime = orderedTime;
     }
@@ -62,11 +65,19 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isInProgress() {
+        return MEAL.name().equals(orderStatus) || COOKING.name().equals(orderStatus);
+    }
+
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public void startMeal() {
+        this.orderStatus = MEAL.name();
     }
 }

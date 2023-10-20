@@ -23,7 +23,7 @@ public class OrderLineItem {
     @Column(nullable = false)
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     public OrderLineItem(final Order order, final Menu menu, final long quantity) {

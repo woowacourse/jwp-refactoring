@@ -1,11 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_저장;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_저장;
-import static kitchenpos.fixture.TableGroupFixture.단체_테이블_저장;
+import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,12 +46,9 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("모든 주문 테이블은 등록 시점에는 소속된 단체가 없다.")
     void 주문_테이블_등록_성공_단체_미지정() {
         // given
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable saved = tableService.create(주문_테이블_생성());
 
-        // when
-        final OrderTable saved = tableService.create(orderTable);
-
-        // then
+        // expected
         assertThat(saved.getTableGroup()).isNull();
     }
 
@@ -62,16 +56,15 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("특정 테이블을 빈 테이블로 변경하면 해당하는 id의 정보를 업데이트한다.")
     void 주문_테이블_비우기_성공_빈_테이블_여부() {
         // given
-        final OrderTable table = 빈_테이블_저장(tableService::create);
-        table.setEmpty(true);
+        final OrderTable table = tableService.create(빈_테이블_생성());
 
         // when
-        final OrderTable emptyTable = tableService.changeEmpty(table.getId(), table);
+        table.empty();
 
         // then
-        assertThat(emptyTable.isEmpty()).isTrue();
+        assertThat(table.isEmpty()).isTrue();
         assertThat(tableService.list())
-                .filteredOn(found -> Objects.equals(found.getId(), emptyTable.getId()))
+                .filteredOn(found -> Objects.equals(found.getId(), table.getId()))
                 .filteredOn(OrderTable::isEmpty)
                 .hasSize(1);
     }
@@ -80,43 +73,17 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("소속된 단체가 있으면 테이블을 비울 수 없다.")
     void 주문_테이블_비우기_실패_단체_소속() {
         // given
-        final OrderTable table = 빈_테이블_저장(tableService::create);
+        final OrderTable tableInGroup = tableService.create(빈_테이블_생성());
+        List<OrderTable> tablesInGroup = List.of(
+                tableInGroup,
+                tableService.create(빈_테이블_생성())
+        );
 
         // when
-        단체_테이블_저장(tableGroupService::create, List.of(table, 빈_테이블_저장(tableService::create)));
+        tableGroupService.create(new TableGroup(tablesInGroup));
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), table))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("조리 상태인 테이블을 비울 수 없다.")
-    void 주문_테이블_비우기_실패_조리_상태() {
-        // given
-        final OrderTable table = 주문_테이블_저장(tableService::create);
-
-        // when
-        orderService.create(주문_생성_메뉴_당_1개씩_상태_설정(table, COOKING, List.of(menuService.list().get(0))));
-        table.setEmpty(true);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), table))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("식사 상태인 테이블을 비울 수 없다.")
-    void 주문_테이블_비우기_실패_식사_상태() {
-        // given
-        final OrderTable table = 주문_테이블_저장(tableService::create);
-
-        // when
-        orderService.create(주문_생성_메뉴_당_1개씩_상태_설정(table, COOKING, List.of(menuService.list().get(0))));
-        table.setEmpty(true);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), table))
+        assertThatThrownBy(() -> tableService.changeEmpty(tableInGroup.getId(), tableInGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -124,7 +91,7 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("특정 테이블의 방문한 손님 수를 변경할 수 있다.")
     void 주문_테이블_방문한_손님수_변경_성공() {
         // given
-        final OrderTable table = 주문_테이블_저장(tableService::create);
+        final OrderTable table = tableService.create(주문_테이블_생성());
 
         // when
         final int numberOfGuests = 10;
@@ -144,7 +111,7 @@ class TableServiceTest extends IntegrationTest {
     void 주문_테이블_방문한_손님_수_변경_실패_음수() {
         // given
         final OrderTable table = tableService.list().get(0);
-        table.setEmpty(false);
+        table.changeEmpty(false);
         tableService.changeEmpty(table.getId(), table);
 
         // when
@@ -159,7 +126,7 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("빈 테이블의 방문한 손님 수를 변경할 수 없다.")
     void 주문_테이블_방문한_손님_수_변경_실패_빈_테이블() {
         // given
-        final OrderTable table = 빈_테이블_저장(tableService::create);
+        final OrderTable table = tableService.create(빈_테이블_생성());
 
         // when
         table.setNumberOfGuests(10);

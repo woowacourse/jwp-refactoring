@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,12 +40,8 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        /// TODO: 2023/10/20  empty 메서드로 변경
+        savedOrderTable.changeEmpty(orderTable.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }

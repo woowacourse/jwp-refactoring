@@ -101,7 +101,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("존재하지 않는 주문 테이블에서 주문을 등록할 수 없다.")
     void 주문_등록_실패_존재하지_않는_주문_테이블() {
         // given
-        final OrderTable fakeOrderTable = new OrderTable();
+        final OrderTable fakeOrderTable = 주문_테이블_생성();
         fakeOrderTable.setId(-1L);
         final Product chicken = productRepository.save(치킨_8000원());
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));

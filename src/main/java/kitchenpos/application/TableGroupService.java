@@ -56,7 +56,7 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroup(tableGroup);
-            savedOrderTable.setEmpty(false);
+            savedOrderTable.changeEmpty(false);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
@@ -78,7 +78,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.changeEmpty(false);
             orderTableRepository.save(orderTable);
         }
     }
