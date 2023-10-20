@@ -23,7 +23,6 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
         orderTable.setTableGroup(null);
 
         return orderTableRepository.save(orderTable);
@@ -57,6 +56,10 @@ public class TableService {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (Objects.isNull(orderTableId)) {
             throw new IllegalArgumentException();
         }
 

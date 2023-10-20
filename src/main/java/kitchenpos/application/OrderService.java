@@ -55,6 +55,10 @@ public class OrderService {
 
         order.setId(null);
 
+        if (Objects.isNull(order.getOrderTable().getId())) {
+            throw new IllegalArgumentException();
+        }
+
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
                 .orElseThrow(IllegalArgumentException::new);
 

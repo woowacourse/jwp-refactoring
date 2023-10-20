@@ -168,10 +168,7 @@ class OrderServiceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
-            final long invalidId = -1L;
-            final OrderTable notSavedOrderTable = new TableBuilder()
-                    .setId(invalidId)
-                    .build();
+            final OrderTable notSavedOrderTable = new TableBuilder().build();
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))

@@ -5,35 +5,32 @@ import kitchenpos.domain.table_group.TableGroup;
 
 public class TableBuilder {
 
-    private final OrderTable table;
+    private TableGroup tableGroup;
+    private int numberOfGuests;
+    private boolean empty;
 
     public TableBuilder() {
-        this.table = new OrderTable();
-        table.setEmpty(true);
-        table.setNumberOfGuests(0);
-    }
-
-    public TableBuilder setId(final Long id) {
-        table.setId(id);
-        return this;
+        this.tableGroup = null;
+        this.numberOfGuests = 0;
+        this.empty = true;
     }
 
     public TableBuilder setTableGroup(final TableGroup tableGroup) {
-        table.setTableGroup(tableGroup);
+        this.tableGroup = tableGroup;
         return this;
     }
 
     public TableBuilder setNumberOfGuests(final int numberOfGuests) {
-        table.setNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
         return this;
     }
 
     public TableBuilder setEmpty(final boolean empty) {
-        table.setEmpty(empty);
+        this.empty = empty;
         return this;
     }
 
     public OrderTable build() {
-        return table;
+        return new OrderTable(tableGroup, numberOfGuests, empty);
     }
 }

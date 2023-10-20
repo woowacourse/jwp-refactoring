@@ -95,7 +95,7 @@ class TableServiceTest {
         void should_throw_when_table_does_not_exists() {
             // given
             final long notExistsTableId = -1L;
-            final OrderTable notExistsTable = new TableBuilder().setId(notExistsTableId).build();
+            final OrderTable notExistsTable = new TableBuilder().build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
@@ -205,7 +205,6 @@ class TableServiceTest {
             final long invalidId = -1L;
 
             final OrderTable table = new TableBuilder()
-                    .setId(invalidId)
                     .setEmpty(false)
                     .build();
 
