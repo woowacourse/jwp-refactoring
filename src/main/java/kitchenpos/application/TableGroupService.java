@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -52,8 +51,6 @@ public class TableGroupService {
                 throw new IllegalArgumentException();
             }
         }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
