@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.vo.Quantity;
 
 @Entity
 @Table(name = "menu_product")
@@ -28,7 +29,7 @@ public class MenuProduct {
     private Product product;
 
     @Column(name = "quantity")
-    private long quantity;
+    private Quantity quantity;
 
     protected MenuProduct() {
     }
@@ -36,7 +37,7 @@ public class MenuProduct {
     private MenuProduct(Menu menu, Product product, long quantity) {
         this.menu = menu;
         this.product = product;
-        this.quantity = quantity;
+        this.quantity = new Quantity(quantity);
     }
 
     public static MenuProductBuilder builder() {
@@ -82,6 +83,6 @@ public class MenuProduct {
     }
 
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 }
