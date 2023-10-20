@@ -17,7 +17,6 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-
     protected TableGroup() {
     }
 
