@@ -39,6 +39,7 @@ public class TableGroup {
         return orderTables;
     }
 
+    // TODO setter
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }

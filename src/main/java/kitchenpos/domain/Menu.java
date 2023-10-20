@@ -119,6 +119,7 @@ public class Menu {
         return new ArrayList<>(menuProducts);
     }
 
+    // TODO setter
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = new ArrayList<>(menuProducts);
     }

@@ -58,6 +58,7 @@ public class Order {
         return orderStatus;
     }
 
+    // TODO setter 네이밍 변경 또는 의미있는 메서드로 나누기
     public void setOrderStatus(final String orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION, OrderStatus.valueOf(this.orderStatus))) {
             throw new IllegalArgumentException();
@@ -73,6 +74,7 @@ public class Order {
         return orderLineItems;
     }
 
+    // TODO setter
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }

@@ -44,6 +44,7 @@ public class MenuProduct {
         return menu;
     }
 
+    // TODO setter
     public void setMenu(Menu menu) {
         this.menu = menu;
     }
