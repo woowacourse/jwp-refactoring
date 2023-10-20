@@ -84,7 +84,7 @@ public class MenuService {
         Money actualPrice = Money.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             BigDecimal menuProductPrice = calculateMenuProductPrice(menuProduct);
-            actualPrice = actualPrice.add(new Money(menuProductPrice));
+            actualPrice = actualPrice.add(Money.fromNonNegative(menuProductPrice));
         }
         return actualPrice;
     }

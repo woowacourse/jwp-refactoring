@@ -30,7 +30,7 @@ public class Product {
 
     public Product(String name, BigDecimal price) {
         this.name = name;
-        this.price = new Money(price);
+        this.price = Money.fromNonNegative(price);
     }
 
     public Long getId() {

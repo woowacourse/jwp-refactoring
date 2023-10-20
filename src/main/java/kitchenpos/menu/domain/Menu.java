@@ -34,7 +34,7 @@ public class Menu {
     public Menu(Long menuGroupId, String name, BigDecimal price) {
         this.menuGroupId = menuGroupId;
         this.name = name;
-        this.price = new Money(price);
+        this.price = Money.fromNonNegative(price);
     }
 
     public boolean hasPriceGreaterThan(Money other) {

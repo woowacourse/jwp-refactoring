@@ -16,17 +16,23 @@ public class Money {
 
     public Money(BigDecimal value) {
         validatePriceIsNonNull(value);
-        validatePriceIsNotNegative(value);
         this.value = value;
     }
 
-    private void validatePriceIsNonNull(BigDecimal price) {
+    public static Money fromNonNegative(BigDecimal value) {
+        validatePriceIsNonNull(value);
+        validatePriceIsNotNegative(value);
+
+        return new Money(value);
+    }
+
+    private static void validatePriceIsNonNull(BigDecimal price) {
         if (price == null) {
             throw new PriceIsNotProvidedException();
         }
     }
 
-    private void validatePriceIsNotNegative(BigDecimal price) {
+    private static void validatePriceIsNotNegative(BigDecimal price) {
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new PriceIsNegativeException();
         }

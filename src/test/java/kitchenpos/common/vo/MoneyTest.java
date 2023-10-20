@@ -15,7 +15,7 @@ class MoneyTest {
     @Test
     void 가격이_0원_미만이라면_예외를_던진다() {
         // given, when, then
-        assertThatThrownBy(() -> new Money(BigDecimal.valueOf(-1L)))
+        assertThatThrownBy(() -> Money.fromNonNegative(BigDecimal.valueOf(-1L)))
                 .isInstanceOf(PriceIsNegativeException.class);
     }
 
