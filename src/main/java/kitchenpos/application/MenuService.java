@@ -54,14 +54,14 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menu);
+        menuRepository.save(menu);
 
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(savedMenu);
+            menuProduct.setMenu(menu);
             menuProductRepository.save(menuProduct);
         }
 
-        return savedMenu;
+        return menu;
     }
 
     public List<Menu> list() {

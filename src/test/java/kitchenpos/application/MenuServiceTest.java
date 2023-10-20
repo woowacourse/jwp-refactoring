@@ -5,7 +5,6 @@ import kitchenpos.domain.menu_group.MenuGroup;
 import kitchenpos.domain.menu_product.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import support.fixture.MenuBuilder;
 import support.fixture.MenuGroupBuilder;
+import support.fixture.MenuProductBuilder;
 import support.fixture.ProductBuilder;
 
 import java.math.BigDecimal;
@@ -39,8 +39,6 @@ class MenuServiceTest {
     private ProductRepository productRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     private MenuGroup menuGroup;
 
@@ -68,12 +66,14 @@ class MenuServiceTest {
             // given
             final int quantity = 2;
 
-            final MenuProduct menuProduct1 = new MenuProduct();
-            menuProduct1.setProduct(product1);
-            menuProduct1.setQuantity(quantity);
-            final MenuProduct menuProduct2 = new MenuProduct();
-            menuProduct2.setProduct(product1);
-            menuProduct2.setQuantity(quantity);
+            final MenuProduct menuProduct1 = new MenuProductBuilder()
+                    .setProduct(product1)
+                    .setQuantity(quantity)
+                    .build();
+            final MenuProduct menuProduct2 = new MenuProductBuilder()
+                    .setProduct(product2)
+                    .setQuantity(quantity)
+                    .build();
 
             final Menu menu = new MenuBuilder()
                     .setMenuGroup(menuGroup)
@@ -113,12 +113,14 @@ class MenuServiceTest {
 
         @BeforeEach
         void setUp() {
-            final Product product = productRepository.save(new ProductBuilder().setPrice(BigDecimal.valueOf(100_000_000))
+            final Product product = productRepository.save(new ProductBuilder()
+                    .setPrice(BigDecimal.valueOf(100_000_000))
                     .build());
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1);
+            final MenuProduct menuProduct = new MenuProductBuilder()
+                    .setProduct(product)
+                    .setQuantity(1)
+                    .build();
 
             menuBuilder = new MenuBuilder()
                     .setMenuGroup(menuGroup)

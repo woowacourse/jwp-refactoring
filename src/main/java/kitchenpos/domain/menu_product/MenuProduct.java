@@ -18,12 +18,17 @@ public class MenuProduct {
     private Product product;
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public MenuProduct(final Menu menu, final Product product, final long quantity) {
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    protected MenuProduct() {
+    }
+
+    public Long getSeq() {
+        return seq;
     }
 
     public Menu getMenu() {
@@ -38,15 +43,7 @@ public class MenuProduct {
         return product;
     }
 
-    public void setProduct(final Product product) {
-        this.product = product;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
