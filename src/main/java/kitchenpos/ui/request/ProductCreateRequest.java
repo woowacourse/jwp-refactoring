@@ -2,8 +2,11 @@ package kitchenpos.ui.request;
 
 public class ProductCreateRequest {
 
-    private final String name;
-    private final Long price;
+    private String name;
+    private Long price;
+
+    public ProductCreateRequest() {
+    }
 
     public ProductCreateRequest(String name, Long price) {
         this.name = name;

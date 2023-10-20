@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -156,8 +156,8 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         orderTable.setEmpty(false);
         orderTableDao.save(orderTable);
 
-        Order savedOrder = 주문을_저장하고_반환받는다(orderTable);
-        주문의_상태를_변환한다(savedOrder, orderStatus);
+        Orders savedOrders = 주문을_저장하고_반환받는다(orderTable);
+        주문의_상태를_변환한다(savedOrders, orderStatus);
 
         orderTable.setEmpty(true);
         orderTableDao.save(orderTable);

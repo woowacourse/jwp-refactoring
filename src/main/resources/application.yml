@@ -12,7 +12,8 @@ spring:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
+    #      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -96,8 +96,8 @@ class TableServiceTest extends ServiceIntegrationTest {
     void 주문_테이블에_속해_있는_주문_중_단_하나라도_요리중이면_empty_변경이_안된다() {
         // given
         OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, false));
-        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
-        주문의_상태를_변환한다(order, OrderStatus.COOKING);
+        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(orders, OrderStatus.COOKING);
         OrderTable emptyTrueOrderTable = 단체_지정이_없는_주문_테이블_생성(
                 1,
                 true
@@ -112,8 +112,8 @@ class TableServiceTest extends ServiceIntegrationTest {
     void 주문_테이블에_속해_있는_주문_중_단_하나라도_식사중이면_empty_변경이_안된다() {
         // given
         OrderTable savedOrderTable = orderTableDao.save(단체_지정이_없는_주문_테이블_생성(1, false));
-        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
-        주문의_상태를_변환한다(order, OrderStatus.MEAL);
+        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(orders, OrderStatus.MEAL);
         OrderTable emptyTrueOrderTable = 단체_지정이_없는_주문_테이블_생성(
                 1,
                 true
@@ -132,8 +132,8 @@ class TableServiceTest extends ServiceIntegrationTest {
                 false
         );
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
-        주문의_상태를_변환한다(order, OrderStatus.COMPLETION);
+        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
+        주문의_상태를_변환한다(orders, OrderStatus.COMPLETION);
         OrderTable emptyTrueOrderTable = 단체_지정이_없는_주문_테이블_생성(1, true);
 
         // when

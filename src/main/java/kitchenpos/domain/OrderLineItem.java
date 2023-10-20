@@ -1,58 +1,73 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import kitchenpos.domain.vo.Quantity;
+
+@Entity
 public class OrderLineItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Orders orders;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
+
+    @Embedded
+    private Quantity quantity;
 
     public OrderLineItem(){
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
-        this(null, null, menuId, quantity);
+    public OrderLineItem(Menu menu, Quantity quantity) {
+        this(null, null, menu, quantity);
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
-    }
-
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Orders orders, Menu menu, Quantity quantity) {
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.orders = orders;
+        this.menu = menu;
         this.quantity = quantity;
+    }
+
+    public static OrderLineItem of(
+            Menu menu,
+            Long quantity
+    ) {
+        return new OrderLineItem(
+                menu,
+                Quantity.from(quantity)
+        );
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+
+    public Orders getOrder() {
+        return orders;
     }
 
-    public Long getOrderId() {
-        return orderId;
+
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
 
     public long getQuantity() {
-        return quantity;
+        return quantity.getValue();
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
 }

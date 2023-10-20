@@ -9,6 +9,9 @@ public class MenuCreateRequest {
     private Long menuGroupId;
     private List<MenuProductCreateRequest> menuProductCreateRequests;
 
+    public MenuCreateRequest() {
+    }
+
     public MenuCreateRequest(
             String name,
             Long price,

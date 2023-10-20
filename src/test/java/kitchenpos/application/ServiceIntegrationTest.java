@@ -7,7 +7,6 @@ import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderLineItemFixture.메뉴을_가진_주문_항목_생성;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.DatabaseCleanup;
 import kitchenpos.dao.OrderDao;
@@ -19,7 +18,7 @@ import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -67,21 +66,21 @@ public abstract class ServiceIntegrationTest {
         databaseCleanup.execute();
     }
 
-    protected Order 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
+    protected Orders 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
         Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
         Menu savedMenu = menuRepository.save(메뉴_생성(20000L, savedMenuGroup, menuProduct));
         OrderLineItem orderLineItem = 메뉴을_가진_주문_항목_생성(savedMenu, 2);
-        Order order = 주문_생성(savedOrderTable, List.of(orderLineItem));
+        Orders orders = 주문_생성(savedOrderTable, List.of(orderLineItem));
 
-        return orderService.create(order);
+        return orderService.create(orders);
     }
 
-    protected Order 주문의_상태를_변환한다(Order order, OrderStatus orderStatus) {
-        order.setOrderStatus(orderStatus.name());
+    protected Orders 주문의_상태를_변환한다(Orders orders, OrderStatus orderStatus) {
+        orders.setOrderStatus(orderStatus.name());
 
-        return orderService.changeOrderStatus(order.getId(), order);
+        return orderService.changeOrderStatus(orders.getId(), orders);
     }
 
 }
