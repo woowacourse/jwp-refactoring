@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +64,7 @@ class MenuServiceTest extends ServiceTestHelper {
     @Test
     void 메뉴상품_중_상품에_등록되어있지_않으면_예외가_발생한다() {
         // given
-        final Product emptyProduct = new Product();
+        final Product emptyProduct = Product.of("존재하지않는상품", BigDecimal.valueOf(1000L));
 
         // when & then
         assertThatIllegalArgumentException()
