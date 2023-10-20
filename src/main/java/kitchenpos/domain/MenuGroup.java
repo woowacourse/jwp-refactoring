@@ -1,11 +1,13 @@
 package kitchenpos.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.domain.vo.MenuGroupName;
 
 @Entity
 @Table(name = "menu_group")
@@ -16,14 +18,14 @@ public class MenuGroup {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+    @Embedded
+    private MenuGroupName name;
 
     protected MenuGroup() {
     }
 
     private MenuGroup(String name) {
-        this.name = name;
+        this.name = new MenuGroupName(name);
     }
 
     public Long getId() {
@@ -31,7 +33,7 @@ public class MenuGroup {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public static MenuGroupBuilder builder() {
