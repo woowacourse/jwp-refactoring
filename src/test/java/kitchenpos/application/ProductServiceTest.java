@@ -5,9 +5,11 @@ import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,17 +24,20 @@ class ProductServiceTest extends ServiceIntegrationTest {
     @Test
     void 정상적으로_상품을_생성한다() {
         // given
-        Product product = 후추_치킨_10000원();
+        ProductCreateRequest request = new ProductCreateRequest(
+                "후추 치킨",
+                10000L
+        );
 
         // when
-        Long id = productService.create(product)
+        Long id = productService.create(request)
                 .getId();
 
         // then
-        Product savedProduct = productRepository.findById(id).get();
+        Product actual = productRepository.findById(id).get();
         assertAll(
-                () -> assertThat(product.getName()).isEqualTo(savedProduct.getName()),
-                () -> assertThat(product.getPrice()).isEqualByComparingTo(savedProduct.getPrice())
+                () -> assertThat(actual.getName()).isEqualTo("후추 치킨"),
+                () -> assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(10000L))
         );
     }
 
