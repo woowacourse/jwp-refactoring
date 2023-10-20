@@ -46,8 +46,10 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest emptyInput) {
         final OrderTable orderTable = orderTableRepository.findMandatoryById(orderTableId);
         validateTableGroupNotNull(orderTable);
-        validateOrderStatusCompletion(orderTable);
-        orderTable.changeEmpty(emptyInput.isEmpty());
+        if (!orderTable.isEmpty()) {
+            validateOrderStatusCompletion(orderTable);
+        }
+        orderTable.changeEmpty(emptyInput.getEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 

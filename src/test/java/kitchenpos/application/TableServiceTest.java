@@ -86,7 +86,7 @@ class TableServiceTest extends ServiceTestConfig {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
+                softly.assertThat(actual.isEmpty()).isEqualTo(request.getEmpty());
             });
         }
 

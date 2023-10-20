@@ -24,7 +24,7 @@ class TableChangeEmptyApiTest extends ApiTestConfig {
         final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
         // when
-        final OrderTableResponse response = new OrderTableResponse(orderTableId, 1, request.isEmpty(), null);
+        final OrderTableResponse response = new OrderTableResponse(orderTableId, 1, request.getEmpty(), null);
         when(tableService.changeEmpty(eq(orderTableId), eq(request))).thenReturn(response);
 
         // then
