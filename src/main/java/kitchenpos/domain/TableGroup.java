@@ -26,7 +26,7 @@ public class TableGroup {
     @OneToMany
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     private TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {

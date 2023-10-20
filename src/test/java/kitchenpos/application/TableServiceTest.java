@@ -8,6 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -36,7 +38,7 @@ class TableServiceTest {
     @Mock
     private OrderTableRepository orderTableRepository;
 
-    private OrderTable orderTable = new OrderTable();
+    private OrderTable orderTable = new OrderTable(0);
 
     @Test
     @DisplayName("현재 저장된 주문 테이블을 확인할 수 있다.")
@@ -49,7 +51,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블이 db에 저장되어있지 않으면 예외가 발생한다.")
     void changeEmpty_fail_no_order_table() {
-        OrderTable changeEmptyOrderTable = new OrderTable();
+        OrderTable changeEmptyOrderTable = new OrderTable(10);
 
         when(orderTableRepository.getById(orderTable.getId())).thenThrow(new NotExistsOrderTableException()); // db에 저장 x
 
@@ -60,8 +62,8 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블이 어떤 테이블 그룹에 포함되어 있으면 예외가 발생한다.")
     void changeEmpty_fail_exists_tableGroup() {
-        orderTable.setTableGroup(new TableGroup()); // 테이블 그룹에 포함
-        OrderTable changeEmptyOrderTable = new OrderTable();
+        orderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10)))); // 테이블 그룹에 포함
+        OrderTable changeEmptyOrderTable = new OrderTable(10);
 
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
@@ -73,7 +75,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블에 매핑된 주문이 COOKING 상태이거나 MEAL 상태라면 예외가 발생한다.")
     void changeEmpty_fail_not_completion() {
         orderTable.setTableGroup(null);
-        OrderTable changeEmptyOrderTable = new OrderTable();
+        OrderTable changeEmptyOrderTable = new OrderTable(10);
 
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
         when(orderRepository.existsByOrderTableAndOrderStatusIn(any(), any())).thenReturn(true);
@@ -85,14 +87,12 @@ class TableServiceTest {
     @Test
     @DisplayName("방문한 손님 수를 바꿀 수 있다.")
     void changeNumberOfGuests_success() {
-        OrderTable changeNumberOrderTable = new OrderTable();
-        int changeNumberOfGuests = 10;
-        changeNumberOrderTable.setNumberOfGuests(changeNumberOfGuests);
+        OrderTable changeNumberOrderTable = new OrderTable(10);
+        int beforeNumberOfGuests = orderTable.getNumberOfGuests();
         orderTable.changeEmpty(false);
 
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
-        int beforeNumberOfGuests = orderTable.getNumberOfGuests();
 
         tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOrderTable);
 
@@ -100,7 +100,7 @@ class TableServiceTest {
 
         assertAll(
                 () -> assertThat(beforeNumberOfGuests).isZero(),
-                () -> assertThat(afterNumberOfGuests).isEqualTo(changeNumberOfGuests)
+                () -> assertThat(afterNumberOfGuests).isEqualTo(10)
         );
     }
 
@@ -118,7 +118,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블이 db에 저장되어있지 않으면 예외가 발생한다")
     void changeNumberOfGuests_fail_no_order_table() {
-        OrderTable changeNumberOrderTable = new OrderTable();
+        OrderTable changeNumberOrderTable = new OrderTable(10);
         changeNumberOrderTable.setNumberOfGuests(10);
 
         when(orderTableRepository.getById(orderTable.getId())).thenThrow(new NotExistsOrderTableException());
@@ -131,7 +131,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블이 빈 테이블인 경우 예외가 발생한다.")
     void changeNumberOfGuests_fail_empty_table() {
         orderTable.setEmpty(true);
-        OrderTable changeNumberOrderTable = new OrderTable();
+        OrderTable changeNumberOrderTable = new OrderTable(10);
         changeNumberOrderTable.setNumberOfGuests(10);
 
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);

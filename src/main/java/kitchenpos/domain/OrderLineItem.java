@@ -20,15 +20,21 @@ public class OrderLineItem {
     @Column
     private long quantity;
 
+    protected OrderLineItem() {
+    }
+
+    public OrderLineItem(Long menuId, long quantity) {
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
     public Long getSeq() {
         return seq;
     }
 
-
     public Long getOrderId() {
         return order.getId();
     }
-
 
     public void setOrder(final Order order) {
         this.order = order;

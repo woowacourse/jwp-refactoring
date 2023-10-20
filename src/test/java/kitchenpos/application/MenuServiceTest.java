@@ -63,7 +63,7 @@ class MenuServiceTest {
         when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
         when(productRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
 
-        when(menuRepository.save(menu)).thenReturn(new Menu());
+        when(menuRepository.save(menu)).thenReturn(menu);
 
         menuService.create(menu);
 
@@ -78,7 +78,7 @@ class MenuServiceTest {
         when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
         when(productRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
 
-        when(menuRepository.save(menu)).thenReturn(new Menu());
+        when(menuRepository.save(menu)).thenReturn(menu);
 
         menuService.create(menu);
 

@@ -24,7 +24,8 @@ public class MenuProduct {
     @Column
     private long quantity;
 
-    public MenuProduct() {}
+    protected MenuProduct() {
+    }
 
     public MenuProduct(final Product product, final long quantity) {
         this.product = product;

@@ -17,8 +17,8 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        return menuGroupRepository.save(menuGroup);
+    public MenuGroup create(final String menuGroupName) {
+        return menuGroupRepository.save(new MenuGroup(menuGroupName));
     }
 
     public List<MenuGroup> list() {

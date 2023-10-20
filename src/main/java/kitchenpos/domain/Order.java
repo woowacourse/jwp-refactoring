@@ -33,7 +33,7 @@ public class Order {
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     private Order(final OrderTable orderTable,

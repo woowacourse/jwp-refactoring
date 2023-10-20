@@ -19,7 +19,8 @@ public class Product {
     @Embedded
     private Price price;
 
-    public Product() {}
+    protected Product() {
+    }
 
     private Product(final String name, final Price price) {
         this.name = name;

@@ -23,7 +23,7 @@ public class OrderTable {
     @Column
     private boolean empty = true;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final int numberOfGuests) {

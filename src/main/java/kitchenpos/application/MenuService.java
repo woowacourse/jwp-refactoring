@@ -30,13 +30,13 @@ public class MenuService {
     @Transactional
     public Menu create(final Menu menu) {
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        validateCreate(menu, menuProducts);
+        validateCreate(menu.getMenuGroupId(), menuProducts);
         return menuRepository.save(menu);
     }
 
-    private void validateCreate(Menu menu, List<MenuProduct> menuProducts) {
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new NotExistsMenuGroupException(menu.getMenuGroupId());
+    private void validateCreate(final Long menuGroupId, List<MenuProduct> menuProducts) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new NotExistsMenuGroupException(menuGroupId);
         }
 
         long countOfProducts = productRepository.countByIdIn(menuProducts.stream()

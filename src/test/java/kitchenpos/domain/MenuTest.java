@@ -19,7 +19,7 @@ class MenuTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     void init_success() {
 
-        Menu wugas = Menu.of("wugas", BigDecimal.valueOf(10000), new MenuGroup(), List.of(kong, wuga));
+        Menu wugas = Menu.of("wugas", BigDecimal.valueOf(10000), new MenuGroup("kong"), List.of(kong, wuga));
 
         assertThat(wugas.getName()).isEqualTo("wugas");
     }
@@ -29,7 +29,7 @@ class MenuTest {
     @DisplayName("메뉴를 생성할 때 가격의 총합이 메뉴 상품들의 총합보다 작아야한다.")
     void init_fail() {
         assertThatThrownBy(() ->
-                Menu.of("wugas", BigDecimal.valueOf(25001), new MenuGroup(), List.of(kong, wuga)))
+                Menu.of("wugas", BigDecimal.valueOf(25001), new MenuGroup("kong"), List.of(kong, wuga)))
                 .isInstanceOf(PriceMoreThanProductsException.class);
     }
 }

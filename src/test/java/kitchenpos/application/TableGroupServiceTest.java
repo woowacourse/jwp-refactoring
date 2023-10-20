@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.OrderTable;
@@ -39,8 +40,8 @@ class TableGroupServiceTest {
     @Mock
     private TableGroupRepository tableGroupRepository;
 
-    private OrderTable orderTable1 = new OrderTable();
-    private OrderTable orderTable2 = new OrderTable();
+    private OrderTable orderTable1 = new OrderTable(10);
+    private OrderTable orderTable2 = new OrderTable(10);
 
     @BeforeEach
     void init() {
@@ -59,7 +60,7 @@ class TableGroupServiceTest {
     void create_success() {
         LocalDateTime start = LocalDateTime.now();
         when(orderTableRepository.countByIdIn(List.of(orderTable1.getId(), orderTable2.getId()))).thenReturn(2L);
-        when(tableGroupRepository.save(any())).thenReturn(TableGroup.from(List.of(new OrderTable(), new OrderTable())));
+        when(tableGroupRepository.save(any())).thenReturn(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
 
         TableGroup actual = tableGroupService.create(List.of(orderTable1, orderTable2));
         LocalDateTime end = LocalDateTime.now();
@@ -86,7 +87,7 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("주문 테이블은 매핑된 테이블 그룹의 번호가 있으면 예외가 발생한다.")
     void create_fail_cannot_assign_tableGroup1() {
-        orderTable1.setTableGroup(new TableGroup());
+        orderTable1.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
 
         assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1, orderTable2)))
                 .isInstanceOf(CannotAssignOrderTableException.class);

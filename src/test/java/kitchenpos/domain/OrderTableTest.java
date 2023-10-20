@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
 import kitchenpos.domain.exception.OrderTableException.ExistsTableGroupException;
 import kitchenpos.domain.exception.OrderTableException.InvalidNumberOfGuestsException;
@@ -37,7 +39,7 @@ class OrderTableTest {
     @DisplayName("테이블 그룹이 있으면 주문 테이블의 상태를 변경할 수 없다.")
     void changeEmpty_fail() {
         OrderTable orderTable = new OrderTable(10);
-        orderTable.setTableGroup(new TableGroup());
+        orderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(ExistsTableGroupException.class);

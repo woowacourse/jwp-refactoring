@@ -49,9 +49,9 @@ class OrderServiceTest {
     private OrderTableRepository orderTableRepository;
 
 
-    private OrderLineItem orderLineItem1 = new OrderLineItem();
-    private OrderLineItem orderLineItem2 = new OrderLineItem();
-    private OrderTable orderTable = new OrderTable();
+    private OrderLineItem orderLineItem1 = new OrderLineItem(1L, 10);
+    private OrderLineItem orderLineItem2 = new OrderLineItem(1L, 10);
+    private OrderTable orderTable = new OrderTable(10);
     private Order order = Order.of(orderTable, List.of(orderLineItem1, orderLineItem2));
 
     @BeforeEach
@@ -140,7 +140,7 @@ class OrderServiceTest {
         OrderStatus nowOrderStatus = OrderStatus.COOKING;
         OrderStatus newOrderStatus = OrderStatus.MEAL;
         order.changeOrderStatus(nowOrderStatus);
-        Order newOrder = new Order();
+        Order newOrder = Order.of(new OrderTable(10), List.of(new OrderLineItem(1L, 10)));
         newOrder.changeOrderStatus(newOrderStatus);
         Long orderId = order.getId();
 
@@ -155,10 +155,11 @@ class OrderServiceTest {
     @DisplayName("주문이 db에 저장되어있지 않으면 예외가 발생한다.")
     void changeOrderStatus_fail_no_order() {
         Long orderId = order.getId();
+        Order newOrder = Order.of(new OrderTable(10), List.of(new OrderLineItem(1L, 10)));
 
         when(orderRepository.getById(orderId)).thenThrow(NotExistsOrderException.class);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, newOrder))
                 .isInstanceOf(NotExistsOrderException.class);
     }
 
@@ -167,10 +168,11 @@ class OrderServiceTest {
     void changeOrderStatus_fail_completion() {
         order.changeOrderStatus(OrderStatus.COMPLETION);
         Long orderId = order.getId();
+        Order newOrder = Order.of(new OrderTable(10), List.of(new OrderLineItem(1L, 10)));
 
         when(orderRepository.getById(orderId)).thenReturn(order);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, newOrder))
                 .isInstanceOf(CompletionOrderException.class);
     }
 
