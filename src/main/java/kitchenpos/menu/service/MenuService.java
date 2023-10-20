@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.vo.Money;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
-import kitchenpos.menu.exception.MenuGroupNotFoundException;
+import kitchenpos.menugroup.exception.MenuGroupNotFoundException;
 import kitchenpos.menu.exception.MenuPriceIsBiggerThanActualPriceException;
-import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.product.domain.Product;
@@ -52,7 +52,7 @@ public class MenuService {
     private Menu saveMenu(CreateMenuRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
-        return new Menu(request.getName(), request.getPrice(), menuGroup);
+        return new Menu(menuGroup.getId(), request.getName(), request.getPrice());
     }
 
     private void setupMenuProducts(CreateMenuRequest request, Menu menu) {

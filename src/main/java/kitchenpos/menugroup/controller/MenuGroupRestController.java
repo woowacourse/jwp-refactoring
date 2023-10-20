@@ -1,11 +1,11 @@
-package kitchenpos.menu.controller;
+package kitchenpos.menugroup.controller;
 
 import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
-import kitchenpos.menu.dto.request.CreateMenuGroupRequest;
-import kitchenpos.menu.dto.response.MenuGroupResponse;
-import kitchenpos.menu.service.MenuGroupService;
+import kitchenpos.menugroup.dto.request.CreateMenuGroupRequest;
+import kitchenpos.menugroup.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.service.MenuGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

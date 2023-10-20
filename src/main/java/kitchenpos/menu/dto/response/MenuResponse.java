@@ -28,7 +28,7 @@ public class MenuResponse {
                 .collect(Collectors.toList());
 
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(),
-                menu.getMenuGroup().getId(), menuProductResponses);
+                menu.getMenuGroupId(), menuProductResponses);
     }
 
     public Long getId() {

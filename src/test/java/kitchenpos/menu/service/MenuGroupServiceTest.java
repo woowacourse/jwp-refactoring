@@ -3,8 +3,8 @@ package kitchenpos.menu.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.menu.dto.request.CreateMenuGroupRequest;
-import kitchenpos.menu.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.dto.request.CreateMenuGroupRequest;
+import kitchenpos.menugroup.dto.response.MenuGroupResponse;
 import kitchenpos.supports.ServiceTestContext;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package kitchenpos.menu.dto.request;
+package kitchenpos.menugroup.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.sun.istack.NotNull;

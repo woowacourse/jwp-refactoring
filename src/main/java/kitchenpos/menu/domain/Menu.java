@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import kitchenpos.common.vo.Money;
 
@@ -21,23 +19,22 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
+
     private String name;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "price"))
     private Money price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
-
     protected Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(Long menuGroupId, String name, BigDecimal price) {
+        this.menuGroupId = menuGroupId;
         this.name = name;
         this.price = new Money(price);
-        this.menuGroup = menuGroup;
     }
 
     public boolean hasPriceGreaterThan(Money other) {
@@ -56,7 +53,7 @@ public class Menu {
         return price.getValue();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 }

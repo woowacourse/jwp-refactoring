@@ -1,9 +1,9 @@
 package kitchenpos.supports;
 
-import kitchenpos.menu.repository.MenuGroupRepository;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menu.service.MenuGroupService;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;

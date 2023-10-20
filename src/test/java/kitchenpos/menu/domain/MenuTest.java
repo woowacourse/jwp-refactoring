@@ -19,7 +19,7 @@ class MenuTest {
         BigDecimal price = BigDecimal.valueOf(-1L);
 
         // when, then
-        assertThatThrownBy(() -> new Menu("name", price, null))
+        assertThatThrownBy(() -> new Menu(null, "name", price))
                 .isInstanceOf(PriceIsNegativeException.class);
     }
 
@@ -29,7 +29,7 @@ class MenuTest {
         BigDecimal price = BigDecimal.valueOf(1L);
 
         // when, then
-        assertThatCode(() -> new Menu("name", price, null))
+        assertThatCode(() -> new Menu(null, "name", price))
                 .doesNotThrowAnyException();
     }
 }

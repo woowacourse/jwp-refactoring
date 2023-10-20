@@ -11,8 +11,8 @@ import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.exception.MenuNotFoundException;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
@@ -63,9 +63,9 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문_테이블이_존재하지_않는다면_예외를_던진다() {
         // given
         MenuGroup menuGroup = MenuGroupFixture.from("name");
-        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
-
         menuGroupRepository.save(menuGroup);
+
+        Menu menu = MenuFixture.of(menuGroup.getId(), "name", BigDecimal.valueOf(1000L));
         menuRepository.save(menu);
 
         CreateOrderRequest request = new CreateOrderRequest(Long.MAX_VALUE,
@@ -80,10 +80,11 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문은_생성되면_COOKING_상태로_설정된다() {
         // given
         MenuGroup menuGroup = MenuGroupFixture.from("name");
-        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        menuGroupRepository.save(menuGroup);
+
+        Menu menu = MenuFixture.of(menuGroup.getId(), "name", BigDecimal.valueOf(1000L));
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
-        menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
         orderTableRepository.save(orderTable);
 
@@ -101,10 +102,11 @@ class OrderServiceTest extends ServiceTestContext {
     void 주문을_정상적으로_생성하는_경우_생성한_주문이_반환된다() {
         // given
         MenuGroup menuGroup = MenuGroupFixture.from("name");
-        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        menuGroupRepository.save(menuGroup);
+
+        Menu menu = MenuFixture.of(menuGroup.getId(), "name", BigDecimal.valueOf(1000L));
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
-        menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
         orderTableRepository.save(orderTable);
 
@@ -122,10 +124,11 @@ class OrderServiceTest extends ServiceTestContext {
     void 전체_주문을_조회할_수_있다() {
         // given
         MenuGroup menuGroup = MenuGroupFixture.from("name");
-        Menu menu = MenuFixture.of("name", BigDecimal.valueOf(1000L), menuGroup);
+        menuGroupRepository.save(menuGroup);
+
+        Menu menu = MenuFixture.of(menuGroup.getId(), "name", BigDecimal.valueOf(1000L));
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
 
-        menuGroupRepository.save(menuGroup);
         menuRepository.save(menu);
         orderTableRepository.save(orderTable);
 
