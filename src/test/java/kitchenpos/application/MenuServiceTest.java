@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu_group.MenuGroup;
+import kitchenpos.domain.menu_product.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
@@ -23,7 +24,6 @@ import support.fixture.ProductBuilder;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,12 +63,21 @@ class MenuServiceTest {
         }
 
         @Test
-        @DisplayName("모든 Menu의 MenuProduct와 Menu 목록을 조회한다.")
+        @DisplayName("모든 Menu의 목록을 조회한다.")
         void should_return_menu_list_when_request_list() {
             // given
             final int quantity = 2;
-            final Menu menu = new MenuBuilder(menuGroup)
-                    .setMenuProducts(Map.of(product1, quantity, product2, quantity))
+
+            final MenuProduct menuProduct1 = new MenuProduct();
+            menuProduct1.setProduct(product1);
+            menuProduct1.setQuantity(quantity);
+            final MenuProduct menuProduct2 = new MenuProduct();
+            menuProduct2.setProduct(product1);
+            menuProduct2.setQuantity(quantity);
+
+            final Menu menu = new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .setMenuProducts(List.of(menuProduct1, menuProduct2))
                     .build();
 
             final List<Menu> expect = menuRepository.findAll();
@@ -85,17 +94,11 @@ class MenuServiceTest {
             for (int i = 0; i < actual.size(); i++) {
                 final Menu actualMenu = actual.get(i);
                 final Menu expectMenu = expect.get(i);
-                expectMenu.setMenuProducts(
-                        menuProductRepository.findAllByMenuId(expectMenu.getId())
-                );
 
                 assertAll(
                         () -> assertEquals(expectMenu.getName(), actualMenu.getName()),
                         () -> assertThat(expectMenu.getPrice()).isEqualByComparingTo(actualMenu.getPrice()),
-                        () -> assertEquals(expectMenu.getMenuGroup().getId(), actualMenu.getMenuGroup().getId()),
-                        () -> assertThat(actualMenu.getMenuProducts())
-                                .usingRecursiveComparison()
-                                .isEqualTo(expectMenu.getMenuProducts())
+                        () -> assertEquals(expectMenu.getMenuGroup().getId(), actualMenu.getMenuGroup().getId())
                 );
             }
         }
@@ -105,16 +108,21 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     class MenuCreateTest {
 
-        private Menu menu;
+
+        private MenuBuilder menuBuilder;
 
         @BeforeEach
         void setUp() {
             final Product product = productRepository.save(new ProductBuilder().setPrice(BigDecimal.valueOf(100_000_000))
                     .build());
 
-            menu = new MenuBuilder(menuGroup)
-                    .setMenuProducts(Map.of(product, 1))
-                    .build();
+            final MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setProduct(product);
+            menuProduct.setQuantity(1);
+
+            menuBuilder = new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .setMenuProducts(List.of(menuProduct));
         }
 
         @ParameterizedTest
@@ -122,7 +130,9 @@ class MenuServiceTest {
         @DisplayName("상품 가격이 0 이상이고 MenuGroup이 존재하며 MenuProduct에 속하는 모든 상품의 가격 * 수량의 합보다 작으면 정상적으로 저장된다.")
         void saveTest(final BigDecimal price) {
             // given
-            menu.setPrice(price);
+            final Menu menu = menuBuilder
+                    .setPrice(price)
+                    .build();
 
             // when
             final Menu actual = menuService.create(menu);
@@ -141,7 +151,9 @@ class MenuServiceTest {
         @DisplayName("상품 가격이 null이거나 0 미만이면 IllegalArgumentException이 발생한다.")
         void smallerThenZeroPriceTest(final BigDecimal price) {
             // given
-            menu.setPrice(price);
+            final Menu menu = menuBuilder
+                    .setPrice(price)
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class, () -> menuService.create(menu));
@@ -154,7 +166,9 @@ class MenuServiceTest {
             final MenuGroup notSavedMenuGroup = new MenuGroupBuilder()
                     .build();
 
-            menu.setMenuGroup(notSavedMenuGroup);
+            final Menu menu = menuBuilder
+                    .setMenuGroup(notSavedMenuGroup)
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class, () -> menuService.create(menu));
@@ -165,8 +179,11 @@ class MenuServiceTest {
         void largerThenTotalProductPriceTest() {
             // given
             final int price = 1;
-            menu.setPrice(BigDecimal.valueOf(price));
-            menu.setMenuProducts(Collections.emptyList());
+
+            final Menu menu = menuBuilder
+                    .setPrice(BigDecimal.valueOf(price))
+                    .setMenuProducts(Collections.emptyList())
+                    .build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class, () -> menuService.create(menu));

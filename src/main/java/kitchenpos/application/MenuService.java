@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,23 +56,15 @@ public class MenuService {
 
         final Menu savedMenu = menuRepository.save(menu);
 
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenu(savedMenu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+            menuProductRepository.save(menuProduct);
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuRepository.findAll();
     }
 }

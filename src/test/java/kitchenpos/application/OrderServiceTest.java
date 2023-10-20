@@ -44,7 +44,9 @@ class OrderServiceTest {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-        final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
+        final Menu menu = menuRepository.save(new MenuBuilder()
+                .setMenuGroup(menuGroup)
+                .build());
 
         final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
@@ -81,7 +83,9 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
@@ -132,7 +136,9 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = new MenuBuilder(menuGroup).build();
+            final Menu menu = new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .build();
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
@@ -156,7 +162,9 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
@@ -181,7 +189,9 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
@@ -211,7 +221,9 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 
@@ -242,7 +254,9 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
 
-            final Menu menu = menuRepository.save(new MenuBuilder(menuGroup).build());
+            final Menu menu = menuRepository.save(new MenuBuilder()
+                    .setMenuGroup(menuGroup)
+                    .build());
 
             final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
 

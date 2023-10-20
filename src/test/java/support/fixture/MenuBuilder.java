@@ -3,66 +3,50 @@ package support.fixture;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu_group.MenuGroup;
 import kitchenpos.domain.menu_product.MenuProduct;
-import kitchenpos.domain.product.Product;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MenuBuilder {
 
     private static int sequence = 1;
 
-    private final Menu menu;
+    private String name;
+    private BigDecimal price;
+    private MenuGroup menuGroup;
+    private List<MenuProduct> menuProducts;
 
-    public MenuBuilder(final MenuGroup menuGroup) {
-        this.menu = new Menu();
-        menu.setName("메뉴" + sequence);
-        menu.setPrice(BigDecimal.valueOf(0));
-        menu.setMenuGroup(menuGroup);
-        menu.setMenuProducts(Collections.emptyList());
+    public MenuBuilder() {
+        this.name = "메뉴" + sequence;
+        this.price = BigDecimal.valueOf(1000 * sequence);
+        this.menuGroup = null;
+        this.menuProducts = Collections.emptyList();
 
         sequence++;
     }
 
     public MenuBuilder setName(final String name) {
-        menu.setName(name);
+        this.name = name;
         return this;
     }
 
     public MenuBuilder setPrice(final BigDecimal price) {
-        menu.setPrice(price);
+        this.price = price;
         return this;
     }
 
-    public MenuBuilder setMenuGroupId(final MenuGroup menuGroup) {
-        menu.setMenuGroup(menuGroup);
-        return this;
-    }
-
-    public MenuBuilder setMenuProducts(final Map<Product, Integer> productQuantityMap) {
-        final List<MenuProduct> menuProducts = productQuantityMap.entrySet().stream()
-                .map(entry -> {
-                    final MenuProduct menuProduct = new MenuProduct();
-                    menuProduct.setProduct(entry.getKey());
-                    menuProduct.setQuantity(entry.getValue());
-                    return menuProduct;
-                })
-                .collect(Collectors.toList());
-
-        menu.setMenuProducts(menuProducts);
-
+    public MenuBuilder setMenuGroup(final MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
         return this;
     }
 
     public MenuBuilder setMenuProducts(final List<MenuProduct> menuProducts) {
-        menu.setMenuProducts(menuProducts);
+        this.menuProducts = menuProducts;
         return this;
     }
 
     public Menu build() {
-        return menu;
+        return new Menu(name, price, menuGroup, menuProducts);
     }
 }
