@@ -4,11 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import kitchenpos.table.exception.NotEnoughGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.table.exception.TableGroupExistsException;
+import kitchenpos.tablegroup.exception.TableGroupExistsException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,7 @@ class OrderTableTest {
     @Test
     void 테이블_그룹이_존재한다면_예외를_던진다() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        OrderTable orderTable = new OrderTable(tableGroup, 1, false);
+        OrderTable orderTable = new OrderTable(1L, 1, false);
 
         // when, then
         assertThatThrownBy(() -> orderTable.validateTableGroupNotExists())

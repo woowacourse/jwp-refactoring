@@ -1,4 +1,4 @@
-package kitchenpos.table.service;
+package kitchenpos.tablegroup.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,15 +6,15 @@ import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
-import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.table.exception.OrderTableCountNotEnoughException;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
+import kitchenpos.tablegroup.exception.OrderTableCountNotEnoughException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.table.exception.TableGroupNotFoundException;
+import kitchenpos.tablegroup.exception.TableGroupNotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.repository.TableGroupRepository;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +54,7 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
         validateAllOrderCompleted(orderTables);
         unGroupOrderTables(orderTables);
     }

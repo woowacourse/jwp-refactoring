@@ -1,4 +1,4 @@
-package kitchenpos.table.exception;
+package kitchenpos.tablegroup.exception;
 
 public class TableGroupNotFoundException extends RuntimeException {
 

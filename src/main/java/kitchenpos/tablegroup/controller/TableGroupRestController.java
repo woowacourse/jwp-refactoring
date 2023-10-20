@@ -1,10 +1,10 @@
-package kitchenpos.table.controller;
+package kitchenpos.tablegroup.controller;
 
 import java.net.URI;
 import javax.validation.Valid;
-import kitchenpos.table.dto.request.CreateTableGroupRequest;
-import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.table.service.TableGroupService;
+import kitchenpos.tablegroup.dto.request.CreateTableGroupRequest;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
+import kitchenpos.tablegroup.service.TableGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;

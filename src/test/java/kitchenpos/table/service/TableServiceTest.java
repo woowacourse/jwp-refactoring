@@ -13,7 +13,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderIsNotCompletedException;
 import kitchenpos.supports.ServiceTestContext;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.table.dto.request.ChangeTableGuestRequest;
 import kitchenpos.table.dto.request.CreateOrderTableRequest;
@@ -21,7 +21,7 @@ import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.exception.NotEnoughGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.table.exception.TableGroupExistsException;
+import kitchenpos.tablegroup.exception.TableGroupExistsException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -74,7 +74,7 @@ class TableServiceTest extends ServiceTestContext {
         TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable = OrderTableFixture.of(tableGroup, 2, false);
+        OrderTable orderTable = OrderTableFixture.of(tableGroup.getId(), 2, false);
         orderTableRepository.save(orderTable);
 
         ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);

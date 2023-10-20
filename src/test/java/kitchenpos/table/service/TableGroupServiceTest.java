@@ -14,11 +14,11 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderIsNotCompletedException;
 import kitchenpos.supports.ServiceTestContext;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
-import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.table.exception.OrderTableCountNotEnoughException;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
+import kitchenpos.tablegroup.exception.OrderTableCountNotEnoughException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -91,8 +91,8 @@ class TableGroupServiceTest extends ServiceTestContext {
         TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable1 = OrderTableFixture.of(tableGroup, 1, false);
-        OrderTable orderTable2 = OrderTableFixture.of(tableGroup, 1, false);
+        OrderTable orderTable1 = OrderTableFixture.of(tableGroup.getId(), 1, false);
+        OrderTable orderTable2 = OrderTableFixture.of(tableGroup.getId(), 1, false);
 
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
@@ -139,7 +139,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         TableGroup tableGroup = TableGroupFixture.from(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
 
-        OrderTable orderTable = OrderTableFixture.of(tableGroup, 0, false);
+        OrderTable orderTable = OrderTableFixture.of(tableGroup.getId(), 0, false);
         orderTableRepository.save(orderTable);
 
         Order order = OrderFixture.of(orderTable, orderStatus, LocalDateTime.now());

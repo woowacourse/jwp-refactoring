@@ -19,7 +19,7 @@ import kitchenpos.product.dto.request.CreateProductRequest;
 import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.table.dto.request.ChangeTableGuestRequest;
 import kitchenpos.table.dto.request.CreateOrderTableRequest;
-import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.tablegroup.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
