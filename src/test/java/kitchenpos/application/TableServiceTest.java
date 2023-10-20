@@ -96,7 +96,7 @@ class TableServiceTest extends IntegrationTest {
 
         // when
         final int numberOfGuests = 10;
-        table.setNumberOfGuests(numberOfGuests);
+        table.changeNumberOfGuests(numberOfGuests);
         tableService.changeNumberOfGuests(table.getId(), table);
 
         // then
@@ -116,7 +116,7 @@ class TableServiceTest extends IntegrationTest {
         tableService.changeEmpty(table.getId(), table);
 
         // when
-        table.setNumberOfGuests(-10);
+        table.changeNumberOfGuests(-10);
 
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), table))
@@ -130,7 +130,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTable table = tableService.create(빈_테이블_생성());
 
         // when
-        table.setNumberOfGuests(10);
+        table.changeNumberOfGuests(10);
 
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), table))

@@ -22,9 +22,9 @@ public class OrderTable {
     @ManyToOne
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-    @Column
+    @Column(nullable = false)
     private int numberOfGuests;
-    @Column
+    @Column(nullable = false)
     private boolean empty;
 
     protected OrderTable() {
@@ -44,38 +44,18 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void addOrder(final Order order) {
-        orders.add(order);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    // TODO setter
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void group(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+        changeEmpty(true);
     }
 
-    public int getNumberOfGuests() {
-        return numberOfGuests;
+    public void unGroup() {
+        this.tableGroup = null;
+        changeEmpty(false);
     }
 
-    // TODO setter
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     public void changeEmpty(final boolean empty) {
@@ -91,4 +71,27 @@ public class OrderTable {
         }
     }
 
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public void addOrder(final Order order) {
+        orders.add(order);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
 }
