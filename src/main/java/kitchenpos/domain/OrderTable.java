@@ -79,13 +79,11 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
-        if (empty) {
-            validateAbleToEmpty();
-        }
+        validateAbleToChangeEmpty();
         this.empty = empty;
     }
 
-    private void validateAbleToEmpty() {
+    private void validateAbleToChangeEmpty() {
         final boolean cannotEmptyTable = orders.stream()
                 .anyMatch(Order::isInProgress);
         if (cannotEmptyTable) {
