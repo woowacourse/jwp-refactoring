@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +31,8 @@ public class Order {
     private OrderTable orderTable;
     // TODO EnumType으로 변경
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
     @Column
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order")
@@ -42,7 +45,7 @@ public class Order {
                  final LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         orderTable.addOrder(this);
-        this.orderStatus = COOKING.name();
+        this.orderStatus = COOKING;
         this.orderedTime = orderedTime;
     }
 
@@ -54,20 +57,20 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     // TODO setter 네이밍 변경 또는 의미있는 메서드로 나누기
-    public void setOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, OrderStatus.valueOf(this.orderStatus))) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException();
         }
         this.orderStatus = orderStatus;
     }
 
     public boolean isInProgress() {
-        return MEAL.name().equals(orderStatus) || COOKING.name().equals(orderStatus);
+        return MEAL.equals(orderStatus) || COOKING.equals(orderStatus);
     }
 
     public List<OrderLineItem> getOrderLineItems() {
@@ -80,6 +83,6 @@ public class Order {
     }
 
     public void startMeal() {
-        this.orderStatus = MEAL.name();
+        this.orderStatus = MEAL;
     }
 }

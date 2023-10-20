@@ -149,14 +149,14 @@ class OrderServiceTest extends IntegrationTest {
         final Order order = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
 
         // when
-        order.setOrderStatus(MEAL.name());
+        order.setOrderStatus(MEAL);
         final Order orderForMeal = orderService.changeOrderStatus(order.getId(), order);
 
         // then
         assertThat(orderForMeal).usingRecursiveComparison()
                 .ignoringFields("orderStatus")
                 .isEqualTo(order);
-        assertThat(orderForMeal.getOrderStatus()).isEqualTo(MEAL.name());
+        assertThat(orderForMeal.getOrderStatus()).isEqualTo(MEAL);
     }
 
 }

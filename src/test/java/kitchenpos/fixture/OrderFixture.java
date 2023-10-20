@@ -22,7 +22,7 @@ public class OrderFixture {
                                              final OrderStatus orderStatus,
                                              final List<Menu> menus) {
         final Order order = new Order(orderTable, LocalDateTime.now());
-        order.setOrderStatus(orderStatus.name());
+        order.setOrderStatus(orderStatus);
         final List<OrderLineItem> orderLineItems = 주문_항목_목록_생성(order, menus, 1L);
         order.setOrderLineItems(orderLineItems);
         return order;

@@ -31,7 +31,7 @@ class OrderTest {
         final Order order = 주문_생성_메뉴_당_1개씩(orderTable, List.of(menu));
 
         // then
-        assertThat(order.getOrderStatus()).isEqualTo(COOKING.name());
+        assertThat(order.getOrderStatus()).isEqualTo(COOKING);
     }
 
     @Test
@@ -45,7 +45,7 @@ class OrderTest {
         final Order order = 주문_생성_메뉴_당_1개씩_상태_설정(orderTable, COMPLETION, List.of(menu));
 
         // expected
-        assertThatThrownBy(() -> order.setOrderStatus(MEAL.name()))
+        assertThatThrownBy(() -> order.setOrderStatus(MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
