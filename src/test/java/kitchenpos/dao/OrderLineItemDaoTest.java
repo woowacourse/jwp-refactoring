@@ -2,8 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -39,32 +37,33 @@ class OrderLineItemDaoTest {
     private OrderLineItemDao orderLineItemDao;
 
     private Order order;
+
     private Menu menu;
 
     @BeforeEach
     void setUp() {
-        TableGroup tableGroupEntity = new TableGroup();
-        tableGroupEntity.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroupEntity = TableGroup.builder().build();
         TableGroup tableGroup = tableGroupDao.save(tableGroupEntity);
 
-        OrderTable orderTableEntity = new OrderTable();
-        orderTableEntity.setTableGroupId(tableGroup.getId());
+        OrderTable orderTableEntity = OrderTable.builder().tableGroup(tableGroup).build();
         OrderTable orderTable = orderTableDao.save(orderTableEntity);
 
-        Order orderEntity = new Order();
-        orderEntity.setOrderTableId(orderTable.getId());
-        orderEntity.setOrderedTime(LocalDateTime.now());
-        orderEntity.setOrderStatus(OrderStatus.COOKING.name());
+        Order orderEntity = Order.builder()
+                .orderTable(orderTable)
+                .orderStatus(OrderStatus.COOKING)
+                .build();
         order = orderDao.save(orderEntity);
 
-        MenuGroup menuGroupEntity = new MenuGroup();
-        menuGroupEntity.setName("샐러드");
+        MenuGroup menuGroupEntity = MenuGroup.builder()
+                .name("샐러드")
+                .build();
         MenuGroup menuGroup = menuGroupDao.save(menuGroupEntity);
 
-        Menu menuEntity = new Menu();
-        menuEntity.setMenuGroupId(menuGroup.getId());
-        menuEntity.setName("닭가슴살 샐러드");
-        menuEntity.setPrice(BigDecimal.valueOf(1_000_000));
+        Menu menuEntity = Menu.builder()
+                .name("닭가슴살 샐러드")
+                .menuGroup(menuGroup)
+                .price(1_000_000)
+                .build();
         menu = menuDao.save(menuEntity);
     }
 
@@ -112,10 +111,10 @@ class OrderLineItemDaoTest {
     }
 
     private OrderLineItem createOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setQuantity(10);
-        return orderLineItem;
+        return OrderLineItem.builder()
+                .menu(menu)
+                .order(order)
+                .quantity(10)
+                .build();
     }
 }

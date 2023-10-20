@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -46,9 +45,6 @@ class TableGroupDaoTest {
     }
 
     private TableGroup createTableGroupEntity() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(null);
-        return tableGroup;
+        return TableGroup.builder().build();
     }
 }

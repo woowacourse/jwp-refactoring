@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -30,12 +29,10 @@ class OrderDaoTest {
 
     @BeforeEach
     void setUp() {
-        TableGroup tableGroupEntity = new TableGroup();
-        tableGroupEntity.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroupEntity = TableGroup.builder().build();
         TableGroup tableGroup = tableGroupDao.save(tableGroupEntity);
 
-        OrderTable orderTableEntity = new OrderTable();
-        orderTableEntity.setTableGroupId(tableGroup.getId());
+        OrderTable orderTableEntity = OrderTable.builder().tableGroup(tableGroup).build();
         orderTable = orderTableDao.save(orderTableEntity);
     }
 
@@ -77,7 +74,7 @@ class OrderDaoTest {
 
         assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
                         orderTable.getId(),
-                        List.of(orderStatus.name())
+                        List.of(orderStatus)
                 )
         ).isTrue();
     }
@@ -90,7 +87,7 @@ class OrderDaoTest {
 
         assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
                         orderTable.getId(),
-                        List.of(OrderStatus.COMPLETION.name())
+                        List.of(OrderStatus.COMPLETION)
                 )
         ).isFalse();
     }
@@ -104,7 +101,7 @@ class OrderDaoTest {
 
         assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
                         List.of(orderTable.getId()),
-                        List.of(orderStatusA.name(), orderStatusB.name())
+                        List.of(orderStatusA, orderStatusB)
                 )
         ).isTrue();
     }
@@ -117,26 +114,22 @@ class OrderDaoTest {
 
         assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
                         List.of(orderTable.getId()),
-                        List.of(OrderStatus.COOKING.name())
+                        List.of(OrderStatus.COOKING)
                 )
         ).isFalse();
     }
 
     private Order createOrderEntity() {
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(null);
-        return order;
+        return Order.builder()
+                .orderStatus(OrderStatus.COOKING)
+                .orderTable(orderTable)
+                .build();
     }
 
     private Order createOrderEntityWithStatus(OrderStatus orderStatus) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(null);
-        return order;
+        return Order.builder()
+                .orderStatus(orderStatus)
+                .orderTable(orderTable)
+                .build();
     }
 }

@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -24,9 +23,7 @@ class OrderTableDaoTest {
 
     @BeforeEach
     void setUp() {
-        TableGroup tableGroupEntity = new TableGroup();
-        tableGroupEntity.setCreatedDate(LocalDateTime.now());
-        tableGroupEntity.setOrderTables(null);
+        TableGroup tableGroupEntity = TableGroup.builder().build();
         tableGroup = tableGroupDao.save(tableGroupEntity);
     }
 
@@ -88,10 +85,10 @@ class OrderTableDaoTest {
     }
 
     private OrderTable createOrderTableEntity() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setTableGroupId(tableGroup.getId());
-        orderTable.setNumberOfGuests(10);
-        return orderTable;
+        return OrderTable.builder()
+                .empty(false)
+                .tableGroup(tableGroup)
+                .numberOfGuests(10)
+                .build();
     }
 }
