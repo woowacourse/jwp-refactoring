@@ -1,15 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
-import kitchenpos.fake.InMemoryProductDao;
+import kitchenpos.domain.ProductRepository;
+import kitchenpos.fake.InMemoryProductRepository;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
+import static kitchenpos.fixture.ProductFixture.product;
+import static kitchenpos.fixture.ProductFixture.productRequest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -18,48 +20,39 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class ProductServiceTest {
 
     private ProductService productService;
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void before() {
-        productDao = new InMemoryProductDao();
-        productService = new ProductService(productDao);
+        productRepository = new InMemoryProductRepository();
+        productService = new ProductService(productRepository);
     }
 
     @Test
     void 상품을_생성한다() {
         // given
-        Product chicken = new Product("chicken", BigDecimal.valueOf(10_000));
+        ProductRequest request = productRequest("chicken", 10_000L);
 
         // when
-        Product savedProduct = productService.create(chicken);
+        Product savedProduct = productService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(savedProduct).usingRecursiveComparison()
                     .ignoringFields("id")
-                    .isEqualTo(chicken);
+                    .isEqualTo(product("chicken", 10_000L));
             softly.assertThat(savedProduct.getId()).isNotNull();
         });
     }
 
     @Test
-    void 상품을_생성할_때_상품_가격이_없으면_예외가_발생한다() {
-        // given
-        Product invalidProduct = new Product();
-
-        // expect
-        assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 상품을_생성할_때_상품_가격이_음수면_예외가_발생한다() {
         // given
-        Product invalidProduct = new Product("chicken", BigDecimal.valueOf(-1));
+        ProductRequest invalidProduct = ProductFixture.productRequest("chicken", -1L);
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상이여야합니다");
     }
 }

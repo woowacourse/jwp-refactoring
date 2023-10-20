@@ -1,27 +1,35 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.dto.OrderChangeStatusRequest;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fake.InMemoryMenuDao;
-import kitchenpos.fake.InMemoryOrderDao;
-import kitchenpos.fake.InMemoryOrderLineItemDao;
-import kitchenpos.fake.InMemoryOrderTableDao;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.fake.InMemoryMenuRepository;
+import kitchenpos.fake.InMemoryOrderRepository;
+import kitchenpos.fake.InMemoryOrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static java.lang.Long.MAX_VALUE;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.fixture.MenuFixture.menu;
+import static kitchenpos.fixture.MenuProductFixture.menuProduct;
+import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderFixture.orderRequest;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
+import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
+import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -30,96 +38,85 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {
 
-    private MenuDao menuDao;
-    private OrderDao orderDao;
-    private OrderLineItemDao orderLineItemDao;
-    private OrderTableDao orderTableDao;
+    private MenuRepository menuRepository;
+    private OrderRepository orderRepository;
+    private OrderTableRepository orderTableRepository;
     private OrderService orderService;
-    private OrderTable savedOrderTable;
-    private OrderLineItem savedOrderLineItem;
 
     @BeforeEach
     void before() {
-        menuDao = new InMemoryMenuDao();
-        orderDao = new InMemoryOrderDao();
-        orderLineItemDao = new InMemoryOrderLineItemDao();
-        orderTableDao = new InMemoryOrderTableDao();
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-        Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(10000), null, List.of()));
-        savedOrderTable = orderTableDao.save(new OrderTable(null, 10, false));
-        savedOrderLineItem = orderLineItemDao.save(new OrderLineItem());
-        savedOrderLineItem.setMenuId(menu.getId());
+        menuRepository = new InMemoryMenuRepository();
+        orderRepository = new InMemoryOrderRepository();
+        orderTableRepository = new InMemoryOrderTableRepository();
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
     }
 
     @Test
     void 주문_항목이_없다면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of());
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
+        OrderRequest orderRequest = orderRequest(savedOrderTable.getId(), List.of());
 
         // expect
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목은 하나 이상이여야 합니다");
     }
 
     @Test
     void 주문_항목의_메뉴가_존재하지_않는다면_예외가_발생한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(MAX_VALUE);
-        orderLineItem.setQuantity(1L);
-
-        Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
+        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(MAX_VALUE, 1L)));
 
         // expect
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 주문 항목이 있습니다");
     }
 
     @Test
     void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        order.setOrderTableId(MAX_VALUE);
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
+        OrderRequest request = orderRequest(MAX_VALUE, List.of(orderLineItem(menu.getId(), 1L)));
 
         // expect
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 존재하지 않습니다");
     }
 
     @Test
     void 주문_테이블이_빈_테이블이면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, 10, true));
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(List.of(savedOrderLineItem));
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
+        OrderLineItem orderLineItem = orderLineItem(menu.getId(), 2L);
+        OrderRequest request = orderRequest(orderTable.getId(), List.of(orderLineItem));
 
         // expect
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 빈 테이블입니다");
     }
 
     @Test
     void 주문을_생성한다() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(savedOrderLineItem));
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
+        OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(menu.getId(), 10)));
 
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-            softly.assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
+            softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING);
+            softly.assertThat(savedOrder.getOrderTable().getId()).isEqualTo(request.getOrderTableId());
             softly.assertThat(savedOrder.getOrderedTime()).isNotNull();
-            softly.assertThat(savedOrder.getOrderLineItems()).map(OrderLineItem::getOrderId)
+            softly.assertThat(savedOrder.getOrderLineItems()).map(OrderLineItem::getSeq)
                     .isNotNull();
         });
     }
@@ -127,54 +124,57 @@ class OrderServiceTest {
     @Test
     void 주문을_조회한다() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(savedOrderLineItem));
-        Order savedOrder = orderService.create(order);
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, null, List.of(menuProduct(product("chicken", 1000L), 10L))));
+
+        OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
+        Order order1 = orderRepository.save(order(orderTable, MEAL, List.of(orderLineItem(menu.getId(), 10), orderLineItem(menu.getId(), 2L))));
+        Order order2 = orderRepository.save(order(orderTable, COOKING, List.of(orderLineItem(menu.getId(), 5), orderLineItem(menu.getId(), 2L))));
 
         // when
         List<Order> orders = orderService.list();
 
         // then
-        assertThat(orders).usingRecursiveComparison()
-                .isEqualTo(List.of(savedOrder));
+        assertThat(orders)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(order1, order2));
     }
 
     @Test
     void 주문의_상태를_변경할_때_주문이_존재하지_않으면_예외가_발생한다() {
         // expect
-        assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, new Order()))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(MAX_VALUE, new OrderChangeStatusRequest(COOKING)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문이 존재하지 않습니다");
     }
 
     @Test
     void 주문의_상태를_변경할_때_상태가_완료면_예외가_발생한다() {
         // given
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        Order savedOrder = orderDao.save(order);
+        Order order = order(orderTable(10, false), OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10)));
+        Order savedOrder = orderRepository.save(order);
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(COOKING);
 
         // expect
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료 상태의 주문은 변경할 수 없습니다");
     }
 
     @Test
     void 주문의_상태를_변경한다() {
         // given
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        Order savedOrder = orderDao.save(order);
-        Order newOrder = new Order();
-        newOrder.setOrderStatus(OrderStatus.MEAL.name());
+        Order order = order(orderTable(10, false), COOKING, List.of(orderLineItem(1L, 10)));
+        Order savedOrder = orderRepository.save(order);
+        OrderChangeStatusRequest newOrder = new OrderChangeStatusRequest(OrderStatus.MEAL);
 
         // when
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            softly.assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
             softly.assertThat(changedOrder.getId()).isEqualTo(savedOrder.getId());
         });
     }
+
 }

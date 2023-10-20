@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fake.InMemoryMenuGroupService;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.fake.InMemoryMenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
+import static kitchenpos.fixture.MenuGroupFixture.menuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -18,18 +21,18 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class MenuGroupServiceTest {
 
     private MenuGroupService menuGroupService;
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @BeforeEach
     void before() {
-        menuGroupDao = new InMemoryMenuGroupService();
-        menuGroupService = new MenuGroupService(menuGroupDao);
+        menuGroupRepository = new InMemoryMenuGroupRepository();
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @Test
     void 주문_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("korean");
+        MenuGroupRequest menuGroup = menuGroupRequest("korean");
 
         // when
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
@@ -44,8 +47,8 @@ class MenuGroupServiceTest {
     @Test
     void 주문을_전체_조회한다() {
         // given
-        menuGroupDao.save(new MenuGroup("korean"));
-        menuGroupDao.save(new MenuGroup("french"));
+        menuGroupRepository.save(menuGroup("korean"));
+        menuGroupRepository.save(menuGroup("french"));
 
         // when
         List<MenuGroup> savedMenuGroups = menuGroupService.list();

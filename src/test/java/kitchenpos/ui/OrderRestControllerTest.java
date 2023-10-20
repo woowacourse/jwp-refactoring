@@ -2,6 +2,8 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dto.OrderChangeStatusRequest;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
+import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
@@ -38,12 +43,10 @@ class OrderRestControllerTest {
     @Test
     void 주문을_생성한다() throws Exception {
         // given
-        Order createdOrder = new Order();
-        createdOrder.setId(1L);
-        createdOrder.setOrderStatus(OrderStatus.MEAL.name());
+        Order createdOrder = order(orderTable(10, false), List.of(orderLineItem(1L, 10)));
 
         // when
-        when(orderService.create(any(Order.class))).thenReturn(createdOrder);
+        when(orderService.create(any(OrderRequest.class))).thenReturn(createdOrder);
 
         // then
         mockMvc.perform(post("/api/orders")
@@ -57,12 +60,8 @@ class OrderRestControllerTest {
     @Test
     void 주문_목록을_조회한다() throws Exception {
         // given
-        Order order1 = new Order();
-        order1.setId(1L);
-        order1.setOrderStatus(OrderStatus.MEAL.name());
-        Order order2 = new Order();
-        order2.setId(2L);
-        order2.setOrderStatus(OrderStatus.COOKING.name());
+        Order order1 = order(orderTable(1, false), List.of(orderLineItem(1L, 10)));
+        Order order2 = order(orderTable(1, false), List.of(orderLineItem(1L, 10)));
 
         // when
         when(orderService.list()).thenReturn(List.of(order1, order2));
@@ -78,11 +77,11 @@ class OrderRestControllerTest {
     void 주문_상태를_변경한다() throws Exception {
         // given
         Long orderId = 1L;
-        Order request = new Order();
-        Order response = new Order();
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COMPLETION);
+        Order response = order(orderTable(1, false), OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10)));
 
         // when
-        when(orderService.changeOrderStatus(anyLong(), any(Order.class)))
+        when(orderService.changeOrderStatus(anyLong(), any(OrderChangeStatusRequest.class)))
                 .thenReturn(response);
 
         // when

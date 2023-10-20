@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -38,17 +39,15 @@ class MenuGroupRestControllerTest {
     @Test
     void 메뉴_그룹을_생성한다() throws Exception {
         // given
-        MenuGroup createdMenuGroup = new MenuGroup();
-        createdMenuGroup.setId(1L);
-        createdMenuGroup.setName("Test Menu Group");
+        MenuGroup createdMenuGroup = new MenuGroup(1L, "Test Menu Group");
 
         // when
-        when(menuGroupService.create(any(MenuGroup.class))).thenReturn(createdMenuGroup);
+        when(menuGroupService.create(any(MenuGroupRequest.class))).thenReturn(createdMenuGroup);
 
         // then
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createdMenuGroup)))
+                        .content(objectMapper.writeValueAsBytes(new MenuGroupRequest("Test Menu Group"))))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/menu-groups/" + createdMenuGroup.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdMenuGroup)));
@@ -57,12 +56,8 @@ class MenuGroupRestControllerTest {
     @Test
     void 메뉴_그룹을_전체_조회한다() throws Exception {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("Menu Group 1");
-        MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setId(2L);
-        menuGroup1.setName("Menu Group 2");
+        MenuGroup menuGroup = new MenuGroup(1L, "Test Menu Group 1");
+        MenuGroup menuGroup1 = new MenuGroup(2L, "Test Menu Group 2");
 
         // when
         when(menuGroupService.list()).thenReturn(List.of(menuGroup, menuGroup1));

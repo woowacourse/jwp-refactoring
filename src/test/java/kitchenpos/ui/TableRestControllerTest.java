@@ -2,7 +2,11 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableEmptyRequest;
+import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderTableFixtrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,17 +40,16 @@ class TableRestControllerTest {
     @Test
     void 테이블을_생성한다() throws Exception {
         // given
-        OrderTable createdTable = new OrderTable();
-        createdTable.setId(1L);
-        createdTable.setNumberOfGuests(10);
+        OrderTable createdTable = OrderTableFixtrue.orderTable(10, false);
+        OrderTableRequest request = new OrderTableRequest(10, false);
 
         // when
-        when(tableService.create(any(OrderTable.class))).thenReturn(createdTable);
+        when(tableService.create(any(OrderTableRequest.class))).thenReturn(createdTable);
 
         // then
         mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createdTable)))
+                        .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/tables/" + createdTable.getId()))
                 .andExpect(content().string(objectMapper.writeValueAsString(createdTable)));
@@ -55,12 +58,8 @@ class TableRestControllerTest {
     @Test
     void 테이블을_전체_조회한다() throws Exception {
         // given
-        OrderTable table1 = new OrderTable();
-        table1.setId(1L);
-        table1.setNumberOfGuests(10);
-        OrderTable table2 = new OrderTable();
-        table2.setId(2L);
-        table2.setNumberOfGuests(12);
+        OrderTable table1 = OrderTableFixtrue.orderTable(10, false);
+        OrderTable table2 = OrderTableFixtrue.orderTable(12, false);
 
         // when
         when(tableService.list()).thenReturn(List.of(table1, table2));
@@ -76,16 +75,16 @@ class TableRestControllerTest {
     void 빈_테이블로_변경한다() throws Exception {
         // given
         Long tableId = 1L;
-        OrderTable updatedTable = new OrderTable();
-        updatedTable.setEmpty(true);
+        OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
+        OrderTable orderTable = OrderTableFixtrue.orderTable(10, true);
 
         // when
-        when(tableService.changeEmpty(tableId, updatedTable)).thenReturn(updatedTable);
+        when(tableService.changeEmpty(tableId, orderTableEmptyRequest)).thenReturn(orderTable);
 
         // then
         mockMvc.perform(put("/api/tables/1/empty")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(updatedTable)))
+                        .content(objectMapper.writeValueAsBytes(orderTableEmptyRequest)))
                 .andExpect(status().isOk());
     }
 
@@ -93,11 +92,11 @@ class TableRestControllerTest {
     void 테이블의_손님_수를_변경한다() throws Exception {
         // given
         Long tableId = 1L;
-        OrderTable updatedTable = new OrderTable();
-        updatedTable.setNumberOfGuests(4);
+        OrderTable updatedTable = OrderTableFixtrue.orderTable(10, false);
+        OrderTableNumberOfGuestRequest request = new OrderTableNumberOfGuestRequest(10);
 
         // when
-        when(tableService.changeNumberOfGuests(tableId, updatedTable)).thenReturn(updatedTable);
+        when(tableService.changeNumberOfGuests(tableId, request)).thenReturn(updatedTable);
 
         // then
         mockMvc.perform(put("/api/tables/1/number-of-guests")
