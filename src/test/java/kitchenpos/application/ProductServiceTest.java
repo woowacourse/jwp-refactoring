@@ -2,67 +2,54 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.fixture.ProductFixture;
+import kitchenpos.application.request.ProductCreateRequest;
+import kitchenpos.application.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceMockTest
+@ServiceTest
 class ProductServiceTest {
 
-    @InjectMocks
+    @Autowired
     private ProductService productService;
-
-    @Mock
-    private ProductDao productDao;
 
     @Nested
     class 상품을_생성할_때 {
 
         @Test
         void 정상적으로_생성한다() {
-            Product 상품_엔티티_A = ProductFixture.상품_엔티티_A;
-            given(productDao.save(any(Product.class)))
-                    .willReturn(상품_엔티티_A);
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("벨리곰", 10_000);
 
-            Product response = productService.create(상품_엔티티_A);
+            ProductResponse productResponse = productService.create(productCreateRequest);
 
-            assertThat(response).usingRecursiveComparison().isEqualTo(상품_엔티티_A);
-        }
-
-        @Test
-        void 상품_가격이_NULL_이면_예외가_발생한다() {
-            Product 상품_엔티티_C_가격_Null = ProductFixture.상품_엔티티_B_가격_NULL;
-
-            assertThatThrownBy(() -> productService.create(상품_엔티티_C_가격_Null))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertAll(
+                    () -> assertThat(productResponse.getName()).isEqualTo(productCreateRequest.getName()),
+                    () -> assertThat(productResponse.getPrice()).isEqualTo(
+                            String.valueOf(productCreateRequest.getPrice()))
+            );
         }
 
         @Test
         void 상품_가격이_음수이면_예외가_발생한다() {
-            Product 상품_엔티티_가격_음수 = ProductFixture.상품_엔티티_C_가격_음수;
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("벨리곰", -1);
 
-            assertThatThrownBy(() -> productService.create(상품_엔티티_가격_음수))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Test
     void 모든_상품을_조회한다() {
-        Product 상품_엔티티_A = ProductFixture.상품_엔티티_A;
-        given(productDao.findAll())
-                .willReturn(List.of(상품_엔티티_A));
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("milk", 1_000);
+        productService.create(productCreateRequest);
 
-        List<Product> products = productService.list();
+        List<ProductResponse> productResponses = productService.list();
 
-        assertThat(products).contains(상품_엔티티_A);
+        assertThat(productResponses).hasSizeGreaterThan(1);
     }
 }
