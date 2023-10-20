@@ -144,8 +144,10 @@
 
 - 의존성 리팩토링 전
 
-<img src = images/before.png>
+![image](https://github.com/woosung1223/jwp-refactoring/assets/78679830/7d8f6933-a351-4f24-b485-0cf4abae8c7b)
+
+
 
 - 의존성 리팩토링 후
 
-<img src = images/after.png>
+![image](https://github.com/woosung1223/jwp-refactoring/assets/78679830/3d882959-ebff-4f81-904c-516b7b7bba29)
