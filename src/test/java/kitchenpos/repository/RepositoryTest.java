@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +12,5 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @Retention(RetentionPolicy.RUNTIME)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DataJpaTest
-public @interface DaoTest {
+public @interface RepositoryTest {
 }

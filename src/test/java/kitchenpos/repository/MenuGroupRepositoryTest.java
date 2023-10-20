@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class MenuGroupDaoTest {
+@RepositoryTest
+class MenuGroupRepositoryTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴_그룹_엔티티를_저장한다() {
         MenuGroup menuGroupEntity = createMenuGroupEntity();
 
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroupEntity);
 
         assertThat(savedMenuGroup.getId()).isPositive();
     }
@@ -26,19 +26,19 @@ class MenuGroupDaoTest {
     @Test
     void 메뉴_그룹_엔티티를_조회한다() {
         MenuGroup menuGroupEntity = createMenuGroupEntity();
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroupEntity);
 
-        assertThat(menuGroupDao.findById(savedMenuGroup.getId())).isPresent();
+        assertThat(menuGroupRepository.findById(savedMenuGroup.getId())).isPresent();
     }
 
     @Test
     void 모든_메뉴_그룹_엔티티를_조회한다() {
         MenuGroup menuGroupEntityA = createMenuGroupEntity();
         MenuGroup menuGroupEntityB = createMenuGroupEntity();
-        MenuGroup savedMenuGroupA = menuGroupDao.save(menuGroupEntityA);
-        MenuGroup savedMenuGroupB = menuGroupDao.save(menuGroupEntityB);
+        MenuGroup savedMenuGroupA = menuGroupRepository.save(menuGroupEntityA);
+        MenuGroup savedMenuGroupB = menuGroupRepository.save(menuGroupEntityB);
 
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
 
         assertThat(menuGroups).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(savedMenuGroupA, savedMenuGroupB);
@@ -47,14 +47,14 @@ class MenuGroupDaoTest {
     @Test
     void 메뉴_그룹_엔티티가_존재하면_TRUE_반환한다() {
         MenuGroup menuGroupEntity = createMenuGroupEntity();
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroupEntity);
 
-        assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
+        assertThat(menuGroupRepository.existsById(savedMenuGroup.getId())).isTrue();
     }
 
     @Test
     void 메뉴_그룹_엔티티가_존재하지_않으면_FALSE_반환한다() {
-        assertThat(menuGroupDao.existsById(-1L)).isFalse();
+        assertThat(menuGroupRepository.existsById(-1L)).isFalse();
     }
 
     private MenuGroup createMenuGroupEntity() {

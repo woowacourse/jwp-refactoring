@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class MenuDaoTest {
+@RepositoryTest
+class MenuRepositoryTest {
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private MenuGroup menuGroup;
 
@@ -26,14 +26,14 @@ class MenuDaoTest {
         MenuGroup menuGroupEntity = MenuGroup.builder()
                 .name("반려 식물")
                 .build();
-        menuGroup = menuGroupDao.save(menuGroupEntity);
+        menuGroup = menuGroupRepository.save(menuGroupEntity);
     }
 
     @Test
     void 메뉴_엔티티를_저장한다() {
         Menu menuEntity = createMenu();
 
-        Menu savedMenu = menuDao.save(menuEntity);
+        Menu savedMenu = menuRepository.save(menuEntity);
 
         assertThat(savedMenu.getId()).isPositive();
     }
@@ -41,19 +41,19 @@ class MenuDaoTest {
     @Test
     void 메뉴_엔티티를_조회한다() {
         Menu menuEntity = createMenu();
-        Menu savedMenu = menuDao.save(menuEntity);
+        Menu savedMenu = menuRepository.save(menuEntity);
 
-        assertThat(menuDao.findById(savedMenu.getId())).isPresent();
+        assertThat(menuRepository.findById(savedMenu.getId())).isPresent();
     }
 
     @Test
     void 모든_메뉴_엔티티를_조회한다() {
         Menu menuEntityA = createMenu();
         Menu menuEntityB = createMenu();
-        Menu savedMenuA = menuDao.save(menuEntityA);
-        Menu savedMenuB = menuDao.save(menuEntityB);
+        Menu savedMenuA = menuRepository.save(menuEntityA);
+        Menu savedMenuB = menuRepository.save(menuEntityB);
 
-        List<Menu> menus = menuDao.findAll();
+        List<Menu> menus = menuRepository.findAll();
 
         assertThat(menus).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(savedMenuA, savedMenuB);
@@ -63,10 +63,10 @@ class MenuDaoTest {
     void 존재하는_메뉴의_개수를_조회한다() {
         Menu menuEntityA = createMenu();
         Menu menuEntityB = createMenu();
-        Menu saveMenuA = menuDao.save(menuEntityA);
-        Menu saveMenuB = menuDao.save(menuEntityB);
+        Menu saveMenuA = menuRepository.save(menuEntityA);
+        Menu saveMenuB = menuRepository.save(menuEntityB);
 
-        long count = menuDao.countByIdIn(List.of(saveMenuA.getId(), saveMenuB.getId()));
+        long count = menuRepository.countByIdIn(List.of(saveMenuA.getId(), saveMenuB.getId()));
 
         assertThat(count).isEqualTo(2);
     }

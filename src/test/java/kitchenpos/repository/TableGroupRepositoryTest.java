@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class TableGroupDaoTest {
+@RepositoryTest
+class TableGroupRepositoryTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     void 테이블_그룹_엔티티를_저장한다() {
         TableGroup tableGroupEntity = createTableGroupEntity();
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroupEntity);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroupEntity);
 
         assertThat(savedTableGroup.getId()).isPositive();
     }
@@ -26,19 +26,19 @@ class TableGroupDaoTest {
     @Test
     void 테이블_그룹_엔티티를_조회한다() {
         TableGroup tableGroupEntity = createTableGroupEntity();
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroupEntity);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroupEntity);
 
-        assertThat(tableGroupDao.findById(savedTableGroup.getId())).isPresent();
+        assertThat(tableGroupRepository.findById(savedTableGroup.getId())).isPresent();
     }
 
     @Test
     void 모든_테이블_그룹_엔티티를_조회한다() {
         TableGroup tableGroupEntityA = createTableGroupEntity();
         TableGroup tableGroupEntityB = createTableGroupEntity();
-        TableGroup savedTableGroupA = tableGroupDao.save(tableGroupEntityA);
-        TableGroup savedTableGroupB = tableGroupDao.save(tableGroupEntityB);
+        TableGroup savedTableGroupA = tableGroupRepository.save(tableGroupEntityA);
+        TableGroup savedTableGroupB = tableGroupRepository.save(tableGroupEntityB);
 
-        List<TableGroup> tableGroups = tableGroupDao.findAll();
+        List<TableGroup> tableGroups = tableGroupRepository.findAll();
 
         assertThat(tableGroups).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(savedTableGroupA, savedTableGroupB);

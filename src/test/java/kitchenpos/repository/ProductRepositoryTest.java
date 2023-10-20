@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class ProductDaoTest {
+@RepositoryTest
+class ProductRepositoryTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     void 상품_엔티티를_저장한다() {
         Product productEntity = createProductEntity();
 
-        Product savedProduct = productDao.save(productEntity);
+        Product savedProduct = productRepository.save(productEntity);
 
         assertThat(savedProduct.getId()).isPositive();
     }
@@ -26,19 +26,19 @@ class ProductDaoTest {
     @Test
     void 상품_엔티티를_조회한다() {
         Product productEntity = createProductEntity();
-        Product savedProduct = productDao.save(productEntity);
+        Product savedProduct = productRepository.save(productEntity);
 
-        assertThat(productDao.findById(savedProduct.getId())).isPresent();
+        assertThat(productRepository.findById(savedProduct.getId())).isPresent();
     }
 
     @Test
     void 모든_상품_엔티티를_조회한다() {
         Product productEntityA = createProductEntity();
         Product productEntityB = createProductEntity();
-        Product savedProductA = productDao.save(productEntityA);
-        Product savedProductB = productDao.save(productEntityB);
+        Product savedProductA = productRepository.save(productEntityA);
+        Product savedProductB = productRepository.save(productEntityB);
 
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
 
         assertThat(products)
                 .usingRecursiveFieldByFieldElementComparatorOnFields("id")

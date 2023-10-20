@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,26 +15,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class OrderLineItemDaoTest {
+@RepositoryTest
+class OrderLineItemRepositoryTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     private Order order;
 
@@ -43,35 +43,35 @@ class OrderLineItemDaoTest {
     @BeforeEach
     void setUp() {
         TableGroup tableGroupEntity = TableGroup.builder().build();
-        TableGroup tableGroup = tableGroupDao.save(tableGroupEntity);
+        TableGroup tableGroup = tableGroupRepository.save(tableGroupEntity);
 
         OrderTable orderTableEntity = OrderTable.builder().tableGroup(tableGroup).build();
-        OrderTable orderTable = orderTableDao.save(orderTableEntity);
+        OrderTable orderTable = orderTableRepository.save(orderTableEntity);
 
         Order orderEntity = Order.builder()
                 .orderTable(orderTable)
                 .orderStatus(OrderStatus.COOKING)
                 .build();
-        order = orderDao.save(orderEntity);
+        order = orderRepository.save(orderEntity);
 
         MenuGroup menuGroupEntity = MenuGroup.builder()
                 .name("샐러드")
                 .build();
-        MenuGroup menuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroupEntity);
 
         Menu menuEntity = Menu.builder()
                 .name("닭가슴살 샐러드")
                 .menuGroup(menuGroup)
                 .price(1_000_000)
                 .build();
-        menu = menuDao.save(menuEntity);
+        menu = menuRepository.save(menuEntity);
     }
 
     @Test
     void 주문_아이템_엔티티를_저장한다() {
         OrderLineItem orderLineItemEntity = createOrderLineItem();
 
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItemEntity);
+        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItemEntity);
 
         assertThat(savedOrderLineItem.getSeq()).isPositive();
     }
@@ -79,19 +79,19 @@ class OrderLineItemDaoTest {
     @Test
     void 주문_아이템_엔티티를_조회한다() {
         OrderLineItem orderLineItemEntity = createOrderLineItem();
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItemEntity);
+        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItemEntity);
 
-        assertThat(orderLineItemDao.findById(savedOrderLineItem.getSeq())).isPresent();
+        assertThat(orderLineItemRepository.findById(savedOrderLineItem.getSeq())).isPresent();
     }
 
     @Test
     void 모든_주문_아이템_엔티티를_조회한다() {
         OrderLineItem orderLineItemEntityA = createOrderLineItem();
         OrderLineItem orderLineItemEntityB = createOrderLineItem();
-        OrderLineItem savedOrderLineItemA = orderLineItemDao.save(orderLineItemEntityA);
-        OrderLineItem savedOrderLineItemB = orderLineItemDao.save(orderLineItemEntityB);
+        OrderLineItem savedOrderLineItemA = orderLineItemRepository.save(orderLineItemEntityA);
+        OrderLineItem savedOrderLineItemB = orderLineItemRepository.save(orderLineItemEntityB);
 
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAll();
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
 
         assertThat(orderLineItems).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
                 .contains(savedOrderLineItemA, savedOrderLineItemB);
@@ -101,10 +101,10 @@ class OrderLineItemDaoTest {
     void 주문에_해당하는_모든_주문_아이템_엔티티를_조회한다() {
         OrderLineItem orderLineItemEntityA = createOrderLineItem();
         OrderLineItem orderLineItemEntityB = createOrderLineItem();
-        OrderLineItem saveOrderLineItemA = orderLineItemDao.save(orderLineItemEntityA);
-        OrderLineItem saveOrderLineItemB = orderLineItemDao.save(orderLineItemEntityB);
+        OrderLineItem saveOrderLineItemA = orderLineItemRepository.save(orderLineItemEntityA);
+        OrderLineItem saveOrderLineItemB = orderLineItemRepository.save(orderLineItemEntityB);
 
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
 
         assertThat(orderLineItems).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
                 .contains(saveOrderLineItemA, saveOrderLineItemB);

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class OrderDaoTest {
+@RepositoryTest
+class OrderRepositoryTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
 
     private OrderTable orderTable;
@@ -30,17 +30,17 @@ class OrderDaoTest {
     @BeforeEach
     void setUp() {
         TableGroup tableGroupEntity = TableGroup.builder().build();
-        TableGroup tableGroup = tableGroupDao.save(tableGroupEntity);
+        TableGroup tableGroup = tableGroupRepository.save(tableGroupEntity);
 
         OrderTable orderTableEntity = OrderTable.builder().tableGroup(tableGroup).build();
-        orderTable = orderTableDao.save(orderTableEntity);
+        orderTable = orderTableRepository.save(orderTableEntity);
     }
 
     @Test
     void 주문_엔티티를_저장한다() {
         Order orderEntity = createOrderEntity();
 
-        Order savedOrder = orderDao.save(orderEntity);
+        Order savedOrder = orderRepository.save(orderEntity);
 
         assertThat(savedOrder.getId()).isPositive();
     }
@@ -48,19 +48,19 @@ class OrderDaoTest {
     @Test
     void 주문_엔티티를_조회한다() {
         Order orderEntity = createOrderEntity();
-        Order savedOrder = orderDao.save(orderEntity);
+        Order savedOrder = orderRepository.save(orderEntity);
 
-        assertThat(orderDao.findById(savedOrder.getId())).isPresent();
+        assertThat(orderRepository.findById(savedOrder.getId())).isPresent();
     }
 
     @Test
     void 모든_주문_엔티티를_조회한다() {
         Order orderEntityA = createOrderEntity();
         Order orderEntityB = createOrderEntity();
-        Order savedOrderA = orderDao.save(orderEntityA);
-        Order savedOrderB = orderDao.save(orderEntityB);
+        Order savedOrderA = orderRepository.save(orderEntityA);
+        Order savedOrderB = orderRepository.save(orderEntityB);
 
-        List<Order> orders = orderDao.findAll();
+        List<Order> orders = orderRepository.findAll();
 
         assertThat(orders).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(savedOrderA, savedOrderB);
@@ -70,9 +70,9 @@ class OrderDaoTest {
     void 주문_테이블에서_주문_상태와_일치하는_엔티티가_존재하면_TRUE_반환한다() {
         OrderStatus orderStatus = OrderStatus.MEAL;
         Order orderEntity = createOrderEntityWithStatus(orderStatus);
-        orderDao.save(orderEntity);
+        orderRepository.save(orderEntity);
 
-        assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
+        assertThat(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                         orderTable.getId(),
                         List.of(orderStatus)
                 )
@@ -83,9 +83,9 @@ class OrderDaoTest {
     void 주문_테이블에서_주문_상태와_일치하는_엔티티가_존재하지_않으면_FALSE_반환한다() {
         OrderStatus orderStatus = OrderStatus.MEAL;
         Order orderEntity = createOrderEntityWithStatus(orderStatus);
-        orderDao.save(orderEntity);
+        orderRepository.save(orderEntity);
 
-        assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
+        assertThat(orderRepository.existsByOrderTableIdAndOrderStatusIn(
                         orderTable.getId(),
                         List.of(OrderStatus.COMPLETION)
                 )
@@ -97,9 +97,9 @@ class OrderDaoTest {
         OrderStatus orderStatusA = OrderStatus.MEAL;
         OrderStatus orderStatusB = OrderStatus.COMPLETION;
         Order orderEntity = createOrderEntityWithStatus(orderStatusA);
-        orderDao.save(orderEntity);
+        orderRepository.save(orderEntity);
 
-        assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        assertThat(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                         List.of(orderTable.getId()),
                         List.of(orderStatusA, orderStatusB)
                 )
@@ -110,9 +110,9 @@ class OrderDaoTest {
     void 여러_주문_테이블_중_주문_상태와_일치하는_주문_엔티티가_존재하지_않으면_FALSE_반환한다() {
         OrderStatus orderStatus = OrderStatus.MEAL;
         Order orderEntity = createOrderEntityWithStatus(orderStatus);
-        orderDao.save(orderEntity);
+        orderRepository.save(orderEntity);
 
-        assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        assertThat(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                         List.of(orderTable.getId()),
                         List.of(OrderStatus.COOKING)
                 )

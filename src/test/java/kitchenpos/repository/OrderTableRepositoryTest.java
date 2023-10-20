@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,28 +10,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class OrderTableDaoTest {
+@RepositoryTest
+class OrderTableRepositoryTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
         TableGroup tableGroupEntity = TableGroup.builder().build();
-        tableGroup = tableGroupDao.save(tableGroupEntity);
+        tableGroup = tableGroupRepository.save(tableGroupEntity);
     }
 
     @Test
     void 주문_테이블_엔티티를_저장한다() {
         OrderTable orderTableEntity = createOrderTableEntity();
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTableEntity);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTableEntity);
 
         assertThat(savedOrderTable.getId()).isPositive();
     }
@@ -39,19 +39,19 @@ class OrderTableDaoTest {
     @Test
     void 주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntity = createOrderTableEntity();
-        OrderTable savedOrderTable = orderTableDao.save(orderTableEntity);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTableEntity);
 
-        assertThat(orderTableDao.findById(savedOrderTable.getId())).isPresent();
+        assertThat(orderTableRepository.findById(savedOrderTable.getId())).isPresent();
     }
 
     @Test
     void 모든_주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntityA = createOrderTableEntity();
         OrderTable orderTableEntityB = createOrderTableEntity();
-        OrderTable savedOrderTableA = orderTableDao.save(orderTableEntityA);
-        OrderTable savedOrderTableB = orderTableDao.save(orderTableEntityB);
+        OrderTable savedOrderTableA = orderTableRepository.save(orderTableEntityA);
+        OrderTable savedOrderTableB = orderTableRepository.save(orderTableEntityB);
 
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
 
         assertThat(orderTables).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(savedOrderTableA, savedOrderTableB);
@@ -61,10 +61,10 @@ class OrderTableDaoTest {
     void ID에_해당하는_주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntityA = createOrderTableEntity();
         OrderTable orderTableEntityB = createOrderTableEntity();
-        OrderTable savedOrderTableA = orderTableDao.save(orderTableEntityA);
-        OrderTable savedOrderTableB = orderTableDao.save(orderTableEntityB);
+        OrderTable savedOrderTableA = orderTableRepository.save(orderTableEntityA);
+        OrderTable savedOrderTableB = orderTableRepository.save(orderTableEntityB);
 
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(List.of(savedOrderTableA.getId()));
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(savedOrderTableA.getId()));
 
         assertThat(orderTables).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(savedOrderTableA)
@@ -75,10 +75,10 @@ class OrderTableDaoTest {
     void 테이블_그룹_ID에_해당하는_주문_테이블_엔티티를_조회한다() {
         OrderTable orderTableEntityA = createOrderTableEntity();
         OrderTable orderTableEntityB = createOrderTableEntity();
-        OrderTable saveOrderTableA = orderTableDao.save(orderTableEntityA);
-        OrderTable saveOrderTableB = orderTableDao.save(orderTableEntityB);
+        OrderTable saveOrderTableA = orderTableRepository.save(orderTableEntityA);
+        OrderTable saveOrderTableB = orderTableRepository.save(orderTableEntityB);
 
-        List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
         assertThat(orderTables).usingRecursiveFieldByFieldElementComparatorOnFields("id")
                 .contains(saveOrderTableA, saveOrderTableB);

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,20 +12,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DaoTest
-class MenuProductDaoTest {
+@RepositoryTest
+class MenuProductRepositoryTest {
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private Menu menu;
     private Product product;
@@ -36,27 +36,27 @@ class MenuProductDaoTest {
         MenuGroup menuGroupEntity = MenuGroup.builder()
                 .name("샐러드")
                 .build();
-        MenuGroup menuGroup = menuGroupDao.save(menuGroupEntity);
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroupEntity);
 
         Menu menuEntity = Menu.builder()
                 .name("닭가슴살")
                 .price(1_000)
                 .menuGroup(menuGroup)
                 .build();
-        menu = menuDao.save(menuEntity);
+        menu = menuRepository.save(menuEntity);
 
         Product productEntity = Product.builder()
                 .name("닭가슴살 볼")
                 .price(3_000)
                 .build();
-        product = productDao.save(productEntity);
+        product = productRepository.save(productEntity);
     }
 
     @Test
     void 메뉴_제품_엔티티를_저장한다() {
         MenuProduct menuProductEntity = createMenuProduct();
 
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProductEntity);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProductEntity);
 
         assertThat(savedMenuProduct.getId()).isPositive();
     }
@@ -64,19 +64,19 @@ class MenuProductDaoTest {
     @Test
     void 메뉴_제품_엔티티를_조회한다() {
         MenuProduct menuProductEntity = createMenuProduct();
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProductEntity);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProductEntity);
 
-        assertThat(menuProductDao.findById(savedMenuProduct.getId())).isPresent();
+        assertThat(menuProductRepository.findById(savedMenuProduct.getId())).isPresent();
     }
 
     @Test
     void 모든_메뉴_제품_엔티티를_조회한다() {
         MenuProduct menuProductEntityA = createMenuProduct();
         MenuProduct menuProductEntityB = createMenuProduct();
-        MenuProduct savedMenuProductA = menuProductDao.save(menuProductEntityA);
-        MenuProduct savedMenuProductB = menuProductDao.save(menuProductEntityB);
+        MenuProduct savedMenuProductA = menuProductRepository.save(menuProductEntityA);
+        MenuProduct savedMenuProductB = menuProductRepository.save(menuProductEntityB);
 
-        List<MenuProduct> menuProducts = menuProductDao.findAll();
+        List<MenuProduct> menuProducts = menuProductRepository.findAll();
 
         assertThat(menuProducts).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
                 .contains(savedMenuProductA, savedMenuProductB);
@@ -86,10 +86,10 @@ class MenuProductDaoTest {
     void 메뉴와_일치하는_모든_메뉴_제품_엔티티를_조회한다() {
         MenuProduct menuProductEntityA = createMenuProduct();
         MenuProduct menuProductEntityB = createMenuProduct();
-        MenuProduct savedMenuProductA = menuProductDao.save(menuProductEntityA);
-        MenuProduct savedMenuProductB = menuProductDao.save(menuProductEntityB);
+        MenuProduct savedMenuProductA = menuProductRepository.save(menuProductEntityA);
+        MenuProduct savedMenuProductB = menuProductRepository.save(menuProductEntityB);
 
-        List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
+        List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
 
         assertThat(menuProducts).usingRecursiveFieldByFieldElementComparatorOnFields("seq")
                 .contains(savedMenuProductA, savedMenuProductB);
