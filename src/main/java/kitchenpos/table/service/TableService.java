@@ -2,8 +2,7 @@ package kitchenpos.table.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.common.event.ValidateOrdersCompletedEvent;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.table.dto.request.ChangeTableGuestRequest;
@@ -11,6 +10,7 @@ import kitchenpos.table.dto.request.CreateOrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(ApplicationEventPublisher eventPublisher, OrderTableRepository orderTableRepository) {
+        this.eventPublisher = eventPublisher;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -47,17 +47,10 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        validateOrdersCompleted(orderTable);
+        eventPublisher.publishEvent(new ValidateOrdersCompletedEvent(orderTable.getId()));
         orderTable.changeEmpty(request.getEmpty());
 
         return OrderTableResponse.from(orderTable);
-    }
-
-    private void validateOrdersCompleted(OrderTable orderTable) {
-        List<Order> orders = orderRepository.findByOrderTableId(orderTable.getId());
-        for (Order order : orders) {
-            order.validateOrderIsCompleted();
-        }
     }
 
     @Transactional

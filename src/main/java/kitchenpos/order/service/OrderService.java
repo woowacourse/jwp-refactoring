@@ -99,4 +99,11 @@ public class OrderService {
 
         return OrderResponse.from(order, orderLineItems);
     }
+
+    public void validateOrdersCompleted(Long orderTableId) {
+        List<Order> orders = orderRepository.findByOrderTableId(orderTableId);
+        for (Order order : orders) {
+            order.validateOrderIsCompleted();
+        }
+    }
 }
