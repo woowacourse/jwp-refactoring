@@ -37,8 +37,8 @@ public class TableGroupService {
     public TableGroupResponse create(CreateTableGroupRequest request) {
         List<OrderTable> orderTables = findOrderTables(request.getOrderTables());
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        groupOrderTables(orderTables);
         tableGroupRepository.save(tableGroup);
+        groupOrderTables(tableGroup, orderTables);
 
         return TableGroupResponse.from(tableGroup, orderTables);
     }
@@ -48,6 +48,15 @@ public class TableGroupService {
                 .map(each -> orderTableRepository.findById(each.getId())
                         .orElseThrow(OrderTableNotFoundException::new))
                 .collect(Collectors.toList());
+    }
+
+    public void groupOrderTables(TableGroup tableGroup, List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.validateIsEmpty();
+            orderTable.validateTableGroupNotExists();
+            orderTable.changeTableGroup(tableGroup.getId());
+        }
+        validateOrderTableCount(orderTables);
     }
 
     @Transactional
@@ -68,14 +77,6 @@ public class TableGroupService {
         for (Order order : orders) {
             order.validateOrderIsCompleted();
         }
-    }
-
-    public void groupOrderTables(List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.validateIsEmpty();
-            orderTable.validateTableGroupNotExists();
-        }
-        validateOrderTableCount(orderTables);
     }
 
     private void validateOrderTableCount(List<OrderTable> orderTables) {
