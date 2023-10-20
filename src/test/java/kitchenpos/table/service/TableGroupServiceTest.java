@@ -132,6 +132,30 @@ class TableGroupServiceTest extends ServiceTestContext {
         assertThat(response.getId()).isNotNull();
     }
 
+    @Test
+    void 테이블_그룹을_생성하면_모두_주문_테이블로_전환된다() {
+        // given
+        OrderTable orderTable1 = OrderTableFixture.of(null, 0, true);
+        OrderTable orderTable2 = OrderTableFixture.of(null, 0, true);
+
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
+
+        List<OrderTableRequest> orderTableRequests = List.of(
+                new OrderTableRequest(orderTable1.getId()),
+                new OrderTableRequest(orderTable2.getId())
+        );
+
+        CreateTableGroupRequest request = new CreateTableGroupRequest(orderTableRequests);
+
+        // when
+        TableGroupResponse response = tableGroupService.create(request);
+
+        // then
+        assertThat(response.getOrderTables())
+                .allMatch(each -> each.isEmpty() != true);
+    }
+
     @ParameterizedTest
     @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
     void 주문_상태가_COOKING이거나_MEAL인_경우_그룹을_해체할_수_없다(OrderStatus orderStatus) {

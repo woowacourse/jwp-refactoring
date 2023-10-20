@@ -54,6 +54,8 @@ public class TableGroupService {
         for (OrderTable orderTable : orderTables) {
             orderTable.validateIsEmpty();
             orderTable.validateTableGroupNotExists();
+
+            orderTable.changeEmpty(false);
             orderTable.changeTableGroup(tableGroup.getId());
         }
         validateOrderTableCount(orderTables);
