@@ -5,6 +5,8 @@ import kitchenpos.common.BaseDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -14,7 +16,10 @@ public class OrderLineItem extends BaseDate {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
-    private Long orderId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
     private Long menuId;
     private long quantity;
 
@@ -26,12 +31,8 @@ public class OrderLineItem extends BaseDate {
         this.seq = seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(final Order order) {
+        this.order = order;
     }
 
     public Long getMenuId() {
