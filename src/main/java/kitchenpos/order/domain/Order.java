@@ -49,7 +49,7 @@ public class Order {
     }
 
     public void validateOrderIsCompleted() {
-        if (orderStatus.isNotCompleted()) {
+        if (!orderStatus.isCompleted()) {
             throw new OrderIsNotCompletedException();
         }
     }

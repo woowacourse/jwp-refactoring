@@ -9,8 +9,4 @@ public enum OrderStatus {
     public boolean isCompleted() {
         return this == COMPLETION;
     }
-
-    public boolean isNotCompleted() {
-        return this != COMPLETION;
-    }
 }
