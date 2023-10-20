@@ -68,7 +68,7 @@ class MenuServiceTest extends ServiceTestConfig {
             });
         }
 
-        @DisplayName("가격이 null 이면 실패한다.")
+        @DisplayName("가격을 입력하지 않으면 실패한다.")
         @Test
         void fail_if_price_is_null() {
             // given
