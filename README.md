@@ -65,15 +65,74 @@ API 요청에 id를 객체로 감싸놓은 것을 언박싱
 ### `GET /api/orders`
 API 응답에 orderLineItems 안에 불필요한 orderId 제거
 #### 변경 전
-
+```json
+{
+    "id": 1,
+    "orderStatus": "COOKING",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1,
+            "orderId": 1
+        }
+    ]
+}
+```
 
 #### 변경 후
-
+```json
+{
+    "id": 1,
+    "orderStatus": "COOKING",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1
+        }
+    ]
+}
+```
 <br>
 
 ### `PUT /api/orders/{id}/order-status`
 API 응답에 orderLineItems 안에 불필요한 orderId 제거
 #### 변경 전
-
+```json
+{
+    "id": 1,
+    "orderStatus": "MEAL",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1,
+            "orderId": 1
+        }
+    ]
+}
+```
 
 #### 변경 후
+```json
+{
+    "id": 1,
+    "orderStatus": "MEAL",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1
+        }
+    ]
+}
+```
