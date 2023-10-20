@@ -28,10 +28,13 @@ public class MenuGroup {
         this.name = name;
     }
 
+    public static MenuGroup from(String name) {
+        return new MenuGroup(name);
+    }
+
     public Long getId() {
         return id;
     }
-
 
     public String getName() {
         return name;

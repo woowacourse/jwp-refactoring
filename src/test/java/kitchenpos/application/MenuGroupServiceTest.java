@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,16 +21,19 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = 추천_메뉴_그룹();
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest(
+                추천_메뉴_그룹().getName()
+        );
 
         // when
-        Long id = menuGroupService.create(menuGroup).getId();
+        Long id = menuGroupService.create(request)
+                .getId();
 
         // then
-        String savedName = menuGroupRepository.findById(id)
+        String actual = menuGroupRepository.findById(id)
                 .get()
                 .getName();
-        assertThat(savedName).isEqualTo(menuGroup.getName());
+        assertThat(actual).isEqualTo(request.getName());
     }
 
     @Test
