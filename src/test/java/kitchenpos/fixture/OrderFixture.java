@@ -1,5 +1,6 @@
 package kitchenpos.fixture;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
@@ -10,36 +11,28 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderFixture {
 
-    public static Order 주문_생성(
-            final OrderTable orderTable,
-            final OrderStatus orderStatus,
-            final List<Menu> menus
-    ) {
-        final Order order = new Order();
+    public static Order 주문_생성_메뉴_당_1개씩(final OrderTable orderTable, final List<Menu> menus) {
+        final Order order = new Order(orderTable, LocalDateTime.now());
+        final List<OrderLineItem> orderLineItems = 주문_항목_목록_생성(order, menus, 1L);
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    public static Order 주문_생성_메뉴_당_1개씩_상태_설정(final OrderTable orderTable,
+                                             final OrderStatus orderStatus,
+                                             final List<Menu> menus) {
+        final Order order = new Order(orderTable, LocalDateTime.now());
         order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(orderTable.getId());
-        final List<OrderLineItem> orderLineItems = 주문_항목_목록_생성(menus);
+        final List<OrderLineItem> orderLineItems = 주문_항목_목록_생성(order, menus, 1L);
         order.setOrderLineItems(orderLineItems);
         return order;
     }
 
-    public static Order 주문_생성(
-            final OrderTable orderTable,
-            final List<Menu> menus
-    ) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        final List<OrderLineItem> orderLineItems = 주문_항목_목록_생성(menus);
-        order.setOrderLineItems(orderLineItems);
-        return order;
-    }
-
-    public static List<OrderLineItem> 주문_항목_목록_생성(final List<Menu> menus) {
+    public static List<OrderLineItem> 주문_항목_목록_생성(final Order order,
+                                                  final List<Menu> menus,
+                                                  final long quantity) {
         return menus.stream()
-                .map(menu -> {
-                    final OrderLineItem orderLineItem = new OrderLineItem();
-                    orderLineItem.setMenuId(menu.getId());
-                    return orderLineItem;
-                }).collect(Collectors.toList());
+                .map(menu -> new OrderLineItem(order, menu, quantity))
+                .collect(Collectors.toList());
     }
 }

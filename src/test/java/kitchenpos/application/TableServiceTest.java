@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.fixture.OrderFixture.주문_생성;
+import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_저장;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_저장;
@@ -55,7 +55,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTable saved = tableService.create(orderTable);
 
         // then
-        assertThat(saved.getTableGroupId()).isNull();
+        assertThat(saved.getTableGroup()).isNull();
     }
 
     @Test
@@ -97,7 +97,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTable table = 주문_테이블_저장(tableService::create);
 
         // when
-        orderService.create(주문_생성(table, COOKING, List.of(menuService.list().get(0))));
+        orderService.create(주문_생성_메뉴_당_1개씩_상태_설정(table, COOKING, List.of(menuService.list().get(0))));
         table.setEmpty(true);
 
         // then
@@ -112,7 +112,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTable table = 주문_테이블_저장(tableService::create);
 
         // when
-        orderService.create(주문_생성(table, COOKING, List.of(menuService.list().get(0))));
+        orderService.create(주문_생성_메뉴_당_1개씩_상태_설정(table, COOKING, List.of(menuService.list().get(0))));
         table.setEmpty(true);
 
         // then

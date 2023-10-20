@@ -4,7 +4,13 @@ import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class Product {
 
     private static final BigDecimal PRICE_MINIMUM = ZERO;
@@ -12,9 +18,13 @@ public class Product {
     private static final int PRICE_SCALE = 2;
     private static final int NAME_LENGTH_MAXIMUM = 255;
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String name;
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal price;
 
     public Product(final Long id, final String name, final BigDecimal price) {
         validateName(name);
@@ -22,6 +32,9 @@ public class Product {
         this.id = id;
         this.name = name;
         this.price = price.setScale(PRICE_SCALE, RoundingMode.DOWN);
+    }
+
+    protected Product() {
     }
 
     public Product(final String name, final BigDecimal price) {

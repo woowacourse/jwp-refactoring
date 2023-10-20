@@ -1,11 +1,24 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class MenuGroup {
 
     private static final int NAME_LENGTH_MAXIMUM = 255;
-    
-    private final String name;
-    private final Long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String name;
+
+    protected MenuGroup() {
+    }
 
     public MenuGroup(final Long id, final String name) {
         validateName(name);

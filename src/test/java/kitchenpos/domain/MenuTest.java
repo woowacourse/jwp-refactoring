@@ -1,11 +1,11 @@
 package kitchenpos.domain;
 
+import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,9 +23,9 @@ class MenuTest {
         // expected
         assertThatThrownBy(() -> new Menu(
                 nullName,
-                BigDecimal.ONE,
-                1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 1L))
+                BigDecimal.ZERO,
+                new MenuGroup("이벤트 메뉴"),
+                List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
 
@@ -40,8 +40,8 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 name,
                 BigDecimal.ZERO,
-                1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 1L))
+                new MenuGroup("이벤트 메뉴"),
+                List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
 
@@ -55,8 +55,8 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "순두부 정식",
                 nullPrice,
-                1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 1L))
+                new MenuGroup("이벤트 메뉴"),
+                List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
 
@@ -66,20 +66,43 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "순두부 정식",
                 BigDecimal.valueOf(-1),
-                1L,
-                List.of(new MenuProduct(1L, 1L, 1L, 1L))
+                new MenuGroup("이벤트 메뉴"),
+                List.of(new MenuProduct(new Product("상품", ONE), 2))
         )).isInstanceOf(Exception.class);
     }
 
-    @Disabled
     @Test
-    @DisplayName("메뉴는 1 종류 이상의 메뉴 상품으로 구성되어 있다.")
+    @DisplayName("메뉴는 1 종류 이상의 메뉴 상품으로 구성된다.")
     void 메뉴_생성_실패_메뉴_상품_개수() {
         assertThatThrownBy(() -> new Menu(
                 "순두부 정식",
-                BigDecimal.ONE,
-                1L,
+                BigDecimal.ZERO,
+                new MenuGroup("이벤트 메뉴"),
                 Collections.emptyList()
         )).isInstanceOf(Exception.class);
+    }
+
+    @Test
+    @DisplayName("메뉴 등록 시 가격은 상품 총액보다 클 수 없다.")
+    void 메뉴_등록_실패_상품_총액보다_큰_가격() {
+        // given
+        final BigDecimal productPrice1 = BigDecimal.valueOf(14000);
+        final BigDecimal productPrice2 = BigDecimal.valueOf(8000);
+        final Product product1 = new Product("떡갈비", productPrice1);
+        final Product product2 = new Product("순두부찌개", productPrice2);
+        final BigDecimal product2Quantity = BigDecimal.valueOf(2);
+
+        // when
+        final BigDecimal menuPrice = productPrice2.multiply(product2Quantity)
+                .add(productPrice1)
+                .add(ONE);
+
+        // then
+        assertThatThrownBy(() -> new Menu(
+                "순두부 2인 정식",
+                menuPrice,
+                new MenuGroup("이벤트 메뉴"),
+                List.of(new MenuProduct(product1, 1), new MenuProduct(product2, 2))
+        )).isInstanceOf(IllegalArgumentException.class);
     }
 }

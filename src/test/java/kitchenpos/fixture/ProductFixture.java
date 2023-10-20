@@ -18,4 +18,12 @@ public class ProductFixture {
         final Product product = new Product("허니콤보", new BigDecimal("20000"));
         return productPersistable.apply(product);
     }
+
+    public static Product 치킨_8000원() {
+        return new Product("치킨", BigDecimal.valueOf(8000));
+    }
+    
+    public static Product 피자_8000원() {
+        return new Product("피자", BigDecimal.valueOf(8000));
+    }
 }
