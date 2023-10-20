@@ -56,10 +56,11 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("특정 테이블을 빈 테이블로 변경하면 해당하는 id의 정보를 업데이트한다.")
     void 주문_테이블_비우기_성공_빈_테이블_여부() {
         // given
-        final OrderTable table = tableService.create(빈_테이블_생성());
+        final OrderTable table = tableService.create(주문_테이블_생성());
+        table.changeEmpty(true);
 
         // when
-        table.empty();
+        tableService.changeEmpty(table.getId(), table);
 
         // then
         assertThat(table.isEmpty()).isTrue();

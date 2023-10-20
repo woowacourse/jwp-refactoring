@@ -60,6 +60,7 @@ public class OrderTable {
         return tableGroup;
     }
 
+    // TODO setter
     public void setTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
@@ -68,6 +69,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
+    // TODO setter
     public void setNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
@@ -91,8 +93,4 @@ public class OrderTable {
         }
     }
 
-    public void empty() {
-
-        this.empty = true;
-    }
 }
