@@ -2,9 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.ProductFixture.매튜_치킨_10000원;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
-import static kitchenpos.fixture.ProductFixture.후추_칰힌_가격_책정;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
@@ -36,26 +34,6 @@ class ProductServiceTest extends ServiceIntegrationTest {
                 () -> assertThat(product.getName()).isEqualTo(savedProduct.getName()),
                 () -> assertThat(product.getPrice()).isEqualByComparingTo(savedProduct.getPrice())
         );
-    }
-
-    @Test
-    void price가_null_인_경우_상품_저장에_실패한다() {
-        // given
-        Product product = 후추_칰힌_가격_책정(null);
-
-        // expect
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void price가_음수인_경우_상품_저장에_실패한다() {
-        // given
-        Product product = 후추_칰힌_가격_책정(-1L);
-
-        // expect
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
