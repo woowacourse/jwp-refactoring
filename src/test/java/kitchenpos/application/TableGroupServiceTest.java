@@ -4,6 +4,8 @@ import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
+import static kitchenpos.fixture.ProductFixture.치킨_8000원;
+import static kitchenpos.fixture.ProductFixture.피자_8000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -21,12 +23,13 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 class TableGroupServiceTest extends IntegrationTest {
 
@@ -85,39 +88,6 @@ class TableGroupServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("소속된 단체가 없는 테이블만 단체로 지정할 수 있다.")
-    void 단체_테이블_지정_실패_이미_소속_단체가_있는_테이블() {
-        // given
-        final List<OrderTable> tablesInGroup = List.of(
-                tableService.create(빈_테이블_생성()),
-                tableService.create(빈_테이블_생성())
-        );
-        tableGroupService.create(new TableGroup(tablesInGroup));
-
-        // when
-        final TableGroup tableGroup = new TableGroup(tablesInGroup);
-
-        // then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("빈 테이블만 단체로 지정할 수 있다.")
-    void 단체_테이블_지정_실패_주문_테이블() {
-        // given
-        final List<OrderTable> tablesInGroup = List.of(
-                tableService.create(주문_테이블_생성()),
-                tableService.create(빈_테이블_생성())
-        );
-
-        // when
-        // then
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(tablesInGroup)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("단체에 지정할 테이블은 2개 이상이어야 한다.")
     void 단체_테이블_지정_실패_주문_테이블_개수_미달() {
         assertThatThrownBy(() -> tableGroupService.create(new TableGroup(List.of(주문_테이블_생성()))))
@@ -143,6 +113,7 @@ class TableGroupServiceTest extends IntegrationTest {
                         .noneMatch(OrderTable::isEmpty));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     @DisplayName("주문 상태가 '조리', '식사'인 테이블이 있으면 분할할 수 없다.")
@@ -154,8 +125,8 @@ class TableGroupServiceTest extends IntegrationTest {
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTablesInGroup));
 
         // when
-        final Product chicken = productRepository.save(ProductFixture.치킨_8000원());
-        final Product pizza = productRepository.save(ProductFixture.피자_8000원());
+        final Product chicken = productRepository.save(치킨_8000원());
+        final Product pizza = productRepository.save(피자_8000원());
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
         final Menu menu = menuRepository.save(
                 세트_메뉴_1개씩("치킨_피자_세트", BigDecimal.valueOf(10000), menuGroup, List.of(chicken, pizza))

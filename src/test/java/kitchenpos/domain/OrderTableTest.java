@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.fixture.MenuFixture.치킨_피자_세트_치킨_8000_1개_피자_8000_1개;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
+import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -42,6 +43,34 @@ class OrderTableTest {
 
         // then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("소속된 단체가 없는 테이블만 단체로 지정할 수 있다.")
+    void 단체_테이블_지정_실패_이미_소속_단체가_있는_테이블() {
+        // given
+        final List<OrderTable> tablesInGroup = List.of(빈_테이블_생성(), 빈_테이블_생성());
+
+        // when
+        new TableGroup().addOrderTables(tablesInGroup);
+
+        // then
+        assertThatThrownBy(() -> new TableGroup().addOrderTables(tablesInGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("빈 테이블만 단체로 지정할 수 있다.")
+    void 단체_테이블_지정_실패_주문_테이블() {
+        // given
+        final List<OrderTable> tablesInGroup = List.of(주문_테이블_생성(), 빈_테이블_생성());
+
+        // when
+        final TableGroup tableGroup = new TableGroup();
+
+        // then
+        assertThatThrownBy(() -> tableGroup.addOrderTables(tablesInGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

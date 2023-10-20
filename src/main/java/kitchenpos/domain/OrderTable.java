@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,8 +46,18 @@ public class OrderTable {
     }
 
     public void group(final TableGroup tableGroup) {
+        validateAbleToGroup();
         this.tableGroup = tableGroup;
-        changeEmpty(true);
+        changeEmpty(false);
+    }
+
+    private void validateAbleToGroup() {
+        if (isNotEmpty()) {
+            throw new IllegalArgumentException("이미 주문 상태인 테이블을 단체로 지정할 수 없습니다.");
+        }
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("이미 단체에 속한 테이블을 단체로 지정할 수 없습니다.");
+        }
     }
 
     public void unGroup() {
@@ -77,6 +88,10 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public boolean isNotEmpty() {
+        return !empty;
     }
 
     public void addOrder(final Order order) {
