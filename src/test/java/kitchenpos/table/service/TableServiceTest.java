@@ -91,7 +91,7 @@ class TableServiceTest extends ServiceTestContext {
         OrderTable orderTable = OrderTableFixture.of(null, 2, false);
         orderTableRepository.save(orderTable);
 
-        Order order = OrderFixture.of(orderTable, orderStatus, LocalDateTime.now());
+        Order order = OrderFixture.of(orderTable.getId(), orderStatus, LocalDateTime.now());
         orderRepository.save(order);
 
         ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);

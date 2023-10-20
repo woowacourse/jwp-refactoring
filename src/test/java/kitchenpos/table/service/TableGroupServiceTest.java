@@ -166,7 +166,7 @@ class TableGroupServiceTest extends ServiceTestContext {
         OrderTable orderTable = OrderTableFixture.of(tableGroup.getId(), 0, false);
         orderTableRepository.save(orderTable);
 
-        Order order = OrderFixture.of(orderTable, orderStatus, LocalDateTime.now());
+        Order order = OrderFixture.of(orderTable.getId(), orderStatus, LocalDateTime.now());
         orderRepository.save(order);
 
         // when, then

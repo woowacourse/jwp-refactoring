@@ -160,7 +160,8 @@ class OrderServiceTest extends ServiceTestContext {
         // given
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
         orderTableRepository.save(orderTable);
-        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+
+        Order order = OrderFixture.of(orderTable.getId(), OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
 
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
@@ -176,7 +177,8 @@ class OrderServiceTest extends ServiceTestContext {
         // given
         OrderTable orderTable = OrderTableFixture.of(null, 1, false);
         orderTableRepository.save(orderTable);
-        Order order = OrderFixture.of(orderTable, OrderStatus.MEAL, LocalDateTime.now());
+
+        Order order = OrderFixture.of(orderTable.getId(), OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
 
         ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("COMPLETION");
