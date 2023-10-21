@@ -10,7 +10,7 @@ import static io.restassured.http.ContentType.JSON;
 
 public class MenuStep {
 
-    public static MenuRequest toRequest(final Menu menu) {
+    public static MenuRequest toMenuRequest(final Menu menu) {
         return new MenuRequest(
                 menu.getId(),
                 menu.getName(),
@@ -21,7 +21,7 @@ public class MenuStep {
     }
 
     public static Long 메뉴_생성_요청하고_아이디_반환(final Menu menu) {
-        final ExtractableResponse<Response> response = 메뉴_생성_요청(toRequest(menu));
+        final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
         return response.jsonPath().getLong("id");
     }
 
