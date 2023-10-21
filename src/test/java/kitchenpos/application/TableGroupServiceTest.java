@@ -48,11 +48,11 @@ class TableGroupServiceTest extends ServiceTest {
     void setUp() {
         // TODO: empty가 true인 상태에서 방문자 수 변경해서 발생한 문제 -> 생성자로 변경 필요
         OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
+        orderTable1.changeEmpty(true);
         orderTable1.changeNumberOfGuests(0);
 
         OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
+        orderTable2.changeEmpty(true);
         orderTable2.changeNumberOfGuests(0);
 
         주문테이블1 = orderTableDao.save(orderTable1);
@@ -120,7 +120,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_FailWithNotEmptyOrderTable() {
         // given
         OrderTable orderTable3 = new OrderTable();
-        orderTable3.setEmpty(false);
+        orderTable3.changeEmpty(false);
         orderTable3.changeNumberOfGuests(0);
 
         OrderTable 비어있지_않은_주문테이블 = orderTableDao.save(orderTable3);
@@ -141,7 +141,7 @@ class TableGroupServiceTest extends ServiceTest {
         existingTableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2));
 
         OrderTable orderTable3 = new OrderTable();
-        orderTable3.setEmpty(false);
+        orderTable3.changeEmpty(false);
         orderTable3.changeNumberOfGuests(0);
         orderTable3.setTableGroupId(tableGroupService.create(existingTableGroup).getId());
 

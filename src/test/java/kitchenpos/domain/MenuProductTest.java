@@ -15,7 +15,7 @@ class MenuProductTest {
     @ValueSource(longs = {-1L, -0L})
     void menuProduct_FailWithInvalidQuantity(Long invalidQuantity) {
         // when & then
-        assertThatThrownBy(() -> new MenuProduct(1L, 1L, invalidQuantity))
+        assertThatThrownBy(() -> MenuProduct.create(1L, invalidQuantity))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 상품의 수량은 1개 이상이어야 합니다.");
     }
@@ -24,7 +24,7 @@ class MenuProductTest {
     @Test
     void menuProduct() {
         // then
-        assertDoesNotThrow(() -> new MenuProduct(1L, 1L, 1L));
+        assertDoesNotThrow(() -> MenuProduct.create(1L, 1L));
     }
 
 }

@@ -7,16 +7,19 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
@@ -35,30 +38,33 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+    public Menu create(final MenuCreateRequest request) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException("요청한 menuGroupId에 해당하는 MenuGroup이 존재하지 않습니다.");
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        final List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProducts();
+        final List<Long> menuProductIds = menuProductCreateRequests.stream().map(MenuProductCreateRequest::getProductId).collect(Collectors.toList());
+        // TODO: MenuProduct의 productId가 모두 존재하는지 검사
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final List<MenuProduct> menuProducts = menuProductCreateRequests.stream().map(menuProductRequest -> {
+            long productId = menuProductRequest.getProductId();
+            long quantity = menuProductRequest.getQuantity();
+            return MenuProduct.create(productId, quantity);
+        }).collect(Collectors.toList());
 
+        // TODO: MenuProducts 도메인으로 책임 넘기기
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+        if (BigDecimal.valueOf(request.getPrice()).compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴 금액의 합계는 각 상품들의 금액 합계보다 클 수 없습니다.");
         }
 
+        Menu menu = Menu.create(request.getName(), BigDecimal.valueOf(request.getPrice()), request.getMenuGroupId());
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
@@ -68,7 +74,6 @@ public class MenuService {
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
-
         return savedMenu;
     }
 

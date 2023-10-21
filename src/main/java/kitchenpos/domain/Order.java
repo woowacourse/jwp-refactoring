@@ -6,6 +6,7 @@ import java.util.List;
 import static kitchenpos.domain.OrderStatus.*;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
@@ -15,9 +16,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    private Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         // TODO: orderLineItems의 orderId 변경하기
         // TODO: orderLineItems의 menuId 변경하기
+        validateOrderLineItemsSize(orderLineItems.size());
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -25,8 +27,12 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    private Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, COOKING.name(), LocalDateTime.now(), orderLineItems);
+    }
+
+    public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, orderLineItems);
     }
 
     private void validateOrderLineItemsSize(final int orderLineItemsSize) {

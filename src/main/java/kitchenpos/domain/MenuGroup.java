@@ -8,14 +8,14 @@ public class MenuGroup {
     public MenuGroup() {
     }
 
-    public MenuGroup(final Long id, final String name) {
+    private MenuGroup(final Long id, final String name) {
         validateName(name);
         this.id = id;
         this.name = name;
     }
 
-    public MenuGroup(final String name) {
-        this(null, name);
+    public static MenuGroup create(final String name) {
+        return new MenuGroup(null, name);
     }
 
     private void validateName(final String name) {

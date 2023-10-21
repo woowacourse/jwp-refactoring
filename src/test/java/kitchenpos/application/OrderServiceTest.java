@@ -106,7 +106,7 @@ class OrderServiceTest extends ServiceTest {
         간1양1_메뉴 = menuDao.save(menu2);
 
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        orderTable.changeEmpty(false);
         orderTable.changeNumberOfGuests(0);
         주문테이블 = orderTableDao.save(orderTable);
 
@@ -186,7 +186,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_FailWithEmptyOrderTable() {
         // given
-        주문테이블.setEmpty(true);
+        주문테이블.changeEmpty(true);
         OrderTable 비어있는_주문테이블 = orderTableDao.save(주문테이블);
 
         Order expected = new Order();

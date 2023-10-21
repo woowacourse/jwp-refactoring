@@ -12,7 +12,7 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    private TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         // TODO: orderTable들의 tableGroupId 변경하기
         // TODO: orderTable들의 empty false로 변경하기
         validateOrderTableSize(orderTables.size());
@@ -21,13 +21,17 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
+    private TableGroup(final List<OrderTable> orderTables) {
         this(null, LocalDateTime.now(), orderTables);
+    }
+
+    public static TableGroup groupOrderTables(final List<OrderTable> orderTables) {
+        return new TableGroup(orderTables);
     }
 
     private void validateOrderTableSize(final int orderTableSize) {
         if (orderTableSize < 2) {
-            throw new IllegalArgumentException("테이블 그룹은 2개 이상의 테이블로 구성되어야 합니다.");
+            throw new IllegalArgumentException("그룹화 할 테이블 개수는 2 이상이어야 합니다.");
         }
     }
 

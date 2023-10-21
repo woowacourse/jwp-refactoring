@@ -3,17 +3,15 @@ package kitchenpos.application;
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -30,62 +28,29 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        Product expected = new Product();
-        expected.setName("상품");
-        expected.setPrice(BigDecimal.valueOf(1000));
+        ProductCreateRequest request = new ProductCreateRequest("상품", 1000L);
 
         // when
-        Product actual = productService.create(expected);
+        Product actual = productService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(productDao.findById(actual.getId())).isPresent();
-            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-            softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
+            softly.assertThat(actual.getName()).isEqualTo(request.getName());
+            softly.assertThat(actual.getPrice())
+                    .isEqualByComparingTo(BigDecimal.valueOf(request.getPrice()));
         });
-    }
-
-    @DisplayName("상품 등록 시 상품 가격이 음수인 경우 예외가 발생한다.")
-    @ParameterizedTest
-    @ValueSource(longs = { -1L, -100L, -1000L })
-    void create_FailWithNegativePrice(long invalidPrice) {
-        // given
-        Product invalidProduct = new Product();
-        invalidProduct.setName("상품");
-        invalidProduct.setPrice(BigDecimal.valueOf(invalidPrice));
-
-        // when & then
-        assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품 등록 시 상품 가격이 null인 경우 예외가 발생한다.")
-    @Test
-    void create_FailWithNullablePrice() {
-        // given
-        Product invalidProduct = new Product();
-        invalidProduct.setName("상품");
-        invalidProduct.setPrice(null);
-
-        // when & then
-        assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() {
         // given
-        Product product1 = new Product();
-        product1.setName("후라이드");
-        product1.setPrice(BigDecimal.valueOf(16000));
+        ProductCreateRequest 후라이드_생성_요청 = new ProductCreateRequest("후라이드", 16000L);
+        ProductCreateRequest 양념치킨_생성_요청 = new ProductCreateRequest("양념치킨", 16000L);
 
-        Product product2 = new Product();
-        product2.setName("양념치킨");
-        product2.setPrice(BigDecimal.valueOf(16000));
-
-        Product 후라이드 = productService.create(product1);
-        Product 양념치킨 = productService.create(product2);
+        Product 후라이드 = productService.create(후라이드_생성_요청);
+        Product 양념치킨 = productService.create(양념치킨_생성_요청);
 
         // when
         List<Product> list = productService.list();

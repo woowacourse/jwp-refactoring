@@ -19,7 +19,7 @@ class MenuTest {
     @ValueSource(strings = {"", " ", "  "})
     void menu_FailWithBlankName(String blankName) {
         // when & then
-        assertThatThrownBy(() -> new Menu(blankName, BigDecimal.ZERO, 1L))
+        assertThatThrownBy(() -> Menu.create(blankName, BigDecimal.ZERO, 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴명이 비어있습니다.");
     }
@@ -28,7 +28,7 @@ class MenuTest {
     @Test
     void menu_FailWithNullPrice() {
         // when & then
-        assertThatThrownBy(() -> new Menu("메뉴", null, 1L))
+        assertThatThrownBy(() -> Menu.create("메뉴", null, 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 가격이 비어있습니다.");
     }
@@ -38,7 +38,7 @@ class MenuTest {
     @ValueSource(longs = {-1L, -100L})
     void menu_FailWithBlankName(Long invalidPrice) {
         // when & then
-        assertThatThrownBy(() -> new Menu("메뉴명", BigDecimal.valueOf(invalidPrice), 1L))
+        assertThatThrownBy(() -> Menu.create("메뉴명", BigDecimal.valueOf(invalidPrice), 1L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 가격은 0원 이상이어야 합니다.");
     }
@@ -47,6 +47,6 @@ class MenuTest {
     @Test
     void menu() {
         // then
-        assertDoesNotThrow(() -> new Menu("메뉴명", BigDecimal.ZERO, 1L));
+        assertDoesNotThrow(() -> Menu.create("메뉴명", BigDecimal.ZERO, 1L));
     }
 }

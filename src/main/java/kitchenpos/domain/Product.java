@@ -11,15 +11,19 @@ public class Product {
     public Product() {
     }
 
-    public Product(final Long id, final String name, final BigDecimal price) {
+    private Product(final Long id, final String name, final BigDecimal price) {
         validate(name, price);
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public Product(final String name, final BigDecimal price) {
+    private Product(final String name, final BigDecimal price) {
         this(null, name, price);
+    }
+
+    public static Product create(final String name, final BigDecimal price) {
+        return new Product(name, price);
     }
 
     private void validate(final String name, final BigDecimal price) {

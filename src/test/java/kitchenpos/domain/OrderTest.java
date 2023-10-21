@@ -14,21 +14,21 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class OrderTest {
 
-    private final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1L);
-    private final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1L);
+    private final OrderLineItem orderLineItem1 = OrderLineItem.create(1L, 1L);
+    private final OrderLineItem orderLineItem2 = OrderLineItem.create(2L, 1L);
 
     @DisplayName("주문을 생성할 수 있다.")
     @Test
     void order() {
         // then
-        assertDoesNotThrow(() -> new Order(1L, List.of(orderLineItem1, orderLineItem2)));
+        assertDoesNotThrow(() -> Order.create(1L, List.of(orderLineItem1, orderLineItem2)));
     }
 
     @DisplayName("주문 상태 변경 시, 현재 주문 상태가 COMPLETION이면 예외가 발생한다.")
     @Test
     void changeOrderStatus_FailWithInvalidOrderStatus() {
         // given
-        Order order = new Order(1L, List.of(orderLineItem1, orderLineItem2));
+        Order order = Order.create(1L, List.of(orderLineItem1, orderLineItem2));
         order.changeOrderStatus(COMPLETION.name());
 
         // when & then
@@ -42,7 +42,7 @@ class OrderTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) {
         // given
-        Order order = new Order(1L, List.of(orderLineItem1, orderLineItem2));
+        Order order = Order.create(1L, List.of(orderLineItem1, orderLineItem2));
 
         // when
         order.changeOrderStatus(orderStatus.name());

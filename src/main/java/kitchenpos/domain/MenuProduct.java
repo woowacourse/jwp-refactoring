@@ -10,7 +10,7 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+    private MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
         validateQuantity(quantity);
         this.seq = seq;
         this.menuId = menuId;
@@ -18,8 +18,12 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
-        this(null, menuId, productId, quantity);
+    public MenuProduct(final Long productId, final long quantity) {
+        this(null, null, productId, quantity);
+    }
+
+    public static MenuProduct create(final Long productId, final long quantity) {
+        return new MenuProduct(productId, quantity);
     }
 
     private void validateQuantity(final long quantity) {

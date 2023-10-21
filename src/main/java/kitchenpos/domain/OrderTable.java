@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
 
     private Long id;
@@ -10,7 +12,7 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    private OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -18,8 +20,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(final int numberOfGuests, final boolean empty) {
+    private OrderTable(final int numberOfGuests, final boolean empty) {
         this(null, null, numberOfGuests, empty);
+    }
+
+    public static OrderTable create(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(numberOfGuests, empty);
     }
 
     private void validateNumberOfGuests(final int numberOfGuests) {
@@ -60,7 +66,10 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(this.tableGroupId)) {
+            throw new IllegalArgumentException("그룹 지정된 테이블은 빈 테이블로 변경할 수 없습니다.");
+        }
         this.empty = empty;
     }
 }

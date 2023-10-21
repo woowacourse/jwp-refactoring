@@ -15,7 +15,7 @@ class OrderLineItemTest {
     @ValueSource(longs = {-1L, -100L})
     void orderLineItem_FailWithInvalidQuantity(Long invalidQuantity) {
         // when & then
-        assertThatThrownBy(() -> new OrderLineItem(1L, invalidQuantity))
+        assertThatThrownBy(() -> OrderLineItem.create(1L, invalidQuantity))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목의 수량은 0개 이상이어야 합니다.");
     }
@@ -24,6 +24,6 @@ class OrderLineItemTest {
     @Test
     void orderLineItem() {
         // then
-        assertDoesNotThrow(() -> new OrderLineItem(1L, 1L));
+        assertDoesNotThrow(() -> OrderLineItem.create(1L, 1L));
     }
 }
