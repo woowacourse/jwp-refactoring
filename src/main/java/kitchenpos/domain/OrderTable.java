@@ -58,8 +58,11 @@ public class OrderTable {
         this.empty = isEmpty;
     }
 
-    public void assignTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void assignTableGroup(final TableGroup requestTableGroup) {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException("이미 단체 지정이 되어있는 주문 테이블을 새롭게 단체 지정할 수 없습니다.");
+        }
+        tableGroup = requestTableGroup;
     }
 
     public void deassignTableGroup() {
