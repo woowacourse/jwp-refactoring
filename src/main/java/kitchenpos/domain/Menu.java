@@ -27,10 +27,6 @@ public class Menu {
     this.menuProducts = menuProducts;
   }
 
-  public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
-    this(null, name, price, menuGroup, null);
-  }
-
   private void validatePrice(final BigDecimal price) {
     if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
       throw new IllegalArgumentException();
