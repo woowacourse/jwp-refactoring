@@ -67,20 +67,12 @@ public class Menu {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
     public BigDecimal getPrice() {
         return price.getValue();
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = Price.from(price);
     }
 
     public Long getMenuGroupId() {

@@ -42,9 +42,6 @@ public class MenuProduct {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
 
     public Menu getMenu() {
         return menu;

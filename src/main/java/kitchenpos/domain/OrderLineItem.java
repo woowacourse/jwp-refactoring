@@ -44,10 +44,6 @@ public class OrderLineItem {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public long getQuantity() {
         return quantity;
     }

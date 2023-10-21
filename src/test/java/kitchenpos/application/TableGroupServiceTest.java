@@ -44,9 +44,6 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void init() {
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-
         orderTable1.setEmpty(true);
         orderTable2.setEmpty(true);
 

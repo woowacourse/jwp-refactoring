@@ -58,7 +58,6 @@ class OrderServiceTest {
 
     @BeforeEach
     void init() {
-        orderTable.setId(1L);
         orderTable.setEmpty(false);
     }
 
@@ -101,7 +100,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문을 생성할 때 주문 테이블 번호가 db에 존재하지 않으면 예외가 발생한다.")
     void create_fail_no_orderTable() {
-        when(orderTableRepository.getById(order.getOrderTableId())).thenThrow(new NotExistsOrderTableException());
+        when(orderTableRepository.getById(1L)).thenThrow(new NotExistsOrderTableException());
 
         List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
@@ -117,7 +116,7 @@ class OrderServiceTest {
     void create_fail_empty_orderTable() {
         orderTable.setEmpty(true);
         when(menuRepository.countByIdIn(List.of(1L, 1L))).thenReturn(2L);
-        when(orderTableRepository.getById(order.getOrderTableId())).thenReturn(orderTable);
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
 
         List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));

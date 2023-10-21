@@ -58,7 +58,6 @@ class MenuServiceTest {
         MenuProduct menuProduct2 = new MenuProduct(product2, 3);
 
         menuGroup = new MenuGroup("menuGroup1");
-        menuGroup.setId(1L);
 
         this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup, List.of(menuProduct1, menuProduct2));
     }
