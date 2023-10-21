@@ -30,23 +30,14 @@ public class TableService {
     public OrderTableResponse create(final CreateOrderTableRequest createOrderTableRequest) {
         OrderTable orderTable = new OrderTable(createOrderTableRequest.getNumberOfGuests(), createOrderTableRequest.isEmpty());
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-
-        return new OrderTableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
         List<OrderTable> orderTables = orderTableRepository.findAll();
 
         return orderTables.stream()
-                .map(orderTable -> new OrderTableResponse(
-                        orderTable.getId(),
-                        orderTable.getNumberOfGuests(),
-                        orderTable.isEmpty()
-                ))
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -66,11 +57,7 @@ public class TableService {
 
         orderTable.changeEmpty(updateOrderTableEmptyRequest.isEmpty());
 
-        return new OrderTableResponse(
-                orderTable.getId(),
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty()
-        );
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
@@ -90,10 +77,6 @@ public class TableService {
 
         orderTable.changeNumberOfGuests(numberOfGuests);
 
-        return new OrderTableResponse(
-                orderTable.getId(),
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty()
-        );
+        return OrderTableResponse.from(orderTable);
     }
 }
