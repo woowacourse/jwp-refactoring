@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -110,5 +112,67 @@ class OrderServiceTest extends OrderServiceFixture {
             softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
                           .isEqualTo(저장된_주문2);
         });
+    }
+
+    @Test
+    void 주문_상태를_요리에서_식사로_변경한다() {
+        // given
+        given(orderDao.findById(anyLong())).willReturn(Optional.ofNullable(저장된_주문));
+        given(orderDao.save(any(Order.class))).willReturn(식사_상태의_저장된_주문);
+        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(식사_상태의_저장된_주문.getOrderLineItems());
+
+        // when
+        final Order actual = orderService.changeOrderStatus(저장된_주문.getId(), 식사_상태의_저장된_주문);
+
+        // then
+        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+    }
+
+    @Test
+    void 주문_상태를_식사에서_계산으로_변경한다() {
+        // given
+        given(orderDao.findById(anyLong())).willReturn(Optional.ofNullable(식사_상태의_저장된_주문));
+        given(orderDao.save(any(Order.class))).willReturn(계산_상태의_저장된_주문);
+        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(계산_상태의_저장된_주문.getOrderLineItems());
+
+        // when
+        final Order actual = orderService.changeOrderStatus(식사_상태의_저장된_주문.getId(), 계산_상태의_저장된_주문);
+
+        // then
+        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+    }
+
+    @Test
+    void 주문_상태를_주문에서_계산으로_변경한다() {
+        // given
+        given(orderDao.findById(anyLong())).willReturn(Optional.ofNullable(저장된_주문));
+        given(orderDao.save(any(Order.class))).willReturn(계산_상태의_저장된_주문);
+        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(계산_상태의_저장된_주문.getOrderLineItems());
+
+        // when
+        final Order actual = orderService.changeOrderStatus(저장된_주문.getId(), 계산_상태의_저장된_주문);
+
+        // then
+        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+    }
+
+    @Test
+    void 주문_상태를_계산에서_주문으로_변경하면_예외를_반환한다() {
+        // given
+        given(orderDao.findById(anyLong())).willReturn(Optional.ofNullable(계산_상태의_저장된_주문));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(계산_상태의_저장된_주문.getId(), 저장된_주문))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 주문_상태를_계산에서_요리로_변경하면_예외를_반환한다() {
+        // given
+        given(orderDao.findById(anyLong())).willReturn(Optional.ofNullable(계산_상태의_저장된_주문));
+
+        // when & then
+        assertThatThrownBy(() -> orderService.changeOrderStatus(계산_상태의_저장된_주문.getId(), 식사_상태의_저장된_주문))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
