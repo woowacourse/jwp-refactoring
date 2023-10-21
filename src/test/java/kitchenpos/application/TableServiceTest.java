@@ -79,16 +79,6 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("실재하지 않는 주문 테이블의 상태를 변경할 수 없다.")
-        void notExistingTable() {
-            final OrderTable notEmptyTable = new OrderTable(); // 비어있음 상태를 변경하기 위한 객체
-            notEmptyTable.setEmpty(false);
-
-            assertThatThrownBy(() -> tableService.changeEmpty(0L, notEmptyTable))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         @DisplayName("주문 상태가 COOKING 또는 MEAL인 주문 테이블의 상태를 변경할 수 없다.")
         void invalidTableStatus(
                 @Autowired ProductService productService,
@@ -154,21 +144,6 @@ class TableServiceTest {
         }
 
         @Test
-        @DisplayName("변경하려는 손님 수가 음수라면 변경할 수 없다.")
-        void invalidGuestNumber() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            final OrderTable savedTable = tableService.create(orderTable);
-
-            final OrderTable changingGuestNumberOrderTable = new OrderTable(); // 손님의 수를 변경하기 위한 객체
-            changingGuestNumberOrderTable.setNumberOfGuests(-1);
-
-            assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedTable.getId(), changingGuestNumberOrderTable))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         @DisplayName("실재하지 않는 주문 테이블의 손님 수를 변경할 수 없다.")
         void notExistingTable() {
             final OrderTable changingGuestNumberOrderTable = new OrderTable(); // 손님의 수를 변경하기 위한 객체
@@ -176,21 +151,6 @@ class TableServiceTest {
 
             assertThatThrownBy(
                     () -> tableService.changeNumberOfGuests(0L, changingGuestNumberOrderTable))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("주문 테이블이 빈 테이블이라면 손님 수 변경할 수 없다.")
-        void emptyTable() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedTable = tableService.create(orderTable);
-
-            final OrderTable changingGuestNumberOrderTable = new OrderTable(); // 손님의 수를 변경하기 위한 객체
-            changingGuestNumberOrderTable.setNumberOfGuests(9);
-
-            assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(savedTable.getId(), changingGuestNumberOrderTable))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

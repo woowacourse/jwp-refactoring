@@ -1,15 +1,13 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 
 public class OrderTable {
     @Id
     private Long id;
-
     private Long tableGroupId;
-
     private int numberOfGuests;
-
     private boolean empty;
 
     public Long getId() {
@@ -33,6 +31,14 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -41,6 +47,10 @@ public class OrderTable {
     }
 
     public void setEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+
         this.empty = empty;
     }
 }
