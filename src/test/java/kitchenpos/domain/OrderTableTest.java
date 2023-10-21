@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("NonAsciiCharacters")
 class OrderTableTest {
 
     @Test
@@ -37,6 +38,18 @@ class OrderTableTest {
     }
 
     @Test
+    @DisplayName("소속된 단체가 있으면 테이블을 비울 수 없다.")
+    void 주문_테이블_비우기_실패_단체_소속() {
+        // given
+        final OrderTable tableInGroup = 빈_테이블_생성();
+        tableInGroup.group(new TableGroup());
+
+        // expected
+        assertThatThrownBy(() -> tableInGroup.changeEmpty(true))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("식사 상태인 테이블을 비울 수 없다.")
     void 주문_테이블_비우기_실패_식사_상태() {
         // given
@@ -51,7 +64,6 @@ class OrderTableTest {
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
 
     @Test
     @DisplayName("조리 상태인 테이블을 비울 수 없다.")

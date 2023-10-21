@@ -85,24 +85,6 @@ class TableServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("소속된 단체가 있으면 테이블을 비울 수 없다.")
-    void 주문_테이블_비우기_실패_단체_소속() {
-        // given
-        final OrderTable tableInGroup = tableService.create(빈_테이블_생성());
-        List<OrderTable> tablesInGroup = List.of(
-                tableInGroup,
-                tableService.create(빈_테이블_생성())
-        );
-
-        // when
-        tableGroupService.create(new TableGroup(tablesInGroup));
-
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(tableInGroup.getId(), tableInGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("특정 주문 테이블의 방문한 손님 수를 변경할 수 있다.")
     void 주문_테이블_방문한_손님수_변경_성공() {
         // given

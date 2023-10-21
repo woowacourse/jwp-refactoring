@@ -60,8 +60,8 @@ public class OrderTable {
 
     public void group(final TableGroup tableGroup) {
         validateAbleToGroup();
-        this.tableGroup = tableGroup;
         changeEmpty(false);
+        this.tableGroup = tableGroup;
     }
 
     private void validateAbleToGroup() {
@@ -98,9 +98,12 @@ public class OrderTable {
     }
 
     private void validateAbleToChangeEmpty() {
-        final boolean cannotEmptyTable = orders.stream()
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
+        }
+        final boolean hasAnyOrderInProgress = orders.stream()
                 .anyMatch(Order::isInProgress);
-        if (cannotEmptyTable) {
+        if (hasAnyOrderInProgress) {
             throw new IllegalArgumentException("조리 또는 식사 중인 테이블을 비울 수 없습니다.");
         }
     }
