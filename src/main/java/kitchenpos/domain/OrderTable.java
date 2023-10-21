@@ -33,6 +33,17 @@ public class OrderTable {
     protected OrderTable() {
     }
 
+    public OrderTable(final Long id,
+                      final TableGroup tableGroup,
+                      final int numberOfGuests,
+                      final boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public OrderTable(final TableGroup tableGroup,
                       final int numberOfGuests,
                       final boolean empty) {
@@ -44,7 +55,7 @@ public class OrderTable {
 
     public OrderTable(final int numberOfGuests,
                       final boolean empty) {
-        this(null, numberOfGuests, empty);
+        this(null, null, numberOfGuests, empty);
     }
 
     public void group(final TableGroup tableGroup) {
@@ -112,10 +123,6 @@ public class OrderTable {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public TableGroup getTableGroup() {

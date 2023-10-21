@@ -4,6 +4,7 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
+import static kitchenpos.fixture.OrderTableFixture.존재하지_않는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.치킨_8000원;
 import static kitchenpos.fixture.ProductFixture.피자_8000원;
@@ -101,8 +102,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("존재하지 않는 주문 테이블에서 주문을 등록할 수 없다.")
     void 주문_등록_실패_존재하지_않는_주문_테이블() {
         // given
-        final OrderTable fakeOrderTable = 주문_테이블_생성();
-        fakeOrderTable.setId(-1L);
+        final OrderTable fakeOrderTable = 존재하지_않는_주문_테이블_생성();
         final Product chicken = productService.create(치킨_8000원());
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
         final Menu menu = menuService.create(
