@@ -6,20 +6,32 @@ import kitchenpos.domain.order_line_item.OrderLineItem;
 
 public class OrderLineItemBuilder {
 
-    private final OrderLineItem orderLineItem;
+    private Order order;
+    private Menu menu;
+    private long quantity;
 
-    public OrderLineItemBuilder(final Menu menu, final Integer quantity) {
-        this.orderLineItem = new OrderLineItem();
-        orderLineItem.setMenu(menu);
-        orderLineItem.setQuantity(quantity);
+    public OrderLineItemBuilder() {
+        order = null;
+        menu = null;
+        quantity = 0;
     }
 
-    public OrderLineItemBuilder setOrderId(final Order order) {
-        orderLineItem.setOrder(order);
+    public OrderLineItemBuilder setOrder(final Order order) {
+        this.order = order;
+        return this;
+    }
+
+    public OrderLineItemBuilder setMenu(final Menu menu) {
+        this.menu = menu;
+        return this;
+    }
+
+    public OrderLineItemBuilder setQuantity(final long quantity) {
+        this.quantity = quantity;
         return this;
     }
 
     public OrderLineItem build() {
-        return orderLineItem;
+        return new OrderLineItem(order, menu, quantity);
     }
 }

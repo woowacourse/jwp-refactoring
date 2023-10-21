@@ -11,18 +11,26 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
+
     private long quantity;
+
+    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    protected OrderLineItem() {
+    }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
     }
 
     public Order getOrder() {
@@ -37,15 +45,7 @@ public class OrderLineItem {
         return menu;
     }
 
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

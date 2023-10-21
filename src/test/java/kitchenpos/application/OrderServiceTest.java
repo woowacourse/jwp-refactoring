@@ -48,7 +48,10 @@ class OrderServiceTest {
                 .setMenuGroup(menuGroup)
                 .build());
 
-        final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+        final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                .setMenu(menu)
+                .setQuantity(1)
+                .build();
 
         final OrderTable table = orderTableRepository.save(new TableBuilder()
                 .setEmpty(false)
@@ -87,7 +90,10 @@ class OrderServiceTest {
                     .setMenuGroup(menuGroup)
                     .build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                    .setMenu(menu)
+                    .setQuantity(1)
+                    .build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
@@ -140,7 +146,10 @@ class OrderServiceTest {
                     .setMenuGroup(menuGroup)
                     .build();
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                    .setMenu(menu)
+                    .setQuantity(1)
+                    .build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
@@ -166,7 +175,10 @@ class OrderServiceTest {
                     .setMenuGroup(menuGroup)
                     .build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                    .setMenu(menu)
+                    .setQuantity(1)
+                    .build();
 
             final OrderTable notSavedOrderTable = new TableBuilder().build();
 
@@ -190,7 +202,10 @@ class OrderServiceTest {
                     .setMenuGroup(menuGroup)
                     .build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                    .setMenu(menu)
+                    .setQuantity(1)
+                    .build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(true)
@@ -222,7 +237,9 @@ class OrderServiceTest {
                     .setMenuGroup(menuGroup)
                     .build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                    .setMenu(menu)
+                    .setQuantity(1).build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
@@ -255,7 +272,10 @@ class OrderServiceTest {
                     .setMenuGroup(menuGroup)
                     .build());
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder(menu, 1).build();
+            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
+                    .setMenu(menu)
+                    .setQuantity(1)
+                    .build();
 
             final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)

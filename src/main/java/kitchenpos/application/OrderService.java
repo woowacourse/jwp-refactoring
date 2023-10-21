@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -70,16 +69,14 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
 
-        final Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(savedOrder);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            orderLineItem.setOrder(order);
+            orderLineItemRepository.save(orderLineItem);
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return order;
     }
 
     public List<Order> list() {
