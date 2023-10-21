@@ -56,12 +56,12 @@ public class OrderTable {
         return empty;
     }
 
-    public void setTableGroup(TableGroup savedTableGroup) {
+    public void settingTableGroup(final TableGroup savedTableGroup) {
         this.tableGroup = savedTableGroup;
     }
 
-    public void changeEmpty(boolean b) {
-        this.empty = b;
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
     }
 
     public boolean isGroupable() {

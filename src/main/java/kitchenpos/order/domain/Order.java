@@ -76,7 +76,7 @@ public class Order {
     }
 
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
-        orderLineItem.setOrder(this);
+        orderLineItem.settingOrder(this);
         final List<OrderLineItem> items = new ArrayList<>(orderLineItems);
         items.add(orderLineItem);
         orderLineItems = items;

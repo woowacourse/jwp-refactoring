@@ -28,6 +28,10 @@ public class TableGroup {
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         validate(orderTables);
+        for (final OrderTable savedOrderTable : orderTables) {
+            savedOrderTable.settingTableGroup(this);
+            savedOrderTable.changeEmpty(false);
+        }
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
@@ -40,11 +44,6 @@ public class TableGroup {
             if (!savedOrderTable.isGroupable()) {
                 throw new IllegalArgumentException();
             }
-        }
-
-        for (final OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.setTableGroup(this);
-            savedOrderTable.changeEmpty(false);
         }
     }
 
@@ -62,7 +61,7 @@ public class TableGroup {
 
     public void unGroup() {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
+            orderTable.settingTableGroup(null);
             orderTable.changeEmpty(false);
         }
     }

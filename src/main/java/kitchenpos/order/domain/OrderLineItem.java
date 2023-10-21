@@ -50,7 +50,7 @@ public class OrderLineItem {
         return quantity;
     }
 
-    public void setOrder(Order savedOrder) {
+    public void settingOrder(final Order savedOrder) {
         this.order = savedOrder;
     }
 }
