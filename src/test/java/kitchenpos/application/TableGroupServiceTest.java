@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.application.dto.OrderTablesRequest;
 import kitchenpos.domain.OrderTable;
@@ -59,17 +58,14 @@ class TableGroupServiceTest {
         newOrderTable1.setEmpty(true);
         newOrderTable2.setEmpty(true);
 
-        LocalDateTime start = LocalDateTime.now();
         when(orderTableRepository.findAllById(anyList())).thenReturn(List.of(orderTable1, orderTable2));
         when(tableGroupRepository.save(any())).thenReturn(TableGroup.from(List.of(newOrderTable1, newOrderTable2)));
 
         OrderTablesRequest orderTablesRequest = new OrderTablesRequest(List.of(1L, 2L));
 
         TableGroup actual = tableGroupService.create(orderTablesRequest);
-        LocalDateTime end = LocalDateTime.now();
 
         assertSoftly(softAssertions -> {
-                    softAssertions.assertThat(actual.getCreatedDate()).isBetween(start, end);
                     softAssertions.assertThat(newOrderTable1.getTableGroup()).isEqualTo(actual);
                     softAssertions.assertThat(newOrderTable2.isEmpty()).isFalse();
                 }

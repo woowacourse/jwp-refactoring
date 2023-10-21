@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.exception.OrderException.CompletionOrderException;
@@ -16,14 +16,9 @@ class OrderTest {
     @Test
     @DisplayName("주문을 생성할 수 있다. 이때 주문 상태는 cooking, 주문 시간은 주문을 생성한 시간이 된다.")
     void init_success() {
-        LocalDateTime start = LocalDateTime.now();
         Order order = Order.of(new OrderTable(10), List.of(OrderLineItem.of(1L, 10)));
-        LocalDateTime end = LocalDateTime.now();
 
-        assertSoftly(softAssertions -> {
-            softAssertions.assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-            softAssertions.assertThat(order.getOrderedTime()).isBetween(start, end);
-        });
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @Test

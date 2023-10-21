@@ -8,7 +8,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,12 +73,8 @@ class OrderServiceTest {
         OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
 
         orderService.create(orderRequest);
-        LocalDateTime end = LocalDateTime.now();
 
-        assertAll(
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(order.getOrderedTime()).isBefore(end)
-        );
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @Test

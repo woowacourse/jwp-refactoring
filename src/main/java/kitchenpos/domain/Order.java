@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -15,9 +16,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import kitchenpos.domain.exception.OrderException.CompletionOrderException;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
 
 @Entity(name = "orders")
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
 
     @Id
@@ -29,6 +33,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     @Column
+    @CreatedDate
     private LocalDateTime orderedTime;
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
@@ -38,11 +43,9 @@ public class Order {
 
     private Order(final OrderTable orderTable,
                   final OrderStatus orderStatus,
-                  final LocalDateTime orderedTime,
                   final List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
         this.orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
     }
@@ -53,7 +56,7 @@ public class Order {
             throw new EmptyOrderLineItemsException();
         }
 
-        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        return new Order(orderTable, OrderStatus.COOKING, orderLineItems);
     }
 
     public Long getId() {
