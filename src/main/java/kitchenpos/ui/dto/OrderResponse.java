@@ -1,11 +1,11 @@
 package kitchenpos.ui.dto;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderResponse {
 
@@ -13,10 +13,10 @@ public class OrderResponse {
     private final Long orderTableId;
     private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
-    private final List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(final Long id, final Long orderTableId, final OrderStatus orderStatus,
-                         final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+                         final LocalDateTime orderedTime, final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -25,8 +25,14 @@ public class OrderResponse {
     }
 
     public static OrderResponse from(final Order order) {
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
-                order.getOrderedTime(), order.getOrderLineItems());
+        return new OrderResponse(
+                order.getId(),
+                order.getOrderTableId(),
+                order.getOrderStatus(),
+                order.getOrderedTime(),
+                order.getOrderLineItems().stream()
+                        .map(OrderLineItemResponse::from)
+                        .collect(Collectors.toList()));
     }
 
     public Long getId() {
@@ -45,7 +51,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
 }
