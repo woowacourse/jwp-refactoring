@@ -2,14 +2,15 @@ package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
 
 public class CreateMenuCommand {
 
     public static class CreateMenuProductCommand {
         private Long productId;
-        private long quantity;
+        private Integer quantity;
 
-        public CreateMenuProductCommand(final Long productId, final long quantity) {
+        public CreateMenuProductCommand(final Long productId, final Integer quantity) {
             this.productId = productId;
             this.quantity = quantity;
         }
@@ -18,7 +19,7 @@ public class CreateMenuCommand {
             return productId;
         }
 
-        public long getQuantity() {
+        public Integer getQuantity() {
             return quantity;
         }
 

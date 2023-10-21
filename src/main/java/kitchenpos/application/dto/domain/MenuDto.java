@@ -13,7 +13,7 @@ public class MenuDto {
     private List<MenuProductDto> menuProducts;
 
     public static MenuDto from(final Menu menu) {
-        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(),
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice().getValue(),
                 menu.getMenuProducts().stream().map(MenuProductDto::from).collect(Collectors.toList()));
     }
 

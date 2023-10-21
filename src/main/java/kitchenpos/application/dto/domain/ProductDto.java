@@ -9,7 +9,7 @@ public class ProductDto {
     private BigDecimal price;
 
     public static ProductDto from(final Product product) {
-        return new ProductDto(product.getId(), product.getName(), product.getPrice());
+        return new ProductDto(product.getId(), product.getName(), product.getPrice().getValue());
     }
 
     public ProductDto(final Long id, final String name, final BigDecimal price) {

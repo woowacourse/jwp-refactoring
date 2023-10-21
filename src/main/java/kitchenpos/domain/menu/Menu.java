@@ -1,18 +1,21 @@
 package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.product.Product;
 
+import static java.util.Objects.requireNonNull;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REMOVE;
 
@@ -23,7 +26,10 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Money price;
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
@@ -32,20 +38,17 @@ public class Menu {
     protected Menu() {
     }
 
-    public static Menu of(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
-                          final Map<Product, Long> productToQuantity) {
-        Menu menu = new Menu(id, name, price, menuGroupId);
+    public static Menu of(final String name, final Money price, final Long menuGroupId,
+                          final Map<Product, Integer> productToQuantity) {
+        Menu menu = new Menu(null, name, price, menuGroupId);
         menu.changeMenuProducts(productToQuantity);
         return menu;
     }
 
-    private Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("메뉴 가격이 없거나 0보다 작습니다.");
-        }
+    public Menu(final Long id, final String name, final Money price, final Long menuGroupId) {
         this.id = id;
-        this.name = name;
-        this.price = price;
+        this.name = requireNonNull(name, "메뉴 이름은 null일 수 없습니다.");
+        this.price = requireNonNull(price, "메뉴 가격은 null일 수 없습니다.");
         this.menuGroupId = menuGroupId;
     }
 
@@ -65,23 +68,19 @@ public class Menu {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void changeMenuProducts(final Map<Product, Long> productToQuantity) {
+    public void changeMenuProducts(final Map<Product, Integer> productToQuantity) {
         final var sumOfMenuProductPrice = productToQuantity.entrySet().stream()
-                .map(entry -> entry.getKey().getPrice().multiply(BigDecimal.valueOf(entry.getValue())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (price.compareTo(sumOfMenuProductPrice) == 1) {
+                .map(entry -> entry.getKey().getPrice().times(entry.getValue()))
+                .reduce(Money.ZERO, Money::plus);
+        if (price.isHigherThan(sumOfMenuProductPrice)) {
             throw new IllegalArgumentException("메뉴 가격이 메뉴에 속한 상품 가격의 합보다 큽니다.");
         }
         final List<MenuProduct> menuProducts = productToQuantity.entrySet().stream()

@@ -1,6 +1,7 @@
 package kitchenpos.application.dto;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.product.Product;
 
 public class CreateProductCommand {
@@ -9,7 +10,7 @@ public class CreateProductCommand {
     private BigDecimal price;
 
     public Product toDomain() {
-        return new Product(name, price);
+        return new Product(name, new Money(price));
     }
 
     public CreateProductCommand() {

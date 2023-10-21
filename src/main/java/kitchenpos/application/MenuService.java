@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
 import kitchenpos.application.dto.domain.MenuDto;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
@@ -32,18 +34,23 @@ public class MenuService {
     @Transactional
     public MenuDto create(final CreateMenuCommand command) {
         if (!menuGroupRepository.existsById(command.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 
         final List<CreateMenuProductCommand> menuProductCommands = command.getMenuProducts();
+        if (menuProductCommands.isEmpty()) {
+            throw new IllegalArgumentException("메뉴에는 최소 한 개 이상의 상품이 포함되어야 합니다.");
+        }
 
-        final Map<Product, Long> productToQuantity = menuProductCommands.stream()
+        final Map<Product, Integer> productToQuantity = menuProductCommands.stream()
                 .collect(Collectors.toMap(
                         menuProductCommand -> productRepository.findById(menuProductCommand.getProductId())
                                 .orElseThrow(IllegalArgumentException::new),
                         CreateMenuProductCommand::getQuantity
                 ));
-        final Menu menu = Menu.of(null, command.getName(), command.getPrice(), command.getMenuGroupId(), productToQuantity);
+
+        final Menu menu = Menu.of(command.getName(), new Money(command.getPrice()), command.getMenuGroupId(),
+                productToQuantity);
         return MenuDto.from(menuRepository.save(menu));
     }
 

@@ -13,7 +13,7 @@ class ProductTest {
     void 가격과_이름으로_생성할_수_있다() {
         //given
         String name = "후라이드";
-        BigDecimal price = BigDecimal.valueOf(16000);
+        Money price = Money.of(16000);
 
         //when
         final var product = new Product(name, price);
@@ -30,7 +30,7 @@ class ProductTest {
     void name이_null이면_예외가_발생한다() {
         //given
         String name = null;
-        BigDecimal price = BigDecimal.valueOf(16000);
+        Money price = Money.of(16000);
 
         //expect
         assertThatThrownBy(() -> new Product(name, price))
@@ -42,18 +42,7 @@ class ProductTest {
     void price가_null이면_예외가_발생한다() {
         //given
         String name = "후라이드";
-        BigDecimal price = null;
-
-        //expect
-        assertThatThrownBy(() -> new Product(name, price))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void price가_음수이면_예외가_발생한다() {
-        //given
-        String name = "후라이드";
-        BigDecimal price = BigDecimal.valueOf(-16000);
+        Money price = null;
 
         //expect
         assertThatThrownBy(() -> new Product(name, price))

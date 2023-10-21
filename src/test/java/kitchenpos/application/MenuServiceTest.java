@@ -92,7 +92,7 @@ class MenuServiceTest extends ServiceTest {
             final long 가격_합 = 메뉴_상품가격합_구하기(존재하는_상품_목록);
 
             final var 상품_요청_목록 = 존재하는_상품_목록.stream()
-                    .map(product -> new CreateMenuProductCommand(product.getId(), 1L))
+                    .map(product -> new CreateMenuProductCommand(product.getId(), 1))
                     .collect(Collectors.toList());
 
             CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(가격_합 - subtrahend), 메뉴_그룹.getId(),
@@ -114,7 +114,7 @@ class MenuServiceTest extends ServiceTest {
             final long 가격_합 = 메뉴_상품가격합_구하기(존재하는_상품_목록);
 
             final var 상품_요청_목록 = 존재하는_상품_목록.stream()
-                    .map(product -> new CreateMenuProductCommand(product.getId(), 1L))
+                    .map(product -> new CreateMenuProductCommand(product.getId(), 1))
                     .collect(Collectors.toList());
 
             CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(가격_합 + 1), 메뉴_그룹.getId(),
@@ -127,7 +127,7 @@ class MenuServiceTest extends ServiceTest {
 
         private long 메뉴_상품가격합_구하기(final List<Product> 상품_목록) {
             long 가격_합 = 상품_목록.stream()
-                    .mapToLong(product -> product.getPrice().longValue())
+                    .mapToLong(product -> product.getPrice().getValue().longValue())
                     .sum();
             return 가격_합;
         }
@@ -147,7 +147,7 @@ class MenuServiceTest extends ServiceTest {
 
     private List<CreateMenuProductCommand> 상품_요청_만들기() {
         final var 상품_아이디 = productRepository.findAll().get(0).getId();
-        final var 메뉴_상품 = new CreateMenuProductCommand(상품_아이디, 1L);
+        final var 메뉴_상품 = new CreateMenuProductCommand(상품_아이디, 1);
         return List.of(메뉴_상품);
     }
 
