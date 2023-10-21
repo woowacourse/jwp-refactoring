@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateTableGroupCommand;
+import kitchenpos.application.dto.domain.TableGroupDto;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
@@ -29,7 +30,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final CreateTableGroupCommand command) {
+    public TableGroupDto create(final CreateTableGroupCommand command) {
         final List<Long> orderTableIds = command.getOrderTableIds();
         final List<OrderTable> foundOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         if (orderTableIds.size() != foundOrderTables.size()) {
@@ -38,7 +39,7 @@ public class TableGroupService {
 
         TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         savedTableGroup.setOrderTables(foundOrderTables);
-        return savedTableGroup;
+        return TableGroupDto.from(savedTableGroup);
     }
 
     @Transactional

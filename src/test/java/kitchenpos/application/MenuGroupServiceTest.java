@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuGroupCommand;
+import kitchenpos.application.dto.domain.MenuGroupDto;
 import kitchenpos.domain.menugroup.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ class MenuGroupServiceTest extends ServiceTest {
         CreateMenuGroupCommand 커맨드 = new CreateMenuGroupCommand("메뉴그룹");
 
         //when
-        MenuGroup 생성된_메뉴그룹 = menuGroupService.create(커맨드);
+        final MenuGroupDto 생성된_메뉴그룹 = menuGroupService.create(커맨드);
 
         //then
         assertAll(
@@ -40,10 +41,10 @@ class MenuGroupServiceTest extends ServiceTest {
                 .collect(Collectors.toList());
 
         //when
-        List<MenuGroup> 메뉴_그룹_리스트 = menuGroupService.list();
+        final List<MenuGroupDto> 메뉴_그룹_리스트 = menuGroupService.list();
 
         //then
-        assertThat(메뉴_그룹_리스트).extracting(MenuGroup::getId)
+        assertThat(메뉴_그룹_리스트).extracting(MenuGroupDto::getId)
                 .containsAll(모든_그룹_아이디);
     }
 }

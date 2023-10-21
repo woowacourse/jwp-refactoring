@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
+import kitchenpos.application.dto.domain.MenuDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -98,7 +99,7 @@ class MenuServiceTest extends ServiceTest {
                     상품_요청_목록);
 
             //when
-            Menu 생성된_메뉴 = menuService.create(커맨드);
+            MenuDto 생성된_메뉴 = menuService.create(커맨드);
 
             //then
             assertThat(생성된_메뉴.getId()).isNotNull();
@@ -161,10 +162,10 @@ class MenuServiceTest extends ServiceTest {
                     .collect(Collectors.toList());
 
             //when
-            List<Menu> 메뉴_목록 = menuService.list();
+            List<MenuDto> 메뉴_목록 = menuService.list();
 
             //then
-            assertThat(메뉴_목록).extracting(Menu::getId)
+            assertThat(메뉴_목록).extracting(MenuDto::getId)
                     .containsAll(모든_메뉴_아이디);
         }
 

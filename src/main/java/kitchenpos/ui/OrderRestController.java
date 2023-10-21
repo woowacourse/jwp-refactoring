@@ -28,18 +28,17 @@ public class OrderRestController {
 
     @PostMapping("/api/orders")
     public ResponseEntity<OrderDto> create(@RequestBody final CreateOrderCommand command) {
-        final Order created = orderService.create(command);
+        final OrderDto created = orderService.create(command);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(OrderDto.from(created))
+                .body(created)
                 ;
     }
 
     @GetMapping("/api/orders")
     public ResponseEntity<List<OrderDto>> list() {
-        final List<OrderDto> orderDtos = orderService.list().stream().map(OrderDto::from).collect(Collectors.toList());
         return ResponseEntity.ok()
-                .body(orderDtos)
+                .body(orderService.list())
                 ;
     }
 
@@ -49,8 +48,8 @@ public class OrderRestController {
             @RequestBody final PutOrderStatusRequest order
     ) {
         final ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(orderId, order.getOrderStatus());
-        Order changedOrder = orderService.changeOrderStatus(command);
-        return ResponseEntity.ok(OrderDto.from(changedOrder));
+        final OrderDto changedOrder = orderService.changeOrderStatus(command);
+        return ResponseEntity.ok(changedOrder);
     }
 
 }

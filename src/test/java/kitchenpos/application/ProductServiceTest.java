@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.CreateProductCommand;
+import kitchenpos.application.dto.domain.ProductDto;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class ProductServiceTest extends ServiceTest {
             CreateProductCommand 상품_생성_요청 = new CreateProductCommand("상품명", BigDecimal.valueOf(1000));
 
             //when
-            Product 생성된_상품 = productService.create(상품_생성_요청);
+            ProductDto 생성된_상품 = productService.create(상품_생성_요청);
 
             //then
             assertAll(
@@ -70,10 +71,10 @@ class ProductServiceTest extends ServiceTest {
                 .collect(toList());
 
         //when
-        List<Product> products = productService.list();
+        List<ProductDto> products = productService.list();
 
         //then
-        assertThat(products).extracting(Product::getId)
+        assertThat(products).extracting(ProductDto::getId)
                 .containsAll(allProductIds);
     }
 

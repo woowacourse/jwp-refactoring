@@ -22,10 +22,10 @@ public class TableGroupRestController {
 
     @PostMapping("/api/table-groups")
     public ResponseEntity<TableGroupDto> create(@RequestBody final CreateTableGroupCommand request) {
-        final TableGroup created = tableGroupService.create(request);
+        final TableGroupDto created = tableGroupService.create(request);
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(TableGroupDto.from(created))
+                .body(created)
                 ;
     }
 

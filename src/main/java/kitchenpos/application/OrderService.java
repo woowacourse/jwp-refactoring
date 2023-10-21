@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
+import kitchenpos.application.dto.domain.OrderDto;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -34,7 +35,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final CreateOrderCommand command) {
+    public OrderDto create(final CreateOrderCommand command) {
         final List<OrderLineItemRequest> orderLineItemRequests = command.getOrderLineItems();
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException();
@@ -55,21 +56,23 @@ public class OrderService {
                 .map(request -> request.toDomain(null))
                 .collect(Collectors.toList());
         Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-        return orderRepository.save(order);
+        return OrderDto.from(orderRepository.save(order));
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderDto> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderDto::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final ChangeOrderStatusCommand command) {
+    public OrderDto changeOrderStatus(final ChangeOrderStatusCommand command) {
         final Long orderId = command.getOrderId();
         final Order order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(command.getOrderStatus());
         order.changeOrderStatus(orderStatus);
-        return order;
+        return OrderDto.from(order);
     }
 }

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
+import kitchenpos.application.dto.domain.MenuDto;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
@@ -29,7 +30,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final CreateMenuCommand command) {
+    public MenuDto create(final CreateMenuCommand command) {
         if (!menuGroupRepository.existsById(command.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -43,11 +44,13 @@ public class MenuService {
                         CreateMenuProductCommand::getQuantity
                 ));
         final Menu menu = Menu.of(null, command.getName(), command.getPrice(), command.getMenuGroupId(), productToQuantity);
-        return menuRepository.save(menu);
+        return MenuDto.from(menuRepository.save(menu));
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuDto> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuDto::from)
+                .collect(Collectors.toList());
     }
 
 }

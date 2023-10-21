@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
 import kitchenpos.application.dto.ChangeTableEmptyCommand;
 import kitchenpos.application.dto.CreateTableCommand;
+import kitchenpos.application.dto.domain.OrderTableDto;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
@@ -31,7 +32,7 @@ class TableServiceTest extends ServiceTest {
         CreateTableCommand 테이블_생성_요청 = new CreateTableCommand();
 
         //when
-        OrderTable 생성된_주문 = tableService.create(테이블_생성_요청);
+        OrderTableDto 생성된_주문 = tableService.create(테이블_생성_요청);
 
         //then
         assertThat(생성된_주문.getId()).isNotNull();
@@ -61,7 +62,7 @@ class TableServiceTest extends ServiceTest {
             ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
 
             //when
-            OrderTable 변경된_테이블 = tableService.changeNumberOfGuests(커맨드);
+            OrderTableDto 변경된_테이블 = tableService.changeNumberOfGuests(커맨드);
 
             //then
             assertThat(변경된_테이블.getNumberOfGuests()).isEqualTo(9);
@@ -127,7 +128,7 @@ class TableServiceTest extends ServiceTest {
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
             //when
-            OrderTable 변경된_테이블 = tableService.changeEmpty(테이블_비우기_요청);
+            OrderTableDto 변경된_테이블 = tableService.changeEmpty(테이블_비우기_요청);
 
             //then
             assertThat(변경된_테이블.isEmpty()).isTrue();

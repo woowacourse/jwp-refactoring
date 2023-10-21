@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.application.dto.CreateTableGroupCommand;
 import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
+import kitchenpos.application.dto.domain.TableGroupDto;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
@@ -36,7 +37,7 @@ class TableGroupServiceTest extends ServiceTest {
                     List.of(new TableInGroup(아이디1), new TableInGroup(아이디2)));
 
             //when
-            TableGroup 생성된_테이블그룹 = tableGroupService.create(커맨드);
+            TableGroupDto 생성된_테이블그룹 = tableGroupService.create(커맨드);
 
             //then
             TableGroup 조회 = tableGroupRepository.findById(생성된_테이블그룹.getId()).orElseThrow();

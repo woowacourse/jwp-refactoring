@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
+import kitchenpos.application.dto.domain.OrderDto;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -39,10 +40,10 @@ class OrderServiceTest extends ServiceTest {
             CreateOrderCommand 커맨드 = new CreateOrderCommand(테이블.getId(), List.of(주문상품));
 
             //when
-            Order 실제주문 = orderService.create(커맨드);
+            OrderDto 실제주문 = orderService.create(커맨드);
 
             //then
-            assertThat(실제주문.getId()).isNotNull();
+            assertThat(orderRepository.existsById(실제주문.getId())).isTrue();
         }
 
         @Test
@@ -118,17 +119,17 @@ class OrderServiceTest extends ServiceTest {
                 .collect(Collectors.toList());
 
         //when
-        List<Order> 주문_리스트 = orderService.list();
+        List<OrderDto> 주문_리스트 = orderService.list();
 
         //then
-        assertThat(주문_리스트).extracting(Order::getId)
+        assertThat(주문_리스트).extracting(OrderDto::getId)
                 .containsAll(존재하는_주문_아이디);
     }
 
     @Nested
     class 주문_상태_변경 {
 
-        private Order 주문_생성() {
+        private OrderDto 주문_생성() {
             OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
 
@@ -140,16 +141,16 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 성공() {
             //given
-            Order 주문 = 주문_생성();
+            OrderDto 주문 = 주문_생성();
 
             ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(주문.getId(),
                     OrderStatus.MEAL.name());
 
             //when
-            Order 실제주문 = orderService.changeOrderStatus(커맨드);
+            OrderDto 실제주문 = orderService.changeOrderStatus(커맨드);
 
             //then
-            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
+            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
         }
 
         @Test
@@ -168,11 +169,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_상태가_COMPLETION이면_예외가_발생한다() {
             //given
-            Order 주문 = 주문_생성();
-            주문.changeOrderStatus(OrderStatus.COMPLETION);
-            orderRepository.save(주문);
+            Order 생성된_주문 = orderRepository.findById(주문_생성().getId()).orElseThrow();
+            생성된_주문.changeOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(생성된_주문);
 
-            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(주문.getId(),
+            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(생성된_주문.getId(),
                     OrderStatus.COMPLETION.name());
 
             //expect
