@@ -10,6 +10,7 @@ import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemCreateRequest;
@@ -59,7 +60,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         /// TODO: 2023/10/22  도메인 로직 이동
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
         }
         return orderTable;
     }
@@ -82,10 +83,10 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final String orderStatus) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrder.changeOrderStatus(order.getOrderStatus());
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(orderStatus));
 
         return savedOrder;
     }

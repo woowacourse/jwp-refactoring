@@ -141,8 +141,7 @@ class OrderServiceTest extends IntegrationTest {
         final Order order = orderService.create(RequestParser.of(orderTable, List.of(menu)));
 
         // when
-        order.changeOrderStatus(MEAL);
-        final Order orderForMeal = orderService.changeOrderStatus(order.getId(), order);
+        final Order orderForMeal = orderService.changeOrderStatus(order.getId(), MEAL.name());
 
         // then
         assertThat(orderForMeal).usingRecursiveComparison()
@@ -154,20 +153,7 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     @DisplayName("존재하지 않는 주문의 상태를 변경할 수 없다.")
     void 주문_상태_변경_실패_존재하지_않는_주문() {
-        // given
-        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
-        final Product chicken = productService.create(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
-        final Menu menu = menuService.create(
-                세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
-        );
-        final Order order = orderService.create(RequestParser.of(orderTable, List.of(menu)));
-
-        // when
-        order.changeOrderStatus(MEAL);
-
-        // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, MEAL.name()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
