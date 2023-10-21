@@ -51,8 +51,4 @@ public class TableGroup {
     public OrderTables getOrderTables() {
         return orderTables;
     }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
 }
