@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.치킨_8000원;
 import static kitchenpos.fixture.ProductFixture.피자_8000원;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,13 +79,6 @@ class TableGroupServiceTest extends IntegrationTest {
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("단체에 지정할 테이블은 2개 이상이어야 한다.")
-    void 단체_테이블_지정_실패_주문_테이블_개수_미달() {
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroup(List.of(주문_테이블_생성()))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

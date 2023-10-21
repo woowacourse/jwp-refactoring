@@ -44,15 +44,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(final TableGroup tableGroup,
-                      final int numberOfGuests,
-                      final boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
     public OrderTable(final int numberOfGuests,
                       final boolean empty) {
         this(null, null, numberOfGuests, empty);

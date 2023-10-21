@@ -24,20 +24,21 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        validateOrderTables(orderTables);
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        savedTableGroup.addOrderTables(orderTables);
+
+        return savedTableGroup;
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
-        savedTableGroup.addOrderTables(savedOrderTables);
-
-        return savedTableGroup;
     }
 
     @Transactional

@@ -5,11 +5,9 @@ import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +50,7 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("특정 테이블을 빈 테이블로 변경하면 해당하는 id의 정보를 업데이트한다.")
     void 주문_테이블_비우기_성공_빈_테이블_여부() {
         // given
-        final OrderTable table = tableService.create(주문_테이블_생성());
-        table.changeEmpty(true);
+        final OrderTable table = tableService.create(빈_테이블_생성());
 
         // when
         tableService.changeEmpty(table.getId(), table);
@@ -69,18 +66,7 @@ class TableServiceTest extends IntegrationTest {
     @Test
     @DisplayName("존재하지 않는 테이블을 비울 수 없다.")
     void 주문_테이블_비우기_실패_존재하지_않는_테이블() {
-        // given
-        final OrderTable tableInGroup = tableService.create(빈_테이블_생성());
-        List<OrderTable> tablesInGroup = List.of(
-                tableInGroup,
-                tableService.create(빈_테이블_생성())
-        );
-
-        // when
-        tableGroupService.create(new TableGroup(tablesInGroup));
-
-        // then
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, tableInGroup))
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, 빈_테이블_생성()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -106,15 +92,7 @@ class TableServiceTest extends IntegrationTest {
     @Test
     @DisplayName("존재하지 않는 테이블의 손님 수를 변경할 수 없다.")
     void 주문_테이블_방문한_손님수_변경_실패() {
-        // given
-        final OrderTable table = tableService.create(주문_테이블_생성());
-
-        // when
-        final int numberOfGuests = 10;
-        table.changeNumberOfGuests(numberOfGuests);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, table))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, new OrderTable(10, false)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

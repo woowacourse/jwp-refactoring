@@ -43,7 +43,7 @@ class OrderTableTest {
     void 주문_테이블_비우기_실패_단체_소속() {
         // given
         final OrderTable tableInGroup = 빈_테이블_생성();
-        tableInGroup.group(new TableGroup());
+        new TableGroup().addOrderTables(List.of(tableInGroup, 빈_테이블_생성()));
 
         // expected
         assertThatThrownBy(() -> tableInGroup.changeEmpty(true))
