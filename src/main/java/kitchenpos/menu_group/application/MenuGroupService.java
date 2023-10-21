@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.menu_group.application.dto.MenuGroupCreateRequest;
 import kitchenpos.menu_group.application.dto.MenuGroupQueryResponse;
 import kitchenpos.menu_group.domain.repository.MenuGroupRepository;
+import kitchenpos.menu_group.persistence.MenuGroupRepositoryImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,7 @@ public class MenuGroupService {
 
   private final MenuGroupRepository menuGroupRepository;
 
-  public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+  public MenuGroupService(final MenuGroupRepositoryImpl menuGroupRepository) {
     this.menuGroupRepository = menuGroupRepository;
   }
 
