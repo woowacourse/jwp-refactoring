@@ -66,6 +66,24 @@ class TableServiceTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 테이블을 비울 수 없다.")
+    void 주문_테이블_비우기_실패_존재하지_않는_테이블() {
+        // given
+        final OrderTable tableInGroup = tableService.create(빈_테이블_생성());
+        List<OrderTable> tablesInGroup = List.of(
+                tableInGroup,
+                tableService.create(빈_테이블_생성())
+        );
+
+        // when
+        tableGroupService.create(new TableGroup(tablesInGroup));
+
+        // then
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, tableInGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("소속된 단체가 있으면 테이블을 비울 수 없다.")
     void 주문_테이블_비우기_실패_단체_소속() {
         // given
@@ -84,7 +102,7 @@ class TableServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("특정 테이블의 방문한 손님 수를 변경할 수 있다.")
+    @DisplayName("특정 주문 테이블의 방문한 손님 수를 변경할 수 있다.")
     void 주문_테이블_방문한_손님수_변경_성공() {
         // given
         final OrderTable table = tableService.create(주문_테이블_생성());
@@ -100,5 +118,20 @@ class TableServiceTest extends IntegrationTest {
                 .filteredOn(found -> Objects.equals(found.getId(), table.getId()))
                 .filteredOn(found -> Objects.equals(found.getNumberOfGuests(), numberOfGuests))
                 .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 테이블의 손님 수를 변경할 수 없다.")
+    void 주문_테이블_방문한_손님수_변경_실패() {
+        // given
+        final OrderTable table = tableService.create(주문_테이블_생성());
+
+        // when
+        final int numberOfGuests = 10;
+        table.changeNumberOfGuests(numberOfGuests);
+
+        // then
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, table))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
