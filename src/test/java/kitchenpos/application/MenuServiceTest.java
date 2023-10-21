@@ -8,7 +8,7 @@ import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,7 +87,7 @@ class MenuServiceTest extends ServiceTest {
         void 메뉴가격이_상품가격합_이하여야한다(Long subtrahend) {
             //given
             MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
-            final var 존재하는_상품_목록 = productDao.findAll().subList(0, 2);
+            final var 존재하는_상품_목록 = productRepository.findAll().subList(0, 2);
             final long 가격_합 = 메뉴_상품가격합_구하기(존재하는_상품_목록);
 
             final var 상품_요청_목록 = 존재하는_상품_목록.stream()
@@ -109,7 +109,7 @@ class MenuServiceTest extends ServiceTest {
             //given
             MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
 
-            final var 존재하는_상품_목록 = productDao.findAll().subList(0, 2);
+            final var 존재하는_상품_목록 = productRepository.findAll().subList(0, 2);
             final long 가격_합 = 메뉴_상품가격합_구하기(존재하는_상품_목록);
 
             final var 상품_요청_목록 = 존재하는_상품_목록.stream()
@@ -139,13 +139,13 @@ class MenuServiceTest extends ServiceTest {
     }
 
     private List<MenuProduct> 상품_만들기() {
-        var 상품_아이디 = productDao.findAll().get(0).getId();
+        var 상품_아이디 = productRepository.findAll().get(0).getId();
         MenuProduct 메뉴_상품 = new MenuProduct(null, null, 상품_아이디, 1L);
         return List.of(메뉴_상품);
     }
 
     private List<CreateMenuProductCommand> 상품_요청_만들기() {
-        final var 상품_아이디 = productDao.findAll().get(0).getId();
+        final var 상품_아이디 = productRepository.findAll().get(0).getId();
         final var 메뉴_상품 = new CreateMenuProductCommand(상품_아이디, 1L);
         return List.of(메뉴_상품);
     }

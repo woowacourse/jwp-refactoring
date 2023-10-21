@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.CreateProductCommand;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -65,7 +65,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_리스트를_조회할_수_있다() {
         //given
-        List<Long> allProductIds = productDao.findAll().stream()
+        List<Long> allProductIds = productRepository.findAll().stream()
                 .map(Product::getId)
                 .collect(toList());
 

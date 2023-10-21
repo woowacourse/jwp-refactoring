@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,15 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(
             final MenuGroupRepository menuGroupRepository,
-            final ProductDao productDao,
+            final ProductRepository productRepository,
             final MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public class MenuService {
 
         final Map<Product, Long> productToQuantity = menuProductCommands.stream()
                 .collect(Collectors.toMap(
-                        menuProductCommand -> productDao.findById(menuProductCommand.getProductId())
+                        menuProductCommand -> productRepository.findById(menuProductCommand.getProductId())
                                 .orElseThrow(IllegalArgumentException::new),
                         CreateMenuProductCommand::getQuantity
                 ));

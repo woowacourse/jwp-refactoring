@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.tablegroup.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public abstract class ServiceTest {
     protected MenuRepository menuRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
     protected MenuGroupRepository menuGroupRepository;
