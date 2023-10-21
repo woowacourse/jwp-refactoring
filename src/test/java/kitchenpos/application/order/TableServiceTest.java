@@ -47,7 +47,7 @@ class TableServiceTest extends ServiceTestHelper {
     @Test
     void 주문_테이블_비움상태_변경시_그룹화되어있으면_예외가_발생한다() {
         // given
-        TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        TableGroup tableGroup = 테이블_그룹화(List.of(빈_테이블1, 빈_테이블2));
         List<OrderTable> orderTables = tableGroup.getOrderTables();
         OrderTable orderTable1 = orderTables.get(0);
 
@@ -88,13 +88,13 @@ class TableServiceTest extends ServiceTestHelper {
     void 주문_테이블의_손님수를_음수로_지정하면_예외가_발생한다() {
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() ->  테이블_손님_수_변경(손님있는_테이블.getId(), -1));
+                .isThrownBy(() -> 테이블_손님_수_변경(손님있는_테이블.getId(), -1));
     }
 
     @Test
     void 주문_테이블의_손님수_변경시_테이블이_비어있으면_예외가_발생한다() {
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() ->  테이블_손님_수_변경(빈_테이블1.getId(), 20));
+                .isThrownBy(() -> 테이블_손님_수_변경(빈_테이블1.getId(), 20));
     }
 }

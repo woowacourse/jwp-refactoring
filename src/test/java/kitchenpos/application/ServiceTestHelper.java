@@ -7,6 +7,8 @@ import kitchenpos.application.order.TableService;
 import kitchenpos.application.product.ProductService;
 import kitchenpos.application.product.request.ProductCreateRequest;
 import kitchenpos.application.tablegroup.TableGroupService;
+import kitchenpos.application.tablegroup.request.OrderTableIdRequest;
+import kitchenpos.application.tablegroup.request.TableGroupCreateRequest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProductRepository;
@@ -23,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -162,9 +163,17 @@ public abstract class ServiceTestHelper {
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 
-    public TableGroup 테이블_그룹화(OrderTable... tables) {
-        TableGroup tableGroup = TableGroup.of(List.of(tables));
-        return tableGroupService.create(tableGroup);
+    public TableGroup 테이블_그룹화(List<OrderTable> orderTables) {
+        List<OrderTableIdRequest> orderTableIdRequests = mapToOrderTableIds(orderTables);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(orderTableIdRequests);
+        return tableGroupService.create(request);
+    }
+
+    private List<OrderTableIdRequest> mapToOrderTableIds(List<OrderTable> orderTables) {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .map(OrderTableIdRequest::new)
+                .collect(Collectors.toList());
     }
 
     public void 테이블_그룹해제(TableGroup tableGroup) {

@@ -21,7 +21,7 @@ class TableGroupServiceTest extends ServiceTestHelper {
     @Test
     void 테이블을_그룹으로_묶는다() {
         // given
-        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        final TableGroup tableGroup = 테이블_그룹화(List.of(빈_테이블1, 빈_테이블2));
 
         // when
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
@@ -39,20 +39,20 @@ class TableGroupServiceTest extends ServiceTestHelper {
     void 채워진_테이블을_그룹으로_묶을경우_예외가_발생한다() {
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> 테이블_그룹화(손님있는_테이블, 손님있는_식사중_테이블));
+                .isThrownBy(() -> 테이블_그룹화(List.of(손님있는_테이블, 손님있는_식사중_테이블)));
     }
 
     @Test
     void 테이블그룹을_생성할_때_주문테이블이_1개면_예외가_발생한다() {
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> 테이블_그룹화(빈_테이블1));
+                .isThrownBy(() -> 테이블_그룹화(List.of(빈_테이블1)));
     }
 
     @Test
     void 조리중인_테이블의_그룹을_해제할경우_예외가_발생한다() {
         // given
-        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        final TableGroup tableGroup = 테이블_그룹화(List.of(빈_테이블1, 빈_테이블2));
 
         // when
         주문_요청(빈_테이블1, 이달의음료세트);
@@ -65,7 +65,7 @@ class TableGroupServiceTest extends ServiceTestHelper {
     @Test
     void 식사중인_테이블의_그룹을_해제할경우_예외가_발생한다() {
         // given
-        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        final TableGroup tableGroup = 테이블_그룹화(List.of(빈_테이블1, 빈_테이블2));
         final Order order = 주문_요청(빈_테이블1, 이달의음료세트);
 
         // when
@@ -79,7 +79,7 @@ class TableGroupServiceTest extends ServiceTestHelper {
     @Test
     void 테이블이_그룹으로_묶여지면_채워진다() {
         // given
-        final TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        final TableGroup tableGroup = 테이블_그룹화(List.of(빈_테이블1, 빈_테이블2));
 
         // when
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
