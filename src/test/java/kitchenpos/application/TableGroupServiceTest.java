@@ -97,8 +97,8 @@ class TableGroupServiceTest {
         void notExistingOrderTable(@Autowired TableService tableService) {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
 
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setEmpty(true); // 저장하지 않은 orderTable
+            final OrderTable orderTable2 = new OrderTable(0, true);
+            // 저장하지 않은 orderTable
 
             final TableGroup tableGroup = new TableGroup();
             tableGroup.setOrderTables(List.of(savedOrderTable, orderTable2));

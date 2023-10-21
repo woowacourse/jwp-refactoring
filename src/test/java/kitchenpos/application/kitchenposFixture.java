@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.response.ProductResponse;
@@ -11,6 +12,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.product.Name;
 import kitchenpos.domain.product.Price;
+import org.springframework.util.ReflectionUtils;
 
 public class kitchenposFixture {
     public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId, final MenuProduct... menuProducts) {
@@ -43,9 +45,14 @@ public class kitchenposFixture {
     }
 
     public static OrderTable 주문테이블만들기(final TableService tableService, final boolean isEmpty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(isEmpty);
-        return tableService.create(orderTable);
+        final OrderTable orderTable = new OrderTable(6, isEmpty);
+        final Long orderTableId = tableService.create(6, isEmpty);
+        final Field field = ReflectionUtils.findField(OrderTable.class, "id", Long.class);
+        assert field != null;
+        field.setAccessible(true);
+        ReflectionUtils.setField(field, orderTable, orderTableId);
+
+        return orderTable;
     }
 
     public static OrderLineItem 주문할메뉴만들기(final Menu savedMenu, final int quantity) {

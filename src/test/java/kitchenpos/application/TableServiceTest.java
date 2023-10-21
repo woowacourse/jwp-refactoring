@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
@@ -65,17 +66,10 @@ class TableServiceTest {
         @Test
         @DisplayName("orderTableId에 해당하는 pathVariable에 주문 테이블 식별자를 제공하여 테이블의 비어있음 여부를 변경할 수 있다.")
         void givenOrderTableId() {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            final OrderTable savedTable = tableService.create(orderTable);
+            final Long savedTableId = tableService.create(6, true);
 
-            assertThat(savedTable.isEmpty()).isTrue();
-
-            final OrderTable notEmptyTable = new OrderTable(); // 비어있음 상태를 변경하기 위한 객체
-            notEmptyTable.setEmpty(false);
-
-            final OrderTable changedTable = tableService.changeEmpty(savedTable.getId(), notEmptyTable);
-            assertThat(changedTable.isEmpty()).isFalse();
+            final OrderTableResponse changedTable = tableService.changeEmpty(savedTableId, false);
+            assertThat(changedTable).extracting("empty").isEqualTo(false);
         }
 
         @Test
@@ -115,10 +109,7 @@ class TableServiceTest {
             changingStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
             orderService.changeOrderStatus(savedOrder.getId(), changingStatusOrder);
 
-            final OrderTable changingEmptyOrderTable = new OrderTable();
-            changingEmptyOrderTable.setEmpty(false);
-
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changingEmptyOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), false))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -130,27 +121,19 @@ class TableServiceTest {
         @Test
         @DisplayName("orderTableId에 해당하는 pathVariable에 주문 테이블 식별자를, requestBody에 변경하려는 손님 수를 제공하여 변경할 수 있다.")
         void given(@Autowired OrderTableDao orderTableDao) {
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(false);
-            final OrderTable savedTable = tableService.create(orderTable);
+            final Long savedTableId = tableService.create(6, false);
 
-            final OrderTable changingGuestNumberOrderTable = new OrderTable(); // 손님의 수를 변경하기 위한 객체
-            changingGuestNumberOrderTable.setNumberOfGuests(9);
+            tableService.changeNumberOfGuests(savedTableId, 9);
 
-            tableService.changeNumberOfGuests(savedTable.getId(), changingGuestNumberOrderTable);
-
-            final Optional<OrderTable> changedOrderTable = orderTableDao.findById(savedTable.getId());
+            final Optional<OrderTable> changedOrderTable = orderTableDao.findById(savedTableId);
             assertThat(changedOrderTable.get().getNumberOfGuests()).isEqualTo(9);
         }
 
         @Test
         @DisplayName("실재하지 않는 주문 테이블의 손님 수를 변경할 수 없다.")
         void notExistingTable() {
-            final OrderTable changingGuestNumberOrderTable = new OrderTable(); // 손님의 수를 변경하기 위한 객체
-            changingGuestNumberOrderTable.setNumberOfGuests(9);
-
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(0L, changingGuestNumberOrderTable))
+                    () -> tableService.changeNumberOfGuests(0L, 9))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

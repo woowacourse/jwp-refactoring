@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -20,23 +21,21 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public Long create(final int numberOfGuests, boolean empty) {
+        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        return orderTableDao.save(orderTable).getId();
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.from(orderTableDao.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableDao.findMandatoryById(orderTableId);
         validateOrderStatus(orderTableId);
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-        return orderTableDao.save(savedOrderTable);
+        savedOrderTable.setEmpty(empty);
+        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
 
     private void validateOrderStatus(final Long orderTableId) {
@@ -47,10 +46,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = orderTableDao.findMandatoryById(orderTableId);
         savedOrderTable.setNumberOfGuests(numberOfGuests);
-        return orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
 }

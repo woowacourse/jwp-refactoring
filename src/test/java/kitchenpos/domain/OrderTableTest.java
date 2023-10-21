@@ -9,8 +9,8 @@ class OrderTableTest {
     @Test
     @DisplayName("테이블 그룹에 이미 속해있는 주문 테이블의 상태를 변경할 수 없다.")
     void notExistingTable() {
-        final OrderTable notEmptyTable = new OrderTable(); // 비어있음 상태를 변경하기 위한 객체
-        notEmptyTable.setTableGroupId(3L);
+        final OrderTable notEmptyTable = new OrderTable(6, false);
+        notEmptyTable.setTableGroupId(6L);
 
         assertThatThrownBy(() -> notEmptyTable.setEmpty(true))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -19,7 +19,7 @@ class OrderTableTest {
     @Test
     @DisplayName("변경하려는 손님 수가 음수라면 변경할 수 없다.")
     void invalidGuestNumber() {
-        final OrderTable orderTable = new OrderTable();
+        final OrderTable orderTable = new OrderTable(6, false);
 
         assertThatThrownBy(
                 () -> orderTable.setNumberOfGuests(-1))
@@ -29,8 +29,7 @@ class OrderTableTest {
     @Test
     @DisplayName("주문 테이블이 빈 테이블이라면 손님 수 변경할 수 없다.")
     void emptyTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(0, true);
 
         assertThatThrownBy(
                 () -> orderTable.setNumberOfGuests(6))
