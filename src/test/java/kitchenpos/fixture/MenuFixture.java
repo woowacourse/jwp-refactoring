@@ -13,10 +13,6 @@ import kitchenpos.domain.Product;
 
 public class MenuFixture {
 
-    public static MenuProduct 메뉴_상품_생성(Product product) {
-        return new MenuProduct(product, 1);
-    }
-
     public static Menu 치킨_피자_세트_치킨_8000_1개_피자_8000_1개(final MenuGroup menuGroup) {
         return new Menu("치킨 피자 세트", BigDecimal.valueOf(14000), menuGroup, List.of(
                 new MenuProduct(치킨_8000원(), 1), new MenuProduct(피자_8000원(), 1)
