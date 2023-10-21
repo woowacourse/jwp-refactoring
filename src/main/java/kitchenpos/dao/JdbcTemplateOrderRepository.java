@@ -19,14 +19,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateOrderDao implements OrderDao {
+public class JdbcTemplateOrderRepository implements OrderDao {
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderDao(final DataSource dataSource) {
+    public JdbcTemplateOrderRepository(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
@@ -96,11 +96,11 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        return new Order(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                resultSet.getLong("order_table_id"),
+                resultSet.getString("order_status"),
+                resultSet.getObject("ordered_time", LocalDateTime.class)
+        );
     }
 }

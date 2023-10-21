@@ -184,12 +184,14 @@ public abstract class ServiceTestHelper {
     }
 
     public Order 주문_요청(final OrderTable orderTable, final Menu... menus) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(makeOrderLineItems(menus));
+        Order order = Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        addOrderLineItems(order, menus);
         return orderService.create(order);
+    }
+
+    private void addOrderLineItems(Order order, Menu... menus) {
+        makeOrderLineItems(menus)
+                .forEach(order::addOrderLineItem);
     }
 
     private List<OrderLineItem> makeOrderLineItems(final Menu[] menus) {
