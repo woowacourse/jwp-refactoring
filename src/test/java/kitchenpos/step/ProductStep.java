@@ -18,6 +18,11 @@ public class ProductStep {
         );
     }
 
+    public static Product 상품_생성_요청하고_상품_반환(final ProductRequest request) {
+        final ExtractableResponse<Response> response = 상품_생성_요청(request);
+        return response.jsonPath().getObject("", Product.class);
+    }
+
     public static Long 상품_생성_요청하고_아이디_반환(final ProductRequest request) {
         final ExtractableResponse<Response> response = 상품_생성_요청(request);
         return response.jsonPath().getLong("id");

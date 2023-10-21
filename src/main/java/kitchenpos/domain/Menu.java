@@ -81,6 +81,14 @@ public class Menu extends BaseDate {
     }
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
         this.menuProducts = menuProducts;
     }
 

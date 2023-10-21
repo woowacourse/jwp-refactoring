@@ -20,7 +20,10 @@ public class MenuProduct extends BaseDate {
     @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
-    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
     private long quantity;
 
     public Long getSeq() {
@@ -35,12 +38,12 @@ public class MenuProduct extends BaseDate {
         this.menu = menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public void setProduct(final Product productId) {
+        this.product = productId;
     }
 
     public long getQuantity() {
