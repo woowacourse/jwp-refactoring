@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import kitchenpos.table.exception.NotEnoughGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.tablegroup.exception.TableGroupExistsException;
+import kitchenpos.table.exception.TableGroupExistsException;
 
 @Table(name = "order_table")
 @Entity

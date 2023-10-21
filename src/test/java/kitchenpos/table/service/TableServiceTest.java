@@ -21,7 +21,7 @@ import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.exception.NotEnoughGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.tablegroup.exception.TableGroupExistsException;
+import kitchenpos.table.exception.TableGroupExistsException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

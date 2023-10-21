@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import kitchenpos.table.exception.NotEnoughGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotEmptyException;
-import kitchenpos.tablegroup.exception.TableGroupExistsException;
+import kitchenpos.table.exception.TableGroupExistsException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
