@@ -5,6 +5,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
@@ -126,7 +127,7 @@ class OrderServiceTest extends ServiceTest {
             order = testFixtureBuilder.buildOrder(order);
 
             //when
-            final List<Order> actual = orderService.list();
+            final List<OrderResponse> actual = orderService.list();
 
             //then
             final Long orderId = order.getId();

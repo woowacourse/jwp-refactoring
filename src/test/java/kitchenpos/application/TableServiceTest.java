@@ -4,6 +4,7 @@ import kitchenpos.ServiceTest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +58,7 @@ class TableServiceTest extends ServiceTest {
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
             //when
-            final List<OrderTable> actual = tableService.list();
+            final List<OrderTableResponse> actual = tableService.list();
 
             //then
             final Long orderTableId = orderTable.getId();

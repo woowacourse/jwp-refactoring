@@ -4,6 +4,7 @@ import kitchenpos.table.domain.OrderTable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +31,7 @@ public class Order {
     private String orderStatus;
     @Column(nullable = false)
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {

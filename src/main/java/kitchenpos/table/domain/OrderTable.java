@@ -40,6 +40,14 @@ public class OrderTable {
         return tableGroup;
     }
 
+    public Long getTableGroupId() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
+
+        return tableGroup.getId();
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

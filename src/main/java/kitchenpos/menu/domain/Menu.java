@@ -5,6 +5,7 @@ import kitchenpos.menu.domain.vo.Price;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ public class Menu {
     private Price price;
     @Column(nullable = false)
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", fetch = FetchType.EAGER)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {

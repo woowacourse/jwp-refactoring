@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.ServiceTest;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -74,7 +75,7 @@ class ProductServiceTest extends ServiceTest {
             final Product expected = testFixtureBuilder.buildProduct(product);
 
             //when
-            final List<Product> actual = productService.list();
+            final List<ProductResponse> actual = productService.list();
 
             //then
             assertSoftly(softly -> {

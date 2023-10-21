@@ -3,11 +3,13 @@ package kitchenpos.table.application;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +31,15 @@ public class TableService {
         return orderTableRepository.save(orderTable).getId();
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
+
+        final List<OrderTableResponse> orderTableResponses = new ArrayList<>();
+        for (final OrderTable orderTable : orderTables) {
+            orderTableResponses.add(new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()));
+        }
+
+        return orderTableResponses;
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.ServiceTest;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -128,7 +129,7 @@ class MenuServiceTest extends ServiceTest {
             final Menu expected = testFixtureBuilder.buildMenu(menu);
 
             //when
-            final List<Menu> actual = menuService.list();
+            final List<MenuResponse> actual = menuService.list();
 
             //then
             assertSoftly(softly -> {

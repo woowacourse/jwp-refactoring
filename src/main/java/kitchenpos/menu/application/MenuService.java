@@ -1,6 +1,7 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -64,13 +67,18 @@ public class MenuService {
         return savedMenu.getId();
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
-        for (Menu menu : menus) {
-            menu = new Menu(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+        final List<MenuResponse> menuResponses = new ArrayList<>();
+        for (final Menu menu : menus) {
+            final List<Long> menuProductId = menu.getMenuProducts()
+                    .stream()
+                    .map(MenuProduct::getSeq)
+                    .collect(Collectors.toList());
+            menuResponses.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductId));
         }
 
-        return menus;
+        return menuResponses;
     }
 }

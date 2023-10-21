@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,14 +67,19 @@ public class OrderService {
         return savedOrder.getId();
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
-        for (Order order : orders) {
-            order = new Order(order.getOrderTable(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemRepository.findAllByOrder(order));
+        final List<OrderResponse> orderResponses = new ArrayList<>();
+        for (final Order order : orders) {
+            final List<Long> orderLineItemIds = order.getOrderLineItems()
+                    .stream()
+                    .map(OrderLineItem::getSeq)
+                    .collect(Collectors.toList());
+            orderResponses.add(new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemIds));
         }
 
-        return orders;
+        return orderResponses;
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.ServiceTest;
 import kitchenpos.menu.application.MenuGroupService;
 import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
 import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -55,7 +56,7 @@ class MenuGroupServiceTest extends ServiceTest {
             final MenuGroup expected2 = testFixtureBuilder.buildMenuGroup(menuGroup2);
 
             //when
-            final List<MenuGroup> actual = menuGroupService.list();
+            final List<MenuGroupResponse> actual = menuGroupService.list();
 
             //then
             assertSoftly(softly -> {

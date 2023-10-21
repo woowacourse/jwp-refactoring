@@ -1,11 +1,13 @@
 package kitchenpos.product.application;
 
 import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,7 +23,14 @@ public class ProductService {
         return productRepository.save(new Product(request.getName(), request.getPrice())).getId();
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public List<ProductResponse> list() {
+        final List<Product> products = productRepository.findAll();
+
+        final List<ProductResponse> productResponses = new ArrayList<>();
+        for (final Product product : products) {
+            productResponses.add(new ProductResponse(product.getId(), product.getName(), product.getPrice()));
+        }
+
+        return productResponses;
     }
 }
