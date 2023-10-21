@@ -1,12 +1,12 @@
 package kitchenpos.ui.request;
 
-import kitchenpos.common.BaseDate;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public class MenuRequest extends BaseDate {
+public class MenuRequest {
 
     private final Long id;
     private final String name;
@@ -20,6 +20,16 @@ public class MenuRequest extends BaseDate {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public Menu toMenu() {
+        final Menu menu = new Menu();
+        menu.setId(id);
+        menu.setName(name);
+        menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+        return menu;
     }
 
     public Long getId() {
@@ -40,5 +50,16 @@ public class MenuRequest extends BaseDate {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    @Override
+    public String toString() {
+        return "MenuRequest{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", menuGroupId=" + menuGroupId +
+                ", menuProducts=" + menuProducts +
+                '}';
     }
 }

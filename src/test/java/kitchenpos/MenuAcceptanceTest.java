@@ -15,6 +15,7 @@ import java.util.List;
 import static kitchenpos.fixture.MenuGroupFixture.일식;
 import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
+import static kitchenpos.step.MenuStep.toRequest;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_메뉴_반환;
 import static kitchenpos.step.MenuStep.메뉴_조회_요청;
@@ -46,7 +47,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menu.setMenuGroupId(menuGroupId);
             menu.setMenuProducts(List.of(menuProduct));
 
-            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(toRequest(menu));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
@@ -68,7 +69,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menu.setPrice(product.getPrice());
             menu.setMenuProducts(List.of(menuProduct));
 
-            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(toRequest(menu));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -91,7 +92,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menu.setMenuGroupId(menuGroupId);
             menu.setMenuProducts(List.of(menuProduct));
 
-            final ExtractableResponse<Response> response = 메뉴_생성_요청(menu);
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(toRequest(menu));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -113,7 +114,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(List.of(menuProduct));
 
-        final Menu createdMenu = 메뉴_생성_요청하고_메뉴_반환(menu);
+        final Menu createdMenu = 메뉴_생성_요청하고_메뉴_반환(toRequest(menu));
 
         final ExtractableResponse<Response> response = 메뉴_조회_요청();
         final List<Menu> result = response.jsonPath().getList("", Menu.class);
