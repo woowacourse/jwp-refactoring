@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateTableGroupCommand;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,33 +19,26 @@ public class TableGroupService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupDao tableGroupDao;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(final OrderTableRepository orderTableRepository,
-                             final TableGroupDao tableGroupDao, final OrderRepository orderRepository) {
+                             final TableGroupRepository tableGroupRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupDao = tableGroupDao;
+        this.tableGroupRepository = tableGroupRepository;
         this.orderRepository = orderRepository;
     }
 
     @Transactional
     public TableGroup create(final CreateTableGroupCommand command) {
         final List<Long> orderTableIds = command.getOrderTableIds();
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
+        final List<OrderTable> foundOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        if (orderTableIds.size() != foundOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
-        // todo: tablegroup repository 안으로 보내기
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(null, LocalDateTime.now(), savedOrderTables));
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(savedTableGroup.getId());
-            savedOrderTable.changeEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        savedTableGroup.setOrderTables(foundOrderTables);
         return savedTableGroup;
-        // repository 안으로 보내기
     }
 
     @Transactional
@@ -59,12 +52,6 @@ public class TableGroupService {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.changeEmpty(false);
-            orderTableRepository.save(orderTable);
         }
     }
 

@@ -4,7 +4,9 @@ import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderTableTest {
 
@@ -58,6 +60,22 @@ class OrderTableTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
+    }
+
+    @Test
+    void 그룹을_없앨_수_있다() {
+        //given
+        OrderTable 테이블 = new OrderTable(1, true);
+        테이블.setTableGroupId(1L);
+
+        //when
+        테이블.ungroup();
+
+        //then
+        assertAll(
+                () -> assertThat(테이블.isEmpty()).isFalse(),
+                () -> assertThat(테이블.getTableGroupId()).isNull()
+        );
     }
 
 }

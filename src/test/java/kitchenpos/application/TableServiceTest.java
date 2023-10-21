@@ -7,11 +7,10 @@ import kitchenpos.application.dto.CreateTableCommand;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.time.LocalDateTime.now;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
@@ -176,7 +175,7 @@ class TableServiceTest extends ServiceTest {
         private TableGroup 그룹_생성하기(final OrderTable 포함할_테이블) {
             List<OrderTable> 테이블_목록 = List.of(포함할_테이블, new OrderTable(0, true));
             TableGroup 그룹_엔티티 = new TableGroup(null, now(), 테이블_목록);
-            return tableGroupDao.save(그룹_엔티티);
+            return tableGroupRepository.save(그룹_엔티티);
         }
 
     }

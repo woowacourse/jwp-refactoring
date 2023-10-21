@@ -1,29 +1,43 @@
-package kitchenpos.domain;
+package kitchenpos.domain.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import kitchenpos.domain.table.OrderTable;
+import org.springframework.data.annotation.CreatedDate;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElseGet;
+import static javax.persistence.GenerationType.IDENTITY;
 
+@Entity
 public class TableGroup {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @CreatedDate
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this.id = id;
+    protected TableGroup() {
+    }
+
+    public TableGroup(final LocalDateTime createdDate) {
         this.createdDate = requireNonNullElseGet(createdDate, LocalDateTime::now);
     }
 
     public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = requireNonNullElseGet(createdDate, LocalDateTime::now);
-        validate(orderTables);
-        this.orderTables = orderTables;
+        setOrderTables(orderTables);
     }
 
     private void validate(final List<OrderTable> orderTables) {
@@ -56,15 +70,17 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        if (Objects.isNull(createdDate)) {
-            throw new IllegalArgumentException("생성일자를 null로 설정할 수 없습니다.");
-        }
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public void setOrderTables(final List<OrderTable> orderTables) {
+        validate(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(this.id);
+            orderTable.changeEmpty(false);
+        }
+        this.orderTables = orderTables;
     }
 
 }
