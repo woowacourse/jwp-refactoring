@@ -50,6 +50,6 @@ public class OrderTable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tableGroupId, numberOfGuests, empty);
+        return Objects.hash(id);
     }
 }
