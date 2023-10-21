@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -27,7 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Mock
     private OrderDao orderDao;
     @Mock
@@ -51,7 +51,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
         주문1번.setOrderLineItems(List.of(orderLineItem));
 
-        when(menuDao.countByIdIn(List.of(1L))).thenReturn(0L);
+        when(menuRepository.countByIdIn(List.of(1L))).thenReturn(0L);
 
         assertThatThrownBy(() -> orderService.create(주문1번)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -62,7 +62,7 @@ class OrderServiceTest {
         OrderLineItem 로제떡볶이_주문항목 = OrderLineItemFixtures.로제떡볶이_주문항목();
         주문2번.setOrderLineItems(List.of(로제떡볶이_주문항목));
 
-        when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
+        when(menuRepository.countByIdIn(List.of(1L))).thenReturn(1L);
 
         when(orderTableDao.findById(2L)).thenReturn(Optional.empty());
 
@@ -75,7 +75,7 @@ class OrderServiceTest {
         OrderLineItem 로제떡볶이_주문항목 = OrderLineItemFixtures.로제떡볶이_주문항목();
         주문2번.setOrderLineItems(List.of(로제떡볶이_주문항목));
 
-        when(menuDao.countByIdIn(List.of(1L))).thenReturn(1L);
+        when(menuRepository.countByIdIn(List.of(1L))).thenReturn(1L);
 
         OrderTable 주문테이블2번 = OrderTableFixtures.주문테이블2번();
         when(orderTableDao.findById(2L)).thenReturn(Optional.of(주문테이블2번));
