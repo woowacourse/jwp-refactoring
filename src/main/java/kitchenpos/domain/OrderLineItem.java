@@ -18,46 +18,35 @@ public class OrderLineItem {
     @Column(name = "seq")
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
+
+    @ManyToOne
+    private Order order;
     @Column(name = "quantity")
     private long quantity;
 
     public OrderLineItem() {
     }
 
+    public OrderLineItem(Menu menu, long quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public void changeOrder(Order order) {
+        this.order = order;
+    }
+
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
