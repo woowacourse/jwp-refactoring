@@ -26,10 +26,10 @@ public abstract class TableGroupException extends KitchenPosException {
 
     public static class NotExistsTableGroupException extends TableGroupException {
 
-        private static final String INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE = "테이블 그룹이 없습니다. 현재 테이블 그룹: ";
+        private static final String NOT_EXISTS_TABLE_GROUP_MESSAGE = "테이블 그룹이 없습니다. 현재 테이블 그룹: ";
 
         public NotExistsTableGroupException(final Long tableGroupId) {
-            super(INSUFFICIENT_ORDER_TABLE_SIZE_MESSAGE + tableGroupId);
+            super(NOT_EXISTS_TABLE_GROUP_MESSAGE + tableGroupId);
         }
     }
 

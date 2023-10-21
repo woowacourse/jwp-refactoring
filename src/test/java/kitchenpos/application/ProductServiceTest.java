@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,9 +35,10 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품을 생성할 수 있다.")
     void create_success() {
-        productService.create(product);
+        ProductRequest productRequest = new ProductRequest("wuga", BigDecimal.valueOf(1000));
+        productService.create(productRequest);
 
-        verify(productRepository, times(1)).save(product);
+        verify(productRepository, times(1)).save(any());
     }
 
     @Test

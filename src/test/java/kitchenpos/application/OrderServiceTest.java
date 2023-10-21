@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -56,9 +59,6 @@ class OrderServiceTest {
 
     @BeforeEach
     void init() {
-        orderLineItem1.setMenuId(1L);
-        orderLineItem2.setMenuId(2L);
-
         orderTable.setId(1L);
         orderTable.setEmpty(false);
     }
@@ -66,11 +66,16 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문을 생성할 수 있다.")
     void create_success() {
-        when(menuRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
-        when(orderTableRepository.getById(order.getOrderTableId())).thenReturn(orderTable);
-        when(orderRepository.save(order)).thenReturn(order);
+        when(menuRepository.countByIdIn(List.of(1L, 1L))).thenReturn(2L);
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
+        when(orderRepository.save(any())).thenReturn(order);
 
-        orderService.create(order);
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
+
+        orderService.create(orderRequest);
         LocalDateTime end = LocalDateTime.now();
 
         assertAll(
@@ -82,19 +87,29 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문을 생성할 때 주문 항목의 메뉴가 db에 존재하지 않으면 예외가 발생한다.")
     void create_fail_orderLineItems_no_menu() {
-        when(menuRepository.countByIdIn(List.of(1L, 2L))).thenReturn(1L);
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
+        when(menuRepository.countByIdIn(List.of(1L, 1L))).thenReturn(1L);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
+
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(NotExistsMenuException.class);
     }
 
     @Test
     @DisplayName("주문을 생성할 때 주문 테이블 번호가 db에 존재하지 않으면 예외가 발생한다.")
     void create_fail_no_orderTable() {
-        when(menuRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
         when(orderTableRepository.getById(order.getOrderTableId())).thenThrow(new NotExistsOrderTableException());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
+
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(NotExistsOrderTableException.class);
     }
 
@@ -102,10 +117,15 @@ class OrderServiceTest {
     @DisplayName("주문을 생성할 때 주문 테이블이 빈 테이블이면 예외가 발생한다.")
     void create_fail_empty_orderTable() {
         orderTable.setEmpty(true);
-        when(menuRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
+        when(menuRepository.countByIdIn(List.of(1L, 1L))).thenReturn(2L);
         when(orderTableRepository.getById(order.getOrderTableId())).thenReturn(orderTable);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        orderLineItemRequests.add(new OrderLineItemRequest(1L, 10));
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
+
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(EmptyOrderTableException.class);
     }
 
@@ -137,16 +157,12 @@ class OrderServiceTest {
     @Test
     @DisplayName("현재 주문 상태를 변경할 수 있다.")
     void changeOrderStatus_success() {
-        OrderStatus nowOrderStatus = OrderStatus.COOKING;
+        order.changeOrderStatus(OrderStatus.COOKING);
         OrderStatus newOrderStatus = OrderStatus.MEAL;
-        order.changeOrderStatus(nowOrderStatus);
-        Order newOrder = Order.of(new OrderTable(10), List.of(new OrderLineItem(1L, 10)));
-        newOrder.changeOrderStatus(newOrderStatus);
-        Long orderId = order.getId();
 
-        when(orderRepository.getById(orderId)).thenReturn(order);
+        when(orderRepository.getById(1L)).thenReturn(order);
 
-        Order savedOrder = orderService.changeOrderStatus(orderId, newOrder);
+        Order savedOrder = orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(newOrderStatus));
 
         assertThat(savedOrder.getOrderStatus()).isEqualTo(newOrderStatus);
     }
@@ -154,12 +170,9 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문이 db에 저장되어있지 않으면 예외가 발생한다.")
     void changeOrderStatus_fail_no_order() {
-        Long orderId = order.getId();
-        Order newOrder = Order.of(new OrderTable(10), List.of(new OrderLineItem(1L, 10)));
+        when(orderRepository.getById(1L)).thenThrow(NotExistsOrderException.class);
 
-        when(orderRepository.getById(orderId)).thenThrow(NotExistsOrderException.class);
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, newOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(OrderStatus.MEAL)))
                 .isInstanceOf(NotExistsOrderException.class);
     }
 
@@ -167,12 +180,9 @@ class OrderServiceTest {
     @DisplayName("주문이 현재 주문 상태가 COMPLETION이면 예외가 발생한다.")
     void changeOrderStatus_fail_completion() {
         order.changeOrderStatus(OrderStatus.COMPLETION);
-        Long orderId = order.getId();
-        Order newOrder = Order.of(new OrderTable(10), List.of(new OrderLineItem(1L, 10)));
+        when(orderRepository.getById(1L)).thenReturn(order);
 
-        when(orderRepository.getById(orderId)).thenReturn(order);
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, newOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderStatusChangeRequest(OrderStatus.MEAL)))
                 .isInstanceOf(CompletionOrderException.class);
     }
 

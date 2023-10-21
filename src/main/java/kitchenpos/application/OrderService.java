@@ -2,6 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -29,14 +32,17 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        validateOrder(order);
-        return orderRepository.save(order);
+    public Order create(final OrderRequest orderRequest) {
+        final OrderTable orderTable = orderTableRepository.getById(orderRequest.getOrderTableId());
+        List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
+        validateOrder(orderLineItems, orderTable);
+
+        return orderRepository.save(Order.of(orderTable, orderLineItems));
     }
 
-    private void validateOrder(final Order order) {
-        validateOrderLineItems(order.getOrderLineItems());
-        validateOrderTable(order.getOrderTableId());
+    private void validateOrder(final List<OrderLineItem> orderLineItems, final OrderTable orderTable) {
+        validateOrderLineItems(orderLineItems);
+        validateOrderTable(orderTable);
     }
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -49,9 +55,7 @@ public class OrderService {
         }
     }
 
-    private void validateOrderTable(final Long orderTableId) {
-        final OrderTable orderTable = orderTableRepository.getById(orderTableId);
-
+    private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new EmptyOrderTableException(orderTable.getId());
         }
@@ -62,10 +66,10 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
         final Order savedOrder = orderRepository.getById(orderId);
 
-        savedOrder.changeOrderStatus(order.getOrderStatus());
+        savedOrder.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
 
         return savedOrder;
     }

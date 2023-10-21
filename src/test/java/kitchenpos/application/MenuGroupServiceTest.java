@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup = new MenuGroup("kong");
         when(menuGroupRepository.save(any())).thenReturn(menuGroup);
 
-        assertThat(menuGroupService.create("kong").getName()).isEqualTo("kong");
+        assertThat(menuGroupService.create(new MenuGroupRequest("kong")).getName()).isEqualTo("kong");
     }
 
     @Test

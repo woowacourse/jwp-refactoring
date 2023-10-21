@@ -8,9 +8,10 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.OrderTablesRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.OrderTableException.NotExistsOrderTableException;
@@ -58,18 +59,24 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 그룹을 생성할 수 있다.")
     void create_success() {
-        LocalDateTime start = LocalDateTime.now();
-        when(orderTableRepository.countByIdIn(List.of(orderTable1.getId(), orderTable2.getId()))).thenReturn(2L);
-        when(tableGroupRepository.save(any())).thenReturn(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
+        OrderTable newOrderTable1 = new OrderTable(10);
+        OrderTable newOrderTable2 = new OrderTable(10);
+        newOrderTable1.setEmpty(true);
+        newOrderTable2.setEmpty(true);
 
-        TableGroup actual = tableGroupService.create(List.of(orderTable1, orderTable2));
+        LocalDateTime start = LocalDateTime.now();
+        when(orderTableRepository.findAllById(anyList())).thenReturn(List.of(orderTable1, orderTable2));
+        when(tableGroupRepository.save(any())).thenReturn(TableGroup.from(List.of(newOrderTable1, newOrderTable2)));
+
+        OrderTablesRequest orderTablesRequest = new OrderTablesRequest(List.of(1L, 2L));
+
+        TableGroup actual = tableGroupService.create(orderTablesRequest);
         LocalDateTime end = LocalDateTime.now();
 
-        // 테이블 그룹 생성 이후 변경 상태
         assertSoftly(softAssertions -> {
                     softAssertions.assertThat(actual.getCreatedDate()).isBetween(start, end);
-                    softAssertions.assertThat(actual.getOrderTables().get(0).getTableGroup()).isEqualTo(actual);
-                    softAssertions.assertThat(actual.getOrderTables().get(0).isEmpty()).isFalse();
+                    softAssertions.assertThat(newOrderTable1.getTableGroup()).isEqualTo(actual);
+                    softAssertions.assertThat(newOrderTable2.isEmpty()).isFalse();
                 }
         );
     }
@@ -77,10 +84,11 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 그룹에 포함된 주문 테이블 번호는 현재 존재하는 주문 테이블 번호에 포함되어 있지 않으면 예외가 발생한다.")
     void create_fail_no_OrderTable() {
-        when(orderTableRepository.countByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
-                .thenReturn(1L);
+        when(orderTableRepository.findAllById(anyList())).thenReturn(List.of(orderTable2));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1, orderTable2)))
+        OrderTablesRequest orderTablesRequest = new OrderTablesRequest(List.of(1L, 2L));
+
+        assertThatThrownBy(() -> tableGroupService.create(orderTablesRequest))
                 .isInstanceOf(NotExistsOrderTableException.class);
     }
 
@@ -89,7 +97,11 @@ class TableGroupServiceTest {
     void create_fail_cannot_assign_tableGroup1() {
         orderTable1.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1, orderTable2)))
+        when(orderTableRepository.findAllById(anyList())).thenReturn(List.of(orderTable1, orderTable2));
+
+        OrderTablesRequest orderTablesRequest = new OrderTablesRequest(List.of(1L, 2L));
+
+        assertThatThrownBy(() -> tableGroupService.create(orderTablesRequest))
                 .isInstanceOf(CannotAssignOrderTableException.class);
     }
 
@@ -97,8 +109,11 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블은 빈 테이블이 아니면 예외가 발생한다.")
     void create_fail_cannot_assign_tableGroup2() {
         orderTable1.setEmpty(false);
+        when(orderTableRepository.findAllById(anyList())).thenReturn(List.of(orderTable1, orderTable2));
 
-        assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1, orderTable2)))
+        OrderTablesRequest orderTablesRequest = new OrderTablesRequest(List.of(1L, 2L));
+
+        assertThatThrownBy(() -> tableGroupService.create(orderTablesRequest))
                 .isInstanceOf(CannotAssignOrderTableException.class);
     }
 

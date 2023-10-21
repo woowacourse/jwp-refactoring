@@ -1,18 +1,23 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.dto.MenuProductRequest;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.exception.MenuException.NotExistsMenuGroupException;
 import kitchenpos.domain.exception.MenuException.NotExistsProductException;
+import kitchenpos.domain.exception.MenuGroupException.NotExistsMenuGroupException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -38,69 +43,67 @@ class MenuServiceTest {
     private ProductRepository productRepository;
 
     private Menu menu;
-    private MenuProduct menuProduct1;
-    private MenuProduct menuProduct2;
+    private Product product1;
+    private Product product2;
+    private MenuGroup menuGroup;
 
     @BeforeEach
     void init() {
-        Product kong = Product.of("kong", BigDecimal.valueOf(1000));
-        Product wuga = Product.of("wuga", BigDecimal.valueOf(5000));
-        kong.setId(1L);
-        wuga.setId(2L);
+        product1 = Product.of("kong", BigDecimal.valueOf(1000));
+        product2 = Product.of("wuga", BigDecimal.valueOf(5000));
+        product1.setId(1L);
+        product2.setId(2L);
 
-        menuProduct1 = new MenuProduct(kong, 10);
-        menuProduct2 = new MenuProduct(wuga, 3);
+        MenuProduct menuProduct1 = new MenuProduct(product1, 10);
+        MenuProduct menuProduct2 = new MenuProduct(product2, 3);
 
-        MenuGroup menuGroup = new MenuGroup("menuGroup1");
+        menuGroup = new MenuGroup("menuGroup1");
         menuGroup.setId(1L);
 
         this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup, List.of(menuProduct1, menuProduct2));
     }
 
     @Test
-    @DisplayName("메뉴를 생성할 수 있다. - 메뉴가 생성될 때 메뉴 상품들도 함께 저장된다.")
-    void create_success1() {
-        when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
-        when(productRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
+    @DisplayName("메뉴를 생성할 수 있다.")
+    void create_success() {
+        when(menuGroupRepository.getById(1L)).thenReturn(menuGroup);
+        when(productRepository.findAllById(anyList())).thenReturn(List.of(product1, product2));
+        when(menuRepository.save(any())).thenReturn(menu);
 
-        when(menuRepository.save(menu)).thenReturn(menu);
+        List<MenuProductRequest> menuProductRequests = new ArrayList<>();
+        menuProductRequests.add(new MenuProductRequest(1L, 10));
+        menuProductRequests.add(new MenuProductRequest(2L, 3));
+        MenuRequest menuRequest = new MenuRequest("kong", BigDecimal.valueOf(10000), 1L, menuProductRequests);
 
-        menuService.create(menu);
-
-        verify(menuRepository, times(1)).save(menu);
-    }
-
-    @Test
-    @DisplayName("메뉴를 생성할 수 있다. - 메뉴 가격이 0원이고, 상품 가격들도 0원이면 메뉴를 생성한다.")
-    void create_success2() {
-        menu.setPrice(BigDecimal.valueOf(0));
-
-        when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
-        when(productRepository.countByIdIn(List.of(1L, 2L))).thenReturn(2L);
-
-        when(menuRepository.save(menu)).thenReturn(menu);
-
-        menuService.create(menu);
-
-        verify(menuRepository, times(1)).save(menu);
+        menuService.create(menuRequest);
     }
 
     @Test
     @DisplayName("메뉴는 현재 존재하는 메뉴 그룹에 포함되어 있지 않으면 예외가 발생한다.")
     void create_fail_menuGroup() {
-        when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(false);
+        when(menuGroupRepository.getById(1L)).thenThrow(new NotExistsMenuGroupException(1L));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        List<MenuProductRequest> menuProductRequests = new ArrayList<>();
+        menuProductRequests.add(new MenuProductRequest(1L, 10));
+        menuProductRequests.add(new MenuProductRequest(2L, 3));
+        MenuRequest menuRequest = new MenuRequest("kong", BigDecimal.valueOf(10000), 1L, menuProductRequests);
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(NotExistsMenuGroupException.class);
     }
 
     @Test
     @DisplayName("메뉴의 상품 목록이 현재 존재하는 상품에 포함되어 있지 않으면 예외가 발생한다.")
     void create_fail_products() {
-        when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
-        when(productRepository.countByIdIn(List.of(1L, 2L))).thenReturn(1L);
+        when(menuGroupRepository.getById(1L)).thenReturn(menuGroup);
+        when(productRepository.findAllById(anyList())).thenReturn(List.of(product1));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        List<MenuProductRequest> menuProductRequests = new ArrayList<>();
+        menuProductRequests.add(new MenuProductRequest(1L, 10));
+        menuProductRequests.add(new MenuProductRequest(2L, 3));
+        MenuRequest menuRequest = new MenuRequest("kong", BigDecimal.valueOf(10000), 1L, menuProductRequests);
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(NotExistsProductException.class);
     }
 

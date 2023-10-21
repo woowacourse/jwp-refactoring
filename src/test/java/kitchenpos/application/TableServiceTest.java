@@ -11,6 +11,9 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.OrderTableEmptyRequest;
+import kitchenpos.application.dto.OrderTableGuestRequest;
+import kitchenpos.application.dto.OrderTablesRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
@@ -51,50 +54,49 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블이 db에 저장되어있지 않으면 예외가 발생한다.")
     void changeEmpty_fail_no_order_table() {
-        OrderTable changeEmptyOrderTable = new OrderTable(10);
+        when(orderTableRepository.getById(1L)).thenThrow(new NotExistsOrderTableException()); // db에 저장 x
 
-        when(orderTableRepository.getById(orderTable.getId())).thenThrow(new NotExistsOrderTableException()); // db에 저장 x
+        OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTableEmptyRequest))
                 .isInstanceOf(NotExistsOrderTableException.class);
     }
 
     @Test
     @DisplayName("주문 테이블이 어떤 테이블 그룹에 포함되어 있으면 예외가 발생한다.")
     void changeEmpty_fail_exists_tableGroup() {
-        orderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10)))); // 테이블 그룹에 포함
-        OrderTable changeEmptyOrderTable = new OrderTable(10);
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
+        orderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
 
-        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
+        OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTableEmptyRequest))
                 .isInstanceOf(ExistsTableGroupException.class);
     }
 
     @Test
     @DisplayName("주문 테이블에 매핑된 주문이 COOKING 상태이거나 MEAL 상태라면 예외가 발생한다.")
     void changeEmpty_fail_not_completion() {
-        orderTable.setTableGroup(null);
-        OrderTable changeEmptyOrderTable = new OrderTable(10);
-
-        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
         when(orderRepository.existsByOrderTableAndOrderStatusIn(any(), any())).thenReturn(true);
+        orderTable.setTableGroup(null);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeEmptyOrderTable))
+        OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
+
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTableEmptyRequest))
                 .isInstanceOf(ExistsNotCompletionOrderException.class);
     }
 
     @Test
     @DisplayName("방문한 손님 수를 바꿀 수 있다.")
     void changeNumberOfGuests_success() {
-        OrderTable changeNumberOrderTable = new OrderTable(10);
+        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
         int beforeNumberOfGuests = orderTable.getNumberOfGuests();
         orderTable.changeEmpty(false);
 
-        when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
+        OrderTableGuestRequest orderTableGuestRequest = new OrderTableGuestRequest(10);
 
-
-        tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOrderTable);
+        tableService.changeNumberOfGuests(orderTable.getId(), orderTableGuestRequest);
 
         int afterNumberOfGuests = orderTable.getNumberOfGuests();
 
@@ -107,36 +109,34 @@ class TableServiceTest {
     @Test
     @DisplayName("방문한 손님 수가 0명 미만인 경우 예외가 발생한다.")
     void changeNumberOfGuests_fail_number_of_guest_less_than_zero() {
-        orderTable.setNumberOfGuests(-1);
-
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        OrderTableGuestRequest orderTableGuestRequest = new OrderTableGuestRequest(-1);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableGuestRequest))
                 .isInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
     @Test
     @DisplayName("주문 테이블이 db에 저장되어있지 않으면 예외가 발생한다")
     void changeNumberOfGuests_fail_no_order_table() {
-        OrderTable changeNumberOrderTable = new OrderTable(10);
-        changeNumberOrderTable.setNumberOfGuests(10);
-
         when(orderTableRepository.getById(orderTable.getId())).thenThrow(new NotExistsOrderTableException());
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOrderTable))
+        OrderTableGuestRequest orderTableGuestRequest = new OrderTableGuestRequest(10);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableGuestRequest))
                 .isInstanceOf(NotExistsOrderTableException.class);
     }
 
     @Test
     @DisplayName("주문 테이블이 빈 테이블인 경우 예외가 발생한다.")
     void changeNumberOfGuests_fail_empty_table() {
-        orderTable.setEmpty(true);
-        OrderTable changeNumberOrderTable = new OrderTable(10);
-        changeNumberOrderTable.setNumberOfGuests(10);
-
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
+        orderTable.setEmpty(true);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOrderTable))
+        OrderTableGuestRequest orderTableGuestRequest = new OrderTableGuestRequest(10);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableGuestRequest))
                 .isInstanceOf(EmptyTableException.class);
     }
 }

@@ -17,15 +17,6 @@ public abstract class MenuException extends KitchenPosException {
         }
     }
 
-    public static class NotExistsMenuGroupException extends MenuException {
-
-        private static final String NOT_EXISTS_MENU_GROUP_MESSAGE = "메뉴 그룹의 id가 없습니다. \nmenu gruop id: ";
-
-        public NotExistsMenuGroupException(final Long menuGroupId) {
-            super(NOT_EXISTS_MENU_GROUP_MESSAGE + menuGroupId);
-        }
-    }
-
     public static class NotExistsProductException extends MenuException {
 
         private static final String NOT_EXISTS_PRODUCT_MESSAGE = "상품에 존재하지 않는 상품이 있습니다.";
