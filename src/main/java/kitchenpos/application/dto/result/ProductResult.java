@@ -1,6 +1,6 @@
 package kitchenpos.application.dto.result;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 public class ProductResult {
 

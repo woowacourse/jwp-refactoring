@@ -2,7 +2,7 @@ package kitchenpos.application.dto.result;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 
 public class MenuResult {
 

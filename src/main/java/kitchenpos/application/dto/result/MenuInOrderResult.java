@@ -1,6 +1,6 @@
 package kitchenpos.application.dto.result;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class MenuInOrderResult {
 

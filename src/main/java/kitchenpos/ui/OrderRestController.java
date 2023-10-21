@@ -2,7 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.application.OrderService;
+import kitchenpos.application.order.OrderService;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.result.OrderResult;

@@ -1,7 +1,7 @@
 package kitchenpos.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
 
 public class OrderStatusChangeRequest {
 

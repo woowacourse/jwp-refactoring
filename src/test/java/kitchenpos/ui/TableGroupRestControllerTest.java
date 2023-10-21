@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.TableGroupService;
+import kitchenpos.application.table.TableGroupService;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
 import kitchenpos.application.dto.result.TableGroupResult;

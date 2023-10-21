@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.menu.MenuGroupService;
 import kitchenpos.application.dto.MenuGroupCreationRequest;
 import kitchenpos.application.dto.result.MenuGroupResult;
 import org.junit.jupiter.api.Test;

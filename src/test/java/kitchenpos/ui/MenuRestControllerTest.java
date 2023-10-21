@@ -12,12 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.MenuService;
+import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
 import kitchenpos.application.dto.result.MenuResult;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
