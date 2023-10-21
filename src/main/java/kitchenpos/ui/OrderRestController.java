@@ -2,9 +2,11 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
+import kitchenpos.application.dto.domain.OrderDto;
 import kitchenpos.domain.order.Order;
 import kitchenpos.ui.dto.PutOrderStatusRequest;
 import org.springframework.http.ResponseEntity;
@@ -25,28 +27,30 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final CreateOrderCommand command) {
+    public ResponseEntity<OrderDto> create(@RequestBody final CreateOrderCommand command) {
         final Order created = orderService.create(command);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
+                .body(OrderDto.from(created))
                 ;
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<OrderDto>> list() {
+        final List<OrderDto> orderDtos = orderService.list().stream().map(OrderDto::from).collect(Collectors.toList());
         return ResponseEntity.ok()
-                .body(orderService.list())
+                .body(orderDtos)
                 ;
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderDto> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final PutOrderStatusRequest order
     ) {
         final ChangeOrderStatusCommand command = new ChangeOrderStatusCommand(orderId, order.getOrderStatus());
-        return ResponseEntity.ok(orderService.changeOrderStatus(command));
+        Order changedOrder = orderService.changeOrderStatus(command);
+        return ResponseEntity.ok(OrderDto.from(changedOrder));
     }
 
 }

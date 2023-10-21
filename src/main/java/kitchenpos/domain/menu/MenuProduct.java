@@ -34,4 +34,20 @@ public class MenuProduct {
         this.menu = menu;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
+
 }
