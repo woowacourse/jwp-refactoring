@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.ProductFixture.스키야키;
@@ -17,7 +16,6 @@ import static kitchenpos.step.ProductStep.상품_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 class ProductAcceptanceTest extends AcceptanceTest {
 
@@ -38,16 +36,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
                     () -> assertThat((int) response.jsonPath().getDouble("price"))
                             .isEqualTo(product.getPrice().intValue())
             );
-        }
-
-        @Test
-        void 상품의_가격은_0원_이상이어야_한다() {
-            final Product product = 스키야키();
-            product.setPrice(BigDecimal.valueOf(-1));
-
-            final ExtractableResponse<Response> response = 상품_생성_요청(product);
-
-            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
     }
 
