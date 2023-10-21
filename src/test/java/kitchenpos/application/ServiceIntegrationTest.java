@@ -1,20 +1,24 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.후라이드치킨;
+import static kitchenpos.fixture.MenuFixture.createMenuProductDto;
+import static kitchenpos.fixture.MenuFixture.한마리메뉴_DTO;
+import static kitchenpos.fixture.MenuFixture.후라이드치킨_DTO;
 import static kitchenpos.fixture.OrderFixture.createOrderLineItem;
-import static kitchenpos.fixture.ProductFixture.후라이드;
-import static kitchenpos.fixture.TableFixture.주문_테이블;
+import static kitchenpos.fixture.ProductFixture.후라이드_DTO;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블_DTO;
+import static kitchenpos.fixture.TableFixture.비어있지_않는_주문_테이블_DTO;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.MenuFixture;
+import kitchenpos.application.dto.MenuDto;
+import kitchenpos.application.dto.MenuGroupDto;
+import kitchenpos.application.dto.MenuProductDto;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.ProductDto;
+import kitchenpos.application.dto.TableGroupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -36,36 +40,44 @@ public abstract class ServiceIntegrationTest {
     @Autowired
     protected OrderService orderService;
 
-    protected Menu createMenu() {
-        final Product savedProduct = productService.create(후라이드());
-        final MenuProduct menuProduct = MenuFixture.createMenuProduct(savedProduct, 1L);
-        final MenuGroup savedMenuGroup = menuGroupService.create(MenuFixture.한마리메뉴());
-        final Menu menu = 후라이드치킨(savedMenuGroup, List.of(menuProduct));
+    protected MenuDto createMenu() {
+        final ProductDto savedProduct = productService.create(후라이드_DTO());
+        final MenuProductDto menuProductDto = createMenuProductDto(savedProduct, 1L);
+        final MenuGroupDto savedMenuGroupDto = menuGroupService.create(한마리메뉴_DTO());
+        final MenuDto menuDto = 후라이드치킨_DTO(
+            savedMenuGroupDto, List.of(menuProductDto), BigDecimal.valueOf(16000)
+        );
 
-        return menuService.create(menu);
+        return menuService.create(menuDto);
     }
 
-    protected Order createOrderSuccessfully() {
-        final Menu menu = createMenu();
-        final OrderLineItem orderLineItem = createOrderLineItem(menu.getId(), 1L);
-        final OrderTable savedOrderTable = createOrderTable();
+    protected OrderDto createOrderSuccessfully() {
+        final MenuDto menuDto = createMenu();
+        final OrderLineItemDto orderLineItemDto = createOrderLineItem(menuDto.getId(), 1L);
+        final OrderTableDto savedOrderTableDto = createNotEmptyOrderTable();
 
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
-        return orderService.create(order);
+        final OrderDto orderDto = new OrderDto(
+            null,
+            savedOrderTableDto.getId(),
+            null,
+            LocalDateTime.now(),
+            List.of(orderLineItemDto)
+        );
+        return orderService.create(orderDto);
     }
 
-    protected OrderTable createOrderTable() {
-        final OrderTable orderTable = 주문_테이블();
-        orderTable.setEmpty(false);
+    protected OrderTableDto createNotEmptyOrderTable() {
+        final OrderTableDto orderTable = 비어있지_않는_주문_테이블_DTO();
         return tableService.create(orderTable);
     }
 
-    protected void saveTableGroup(final OrderTable savedOrderTable) {
-        final TableGroup tableGroup = new TableGroup();
-        final OrderTable orderTable = tableService.create(주문_테이블());
-        tableGroup.setOrderTables(List.of(savedOrderTable, orderTable));
-        tableGroupService.create(tableGroup);
+    protected void saveTableGroup(final OrderTableDto savedOrderTableDto) {
+        final OrderTableDto orderTable = tableService.create(비어있는_주문_테이블_DTO());
+        final TableGroupDto tableGroupDto = new TableGroupDto(
+            null,
+            LocalDateTime.now(),
+            List.of(savedOrderTableDto, orderTable)
+        );
+        tableGroupService.create(tableGroupDto);
     }
 }

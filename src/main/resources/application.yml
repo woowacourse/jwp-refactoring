@@ -1,0 +1,16 @@
+loggin:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    properties:
+      hibernate.format_sql: true
+      hibernate.show_sql: true
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driverClassName: org.h2.Driver

@@ -1,49 +1,99 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.ProductDto;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class ProductFixture {
 
     public static Product 후라이드() {
-        final Product product = new Product();
-        product.setName("후라이드");
-        product.setPrice(BigDecimal.valueOf(16000));
-        return product;
+        return new Product(
+            "후라이드",
+            new Price(BigDecimal.valueOf(16000))
+        );
     }
 
     public static Product 양념치킨() {
-        final Product product = new Product();
-        product.setName("양념치킨");
-        product.setPrice(BigDecimal.valueOf(16000));
-        return product;
+        return new Product(
+            "양념치킨",
+            new Price(BigDecimal.valueOf(16000))
+        );
     }
 
     public static Product 반반치킨() {
-        final Product product = new Product();
-        product.setName("반반치킨");
-        product.setPrice(BigDecimal.valueOf(16000));
-        return product;
+        return new Product(
+            "반반치킨",
+            new Price(BigDecimal.valueOf(16000))
+        );
     }
 
     public static Product 통구이() {
-        final Product product = new Product();
-        product.setName("통구이");
-        product.setPrice(BigDecimal.valueOf(16000));
-        return product;
+        return new Product(
+            "통구이",
+            new Price(BigDecimal.valueOf(16000))
+        );
     }
 
     public static Product 간장치킨() {
-        final Product product = new Product();
-        product.setName("간장치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
-        return product;
+        return new Product(
+            "간장치킨",
+            new Price(BigDecimal.valueOf(16000))
+        );
     }
 
     public static Product 순살치킨() {
-        final Product product = new Product();
-        product.setName("순살치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
-        return product;
+        return new Product(
+            "순살치킨",
+            new Price(BigDecimal.valueOf(16000))
+        );
+    }
+
+    public static ProductDto 후라이드_DTO() {
+        return new ProductDto(
+            null,
+            "후라이드",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 양념치킨_DTO() {
+        return new ProductDto(
+            null,
+            "양념치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 반반치킨_DTO() {
+        return new ProductDto(
+            null,
+            "반반치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 통구이_DTO() {
+        return new ProductDto(
+            null,
+            "통구이",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 간장치킨_DTO() {
+        return new ProductDto(
+            null,
+            "간장치킨",
+            BigDecimal.valueOf(16000)
+        );
+    }
+
+    public static ProductDto 순살치킨_DTO() {
+        return new ProductDto(
+            null,
+            "순살치킨",
+            BigDecimal.valueOf(16000)
+        );
     }
 }

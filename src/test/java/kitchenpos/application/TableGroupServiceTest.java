@@ -1,21 +1,33 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.TableFixture.전체_주문_테이블;
-import static kitchenpos.fixture.TableFixture.주문_테이블;
+import static java.util.stream.Collectors.toUnmodifiableList;
+import static kitchenpos.domain.exception.OrderExceptionType.ORDER_IS_NOT_COMPLETION;
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED;
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_IS_NOT_PRESENT_ALL;
+import static kitchenpos.domain.exception.TableGroupExceptionType.ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY;
+import static kitchenpos.fixture.TableFixture.비어있는_전쳬_주문_테이블_DTO;
+import static kitchenpos.fixture.TableFixture.비어있는_주문_테이블;
+import static kitchenpos.fixture.TableFixture.비어있지_않는_전쳬_주문_테이블_DTO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import java.util.stream.Stream;
+import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.TableGroupDto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.exception.OrderException;
+import kitchenpos.domain.exception.TableGroupException;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,9 +40,9 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     @Autowired
     private TableService tableService;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("Table Group을 추가한다.")
@@ -40,52 +52,67 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("테이블 그룹을 정상적으로 생성한다.")
         void success() {
             //given
-            final TableGroup tableGroup = new TableGroup();
+            final List<OrderTableDto> orderTableDtos = 비어있는_전쳬_주문_테이블_DTO().stream()
+                .map(tableService::create)
+                .collect(Collectors.toList());
+
+            final TableGroupDto tableGroupDto = new TableGroupDto(
+                null,
+                LocalDateTime.now(),
+                orderTableDtos
+            );
 
             //when
-            final TableGroup savedTableGroup = saveTableGroupSuccessfully(tableGroup, 전체_주문_테이블());
+            final TableGroupDto savedTableGroup = tableGroupService.create(tableGroupDto);
 
             //then
-            tableGroup.getOrderTables().forEach(orderTable -> {
-                orderTable.setTableGroupId(savedTableGroup.getId());
-                orderTable.setEmpty(false);
-            });
-            assertThat(savedTableGroup)
-                .usingRecursiveComparison()
-                .ignoringFields("id", "orderTables.id")
-                .isEqualTo(tableGroup);
+            assertAll(
+                () -> assertThat(savedTableGroup)
+                    .usingRecursiveComparison()
+                    .ignoringFields("id", "orderTables.id", "orderTables.empty",
+                        "orderTables.tableGroupId")
+                    .isEqualTo(tableGroupDto),
+                () -> assertThat(savedTableGroup.getOrderTables())
+                    .extracting(OrderTableDto::getEmpty)
+                    .doesNotContain(true)
+            );
         }
 
         @Test
         @DisplayName("ordertable 이 비어있는 경우 예외처리한다.")
         void throwExceptionOrderTablesAreEmpty() {
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(Collections.emptyList());
+            final TableGroupDto tableGroupDto = new TableGroupDto(null, LocalDateTime.now(),
+                Collections.emptyList());
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
+                .isInstanceOf(TableGroupException.class)
+                .hasMessage(ORDER_TABLE_SIZE_IS_LOWER_THAN_ZERO_OR_EMPTY.getMessage());
         }
 
         @Test
         @DisplayName("저장되지 않은 tableGroup로 요청하는 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotFound() {
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(전체_주문_테이블());
+            final TableGroupDto tableGroupDto
+                = new TableGroupDto(null, LocalDateTime.now(), 비어있지_않는_전쳬_주문_테이블_DTO());
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
+                .isInstanceOf(TableGroupException.class)
+                .hasMessage(ORDER_TABLE_IS_NOT_PRESENT_ALL.getMessage());
         }
 
         @Test
         @DisplayName("tableGroup안에 orderTable이 비어있지 않은 경우 Exception을 throw한다.")
         void throwExceptionOrderTablesAreNotEmpty() {
-            final List<OrderTable> orderTables = 전체_주문_테이블();
-            orderTables.forEach(orderTable -> orderTable.setEmpty(false));
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(orderTables);
+            final List<OrderTableDto> orderTableDtos = 비어있지_않는_전쳬_주문_테이블_DTO().stream()
+                .map(tableService::create)
+                .collect(toUnmodifiableList());
 
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            final TableGroupDto tableGroupDto
+                = new TableGroupDto(null, LocalDateTime.now(), orderTableDtos);
+
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
+                .isInstanceOf(TableGroupException.class)
+                .hasMessage(ORDER_TABLE_IS_NOT_EMPTY_OR_ALREADY_GROUPED.getMessage());
         }
     }
 
@@ -97,21 +124,22 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 tableGroup을 해제한다.")
         void success() {
             //given
-            final TableGroup tableGroup = new TableGroup();
-            final TableGroup savedTableGroup = saveTableGroupSuccessfully(tableGroup, 전체_주문_테이블());
+            final TableGroupDto savedTableGroupDto = saveTableGroupSuccessfully(
+                비어있는_전쳬_주문_테이블_DTO());
 
             //when
-            tableGroupService.ungroup(savedTableGroup.getId());
+            tableGroupService.ungroup(savedTableGroupDto.getId());
 
             //then
-            final List<Long> savedOrderTableIds = savedTableGroup.getOrderTables().stream()
-                .map(OrderTable::getId)
+            final List<Long> savedOrderTableIds = savedTableGroupDto.getOrderTables()
+                .stream()
+                .map(OrderTableDto::getId)
                 .collect(Collectors.toList());
-            final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(
+            final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(
                 savedOrderTableIds);
 
             assertThat(savedOrderTables)
-                .extracting(OrderTable::getTableGroupId, OrderTable::isEmpty)
+                .extracting(OrderTable::getTableGroup, OrderTable::isEmpty)
                 .containsExactly(
                     tuple(null, false), tuple(null, false), tuple(null, false), tuple(null, false),
                     tuple(null, false), tuple(null, false), tuple(null, false), tuple(null, false)
@@ -122,36 +150,48 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         @DisplayName("해제하려는 TableGroup에 속한 Table의 주문 상태가 완료상태가 아닌경우 예외처리")
         void throwExceptionIfOrderIsNotCompletion() {
             //given
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable savedOrderTable = orderTableDao.save(주문_테이블());
-            final OrderTable savedOrderTable2 = orderTableDao.save(주문_테이블());
-            saveOrderMeal(savedOrderTable);
-            tableGroup.setOrderTables(List.of(savedOrderTable, savedOrderTable2));
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final List<OrderTableDto> orderTableDtos = createOrderTableContainNoCompletion();
+            final TableGroupDto tableGroupDto =
+                new TableGroupDto(null, LocalDateTime.now(), orderTableDtos);
+
+            final TableGroupDto savedTableGroupDto = tableGroupService.create(tableGroupDto);
 
             //when
-            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+            final Long tableGroupId = savedTableGroupDto.getId();
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+                .isInstanceOf(OrderException.class)
+                .hasMessage(ORDER_IS_NOT_COMPLETION.getMessage());
+        }
+
+        private List<OrderTableDto> createOrderTableContainNoCompletion() {
+            final OrderTable savedOrderTable = orderTableRepository.save(비어있는_주문_테이블());
+            final OrderTable savedOrderTable2 = orderTableRepository.save(비어있는_주문_테이블());
+            saveOrderMeal(savedOrderTable);
+
+            return Stream.of(savedOrderTable, savedOrderTable2)
+                .map(OrderTableDto::from)
+                .collect(Collectors.toList());
         }
 
         private void saveOrderMeal(final OrderTable savedOrderTable) {
-            final Order order = new Order();
-            order.setOrderStatus(OrderStatus.MEAL.name());
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderedTime(LocalDateTime.now());
-            orderDao.save(order);
+            final Order order = new Order(
+                savedOrderTable.getId(),
+                OrderStatus.MEAL,
+                LocalDateTime.now(),
+                Map.of()
+            );
+            orderRepository.save(order);
         }
     }
 
-    private TableGroup saveTableGroupSuccessfully(final TableGroup tableGroup,
-                                                  final List<OrderTable> orderTables) {
-        final List<OrderTable> savedOrderTables = orderTables.stream()
+    private TableGroupDto saveTableGroupSuccessfully(
+        final List<OrderTableDto> orderTableDtos
+    ) {
+        final List<OrderTableDto> savedOrderTableDtos = orderTableDtos.stream()
             .map(tableService::create)
             .collect(Collectors.toList());
-
-        tableGroup.setOrderTables(savedOrderTables);
-
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        return savedTableGroup;
+        final TableGroupDto tableGroupDto =
+            new TableGroupDto(null, LocalDateTime.now(), savedOrderTableDtos);
+        return tableGroupService.create(tableGroupDto);
     }
 }
