@@ -5,6 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @Transactional
-public class ServiceIntegrateTest {
+public abstract class ServiceIntegrateTest {
 
 }
