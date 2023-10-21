@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -27,9 +28,7 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menuGroup");
+        final MenuGroup menuGroup = createMenuGroup("menuGroup");
         given(menuGroupDao.save(any(MenuGroup.class)))
             .willReturn(menuGroup);
 
@@ -37,20 +36,15 @@ class MenuGroupServiceTest {
         final MenuGroup result = menuGroupService.create(menuGroup);
 
         // then
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("menuGroup");
+        assertThat(result.getName()).isEqualTo(menuGroup.getName());
     }
 
     @DisplayName("모든 메뉴 그룹을 조회한다.")
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup1 = new MenuGroup();
-        final MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup1.setId(1L);
-        menuGroup1.setName("menuGroup1");
-        menuGroup2.setId(2L);
-        menuGroup2.setName("menuGroup2");
+        final MenuGroup menuGroup1 = createMenuGroup("menuGroup1");
+        final MenuGroup menuGroup2 = createMenuGroup("menuGroup2");
 
         final List<MenuGroup> menuGroups = List.of(menuGroup1, menuGroup2);
         given(menuGroupDao.findAll())

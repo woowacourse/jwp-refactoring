@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.MenuFixture.createMenu;
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.application.fixture.OrderFixture.createOrder;
+import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,13 +12,14 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -27,6 +33,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
+
+    private static final MenuGroup MENU_GROUP = createMenuGroup(1L, "menuGroup");
+    private static final OrderTable ORDER_TABLE = createOrderTable(1L, 3);
 
     @Mock
     private MenuDao menuDao;
@@ -47,26 +56,15 @@ class OrderServiceTest {
     @Test
     void create_success() {
         // given
-        final LocalDateTime now = LocalDateTime.now();
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderedTime(now);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(order.getId());
-
+        final Order order = createOrder(1L, ORDER_TABLE.getId());
+        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
+        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
         order.setOrderLineItems(List.of(orderLineItem));
-
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setId(1L);
-        order.setOrderTableId(orderTable.getId());
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(1L);
         given(orderTableDao.findById(anyLong()))
-            .willReturn(Optional.of(orderTable));
+            .willReturn(Optional.of(ORDER_TABLE));
         given(orderDao.save(any(Order.class)))
             .willReturn(order);
         given(orderLineItemDao.save(any(OrderLineItem.class)))
@@ -84,7 +82,10 @@ class OrderServiceTest {
     @Test
     void create_empty_fail() {
         // given
-        final Order order = new Order();
+        final Order order = createOrder(1L, ORDER_TABLE.getId());
+        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
+        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
+        order.setOrderLineItems(List.of(orderLineItem));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -95,12 +96,8 @@ class OrderServiceTest {
     @Test
     void create_notExistMenu_fail() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setMenuId(1L);
+        final Order order = createOrder(1L, ORDER_TABLE.getId());
+        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
         order.setOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
@@ -115,13 +112,8 @@ class OrderServiceTest {
     @Test
     void create_notExistTable_fail() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setMenuId(1L);
+        final Order order = createOrder(1L, 0L);
+        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
         order.setOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
@@ -138,16 +130,11 @@ class OrderServiceTest {
     @Test
     void create_emptyTable_fail() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final OrderTable orderTable = createOrderTable(1L, 3);
         orderTable.setEmpty(true);
-        order.setOrderTableId(orderTable.getId());
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setMenuId(1L);
+        final Order order = createOrder(1L, orderTable.getId());
+        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
         order.setOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
@@ -164,13 +151,14 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final Order order1 = new Order();
-        order1.setId(1L);
-        order1.setOrderStatus(OrderStatus.COOKING.name());
+        final Order order1 = createOrder(1L, ORDER_TABLE.getId());
+        final Menu menu = createMenu(1L, "menuGroup", 1000L, MENU_GROUP.getId());
+        final OrderLineItem orderLineItem1 = createOrderLineItem(order1.getId(), menu.getId(), 3);
+        order1.setOrderLineItems(List.of(orderLineItem1));
+        final Order order2 = createOrder(2L, ORDER_TABLE.getId());
+        final OrderLineItem orderLineItem2 = createOrderLineItem(order2.getId(), menu.getId(), 3);
+        order2.setOrderLineItems(List.of(orderLineItem2));
 
-        final Order order2 = new Order();
-        order2.setId(2L);
-        order2.setOrderStatus(OrderStatus.MEAL.name());
 
         given(orderDao.findAll())
             .willReturn(List.of(order1, order2));
@@ -187,11 +175,8 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final Order prevOrder = new Order();
-        prevOrder.setId(1L);
-        prevOrder.setOrderStatus(OrderStatus.COOKING.name());
-
-        final Order changeOrder = new Order();
+        final Order prevOrder = createOrder(1L, ORDER_TABLE.getId());
+        final Order changeOrder = createOrder(1L, ORDER_TABLE.getId());
         changeOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         given(orderDao.findById(anyLong()))
@@ -209,7 +194,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_notExist_fail() {
         // given
-        final Order order = new Order();
+        final Order order = createOrder(1L, ORDER_TABLE.getId());
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.empty());
 
@@ -222,15 +207,17 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_wrongStatus_fail() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = createOrder(1L, ORDER_TABLE.getId());
         order.setOrderStatus(OrderStatus.COMPLETION.name());
+
+        final Order changeOrder = createOrder(1L, ORDER_TABLE.getId());
+        changeOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.of(order));
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, changeOrder))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

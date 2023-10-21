@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.fixture.MenuFixture.createMenu;
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.application.fixture.MenuProductFixture.createMenuProduct;
+import static kitchenpos.application.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
@@ -46,27 +49,11 @@ class MenuServiceTest {
     @Test
     void create_success() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menuGroup");
-
-        final Product product = new Product();
-        product.setId(1L);
-        product.setName("product");
-        product.setPrice(BigDecimal.valueOf(1000L));
-
-        final MenuProduct menuProduct = new MenuProduct();
-        final Menu menu = new Menu();
-        menu.setId(1L);
+        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final Product product = createProduct(1L, "product", 1000L);
+        final Menu menu = createMenu(1L, "menu", 500L, menuGroup.getId());
+        final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
         menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName("menu");
-        menu.setPrice(BigDecimal.valueOf(2000L));
-
-        menuProduct.setMenuId(menu.getId());
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(2L);
-        menuProduct.setSeq(1L);
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -88,13 +75,8 @@ class MenuServiceTest {
     @Test
     void create_price_fail() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        final Menu menu = new Menu();
-        menu.setId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(1L);
-        menu.setName("menu");
-        menu.setPrice(BigDecimal.valueOf(-1L));
+        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final Menu menu = createMenu(1L, "menu", -1L, menuGroup.getId());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -105,13 +87,7 @@ class MenuServiceTest {
     @Test
     void create_menuGroup_fail() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        final Menu menu = new Menu();
-        menu.setId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(1L);
-        menu.setName("menu");
-        menu.setPrice(BigDecimal.valueOf(1000L));
+        final Menu menu = createMenu(1L, "menu", 1000L, 0L);
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(false);
@@ -125,14 +101,10 @@ class MenuServiceTest {
     @Test
     void create_menuProduct_fail() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        final Menu menu = new Menu();
-        menu.setId(1L);
+        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final Menu menu = createMenu(1L, "menu", 1000L, menuGroup.getId());
+        final MenuProduct menuProduct = createMenuProduct(0L, 2, menu.getId());
         menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(1L);
-        menu.setName("menu");
-        menu.setPrice(BigDecimal.valueOf(1000L));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -148,21 +120,11 @@ class MenuServiceTest {
     @Test
     void create_menuTotalPrice_fail() {
         // given
-        final Product product = new Product();
-        product.setId(1L);
-        product.setName("product");
-        product.setPrice(BigDecimal.valueOf(1000L));
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(2L);
-
-        final Menu menu = new Menu();
-        menu.setId(1L);
+        final Product product = createProduct(1L, "product", 1000L);
+        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final Menu menu = createMenu(1L, "menu", 3000L, menuGroup.getId());
+        final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
         menu.setMenuProducts(List.of(menuProduct));
-        menu.setMenuGroupId(1L);
-        menu.setName("menu");
-        menu.setPrice(BigDecimal.valueOf(2001L));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -178,26 +140,23 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        final MenuProduct menuProduct = new MenuProduct();
-        final Menu menu1 = new Menu();
-        menu1.setId(1L);
+        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final Product product = createProduct(1L, "product", 1000L);
+        final Menu menu1 = createMenu(1L, "menu", 500L, menuGroup.getId());
+        final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu1.getId());
         menu1.setMenuProducts(List.of(menuProduct));
-        menu1.setMenuGroupId(1L);
-        menu1.setName("menu1");
-        menu1.setPrice(BigDecimal.valueOf(2000L));
 
-        menuProduct.setMenuId(menu1.getId());
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2L);
-        menuProduct.setSeq(1L);
+        final Menu menu2 = createMenu(2L, "menu2", 1000L, menuGroup.getId());
+        final MenuProduct menuProduct2 = createMenuProduct(product.getId(), 3, menu2.getId());
+        menu2.setMenuProducts(List.of(menuProduct2));
 
         given(menuDao.findAll())
-            .willReturn(List.of(menu1));
+            .willReturn(List.of(menu1, menu2));
 
         // when
         final List<Menu> foundMenus = menuService.list();
 
         // then
-        assertThat(foundMenus).containsExactly(menu1);
+        assertThat(foundMenus).containsExactly(menu1, menu2);
     }
 }
