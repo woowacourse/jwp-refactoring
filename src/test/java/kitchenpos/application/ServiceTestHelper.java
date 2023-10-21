@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -75,8 +74,8 @@ public abstract class ServiceTestHelper {
         딸기에이드 = 상품_등록("딸기에이드", 5500L);
         자바칩프라페 = 상품_등록("자바칩프라페", 6000L);
         커피 = 메뉴_그룹_등록("커피");
-        에이드 = 메뉴_그룹_등록("스테이크");
-        프라페 = 메뉴_그룹_등록("에이드");
+        에이드 = 메뉴_그룹_등록("에이드");
+        프라페 = 메뉴_그룹_등록("프라페");
         세트 = 메뉴_그룹_등록("세트");
         이달의음료세트 = 메뉴_등록("이달의음료세트", 16000L, 세트, 아메리카노, 딸기에이드, 자바칩프라페);
         빈_테이블1 = 테이블_등록();
@@ -135,19 +134,13 @@ public abstract class ServiceTestHelper {
     }
 
     public OrderTable 테이블_등록() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = OrderTable.of(0, true);
         return tableService.create(orderTable);
     }
 
     public OrderTable 손님_채운_테이블_생성(final int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        OrderTable savedTable = tableService.create(orderTable);
-        savedTable.setEmpty(false);
-        savedTable = tableService.changeEmpty(savedTable.getId(), savedTable);
-        savedTable.setNumberOfGuests(numberOfGuests);
-        return tableService.changeNumberOfGuests(savedTable.getId(), savedTable);
+        OrderTable orderTable = OrderTable.of(numberOfGuests, false);
+        return tableService.create(orderTable);
     }
 
     public List<OrderTable> 테이블_목록_조회() {
@@ -155,22 +148,17 @@ public abstract class ServiceTestHelper {
     }
 
     public OrderTable 테이블_손님_수_변경(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
+        OrderTable orderTable = OrderTable.of(numberOfGuests, false);
         return tableService.changeNumberOfGuests(orderTableId, orderTable);
     }
 
     public OrderTable 테이블_채움(final Long orderTableId) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(orderTableId);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = OrderTable.of(0, false); // 요청이지
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 
     public OrderTable 테이블_비움(final Long orderTableId) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(orderTableId);
-        orderTable.setEmpty(true);
+        OrderTable orderTable = OrderTable.of(0, true);
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 

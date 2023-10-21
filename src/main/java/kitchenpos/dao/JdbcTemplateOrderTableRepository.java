@@ -95,11 +95,12 @@ public class JdbcTemplateOrderTableRepository implements OrderTableRepository {
     }
 
     private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+        long tableGroupId = resultSet.getLong("table_group_id");
+        return new OrderTable(
+                resultSet.getLong(KEY_COLUMN_NAME),
+                tableGroupId == 0 ? null : tableGroupId,
+                resultSet.getInt("number_of_guests"),
+                resultSet.getBoolean("empty")
+        );
     }
 }

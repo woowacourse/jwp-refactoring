@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -45,13 +46,15 @@ class TableServiceTest extends ServiceTestHelper {
     @Test
     void 주문_테이블_비움상태_변경시_그룹화되어있으면_예외가_발생한다() {
         // given
-        테이블_그룹화(빈_테이블1, 빈_테이블2);
+        TableGroup tableGroup = 테이블_그룹화(빈_테이블1, 빈_테이블2);
+        List<OrderTable> orderTables = tableGroup.getOrderTables();
+        OrderTable orderTable1 = orderTables.get(0);
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> 테이블_채움(빈_테이블1.getId()));
+                .isThrownBy(() -> 테이블_채움(orderTable1.getId()));
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> 테이블_비움(빈_테이블2.getId()));
+                .isThrownBy(() -> 테이블_비움(orderTable1.getId()));
     }
 
     @Test

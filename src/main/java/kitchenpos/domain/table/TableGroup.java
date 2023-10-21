@@ -11,18 +11,18 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
     }
 
-    public static TableGroup of(final List<OrderTable> orderTables) {
+    public static TableGroup of(List<OrderTable> orderTables) {
         return new TableGroup(null, LocalDateTime.now(), new ArrayList<>(orderTables));
     }
 

@@ -53,7 +53,7 @@ class OrderServiceTest extends ServiceTestHelper{
     @Test
     void 주문_항목의_주문테이블이_존재하지_않는_주문테이블이면_예외가_발생한다() {
         // given
-        final OrderTable notExistTable = new OrderTable();
+        final OrderTable notExistTable = OrderTable.of(0, true);
 
         // when & then
         assertThatIllegalArgumentException()
