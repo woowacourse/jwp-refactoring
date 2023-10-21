@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
-import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.존재하지_않는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
@@ -22,6 +21,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ class OrderServiceTest extends IntegrationTest {
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
-        final Order saved = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
+        final Order saved = orderService.create(RequestParser.of(orderTable, List.of(menu)));
 
         // then
         final List<Order> savedOrders = orderService.list();
@@ -70,10 +70,9 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
 
-        // when
-        // then
+        // expected
         assertThatThrownBy(
-                () -> orderService.create(주문_생성_메뉴_당_1개씩(orderTable, Collections.emptyList())))
+                () -> orderService.create(RequestParser.of(orderTable, Collections.emptyList())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,10 +90,9 @@ class OrderServiceTest extends IntegrationTest {
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
         final Menu fakeMenu = new Menu("x", BigDecimal.ONE, menuGroup, List.of(new MenuProduct(fakePizza, 1)));
-        final Order order = 주문_생성_메뉴_당_1개씩(orderTable, List.of(actualMenu, fakeMenu));
 
         // then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(RequestParser.of(orderTable, List.of(actualMenu, fakeMenu))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -109,11 +107,8 @@ class OrderServiceTest extends IntegrationTest {
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
 
-        // when
-        final Order order = 주문_생성_메뉴_당_1개씩(fakeOrderTable, List.of(menu));
-
-        // then
-        assertThatThrownBy(() -> orderService.create(order))
+        // expected
+        assertThatThrownBy(() -> orderService.create(RequestParser.of(fakeOrderTable, List.of(menu))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -128,11 +123,8 @@ class OrderServiceTest extends IntegrationTest {
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
 
-        // when
-        final Order order = 주문_생성_메뉴_당_1개씩(emptyTable, List.of(menu));
-
-        // then
-        assertThatThrownBy(() -> orderService.create(order))
+        // expected
+        assertThatThrownBy(() -> orderService.create(RequestParser.of(emptyTable, List.of(menu))))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -146,7 +138,7 @@ class OrderServiceTest extends IntegrationTest {
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
-        final Order order = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
+        final Order order = orderService.create(RequestParser.of(orderTable, List.of(menu)));
 
         // when
         order.changeOrderStatus(MEAL);
@@ -169,7 +161,7 @@ class OrderServiceTest extends IntegrationTest {
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
-        final Order order = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
+        final Order order = orderService.create(RequestParser.of(orderTable, List.of(menu)));
 
         // when
         order.changeOrderStatus(MEAL);

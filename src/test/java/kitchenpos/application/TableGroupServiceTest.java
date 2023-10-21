@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
-import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.치킨_8000원;
 import static kitchenpos.fixture.ProductFixture.피자_8000원;
@@ -15,7 +14,6 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -101,6 +99,7 @@ class TableGroupServiceTest extends IntegrationTest {
                         .noneMatch(OrderTable::isEmpty));
     }
 
+    // TODO 도메인 테스트로 이동
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     @DisplayName("주문 상태가 '조리', '식사'인 테이블이 있으면 분할할 수 없다.")
@@ -118,9 +117,7 @@ class TableGroupServiceTest extends IntegrationTest {
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_피자_세트", BigDecimal.valueOf(10000), menuGroup, List.of(chicken, pizza))
         );
-        orderService.create(
-                주문_생성_메뉴_당_1개씩_상태_설정(notAbleToSplitStatusTable, OrderStatus.valueOf(orderStatus), List.of(menu)))
-        ;
+        orderService.create(RequestParser.of(notAbleToSplitStatusTable, List.of(menu)));
 
         // then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

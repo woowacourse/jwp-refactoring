@@ -2,8 +2,6 @@ package kitchenpos.domain;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.fixture.MenuFixture.치킨_피자_세트_치킨_8000_1개_피자_8000_1개;
-import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -71,8 +69,8 @@ class OrderTableTest {
         final OrderTable orderTable = 주문_테이블_생성();
 
         // when
-        주문_생성_메뉴_당_1개씩_상태_설정(orderTable, COOKING, List.of(치킨_피자_세트_치킨_8000_1개_피자_8000_1개(new MenuGroup("양식"))));
-
+        final Order order = new Order(orderTable);
+        order.changeOrderStatus(COOKING);
         // then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
                 .isInstanceOf(IllegalArgumentException.class);
