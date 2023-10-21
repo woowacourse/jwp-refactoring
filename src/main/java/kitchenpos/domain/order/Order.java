@@ -38,22 +38,15 @@ public class Order {
     public Order(Long id, OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
-        this.orderLineItems = new OrderLineItems(orderLineItems);
         validateOrderTable(orderTable);
-        validateOrderLineItems(this.orderLineItems);
     }
 
     private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("테이블이 비어있으면 생성할 수 없다.");
-        }
-    }
-
-    private void validateOrderLineItems(OrderLineItems orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 비어있으면 생성할 수 없다.");
         }
     }
 
@@ -80,16 +73,8 @@ public class Order {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public String getOrderStatus() {
         return orderStatus.name();
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = OrderStatus.of(orderStatus);
     }
 
     public LocalDateTime getOrderedTime() {

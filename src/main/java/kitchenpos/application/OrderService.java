@@ -17,19 +17,18 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
+    private final OrderLineItemDao orderLineItemDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
+            final OrderTableDao orderTableDao,
+            OrderLineItemDao orderLineItemDao) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.orderLineItemDao = orderLineItemDao;
     }
 
     @Transactional
@@ -51,13 +50,7 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderDao.findAll();
     }
 
     @Transactional
@@ -66,10 +59,6 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
         savedOrder.changeOrderStatus(orderStatus);
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
 
         return savedOrder;
     }

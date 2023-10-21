@@ -56,7 +56,7 @@ class OrderTablesTest {
     void 주문이_완료_상태가_아니면_그룹해제할_수_없다(OrderStatus orderStatus) {
         OrderTable orderTable1 = new OrderTable(null, 3, false);
         OrderTable orderTable2 = new OrderTable(null, 3, false);
-        Order order = new Order(1L, orderTable1, List.of(new OrderLineItem(1L, 1L, 1L, 1L)));
+        Order order = new Order(1L, orderTable1, List.of(new OrderLineItem(1L, 1L, 1L)));
         order.changeOrderStatus(orderStatus);
         orderTable1.setOrders(new Orders(List.of(order)));
 

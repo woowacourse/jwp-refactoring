@@ -32,7 +32,7 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao = new FakeOrderTableDao();
     private MenuDao menuDao = new FakeMenuDao();
 
-    private OrderService orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    private OrderService orderService = new OrderService(menuDao, orderDao, orderTableDao, orderLineItemDao);
 
     private OrderLineItem orderLineItem;
     private OrderTable tableFull;
@@ -42,7 +42,7 @@ class OrderServiceTest {
     void setUp() {
         MenuProduct menuProduct = new MenuProduct(null, new Product(null, "후라이드", BigDecimal.valueOf(2000)), 1L);
         menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(2000), 1L, List.of(menuProduct)));
-        orderLineItem = orderLineItemDao.save(new OrderLineItem(null, 1L, 1L, 1L));
+        orderLineItem = orderLineItemDao.save(new OrderLineItem(null, 1L, 1L));
         tableFull = orderTableDao.save(new OrderTable(null, 3, false));
         tableEmpty = orderTableDao.save(new OrderTable(null, 4, true));
     }
@@ -96,7 +96,7 @@ class OrderServiceTest {
         @Test
         void 없는_메뉴를_주문할_수_없다() {
             long notExistMenuId = 2L;
-            assertThatThrownBy(() -> orderService.create(new Order(null, tableFull, List.of(new OrderLineItem(null, 1L, notExistMenuId, 1L)))))
+            assertThatThrownBy(() -> orderService.create(new Order(null, tableFull, List.of(new OrderLineItem(null, notExistMenuId, 1L)))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

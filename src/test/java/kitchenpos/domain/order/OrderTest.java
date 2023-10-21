@@ -17,7 +17,7 @@ class OrderTest {
         // given
         OrderTable orderTable = new OrderTable(1L, 3, true);
         List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 1L, 1L, 1)
+                new OrderLineItem(1L, 1L, 1)
         );
         // when & then
         assertThatThrownBy(() -> new Order(null, orderTable, orderLineItems))
@@ -39,7 +39,7 @@ class OrderTest {
         // given
         OrderTable orderTable = new OrderTable(1L, 3, false);
         List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 1L, 1L, 1)
+                new OrderLineItem(1L, 1L, 1)
         );
         Order order = new Order(null, orderTable, orderLineItems);
         order.changeOrderStatus(OrderStatus.COMPLETION);
@@ -54,7 +54,7 @@ class OrderTest {
         // given
         OrderTable orderTable = new OrderTable(1L, 3, false);
         List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 1L, 1L, 1)
+                new OrderLineItem(1L, 1L, 1)
         );
         Order order = new Order(null, orderTable, orderLineItems);
         order.changeOrderStatus(orderStatus);

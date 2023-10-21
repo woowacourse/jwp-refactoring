@@ -34,7 +34,7 @@ class TableServiceTest {
         firstTable = orderTableDao.save(new OrderTable(null, 3, false));
         secondTable = orderTableDao.save(new OrderTable(null, 4, false));
         orderTableDao.save(new OrderTable(null, 4, false));
-        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
         completionOrder = orderDao.save(new Order(null, secondTable, List.of(orderLineItem)));
         completionOrder.changeOrderStatus(OrderStatus.COMPLETION);
         orderDao.save(completionOrder);
@@ -77,7 +77,7 @@ class TableServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
     void 완료상태가_아니면_테이블을_빈_상태로_변경할_수_없다(OrderStatus orderStatus) {
-        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
         Order order = new Order(null, firstTable, List.of(orderLineItem));
         order.changeOrderStatus(orderStatus);
         orderDao.save(order);

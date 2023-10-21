@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class FakeOrderLineItemDao implements OrderLineItemDao {
 
@@ -34,12 +33,5 @@ public class FakeOrderLineItemDao implements OrderLineItemDao {
     @Override
     public List<OrderLineItem> findAll() {
         return new ArrayList<>(orderLineItems.values());
-    }
-
-    @Override
-    public List<OrderLineItem> findAllByOrderId(Long orderId) {
-        return orderLineItems.values().stream()
-                .filter(orderLineItem -> orderLineItem.getOrderId().equals(orderId))
-                .collect(Collectors.toList());
     }
 }

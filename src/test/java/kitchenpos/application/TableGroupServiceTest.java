@@ -109,7 +109,7 @@ class TableGroupServiceTest {
 
         TableGroup saved = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L, 1L);
+        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
         Order mealOrder = new Order(null, orderTable1, List.of(orderLineItem));
         mealOrder.changeOrderStatus(orderStatus);
         orderDao.save(mealOrder);

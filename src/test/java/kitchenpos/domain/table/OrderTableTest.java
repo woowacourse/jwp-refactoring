@@ -28,7 +28,7 @@ class OrderTableTest {
     @ParameterizedTest
     void 주문_상태가_조리중_또는_식사중이면_비울_수_없다(OrderStatus orderStatus) {
         OrderTable orderTable = new OrderTable(1L, 3, false);
-        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L);
         Order order = new Order(1L, orderTable, List.of(orderLineItem));
         order.changeOrderStatus(orderStatus);
         orderTable.setOrders(new Orders(List.of(order)));
