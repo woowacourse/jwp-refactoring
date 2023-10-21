@@ -15,6 +15,8 @@ import kitchenpos.domain.product.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.util.stream.Collectors.toMap;
+
 @Service
 public class MenuService {
 
@@ -42,16 +44,18 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴에는 최소 한 개 이상의 상품이 포함되어야 합니다.");
         }
 
-        final Map<Product, Integer> productToQuantity = menuProductCommands.stream()
-                .collect(Collectors.toMap(
-                        menuProductCommand -> productRepository.findById(menuProductCommand.getProductId())
-                                .orElseThrow(IllegalArgumentException::new),
-                        CreateMenuProductCommand::getQuantity
-                ));
-
+        final Map<Product, Integer> productToQuantity = findProductWithQuantity(menuProductCommands);
         final Menu menu = Menu.of(command.getName(), new Money(command.getPrice()), command.getMenuGroupId(),
                 productToQuantity);
         return MenuDto.from(menuRepository.save(menu));
+    }
+
+    private Map<Product, Integer> findProductWithQuantity(final List<CreateMenuProductCommand> menuProductCommands) {
+        return menuProductCommands.stream()
+                .collect(toMap(
+                        productCommand -> productRepository.getById(productCommand.getProductId()),
+                        CreateMenuProductCommand::getQuantity
+                ));
     }
 
     public List<MenuDto> list() {

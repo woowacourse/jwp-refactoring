@@ -2,8 +2,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
@@ -14,7 +12,6 @@ import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +75,7 @@ class OrderServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 비어있지_않은_테이블_생성();
             CreateOrderCommand 커맨드 = mock(CreateOrderCommand.class);
-            when(커맨드.getOrderLineItems()).thenReturn(emptyList());
+            when(커맨드.getOrderLineItemRequests()).thenReturn(emptyList());
             when(커맨드.getOrderTableId()).thenReturn(테이블.getId());
 
             //expect
@@ -169,7 +166,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_상태가_COMPLETION이면_예외가_발생한다() {
             //given
-            Order 생성된_주문 = orderRepository.findById(주문_생성().getId()).orElseThrow();
+            Order 생성된_주문 = orderRepository.getById(주문_생성().getId());
             생성된_주문.changeOrderStatus(OrderStatus.COMPLETION);
             orderRepository.save(생성된_주문);
 

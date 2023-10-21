@@ -37,23 +37,20 @@ public class TableService {
     @Transactional
     public OrderTableDto changeEmpty(final ChangeTableEmptyCommand request) {
         Long tableId = request.getTableId();
-        final OrderTable savedOrderTable = orderTableRepository.findById(tableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        savedOrderTable.changeEmpty(request.getEmpty());
+        final OrderTable orderTable = orderTableRepository.getById(tableId);
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 tableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상태가 조리 또는 식사인 경우 테이블의 비어있을 수 없습니다.");
         }
-        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
+
+        orderTable.changeEmpty(request.getEmpty());
         return OrderTableDto.from(orderTable);
     }
 
     @Transactional
     public OrderTableDto changeNumberOfGuests(final ChangeNumberOfQuestsCommand request) {
-        final OrderTable foundTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable foundTable = orderTableRepository.getById(request.getOrderTableId());
 
         foundTable.changeNumberOfGuests(request.getNumberOfGuests());
         OrderTable orderTable = orderTableRepository.save(foundTable);

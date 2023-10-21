@@ -40,7 +40,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupDto 생성된_테이블그룹 = tableGroupService.create(커맨드);
 
             //then
-            TableGroup 조회 = tableGroupRepository.findById(생성된_테이블그룹.getId()).orElseThrow();
+            TableGroup 조회 = tableGroupRepository.getById(생성된_테이블그룹.getId());
             List<OrderTable> 테이블그룹으로_조회 = orderTableRepository.findAllByTableGroupId(생성된_테이블그룹.getId());
             assertAll(
                     () -> Assertions.assertThat(조회.getOrderTables())
@@ -84,7 +84,7 @@ class TableGroupServiceTest extends ServiceTest {
             );
 
             tableGroupService.create(커맨드);
-            return orderTableRepository.findById(테이블.getId()).get();
+            return orderTableRepository.getById(테이블.getId());
         }
 
     }
@@ -114,7 +114,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(생성된_테이블_그룹.getId());
 
             //then
-            assertThat(orderTableRepository.findById(테이블.getId()).get().getTableGroupId()).isNull();
+            assertThat(orderTableRepository.getById(테이블.getId()).getTableGroupId()).isNull();
         }
 
         @Test

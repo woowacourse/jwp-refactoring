@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
-import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
 import kitchenpos.application.dto.domain.OrderDto;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -36,27 +34,29 @@ public class OrderService {
 
     @Transactional
     public OrderDto create(final CreateOrderCommand command) {
-        final List<OrderLineItemRequest> orderLineItemRequests = command.getOrderLineItems();
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
+        if (noOrderLineItems(command)) {
+            throw new IllegalArgumentException("주문항목은 최소 한개 이상이어야 합니다.");
         }
-
-        final List<Long> menuIds = command.getMenuIds();
-        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
+        if (invalidOrderLineItems(command)) {
             throw new IllegalArgumentException("주문항목은 각각 다른 메뉴이며 존재해야합니다.");
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(command.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable orderTable = orderTableRepository.getById(command.getOrderTableId());
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 주문 가능한 테이블이어야 합니다.");
         }
 
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
-                .map(request -> request.toDomain(null))
-                .collect(Collectors.toList());
-        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                command.getOrderLineItems());
         return OrderDto.from(orderRepository.save(order));
+    }
+
+    private boolean invalidOrderLineItems(final CreateOrderCommand command) {
+        return command.getOrderLineItemRequests().size() != menuRepository.countByIdIn(command.getMenuIds());
+    }
+
+    private boolean noOrderLineItems(final CreateOrderCommand command) {
+        return CollectionUtils.isEmpty(command.getOrderLineItemRequests());
     }
 
     public List<OrderDto> list() {
@@ -68,11 +68,11 @@ public class OrderService {
     @Transactional
     public OrderDto changeOrderStatus(final ChangeOrderStatusCommand command) {
         final Long orderId = command.getOrderId();
-        final Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order order = orderRepository.getById(orderId);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(command.getOrderStatus());
         order.changeOrderStatus(orderStatus);
         return OrderDto.from(order);
     }
+
 }

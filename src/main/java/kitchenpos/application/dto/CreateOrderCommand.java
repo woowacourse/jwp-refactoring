@@ -32,7 +32,7 @@ public class CreateOrderCommand {
     }
 
     private Long orderTableId;
-    private List<OrderLineItemRequest> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItemRequests;
 
     public CreateOrderCommand(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
@@ -40,20 +40,27 @@ public class CreateOrderCommand {
         }
 
         this.orderTableId = orderTableId;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItemRequests = orderLineItems;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderLineItemRequest> getOrderLineItems() {
-        return orderLineItems;
-    }
 
     public List<Long> getMenuIds() {
-        return orderLineItems.stream()
+        return orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderLineItemRequest> getOrderLineItemRequests() {
+        return orderLineItemRequests;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItemRequests.stream()
+                .map(request -> request.toDomain(null))
                 .collect(Collectors.toList());
     }
 
