@@ -7,6 +7,10 @@ public class MenuGroupCreationRequest {
     @NotNull
     private final String name;
 
+    private MenuGroupCreationRequest() {
+        this(null);
+    }
+
     public MenuGroupCreationRequest(String name) {
         this.name = name;
     }

@@ -10,7 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.TableCreationRequest;
 import kitchenpos.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.dto.response.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.request.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.response.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

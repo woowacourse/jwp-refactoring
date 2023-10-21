@@ -7,6 +7,10 @@ public class OrderTableRequest {
     @NotNull
     private final Long id;
 
+    private OrderTableRequest() {
+        this(null);
+    }
+
     public OrderTableRequest(Long id) {
         this.id = id;
     }

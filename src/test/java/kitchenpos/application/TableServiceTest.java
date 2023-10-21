@@ -22,7 +22,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.dto.response.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.request.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.response.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

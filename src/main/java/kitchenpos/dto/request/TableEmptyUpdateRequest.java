@@ -7,6 +7,10 @@ public class TableEmptyUpdateRequest {
     @NotNull
     private final Boolean empty;
 
+    private TableEmptyUpdateRequest() {
+        this(null);
+    }
+
     public TableEmptyUpdateRequest(Boolean empty) {
         this.empty = empty;
     }

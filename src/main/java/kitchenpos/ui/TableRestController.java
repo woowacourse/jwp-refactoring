@@ -6,7 +6,7 @@ import javax.validation.Valid;
 import kitchenpos.application.TableService;
 import kitchenpos.dto.request.TableCreationRequest;
 import kitchenpos.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.dto.response.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.request.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.response.TableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
