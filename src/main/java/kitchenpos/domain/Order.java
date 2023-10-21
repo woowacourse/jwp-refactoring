@@ -91,6 +91,14 @@ public class Order {
         orderTable.changeOrderTableEmpty(isEmpty);
     }
 
+    public void ungroupOrderTable() {
+        if (orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL) {
+            throw new IllegalArgumentException("현재 주문 상태가 COOKING, MEAL 일 경우 단체 지정을 해제할 수 없습니다.");
+        }
+
+        orderTable.deassignTableGroup();
+    }
+
     public Long getId() {
         return id;
     }

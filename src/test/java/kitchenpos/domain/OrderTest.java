@@ -6,11 +6,16 @@ import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -45,7 +50,7 @@ class OrderTest {
             softly.assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now());
             softly.assertThat(actual.getOrderLineItems().getOrderLineItems()).isEmpty();
         });
-}
+    }
 
     @DisplayName("[SUCCESS] 주문 항목을 추가할 경우 자신을 주문 항목에 추가한다.")
     @Test
@@ -149,6 +154,55 @@ class OrderTest {
             // expected
             assertThatThrownBy(() -> order.changeOrderTableEmpty(true))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("주문 테이블 그룹화 해제")
+    @Nested
+    class UngroupOrderTableNestedTest {
+
+        @DisplayName("[SUCCESS] 주문 테이블의 주문이 COMPLETION 일 경우 그룹화 해제할 수 있다.")
+        @Test
+        void success_ungroupOrderTable() {
+            // given
+            final OrderTable orderTable = new OrderTable(null, 5, true);
+            final TableGroup tableGroup = TableGroup.emptyOrderTables();
+            tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
+
+            final Order order = Order.ofEmptyOrderLineItems(orderTable);
+            order.changeOrderStatus(OrderStatus.COMPLETION);
+
+            // when
+            order.ungroupOrderTable();
+
+            // then
+            assertThat(order.getOrderTable().getTableGroup()).isNull();
+        }
+
+        @DisplayName("[EXCEPTION] 주문 테이블의 주문이 COMPLETION 이 아닐 경우 그룹화 해제할 수 없다.")
+        @ParameterizedTest
+        @MethodSource("getOrderStatusWithoutCompletion")
+        void throwException_ungroupOrderTable_when_orderStatus_isNotCompletion(final OrderStatus orderStatus) {
+            // given
+            final OrderTable orderTable = new OrderTable(null, 5, true);
+            final TableGroup tableGroup = TableGroup.emptyOrderTables();
+            tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
+
+            final Order order = Order.ofEmptyOrderLineItems(orderTable);
+
+            // when
+            order.changeOrderStatus(orderStatus);
+
+            // then
+            assertThatThrownBy(order::ungroupOrderTable)
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private Stream<Arguments> getOrderStatusWithoutCompletion() {
+            return Arrays.stream(OrderStatus.values())
+                    .filter(orderStatus -> orderStatus != OrderStatus.COMPLETION)
+                    .map(Arguments::arguments);
         }
     }
 }

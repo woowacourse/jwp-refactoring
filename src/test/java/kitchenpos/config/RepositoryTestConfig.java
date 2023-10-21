@@ -7,6 +7,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -53,5 +54,10 @@ public abstract class RepositoryTestConfig {
     protected OrderTable persistOrderTable(final OrderTable orderTable) {
         em.persist(orderTable);
         return orderTable;
+    }
+
+    protected TableGroup persistTableGroup(final TableGroup tableGroup) {
+        em.persist(tableGroup);
+        return tableGroup;
     }
 }
