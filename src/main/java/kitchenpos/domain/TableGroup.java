@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,11 +24,18 @@ public class TableGroup {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
+    }
+
+    public TableGroup(List<OrderTable> orderTables) {
         this.createdDate = LocalDateTime.now();
+        for (OrderTable orderTable : orderTables) {
+            this.orderTables.add(orderTable);
+            orderTable.group(this);
+        }
     }
 
     public Long getId() {
@@ -56,7 +64,7 @@ public class TableGroup {
         }
 
         public TableGroup build() {
-            return new TableGroup();
+            return new TableGroup(orderTables);
         }
     }
 }
