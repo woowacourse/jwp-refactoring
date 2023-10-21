@@ -2,12 +2,14 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,6 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Nested
     class 주문_생성 {
@@ -63,7 +63,7 @@ class OrderServiceTest extends ServiceTest {
             //given
             OrderLineItemRequest 주문상품 = 주문_상품_초기화();
             OrderTable 삭제된_테이블 = 비어있지_않은_테이블_생성();
-            테이블_지우기(삭제된_테이블);
+            orderTableRepository.delete(삭제된_테이블);
 
             CreateOrderCommand 커맨드 = new CreateOrderCommand(삭제된_테이블.getId(), List.of(주문상품));
 
@@ -72,11 +72,6 @@ class OrderServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
-
-        private void 테이블_지우기(OrderTable 테이블) {
-            jdbcTemplate.update("delete from order_table where id = ?", 테이블.getId());
-        }
-
         @Test
         void 주문에_포함된_상품이_없으면_예외가_발생한다() {
             //given
@@ -106,10 +101,8 @@ class OrderServiceTest extends ServiceTest {
     }
 
     private OrderTable 비어있지_않은_테이블_생성() {
-        final var 테이블 = new OrderTable();
-        테이블.changeEmpty(false);
-        테이블.changeNumberOfGuests(4);
-        return orderTableDao.save(테이블);
+        final var 테이블 = new OrderTable(4, false);
+        return orderTableRepository.save(테이블);
     }
 
     private OrderLineItemRequest 주문_상품_초기화() {
@@ -161,20 +154,15 @@ class OrderServiceTest extends ServiceTest {
 
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
-            OrderTable 테이블_엔티티 = new OrderTable();
-            OrderTable 테이블 = orderTableDao.save(테이블_엔티티);
-            Long 삭제된_테이블_아이디 = 테이블.getId();
-            테이블_삭제(테이블);
+            OrderTable 테이블_엔티티 = new OrderTable(4, false);
+            OrderTable 테이블 = orderTableRepository.save(테이블_엔티티);
+            orderTableRepository.delete(테이블);
 
-            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(삭제된_테이블_아이디,
+            ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(테이블.getId(),
                     OrderStatus.COOKING.name());
             //expect
             assertThatThrownBy(() -> orderService.changeOrderStatus(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        private void 테이블_삭제(OrderTable 테이블) {
-            jdbcTemplate.execute("delete from order_table where id = " + 테이블.getId());
         }
 
         @Test

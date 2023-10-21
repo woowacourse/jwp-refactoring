@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ class TableGroupTest {
         @Test
         void 테이블이_2개_이하인_경우_예외가_발생한다() {
             //given
-            List<OrderTable> 테이블_목록 = List.of(new OrderTable());
+            List<OrderTable> 테이블_목록 = List.of(new OrderTable(2, false));
 
             //expect
             assertThatThrownBy(() -> new TableGroup(null, null, 테이블_목록))

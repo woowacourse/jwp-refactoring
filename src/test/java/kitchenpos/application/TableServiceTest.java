@@ -6,8 +6,7 @@ import kitchenpos.application.dto.ChangeTableEmptyCommand;
 import kitchenpos.application.dto.CreateTableCommand;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,9 +25,6 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableService tableService;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
 
     @Test
     void 테이블을_생성할_수_있다() {
@@ -45,7 +41,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 테이블_목록을_조회할_수_있다() {
         //given
-        OrderTable 생성된_테이블 = orderTableDao.save(new OrderTable());
+        OrderTable 생성된_테이블 = orderTableRepository.save(new OrderTable(2, false));
 
         //when
         List<OrderTable> actual = tableService.list();
@@ -73,16 +69,16 @@ class TableServiceTest extends ServiceTest {
         }
 
         private OrderTable empty가_아닌_테이블_조회() {
-            OrderTable 테이블 = orderTableDao.findAll().get(0);
+            OrderTable 테이블 = orderTableRepository.findAll().get(0);
             테이블.changeEmpty(false);
-            orderTableDao.save(테이블);
+            orderTableRepository.save(테이블);
             return 테이블;
         }
 
         @Test
         void 인원이_음수면_예외가_발생한다() {
             //given
-            OrderTable 테이블 = orderTableDao.findAll().get(0);
+            OrderTable 테이블 = orderTableRepository.findAll().get(0);
             ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), -1);
 
             //expect
@@ -93,9 +89,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블이_존재하지_않으면_예외가_발생한다() {
             //given
-            OrderTable 테이블_엔티티 = new OrderTable();
-            OrderTable 테이블 = orderTableDao.save(테이블_엔티티);
-            테이블_삭제(테이블);
+            OrderTable 테이블_엔티티 = new OrderTable(2, false);
+            OrderTable 테이블 = orderTableRepository.save(테이블_엔티티);
+            orderTableRepository.delete(테이블);
+
             ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 1);
 
             //expect
@@ -103,16 +100,12 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private void 테이블_삭제(OrderTable 테이블) {
-            jdbcTemplate.execute("delete from order_table where id = " + 테이블.getId());
-        }
-
         @Test
         void 테이블이_empty이면_예외가_발생한다() {
             //given
-            OrderTable 테이블 = orderTableDao.findAll().get(0);
+            OrderTable 테이블 = orderTableRepository.findAll().get(0);
             테이블.changeEmpty(true);
-            orderTableDao.save(테이블);
+            orderTableRepository.save(테이블);
 
             ChangeNumberOfQuestsCommand 커맨드 = new ChangeNumberOfQuestsCommand(테이블.getId(), 9);
 
@@ -129,9 +122,9 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 성공() {
             //given
-            OrderTable 테이블 = new OrderTable();
+            OrderTable 테이블 = new OrderTable(2, false);
             테이블.changeEmpty(false);
-            OrderTable 생성된_테이블 = orderTableDao.save(테이블);
+            OrderTable 생성된_테이블 = orderTableRepository.save(테이블);
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
             //when
@@ -144,9 +137,9 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블에_COMPLETION_상태가_아닌_주문이_있으면_예외가_발생한다() {
             //given
-            OrderTable 테이블 = new OrderTable();
+            OrderTable 테이블 = new OrderTable(2, false);
             테이블.changeEmpty(false);
-            OrderTable 생성된_테이블 = orderTableDao.save(테이블);
+            OrderTable 생성된_테이블 = orderTableRepository.save(테이블);
             주문만들기(생성된_테이블);
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(생성된_테이블.getId(), true);
 
@@ -169,10 +162,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 그룹에속한_테이블이면_예외가_발생한다() {
             //given
-            OrderTable 그룹있는_테이블 = orderTableDao.save(new OrderTable(0, true));
+            OrderTable 그룹있는_테이블 = orderTableRepository.save(new OrderTable(0, true));
             TableGroup 생성된_그룹 = 그룹_생성하기(그룹있는_테이블);
             그룹있는_테이블.setTableGroupId(생성된_그룹.getId());
-            orderTableDao.save(그룹있는_테이블);
+            orderTableRepository.save(그룹있는_테이블);
 
             //expect
             ChangeTableEmptyCommand 테이블_비우기_요청 = new ChangeTableEmptyCommand(그룹있는_테이블.getId(), true);

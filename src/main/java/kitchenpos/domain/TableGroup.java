@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.domain.table.OrderTable;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElseGet;

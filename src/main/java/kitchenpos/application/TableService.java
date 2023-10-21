@@ -5,10 +5,10 @@ import java.util.List;
 import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
 import kitchenpos.application.dto.ChangeTableEmptyCommand;
 import kitchenpos.application.dto.CreateTableCommand;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,27 +16,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableDao orderTableDao) {
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTable create(final CreateTableCommand command) {
         OrderTable table = command.toDomain();
-        return orderTableDao.save(table);
+        return orderTableRepository.save(table);
     }
 
     public List<OrderTable> list() {
-        return orderTableDao.findAll();
+        return orderTableRepository.findAll();
     }
 
     @Transactional
     public OrderTable changeEmpty(final ChangeTableEmptyCommand request) {
         Long tableId = request.getTableId();
-        final OrderTable savedOrderTable = orderTableDao.findById(tableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(tableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeEmpty(request.getEmpty());
@@ -45,15 +45,15 @@ public class TableService {
                 tableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
-        return orderTableDao.save(savedOrderTable);
+        return orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional
     public OrderTable changeNumberOfGuests(final ChangeNumberOfQuestsCommand request) {
-        final OrderTable foundTable = orderTableDao.findById(request.getOrderTableId())
+        final OrderTable foundTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         foundTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return orderTableDao.save(foundTable);
+        return orderTableRepository.save(foundTable);
     }
 }

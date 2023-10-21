@@ -5,16 +5,13 @@ import kitchenpos.application.dto.CreateTableGroupCommand;
 import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.TableGroup;
-import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,14 +70,14 @@ class TableGroupServiceTest extends ServiceTest {
             );
 
             tableGroupService.create(커맨드);
-            return orderTableDao.findById(테이블.getId()).get();
+            return orderTableRepository.findById(테이블.getId()).get();
         }
 
     }
 
     private OrderTable 빈_테이블_생성() {
         final var 테이블 = new OrderTable(0, true);
-        return orderTableDao.save(테이블);
+        return orderTableRepository.save(테이블);
     }
 
     @Nested
@@ -102,7 +99,7 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupService.ungroup(생성된_테이블_그룹.getId());
 
             //then
-            assertThat(orderTableDao.findById(테이블.getId()).get().getTableGroupId()).isNull();
+            assertThat(orderTableRepository.findById(테이블.getId()).get().getTableGroupId()).isNull();
         }
 
         @Test
@@ -119,7 +116,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // todo: table group repository 도입 후 제거하기
             테이블.setTableGroupId(생성된_테이블_그룹.getId());
-            orderTableDao.save(테이블);
+            orderTableRepository.save(테이블);
 
             //expect
             assertThatThrownBy(() -> tableGroupService.ungroup(생성된_테이블_그룹.getId()))

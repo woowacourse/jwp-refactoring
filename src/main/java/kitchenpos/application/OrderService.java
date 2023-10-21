@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -22,14 +22,14 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
-            final OrderTableDao orderTableDao,
+            final OrderTableRepository orderTableRepository,
             final OrderRepository orderRepository) {
         this.menuRepository = menuRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
     }
 
@@ -45,8 +45,7 @@ public class OrderService {
             throw new IllegalArgumentException("주문항목은 각각 다른 메뉴이며 존재해야합니다.");
         }
 
-        // todo: order repository save (return orderRepository.save(order))
-        final OrderTable orderTable = orderTableDao.findById(command.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(command.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();

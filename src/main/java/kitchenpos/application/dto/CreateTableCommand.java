@@ -1,6 +1,6 @@
 package kitchenpos.application.dto;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 
 public class CreateTableCommand {
 
@@ -16,14 +16,7 @@ public class CreateTableCommand {
     }
 
     public OrderTable toDomain() {
-        OrderTable orderTable = new OrderTable();
-
-        orderTable.changeNumberOfGuests(numberOfGuests);
-        orderTable.changeEmpty(empty);
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTable;
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

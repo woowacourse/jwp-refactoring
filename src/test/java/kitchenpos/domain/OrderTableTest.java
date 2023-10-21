@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

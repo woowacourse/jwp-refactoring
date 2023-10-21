@@ -6,7 +6,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
 import kitchenpos.application.dto.ChangeTableEmptyCommand;
 import kitchenpos.application.dto.CreateTableCommand;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.ui.dto.PutNumberOfGuestsRequest;
 import kitchenpos.ui.dto.PutTableEmptyRequest;
 import org.springframework.http.ResponseEntity;
