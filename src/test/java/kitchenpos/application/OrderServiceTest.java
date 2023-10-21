@@ -74,8 +74,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_상태를_변경한다() {
         tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
-        orderService.create(orderCreateRequest);
-        OrderResponse response = orderService.changeOrderStatus(1L, orderChangeRequest);
+        OrderResponse orderResponse = orderService.create(orderCreateRequest);
+        OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), orderChangeRequest);
         assertThat(response.getOrderStatus().toString()).isEqualTo(orderChangeRequest.getOrderStatus());
     }
 
