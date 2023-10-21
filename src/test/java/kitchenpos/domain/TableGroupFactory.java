@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.ArrayList;
+import kitchenpos.domain.ordertable.OrderTable;
 
 public final class TableGroupFactory {
 

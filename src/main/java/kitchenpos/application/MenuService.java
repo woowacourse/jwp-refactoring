@@ -51,7 +51,6 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public List<Menu> list() {
-
         return menuDao.findAll();
     }
 }

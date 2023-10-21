@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.ordertable.OrderTable;
+
 public final class OrderTableFactory {
 
     private OrderTableFactory() {
