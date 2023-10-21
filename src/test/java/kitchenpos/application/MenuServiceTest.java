@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,8 @@ class MenuServiceTest extends IntegrationTest {
     private ProductRepository productRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private MenuProductRepository menuProductRepository;
 
     @Test
     @DisplayName("메뉴 등록 시 전달받은 정보를 새 id로 저장한다.")
@@ -45,6 +49,11 @@ class MenuServiceTest extends IntegrationTest {
                 .map(Menu::getId)
                 .filteredOn(id -> Objects.equals(id, menu.getId()))
                 .hasSize(1);
+        assertThat(menuProductRepository.findAll())
+                .map(MenuProduct::getMenu)
+                .map(Menu::getId)
+                .filteredOn(id -> Objects.equals(id, menu.getId()))
+                .hasSize(2);
     }
 
     @Test

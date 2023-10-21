@@ -41,8 +41,7 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final Long id,
-                final String name,
+    public Menu(final String name,
                 final BigDecimal price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
@@ -50,18 +49,10 @@ public class Menu {
         validateName(name);
         validatePrice(scaledPrice, menuProducts);
         validateMenuProducts(menuProducts);
-        this.id = id;
         this.name = name;
         this.price = scaledPrice;
         this.menuGroup = menuGroup;
         this.menuProducts = new ArrayList<>(menuProducts);
-    }
-
-    public Menu(final String name,
-                final BigDecimal price,
-                final MenuGroup menuGroup,
-                final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
     }
 
     private void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
@@ -119,8 +110,7 @@ public class Menu {
         return new ArrayList<>(menuProducts);
     }
 
-    // TODO setter
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = new ArrayList<>(menuProducts);
+    public void addMenuProduct(MenuProduct menuProduct) {
+        this.menuProducts.add(menuProduct);
     }
 }

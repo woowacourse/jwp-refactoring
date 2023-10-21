@@ -34,6 +34,14 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public MenuProduct(final Menu menu,
+                       final Product product,
+                       final long quantity) {
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
     public BigDecimal totalPrice() {
         final BigDecimal price = product.getPrice();
 
@@ -44,9 +52,10 @@ public class MenuProduct {
         return menu;
     }
 
-    // TODO setter
+    // TODO MenuProduct DTO 분리한 뒤 setter 개선
     public void setMenu(Menu menu) {
         this.menu = menu;
+        menu.addMenuProduct(this);
     }
 
     public Product getProduct() {
@@ -59,5 +68,4 @@ public class MenuProduct {
         }
         return product.getId();
     }
-
 }

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,17 +34,14 @@ public class MenuService {
     @Transactional
     public Menu create(final Menu menu) {
         validateMenuGroup(menu);
+        final Menu savedMenu = menuRepository.save(menu);
+
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
         validateMenuProducts(menuProducts);
-
-        final Menu savedMenu = menuRepository.save(menu);
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        /// TODO: 2023/10/19 편의 메서드로 통합
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(menu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(savedMenu);
+            menuProductRepository.save(menuProduct);
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -75,12 +71,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuRepository.findAll();
     }
 }
