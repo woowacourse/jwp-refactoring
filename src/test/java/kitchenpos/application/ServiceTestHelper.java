@@ -94,15 +94,8 @@ public abstract class ServiceTestHelper {
     }
 
     public Product 상품_등록(String name, Long price) {
-        ProductCreateRequest request = new ProductCreateRequest(name, createBigDecimal(price));
+        ProductCreateRequest request = new ProductCreateRequest(name, price);
         return productService.create(request);
-    }
-
-    private BigDecimal createBigDecimal(Long price) {
-        if (price == null) {
-            return null;
-        }
-        return BigDecimal.valueOf(price);
     }
 
     public List<Product> 상품_목록_조회() {
