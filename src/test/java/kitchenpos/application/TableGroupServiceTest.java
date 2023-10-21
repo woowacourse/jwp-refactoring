@@ -161,8 +161,8 @@ class TableGroupServiceTest {
     @DisplayName("단체 지정을 삭제할 때 해당 주문 테이블 중 COOKING 또는 MEAL 상태가 존재하면 예외가 발생한다")
     void ungroup_fail(final OrderStatus status) {
         //given
-        final OrderTable orderTable1 = entityFactory.saveOrderTable();
-        final OrderTable orderTable2 = entityFactory.saveOrderTable();
+        final OrderTable orderTable1 = entityFactory.saveOrderTableWithNotEmpty();
+        final OrderTable orderTable2 = entityFactory.saveOrderTableWithNotEmpty();
         final TableGroup tableGroup = entityFactory.saveTableGroup(orderTable1, orderTable2);
 
         final Order order = entityFactory.saveOrder(orderTable1);
@@ -171,6 +171,7 @@ class TableGroupServiceTest {
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리 중이거나 식사 중인 테이블입니다.");
     }
 }

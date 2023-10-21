@@ -56,11 +56,6 @@ public class OrderTableService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 
-    public void validateNotEmptyById(final Long orderTableId) {
-        final OrderTable orderTable = findByIdOrThrow(orderTableId);
-        orderTable.validateNotEmpty();
-    }
-
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableUpdateRequest request) {
         final OrderTable orderTable = findByIdOrThrow(orderTableId);

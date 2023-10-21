@@ -115,8 +115,8 @@ class OrderServiceTest {
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalStateException.class)
-                    .hasMessage("빈 주문 테이블입니다.");
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 없거나 빈 주문 테이블입니다.");
         }
     }
 

@@ -47,8 +47,9 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 tableGroup.getOrderTableIds(), List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리 중이거나 식사 중인 테이블입니다.");
         }
+
         tableGroup.ungroup();
     }
 }

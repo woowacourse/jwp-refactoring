@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import kitchenpos.ui.dto.OrderUpdateRequest;
@@ -30,10 +31,12 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         menuService.validateExistenceByIds(request.getMenuIds());
-        orderTableService.validateNotEmptyById(request.getOrderTableId());
 
-        final Order order = orderRepository.save(request.toEntity());
-        return OrderResponse.from(order);
+        final OrderTable orderTable = orderTableService.findByIdOrThrow(request.getOrderTableId());
+        final Order order = new Order(orderTable, request.getOrderLineItems());
+
+        final Order saved = orderRepository.save(order);
+        return OrderResponse.from(saved);
     }
 
     public List<OrderResponse> list() {

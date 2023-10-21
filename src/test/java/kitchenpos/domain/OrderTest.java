@@ -12,17 +12,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OrderTest {
 
     @Test
-    @DisplayName("생성할 때 주문 테이블 ID가 없으면 예외가 발생한다")
+    @DisplayName("생성할 때 주문 테이블이 없으면 예외가 발생한다")
     void create() {
         assertThatThrownBy(() -> new Order(null, List.of(new OrderLineItem())))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블 ID가 필요합니다.");
+                .hasMessage("주문 테이블이 없거나 빈 주문 테이블입니다.");
     }
 
     @Test
     @DisplayName("생성할 때 주문 항목이 없으면 예외가 발생한다")
     void create2() {
-        assertThatThrownBy(() -> new Order(1L, emptyList()))
+        assertThatThrownBy(() -> new Order(new OrderTable(), emptyList()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목이 필요합니다.");
     }
@@ -31,7 +31,7 @@ class OrderTest {
     @DisplayName("주문 상태를 변경할 때 완료 상태이면 예외가 발생한다")
     void changeOrderStatus() {
         //given
-        final Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem()));
+        final Order order = new Order(1L, new OrderTable(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem()));
 
         //when, then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
