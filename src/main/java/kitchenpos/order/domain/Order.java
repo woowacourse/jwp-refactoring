@@ -1,54 +1,65 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.Table;
 
+@Table(name = "ORDERS")
 public class Order {
     @Id
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    @Embedded.Empty
+    private OrderLineItems orderLineItems;
+
+    private Order() {
+    }
+
+    public Order(Long orderTableId, OrderLineItems orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private Order(
+            Long id,
+            Long orderTableId,
+            OrderStatus orderStatus,
+            LocalDateTime orderedTime,
+            OrderLineItems orderLineItems
+    ) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void updateOrderStatus(OrderStatus desiredStatus) {
+        if (desiredStatus != this.orderStatus.next()) {
+            throw new IllegalArgumentException("주문 상태를 변경할 수 없습니다.");
+        }
+        this.orderStatus = desiredStatus;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

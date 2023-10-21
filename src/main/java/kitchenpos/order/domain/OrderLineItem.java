@@ -18,7 +18,7 @@ public class OrderLineItem {
         this(null, menuId, quantity);
     }
 
-    public OrderLineItem(Long seq, Long menuId, long quantity) {
+    private OrderLineItem(Long seq, Long menuId, long quantity) {
         this.seq = seq;
         this.menuId = AggregateReference.to(menuId);
         this.quantity = quantity;
