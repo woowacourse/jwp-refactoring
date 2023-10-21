@@ -6,6 +6,7 @@ import javax.transaction.Transactional;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderValidator;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.dto.order.OrderChangeStatusRequest;
 import kitchenpos.dto.order.OrderCreateRequest;
@@ -16,7 +17,6 @@ import kitchenpos.exception.MenuException.NotFoundMenuException;
 import kitchenpos.exception.OrderException;
 import kitchenpos.exception.OrderTableException;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -25,15 +25,12 @@ import org.springframework.stereotype.Service;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository,
-                        final OrderLineItemRepository orderLineItemRepository,
                         final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -43,16 +40,11 @@ public class OrderService {
         final List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
-
-        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
-             throw new OrderException.NotFoundOrderLineItemMenuExistException();
-        }
+        OrderValidator.validateOrderLineItemSize(orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(OrderTableException.NotFoundOrderTableException::new);
-        if (orderTable.isEmpty()) {
-            throw new OrderException.CannotOrderStateByOrderTableEmptyException();
-        }
+        OrderValidator.validateOrderTable(orderTable);
 
         final Order order = Order.from(orderTable);
         final Order savedOrder = orderRepository.save(order);
@@ -61,7 +53,8 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    private void associateOrderLineItem(final List<OrderLineItemRequest> orderLineItemRequests, final Order savedOrder) {
+    private void associateOrderLineItem(final List<OrderLineItemRequest> orderLineItemRequests,
+                                        final Order savedOrder) {
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(NotFoundMenuException::new);
