@@ -7,7 +7,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
-import kitchenpos.vo.Money;
+import kitchenpos.support.money.Money;
 
 public class MenuFixture {
 

@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import kitchenpos.common.BaseEntity;
+import kitchenpos.support.domain.BaseEntity;
 import org.springframework.util.CollectionUtils;
 
 @Entity

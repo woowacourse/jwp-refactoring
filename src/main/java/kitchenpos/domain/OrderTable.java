@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.common.BaseEntity;
+import kitchenpos.support.domain.BaseEntity;
 
 @Entity
 public class OrderTable extends BaseEntity {

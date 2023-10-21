@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.Product;
-import kitchenpos.vo.Money;
+import kitchenpos.support.money.Money;
 
 public class ProductFixture {
 

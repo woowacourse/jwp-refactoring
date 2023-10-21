@@ -1,4 +1,4 @@
-package kitchenpos.vo;
+package kitchenpos.support.money;
 
 import java.math.BigDecimal;
 import java.util.Collection;

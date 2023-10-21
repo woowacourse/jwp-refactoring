@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos.support.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

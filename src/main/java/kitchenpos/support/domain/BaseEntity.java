@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos.support.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.EntityListeners;

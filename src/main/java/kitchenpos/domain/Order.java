@@ -15,7 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.common.BaseEntity;
+import kitchenpos.support.domain.BaseEntity;
 
 @Table(name = "orders")
 @Entity

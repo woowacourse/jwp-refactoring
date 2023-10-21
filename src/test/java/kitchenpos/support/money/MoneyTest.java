@@ -1,7 +1,7 @@
-package kitchenpos.vo;
+package kitchenpos.support.money;
 
 import static java.util.function.Function.identity;
-import static kitchenpos.vo.Money.valueOf;
+import static kitchenpos.support.money.Money.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

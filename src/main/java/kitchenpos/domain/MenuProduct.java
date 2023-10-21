@@ -8,8 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.common.BaseEntity;
-import kitchenpos.vo.Money;
+import kitchenpos.support.domain.BaseEntity;
+import kitchenpos.support.money.Money;
 
 @Entity
 public class MenuProduct extends BaseEntity {

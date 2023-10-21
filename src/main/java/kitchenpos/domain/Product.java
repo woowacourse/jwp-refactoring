@@ -6,8 +6,8 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.common.BaseEntity;
-import kitchenpos.vo.Money;
+import kitchenpos.support.domain.BaseEntity;
+import kitchenpos.support.money.Money;
 
 @Entity
 public class Product extends BaseEntity {

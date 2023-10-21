@@ -2,7 +2,7 @@ package kitchenpos.dto;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
-import static kitchenpos.vo.Money.valueOf;
+import static kitchenpos.support.money.Money.valueOf;
 
 import java.math.BigDecimal;
 import java.util.List;

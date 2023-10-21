@@ -1,9 +1,9 @@
-package kitchenpos.common;
+package kitchenpos.support.money;
 
 import java.math.BigDecimal;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import kitchenpos.vo.Money;
+import kitchenpos.support.money.Money;
 
 @Converter(autoApply = true)
 public class MoneyConverter implements AttributeConverter<Money, BigDecimal> {

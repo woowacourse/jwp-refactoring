@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.vo.Money;
+import kitchenpos.support.money.Money;
 
 @Embeddable
 public class MenuProducts {
