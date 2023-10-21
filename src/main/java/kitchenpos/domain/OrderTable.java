@@ -1,27 +1,57 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
-    private boolean empty;
+    private boolean isEmpty;
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean isEmpty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this.isEmpty = isEmpty;
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, null, numberOfGuests, empty);
+    public OrderTable(int numberOfGuests, boolean isEmpty) {
+        this(null, null, numberOfGuests, isEmpty);
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean isEmpty) {
+        this(null, tableGroupId, numberOfGuests, isEmpty);
     }
 
     public OrderTable() {
+    }
+
+    public void changeIsEmpty(boolean hasCookingOrMealOrder, boolean isEmpty) {
+        validateIsEmptyCanBeChanged(hasCookingOrMealOrder);
+        this.isEmpty = isEmpty;
+    }
+
+    private void validateIsEmptyCanBeChanged(boolean hasCookingOrMealOrder) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("단체 지정된 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
+        }
+        if (hasCookingOrMealOrder) {
+            throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
+        }
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        validateNumberOfGuestsCanBeChanged(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuestsCanBeChanged(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수는 0 미만일 수 없습니다.");
+        }
+        if (isEmpty) {
+            throw new IllegalArgumentException("빈 주문 테이블에 손님 수를 변경할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -49,10 +79,10 @@ public class OrderTable {
     }
 
     public boolean isEmpty() {
-        return empty;
+        return isEmpty;
     }
 
     public void setEmpty(final boolean empty) {
-        this.empty = empty;
+        this.isEmpty = empty;
     }
 }

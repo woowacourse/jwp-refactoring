@@ -1,15 +1,19 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
+
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.table.OrderTableCreateRequest;
+import kitchenpos.dto.table.OrderTableIsEmptyUpdateRequest;
+import kitchenpos.dto.table.OrderTableNumberOfGuestsUpdateRequest;
+import kitchenpos.dto.table.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -22,53 +26,48 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
+        OrderTable emptyOrderTable = orderTableDao.save(request.toEmptyOrderTable());
+        return OrderTableResponse.from(emptyOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
-    }
-
-    @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
+    public List<OrderTableResponse> list() {
+        List<OrderTable> orderTables = orderTableDao.findAll();
+        return orderTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeIsEmpty(
+            Long orderTableId,
+            OrderTableIsEmptyUpdateRequest orderTableUpdateRequest
+    ) {
+        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        boolean hasCookingOrMealOrder = orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId,
+                List.of(COOKING.name(), MEAL.name())
+        );
 
+        orderTable.changeIsEmpty(hasCookingOrMealOrder, orderTableUpdateRequest.isEmpty());
+
+        OrderTable changedOrderTable = orderTableDao.save(orderTable);
+        return OrderTableResponse.from(changedOrderTable);
+    }
+
+    @Transactional
+    public OrderTableResponse changeNumberOfGuests(
+            Long orderTableId,
+            OrderTableNumberOfGuestsUpdateRequest orderTableUpdateRequest
+    ) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.changeNumberOfGuests(orderTableUpdateRequest.getNumberOfGuests());
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableDao.save(savedOrderTable);
+        OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(changedOrderTable);
     }
 }
