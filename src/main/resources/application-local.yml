@@ -9,10 +9,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        ddl-auto: create
-    defer-datasource-initialization: true
+        ddl-auto: validate
+    defer-datasource-initialization: false
   flyway:
-    enabled: false
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
 logging:
   level:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
