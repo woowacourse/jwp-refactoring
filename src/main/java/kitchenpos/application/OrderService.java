@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
@@ -19,15 +19,16 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+
+    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final OrderTableDao orderTableDao,
             final OrderRepository orderRepository) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderTableDao = orderTableDao;
         this.orderRepository = orderRepository;
     }
@@ -40,7 +41,7 @@ public class OrderService {
         }
 
         final List<Long> menuIds = command.getMenuIds();
-        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("주문항목은 각각 다른 메뉴이며 존재해야합니다.");
         }
 

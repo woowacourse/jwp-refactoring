@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import kitchenpos.domain.menu.Menu;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,7 +35,7 @@ class MenuTest {
 
         //expect
         assertThatThrownBy(() -> Menu.of(1L, "메뉴", 가격, 1L, Map.of(new Product("상품", BigDecimal.valueOf(10_000)), 1L)))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

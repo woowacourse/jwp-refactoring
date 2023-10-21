@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class MenuServiceTest extends ServiceTest {
 
             //expect
             assertThatThrownBy(() -> menuService.create(커맨드))
-                    .isInstanceOf(NullPointerException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -156,7 +156,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴_목록을_조회할_수_있다() {
             //given
-            List<Long> 모든_메뉴_아이디 = menuDao.findAll().stream()
+            List<Long> 모든_메뉴_아이디 = menuRepository.findAll().stream()
                     .map(Menu::getId)
                     .collect(Collectors.toList());
 
