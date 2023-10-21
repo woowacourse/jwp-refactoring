@@ -13,8 +13,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,16 +26,10 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @Nested
     class 메뉴를_생성할_때 {
