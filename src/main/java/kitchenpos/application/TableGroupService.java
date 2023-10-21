@@ -45,12 +45,9 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty()) {
-                throw new IllegalArgumentException("??");
-            }
-            if (savedOrderTable.existsTableGroup()) {
-                throw new IllegalArgumentException("!!");
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || orderTable.existsTableGroup()) {
+                throw new IllegalArgumentException();
             }
         }
     }
@@ -67,6 +64,14 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
+        validateOrder(orderTables);
+
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+    }
+
+    private void validateOrder(List<OrderTable> orderTables) {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -74,10 +79,6 @@ public class TableGroupService {
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
-        }
-
-        for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
         }
     }
 }
