@@ -1,30 +1,25 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+    @ManyToOne
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        validateGuest(numberOfGuests);
-
+    public OrderTable(final Long id, final TableGroup tableGroup) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    private void validateGuest(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("게스트는 음수일 수 없습니다.");
-        }
-    }
-
-    public OrderTable(final Long id, final Long tableGroupId) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = 0;
         this.empty = true;
     }
@@ -33,8 +28,8 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -49,17 +44,21 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void attachTableGroup(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void attachTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
         this.empty = false;
+        tableGroup.getOrderTables().add(this);
     }
 
     public void detachTableGroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
         this.empty = false;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
+    }
+
+    protected OrderTable() {
     }
 }
