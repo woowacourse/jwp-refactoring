@@ -1,7 +1,10 @@
 package kitchenpos.ui.request;
 
+import javax.validation.constraints.NotBlank;
+
 public class MenuGroupCreateRequest {
 
+    @NotBlank
     private final String name;
 
     public MenuGroupCreateRequest(final String name) {
