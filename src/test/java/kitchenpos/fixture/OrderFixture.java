@@ -9,13 +9,6 @@ public class OrderFixture {
 
     public static Order 주문(final Long id, final Long orderTableId, final String orderStatus,
                            final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        final Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-
-        return order;
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }
