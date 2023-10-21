@@ -5,6 +5,7 @@ import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
 import kitchenpos.application.product.ProductService;
+import kitchenpos.application.product.request.ProductCreateRequest;
 import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
@@ -92,12 +93,12 @@ public abstract class ServiceTestHelper {
         주문 = 주문_식사_상태로_변경(주문);
     }
 
-    public Product 상품_등록(final String name, final Long price) {
-        Product product = Product.of(name, createBigDecimal(price));
-        return productService.create(product);
+    public Product 상품_등록(String name, Long price) {
+        ProductCreateRequest request = new ProductCreateRequest(name, createBigDecimal(price));
+        return productService.create(request);
     }
 
-    private BigDecimal createBigDecimal(final Long price) {
+    private BigDecimal createBigDecimal(Long price) {
         if (price == null) {
             return null;
         }
@@ -108,7 +109,7 @@ public abstract class ServiceTestHelper {
         return productService.list();
     }
 
-    public MenuGroup 메뉴_그룹_등록(final String name) {
+    public MenuGroup 메뉴_그룹_등록(String name) {
         MenuGroup menuGroup = new MenuGroup(name);
         return menuGroupService.create(menuGroup);
     }
@@ -117,13 +118,13 @@ public abstract class ServiceTestHelper {
         return menuGroupService.list();
     }
 
-    public Menu 메뉴_등록(final String name, final Long price, final MenuGroup menuGroup, final Product... products) {
-        final Menu menu = Menu.of(name, price, menuGroup.getId());
+    public Menu 메뉴_등록(String name, Long price, MenuGroup menuGroup, Product... products) {
+        Menu menu = Menu.of(name, price, menuGroup.getId());
         addMenuProducts(menu, products);
         return menuService.create(menu);
     }
 
-    private void addMenuProducts(final Menu menu, final Product[] products) {
+    private void addMenuProducts(Menu menu, Product[] products) {
         Arrays.stream(products)
                 .forEach(product -> menu.addProduct(product.getId(), 1));
     }
@@ -132,7 +133,7 @@ public abstract class ServiceTestHelper {
         return menuService.list();
     }
 
-    public Menu 메뉴_찾기(final Long id) {
+    public Menu 메뉴_찾기(Long id) {
         return 메뉴_목록_조회().stream()
                 .filter(menu -> menu.getId().equals(id))
                 .findFirst()
@@ -144,7 +145,7 @@ public abstract class ServiceTestHelper {
         return tableService.create(orderTable);
     }
 
-    public OrderTable 손님_채운_테이블_생성(final int numberOfGuests) {
+    public OrderTable 손님_채운_테이블_생성(int numberOfGuests) {
         OrderTable orderTable = OrderTable.of(numberOfGuests, false);
         return tableService.create(orderTable);
     }
@@ -153,31 +154,31 @@ public abstract class ServiceTestHelper {
         return tableService.list();
     }
 
-    public OrderTable 테이블_손님_수_변경(final Long orderTableId, final int numberOfGuests) {
+    public OrderTable 테이블_손님_수_변경(Long orderTableId, int numberOfGuests) {
         OrderTable orderTable = OrderTable.of(numberOfGuests, false);
         return tableService.changeNumberOfGuests(orderTableId, orderTable);
     }
 
-    public OrderTable 테이블_채움(final Long orderTableId) {
+    public OrderTable 테이블_채움(Long orderTableId) {
         OrderTable orderTable = OrderTable.of(0, false); // 요청이지
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 
-    public OrderTable 테이블_비움(final Long orderTableId) {
+    public OrderTable 테이블_비움(Long orderTableId) {
         OrderTable orderTable = OrderTable.of(0, true);
         return tableService.changeEmpty(orderTableId, orderTable);
     }
 
-    public TableGroup 테이블_그룹화(final OrderTable... tables) {
+    public TableGroup 테이블_그룹화(OrderTable... tables) {
         TableGroup tableGroup = TableGroup.of(List.of(tables));
         return tableGroupService.create(tableGroup);
     }
 
-    public void 테이블_그룹해제(final TableGroup tableGroup) {
+    public void 테이블_그룹해제(TableGroup tableGroup) {
         tableGroupService.ungroup(tableGroup.getId());
     }
 
-    public Order 주문_요청(final OrderTable orderTable, final Menu... menus) {
+    public Order 주문_요청(OrderTable orderTable, Menu... menus) {
         Order order = Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
         addOrderLineItems(order, menus);
         return orderService.create(order);
@@ -188,18 +189,18 @@ public abstract class ServiceTestHelper {
                 .forEach(order::addOrderLineItem);
     }
 
-    private List<OrderLineItem> makeOrderLineItems(final Menu[] menus) {
+    private List<OrderLineItem> makeOrderLineItems(Menu[] menus) {
         return Arrays.stream(menus)
                 .map(menu -> OrderLineItem.of(null, menu.getId(), 1))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Order 주문_식사_상태로_변경(final Order order) {
+    public Order 주문_식사_상태로_변경(Order order) {
         order.setOrderStatus(OrderStatus.MEAL.name());
         return orderService.changeOrderStatus(order.getId(), order);
     }
 
-    public Order 주문_완료_상태로_변경(final Order order) {
+    public Order 주문_완료_상태로_변경(Order order) {
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         return orderService.changeOrderStatus(order.getId(), order);
     }
