@@ -101,34 +101,4 @@ class TableServiceTest extends IntegrationTest {
                 .filteredOn(found -> Objects.equals(found.getNumberOfGuests(), numberOfGuests))
                 .hasSize(1);
     }
-
-    @Test
-    @DisplayName("특정 테이블의 방문한 손님 수는 0 이상이어야 한다.")
-    void 주문_테이블_방문한_손님_수_변경_실패_음수() {
-        // given
-        final OrderTable table = tableService.list().get(0);
-        table.changeEmpty(false);
-        tableService.changeEmpty(table.getId(), table);
-
-        // when
-        table.changeNumberOfGuests(-10);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), table))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("빈 테이블의 방문한 손님 수를 변경할 수 없다.")
-    void 주문_테이블_방문한_손님_수_변경_실패_빈_테이블() {
-        // given
-        final OrderTable table = tableService.create(빈_테이블_생성());
-
-        // when
-        table.changeNumberOfGuests(10);
-
-        // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(table.getId(), table))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
 }

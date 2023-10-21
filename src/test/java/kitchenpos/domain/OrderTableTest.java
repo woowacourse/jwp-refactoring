@@ -14,6 +14,27 @@ import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
 
+    @Test
+    @DisplayName("특정 테이블의 방문한 손님 수는 0 이상이어야 한다.")
+    void 주문_테이블_방문한_손님_수_변경_실패_음수() {
+        // given
+        final OrderTable table = 주문_테이블_생성();
+
+        // expected
+        assertThatThrownBy(() -> table.changeNumberOfGuests(-10))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("빈 테이블의 방문한 손님 수를 변경할 수 없다.")
+    void 주문_테이블_방문한_손님_수_변경_실패_빈_테이블() {
+        // given
+        final OrderTable table = 빈_테이블_생성();
+
+        // expected
+        assertThatThrownBy(() -> table.changeNumberOfGuests(10))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
     @Test
     @DisplayName("식사 상태인 테이블을 비울 수 없다.")

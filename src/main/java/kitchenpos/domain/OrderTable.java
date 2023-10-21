@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 @Entity
 public class OrderTable {
 
+    private static final int NUMBER_OF_GUESTS_MIN = 0;
+
     @OneToMany(mappedBy = "orderTable")
     private final List<Order> orders = new ArrayList<>();
     @Id
@@ -34,6 +36,7 @@ public class OrderTable {
     public OrderTable(final TableGroup tableGroup,
                       final int numberOfGuests,
                       final boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
@@ -41,8 +44,7 @@ public class OrderTable {
 
     public OrderTable(final int numberOfGuests,
                       final boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this(null, numberOfGuests, empty);
     }
 
     public void group(final TableGroup tableGroup) {
@@ -60,12 +62,22 @@ public class OrderTable {
         }
     }
 
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < NUMBER_OF_GUESTS_MIN) {
+            throw new IllegalArgumentException("테이블 당 인원 수는 최소 " + NUMBER_OF_GUESTS_MIN + "명입니다.");
+        }
+    }
+
     public void unGroup() {
         this.tableGroup = null;
         changeEmpty(false);
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        if (isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블의 인원 수를 변경할 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
