@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +36,7 @@ class OrderServiceTest {
     @Mock
     private OrderLineItemDao orderLineItemDao;
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -70,7 +70,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
 
         // then
-        then(orderTableDao).should(never()).findById(anyLong());
+        then(orderTableRepository).should(never()).findById(anyLong());
     }
 
     @Test
@@ -89,7 +89,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
 
         // then
-        then(orderTableDao).should(never()).findById(anyLong());
+        then(orderTableRepository).should(never()).findById(anyLong());
     }
 
     @Test
@@ -102,10 +102,7 @@ class OrderServiceTest {
         given(menuRepository.countByIdIn(anyList()))
                 .willReturn(2L);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        given(orderTableDao.findById(anyLong()))
-                .willReturn(Optional.of(orderTable));
+        OrderTable orderTable = new OrderTable(1, true);
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -126,8 +123,8 @@ class OrderServiceTest {
         given(menuRepository.countByIdIn(anyList()))
                 .willReturn(2L);
 
-        OrderTable orderTable = new OrderTable();
-        given(orderTableDao.findById(anyLong()))
+        OrderTable orderTable = new OrderTable(1, false);
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         given(orderDao.save(any()))
                 .willReturn(order);
