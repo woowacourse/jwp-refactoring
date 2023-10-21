@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +16,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        return orderTableRepository.save(orderTable);
+    public OrderTable create(final OrderTableCreateRequest request) {
+        return orderTableRepository.save(new OrderTable(request.getNumberOfGuest(), request.isEmpty()));
     }
 
     public List<OrderTable> list() {

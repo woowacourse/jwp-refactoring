@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.존재하지_않는_주문_테이블_생성;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.치킨_8000원;
 import static kitchenpos.fixture.ProductFixture.피자_8000원;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,6 +19,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("주문 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 주문_등록_성공_저장() {
         // given
-        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final OrderTable orderTable = orderTableService.create(new OrderTableCreateRequest(0, false));
         final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
@@ -66,7 +65,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("주문 등록 시 주문 항목의 개수는 최소 1개 이상이다.")
     void 주문_등록_실패_주문_항목_개수_미달() {
         // given
-        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final OrderTable orderTable = orderTableService.create(new OrderTableCreateRequest(0, false));
 
         // expected
         assertThatThrownBy(() -> orderService.create(RequestParser.of(orderTable, Collections.emptyList())))
@@ -77,7 +76,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("존재하지 않는 주문 항목으로 주문을 등록할 수 없다.")
     void 주문_등록_실패_존재하지_않는_주문_항목() {
         // given
-        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final OrderTable orderTable = orderTableService.create(new OrderTableCreateRequest(0, false));
         final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final Product fakePizza = 피자_8000원();
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
@@ -110,7 +109,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("빈 테이블에서 주문을 등록할 수 없다.")
     void 주문_등록_실패_빈_테이블() {
         // given
-        final OrderTable emptyTable = orderTableService.create(빈_테이블_생성());
+        final OrderTable emptyTable = orderTableService.create(new OrderTableCreateRequest(0, true));
         final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
@@ -124,7 +123,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("주문의 상태를 변경할 수 있다.")
     void 주문_상태_변경_성공() {
         // given
-        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final OrderTable orderTable = orderTableService.create(new OrderTableCreateRequest(0, false));
         final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,6 +9,7 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,9 +28,9 @@ class TableGroupServiceTest extends IntegrationTest {
     void 단체_테이블_지정_성공_주문_테이블로_변경() {
         // given
         final List<OrderTable> existingTables = List.of(
-                tableService.create(빈_테이블_생성()),
-                tableService.create(빈_테이블_생성()),
-                tableService.create(빈_테이블_생성())
+                tableService.create(new OrderTableCreateRequest(0, true)),
+                tableService.create(new OrderTableCreateRequest(0, true)),
+                tableService.create(new OrderTableCreateRequest(0, true))
         );
         final long emptyCountBefore = countEmpty(existingTables);
 
