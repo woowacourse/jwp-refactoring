@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -46,6 +47,9 @@ public class Menu extends BaseDate {
     }
 
     public void setPrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
         this.price = price;
     }
 
