@@ -7,21 +7,20 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.refactoring.domain.Menu;
-import kitchenpos.refactoring.domain.MenuGroup;
-import kitchenpos.refactoring.domain.MenuGroupRepository;
-import kitchenpos.refactoring.domain.MenuProduct;
-import kitchenpos.refactoring.domain.MenuRepository;
-import kitchenpos.refactoring.domain.Price;
-import kitchenpos.refactoring.domain.Product;
-import kitchenpos.refactoring.domain.ProductRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -68,7 +67,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void success() {
             // given
-            OrderLineItem orderLineItem = OrderLineItemFixture.create(menu.getId(), 2L);
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2L);
             Order order = OrderFixture.create(orderTable.getId(), List.of(orderLineItem));
 
             // when
@@ -93,7 +92,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 메뉴에_등록되지_않은_주문_상품이_있으면_실패() {
             // given
-            OrderLineItem orderLineItem = OrderLineItemFixture.create(0L, 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(0L, 1L);
 
             Order order = OrderFixture.create(orderTable.getId(), List.of(orderLineItem));
 
@@ -106,7 +105,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 등록되지_않은_주문테이블이면_실패() {
             // given
-            OrderLineItem orderLineItem = OrderLineItemFixture.create(menu.getId(), 2L);
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2L);
             Order order = OrderFixture.create(0L, List.of(orderLineItem));
 
             // when
@@ -118,7 +117,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_테이블이_비어있으면_실패() {
             // given
-            OrderLineItem orderLineItem = OrderLineItemFixture.create(menu.getId(), 2L);
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2L);
             OrderTable emptyTable = orderTableDao.save(OrderTableFixture.create(true, 0));
             Order order = OrderFixture.create(emptyTable.getId(), List.of(orderLineItem));
 
@@ -133,7 +132,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_목록_조회() {
         // given
-        OrderLineItem orderLineItem = OrderLineItemFixture.create(menu.getId(), 2L);
+        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2L);
         Order order = OrderFixture.create(orderTable.getId(), List.of(orderLineItem));
 
         Order savedOrder = orderService.create(order);
@@ -153,7 +152,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void success() {
             // given
-            OrderLineItem orderLineItem = OrderLineItemFixture.create(menu.getId(), 2L);
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2L);
             Order order = OrderFixture.create(orderTable.getId(), List.of(orderLineItem));
 
             Order savedOrder = orderService.create(order);
@@ -183,7 +182,7 @@ class OrderServiceTest extends ServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void 주문_상태가_완료이면_실패(OrderStatus orderStatus) {
             // given
-            OrderLineItem orderLineItem = OrderLineItemFixture.create(menu.getId(), 10L);
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 10L);
 
             Order order = OrderFixture.create(orderTable.getId(), List.of(orderLineItem));
             Order savedOrder = orderService.create(order);

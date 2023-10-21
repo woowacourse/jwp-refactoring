@@ -1,9 +1,9 @@
 package kitchenpos.support;
 
-import kitchenpos.refactoring.application.MenuGroupService;
-import kitchenpos.refactoring.application.MenuService;
-import kitchenpos.application.OrderService;
-import kitchenpos.refactoring.application.ProductService;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.product.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
