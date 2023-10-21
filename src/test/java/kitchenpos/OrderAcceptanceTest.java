@@ -24,6 +24,7 @@ import static kitchenpos.step.OrderStep.주문_상태_변경_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청하고_주문_반환;
 import static kitchenpos.step.OrderStep.주문_조회_요청;
+import static kitchenpos.step.ProductStep.toRequest;
 import static kitchenpos.step.ProductStep.상품_생성_요청하고_아이디_반환;
 import static kitchenpos.step.TableStep.테이블_생성_요청하고_테이블_반환;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,7 +45,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
@@ -85,7 +86,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
@@ -113,7 +114,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
@@ -148,7 +149,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         void 주문을_생성하려면_주문하는_테이블이_존재해야_한다() {
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
@@ -185,7 +186,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
@@ -232,7 +233,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
@@ -275,7 +276,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 일식();
             final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long productId = 상품_생성_요청하고_아이디_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
             menuProduct.setProductId(productId);
