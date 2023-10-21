@@ -11,4 +11,8 @@ public enum OrderStatus {
     public static List<String> notCompletion() {
         return List.of(COOKING.name(), MEAL.name());
     }
+
+    public boolean isCompletion() {
+        return this == COMPLETION;
+    }
 }

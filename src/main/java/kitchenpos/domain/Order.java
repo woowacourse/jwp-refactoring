@@ -33,7 +33,7 @@ public class Order {
   }
 
   public void changeStatus(final OrderStatus orderStatus) {
-    if (this.orderStatus == OrderStatus.COMPLETION) {
+    if (orderStatus.isCompletion()) {
       throw new IllegalArgumentException();
     }
 
