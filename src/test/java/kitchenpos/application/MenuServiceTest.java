@@ -1,10 +1,18 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -16,16 +24,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -39,7 +37,7 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Mock
     private MenuProductDao menuProductDao;
@@ -61,9 +59,9 @@ class MenuServiceTest {
 
             final var product1 = ProductFixture.상품_망고_1000원();
             final var product2 = ProductFixture.상품_치킨_15000원();
-            given(productDao.findById(product1.getId()))
+            given(productRepository.findById(product1.getId()))
                     .willReturn(Optional.of(product1));
-            given(productDao.findById(product2.getId()))
+            given(productRepository.findById(product2.getId()))
                     .willReturn(Optional.of(product2));
 
             final var menuProduct1 = MenuProductFixture.메뉴상품_망고_2개();
@@ -108,7 +106,7 @@ class MenuServiceTest {
             final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -123,9 +121,8 @@ class MenuServiceTest {
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
 
-            final var invalidProduct = new Product();
-            invalidProduct.setPrice(BigDecimal.ZERO);
-            given(productDao.findById(anyLong()))
+            final var invalidProduct = ProductFixture.상품_망고_N원(0);
+            given(productRepository.findById(anyLong()))
                     .willReturn(Optional.of(invalidProduct));
 
             // when & then
