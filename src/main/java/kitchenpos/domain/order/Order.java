@@ -1,13 +1,11 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.domain.order_line_item.OrderLineItem;
 import kitchenpos.domain.order_table.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -25,14 +23,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime orderedTime;
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final OrderLineItems orderLineItems) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
@@ -57,7 +55,7 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 

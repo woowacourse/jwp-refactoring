@@ -97,7 +97,7 @@ class OrderServiceTest {
             // then
             assertEquals(OrderStatus.COOKING, savedOrder.getOrderStatus());
 
-            final Long orderLineItemId = savedOrder.getOrderLineItems().get(0).getSeq();
+            final Long orderLineItemId = savedOrder.getOrderLineItems().getValues().get(0).getSeq();
             orderLineItemRepository.findById(orderLineItemId)
                     .ifPresentOrElse(
                             actual -> assertEquals(savedOrder.getId(), actual.getOrder().getId()),

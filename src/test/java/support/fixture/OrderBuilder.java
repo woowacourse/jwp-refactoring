@@ -1,6 +1,7 @@
 package support.fixture;
 
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order_line_item.OrderLineItem;
 import kitchenpos.domain.order_table.OrderTable;
@@ -36,6 +37,7 @@ public class OrderBuilder {
     }
 
     public Order build() {
+        final OrderLineItems orderLineItems = new OrderLineItems(this.orderLineItems);
         return new Order(orderTable, orderStatus, orderLineItems);
     }
 }

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order_line_item.OrderLineItem;
 import kitchenpos.domain.order_table.OrderTable;
@@ -10,11 +11,9 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -37,17 +36,16 @@ public class OrderService {
 
     @Transactional
     public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        final OrderLineItems orderLineItems = order.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (orderLineItems.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(orderLineItem -> orderLineItem.getMenu().getId())
-                .collect(Collectors.toList());
+        final List<Long> menuIds = orderLineItems.getMenuIds();
 
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        final int savedMenuSize = menuRepository.countByIdIn(menuIds);
+        if (orderLineItems.isNotSameSize(savedMenuSize)) {
             throw new IllegalArgumentException();
         }
 
@@ -66,7 +64,7 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+        for (final OrderLineItem orderLineItem : orderLineItems.getValues()) {
             orderLineItem.setOrder(order);
             orderLineItemRepository.save(orderLineItem);
         }
