@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    //SELECT COUNT(*) FROM menu WHERE id IN (:ids)
     int countByIdIn(final List<Long> menuIds);
 }
