@@ -20,11 +20,11 @@ public class ProductServiceFixture {
     @BeforeEach
     void setUp() {
         저장된_상품 = new Product(상품_이름, 상품_가격);
-        저장된_상품.setId(1L);
+        저장된_상품.updateId(1L);
         저장된_상품1 = 저장된_상품;
 
         저장된_상품2 = new Product("상품2", BigDecimal.valueOf(1_000));
-        저장된_상품2.setId(2L);
+        저장된_상품2.updateId(2L);
 
         저장된_상품들 = List.of(저장된_상품1, 저장된_상품2);
     }

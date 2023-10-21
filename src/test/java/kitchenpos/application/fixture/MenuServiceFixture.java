@@ -32,9 +32,9 @@ public class MenuServiceFixture {
     @BeforeEach
     void setUp() {
         상품1 = new Product("상품1", BigDecimal.valueOf(1_000));
-        상품1.setId(1L);
+        상품1.updateId(1L);
         상품2 = new Product("상품2", BigDecimal.valueOf(1_000));
-        상품2.setId(2L);
+        상품2.updateId(2L);
 
         메뉴_상품1 = new MenuProduct(상품1.getId(), 2);
         메뉴_상품1.setSeq(1L);
