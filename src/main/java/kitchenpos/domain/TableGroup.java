@@ -39,7 +39,7 @@ public class TableGroup {
         }
     }
 
-    // TODO 도메인에서는 빈 생성자로생성 후 add
+    // TODO 도메인에서는 빈 생성자로 생성 후 add
     public void addOrderTables(List<OrderTable> orderTables) {
         validateOrderTablesSize(orderTables);
         orderTables.forEach(orderTable -> orderTable.group(this));

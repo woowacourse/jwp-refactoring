@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
@@ -59,7 +58,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order savedOrder = orderRepository.save(new Order(orderTable, LocalDateTime.now()));
+        final Order savedOrder = orderRepository.save(new Order(orderTable));
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItemRepository.save(
                     new OrderLineItem(savedOrder, orderLineItem.getMenu(), orderLineItem.getQuantity())

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -18,7 +19,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -34,18 +38,16 @@ public class Order {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
-    @Column
+    @CreatedDate
     private LocalDateTime orderedTime;
 
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable,
-                 final LocalDateTime orderedTime) {
+    public Order(final OrderTable orderTable) {
         this.orderTable = orderTable;
         orderTable.addOrder(this);
         this.orderStatus = COOKING;
-        this.orderedTime = orderedTime;
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

@@ -8,7 +8,6 @@ import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,8 +56,7 @@ class OrderTableTest {
         final OrderTable orderTable = 주문_테이블_생성();
 
         // when
-        /// TODO: 2023/10/20 auditing 
-        final Order order = new Order(orderTable, LocalDateTime.now());
+        final Order order = new Order(orderTable);
         order.changeOrderStatus(MEAL);
 
         // then

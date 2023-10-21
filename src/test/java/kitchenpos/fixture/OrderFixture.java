@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
@@ -12,7 +11,7 @@ import kitchenpos.domain.OrderTable;
 public class OrderFixture {
 
     public static Order 주문_생성_메뉴_당_1개씩(final OrderTable orderTable, final List<Menu> menus) {
-        final Order order = new Order(orderTable, LocalDateTime.now());
+        final Order order = new Order(orderTable);
         주문_항목_목록_생성(order, menus, 1L);
         return order;
     }
@@ -20,7 +19,7 @@ public class OrderFixture {
     public static Order 주문_생성_메뉴_당_1개씩_상태_설정(final OrderTable orderTable,
                                              final OrderStatus orderStatus,
                                              final List<Menu> menus) {
-        final Order order = new Order(orderTable, LocalDateTime.now());
+        final Order order = new Order(orderTable);
         order.changeOrderStatus(orderStatus);
         주문_항목_목록_생성(order, menus, 1L);
         return order;
