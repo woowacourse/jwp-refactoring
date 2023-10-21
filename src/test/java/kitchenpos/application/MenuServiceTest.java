@@ -13,6 +13,7 @@ import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class MenuServiceTest extends IntegrationTest {
     void 메뉴_등록_성공_저장() {
         // given
         final List<Product> products = List.of(productService.create(치킨_8000원()), productService.create(피자_8000원()));
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
         final Menu menu = menuService.create(
@@ -72,7 +73,7 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("등록되지 않은 상품이 포함된 메뉴를 등록할 수 없다.")
     void 메뉴_등록_실패_등록되지_않은_상품() {
         // given
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Product savedProduct = productService.create(치킨_8000원());
         final Product unsavedProduct = new Product("등록되지 않은 상품", BigDecimal.ONE);
 

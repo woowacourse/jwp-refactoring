@@ -21,6 +21,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
         final Product chicken = productService.create(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
         final Menu menu = menuService.create(
@@ -83,7 +84,7 @@ class OrderServiceTest extends IntegrationTest {
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
         final Product chicken = productService.create(치킨_8000원());
         final Product fakePizza = 피자_8000원();
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
         final Menu actualMenu = menuService.create(
@@ -102,7 +103,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable fakeOrderTable = 존재하지_않는_주문_테이블_생성();
         final Product chicken = productService.create(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
@@ -118,7 +119,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable emptyTable = orderTableService.create(빈_테이블_생성());
         final Product chicken = productService.create(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
@@ -134,7 +135,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
         final Product chicken = productService.create(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
