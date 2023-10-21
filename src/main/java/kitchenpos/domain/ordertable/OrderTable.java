@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.CannotChangeEmptyException;
+import kitchenpos.exception.InvalidUnGroupException;
 
 @Entity
 public class OrderTable {
@@ -18,7 +21,8 @@ public class OrderTable {
     @Id
     private Long id;
 
-    private Long tableGroupId;
+    @ManyToOne
+    private TableGroup tableGroup;
 
     @OneToMany
     private List<Order> order;
@@ -33,9 +37,9 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final Integer numberOfGuests, final Boolean empty) {
+    public OrderTable(final Long id, final TableGroup tableGroup, final Integer numberOfGuests, final Boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.tableStatus = new TableStatus(numberOfGuests, empty);
         this.order = new ArrayList<>();
     }
@@ -45,7 +49,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(final Boolean empty) {
-        if (tableGroupId != null) {
+        if (hasTableGroup()) {
             throw new CannotChangeEmptyException("그룹 지정된 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
 
@@ -61,6 +65,14 @@ public class OrderTable {
         this.order.add(order);
     }
 
+    public boolean hasTableGroup() {
+        return tableGroup != null;
+    }
+
+    public boolean isNotEmpty() {
+        return !isEmpty();
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,11 +82,12 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroupId;
+        return tableGroup.getId();
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void group(final TableGroup tableGroup) {
+        tableStatus.changeEmpty(false);
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -91,5 +104,15 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         tableStatus.changeEmpty(empty);
+    }
+
+    public void unGroup() {
+        if (tableGroup == null) {
+            throw new InvalidUnGroupException("그룹 지정되지 않은 테이블은 그룹을 해제할 수 없습니다.");
+        }
+        if (order.stream()
+                 .anyMatch(Order::isCookingOrMeal)) {
+            throw new InvalidUnGroupException("조리 또는 식사중인 테이블은 그룹을 해제할 수 없습니다.");
+        }
     }
 }

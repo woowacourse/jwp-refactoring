@@ -4,16 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dao.fakedao.InMemoryOrderDao;
 import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
 import kitchenpos.dao.fakedao.InMemoryTableGroupDao;
 import kitchenpos.domain.OrderTableFactory;
-import kitchenpos.domain.TableGroupFactory;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.exception.EntityNotFoundException;
+import kitchenpos.ui.request.SimpleIdRequest;
+import kitchenpos.ui.request.TableGroupCreateRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,13 +23,11 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest {
 
-    private OrderDao fakeOrderDao;
     private OrderTableDao fakeOrderTableDao;
     private TableGroupDao fakeTableGroupDao;
 
     @BeforeEach
     void setUp() {
-        fakeOrderDao = new InMemoryOrderDao();
         fakeOrderTableDao = new InMemoryOrderTableDao();
         fakeTableGroupDao = new InMemoryTableGroupDao();
     }
@@ -41,8 +40,8 @@ class TableGroupServiceTest {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne);
-            final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
+            final var tableGroup = new TableGroupCreateRequest(List.of(new SimpleIdRequest(tableOne.getId())));
+            final var tableGroupService = new TableGroupService(fakeOrderTableDao, fakeTableGroupDao);
 
             //when
             final ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
@@ -57,23 +56,27 @@ class TableGroupServiceTest {
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
             final var tableTwo = OrderTableFactory.createOrderTableOf(0, true);
             tableTwo.setId(Long.MAX_VALUE);
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne, tableTwo);
-            final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
+            final var tableGroup = new TableGroupCreateRequest(List.of(
+                    new SimpleIdRequest(tableOne.getId()),
+                    new SimpleIdRequest(tableTwo.getId())));
+            final var tableGroupService = new TableGroupService(fakeOrderTableDao, fakeTableGroupDao);
 
             //when
             final ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(EntityNotFoundException.class);
         }
 
         @Test
         void 단체_지정에_속한_테이블이_비어있지_않을_경우_예외가_발생한다() {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
-            final var tableTwe = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne, tableTwe);
-            final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
+            final var tableTwo = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
+            final var tableGroup = new TableGroupCreateRequest(List.of(
+                    new SimpleIdRequest(tableOne.getId()),
+                    new SimpleIdRequest(tableTwo.getId())));
+            final var tableGroupService = new TableGroupService(fakeOrderTableDao, fakeTableGroupDao);
 
             //when
             final ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
@@ -86,9 +89,11 @@ class TableGroupServiceTest {
         void 단체_지정이_속한_테이블이_두_개_이상일_경우_정상_등록된다() {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
-            final var tableTwe = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
-            final var tableGroup = TableGroupFactory.createTableGroupTableOf(tableOne, tableTwe);
-            final var tableGroupService = new TableGroupService(fakeOrderDao, fakeOrderTableDao, fakeTableGroupDao);
+            final var tableTwo = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
+            final var tableGroup = new TableGroupCreateRequest(List.of(
+                    new SimpleIdRequest(tableOne.getId()),
+                    new SimpleIdRequest(tableTwo.getId())));
+            final var tableGroupService = new TableGroupService(fakeOrderTableDao, fakeTableGroupDao);
 
             //when
             final var saved = tableGroupService.create(tableGroup);

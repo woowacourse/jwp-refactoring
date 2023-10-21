@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.fakedao.InMemoryOrderDao;
@@ -12,6 +13,7 @@ import kitchenpos.domain.OrderFactory;
 import kitchenpos.domain.OrderLineItemFactory;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTableFactory;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.CannotChangeEmptyException;
 import kitchenpos.exception.InvalidGuestNumberException;
 import kitchenpos.ui.request.OrderTableChangeEmptyRequest;
@@ -113,8 +115,9 @@ class TableServiceTest {
         void 테이블_그룹이_지정되어있다면_비어있는_상태로_변경할_수_없다() {
             // given
             final var table = OrderTableFactory.createOrderTableOf(0, false);
-            table.setTableGroupId(1L);
             final var savedTable = fakeOrderTableDao.save(table);
+            final var tableGroup = new TableGroup(List.of(savedTable));
+
             final var tableService = new TableService(fakeOrderTableDao);
 
             final var request = new OrderTableChangeEmptyRequest(true);
