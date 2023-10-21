@@ -18,14 +18,14 @@ public class MenuGroupServiceFixture {
     @BeforeEach
     void setUp() {
         저장된_메뉴_그룹 = new MenuGroup(메뉴_그룹_이름);
-        저장된_메뉴_그룹.setId(1L);
+        저장된_메뉴_그룹.updateId(1L);
 
         저장된_메뉴_그룹1 = new MenuGroup("메뉴 그룹1");
-        저장된_메뉴_그룹1.setId(1L);
+        저장된_메뉴_그룹1.updateId(1L);
         저장된_메뉴_그룹2 = new MenuGroup("메뉴 그룹2");
-        저장된_메뉴_그룹2.setId(2L);
+        저장된_메뉴_그룹2.updateId(2L);
         저장된_메뉴_그룹3 = new MenuGroup("메뉴 그룹3");
-        저장된_메뉴_그룹3.setId(3L);
+        저장된_메뉴_그룹3.updateId(3L);
         저장된_메뉴_그룹들 = List.of(저장된_메뉴_그룹1, 저장된_메뉴_그룹2, 저장된_메뉴_그룹3);
     }
 }
