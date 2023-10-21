@@ -76,6 +76,7 @@ public class OrderService {
         return savedOrder;
     }
 
+    @Transactional(readOnly = true)
     public List<Order> list() {
         final List<Order> orders = orderRepository.findAll();
 

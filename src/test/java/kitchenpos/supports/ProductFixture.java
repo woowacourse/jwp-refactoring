@@ -1,6 +1,7 @@
 package kitchenpos.supports;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.Product;
 
@@ -10,7 +11,7 @@ public class ProductFixture {
     private static final String DEFAULT_NAME = "기본 상품";
     private static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(10000);
 
-    public static Product create() {
-        return new Product(DEFAULT_NAME + COUNT, new Price(DEFAULT_PRICE));
+    public static ProductRequest create() {
+        return new ProductRequest(DEFAULT_NAME + COUNT, new Price(DEFAULT_PRICE));
     }
 }

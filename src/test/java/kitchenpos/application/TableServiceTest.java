@@ -5,18 +5,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
-import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.TableGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -177,9 +179,9 @@ class TableServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void throwExceptionWhenIllegalOrderStatus(String orderStatus) {
             // given
-            final Product product = productService.create(ProductFixture.create());
-            final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
-            final Menu menu = menuService.create(MenuFixture.of(menuGroup.getId(), List.of(product)));
+            final ProductResponse product = productService.create(ProductFixture.create());
+            final MenuGroupResponse menuGroup = menuGroupService.create(MenuGroupFixture.create());
+            final MenuResponse menu = menuService.create(MenuFixture.of(menuGroup.getId(), List.of(product)));
 
             final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
             final Order savedOrder = orderService.create(OrderFixture.of(menu.getId(), orderTable.getId()));

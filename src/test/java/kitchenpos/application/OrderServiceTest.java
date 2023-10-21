@@ -5,17 +5,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.OrderFixture;
 import kitchenpos.supports.OrderTableFixture;
 import kitchenpos.supports.ProductFixture;
-import kitchenpos.supports.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,12 +41,12 @@ class OrderServiceTest {
     @Autowired
     private ProductService productService;
 
-    private Menu setUpMenu() {
-        final Product product = productService.create(ProductFixture.create());
-        final MenuGroup menuGroup = menuGroupService.create(MenuGroupFixture.create());
+    private MenuResponse setUpMenu() {
+        final ProductResponse product = productService.create(ProductFixture.create());
+        final MenuGroupResponse menuGroup = menuGroupService.create(MenuGroupFixture.create());
 
-        final Menu menu = MenuFixture.of(menuGroup.getId(), List.of(product));
-        return menuService.create(menu);
+        final MenuRequest request = MenuFixture.of(menuGroup.getId(), List.of(product));
+        return menuService.create(request);
     }
 
     @DisplayName("주문 목록을 조회할 수 있다")

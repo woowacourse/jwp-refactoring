@@ -5,8 +5,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.request.ProductRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.vo.Price;
-import kitchenpos.domain.Product;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -32,15 +33,16 @@ class ProductServiceTest {
         @ValueSource(ints = {0, 10000})
         void createProduct(int price) {
             // given
-            final Product product = new Product("알리오 올리오", new Price(BigDecimal.valueOf(price)));
+            final ProductRequest request = new ProductRequest("알리오 올리오", new Price(BigDecimal.valueOf(price)));
 
             // when
-            final Product savedProduct = productService.create(product);
+            final ProductResponse response = productService.create(request);
 
             // then
             assertSoftly(softly -> {
-                assertThat(savedProduct.getId()).isPositive();
-                assertThat(savedProduct.getName()).isEqualTo(product.getName());
+                assertThat(response.getId()).isPositive();
+                assertThat(response.getName()).isEqualTo(request.getName());
+                assertThat(response.getPrice()).isEqualTo(request.getPrice().value());
             });
         }
     }
@@ -49,16 +51,16 @@ class ProductServiceTest {
     @Test
     void findAllProducts() {
         // given
-        final Product product1 = productService.create(ProductFixture.create());
-        final Product product2 = productService.create(ProductFixture.create());
+        final ProductResponse product1 = productService.create(ProductFixture.create());
+        final ProductResponse product2 = productService.create(ProductFixture.create());
 
         // when
-        final List<Product> list = productService.list();
+        final List<ProductResponse> response = productService.list();
 
         // then
         assertSoftly(softly -> {
-            assertThat(list).hasSize(2);
-            assertThat(list)
+            assertThat(response).hasSize(2);
+            assertThat(response)
                     .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                     .usingRecursiveComparison()
                     .isEqualTo(List.of(product1, product2));

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import kitchenpos.application.dto.request.MenuGroupRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.IntegrationTest;
@@ -22,15 +24,15 @@ class MenuGroupServiceTest {
     @Test
     void createMenuGroup() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("주인장 최애 메뉴");
+        final MenuGroupRequest request = new MenuGroupRequest("주인장 최애 메뉴");
 
         // when
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResponse savedMenuGroup = menuGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
             assertThat(savedMenuGroup.getId()).isPositive();
-            assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
+            assertThat(savedMenuGroup.getName()).isEqualTo(request.getName());
         });
     }
 
@@ -38,11 +40,11 @@ class MenuGroupServiceTest {
     @Test
     void findAllMenuGroups() {
         // given
-        final MenuGroup group1 = menuGroupService.create(MenuGroupFixture.create());
-        final MenuGroup group2 = menuGroupService.create(MenuGroupFixture.create());
+        final MenuGroupResponse group1 = menuGroupService.create(MenuGroupFixture.create());
+        final MenuGroupResponse group2 = menuGroupService.create(MenuGroupFixture.create());
 
         // when
-        final List<MenuGroup> list = menuGroupService.list();
+        final List<MenuGroupResponse> list = menuGroupService.list();
 
         // then
         assertThat(list).hasSize(2);

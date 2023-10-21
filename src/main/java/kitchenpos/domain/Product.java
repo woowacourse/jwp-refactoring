@@ -35,8 +35,8 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.value();
+    public Price getPrice() {
+        return price;
     }
 
     @Override

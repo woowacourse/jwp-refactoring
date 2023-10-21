@@ -56,4 +56,16 @@ public class Price {
     public int hashCode() {
         return Objects.hash(price);
     }
+
+    public boolean isHigherThan(final Price other) {
+        return this.price.compareTo(other.price) > 0;
+    }
+
+    public Price multiply(final long count) {
+        return new Price(price.multiply(BigDecimal.valueOf(count)));
+    }
+
+    public Price add(final Price price) {
+        return new Price(this.price.add(price.price));
+    }
 }
