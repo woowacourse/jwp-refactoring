@@ -34,6 +34,10 @@ public class Price {
         }
     }
 
+    public boolean isBiggerThan(long price) {
+        return this.price.longValue() > price;
+    }
+
     public BigDecimal getValue() {
         return price;
     }
