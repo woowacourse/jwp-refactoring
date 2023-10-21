@@ -2,13 +2,24 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Order {
+
+    @Id
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
+    @OneToMany
     private List<OrderLineItem> orderLineItems;
+
+    public boolean isCookingOrMeal() {
+        return OrderStatus.COOKING.name().equals(orderStatus) || OrderStatus.MEAL.name().equals(orderStatus);
+    }
 
     public Long getId() {
         return id;

@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.ui.request.MenuGroupCreateRequest;
@@ -20,7 +21,9 @@ public class MenuGroupRestController {
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroupCreateRequest request) {
+    public ResponseEntity<MenuGroup> create(
+            @Valid @RequestBody final MenuGroupCreateRequest request
+    ) {
         final var created = menuGroupService.create(request);
         final var uri = URI.create("/api/menu-groups/" + created.getId());
         return ResponseEntity.created(uri).body(created);
