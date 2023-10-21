@@ -34,24 +34,13 @@ public class MenuService {
     @Transactional
     public Menu create(final Menu menu) {
         validateMenuGroup(menu);
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        validateMenuProducts(menuProducts);
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(savedMenu);
-            menuProductRepository.save(menuProduct);
-        }
-
-        return savedMenu;
+        validateMenuProducts(menu.getMenuProducts());
+        return menuRepository.save(menu);
     }
 
     private void validateMenuGroup(final Menu menu) {
         final Long menuGroupId = menu.getMenuGroupId();
-        if (Objects.isNull(menuGroupId)) {
-            throw new IllegalArgumentException("등록되지 않은 메뉴 그룹으로 메뉴를 생성할 수 없습니다.");
-        }
-        if (menuGroupRepository.existsById(menuGroupId)) {
+        if (Objects.nonNull(menuGroupId) && menuGroupRepository.existsById(menuGroupId)) {
             return;
         }
         throw new IllegalArgumentException("등록되지 않은 메뉴 그룹으로 메뉴를 생성할 수 없습니다.");

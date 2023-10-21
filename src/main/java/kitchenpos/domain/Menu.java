@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class Menu {
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -53,6 +54,7 @@ public class Menu {
         this.price = scaledPrice;
         this.menuGroup = menuGroup;
         this.menuProducts = new ArrayList<>(menuProducts);
+        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
     }
 
     private void validatePrice(final BigDecimal price, final List<MenuProduct> menuProducts) {
@@ -108,9 +110,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return new ArrayList<>(menuProducts);
-    }
-
-    public void addMenuProduct(MenuProduct menuProduct) {
-        this.menuProducts.add(menuProduct);
     }
 }
