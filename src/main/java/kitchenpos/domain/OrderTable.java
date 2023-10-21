@@ -32,12 +32,16 @@ public class OrderTable {
     }
 
     private void validateIsEmptyCanBeChanged(boolean hasCookingOrMealOrder) {
-        if (Objects.nonNull(tableGroupId)) {
+        if (isGrouped()) {
             throw new IllegalArgumentException("단체 지정된 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
         if (hasCookingOrMealOrder) {
             throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
+    }
+
+    public boolean isGrouped() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -52,6 +56,20 @@ public class OrderTable {
         if (isEmpty) {
             throw new IllegalArgumentException("빈 주문 테이블에 손님 수를 변경할 수 없습니다.");
         }
+    }
+
+    public boolean isFilled() {
+        return !isEmpty;
+    }
+
+    public void group(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.isEmpty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.isEmpty = false;
     }
 
     public Long getId() {

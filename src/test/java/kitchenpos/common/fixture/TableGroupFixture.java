@@ -9,7 +9,7 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFixture {
 
     public static TableGroup 단체_지정(Long tableGroupId) {
-        return new TableGroup(tableGroupId, LocalDateTime.MAX, null);
+        return new TableGroup(tableGroupId, LocalDateTime.MAX, List.of());
     }
 
     public static TableGroup 단체_지정(List<OrderTable> orderTables) {
@@ -17,6 +17,6 @@ public class TableGroupFixture {
     }
 
     public static TableGroup 단체_지정() {
-        return new TableGroup(LocalDateTime.MAX, null);
+        return new TableGroup(LocalDateTime.MAX, List.of());
     }
 }

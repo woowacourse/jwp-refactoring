@@ -38,7 +38,7 @@ class JdbcTemplateTableGroupDaoTest {
         assertSoftly(softly -> {
             softly.assertThat(savedTableGroup.getId()).isNotNull();
             softly.assertThat(savedTableGroup).usingRecursiveComparison()
-                    .ignoringFields("id")
+                    .ignoringFields("id", "orderTables")
                     .isEqualTo(단체_지정());
         });
     }
@@ -67,7 +67,7 @@ class JdbcTemplateTableGroupDaoTest {
 
         // then
         assertThat(tableGroups).usingRecursiveComparison()
+                .ignoringFields("orderTables")
                 .isEqualTo(List.of(단체_지정(tableGroupId_A), 단체_지정(tableGroupId_B)));
     }
-
 }

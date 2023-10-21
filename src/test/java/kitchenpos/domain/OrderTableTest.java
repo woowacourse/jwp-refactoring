@@ -22,7 +22,8 @@ class OrderTableTest {
         void 단체_지정된_주문_테이블이라면_예외를_던진다() {
             // given
             Long tableGroupId = 1L;
-            OrderTable groupedOrderTable = new OrderTable(tableGroupId, 0, true);
+            OrderTable groupedOrderTable = new OrderTable(0, true);
+            groupedOrderTable.group(tableGroupId);
 
             boolean hasCookingOrMealOrder = false;
             boolean isEmpty = false;
@@ -88,5 +89,58 @@ class OrderTableTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("빈 주문 테이블에 손님 수를 변경할 수 없습니다.");
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({"true, false", "false, true"})
+    void 주문_테이블이_찼는지_확인한다(boolean isEmpty, boolean expected) {
+        // given
+        OrderTable orderTable = new OrderTable(0, isEmpty);
+
+        // when
+        boolean actual = orderTable.isFilled();
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"1, true", ", false"})
+    void 주문_테이블이_단체_지정되었는지_확인한다(Long tableGroupId, boolean expected) {
+        // given
+        OrderTable orderTable = new OrderTable(tableGroupId, 0, true);
+
+        // when
+        boolean actual = orderTable.isGrouped();
+
+        // then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void 주문_테이블을_단체_지정한다() {
+        // given
+        OrderTable orderTable = new OrderTable(0, true);
+        Long tableGroupId = 1L;
+
+        // when
+        orderTable.group(tableGroupId);
+
+        // then
+        assertThat(orderTable.isGrouped()).isTrue();
+    }
+    
+    @Test
+    void 주문_테이블을_단체_지정_해제한다() {
+        // given
+        OrderTable orderTable = new OrderTable(0, true);
+        Long tableGroupId = 1L;
+        orderTable.group(tableGroupId);
+
+        // when
+        orderTable.ungroup();
+
+        // then
+        assertThat(orderTable.isGrouped()).isFalse();
     }
 }
