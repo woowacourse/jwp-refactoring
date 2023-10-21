@@ -28,7 +28,6 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    // TODO DTO로 변경
     public TableGroup(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }

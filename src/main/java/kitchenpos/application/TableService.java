@@ -17,10 +17,7 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        /// TODO: 2023/10/19  DTO 분리
-        return orderTableRepository.save(
-                new OrderTable(orderTable.getTableGroup(), orderTable.getNumberOfGuests(), orderTable.isEmpty())
-        );
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
