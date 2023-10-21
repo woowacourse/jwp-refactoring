@@ -3,13 +3,14 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.menu.CreateMenuRequest;
 import kitchenpos.ui.dto.menu.MenuProductDto;
+import kitchenpos.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class MenuServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductDao productDao;
@@ -40,7 +41,7 @@ class MenuServiceTest {
     @Test
     void 메뉴를_저장할_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("피자"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
         final Product product = productDao.save(new Product("치즈피자", new BigDecimal(3_000)));
         final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
         final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroup.getId(), List.of(menuProductDto));
@@ -52,7 +53,7 @@ class MenuServiceTest {
         assertAll(
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getName()).isEqualTo("치즈피자"),
-                () -> assertThat(actual.getPrice()).isEqualByComparingTo(new BigDecimal(5_000)),
+                () -> assertThat(actual.getPrice()).isEqualTo(Money.valueOf(5_000)),
                 () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId()),
                 () -> assertThat(actual.getMenuProducts()).hasSize(1)
         );
@@ -65,7 +66,7 @@ class MenuServiceTest {
         void 금액이_0보다_작다면_예외가_발생한다() {
             // given
             final Integer price = -999999;
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("피자"));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
             final Product product = productDao.save(new Product("치즈피자", new BigDecimal(3_000)));
             final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
             final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", price, menuGroup.getId(), List.of(menuProductDto));
@@ -91,7 +92,7 @@ class MenuServiceTest {
         @Test
         void 메뉴에_상품이_지정되지_않았다면_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("피자"));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
             final CreateMenuRequest createMenuRequest = new CreateMenuRequest("피자", 5_000, menuGroup.getId(), List.of());
 
             // expect
@@ -102,7 +103,7 @@ class MenuServiceTest {
         @Test
         void 메뉴_가격의_총합이_상품_가격보다_크다면_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("피자"));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
             final Product product = productDao.save(new Product("치즈피자", new BigDecimal(3_000)));
             final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
             final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 500_000, menuGroup.getId(), List.of(menuProductDto));

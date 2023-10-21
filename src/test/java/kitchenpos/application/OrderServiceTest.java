@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
@@ -14,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.order.CreateOrderRequest;
 import kitchenpos.ui.dto.order.OrderLineItemDto;
 import kitchenpos.ui.dto.order.UpdateOrderRequest;
@@ -39,7 +39,7 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -53,7 +53,7 @@ class OrderServiceTest {
     @Test
     void 주문을_저장할_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuDao.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
         final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 5);
@@ -86,7 +86,7 @@ class OrderServiceTest {
         @Test
         void 주문_항목의_개수와_메뉴_개수가_일치하지_않으면_에외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
             final Menu menu = menuDao.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
             final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 1, false));
 
@@ -103,7 +103,7 @@ class OrderServiceTest {
         @Test
         void 주문_테이블이_비어있을_경우_예외가_발생한다() {
             // given
-            final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
             final Menu menu = menuDao.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
 
             final OrderLineItemDto firstOrderLineItemDto = new OrderLineItemDto(menu.getId(), 2);
@@ -121,7 +121,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_변경할_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuDao.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
         final OrderLineItem orderLineItem = new OrderLineItem(null, null, menu.getId(), 10);
@@ -140,7 +140,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태가_완료라면_상태_변경시_예외가_발생한다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuDao.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
         final OrderLineItem orderLineItem = new OrderLineItem(null, null, menu.getId(), 10);
@@ -158,7 +158,7 @@ class OrderServiceTest {
     @Test
     void 주문_목록을_가져올_수_있다() {
         // given
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuDao.save(new Menu("메뉴", new BigDecimal(1_000), menuGroup.getId(), null));
         final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 5, false));
         final OrderLineItem orderLineItem = new OrderLineItem(null, null, menu.getId(), 10);
