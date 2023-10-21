@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import kitchenpos.application.dto.request.TableRequest;
+import kitchenpos.application.dto.response.TableResponse;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
@@ -22,54 +23,44 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableRepository.save(orderTable);
+    public TableResponse create(final TableRequest request) {
+        final OrderTable orderTable = new OrderTable(
+                null,
+                request.getNumberOfGuests(),
+                request.isEmpty()
+        );
+        return TableResponse.from(orderTableRepository.save(orderTable));
     }
 
     @Transactional(readOnly = true)
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<TableResponse> list() {
+        return TableResponse.from(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    public TableResponse changeEmpty(final Long orderTableId, final TableRequest request) {
+        final OrderTable orderTable = findOrderTableById(orderTableId);
+        orderTable.checkTableGroupEmpty();
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
+        // todo: orderTable이 order 리스트를 가지도록?
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException("계산이 완료되지 않아 테이블의 상태를 바꿀 수 없습니다.");
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        orderTable.updateEmpty(request.isEmpty());
+        return TableResponse.from(orderTable);
+    }
 
-        return orderTableRepository.save(savedOrderTable);
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("테이블을 찾을 수 없습니다."));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableRepository.save(savedOrderTable);
+    public TableResponse changeNumberOfGuests(final Long orderTableId, final TableRequest request) {
+        final OrderTable orderTable = findOrderTableById(orderTableId);
+        orderTable.updateNumberOfGuests(request.getNumberOfGuests());
+        return TableResponse.from(orderTable);
     }
 }

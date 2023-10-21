@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
 @Access(AccessType.FIELD)
 public class Price {
 
+    @Column(nullable = false)
     private BigDecimal price;
 
     protected Price() {

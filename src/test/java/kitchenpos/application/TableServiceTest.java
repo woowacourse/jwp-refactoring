@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.request.TableGroupRequest;
+import kitchenpos.application.dto.request.TableRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.response.TableResponse;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
@@ -52,13 +52,13 @@ class TableServiceTest {
         @Test
         void success() {
             //given
-            final OrderTable table = OrderTableFixture.createEmpty();
+            final TableRequest request = OrderTableFixture.createEmpty();
 
             //when
-            final OrderTable savedOrderTable = tableService.create(table);
+            final TableResponse response = tableService.create(request);
 
             //then
-            assertThat(savedOrderTable.getId()).isPositive();
+            assertThat(response.getId()).isPositive();
         }
     }
 
@@ -70,59 +70,58 @@ class TableServiceTest {
         @Test
         void success() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final TableResponse initialResponse = tableService.create(OrderTableFixture.createNotEmpty());
 
-            final OrderTable change = new OrderTable();
-            change.setNumberOfGuests(2);
-            final Long orderTableId = orderTable.getId();
+            final TableRequest guestUpdateRequest = new TableRequest(2);
+            final Long orderTableId = initialResponse.getId();
 
             // when
-            final OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTableId, change);
+            final TableResponse updateResponse = tableService.changeNumberOfGuests(orderTableId, guestUpdateRequest);
 
             // then
-            assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(change.getNumberOfGuests());
+            assertThat(updateResponse.getNumberOfGuests()).isEqualTo(guestUpdateRequest.getNumberOfGuests());
         }
 
         @DisplayName("테이블이 존재하지 않으면 예외처리 한다")
         @Test
         void throwExceptionWhenInvalidOrderTable() {
             // given
-            final OrderTable change = new OrderTable();
-            change.setNumberOfGuests(2);
+            final TableRequest guestUpdateRequest = new TableRequest(2);
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, change))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, guestUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블을 찾을 수 없습니다.");
         }
 
         @DisplayName("손님 수를 0명 미만으로 변경하려 하면 예외처리 한다")
         @Test
         void throwExceptionWhenInvalidNumberOfGuests() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final TableResponse initialResponse = tableService.create(OrderTableFixture.createNotEmpty());
 
-            final OrderTable change = new OrderTable();
-            change.setNumberOfGuests(-1);
-            final Long orderTableId = orderTable.getId();
+            final TableRequest guestUpdateRequest = new TableRequest(-1);
+            final Long orderTableId = initialResponse.getId();
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, change))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, guestUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("올바르지 않은 숫자입니다.");
         }
 
         @DisplayName("빈 테이블을 변경하려하면 예외처리 한다")
         @Test
         void throwExceptionWhenEmptyTable() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse initialResponse = tableService.create(OrderTableFixture.createEmpty());
 
-            final OrderTable change = new OrderTable();
-            change.setNumberOfGuests(2);
-            final Long orderTableId = orderTable.getId();
+            final TableRequest guestUpdateRequest = new TableRequest(2);
+            final Long orderTableId = initialResponse.getId();
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, change))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, guestUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 테이블은 게스트 수를 변경할 수 없습니다.");
         }
     }
 
@@ -134,44 +133,46 @@ class TableServiceTest {
         @Test
         void success() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final TableResponse initialResponse = tableService.create(OrderTableFixture.createNotEmpty());
 
-            final OrderTable change = OrderTableFixture.createEmpty();
-            final Long orderTableId = orderTable.getId();
+            final TableRequest emptyUpdateRequest = OrderTableFixture.createEmpty();
+            final Long orderTableId = initialResponse.getId();
 
             // when
-            final OrderTable savedOrderTable = tableService.changeEmpty(orderTableId, change);
+            final TableResponse response = tableService.changeEmpty(orderTableId, emptyUpdateRequest);
 
             // then
-            assertThat(savedOrderTable.isEmpty()).isTrue();
+            assertThat(response.isEmpty()).isTrue();
         }
 
         @DisplayName("테이블이 존재하지 않으면 예외처리 한다")
         @Test
         void throwExceptionWhenInvalidOrderTable() {
             // given
-            final OrderTable change = OrderTableFixture.createEmpty();
+            final TableRequest emptyUpdateRequest = OrderTableFixture.createEmpty();
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(-1L, change))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(-1L, emptyUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블을 찾을 수 없습니다.");
         }
 
         @DisplayName("단체 지정된 테이블을 변경하려 하면 예외처리 한다")
         @Test
         void throwExceptionWhenTableGroupExist() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableResponse table1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse table2 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup = TableGroupFixture.from(table1, table2);
             tableGroupService.create(tableGroup);
 
-            final OrderTable change = OrderTableFixture.createEmpty();
-            final Long orderTableId = orderTable1.getId();
+            final TableRequest emptyUpdateRequest = OrderTableFixture.createEmpty();
+            final Long orderTableId = table1.getId();
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, change))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, emptyUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("단체 지정이 되어있습니다.");
         }
 
         @DisplayName("주문 상태가 계산 완료가 아니면 예외처리 한다")
@@ -183,20 +184,20 @@ class TableServiceTest {
             final MenuGroupResponse menuGroup = menuGroupService.create(MenuGroupFixture.create());
             final MenuResponse menu = menuService.create(MenuFixture.of(menuGroup.getId(), List.of(product)));
 
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createNotEmpty());
-            final Order savedOrder = orderService.create(OrderFixture.of(menu.getId(), orderTable.getId()));
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createNotEmpty());
+            final OrderResponse savedOrder = orderService.create(OrderFixture.of(menu.getId(), orderTable.getId()));
 
             // 주문 상태 변경
-            final Order change = new Order();
-            change.setOrderStatus(orderStatus);
+            final OrderStatusRequest change = new OrderStatusRequest(orderStatus);
             orderService.changeOrderStatus(savedOrder.getId(), change);
 
-            final OrderTable empty = OrderTableFixture.createEmpty();
+            final TableRequest emptyUpdateRequest = OrderTableFixture.createEmpty();
             final Long orderTableId = orderTable.getId();
 
             // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, empty))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, emptyUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("계산이 완료되지 않아 테이블의 상태를 바꿀 수 없습니다.");
         }
     }
 
@@ -204,17 +205,17 @@ class TableServiceTest {
     @Test
     void findAllTables() {
         // given
-        final OrderTable savedOrderTable = tableService.create(OrderTableFixture.createEmpty());
+        final TableResponse orderTable = tableService.create(OrderTableFixture.createEmpty());
 
         // when
-        final List<OrderTable> list = tableService.list();
+        final List<TableResponse> list = tableService.list();
 
         // then
         assertSoftly(softly -> {
             assertThat(list).hasSize(1);
             assertThat(list.get(0))
                     .usingRecursiveComparison()
-                    .isEqualTo(savedOrderTable);
+                    .isEqualTo(orderTable);
         });
     }
 }

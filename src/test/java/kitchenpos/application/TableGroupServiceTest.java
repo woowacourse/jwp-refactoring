@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.application.dto.response.TableResponse;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.MenuFixture;
 import kitchenpos.supports.MenuGroupFixture;
@@ -54,13 +54,13 @@ class TableGroupServiceTest {
         @Test
         void success() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse orderTable2 = tableService.create(OrderTableFixture.createEmpty());
 
-            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableGroupRequest tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
 
             // when
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
             // then
             assertThat(savedTableGroup.getId()).isPositive();
@@ -70,67 +70,70 @@ class TableGroupServiceTest {
         @Test
         void throwExceptionWhenOrderTableEmpty() {
             // given
-            final TableGroup tableGroup = TableGroupFixture.from();
+            final TableGroupRequest tableGroup = TableGroupFixture.from();
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 개수 2개 이상부터 단체 지정 가능합니다.");
         }
 
         @DisplayName("주문 테이블 목록의 사이즈가 2 미만이면 예외처리 한다")
         @Test
         void throwExceptionWhenOrderTableListSizeIsLowerThanTwo() {
             // given
-            final OrderTable orderTable = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup = TableGroupFixture.from(orderTable);
+            final TableResponse orderTable = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup = TableGroupFixture.from(orderTable);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 개수 2개 이상부터 단체 지정 가능합니다.");
         }
 
         @DisplayName("존재하지 않는 주문 테이블이 들어있으면 예외처리 한다")
         @Test
         void throwExceptionWhenContainsInvalidOrderTable() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable2.setId(INVALID_ID);
-            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(orderTable1.getId(), INVALID_ID));
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블이 포함되어 있습니다.");
         }
 
         @DisplayName("비어있지 않은 테이블이 포함되어 있으면 예외처리 한다")
         @Test
         void throwExceptionWhenContainsNotEmptyOrderTable() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createNotEmpty());
-            final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createNotEmpty());
+            final TableResponse orderTable2 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("단체 지정이 불가능한 테이블이 포함되어 있습니다.");
         }
 
         @DisplayName("이미 단체 지정이 된 테이블이 포함되어 있으면 예외처리 한다")
         @Test
         void throwExceptionWhenContainsAlreadyTableGroupingOrderTable() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup1 = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse orderTable2 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup1 = TableGroupFixture.from(orderTable1, orderTable2);
             tableGroupService.create(tableGroup1);
 
-            final OrderTable orderTable3 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup2 = TableGroupFixture.from(orderTable1, orderTable3);
+            final TableResponse orderTable3 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup2 = TableGroupFixture.from(orderTable1, orderTable3);
 
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("단체 지정이 불가능한 테이블이 포함되어 있습니다.");
         }
     }
 
@@ -142,12 +145,13 @@ class TableGroupServiceTest {
         @Test
         void success() {
             // given
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse orderTable2 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup = TableGroupFixture.from(orderTable1, orderTable2);
+            final TableGroupResponse response = tableGroupService.create(tableGroup);
 
             // then
-            assertThatCode(() -> tableGroupService.ungroup(tableGroup.getId()))
+            assertThatCode(() -> tableGroupService.ungroup(response.getId()))
                     .doesNotThrowAnyException();
         }
 
@@ -160,25 +164,25 @@ class TableGroupServiceTest {
             final MenuGroupResponse menuGroup = menuGroupService.create(MenuGroupFixture.create());
             final MenuResponse menu = menuService.create(MenuFixture.of(menuGroup.getId(), List.of(product)));
 
-            final OrderTable orderTable1 = tableService.create(OrderTableFixture.createEmpty());
-            final OrderTable orderTable2 = tableService.create(OrderTableFixture.createEmpty());
-            final TableGroup tableGroup = tableGroupService.create(TableGroupFixture.from(orderTable1, orderTable2));
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableResponse orderTable2 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupResponse tableGroup = tableGroupService.create(
+                    TableGroupFixture.from(orderTable1, orderTable2));
 
             // orderTable1에 대한 주문 상태 -> 계산 미완료
-            final Order savedOrder1 = orderService.create(OrderFixture.of(menu.getId(), orderTable1.getId()));
-            final Order change1 = new Order();
-            change1.setOrderStatus(orderStatus);
+            final OrderResponse savedOrder1 = orderService.create(OrderFixture.of(menu.getId(), orderTable1.getId()));
+            final OrderStatusRequest change1 = new OrderStatusRequest(orderStatus);
             orderService.changeOrderStatus(savedOrder1.getId(), change1);
 
             // orderTable2에 대한 주문 상태 -> 계산 완료
-            final Order savedOrder2 = orderService.create(OrderFixture.of(menu.getId(), orderTable1.getId()));
-            final Order change2 = new Order();
-            change2.setOrderStatus("COMPLETION");
+            final OrderResponse savedOrder2 = orderService.create(OrderFixture.of(menu.getId(), orderTable1.getId()));
+            final OrderStatusRequest change2 = OrderFixture.createCompletion();
             orderService.changeOrderStatus(savedOrder2.getId(), change2);
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("계산 완료되지 않은 테이블이 남아있어 단체 지정 해제가 불가능합니다.");
         }
     }
 }
