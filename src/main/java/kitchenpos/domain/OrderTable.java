@@ -46,6 +46,7 @@ public class OrderTable {
             Boolean empty
     ) {
         validateNumberOfGuests(numberOfGuests);
+        validateNumberEmpty(empty);
 
         return new OrderTable(null, null, numberOfGuests, empty);
     }
@@ -53,6 +54,12 @@ public class OrderTable {
     private static void validateNumberOfGuests(Integer numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
             throw new IllegalArgumentException("테이블에 방문한 손님 수는 0 이상이어야 합니다.");
+        }
+    }
+
+    private static void validateNumberEmpty(Boolean empty) {
+        if (empty == null) {
+            throw new NullPointerException();
         }
     }
 

@@ -61,12 +61,18 @@ public class Menu {
     }
 
     private static void validateName(String name) {
+        if (name == null) {
+            throw new NullPointerException();
+        }
         if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
             throw new IllegalArgumentException("메뉴 이름의 길이는 1글자 이상, 255글자 이하여야 합니다.");
         }
     }
 
     private static void validatePrice(BigDecimal price) {
+        if (price == null) {
+            throw new NullPointerException();
+        }
         if (price.doubleValue() < MIN_PRICE) {
             throw new IllegalArgumentException("메뉴 금액은 0원 이상이어야 합니다.");
         }

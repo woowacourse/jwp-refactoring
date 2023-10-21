@@ -38,9 +38,23 @@ public class OrderLineItem {
     }
 
     public static OrderLineItem create(Order order, Menu menu, Long quantity) {
+        validateOrder(order);
+        validateMenu(menu);
         validateQuantity(quantity);
 
         return new OrderLineItem(order, menu, quantity);
+    }
+
+    private static void validateOrder(Order order) {
+        if (order == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    private static void validateMenu(Menu menu) {
+        if (menu == null) {
+            throw new NullPointerException();
+        }
     }
 
     private static void validateQuantity(Long quantity) {

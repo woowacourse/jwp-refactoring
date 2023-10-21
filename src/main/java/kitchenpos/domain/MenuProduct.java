@@ -47,14 +47,31 @@ public class MenuProduct {
             Long quantity,
             Product product
     ) {
+        validateMenu(menu);
         validateQuantity(quantity);
+        validateProduct(product);
 
         return new MenuProduct(menu, quantity, product);
     }
 
+    private static void validateMenu(Menu menu) {
+        if (menu == null) {
+            throw new NullPointerException();
+        }
+    }
+
     private static void validateQuantity(Long quantity) {
+        if (quantity == null) {
+            throw new NullPointerException();
+        }
         if (quantity < MIN_QUANTITY) {
             throw new IllegalArgumentException("상품 개수는 1개 이상이어야 합니다.");
+        }
+    }
+
+    private static void validateProduct(Product product) {
+        if (product == null) {
+            throw new NullPointerException();
         }
     }
 

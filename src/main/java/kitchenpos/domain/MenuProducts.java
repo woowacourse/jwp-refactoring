@@ -21,7 +21,15 @@ public class MenuProducts {
     }
 
     public static MenuProducts from(List<MenuProduct> menuProducts) {
+        validate(menuProducts);
+
         return new MenuProducts(menuProducts);
+    }
+
+    private static void validate(List<MenuProduct> menuProducts) {
+        if (menuProducts == null) {
+            throw new NullPointerException();
+        }
     }
 
     public BigDecimal getTotalPriceOfMenuProducts() {

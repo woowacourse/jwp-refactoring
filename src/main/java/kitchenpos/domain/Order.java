@@ -52,19 +52,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order of(
-            OrderStatus orderStatus,
-            OrderTable orderTable,
-            List<OrderLineItem> orderLineItems
-    ) {
-        validateOrderTable(orderTable);
-
-        return new Order(orderStatus, orderTable, OrderLineItems.from(orderLineItems));
-    }
-
     public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);
-//        orderTable.changeEmpty(Boolean.TRUE);
 
         return new Order(OrderStatus.COOKING, orderTable, OrderLineItems.from(orderLineItems));
     }
