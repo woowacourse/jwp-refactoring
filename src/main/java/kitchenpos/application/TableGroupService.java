@@ -8,11 +8,11 @@ import javax.transaction.Transactional;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupValidator;
 import kitchenpos.dto.table.OrderTableFindRequest;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.TableGroupException;
-import kitchenpos.exception.TableGroupException.CannotCreateTableGroupStateException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -38,7 +38,7 @@ public class TableGroupService {
                 .map(OrderTableFindRequest::getId)
                 .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        validateOrderTableSize(orderTableRequests, savedOrderTables);
+        TableGroupValidator.validateOrderTableSize(orderTableRequests.size(), savedOrderTables.size());
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
@@ -47,24 +47,11 @@ public class TableGroupService {
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    private void validateOrderTableSize(final List<OrderTableFindRequest> orderTableRequests,
-                                        final List<OrderTable> savedOrderTables) {
-        if (orderTableRequests.size() != savedOrderTables.size()) {
-            throw new TableGroupException.NotFoundOrderTableExistException();
-        }
-    }
-
     private void associateOrderTable(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            validateOrderTableStatus(savedOrderTable);
+            TableGroupValidator.validateOrderTableStatus(savedOrderTable);
             savedOrderTable.confirmTableGroup(savedTableGroup);
             orderTableRepository.save(savedOrderTable);
-        }
-    }
-
-    private void validateOrderTableStatus(final OrderTable savedOrderTable) {
-        if (!savedOrderTable.isEmpty() || savedOrderTable.isExistTableGroup()) {
-            throw new CannotCreateTableGroupStateException();
         }
     }
 

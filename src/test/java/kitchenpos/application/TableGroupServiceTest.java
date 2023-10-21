@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
-import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,7 +16,6 @@ import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.TableGroupException;
-import kitchenpos.exception.TableGroupException.CannotCreateTableGroupStateException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -52,8 +50,8 @@ class TableGroupServiceTest extends ServiceTest {
 
             final OrderTable orderTable1 = ORDER_TABLE1();
             final OrderTable orderTable2 = ORDER_TABLE1();
-            OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-            OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+            orderTableRepository.save(orderTable1);
+            orderTableRepository.save(orderTable2);
 
             // when
             final TableGroupResponse response = tableGroupService.create(request);
@@ -66,63 +64,6 @@ class TableGroupServiceTest extends ServiceTest {
                 softly.assertThat(orderTableResponses.get(0).getTableGroup()).isNotNull();
                 softly.assertThat(orderTableResponses.get(1).getTableGroup()).isNotNull();
             });
-        }
-
-
-        @Test
-        @DisplayName("요청받은 주문 테이블 사이즈와 저장된 주문 테이블 사이즈가 다르면 예외가 발생한다.")
-        void throws_notSameOrderTableSize() {
-            // given
-            final TableGroupCreateRequest request = TABLE_GROUP1_CREATE_REQUEST();
-
-            final OrderTable orderTable1 = ORDER_TABLE1();
-            orderTableRepository.save(orderTable1);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(TableGroupException.NotFoundOrderTableExistException.class)
-                    .hasMessage("[ERROR] 주문 테이블 목록 중 존재하지 않는 주문 테이블이 있습니다.");
-        }
-
-        @Test
-        @DisplayName("찾은 주문 테이블이 비어있지 않은 상태이면 예외가 발생한다.")
-        void throws_orderTableIsEmpty() {
-            // given
-            final TableGroupCreateRequest request = TABLE_GROUP1_CREATE_REQUEST();
-
-            final OrderTable orderTable1 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
-            final OrderTable orderTable2 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
-
-            orderTableRepository.save(orderTable1);
-            orderTableRepository.save(orderTable2);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(CannotCreateTableGroupStateException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않을 때 테이블 그룹을 생성할 수 없습니다.");
-        }
-
-        @Test
-        @DisplayName("찾은 주문 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
-        void throws_AlreadyExistTableGroup() {
-            // given
-            final TableGroupCreateRequest request = TABLE_GROUP1_CREATE_REQUEST();
-
-            final OrderTable orderTable1 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
-            final OrderTable orderTable2 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
-
-            final TableGroup tableGroup = TABLE_GROUP1();
-            final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-            orderTable1.confirmTableGroup(savedTableGroup);
-            orderTable2.confirmTableGroup(savedTableGroup);
-
-            orderTableRepository.save(orderTable1);
-            orderTableRepository.save(orderTable2);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(CannotCreateTableGroupStateException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않을 때 테이블 그룹을 생성할 수 없습니다.");
         }
     }
 
