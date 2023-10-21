@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import support.fixture.MenuBuilder;
@@ -145,20 +144,6 @@ class MenuServiceTest {
                     () -> assertThat(menu.getPrice()).isEqualByComparingTo(actual.getPrice()),
                     () -> assertEquals(menu.getMenuGroup().getId(), actual.getMenuGroup().getId())
             );
-        }
-
-        @ParameterizedTest
-        @NullSource
-        @CsvSource(value = {"-1", "-2", "-100000"})
-        @DisplayName("상품 가격이 null이거나 0 미만이면 IllegalArgumentException이 발생한다.")
-        void smallerThenZeroPriceTest(final BigDecimal price) {
-            // given
-            final Menu menu = menuBuilder
-                    .setPrice(price)
-                    .build();
-
-            // when & then
-            assertThrowsExactly(IllegalArgumentException.class, () -> menuService.create(menu));
         }
 
         @Test

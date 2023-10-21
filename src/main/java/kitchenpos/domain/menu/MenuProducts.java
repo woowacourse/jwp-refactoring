@@ -5,6 +5,7 @@ import kitchenpos.domain.menu_product.MenuProduct;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,5 +25,15 @@ public class MenuProducts {
 
     public List<MenuProduct> getValues() {
         return Collections.unmodifiableList(values);
+    }
+
+    public BigDecimal calculateTotalPrice() {
+        return values.stream()
+                .map(MenuProduct::calculatePriceMultiplyQuantity)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void updateMenu(final Menu menu) {
+        values.forEach(menuProduct -> menuProduct.setMenu(menu));
     }
 }

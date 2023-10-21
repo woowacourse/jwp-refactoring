@@ -4,6 +4,7 @@ import kitchenpos.domain.menu_group.MenuGroup;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -23,6 +24,8 @@ public class Menu {
     private MenuProducts menuProducts;
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+        validatePrice(price);
+
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
@@ -30,6 +33,12 @@ public class Menu {
     }
 
     protected Menu() {
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -50,5 +59,9 @@ public class Menu {
 
     public MenuProducts getMenuProducts() {
         return menuProducts;
+    }
+
+    public boolean isPriceGreaterThanTotalProductPrice() {
+        return price.compareTo(menuProducts.calculateTotalPrice()) > 0;
     }
 }
