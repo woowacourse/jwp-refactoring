@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
@@ -25,18 +26,15 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             MenuRepository menuRepository,
             OrderRepository orderRepository,
-            OrderLineItemRepository orderLineItemRepository,
             OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -68,8 +66,16 @@ public class OrderService {
     }
 
     private Menu findMenu(Long menuId) {
+        validateNull(menuId);
+
         return menuRepository.findById(menuId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateNull(Object object) {
+        if (Objects.isNull(object)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private OrderTable findOrderTable(Long orderTableId) {
@@ -83,7 +89,7 @@ public class OrderService {
 
     @Transactional
     public Orders changeOrderStatus(Long orderId, OrderUpdateRequest request) {
-        OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+        OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
         Orders orders = findOrder(orderId);
         orders.changeOrderStatus(orderStatus);
 

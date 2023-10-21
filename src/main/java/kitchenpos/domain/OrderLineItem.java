@@ -51,6 +51,10 @@ public class OrderLineItem {
         );
     }
 
+    public void registerOrders(Orders orders) {
+        this.orders = orders;
+    }
+
     public Long getSeq() {
         return seq;
     }

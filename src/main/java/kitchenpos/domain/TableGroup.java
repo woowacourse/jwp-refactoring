@@ -2,9 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,31 +22,18 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
     }
 
     public TableGroup(LocalDateTime createdDate) {
-        this(null, createdDate, null);
+        this(null, createdDate);
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
-    public TableGroup(List<OrderTable> orderTables) {
-        this(null, null, orderTables);
-    }
-
-    public TableGroup(
-            Long id,
-            LocalDateTime createdDate,
-            List<OrderTable> orderTables
-    ) {
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     public static TableGroup from() {

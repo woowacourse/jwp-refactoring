@@ -5,11 +5,14 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,64 +38,67 @@ public class Orders {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "orders")
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "orders", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Orders() {
     }
 
-    public Orders(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, null, orderLineItems);
+    public Orders(OrderTable orderTable) {
+        this(null, orderTable, null, null);
     }
 
     public Orders(
             OrderTable orderTable,
-            LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems
+            LocalDateTime orderedTime
     ) {
-        this(null, orderTable, null, orderedTime, orderLineItems);
+        this(null, orderTable, null, orderedTime);
     }
 
     public Orders(
             OrderStatus orderStatus,
-            LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems
+            LocalDateTime orderedTime
     ) {
-        this(null, null, orderStatus, orderedTime, orderLineItems);
+        this(null, null, orderStatus, orderedTime);
     }
 
     public Orders(
             OrderTable orderTable,
             OrderStatus orderStatus,
-            LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems
+            LocalDateTime orderedTime
     ) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTable, orderStatus, orderedTime);
     }
 
     public Orders(
             Long id,
             OrderTable orderTable,
             OrderStatus orderStatus,
-            LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems
+            LocalDateTime orderedTime
     ) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
     public static Orders of(
             OrderStatus orderStatus,
             List<OrderLineItem> orderLineItems
     ) {
-        return new Orders(orderStatus, LocalDateTime.now(), orderLineItems);
+        Orders orders = new Orders(orderStatus, LocalDateTime.now());
+        orders.addAllOrderLineItems(orderLineItems);
+
+        return orders;
     }
 
     public void registerOrderTable(OrderTable orderTable) {
         this.orderTable = orderTable;
+    }
+
+    public void addAllOrderLineItems(List<OrderLineItem> orderLineItems) {
+        orderLineItems.forEach(orderLineItem -> orderLineItem.registerOrders(this));
+        this.orderLineItems.addAll(orderLineItems);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -123,16 +129,13 @@ public class Orders {
         return orderTable;
     }
 
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
-
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;

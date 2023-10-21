@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,8 +33,8 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Orders> orders;
+    @OneToMany(mappedBy = "orderTable", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private final List<Orders> orders = new ArrayList<>();
 
     public OrderTable() {
     }
@@ -138,4 +141,9 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
+    public List<Orders> getOrders() {
+        return orders;
+    }
+
 }
