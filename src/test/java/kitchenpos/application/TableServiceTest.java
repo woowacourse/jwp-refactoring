@@ -75,7 +75,7 @@ class TableServiceTest {
         final List<OrderTable> expect = orderTableRepository.findAll();
         expect.addAll(tables);
 
-        tables.forEach(orderTableRepository::save);
+        orderTableRepository.saveAll(tables);
 
         // when & then
         final List<OrderTable> actual = tableService.list();
@@ -125,7 +125,7 @@ class TableServiceTest {
             final OrderTable table = orderTableRepository.save(new TableBuilder().build());
 
             orderRepository.save(new OrderBuilder()
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .setOrderStatus(orderStatus)
                     .build());
 
@@ -144,7 +144,7 @@ class TableServiceTest {
                     .build());
 
             orderRepository.save(new OrderBuilder()
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .setOrderStatus(OrderStatus.COMPLETION)
                     .build());
 
@@ -202,8 +202,6 @@ class TableServiceTest {
         @DisplayName("테이블이 비어있지 않고 테이블이 존재하지 않을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_table_does_not_exists() {
             // given
-            final long invalidId = -1L;
-
             final OrderTable table = new TableBuilder()
                     .setEmpty(false)
                     .build();

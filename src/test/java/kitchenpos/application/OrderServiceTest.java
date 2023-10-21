@@ -42,29 +42,16 @@ class OrderServiceTest {
     @DisplayName("모든 주문 목록을 조회한다.")
     void listTest() {
         // given
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+        final OrderTable orderTable = orderTableRepository.findById(1L).get();
 
-        final Menu menu = menuRepository.save(new MenuBuilder()
-                .setMenuGroup(menuGroup)
-                .build());
-
-        final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                .setMenu(menu)
-                .setQuantity(1)
+        final Order order = new OrderBuilder()
+                .setOrderTable(orderTable)
                 .build();
-
-        final OrderTable table = orderTableRepository.save(new TableBuilder()
-                .setEmpty(false)
-                .build());
 
         final List<Order> expect = orderRepository.findAll();
-        final Order newOrder = new OrderBuilder()
-                .setOrderLineItems(List.of(orderLineItem))
-                .setOrderTableId(table)
-                .build();
-        expect.add(newOrder);
+        expect.add(order);
 
-        orderRepository.save(newOrder);
+        orderRepository.save(order);
 
         // when
         final List<Order> actual = orderService.list();
@@ -101,14 +88,14 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .build();
 
             // when
             final Order savedOrder = orderService.create(order);
 
             // then
-            assertEquals(OrderStatus.COOKING.name(), savedOrder.getOrderStatus());
+            assertEquals(OrderStatus.COOKING, savedOrder.getOrderStatus());
 
             final Long orderLineItemId = savedOrder.getOrderLineItems().get(0).getSeq();
             orderLineItemRepository.findById(orderLineItemId)
@@ -128,7 +115,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(Collections.emptyList())
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .build();
 
             // when & then
@@ -157,7 +144,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .build();
 
             // when & then
@@ -184,7 +171,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(notSavedOrderTable)
+                    .setOrderTable(notSavedOrderTable)
                     .build();
 
             // when & then
@@ -213,7 +200,7 @@ class OrderServiceTest {
 
             final Order order = new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .build();
 
             // when & then
@@ -247,17 +234,17 @@ class OrderServiceTest {
 
             final Order order = orderRepository.save(new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .build());
 
             // when
-            order.setOrderStatus(orderStatus.name());
+            order.updateOrderStatus(orderStatus);
             orderService.changeOrderStatus(order.getId(), order);
 
             // then
             orderRepository.findById(order.getId())
                     .ifPresentOrElse(
-                            actual -> assertEquals(orderStatus.name(), actual.getOrderStatus()),
+                            actual -> assertEquals(orderStatus, actual.getOrderStatus()),
                             () -> fail("Order가 존재하지 않습니다.")
                     );
         }
@@ -283,7 +270,7 @@ class OrderServiceTest {
 
             final Order order = orderRepository.save(new OrderBuilder()
                     .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .setOrderStatus(OrderStatus.COMPLETION)
                     .build());
 

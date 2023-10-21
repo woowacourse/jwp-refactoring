@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -52,8 +51,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
         if (Objects.isNull(order.getOrderTable().getId())) {
             throw new IllegalArgumentException();
         }
@@ -65,9 +62,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTable(orderTable);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        order.updateOrderStatus(OrderStatus.COOKING);
 
         orderRepository.save(order);
 
@@ -80,31 +75,24 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.isNull(order.getId()) || !Objects.equals(orderId, order.getId())) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        final Order savedOrder = orderRepository.findById(orderId)
+                .orElseThrow(IllegalArgumentException::new);
 
-        orderRepository.save(savedOrder);
+        if (savedOrder.getOrderStatus().equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
 
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+        orderRepository.save(order);
 
-        return savedOrder;
+        return order;
     }
 }

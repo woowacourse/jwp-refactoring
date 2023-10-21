@@ -217,7 +217,7 @@ class TableGroupServiceTest {
                     .build());
 
             orderRepository.save(new OrderBuilder()
-                    .setOrderTableId(table)
+                    .setOrderTable(table)
                     .setOrderStatus(orderStatus)
                     .build());
 
