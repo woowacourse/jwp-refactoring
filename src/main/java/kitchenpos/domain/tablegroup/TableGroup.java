@@ -13,7 +13,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNullElseGet;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -31,6 +30,12 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     public TableGroup() {
+    }
+
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
     }
 
     private void validate(final List<OrderTable> orderTables) {
@@ -51,12 +56,34 @@ public class TableGroup {
         }
     }
 
-    public Long getId() {
-        return id;
+    public void changeOrderTables(final List<OrderTable> orderTables) {
+        validate(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(this.id);
+            orderTable.changeEmpty(false);
+        }
+        this.orderTables = orderTables;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TableGroup that = (TableGroup) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -65,15 +92,6 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        validate(orderTables);
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(this.id);
-            orderTable.changeEmpty(false);
-        }
-        this.orderTables = orderTables;
     }
 
 }

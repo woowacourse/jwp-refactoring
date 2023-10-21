@@ -36,24 +36,9 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
+    public void ungroup() {
+        this.tableGroupId = null;
+        this.empty = false;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -64,10 +49,6 @@ public class OrderTable {
             throw new IllegalArgumentException("테이블 인원수는 0명 이상이어야 합니다.");
         }
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     public void changeEmpty(final boolean empty) {
@@ -86,17 +67,34 @@ public class OrderTable {
             return false;
         }
         final OrderTable that = (OrderTable) o;
-        return Objects.equals(id, that.id);
+        return numberOfGuests == that.numberOfGuests && empty == that.empty && id.equals(that.id)
+                && Objects.equals(tableGroupId, that.tableGroupId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, tableGroupId, numberOfGuests, empty);
     }
 
-    public void ungroup() {
-        this.tableGroupId = null;
-        this.empty = false;
+    public Long getId() {
+        return id;
     }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public void changeTableGroup(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
 
 }

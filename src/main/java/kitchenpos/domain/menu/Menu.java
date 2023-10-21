@@ -3,6 +3,7 @@ package kitchenpos.domain.menu;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -56,16 +57,8 @@ public class Menu {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public Money getPrice() {
@@ -87,6 +80,23 @@ public class Menu {
                 .map(entry -> new MenuProduct(null, this, entry.getKey().getId(), entry.getValue()))
                 .collect(Collectors.toList());
         this.menuProducts = menuProducts;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Menu menu = (Menu) o;
+        return Objects.equals(id, menu.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
 }

@@ -107,7 +107,7 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup();
-            테이블_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
+            테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
 
             //when
@@ -128,7 +128,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             TableGroup 테이블_그룹 = new TableGroup();
             TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
-            테이블_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
+            테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
             orderTableRepository.save(테이블);
 
             //expect

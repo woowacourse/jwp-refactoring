@@ -53,7 +53,7 @@ class OrderTableTest {
         void 포함된_그룹이_있는_경우_예외가_발생한다() {
             //given
             OrderTable 테이블 = new OrderTable(1, false);
-            테이블.setTableGroupId(1L);
+            테이블.changeTableGroup(1L);
 
             //expect
             assertThatThrownBy(() -> 테이블.changeEmpty(true))
@@ -66,7 +66,7 @@ class OrderTableTest {
     void 그룹을_없앨_수_있다() {
         //given
         OrderTable 테이블 = new OrderTable(1, true);
-        테이블.setTableGroupId(1L);
+        테이블.changeTableGroup(1L);
 
         //when
         테이블.ungroup();
@@ -76,6 +76,18 @@ class OrderTableTest {
                 () -> assertThat(테이블.isEmpty()).isFalse(),
                 () -> assertThat(테이블.getTableGroupId()).isNull()
         );
+    }
+
+    @Test
+    void id가_같으면_동등하다() {
+        //given
+        OrderTable 테이블 = new OrderTable(1L, 1L, 1, true);
+
+        //when
+        boolean actual = 테이블.equals(new OrderTable(1L, 1L, 1, true));
+
+        //then
+        assertThat(actual).isTrue();
     }
 
 }

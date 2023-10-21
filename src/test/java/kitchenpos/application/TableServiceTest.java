@@ -164,7 +164,7 @@ class TableServiceTest extends ServiceTest {
             //given
             OrderTable 그룹있는_테이블 = orderTableRepository.save(new OrderTable(0, true));
             TableGroup 생성된_그룹 = 그룹_생성하기(그룹있는_테이블);
-            그룹있는_테이블.setTableGroupId(생성된_그룹.getId());
+            그룹있는_테이블.changeTableGroup(생성된_그룹.getId());
             orderTableRepository.save(그룹있는_테이블);
 
             //expect
@@ -177,7 +177,7 @@ class TableServiceTest extends ServiceTest {
             List<OrderTable> 테이블_목록 = List.of(포함할_테이블, new OrderTable(0, true));
             TableGroup 테이블_그룹 = new TableGroup();
             tableGroupRepository.save(테이블_그룹);
-            테이블_그룹.setOrderTables(테이블_목록);
+            테이블_그룹.changeOrderTables(테이블_목록);
             return 테이블_그룹;
         }
 

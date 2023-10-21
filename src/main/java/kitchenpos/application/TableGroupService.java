@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class TableGroupService {
         }
 
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        tableGroup.setOrderTables(foundOrderTables);
+        tableGroup.changeOrderTables(foundOrderTables);
 
         return TableGroupDto.from(tableGroup);
     }

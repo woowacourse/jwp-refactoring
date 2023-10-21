@@ -1,6 +1,7 @@
 package kitchenpos.domain.product;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -27,31 +28,45 @@ public class Product {
     }
 
     public Product(final String name, final Money price) {
+        this(null, name, price);
+    }
+
+    public Product(final Long id, final String name, final Money price) {
         if (isNull(name)) {
             throw new IllegalArgumentException("상품명이 없습니다.");
         }
         if (isNull(price)) {
             throw new IllegalArgumentException("상품 가격이 없습니다.");
         }
+        this.id = id;
         this.name = name;
         this.price = price;
     }
 
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public Money getPrice() {

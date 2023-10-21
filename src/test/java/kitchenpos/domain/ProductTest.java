@@ -48,4 +48,16 @@ class ProductTest {
         assertThatThrownBy(() -> new Product(name, price))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void id가_같으면_동등하다() {
+        //given
+        Product product = new Product(1L, "후라이드", Money.of(16000));
+
+        //when
+        boolean actual = product.equals(new Product(1L, "양념치킨", Money.of(16000)));
+
+        //then
+        assertThat(actual).isTrue();
+    }
 }
