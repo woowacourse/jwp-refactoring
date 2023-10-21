@@ -3,7 +3,6 @@ package kitchenpos.dao.fakedao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.menuproduct.MenuProduct;
 
@@ -28,12 +27,5 @@ public class InMemoryMenuProductDao implements MenuProductDao {
     @Override
     public List<MenuProduct> findAll() {
         return menuProducts;
-    }
-
-    @Override
-    public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        return menuProducts.stream()
-                           .filter(menuProduct -> menuProduct.getMenuId().equals(menuId))
-                           .collect(Collectors.toList());
     }
 }

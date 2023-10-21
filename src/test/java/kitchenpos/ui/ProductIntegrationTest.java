@@ -29,7 +29,7 @@ class ProductIntegrationTest extends IntegrationTest {
             final var request = new ProductCreateRequest(productName, new BigDecimal("1000"));
 
             //when
-            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, Product.class);
+            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, String.class);
 
             //then
             assertThat(response.getStatusCode()).isBetween(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -43,7 +43,7 @@ class ProductIntegrationTest extends IntegrationTest {
             final var request = new ProductCreateRequest(invalidName, price);
 
             //when
-            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, Product.class);
+            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, String.class);
 
             //then
             assertThat(response.getStatusCode()).isBetween(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -57,7 +57,7 @@ class ProductIntegrationTest extends IntegrationTest {
             final var request = new ProductCreateRequest("상품명", invalidPrice);
 
             //when
-            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, Product.class);
+            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, String.class);
 
             //then
             assertThat(response.getStatusCode()).isBetween(HttpStatus.BAD_REQUEST, HttpStatus.INTERNAL_SERVER_ERROR);

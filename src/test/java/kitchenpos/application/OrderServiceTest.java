@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderFactory;
 import kitchenpos.domain.OrderLineItemFactory;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTableFactory;
+import kitchenpos.domain.menugroup.MenuGroup;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -61,7 +62,8 @@ class OrderServiceTest {
         @Test
         void 주문한_메뉴가_등록되지_않은_메뉴라면_예외가_발생한다() {
             // given
-            final var menu = MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L);
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup);
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
@@ -78,7 +80,8 @@ class OrderServiceTest {
         @Test
         void 주문에_사용된_테이블이_등록되있지_않으면_예외가_발생한다() {
             // given
-            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L));
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
 
             final var order = OrderFactory.createOrderOf(Long.MAX_VALUE, orderLineItem);
@@ -94,7 +97,8 @@ class OrderServiceTest {
         @Test
         void 주문에_사용된_테이블이_비어있다면_예외가_발생한다() {
             // given
-            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L));
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
@@ -111,7 +115,8 @@ class OrderServiceTest {
         @Test
         void 테이블이_비어있지_않고_메뉴가_존재하면_정상적으로_등록된다() {
             // given
-            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L));
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
@@ -136,7 +141,8 @@ class OrderServiceTest {
         @Test
         void 계산완료_상태일_경우_더_이상_상태를_변경할_수_없다() {
             // given
-            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L));
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
@@ -157,7 +163,8 @@ class OrderServiceTest {
         @Test
         void 식사중일_경우_조리중으로_변경할_수_없다() {
             // given
-            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L));
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
@@ -179,7 +186,8 @@ class OrderServiceTest {
         @CsvSource(value = {"COOKING: MEAL", "MEAL:COMPLETION"}, delimiter = ':')
         void 변경_가능한_상태일경우_정상적으로_변경한다(OrderStatus previous, OrderStatus next) {
             // given
-            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(1000), 1L));
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
             final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
