@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderEntity;
 import kitchenpos.dao.entity.OrderLineItemEntity;
 import kitchenpos.dao.mapper.OrderMapper;
+import kitchenpos.dao.mapper.OrderTableMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
@@ -88,7 +89,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   private OrderTable findOrderTable(final OrderEntity savedOrderEntity) {
     return orderTableDao.findById(savedOrderEntity.getOrderTableId())
-        .map(OrderMapper::mapToOrderTable)
+        .map(OrderTableMapper::mapToOrderTable)
         .orElseThrow(IllegalArgumentException::new);
   }
 

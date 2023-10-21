@@ -3,7 +3,6 @@ package kitchenpos.dao.mapper;
 import java.util.List;
 import kitchenpos.dao.entity.OrderEntity;
 import kitchenpos.dao.entity.OrderLineItemEntity;
-import kitchenpos.dao.entity.OrderTableEntity;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -34,13 +33,5 @@ public class OrderMapper {
         entity.getOrderedTime(),
         orderLineItems
     );
-  }
-
-  public static OrderTable mapToOrderTable(final OrderTableEntity entity) {
-    return new OrderTable(
-        entity.getId(),
-        entity.getTableGroupId(),
-        entity.getNumberOfGuests(),
-        entity.isEmpty());
   }
 }
