@@ -42,7 +42,7 @@ public class TableGroupService {
         return TableGroupResponse.from(tableGroup);
     }
 
-    private static void validateOrderTableSize(List<Long> orderTableIds, List<OrderTable> orderTables) {
+    private void validateOrderTableSize(List<Long> orderTableIds, List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException("존재하지 않는 주문 테이블이 존재합니다.");
         }
