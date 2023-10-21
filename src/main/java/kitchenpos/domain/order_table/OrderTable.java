@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 public class OrderTable {
 
+    private static final int MIN_NUMBER_OF_GUESTS = 0;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,12 +21,20 @@ public class OrderTable {
     private boolean empty;
 
     public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     protected OrderTable() {
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -45,7 +54,14 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        validateIsEmpty();
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateIsEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean isEmpty() {

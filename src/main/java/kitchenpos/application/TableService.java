@@ -37,41 +37,47 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
+        validateNotGrouped(savedOrderTable);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        validateChangeableOrderStatus(orderTableId);
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
 
+    private void validateNotGrouped(final OrderTable savedOrderTable) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateChangeableOrderStatus(final Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (Objects.isNull(orderTableId)) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableMatch(orderTableId, orderTable);
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    private void validateOrderTableMatch(final Long orderTableId, final OrderTable orderTable) {
+        if (Objects.isNull(orderTableId) ||
+                Objects.isNull(orderTable.getId()) ||
+                !orderTableId.equals(orderTable.getId())) {
+            throw new IllegalArgumentException();
+        }
     }
 }

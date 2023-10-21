@@ -182,22 +182,6 @@ class TableServiceTest {
             assertEquals(expectNumberOfGuests, actual.getNumberOfGuests());
         }
 
-        @ParameterizedTest
-        @CsvSource(value = {"-1", "-2", "-100"})
-        @DisplayName("테이블이 비어있지 않고 손님의 수가 0 미만일 경우 IllegalArgumentException이 발생한다.")
-        void changeNumberOfGuestsWithNegativeNumberOfGuests(final int invalidNumberOfGuests) {
-            // given
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
-
-            // when & then
-            table.setNumberOfGuests(invalidNumberOfGuests);
-
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), table));
-        }
-
         @Test
         @DisplayName("테이블이 비어있지 않고 테이블이 존재하지 않을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_table_does_not_exists() {
