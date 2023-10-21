@@ -43,11 +43,12 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menuProduct.setProductId(productId);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
 
@@ -66,10 +67,12 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menuProduct.setProductId(productId);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName(product.getName());
-            menu.setPrice(product.getPrice());
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    product.getName(),
+                    product.getPrice(),
+                    null,
+                    List.of(menuProduct)
+            );
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
 
@@ -88,11 +91,12 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menuProduct.setProductId(productId);
             menuProduct.setQuantity(2L);
 
-            final Menu menu = new Menu();
-            menu.setName(product.getName());
-            menu.setPrice(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    product.getName(),
+                    product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
 
@@ -110,11 +114,12 @@ class MenuAcceptanceTest extends AcceptanceTest {
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(1L);
 
-        final Menu menu = new Menu();
-        menu.setName("스키야키");
-        menu.setPrice(BigDecimal.valueOf(11_900));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(List.of(menuProduct));
+        final Menu menu = new Menu(
+                "스키야키",
+                BigDecimal.valueOf(11_900),
+                menuGroupId,
+                List.of(menuProduct)
+        );
 
         final Menu createdMenu = 메뉴_생성_요청하고_메뉴_반환(toMenuRequest(menu));
 
