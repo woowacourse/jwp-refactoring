@@ -4,7 +4,10 @@ import kitchenpos.domain.OrderStatus;
 
 public class OrderStatusChangeRequest {
 
-    private final OrderStatus orderStatus;
+    private OrderStatus orderStatus;
+
+    private OrderStatusChangeRequest() {
+    }
 
     public OrderStatusChangeRequest(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;

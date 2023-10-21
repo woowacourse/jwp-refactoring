@@ -4,8 +4,11 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemRequest {
 
-    private final Long menuId; // 애그리거트 분리를 위해 id 참조
-    private final long quantity;
+    private Long menuId; // 애그리거트 분리를 위해 id 참조
+    private long quantity;
+
+    private OrderLineItemRequest() {
+    }
 
     public OrderLineItemRequest(final Long menuId, final long quantity) {
         this.menuId = menuId;

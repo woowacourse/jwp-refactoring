@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ public class MenuProduct {
     private Long seq;
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private Menu menu;
     @OneToOne
     private Product product;

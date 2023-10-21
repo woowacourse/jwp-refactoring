@@ -14,7 +14,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderTableInAndOrderStatusIn(final List<OrderTable> orderTables,
                                                  final List<OrderStatus> orderStatuses);
 
-    boolean existsByOrderTableAndOrderStatusIn(final Long orderTableId, final List<OrderStatus> orderStatuses);
+    boolean existsByOrderTableAndOrderStatusIn(final OrderTable orderTableId, final List<OrderStatus> orderStatuses);
 
     default Order getById(final Long orderId) {
         return findById(orderId)

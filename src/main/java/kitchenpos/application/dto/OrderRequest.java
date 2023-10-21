@@ -6,24 +6,27 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
 
-    private final Long orderTableId;
-    private final List<OrderLineItemRequest> orderLineItemRequests;
+    private Long orderTableId;
+    private List<OrderLineItemRequest> orderLineItemsRequest;
 
-    public OrderRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItemRequests) {
+    private OrderRequest() {
+    }
+
+    public OrderRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItemsRequest) {
         this.orderTableId = orderTableId;
-        this.orderLineItemRequests = orderLineItemRequests;
+        this.orderLineItemsRequest = orderLineItemsRequest;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderLineItemRequest> getOrderLineItemRequests() {
-        return orderLineItemRequests;
+    public List<OrderLineItemRequest> getOrderLineItemsRequest() {
+        return orderLineItemsRequest;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItemRequests.stream()
+        return orderLineItemsRequest.stream()
                 .map(OrderLineItemRequest::toEntity)
                 .collect(Collectors.toList());
     }

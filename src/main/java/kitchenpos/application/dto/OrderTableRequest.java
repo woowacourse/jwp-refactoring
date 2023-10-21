@@ -4,10 +4,9 @@ import kitchenpos.domain.OrderTable;
 
 public class OrderTableRequest {
 
-    private final int numberOfGuest;
+    private int numberOfGuest;
 
-    public OrderTableRequest(final int numberOfGuest) {
-        this.numberOfGuest = numberOfGuest;
+    private OrderTableRequest() {
     }
 
     public OrderTable toEntity() {

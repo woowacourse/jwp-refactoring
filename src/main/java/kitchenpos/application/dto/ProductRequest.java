@@ -5,8 +5,11 @@ import kitchenpos.domain.Product;
 
 public class ProductRequest {
 
-    private final String name;
-    private final BigDecimal price;
+    private String name;
+    private BigDecimal price;
+
+    private ProductRequest() {
+    }
 
     public ProductRequest(final String name, final BigDecimal price) {
         this.name = name;

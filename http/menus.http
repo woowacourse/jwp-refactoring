@@ -6,12 +6,14 @@ Content-Type: application/json
   "name": "후라이드+후라이드",
   "price": 19000,
   "menuGroupId": 1,
-  "menuProducts": [
+  "menuProductRequests": [{
+    "productId": 1,
+    "quantity": 10
+  },
     {
-      "productId": 1,
-      "quantity": 2
-    }
-  ]
+      "productId": 2,
+      "quantity": 10
+    }]
 }
 
 ###

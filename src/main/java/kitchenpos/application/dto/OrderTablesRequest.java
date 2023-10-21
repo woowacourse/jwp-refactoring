@@ -4,7 +4,10 @@ import java.util.List;
 
 public class OrderTablesRequest {
 
-    private final List<Long> orderTableIds;
+    private List<Long> orderTableIds;
+
+    private OrderTablesRequest() {
+    }
 
     public OrderTablesRequest(final List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;

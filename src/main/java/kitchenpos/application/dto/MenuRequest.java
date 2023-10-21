@@ -6,10 +6,13 @@ import java.util.stream.Collectors;
 
 public class MenuRequest {
 
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
-    private final List<MenuProductRequest> menuProductRequests;
+    private String name;
+    private BigDecimal price;
+    private Long menuGroupId;
+    private List<MenuProductRequest> menuProductRequests;
+
+    private MenuRequest() {
+    }
 
     public MenuRequest(final String name,
                        final BigDecimal price,
