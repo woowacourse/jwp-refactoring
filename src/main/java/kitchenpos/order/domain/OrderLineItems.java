@@ -13,7 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderLineItems {
 
-    @MappedCollection(idColumn = "ORDER_ID")
+    @MappedCollection(idColumn = "ORDER_ID", keyColumn = "ORDER_KEY")
     private final List<OrderLineItem> orderLineItems;
 
     private OrderLineItems(List<OrderLineItem> orderLineItems) {

@@ -5,7 +5,7 @@ import kitchenpos.order.domain.OrderLineItem;
 public class OrderLineItemRequest {
 
     private Long menuId;
-    private long quantity;
+    private Long quantity;
 
     public OrderLineItemRequest() {
     }

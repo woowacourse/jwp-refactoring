@@ -5,7 +5,7 @@ import java.util.List;
 public class OrderRequest {
 
     private Long orderTableId;
-    private List<OrderLineItemRequest> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItems ;
 
     public OrderRequest() {
     }

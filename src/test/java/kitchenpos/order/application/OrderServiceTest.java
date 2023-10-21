@@ -17,6 +17,7 @@ import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusRequest;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
@@ -151,8 +152,10 @@ class OrderServiceTest extends ServiceTest {
             OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
             OrderResponse savedOrder = orderService.create(orderRequest);
 
+            OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.MEAL);
+
             // when
-            OrderResponse result = orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
+            OrderResponse result = orderService.changeOrderStatus(savedOrder.getId(), orderStatusRequest);
 
             // then
             assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
@@ -162,11 +165,11 @@ class OrderServiceTest extends ServiceTest {
         void 등록되어있지_않은_주문이면_실패() {
             // given
             Long invalidId = 0L;
-            OrderStatus cooking = OrderStatus.COOKING;
+            OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.COOKING);
 
             // when
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, cooking)).isInstanceOf(
+            assertThatThrownBy(() -> orderService.changeOrderStatus(invalidId, orderStatusRequest)).isInstanceOf(
                     IllegalArgumentException.class);
 
         }
@@ -181,12 +184,13 @@ class OrderServiceTest extends ServiceTest {
 
             Long savedOrderId = orderResponse.getId();
 
-            orderService.changeOrderStatus(savedOrderId, OrderStatus.MEAL);
-            orderService.changeOrderStatus(savedOrderId, OrderStatus.COMPLETION);
+            orderService.changeOrderStatus(savedOrderId, new OrderStatusRequest(OrderStatus.MEAL));
+            orderService.changeOrderStatus(savedOrderId, new OrderStatusRequest(OrderStatus.COMPLETION));
 
             // when
+            OrderStatusRequest orderStatusRequest = new OrderStatusRequest(orderStatus);
             // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, orderStatus)).isInstanceOf(
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, orderStatusRequest)).isInstanceOf(
                     IllegalArgumentException.class);
         }
 
