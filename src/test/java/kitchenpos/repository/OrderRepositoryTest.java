@@ -8,7 +8,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
@@ -88,19 +90,67 @@ class OrderRepositoryTest extends RepositoryTestConfig {
                 .isInstanceOf(EmptyResultDataAccessException.class);
     }
 
+    @DisplayName("[SUCCESS] 단체 지정 식별자값으로 주문 목록을 조회한다.")
+    @Test
+    void success_findOrdersByTableGroupId() {
+        // given
+        final Menu savedMenu = createMenu();
+        final OrderTable orderTable = new OrderTable(null, 5, true);
+        final TableGroup savedTableGroup = createTableGroup(orderTable);
+
+        final Order order = Order.ofEmptyOrderLineItems(orderTable);
+        order.addOrderLineItems(List.of(
+                OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1))
+        ));
+        persistOrder(order);
+
+        em.flush();
+        em.close();
+
+        // when
+        final List<Order> actual = orderRepository.findOrdersByTableGroupId(savedTableGroup.getId());
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(actual).hasSize(1);
+            final Order actualOrder = actual.get(0);
+
+            softly.assertThat(actualOrder).isEqualTo(order);
+        });
+    }
+
+    private Menu createMenu() {
+        final Product savedProduct = persistProduct(new Product(new Name("테스트용 상품명"), new Price("10000")));
+        final MenuGroup savedMenuGroup = persistMenuGroup(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
+        final Menu savedMenu = persistMenu(Menu.ofEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, savedMenuGroup));
+        savedMenu.addMenuProducts(List.of(
+                new MenuProduct(savedMenu, savedProduct, new Quantity(1))
+        ));
+
+        return savedMenu;
+    }
+
+    private TableGroup createTableGroup(final OrderTable orderTable) {
+        final TableGroup tableGroup = TableGroup.emptyOrderTables();
+        final OrderTables orderTables = OrderTables.empty();
+        orderTables.addOrderTables(new OrderTables(List.of(
+                orderTable
+        )));
+        tableGroup.addOrderTablesAndChangeEmptyFull(orderTables);
+
+        return persistTableGroup(tableGroup);
+    }
+
     @DisplayName("[SUCCESS] 주문 테이블 식별자값과 주문 상태 목록 조건에 해당하는 주문이 존재하는지 확인한다.")
     @Test
     void success_existsByOrderTableIdAndOrderStatusIn() {
         // given
-        final Product savedProduct = persistProduct(new Product(new Name("테스트용 상품명"), new Price("10000")));
-        final MenuGroup savedMenuGroup = persistMenuGroup(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu savedMenu = persistMenu(Menu.ofEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, savedMenuGroup));
-        persistMenuProduct(new MenuProduct(savedMenu, savedProduct, new Quantity(1)));
+        final Menu savedMenu = createMenu();
         final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, true));
         final Order savedOrder = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
-        final OrderLineItem orderLineItem = OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1));
-        orderLineItem.assignOrder(savedOrder);
-        persistOrderLineItem(orderLineItem);
+        savedOrder.addOrderLineItems(List.of(
+                OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1))
+        ));
 
         em.flush();
         em.close();
