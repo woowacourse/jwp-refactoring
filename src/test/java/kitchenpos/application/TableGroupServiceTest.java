@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -49,14 +52,14 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreate() {
             //given
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables.stream().map(OrderTable::getId).collect(Collectors.toList()));
 
             //when
-            final TableGroup actual = tableGroupService.create(tableGroup);
+            final Long id = tableGroupService.create(request);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isNotNull();
+                softly.assertThat(id).isNotNull();
             });
         }
 
@@ -64,10 +67,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenOrderTablesIsEmpty() {
             //given
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -75,10 +78,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenOrderTablesSizeLessThenTwo() {
             //given
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTables.get(0)));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTables.get(0).getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -86,13 +89,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenNotExistOrderTable() {
             //given
-            final OrderTable notExistOrderTable = new OrderTable(null, 3, true);
-            orderTables.add(notExistOrderTable);
-
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(-1L));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -104,10 +104,10 @@ class TableGroupServiceTest extends ServiceTest {
             notEmptyOrderTable = testFixtureBuilder.buildOrderTable(notEmptyOrderTable);
             orderTables.add(notEmptyOrderTable);
 
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables.stream().map(OrderTable::getId).collect(Collectors.toList()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -122,10 +122,10 @@ class TableGroupServiceTest extends ServiceTest {
             tableGroupIdNotNullOrderTable = testFixtureBuilder.buildOrderTable(tableGroupIdNotNullOrderTable);
 
             orderTables.add(tableGroupIdNotNullOrderTable);
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables.stream().map(OrderTable::getId).collect(Collectors.toList()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

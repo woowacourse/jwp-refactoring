@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,15 +27,15 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void createMenuGroup() {
             //given
-            final MenuGroup expected = new MenuGroup("menu group");
+            final MenuGroupCreateRequest request = new MenuGroupCreateRequest("menu group");
 
             //when
-            final MenuGroup actual = menuGroupService.create(expected);
+            final MenuGroup actual = menuGroupService.create(request);
 
             //then
             assertSoftly(softly -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(expected.getName());
+                assertThat(actual.getName()).isEqualTo(request.getName());
             });
         }
     }

@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.application.dto.OrderTableCreateRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,18 +33,14 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableCreate() {
             //given
-            final OrderTable orderTable = new OrderTable(null, 0, true);
-            orderTable.setEmpty(true);
+            final OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
 
             //when
-            final OrderTable actual = tableService.create(orderTable);
+            final Long id = tableService.create(request);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isNotNull();
-                softly.assertThat(actual.getTableGroup()).isNull();
-                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
-                softly.assertThat(actual.isEmpty()).isEqualTo(orderTable.isEmpty());
+                softly.assertThat(id).isNotNull();
             });
         }
     }
@@ -78,20 +76,18 @@ class TableServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 비어있는지를 변경한다.")
         @ParameterizedTest
         @ValueSource(booleans = {true, false})
-        void orderTableChangeEmpty(final boolean isEmpty) {
+        void orderTableChangeEmpty(final boolean bool) {
             //given
-            OrderTable orderTable = new OrderTable(null, 0, isEmpty);
+            OrderTable orderTable = new OrderTable(null, 0, bool);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable changingStatus = new OrderTable();
-            changingStatus.setEmpty(!isEmpty);
-
             //when
-            final OrderTable actual = tableService.changeEmpty(orderTable.getId(), changingStatus);
+            final Long id = tableService.changeEmpty(orderTable.getId(), !bool);
 
             //then
+            final OrderTable savedOrderTable = testFixtureBuilder.getEntitySupporter().getOrderTableRepository().findById(id).orElseThrow(IllegalArgumentException::new);
             assertSoftly(softly -> {
-                softly.assertThat(actual.isEmpty()).isEqualTo(changingStatus.isEmpty());
+                softly.assertThat(savedOrderTable.isEmpty()).isEqualTo(!bool);
             });
         }
 
@@ -100,11 +96,9 @@ class TableServiceTest extends ServiceTest {
         void orderTableChangeEmptyFailWhenNotExistTableGroup() {
             //given
             final long notExistOrderTableId = -1L;
-            final OrderTable changingStatus = new OrderTable();
-            changingStatus.setEmpty(true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(notExistOrderTableId, changingStatus))
+            assertThatThrownBy(() -> tableService.changeEmpty(notExistOrderTableId, true))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -112,18 +106,20 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeEmptyFailWhenTableGroupIdIsNotNull() {
             //given
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
-            tableGroup = testFixtureBuilder.buildTableGroup(tableGroup);
+            OrderTable orderTable1 = new OrderTable(null, 0, true);
+            orderTable1 = testFixtureBuilder.buildOrderTable(orderTable1);
 
-            OrderTable orderTable = new OrderTable(tableGroup, 0, true);
-            orderTable = testFixtureBuilder.buildOrderTable(orderTable);
+            OrderTable orderTable2 = new OrderTable(null, 0, true);
+            orderTable2 = testFixtureBuilder.buildOrderTable(orderTable2);
 
-            final OrderTable changingStatus = new OrderTable();
-            changingStatus.setEmpty(!orderTable.isEmpty());
+            final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+            testFixtureBuilder.buildTableGroup(tableGroup);
+            orderTables.forEach(orderTable -> testFixtureBuilder.buildOrderTable(orderTable));
 
             // when & then
-            final Long orderTableId = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changingStatus))
+            final Long orderTableId = orderTable1.getId();
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -139,11 +135,11 @@ class TableServiceTest extends ServiceTest {
             testFixtureBuilder.buildOrder(notCompletionOrder);
 
             final OrderTable changingStatus = new OrderTable();
-            changingStatus.setEmpty(!notCompletionOrdertable.isEmpty());
+            changingStatus.changeEmpty(!notCompletionOrdertable.isEmpty());
 
             // when & then
             final Long orderTableId = notCompletionOrdertable.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, changingStatus))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -161,14 +157,14 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = new OrderTable(null, beforeGuests, false);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable afterGuests = new OrderTable(null, beforeGuests + 100, true);
-
+            final int afterGuests = beforeGuests + 100;
             //when
-            final OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), afterGuests);
+            final Long id = tableService.changeNumberOfGuests(orderTable.getId(), afterGuests);
 
             //then
+            final OrderTable savedOrderTable = testFixtureBuilder.getEntitySupporter().getOrderTableRepository().findById(id).orElseThrow(IllegalArgumentException::new);
             assertSoftly(softly -> {
-                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(afterGuests.getNumberOfGuests());
+                softly.assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(afterGuests);
             });
         }
 
@@ -179,11 +175,9 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = new OrderTable(null, 3, false);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable guestsLessThenZero = new OrderTable(null, -1, true);
-
             // when & then
             final Long orderTableId = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, guestsLessThenZero))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, -1))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -191,13 +185,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void orderTableChangeNumberOfGuestsFailWhenNotExistOrderTable() {
             //given
-            OrderTable orderTable = new OrderTable(null, 3, true);
-
-            final OrderTable changingGuests = new OrderTable(null, 5, true);
+            final Long notExistOrderTableId = -1L;
 
             // when & then
-            final Long orderTableId = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changingGuests))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistOrderTableId, 5))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -208,11 +199,9 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = new OrderTable(null, 3, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderTable changingGuests = new OrderTable(null, 5, true);
-
             // when & then
             final Long orderTableId = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changingGuests))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, 5))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.product.Product;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,16 +28,14 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreate() {
             //given
-            final Product product = new Product("product", new BigDecimal(1000));
+            final ProductCreateRequest request = new ProductCreateRequest("product", new BigDecimal(1000));
 
             //when
-            final Product actual = productService.create(product);
+            final Long id = productService.create(request);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isNotNull();
-                softly.assertThat(actual.getPrice()).isEqualByComparingTo(product.getPrice());
-                softly.assertThat(actual.getName()).isEqualTo(product.getName());
+                softly.assertThat(id).isNotNull();
             });
         }
 
@@ -43,10 +43,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreateFailWhenPriceIsNull() {
             //given
-            final Product product = new Product("product", null);
+            final ProductCreateRequest request = new ProductCreateRequest("product", null);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -54,10 +54,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreateFailWhenPriceLessThenZero() {
             //given
-            final Product product = new Product("product", new BigDecimal(-1));
+            final ProductCreateRequest request = new ProductCreateRequest("product", new BigDecimal(-1));
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

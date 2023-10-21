@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -27,7 +29,7 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
-    private List<OrderLineItem> orderLineItems;
+    private List<Menu> menus;
     private OrderTable orderTable;
 
     @BeforeEach
@@ -35,16 +37,11 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = new MenuGroup("menu group");
         menuGroup = testFixtureBuilder.buildMenuGroup(menuGroup);
 
-        Menu menu1 = new Menu("name", new BigDecimal( 100), menuGroup.getId(), Collections.emptyList());
-        menu1 = testFixtureBuilder.buildMenu(menu1);
-        Menu menu2 = new Menu("name", new BigDecimal( 100), menuGroup.getId(), Collections.emptyList());
-        menu2 = testFixtureBuilder.buildMenu(menu2);
-
-        orderLineItems = new ArrayList<>();
-        final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu1, 1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2, 1L);
-        orderLineItems.add(orderLineItem1);
-        orderLineItems.add(orderLineItem2);
+        menus = new ArrayList<>();
+        Menu menu1 = new Menu("name", new BigDecimal(100), menuGroup.getId(), Collections.emptyList());
+        menus.add(testFixtureBuilder.buildMenu(menu1));
+        Menu menu2 = new Menu("name", new BigDecimal(100), menuGroup.getId(), Collections.emptyList());
+        menus.add(testFixtureBuilder.buildMenu(menu2));
 
         orderTable = new OrderTable(null, 3, false);
         orderTable = testFixtureBuilder.buildOrderTable(orderTable);
@@ -58,14 +55,14 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreate() {
             //given
-            final Order order = new Order(orderTable, null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), menus.stream().map(menu -> new OrderCreateRequest.OrderLineItemCreate(menu.getId(), 2L)).collect(Collectors.toList()));
 
             //when
-            final Order actual = orderService.create(order);
+            final Long id = orderService.create(request);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isNotNull();
+                softly.assertThat(id).isNotNull();
             });
         }
 
@@ -73,10 +70,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenOrderLineItemsIsEmpty() {
             //given
-            final Order order = new Order(orderTable, null, null, Collections.emptyList());
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -84,14 +81,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenNotExistMenu() {
             //given
-            final Order order = new Order(orderTable, null, null, orderLineItems);
-
-            final Menu notExistMenu = new Menu("menu", new BigDecimal(1000), null, Collections.emptyList());
-            final OrderLineItem orderLineItem = new OrderLineItem(null, notExistMenu, 1);
-            orderLineItems.add(orderLineItem);
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), List.of(new OrderCreateRequest.OrderLineItemCreate(-1L, 2L)));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -99,11 +92,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenNotExistOrderTable() {
             //given
-            final OrderTable notExistOrderTable = new OrderTable(null, 3, true);
-            final Order order = new Order(notExistOrderTable, null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(-1L, menus.stream().map(menu -> new OrderCreateRequest.OrderLineItemCreate(menu.getId(), 2L)).collect(Collectors.toList()));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,10 +106,10 @@ class OrderServiceTest extends ServiceTest {
             orderTable = new OrderTable(null, 3, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final Order order = new Order(orderTable, null, null, orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), menus.stream().map(menu -> new OrderCreateRequest.OrderLineItemCreate(menu.getId(), 2L)).collect(Collectors.toList()));
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -156,16 +148,13 @@ class OrderServiceTest extends ServiceTest {
             Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
             order = testFixtureBuilder.buildOrder(order);
 
-            final Order changeStatus = new Order(null, OrderStatus.MEAL.name(), null, null);
-
             //when
-            final Order actual = orderService.changeOrderStatus(order.getId(), changeStatus);
+            final Long actual = orderService.changeOrderStatus(order.getId(), OrderStatus.MEAL.name());
 
             //then
             final Long orderId = order.getId();
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isEqualTo(orderId);
-                softly.assertThat(actual.getOrderStatus()).isEqualTo(changeStatus.getOrderStatus());
+                softly.assertThat(actual).isEqualTo(orderId);
             });
         }
 
@@ -173,13 +162,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderStatusChangeFailWhenNotExistOrder() {
             //given
-            Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
-
-            final Order changeStatus = new Order(null, OrderStatus.MEAL.name(), null, null);
-            changeStatus.setOrderStatus(OrderStatus.MEAL.name());
+            final String changeStatus = OrderStatus.MEAL.name();
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeStatus))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, changeStatus))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -190,7 +176,7 @@ class OrderServiceTest extends ServiceTest {
             Order completionOrder = new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList());
             completionOrder = testFixtureBuilder.buildOrder(completionOrder);
 
-            final Order changeStatus = new Order(null, OrderStatus.MEAL.name(), null, null);
+            final String changeStatus = OrderStatus.MEAL.name();
 
             // when & then
             final Long completionOrderId = completionOrder.getId();
