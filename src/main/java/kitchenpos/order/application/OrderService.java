@@ -13,6 +13,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.persistence.OrderRepositoryImpl;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class OrderService {
 
   public OrderService(
       final MenuRepositoryImpl menuRepository,
-      final OrderRepository orderRepository,
+      final OrderRepositoryImpl orderRepository,
       final OrderTableDao orderTableDao
   ) {
     this.menuRepository = menuRepository;
