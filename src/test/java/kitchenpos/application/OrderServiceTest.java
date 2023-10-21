@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.domain.MenuGroup;
@@ -148,14 +147,14 @@ class OrderServiceTest extends ServiceTest {
         void success() {
             // given
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
-            menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
+            Menu savedMenu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.confirmTableGroup(savedTableGroup);
-            Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now());
+            Order order = Order.from(savedOrderTable);
 
-            OrderLineItem orderLineItem = new OrderLineItem(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup), 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 
@@ -184,14 +183,14 @@ class OrderServiceTest extends ServiceTest {
             final OrderChangeStatusRequest request = ORDER1_CHANGE_STATUS_REQUEST();
 
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
-            menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
+            Menu savedMenu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.confirmTableGroup(savedTableGroup);
-            Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now());
+            Order order = Order.from(savedOrderTable);
 
-            OrderLineItem orderLineItem = new OrderLineItem(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup), 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 
@@ -210,14 +209,14 @@ class OrderServiceTest extends ServiceTest {
             final OrderChangeStatusRequest request = ORDER1_CHANGE_STATUS_REQUEST();
 
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
-            menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
+            Menu savedMenu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.confirmTableGroup(savedTableGroup);
-            Order order = new Order(savedOrderTable, OrderStatus.COOKING, LocalDateTime.now());
+            Order order = Order.from(savedOrderTable);
 
-            OrderLineItem orderLineItem = new OrderLineItem(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup), 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 
@@ -234,14 +233,15 @@ class OrderServiceTest extends ServiceTest {
             final OrderChangeStatusRequest request = ORDER1_CHANGE_STATUS_REQUEST();
 
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(MENU_GROUP1_NAME));
-            menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
+            Menu savedMenu = menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup));
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.confirmTableGroup(savedTableGroup);
-            Order order = new Order(savedOrderTable, OrderStatus.COMPLETION, LocalDateTime.now());
+            Order order = Order.from(savedOrderTable);
+            order.changeStatus(OrderStatus.COMPLETION);
 
-            OrderLineItem orderLineItem = new OrderLineItem(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup), 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 

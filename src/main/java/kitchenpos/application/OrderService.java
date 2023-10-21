@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -55,7 +54,7 @@ public class OrderService {
             throw new OrderException.CannotOrderStateByOrderTableEmptyException();
         }
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order = Order.from(orderTable);
         final Order savedOrder = orderRepository.save(order);
         associateOrderLineItem(orderLineItemRequests, savedOrder);
 

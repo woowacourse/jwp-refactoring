@@ -40,13 +40,18 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    protected Order() {}
+    protected Order() {
+    }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
+    private Order(final OrderTable orderTable, final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public static Order from(final OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

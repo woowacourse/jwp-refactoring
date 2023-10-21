@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import kitchenpos.exception.OrderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,8 @@ class OrderTest {
     @DisplayName("현재 OrderStatus가 COMPLETION이면 Status를 변경할 수 없으므로 예외가 발생한다.")
     void validateAvailableChangeStatus() {
         // given
-        final Order order = new Order(ORDER_TABLE1(), OrderStatus.COMPLETION, LocalDateTime.now());
+        final Order order = Order.from(ORDER_TABLE1());
+        order.changeStatus(OrderStatus.COMPLETION);
 
         // when & then
         assertThatThrownBy(() -> order.validateAvailableChangeStatus())

@@ -10,7 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.time.LocalDateTime;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.common.fixtures.OrderTableFixtures;
 import kitchenpos.domain.Order;
@@ -126,7 +125,8 @@ class TableServiceTest extends ServiceTest {
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable);
 
-            final Order order = new Order(savedOrderTable1, OrderStatus.MEAL, LocalDateTime.now());
+            final Order order = Order.from(savedOrderTable1);
+            order.changeStatus(OrderStatus.MEAL);
             orderRepository.save(order);
 
             // when & then
