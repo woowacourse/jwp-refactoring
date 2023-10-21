@@ -31,8 +31,8 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블_그룹을_생성한다() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 3, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(2L, 4, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(4, true));
 
         TableGroup saved = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
@@ -41,7 +41,7 @@ class TableGroupServiceTest {
 
     @Test
     void 두개_미만의_테이블로_그룹할_수_없다() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1L, 3, true));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(3, true));
 
         assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -56,8 +56,8 @@ class TableGroupServiceTest {
 
     @Test
     void 주문_테이블이_비어있지_않으면_그룹할_수_없다() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 3, false));
-        OrderTable notEmptyTable = orderTableDao.save(new OrderTable(2L, 4, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, false));
+        OrderTable notEmptyTable = orderTableDao.save(new OrderTable(4, true));
 
         assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), notEmptyTable.getId())))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -65,8 +65,8 @@ class TableGroupServiceTest {
 
     @Test
     void 그룹이_있다면_그룹할_수_없다() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 3, true));
-        OrderTable groupedTable = orderTableDao.save(new OrderTable(2L, 3, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
+        OrderTable groupedTable = orderTableDao.save(new OrderTable(3, true));
         groupedTable.setTableGroupId(1L);
 
         assertThatThrownBy(() -> tableGroupService.create(List.of(orderTable1.getId(), groupedTable.getId())))
@@ -75,8 +75,8 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블_그룹이_생성되면서_테이블을_비어있지_않은_상태로_만든다() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 3, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(2L, 4, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(4, true));
 
         TableGroup saved = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
@@ -86,8 +86,8 @@ class TableGroupServiceTest {
 
     @Test
     void 그룹_해제를_한다() {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 3, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(2L, 4, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(4, true));
 
         TableGroup saved = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
@@ -104,13 +104,13 @@ class TableGroupServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
     void 주문_상태가_완료가_아니라면_그룹_해제_할_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable1 = orderTableDao.save(new OrderTable(1L, 3, true));
-        OrderTable orderTable2 = orderTableDao.save(new OrderTable(2L, 4, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(3, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(4, true));
 
         TableGroup saved = tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, 1L, 1L);
-        Order mealOrder = new Order(null, orderTable1, List.of(orderLineItem));
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
+        Order mealOrder = new Order(orderTable1, List.of(orderLineItem));
         mealOrder.changeOrderStatus(orderStatus);
         orderDao.save(mealOrder);
 

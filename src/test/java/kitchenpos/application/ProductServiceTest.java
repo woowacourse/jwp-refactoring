@@ -16,7 +16,7 @@ class ProductServiceTest {
 
     @Test
     void 상품을_생성한다() {
-        Product product = new Product(null, "후라이드", BigDecimal.valueOf(16000));
+        Product product = new Product("후라이드", BigDecimal.valueOf(16000));
         Product saved = productService.create(product);
 
         assertThat(product).usingRecursiveComparison().isEqualTo(saved);
@@ -24,9 +24,9 @@ class ProductServiceTest {
 
     @Test
     void 상품_전체를_조회한다() {
-        productService.create(new Product(null, "후라이드", BigDecimal.valueOf(16000)));
-        productService.create(new Product(null, "후라이드", BigDecimal.valueOf(16000)));
-        productService.create(new Product(null, "후라이드", BigDecimal.valueOf(16000)));
+        productService.create(new Product("후라이드", BigDecimal.valueOf(16000)));
+        productService.create(new Product("후라이드", BigDecimal.valueOf(16000)));
+        productService.create(new Product("후라이드", BigDecimal.valueOf(16000)));
 
         assertThat(productService.list()).hasSize(3);
     }

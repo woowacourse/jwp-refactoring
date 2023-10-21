@@ -1,10 +1,18 @@
 package kitchenpos.domain.table;
 
+import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.util.List;
 
+@Embeddable
 public class OrderTables {
 
-    private final List<OrderTable> collection;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<OrderTable> collection;
+
+    public OrderTables() {
+    }
 
     public OrderTables(List<OrderTable> collection) {
         this.collection = collection;

@@ -35,8 +35,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this.id = id;
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this.id = null;
         this.orderTable = orderTable;
         this.orderLineItems = new OrderLineItems(orderLineItems);
         this.orderStatus = OrderStatus.COOKING;

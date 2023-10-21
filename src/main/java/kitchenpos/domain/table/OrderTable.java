@@ -31,9 +31,14 @@ public class OrderTable {
 
     public OrderTable(Long id, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroupId = null;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        this.tableGroupId = null;
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, numberOfGuests, empty);
+        this.tableGroupId = null;
     }
 
     public void changeEmpty(boolean empty) {

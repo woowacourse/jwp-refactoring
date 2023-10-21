@@ -30,7 +30,7 @@ class MenuIntegrationTest extends IntegrationTest {
     void 메뉴가_영속화되면_메뉴프로덕트도_영속화된다() {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Product product = productService.create(new Product(null, "상품1", BigDecimal.valueOf(1000)));
+        Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
         MenuProduct menuProduct = new MenuProduct(null, product, 1L);
         Menu menu = new Menu(null, "메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
@@ -45,7 +45,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
-        Product product = productService.create(new Product(null, "상품1", BigDecimal.valueOf(1000)));
+        Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
         MenuProduct menuProduct = new MenuProduct(null, product, 1L);
         Menu menu = new Menu(null, "메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);

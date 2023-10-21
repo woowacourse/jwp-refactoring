@@ -13,14 +13,14 @@ class ProductTest {
     @ValueSource(ints = {-1, -100})
     @ParameterizedTest
     void 가격은_0보다_작을_수_없다(int price) {
-        assertThatThrownBy(() -> new Product(1L, "상품", new BigDecimal(price)))
+        assertThatThrownBy(() -> new Product("상품", new BigDecimal(price)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ValueSource(ints = {0, 1})
     @ParameterizedTest
     void 가격이_0_이상이면_정상_생성된다(int price) {
-        assertThatCode(() -> new Product(1L, "상품", new BigDecimal(price)))
+        assertThatCode(() -> new Product("상품", new BigDecimal(price)))
                 .doesNotThrowAnyException();
     }
 }

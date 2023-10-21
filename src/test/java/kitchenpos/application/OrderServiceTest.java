@@ -40,16 +40,16 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuProduct menuProduct = new MenuProduct(null, new Product(null, "후라이드", BigDecimal.valueOf(2000)), 1L);
+        MenuProduct menuProduct = new MenuProduct(null, new Product("후라이드", BigDecimal.valueOf(2000)), 1L);
         menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(2000), 1L, List.of(menuProduct)));
-        orderLineItem = orderLineItemDao.save(new OrderLineItem(null, 1L, 1L));
-        tableFull = orderTableDao.save(new OrderTable(null, 3, false));
-        tableEmpty = orderTableDao.save(new OrderTable(null, 4, true));
+        orderLineItem = orderLineItemDao.save(new OrderLineItem(1L, 1L));
+        tableFull = orderTableDao.save(new OrderTable(3, false));
+        tableEmpty = orderTableDao.save(new OrderTable(4, true));
     }
 
     @Test
     void 주문을_생성_한다() {
-        Order order = new Order(null, tableFull, List.of(orderLineItem));
+        Order order = new Order(tableFull, List.of(orderLineItem));
         Order saved = orderService.create(order);
 
         assertThat(order).usingRecursiveComparison()
@@ -58,7 +58,7 @@ class OrderServiceTest {
 
     @Test
     void 주문_상태를_변경한다() {
-        Order order = new Order(null, tableFull, List.of(orderLineItem));
+        Order order = new Order(tableFull, List.of(orderLineItem));
         Order saved = orderService.create(order);
 
         Order changeOrderStatus = orderService.changeOrderStatus(saved.getId(), OrderStatus.MEAL);
@@ -68,7 +68,7 @@ class OrderServiceTest {
 
     @Test
     void 완료_상태에서_주문_상태를_변경할_수_없다() {
-        Order order = new Order(null, tableFull, List.of(orderLineItem));
+        Order order = new Order(tableFull, List.of(orderLineItem));
         Order saved = orderService.create(order);
         orderService.changeOrderStatus(saved.getId(), OrderStatus.COMPLETION);
 
@@ -78,8 +78,8 @@ class OrderServiceTest {
 
     @Test
     void 주문_전체_조회를_한다() {
-        orderService.create(new Order(null, tableFull, List.of(orderLineItem)));
-        orderService.create(new Order(null, tableFull, List.of(orderLineItem)));
+        orderService.create(new Order(tableFull, List.of(orderLineItem)));
+        orderService.create(new Order(tableFull, List.of(orderLineItem)));
 
         assertThat(orderService.list()).hasSize(2);
     }
@@ -89,20 +89,20 @@ class OrderServiceTest {
 
         @Test
         void 빈_테이블에서_주문할_수_없다() {
-            assertThatThrownBy(() -> orderService.create(new Order(null, tableEmpty, List.of(orderLineItem))))
+            assertThatThrownBy(() -> orderService.create(new Order(tableEmpty, List.of(orderLineItem))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 없는_메뉴를_주문할_수_없다() {
             long notExistMenuId = 2L;
-            assertThatThrownBy(() -> orderService.create(new Order(null, tableFull, List.of(new OrderLineItem(null, notExistMenuId, 1L)))))
+            assertThatThrownBy(() -> orderService.create(new Order(tableFull, List.of(new OrderLineItem(notExistMenuId, 1L)))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_시간을_기록한다() {
-            Order order = new Order(null, tableFull, List.of(orderLineItem));
+            Order order = new Order(tableFull, List.of(orderLineItem));
             Order saved = orderService.create(order);
 
             assertThat(saved.getOrderedTime()).isNotNull();
@@ -110,7 +110,7 @@ class OrderServiceTest {
 
         @Test
         void 주문_상태를_COOKING으로_변경한다() {
-            Order order = new Order(null, tableFull, List.of(orderLineItem));
+            Order order = new Order(tableFull, List.of(orderLineItem));
             Order saved = orderService.create(order);
 
             assertThat(saved.getOrderStatus()).isEqualTo("COOKING");
@@ -118,8 +118,8 @@ class OrderServiceTest {
 
         @Test
         void 존재하지_않는_테이블에서_주문할_수_없다() {
-            OrderTable table = new OrderTable(null, 3, false);
-            assertThatThrownBy(() -> orderService.create(new Order(null, table, List.of(orderLineItem))))
+            OrderTable table = new OrderTable(3, false);
+            assertThatThrownBy(() -> orderService.create(new Order(table, List.of(orderLineItem))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
