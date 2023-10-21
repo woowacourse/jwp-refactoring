@@ -35,7 +35,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableDao.findMandatoryById(orderTableId);
         validateOrderStatus(orderTableId);
-        savedOrderTable.setEmpty(empty);
+        savedOrderTable.changeEmptyStatus(empty);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
 
@@ -49,7 +49,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final NumberOfGuests numberOfGuests) {
         final OrderTable savedOrderTable = orderTableDao.findMandatoryById(orderTableId);
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
     }
 }

@@ -58,9 +58,7 @@ public class TableGroupService {
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setEmpty(false);
-            savedOrderTable.setTableGroupId(tableGroupId);
-            orderTableDao.save(savedOrderTable);
+            orderTableDao.save(new OrderTable(savedOrderTable.getId(), tableGroupId, savedOrderTable.getNumberOfGuests(), false));
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
@@ -81,9 +79,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+            orderTableDao.save(new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false));
         }
     }
 }
