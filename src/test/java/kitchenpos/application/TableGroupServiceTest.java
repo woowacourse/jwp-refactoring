@@ -14,9 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
@@ -28,9 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends IntegrationTest {
 
     @Autowired
@@ -40,11 +36,11 @@ class TableGroupServiceTest extends IntegrationTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private MenuRepository menuRepository;
+    private MenuService menuService;
     @Autowired
-    private ProductRepository productRepository;
+    private MenuGroupService menuGroupService;
     @Autowired
-    private MenuGroupRepository menuGroupRepository;
+    private ProductService productService;
 
     @Test
     @DisplayName("단체 테이블 등록 시 지정된 빈 테이블들을 주문 테이블로 변경해 저장한다.")
@@ -98,7 +94,6 @@ class TableGroupServiceTest extends IntegrationTest {
     @DisplayName("단체 테이블을 개별의 주문 테이블로 분할할 수 있다.")
     void 단체_테이블_분할_성공_저장() {
         // given
-        /// TODO: 2023/10/19  service, repository 사용 통일
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(tableService.list()));
 
         // when
@@ -113,7 +108,6 @@ class TableGroupServiceTest extends IntegrationTest {
                         .noneMatch(OrderTable::isEmpty));
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     @DisplayName("주문 상태가 '조리', '식사'인 테이블이 있으면 분할할 수 없다.")
@@ -125,10 +119,10 @@ class TableGroupServiceTest extends IntegrationTest {
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTablesInGroup));
 
         // when
-        final Product chicken = productRepository.save(치킨_8000원());
-        final Product pizza = productRepository.save(피자_8000원());
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
-        final Menu menu = menuRepository.save(
+        final Product chicken = productService.create(치킨_8000원());
+        final Product pizza = productService.create(피자_8000원());
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_피자_세트", BigDecimal.valueOf(10000), menuGroup, List.of(chicken, pizza))
         );
         orderService.create(
@@ -139,5 +133,4 @@ class TableGroupServiceTest extends IntegrationTest {
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-
 }

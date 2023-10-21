@@ -15,60 +15,51 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends IntegrationTest {
 
     @Autowired
     private OrderService orderService;
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
+    private TableService orderTableService;
     @Autowired
-    private OrderTableRepository orderTableRepository;
+    private MenuService menuService;
     @Autowired
-    private MenuRepository menuRepository;
+    private MenuGroupService menuGroupService;
     @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @Test
     @DisplayName("주문 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 주문_등록_성공_저장() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(주문_테이블_생성());
-        final Product chicken = productRepository.save(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
+        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final Product chicken = productService.create(치킨_8000원());
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
 
         // when
-        final Menu menu = menuRepository.save(
+        final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
         final Order saved = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
 
         // then
-        assertThat(orderService.list())
+        final List<Order> savedOrders = orderService.list();
+        assertThat(savedOrders)
                 .map(Order::getId)
                 .filteredOn(id -> Objects.equals(id, saved.getId()))
                 .hasSize(1);
-        assertThat(orderLineItemRepository.findAll())
-                .map(OrderLineItem::getOrder)
-                .map(Order::getId)
-                .filteredOn(id -> Objects.equals(id, saved.getId()))
+        assertThat(savedOrders.get(0).getOrderLineItems())
                 .hasSize(1);
     }
 
@@ -76,7 +67,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("주문 등록 시 주문 항목의 개수는 최소 1개 이상이다.")
     void 주문_등록_실패_주문_항목_개수_미달() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(주문_테이블_생성());
+        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
 
         // when
         // then
@@ -89,13 +80,13 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("존재하지 않는 주문 항목으로 주문을 등록할 수 없다.")
     void 주문_등록_실패_존재하지_않는_주문_항목() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(주문_테이블_생성());
-        final Product chicken = productRepository.save(치킨_8000원());
+        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final Product chicken = productService.create(치킨_8000원());
         final Product fakePizza = 피자_8000원();
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
 
         // when
-        final Menu actualMenu = menuRepository.save(
+        final Menu actualMenu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
         final Menu fakeMenu = new Menu("x", BigDecimal.ONE, menuGroup, List.of(new MenuProduct(fakePizza, 1)));
@@ -112,9 +103,9 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderTable fakeOrderTable = 주문_테이블_생성();
         fakeOrderTable.setId(-1L);
-        final Product chicken = productRepository.save(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
-        final Menu menu = menuRepository.save(
+        final Product chicken = productService.create(치킨_8000원());
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
 
@@ -130,10 +121,10 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("빈 테이블에서 주문을 등록할 수 없다.")
     void 주문_등록_실패_빈_테이블() {
         // given
-        final OrderTable emptyTable = orderTableRepository.save(빈_테이블_생성());
-        final Product chicken = productRepository.save(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
-        final Menu menu = menuRepository.save(
+        final OrderTable emptyTable = orderTableService.create(빈_테이블_생성());
+        final Product chicken = productService.create(치킨_8000원());
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
 
@@ -149,10 +140,10 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("주문의 상태를 변경할 수 있다.")
     void 주문_상태_변경_성공() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(주문_테이블_생성());
-        final Product chicken = productRepository.save(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
-        final Menu menu = menuRepository.save(
+        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final Product chicken = productService.create(치킨_8000원());
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
         final Order order = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
@@ -172,10 +163,10 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("존재하지 않는 주문의 상태를 변경할 수 없다.")
     void 주문_상태_변경_실패_존재하지_않는_주문() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(주문_테이블_생성());
-        final Product chicken = productRepository.save(치킨_8000원());
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("양식"));
-        final Menu menu = menuRepository.save(
+        final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
+        final Product chicken = productService.create(치킨_8000원());
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroup("양식"));
+        final Menu menu = menuService.create(
                 세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
         );
         final Order order = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));

@@ -14,8 +14,7 @@ class MenuGroupServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
-
-
+    
     @Test
     @DisplayName("메뉴 그룹 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 메뉴_그룹_등록_성공_저장() {
