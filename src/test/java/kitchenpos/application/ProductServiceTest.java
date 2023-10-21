@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateDto;
-import kitchenpos.application.dto.ProductDto;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.ProductException.NoPriceException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +32,7 @@ class ProductServiceTest {
             new BigDecimal(2000));
 
         // when
-        final ProductDto result = productService.create(productCreateDto);
+        final Product result = productService.create(productCreateDto);
 
         // then
         assertThat(result.getName()).isEqualTo(productCreateDto.getName());
@@ -59,7 +59,7 @@ class ProductServiceTest {
         productService.create(productCreateDto);
 
         // when
-        final List<ProductDto> results = productService.list();
+        final List<Product> results = productService.list();
 
         // then
         assertThat(results).hasSize(1);

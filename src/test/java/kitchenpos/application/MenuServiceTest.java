@@ -14,6 +14,7 @@ import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.exception.MenuException.MenuOverPriceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,8 +75,9 @@ class MenuServiceTest {
         );
 
         // then
+        System.out.println("테스트 시작");
         assertThatThrownBy(() -> menuService.create(menuCreateDto))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(MenuOverPriceException.class);
     }
 
     @Test
@@ -96,7 +98,7 @@ class MenuServiceTest {
 
         // then
         assertThatThrownBy(() -> menuService.create(menuCreateDto))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(MenuOverPriceException.class);
     }
 
     @Test
@@ -147,10 +149,11 @@ class MenuServiceTest {
         assertThat(results).hasSize(1);
         assertThat(savedMenuResult).usingRecursiveComparison()
             .ignoringFields("id", "price", "menuProducts")
-            .isEqualTo(new Menu(menuCreateDto.getName(), menuCreateDto.getPrice(), savedMenuGroup));
+            .isEqualTo(Menu.of(menuCreateDto.getName(), menuCreateDto.getPrice(), savedMenuGroup,
+                savedMenuProductResults));
         assertThat(savedMenuResult.getPrice()).isEqualByComparingTo(menuCreateDto.getPrice());
         assertThat(savedMenuProductResults.get(0)).usingRecursiveComparison()
-            .ignoringFields("seq", "product.price")
+            .ignoringFields("seq", "product.price", "menu.id")
             .isEqualTo(
                 MenuProduct.of(savedMenuResult, savedProduct, menuProductCreateDto.getQuantity()));
     }

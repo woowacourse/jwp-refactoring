@@ -7,60 +7,75 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.dto.OrderCreateDto;
+import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderStatusUpdateDto;
+import kitchenpos.application.exception.MenuAppException.NotFoundMenuException;
+import kitchenpos.application.exception.OrderAppException.EmptyOrderTableException;
+import kitchenpos.application.exception.OrderAppException.OrderAlreadyCompletedException;
+import kitchenpos.application.exception.OrderLineItemAppException.EmptyOrderLineItemException;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Sql(scripts = {"classpath:truncate.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     private OrderTable mockOrderTable;
     private Menu mockMenu;
 
     @BeforeEach
     void init() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(4);
-        mockOrderTable = orderTableDao.save(orderTable);
+        final OrderTable orderTable = new OrderTable(4);
+        mockOrderTable = orderTableRepository.save(orderTable);
 
         final MenuGroup menuGroup = new MenuGroup("테스트 메뉴 그룹");
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        final Menu menu = new Menu(
+        final Product product = productRepository.save(
+            new Product("테스트 상품", BigDecimal.valueOf(10000)));
+
+        final MenuProduct menuProduct = new MenuProduct(product, 2);
+        final Menu menu = Menu.of(
             "테스트 메뉴",
             BigDecimal.valueOf(10000),
-            savedMenuGroup
+            savedMenuGroup,
+            List.of(menuProduct)
         );
         mockMenu = menuRepository.save(menu);
     }
@@ -68,154 +83,109 @@ class OrderServiceTest {
     @Test
     void 주문_생성한다() {
         // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(mockMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(mockOrderTable.getId());
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(mockMenu.getId(), 2);
+
+        final OrderCreateDto orderCreateDto = new OrderCreateDto(
+            mockOrderTable.getId(), List.of(orderLineItemDto)
+        );
 
         // when
-        final Order result = orderService.create(order);
+        final Order result = orderService.create(orderCreateDto);
 
         // then
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(result.getOrderLineItems()).hasSize(1);
-        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
     }
 
     @Test
     void 주문_생성_시_주문라인아이템이_없으면_예외가_발생한다() {
         // given
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.emptyList());
-        order.setOrderTableId(mockOrderTable.getId());
+        final OrderCreateDto orderCreateDto = new OrderCreateDto(
+            mockOrderTable.getId(), Collections.emptyList()
+        );
 
         // when then
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderCreateDto))
+            .isInstanceOf(EmptyOrderLineItemException.class);
     }
 
     @Test
     void 주문_생성_시_주문라인아이템의_메뉴가_존재하지_않으면_예외가_발생한다() {
         // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(mockOrderTable.getId());
+        final Long notExistMenuId = 99999L;
+        final Optional<Order> emptyOrder = orderRepository.findById(notExistMenuId);
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(notExistMenuId, 2);
 
         // when
-        final Long notExistMenuId = 99999L;
-        final Optional<Order> emptyOrder = orderDao.findById(notExistMenuId);
-        orderLineItem.setMenuId(notExistMenuId);
+        final OrderCreateDto orderCreateDto = new OrderCreateDto(
+            mockOrderTable.getId(), List.of(orderLineItemDto)
+        );
 
         // then
         assertThat(emptyOrder).isEmpty();
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderCreateDto))
+            .isInstanceOf(NotFoundMenuException.class);
     }
 
     @Test
     void 주문_생성_시_테이블이_비어있으면_예외가_발생한다() {
         // given when
-        final OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setEmpty(true);
-        final OrderTable savedOrderTable = orderTableDao.save(emptyOrderTable);
+        final OrderTable emptyOrderTable = new OrderTable(2);
+        emptyOrderTable.changeEmpty(true);
+        final OrderTable savedOrderTable = orderTableRepository.save(emptyOrderTable);
 
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(mockMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(savedOrderTable.getId());
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(mockMenu.getId(), 2);
+
+        final OrderCreateDto orderCreateDto = new OrderCreateDto(
+            savedOrderTable.getId(), List.of(orderLineItemDto)
+        );
 
         // then
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderCreateDto))
+            .isInstanceOf(EmptyOrderTableException.class);
     }
 
     @Test
     void 주문_상태를_변경한다() {
         // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(mockMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(mockOrderTable.getId());
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(mockMenu.getId(), 2);
 
-        final Order createdOrder = orderService.create(order);
+        final OrderCreateDto orderCreateDto = new OrderCreateDto(
+            mockOrderTable.getId(), List.of(orderLineItemDto)
+        );
 
-        final Order updateStatusOrder = new Order();
-        updateStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
+        final Order createdOrder = orderService.create(orderCreateDto);
+        final OrderStatusUpdateDto orderStatusUpdateDto = new OrderStatusUpdateDto("MEAL");
 
         // when
         final Order result = orderService.changeOrderStatus(createdOrder.getId(),
-            updateStatusOrder);
+            orderStatusUpdateDto);
 
         // then
-        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 주문_상태가_완료된_후에는_상태를_변경할_수_없다(final OrderStatus orderStatus) {
         // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(mockMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(mockOrderTable.getId());
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(mockMenu.getId(), 2);
 
-        final Order createdOrder = orderService.create(order);
-        createdOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.create(createdOrder);
+        final OrderCreateDto orderCreateDto = new OrderCreateDto(
+            mockOrderTable.getId(), List.of(orderLineItemDto)
+        );
+
+        final Order createdOrder = orderService.create(orderCreateDto);
+        createdOrder.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(createdOrder);
 
         // when
-        final Order updateStatusOrder = new Order();
-        updateStatusOrder.setOrderStatus(orderStatus.name());
+        final OrderStatusUpdateDto orderStatusUpdateDto = new OrderStatusUpdateDto(
+            orderStatus.name());
 
         // then
         assertThatThrownBy(
-            () -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문_메뉴의_상품들_개수와_기존_메뉴의_상품들_개수가_같지않으면_예외가_발생한다() {
-        // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(mockMenu.getId());
-        order.setOrderTableId(mockOrderTable.getId());
-
-        // when
-        final OrderLineItem notSavedMenuOrderItem = new OrderLineItem();
-        order.setOrderLineItems(List.of(orderLineItem, notSavedMenuOrderItem));
-
-        // then
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 존재하지_않는_주문_상태를_변경할_경우_예외가_발생한다() {
-        // given
-        final Order order = new Order();
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(mockMenu.getId());
-        order.setOrderLineItems(List.of(orderLineItem));
-        order.setOrderTableId(mockOrderTable.getId());
-
-        final Order createdOrder = orderService.create(order);
-        createdOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.create(createdOrder);
-
-        // when
-        final String notExistOrderStatusName = "없는주문상태";
-        final Order updateStatusOrder = new Order();
-        updateStatusOrder.setOrderStatus(notExistOrderStatusName);
-
-        // then
-        assertThatThrownBy(
-            () -> orderService.changeOrderStatus(createdOrder.getId(), updateStatusOrder))
-            .isInstanceOf(IllegalArgumentException.class);
+            () -> orderService.changeOrderStatus(createdOrder.getId(), orderStatusUpdateDto))
+            .isInstanceOf(OrderAlreadyCompletedException.class);
     }
 }
