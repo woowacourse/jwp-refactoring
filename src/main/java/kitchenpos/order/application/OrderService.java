@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.persistence.MenuRepositoryImpl;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderQueryResponse;
@@ -26,7 +27,7 @@ public class OrderService {
   private final OrderTableDao orderTableDao;
 
   public OrderService(
-      final MenuRepository menuRepository,
+      final MenuRepositoryImpl menuRepository,
       final OrderRepository orderRepository,
       final OrderTableDao orderTableDao
   ) {
