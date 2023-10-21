@@ -64,13 +64,14 @@ public class OrderTable {
         this.empty = isEmpty;
     }
 
-    public void validateAvailableChangeNumberOfGuests() {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateAvailableChangeNumberOfGuests();
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateAvailableChangeNumberOfGuests() {
         if (this.empty == true) {
             throw new OrderTableException.CannotChangeNumberOfGuestsStateInEmptyException();
         }
-    }
-
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 }

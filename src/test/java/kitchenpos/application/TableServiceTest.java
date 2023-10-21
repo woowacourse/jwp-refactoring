@@ -172,19 +172,5 @@ class TableServiceTest extends ServiceTest {
                     .isInstanceOf(OrderTableException.NotFoundOrderTableException.class)
                     .hasMessage("[ERROR] 해당하는 OrderTable이 존재하지 않습니다.");
         }
-
-        @Test
-        @DisplayName("주문 테이블이 비어있는 상태면 예외가 발생한다.")
-        void throws_orderTableIsEmpty() {
-            // given
-            final OrderTableChangeGuestRequest request = ORDER_TABLE1_CHANGE_GUEST_REQUEST();
-            final OrderTable orderTable = OrderTableFixtures.ORDER_TABLE1();
-            orderTableRepository.save(orderTable);
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
-                    .isInstanceOf(OrderTableException.CannotChangeNumberOfGuestsStateInEmptyException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 비어있는 상태에서 손님 수를 변경할 수 없습니다.");
-        }
     }
 }

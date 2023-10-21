@@ -30,13 +30,13 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블이 비어있으면 손님 수를 변경할 수 없으므로 예외가 발생한다.")
+    @DisplayName("손님 수 변경 시 테이블이 비어있으면 손님 수를 변경할 수 없으므로 예외가 발생한다.")
     void validateAvailableChangeNumberOfGuests() {
         // given
         OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, true);
 
         // when & then
-        assertThatThrownBy(() -> orderTable.validateAvailableChangeNumberOfGuests())
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(2))
                 .isInstanceOf(OrderTableException.CannotChangeNumberOfGuestsStateInEmptyException.class)
                 .hasMessage("[ERROR] 주문 테이블이 비어있는 상태에서 손님 수를 변경할 수 없습니다.");
     }

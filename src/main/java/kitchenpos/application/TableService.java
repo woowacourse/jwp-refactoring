@@ -64,9 +64,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableException.NotFoundOrderTableException::new);
 
-        savedOrderTable.validateAvailableChangeNumberOfGuests();
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-
         return OrderTableResponse.from(savedOrderTable);
     }
 }
