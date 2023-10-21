@@ -15,6 +15,12 @@ public class Price {
     protected Price() {
     }
 
+    public Price(final int price) {
+        final BigDecimal wrappedPrice = BigDecimal.valueOf(price);
+        validate(wrappedPrice);
+        this.price = wrappedPrice;
+    }
+
     public Price(final BigDecimal price) {
         validate(price);
         this.price = price;
