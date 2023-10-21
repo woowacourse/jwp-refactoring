@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.존재하지_않는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
@@ -50,9 +49,7 @@ class OrderServiceTest extends IntegrationTest {
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
-        final Menu menu = menuService.create(
-                세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
-        );
+        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
         final Order saved = orderService.create(RequestParser.of(orderTable, List.of(menu)));
 
         // then
@@ -72,8 +69,7 @@ class OrderServiceTest extends IntegrationTest {
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
 
         // expected
-        assertThatThrownBy(
-                () -> orderService.create(RequestParser.of(orderTable, Collections.emptyList())))
+        assertThatThrownBy(() -> orderService.create(RequestParser.of(orderTable, Collections.emptyList())))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -88,8 +84,7 @@ class OrderServiceTest extends IntegrationTest {
 
         // when
         final Menu actualMenu = menuService.create(
-                세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
-        );
+                RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
         final Menu fakeMenu = new Menu("x", BigDecimal.ONE, menuGroup, List.of(new MenuProduct(fakePizza, 1)));
 
         // then
@@ -104,9 +99,7 @@ class OrderServiceTest extends IntegrationTest {
         final OrderTable fakeOrderTable = 존재하지_않는_주문_테이블_생성();
         final Product chicken = productService.create(치킨_8000원());
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
-        final Menu menu = menuService.create(
-                세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
-        );
+        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
 
         // expected
         assertThatThrownBy(() -> orderService.create(RequestParser.of(fakeOrderTable, List.of(menu))))
@@ -120,9 +113,7 @@ class OrderServiceTest extends IntegrationTest {
         final OrderTable emptyTable = orderTableService.create(빈_테이블_생성());
         final Product chicken = productService.create(치킨_8000원());
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
-        final Menu menu = menuService.create(
-                세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
-        );
+        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
 
         // expected
         assertThatThrownBy(() -> orderService.create(RequestParser.of(emptyTable, List.of(menu))))
@@ -136,9 +127,8 @@ class OrderServiceTest extends IntegrationTest {
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
         final Product chicken = productService.create(치킨_8000원());
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
-        final Menu menu = menuService.create(
-                세트_메뉴_1개씩("치킨_할인", BigDecimal.valueOf(8000), menuGroup, List.of(chicken))
-        );
+        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
+
         final Order order = orderService.create(RequestParser.of(orderTable, List.of(menu)));
 
         // when

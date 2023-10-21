@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
 import static kitchenpos.fixture.ProductFixture.치킨_8000원;
 import static kitchenpos.fixture.ProductFixture.피자_8000원;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +12,9 @@ import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,9 +38,7 @@ class MenuServiceTest extends IntegrationTest {
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
-        final Menu menu = menuService.create(
-                세트_메뉴_1개씩("치킨_피자_세트", BigDecimal.valueOf(8000), menuGroup, products)
-        );
+        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, products));
 
         // then
         menuService.list()
@@ -62,7 +61,7 @@ class MenuServiceTest extends IntegrationTest {
         final MenuGroup unsavedMenuGroup = new MenuGroup("등록되지 않은 메뉴 그룹");
 
         // when
-        final Menu menu = 세트_메뉴_1개씩("치킨_피자_세트", BigDecimal.valueOf(10000), unsavedMenuGroup, List.of(chicken, pizza));
+        final MenuCreateRequest menu = RequestParser.of("치킨 할인", BigDecimal.ONE, unsavedMenuGroup, List.of(chicken));
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -78,9 +77,8 @@ class MenuServiceTest extends IntegrationTest {
         final Product unsavedProduct = new Product("등록되지 않은 상품", BigDecimal.ONE);
 
         // when
-        final Menu menu = 세트_메뉴_1개씩("치킨_피자_세트", BigDecimal.valueOf(8000), menuGroup,
-                List.of(savedProduct, unsavedProduct)
-        );
+        final MenuCreateRequest menu = RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup,
+                List.of(savedProduct, unsavedProduct));
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
