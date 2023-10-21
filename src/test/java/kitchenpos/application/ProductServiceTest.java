@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
+import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,11 +23,11 @@ class ProductServiceTest {
 
     @Test
     void 상품_생성할_수_있다() {
-        Product 로제떡볶이 = ProductFixtures.로제떡볶이();
+        ProductCreateRequest request = new ProductCreateRequest("로제떡볶이", 1000);
 
-        productService.create(로제떡볶이);
+        productService.create(request);
 
-        verify(productRepository).save(로제떡볶이);
+        verify(productRepository).save(any(Product.class));
     }
 
     @Test

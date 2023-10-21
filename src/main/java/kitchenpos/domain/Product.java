@@ -19,8 +19,7 @@ public class Product {
     @Embedded
     private Price price;
 
-    public Product(final Long id, final String name, final Price price) {
-        this.id = id;
+    public Product(final String name, final Price price) {
         this.name = name;
         this.price = price;
     }

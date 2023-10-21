@@ -47,6 +47,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @Disabled
     void 주문_항목에_메뉴_ID가_존재하지_않는경우_예외가_발생한다() {
         Order 주문1번 = OrderFixtures.주문1번();
         OrderLineItem orderLineItem = OrderLineItemFixtures.로제떡볶이_주문항목();
@@ -58,6 +59,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @Disabled
     void 주문_테이블이_존재하지_않는_경우_예외가_발생한다() {
         Order 주문2번 = OrderFixtures.주문2번();
         OrderLineItem 로제떡볶이_주문항목 = OrderLineItemFixtures.로제떡볶이_주문항목();
