@@ -5,7 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.supports.IntegrationTest;
 import kitchenpos.supports.ProductFixture;
