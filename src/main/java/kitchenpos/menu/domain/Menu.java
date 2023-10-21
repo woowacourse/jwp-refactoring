@@ -1,8 +1,6 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.common.domain.Price;
-import kitchenpos.menu.exception.MenuPriceExpensiveThanProductsPriceException;
-import kitchenpos.menugroup.domain.MenuGroup;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
@@ -20,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "MENU")
+@Table(name = "menu")
 public class Menu {
 
     @Id
@@ -33,9 +29,8 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -43,31 +38,14 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final Long id,
-                final String name,
+    public Menu(final String name,
                 final Long price,
-                final MenuGroup menuGroup) {
-
-        this.id = id;
+                final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = Price.from(price);
-        this.menuGroup = menuGroup;
-        this.menuProducts = new ArrayList<>();
-    }
-
-    public void initMenuProducts(final List<MenuProduct> menuProducts) {
-        validateMenuPriceMoreExpensiveThanProductsPriceSum();
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    private void validateMenuPriceMoreExpensiveThanProductsPriceSum() {
-        long menuProductsTotalPrice = menuProducts.stream()
-                .mapToLong(MenuProduct::getTotalPrice)
-                .sum();
-
-        if (price.getPrice() > menuProductsTotalPrice) {
-            throw new MenuPriceExpensiveThanProductsPriceException();
-        }
     }
 
     public Long getId() {
@@ -78,12 +56,12 @@ public class Menu {
         return name;
     }
 
-    public Long getPrice() {
-        return price.getPrice();
+    public Price getPrice() {
+        return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
@@ -95,11 +73,11 @@ public class Menu {
         if (this == o) return true;
         if (!(o instanceof Menu)) return false;
         Menu menu = (Menu) o;
-        return Objects.equals(id, menu.id) && Objects.equals(name, menu.name) && Objects.equals(price, menu.price) && Objects.equals(menuGroup, menu.menuGroup) && Objects.equals(menuProducts, menu.menuProducts);
+        return Objects.equals(id, menu.id) && Objects.equals(name, menu.name) && Objects.equals(price, menu.price) && Objects.equals(menuGroupId, menu.menuGroupId) && Objects.equals(menuProducts, menu.menuProducts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, menuGroup, menuProducts);
+        return Objects.hash(id, name, price, menuGroupId, menuProducts);
     }
 }

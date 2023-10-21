@@ -5,24 +5,18 @@ import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.domain.TableGroup;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableGroupFixture {
 
+    // TODO: 체크
     public static TableGroup 단체_지정_생성(final List<OrderTable> orderTables) {
         TableGroup tableGroup = TableGroup.createDefault();
-        tableGroup.initOrderTables(orderTables);
         return tableGroup;
     }
 
     public static TableGroupCreateRequest 단체_지정_생성_요청(final TableGroup tableGroup) {
-        List<Long> orderTableIds = tableGroup.getOrderTables()
-                .stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        return new TableGroupCreateRequest(orderTableIds);
+        return new TableGroupCreateRequest(null);
     }
 
     public static TableGroupCreateRequest 단체_지정_생성_요청(final List<Long> ids) {

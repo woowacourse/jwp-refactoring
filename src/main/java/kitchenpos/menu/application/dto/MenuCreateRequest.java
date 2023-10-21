@@ -1,6 +1,9 @@
 package kitchenpos.menu.application.dto;
 
+import kitchenpos.menu.domain.MenuProduct;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
@@ -20,6 +23,12 @@ public class MenuCreateRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public List<MenuProduct> toMenuProducts() {
+        return menuProducts.stream()
+                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     public String getName() {

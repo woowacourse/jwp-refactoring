@@ -24,11 +24,11 @@ class MenuTest {
     void 메뉴_상품을_등록할때_메뉴_가격이_더_크면_예외를_발생한다() {
         // given
         MenuGroup menuGroup = 메뉴_그룹_생성();
-        Menu menu = 메뉴_생성("메뉴", 1000000L, menuGroup);
-        List<MenuProduct> menuProducts = List.of(메뉴_상품_10개_생성(상품_생성_10000원()));
+        Menu menu = 메뉴_생성("메뉴", 1000000L, menuGroup.getId(), List.of());
+        List<MenuProduct> menuProducts = List.of(메뉴_상품_10개_생성(상품_생성_10000원().getId()));
 
         // when & then
-        assertThatThrownBy(() -> menu.initMenuProducts(menuProducts))
+        assertThatThrownBy(() -> menu.getId())
                 .isInstanceOf(MenuPriceExpensiveThanProductsPriceException.class);
     }
 }

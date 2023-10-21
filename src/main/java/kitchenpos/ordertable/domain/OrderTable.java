@@ -1,35 +1,25 @@
 package kitchenpos.ordertable.domain;
 
-import kitchenpos.ordertable.exception.CannotChangeNumberOfGuestBecauseOfEmptyTableException;
-import kitchenpos.ordertable.exception.NumberOfGuestsInvalidException;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.exception.TableGroupAlreadyRegisteredInGroup;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ORDER_TABLE")
+@Table(name = "order_table")
 public class OrderTable {
-
-    private static final int ZERO = 0;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "number_of_guests")
     private int numberOfGuests;
 
     @Column(nullable = false)
@@ -38,90 +28,30 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
-
-        this.id = id;
-        this.tableGroup = tableGroup;
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-
-        belongToTableGroup(tableGroup);
     }
 
-    private void belongToTableGroup(final TableGroup tableGroup) {
-        if (tableGroup != null) {
-            tableGroup.getOrderTables()
-                    .add(this);
-        }
+    public void updateTableGroupStatus(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
-    public void updateEmptyStatus(final boolean status) {
-        if (this.tableGroup != null) {
-            throw new TableGroupAlreadyRegisteredInGroup();
-        }
-
-        this.empty = status;
+    public void updateEmptyStatus(final boolean empty) {
+        this.empty = empty;
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
-        validateNumberOfGuests(numberOfGuests);
-        validateEmptyTable();
-
         this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validateNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < ZERO) {
-            throw new NumberOfGuestsInvalidException();
-        }
-    }
-
-    private void validateEmptyTable() {
-        if (this.isEmpty()) {
-            throw new CannotChangeNumberOfGuestBecauseOfEmptyTableException();
-        }
-    }
-
-    public void initTableGroup(final TableGroup tableGroup) {
-        if (this.tableGroup != null) {
-            throw new TableGroupAlreadyRegisteredInGroup();
-        }
-
-        if (!isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        belongToTableGroup(tableGroup);
-
-        changeStatus(false);
-        this.tableGroup = tableGroup;
-    }
-
-    public void ungroup() {
-        if (this.tableGroup != null) {
-            this.tableGroup.getOrderTables()
-                    .remove(this);
-        }
-
-        this.tableGroup = null;
-        changeStatus(false);
-    }
-
-    private void changeStatus(final boolean isEmpty) {
-        if (this.tableGroup != null) {
-            throw new CannotChangeNumberOfGuestBecauseOfEmptyTableException();
-        }
-
-        this.empty = isEmpty;
     }
 
     public Long getId() {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -137,11 +67,11 @@ public class OrderTable {
         if (this == o) return true;
         if (!(o instanceof OrderTable)) return false;
         OrderTable that = (OrderTable) o;
-        return numberOfGuests == that.numberOfGuests && empty == that.empty && Objects.equals(id, that.id) && Objects.equals(tableGroup, that.tableGroup);
+        return numberOfGuests == that.numberOfGuests && empty == that.empty && Objects.equals(id, that.id) && Objects.equals(tableGroupId, that.tableGroupId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, tableGroup, numberOfGuests, empty);
+        return Objects.hash(id, tableGroupId, numberOfGuests, empty);
     }
 }

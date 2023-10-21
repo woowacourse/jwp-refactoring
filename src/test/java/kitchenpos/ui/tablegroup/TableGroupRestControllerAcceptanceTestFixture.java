@@ -7,8 +7,8 @@ import kitchenpos.helper.IntegrationTestHelper;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.ui.dto.TableGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
@@ -41,8 +41,8 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
     protected void 단체가_성공적으로_지정된다(final ExtractableResponse response, final TableGroup tableGroup) {
         TableGroupResponse result = response.as(TableGroupResponse.class);
 
-        assertThat(result.getOrderTableResponses().size())
-                .isEqualTo(tableGroup.getOrderTables().size());
+        assertThat(result.getId())
+                .isEqualTo(tableGroup.getId());
     }
 
     protected ExtractableResponse 단체를_제거한다(final String url) {
@@ -60,7 +60,7 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
         assertThat(statusCode).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
-    protected TableGroup 단체_데이터_생성(final TableGroup tableGroup) {
+    protected TableGroupResponse 단체_데이터_생성(final TableGroup tableGroup) {
         return tableGroupService.create(단체_지정_생성_요청(tableGroup));
     }
 }

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.주문_생성;
@@ -107,7 +106,7 @@ class TableServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
         OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
-        orderRepository.save(주문_생성(orderTable, COOKING.name(), LocalDateTime.now(), List.of(
+        orderRepository.save(주문_생성(orderTable.getId(), COOKING.name(), List.of(
                 OrderLineItemFixture.주문_품목_생성(null, 10L)
         )));
 

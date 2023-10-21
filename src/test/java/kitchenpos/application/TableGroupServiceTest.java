@@ -4,11 +4,13 @@ import kitchenpos.helper.IntegrationTestHelper;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.exception.CannotUnGroupBecauseOfStatusException;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.exception.TableGroupInvalidSizeException;
 import kitchenpos.tablegroup.exception.TableNotFoundException;
@@ -43,21 +45,21 @@ class TableGroupServiceTest extends IntegrationTestHelper {
     @Test
     void 단체_지정을_저장한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, null, 10, true));
-        OrderTable otherTable = orderTableRepository.save(new OrderTable(2L, null, 20, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 10, true));
+        OrderTable otherTable = orderTableRepository.save(new OrderTable(2L, 20, true));
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
         TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
 
         // when
-        TableGroup result = tableGroupService.create(request);
+        TableGroupResponse result = tableGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getOrderTables()).hasSize(2);
-            softly.assertThat(result.getOrderTables().get(0).getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
-            softly.assertThat(result.getOrderTables().get(0).isEmpty()).isEqualTo(false);
-            softly.assertThat(result.getOrderTables().get(1).getNumberOfGuests()).isEqualTo(otherTable.getNumberOfGuests());
-            softly.assertThat(result.getOrderTables().get(1).isEmpty()).isEqualTo(false);
+            softly.assertThat(result.getOrderTableResponses()).hasSize(2);
+            softly.assertThat(result.getOrderTableResponses().get(0).getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+            softly.assertThat(result.getOrderTableResponses().get(0).isEmpty()).isEqualTo(false);
+            softly.assertThat(result.getOrderTableResponses().get(1).getNumberOfGuests()).isEqualTo(otherTable.getNumberOfGuests());
+            softly.assertThat(result.getOrderTableResponses().get(1).isEmpty()).isEqualTo(false);
         });
     }
 
@@ -93,7 +95,7 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
         TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
 
-        TableGroup savedTableGroup = tableGroupService.create(request);
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
         // when & then
         assertDoesNotThrow(() -> tableGroupService.ungroup(savedTableGroup.getId()));
@@ -105,7 +107,7 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 10, true));
         OrderTable otherTable = orderTableRepository.save(주문_테이블_생성(null, 20, true));
         TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
-        Order order = 주문_생성(otherTable, List.of(new OrderLineItem(null, null, 10L)));
+        Order order = 주문_생성(otherTable.getId(), OrderStatus.COOKING.name(), List.of(new OrderLineItem(null, 10L)));
         orderRepository.save(order);
 
         // when & then

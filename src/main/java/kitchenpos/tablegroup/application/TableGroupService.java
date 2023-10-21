@@ -6,6 +6,7 @@ import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.exception.CannotUnGroupBecauseOfStatusException;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.exception.TableGroupInvalidSizeException;
@@ -34,21 +35,31 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest req) {
+    public TableGroupResponse create(final TableGroupCreateRequest req) {
+//        List<Long> orderTableIds = req.getOrderTables();
+//
+//        validateTableSize(orderTableIds);
+//        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+//        validateTableNotFound(orderTableIds, savedOrderTables);
+//
+//        TableGroup tableGroup = TableGroup.createDefault();
+//        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+//
+//        for (final OrderTable orderTable : savedOrderTables) {
+//            orderTable.initTableGroup(tableGroup);
+//        }
+//
+//        return savedTableGroup;
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup.createDefault());
+
         List<Long> orderTableIds = req.getOrderTables();
+        List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        validateTableSize(orderTableIds);
-        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        validateTableNotFound(orderTableIds, savedOrderTables);
+        findOrderTables.forEach(it ->
+                it.updateTableGroupStatus(tableGroup.getId())
+        );
 
-        TableGroup tableGroup = TableGroup.createDefault();
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable orderTable : savedOrderTables) {
-            orderTable.initTableGroup(tableGroup);
-        }
-
-        return savedTableGroup;
+        return TableGroupResponse.from(tableGroup, findOrderTables);
     }
 
     private void validateTableSize(final List<Long> orderTableIds) {
@@ -70,7 +81,7 @@ public class TableGroupService {
         validateStatus(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
+            orderTable.updateTableGroupStatus(null);
         }
     }
 

@@ -19,11 +19,11 @@ public class MenuProductResponse {
         this.quantity = quantity;
     }
 
-    public static MenuProductResponse from(final MenuProduct menuProduct) {
+    public static MenuProductResponse of(final MenuProduct menuProduct, final Long menuId) {
         return new MenuProductResponse(
                 menuProduct.getSeq(),
-                menuProduct.getMenu().getId(),
-                menuProduct.getProduct().getId(),
+                menuId,
+                menuProduct.getProductId(),
                 menuProduct.getQuantity()
         );
     }

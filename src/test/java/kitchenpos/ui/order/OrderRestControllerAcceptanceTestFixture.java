@@ -71,10 +71,10 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
                 new MenuProductCreateRequest(product.getId(), 1)
         ));
         menu = menuService.create(req);
-        menuProduct = menuProductRepository.save(메뉴_상품_10개_생성(product));
+        menuProduct = menuProductRepository.save(메뉴_상품_10개_생성(product.getId()));
 
         orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
-        orderLineItem = 주문_품목_생성(menu, 1L);
+        orderLineItem = 주문_품목_생성(menu.getId(), 1L);
     }
 
     protected <T> ExtractableResponse 주문_생성한다(final String url, final T request) {
@@ -116,7 +116,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
         assertSoftly(softly -> {
             softly.assertThat(result.getOrderStatus()).isEqualTo(COOKING.name());
-            softly.assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTable().getId());
+            softly.assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTableId());
         });
     }
 
@@ -127,7 +127,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(1);
             softly.assertThat(result.get(0).getOrderStatus()).isEqualTo(order.getOrderStatus());
-            softly.assertThat(result.get(0).getOrderTableId()).isEqualTo(order.getOrderTable().getId());
+            softly.assertThat(result.get(0).getOrderTableId()).isEqualTo(order.getOrderTableId());
         });
     }
 
@@ -136,7 +136,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
         assertSoftly(softly -> {
             softly.assertThat(result.getOrderStatus()).isNotEqualTo(order.getOrderStatus());
-            softly.assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTable().getId());
+            softly.assertThat(result.getOrderTableId()).isEqualTo(order.getOrderTableId());
         });
     }
 }

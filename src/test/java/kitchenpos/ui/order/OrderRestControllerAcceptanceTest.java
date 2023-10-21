@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.주문_생성;
@@ -22,7 +21,7 @@ class OrderRestControllerAcceptanceTest extends OrderRestControllerAcceptanceTes
 
     @BeforeEach
     void setup() {
-        주문 = 주문_생성(orderTable, null, LocalDateTime.now(), List.of(orderLineItem));
+        주문 = 주문_생성(orderTable.getId(), MEAL.name(), List.of(orderLineItem));
     }
 
     @Test

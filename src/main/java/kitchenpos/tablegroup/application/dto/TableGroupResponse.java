@@ -1,5 +1,6 @@
-package kitchenpos.tablegroup.ui.dto;
+package kitchenpos.tablegroup.application.dto;
 
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.ui.dto.OrderTableResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 
@@ -22,16 +23,15 @@ public class TableGroupResponse {
         this.orderTableResponses = orderTableResponses;
     }
 
-    public static TableGroupResponse from(final TableGroup tableGroup) {
-        List<OrderTableResponse> orderTables = tableGroup.getOrderTables()
-                .stream()
+    public static TableGroupResponse from(final TableGroup tableGroup, List<OrderTable> orderTables) {
+        List<OrderTableResponse> orderTablesResponse = orderTables.stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
 
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                orderTables
+                orderTablesResponse
         );
     }
 

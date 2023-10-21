@@ -14,7 +14,7 @@ public interface OrderRepository extends Repository<Order, Long> {
 
     List<Order> findAll();
 
-    boolean existsByOrderTableAndOrderStatusIsIn(OrderTable orderTable, List<String> orderStatuses);
+    boolean existsByOrderTableIdAndOrderStatusIsIn(OrderTable orderTable, List<String> orderStatuses);
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
 }

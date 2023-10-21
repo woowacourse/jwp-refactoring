@@ -14,8 +14,9 @@ public class MenuFixture {
 
     public static Menu 메뉴_생성(final String name,
                              final Long price,
-                             final MenuGroup menuGroup) {
-        return new Menu(null, name, price, menuGroup);
+                             final Long menuGroupId,
+                             final List<MenuProduct> menuProducts) {
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     public static MenuCreateRequest 메뉴_생성_요청(
@@ -36,7 +37,7 @@ public class MenuFixture {
                                              final MenuGroup menuGroup,
                                              final List<MenuProduct> menuProducts) {
         List<MenuProductCreateRequest> menuProductCreateRequests = menuProducts.stream()
-                .map(it -> new MenuProductCreateRequest(it.getProduct().getId(), it.getQuantity()))
+                .map(it -> new MenuProductCreateRequest(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
 
         return new MenuCreateRequest(

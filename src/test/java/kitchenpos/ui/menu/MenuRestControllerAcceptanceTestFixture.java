@@ -54,7 +54,7 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
                 new MenuProductCreateRequest(product.getId(), 1)
         ));
         menu = menuService.create(req);
-        menuProduct = menuProductRepository.save(메뉴_상품_10개_생성(product));
+        menuProduct = menuProductRepository.save(메뉴_상품_10개_생성(product.getId()));
     }
 
     protected <T> ExtractableResponse 메뉴를_생성한다(final String url, final T request) {
@@ -91,8 +91,8 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
 
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(2);
-            softly.assertThat(result.get(0).getMenuGroupId()).isEqualTo(menu.getMenuGroup().getId());
-            softly.assertThat(result.get(0).getPrice().longValue()).isEqualTo(menu.getPrice().longValue());
+            softly.assertThat(result.get(0).getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+            softly.assertThat(result.get(0).getPrice().longValue()).isEqualTo(menu.getPrice());
             softly.assertThat(result.get(0).getMenuProducts()).hasSize(1);
         });
     }

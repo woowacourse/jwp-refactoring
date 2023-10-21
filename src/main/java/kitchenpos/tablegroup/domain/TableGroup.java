@@ -1,6 +1,5 @@
 package kitchenpos.tablegroup.domain;
 
-import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -10,16 +9,13 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "TABLE_GROUP")
 @EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "table_group")
 public class TableGroup {
 
     @Id
@@ -27,21 +23,14 @@ public class TableGroup {
     private Long id;
 
     @CreatedDate
-    @Column(nullable = false)
+    @Column(nullable = false, name = "created_date")
     private LocalDateTime createdDate;
-
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }
 
     public static TableGroup createDefault() {
         return new TableGroup();
-    }
-
-    public void initOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 
     public Long getId() {
@@ -52,20 +41,16 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof TableGroup)) return false;
         TableGroup that = (TableGroup) o;
-        return Objects.equals(id, that.id) && Objects.equals(createdDate, that.createdDate) && Objects.equals(orderTables, that.orderTables);
+        return Objects.equals(id, that.id) && Objects.equals(createdDate, that.createdDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createdDate, orderTables);
+        return Objects.hash(id, createdDate);
     }
 }

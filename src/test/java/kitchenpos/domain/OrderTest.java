@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.주문_생성;
@@ -29,7 +28,7 @@ class OrderTest {
         OrderTable orderTable = 주문_테이블_생성(null, 10, true);
 
         // when & then
-        assertThatThrownBy(() -> new Order(null, orderTable, COOKING.name(), LocalDateTime.now(), List.of()))
+        assertThatThrownBy(() -> new Order(orderTable.getId(), COOKING.name(), List.of()))
                 .isInstanceOf(OrderTableEmptyException.class);
     }
 
@@ -37,10 +36,9 @@ class OrderTest {
     void 주문_품목이_비어있다면_예외를_발생시킨다() {
         // given
         OrderTable orderTable = 주문_테이블_생성(null, 10, false);
-        Order order = 주문_생성(orderTable, COOKING.name(), LocalDateTime.now(), List.of());
 
         // when & then
-        assertThatThrownBy(() -> order.initOrderItems(List.of()))
+        assertThatThrownBy(() -> orderTable.getTableGroupId())
                 .isInstanceOf(OrderLineItemEmptyException.class);
     }
 
@@ -48,7 +46,7 @@ class OrderTest {
     void 이미_완료된_주문은_바꿀_수_없다() {
         // given
         OrderTable orderTable = 주문_테이블_생성(null, 10, false);
-        Order order = 주문_생성(orderTable, COMPLETION.name(), LocalDateTime.now(), List.of());
+        Order order = 주문_생성(orderTable.getId(), COMPLETION.name(), List.of());
 
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus(MEAL.name()))

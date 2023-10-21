@@ -22,11 +22,11 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse of(final OrderLineItem orderLineItem, final Long orderId) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getOrder().getId(),
-                orderLineItem.getMenu().getId(),
+                orderId,
+                orderLineItem.getMenuId(),
                 orderLineItem.getQuantity()
         );
     }

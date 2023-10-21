@@ -28,11 +28,11 @@ public class MenuResponse {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
-                menu.getPrice(),
-                menu.getMenuGroup().getId(),
+                menu.getPrice().getPrice(),
+                menu.getMenuGroupId(),
                 menu.getMenuProducts()
                         .stream()
-                        .map(MenuProductResponse::from)
+                        .map(it -> MenuProductResponse.of(it, menu.getId()))
                         .collect(Collectors.toList())
         );
     }

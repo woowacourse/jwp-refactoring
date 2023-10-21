@@ -14,7 +14,7 @@ public class OrderCreateRequest {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }
-
+    
     public Long getOrderTableId() {
         return orderTableId;
     }

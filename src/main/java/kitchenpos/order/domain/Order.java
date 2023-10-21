@@ -1,17 +1,14 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.order.exception.OrderLineItemEmptyException;
-import kitchenpos.order.exception.OrderStatusAlreadyCompletionException;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.exception.OrderTableEmptyException;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -19,24 +16,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-@Table(name = "ORDERS")
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Column(nullable = false)
     private String orderStatus;
 
-    @Column(nullable = false)
+    @CreatedDate
+    @Column(nullable = false, name = "ordered_time")
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
@@ -45,53 +41,26 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id, final OrderTable orderTable, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        this.id = id;
-        this.orderTable = orderTable;
+    public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-
-        if (orderTable.isEmpty()) {
-            throw new OrderTableEmptyException();
-        }
-    }
-
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
-        this.orderStatus = COOKING.name();
-        this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
     }
 
-    public void initOrderItems(final List<OrderLineItem> orderLineItems) {
-        validateOrderLineNotEmpty(orderLineItems);
-        this.orderLineItems = orderLineItems;
-    }
-
-    private void validateOrderLineNotEmpty(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new OrderLineItemEmptyException();
-        }
+    public static Order createDefault(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTableId, OrderStatus.COOKING.name(), orderLineItems);
     }
 
     public void changeOrderStatus(final String orderStatus) {
-        validateCompleteStatus();
         this.orderStatus = orderStatus;
-    }
-
-    private void validateCompleteStatus() {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new OrderStatusAlreadyCompletionException();
-        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public String getOrderStatus() {
@@ -111,11 +80,11 @@ public class Order {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        return Objects.equals(id, order.id) && Objects.equals(orderTable, order.orderTable) && Objects.equals(orderStatus, order.orderStatus) && Objects.equals(orderedTime, order.orderedTime) && Objects.equals(orderLineItems, order.orderLineItems);
+        return Objects.equals(id, order.id) && Objects.equals(orderTableId, order.orderTableId) && Objects.equals(orderStatus, order.orderStatus) && Objects.equals(orderedTime, order.orderedTime) && Objects.equals(orderLineItems, order.orderLineItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderTable, orderStatus, orderedTime, orderLineItems);
+        return Objects.hash(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }

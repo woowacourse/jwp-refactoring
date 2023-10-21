@@ -22,7 +22,6 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
@@ -60,7 +59,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     void 주문을_생성한다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성());
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup.getId(), List.of()));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
 
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menu.getId(), 1);
@@ -97,10 +96,10 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_품목이_주문_테이블에_있지_않으면_예외를_발생시킨다() {
         // given
-        Menu menu = new Menu(-1L, "name", 100L, null);
+        Menu menu = new Menu("name", 100L, null, null);
 
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
-        OrderLineItem orderLineItem = 주문_품목_생성(menu, 1L);
+        OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
 
         // when & then
@@ -111,11 +110,11 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블이_없다면_예외를_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(-1L, null, 10, true);
+        OrderTable orderTable = new OrderTable(null, 10, true);
 
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup));
-        OrderLineItem orderLineItem = 주문_품목_생성(menu, 1L);
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
+        OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
 
         // when & then
@@ -127,9 +126,9 @@ class OrderServiceTest extends IntegrationTestHelper {
     void 주문_테이블이_비어있다면_예외를_발생한다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, true));
-        OrderLineItem orderLineItem = 주문_품목_생성(menu, 1L);
+        OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
 
         // when & then
@@ -140,9 +139,9 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문을_모두_조회한다() {
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성());
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup.getId(), null));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
-        orderRepository.save(OrderFixture.주문_생성(orderTable, List.of(주문_품목_생성(menu, 1L))));
+        orderRepository.save(OrderFixture.주문_생성(orderTable.getId(), COOKING.name(), List.of(주문_품목_생성(menu.getId(), 1L))));
 
         // when
         List<Order> result = orderService.list();
@@ -157,11 +156,11 @@ class OrderServiceTest extends IntegrationTestHelper {
         String orderStatus = COOKING.name();
 
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
-        OrderLineItem orderLineItem = 주문_품목_생성(menu, 1L);
+        OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
 
-        Order changedOrder = 주문_생성(orderTable, orderStatus, LocalDateTime.now(), List.of(orderLineItem));
+        Order changedOrder = 주문_생성(orderTable.getId(), orderStatus, List.of(orderLineItem));
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
         Order savedOrder = orderService.create(req);
 
