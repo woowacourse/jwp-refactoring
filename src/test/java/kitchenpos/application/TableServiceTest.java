@@ -109,7 +109,6 @@ class TableServiceTest {
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, updateOrderTableGuests))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderTableRepository).should(never()).findById(anyLong());
     }
 
     @Test

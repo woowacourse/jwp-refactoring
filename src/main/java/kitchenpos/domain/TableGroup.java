@@ -37,8 +37,8 @@ public class TableGroup {
         }
 
         for (final OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.changeTableGroup(this);
             savedOrderTable.changeEmpty(false);
+            savedOrderTable.changeTableGroup(this);
         }
         this.orderTables = orderTables;
     }

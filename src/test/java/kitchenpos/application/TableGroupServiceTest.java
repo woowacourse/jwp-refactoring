@@ -76,8 +76,6 @@ class TableGroupServiceTest {
 
         OrderTable orderTable2 = new OrderTable(2, true);
 
-        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
-
         given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));
 
@@ -96,7 +94,6 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1, false);
 
         OrderTable orderTable2 = new OrderTable(1, true);
-        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
 
         given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));

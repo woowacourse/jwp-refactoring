@@ -44,10 +44,16 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        if (isEmpty() || numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
     public void changeEmpty(boolean status) {
+        if (existsTableGroup()) {
+            throw new IllegalArgumentException();
+        }
         this.empty = status;
     }
 
