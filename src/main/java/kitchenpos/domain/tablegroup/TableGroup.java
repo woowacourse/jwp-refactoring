@@ -4,17 +4,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElseGet;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
 
     @Id
@@ -27,17 +30,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
-    protected TableGroup() {
-    }
-
-    public TableGroup(final LocalDateTime createdDate) {
-        this.createdDate = requireNonNullElseGet(createdDate, LocalDateTime::now);
-    }
-
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = requireNonNullElseGet(createdDate, LocalDateTime::now);
-        setOrderTables(orderTables);
+    public TableGroup() {
     }
 
     private void validate(final List<OrderTable> orderTables) {

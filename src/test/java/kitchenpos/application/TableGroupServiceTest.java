@@ -106,7 +106,7 @@ class TableGroupServiceTest extends ServiceTest {
             Order 주문 = new Order(null, 테이블.getId(), COMPLETION, now(), List.of(주문_항목));
             orderRepository.save(주문);
 
-            TableGroup 테이블_그룹 = new TableGroup(now());
+            TableGroup 테이블_그룹 = new TableGroup();
             테이블_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
 
@@ -126,7 +126,7 @@ class TableGroupServiceTest extends ServiceTest {
             Order 주문 = new Order(null, 테이블.getId(), COOKING, now(), List.of(주문_항목));
             orderRepository.save(주문);
 
-            TableGroup 테이블_그룹 = new TableGroup(now());
+            TableGroup 테이블_그룹 = new TableGroup();
             TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
             테이블_그룹.setOrderTables(List.of(테이블, 빈_테이블_생성()));
             orderTableRepository.save(테이블);

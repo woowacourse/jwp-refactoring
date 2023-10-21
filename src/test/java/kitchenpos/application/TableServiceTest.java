@@ -175,8 +175,10 @@ class TableServiceTest extends ServiceTest {
 
         private TableGroup 그룹_생성하기(final OrderTable 포함할_테이블) {
             List<OrderTable> 테이블_목록 = List.of(포함할_테이블, new OrderTable(0, true));
-            TableGroup 그룹_엔티티 = new TableGroup(null, now(), 테이블_목록);
-            return tableGroupRepository.save(그룹_엔티티);
+            TableGroup 테이블_그룹 = new TableGroup();
+            tableGroupRepository.save(테이블_그룹);
+            테이블_그룹.setOrderTables(테이블_목록);
+            return 테이블_그룹;
         }
 
     }

@@ -33,13 +33,18 @@ public class TableGroupService {
     public TableGroupDto create(final CreateTableGroupCommand command) {
         final List<Long> orderTableIds = command.getOrderTableIds();
         final List<OrderTable> foundOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != foundOrderTables.size()) {
-            throw new IllegalArgumentException();
+        if (invalidOrderTable(orderTableIds, foundOrderTables)) {
+            throw new IllegalArgumentException("유효하지 않은 테이블이 있습니다.");
         }
 
-        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        savedTableGroup.setOrderTables(foundOrderTables);
-        return TableGroupDto.from(savedTableGroup);
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+        tableGroup.setOrderTables(foundOrderTables);
+
+        return TableGroupDto.from(tableGroup);
+    }
+
+    private boolean invalidOrderTable(final List<Long> orderTableIds, final List<OrderTable> foundOrderTables) {
+        return orderTableIds.size() != foundOrderTables.size();
     }
 
     @Transactional

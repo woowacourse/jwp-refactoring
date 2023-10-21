@@ -18,7 +18,7 @@ class TableGroupTest {
         void 테이블이_2개_이하인_경우_예외가_발생한다() {
             //given
             List<OrderTable> 테이블_목록 = List.of(new OrderTable(2, false));
-            TableGroup 테이블_그룹 = new TableGroup(now());
+            TableGroup 테이블_그룹 = new TableGroup();
             //expect
             assertThatThrownBy(() -> 테이블_그룹.setOrderTables(테이블_목록))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -29,7 +29,7 @@ class TableGroupTest {
         void 비어있지_않은_테이블이_포함되면_예외가_발생한다() {
             //given
             List<OrderTable> 테이블_목록 = List.of(new OrderTable(2, false), new OrderTable(0, true));
-            TableGroup 테이블_그룹 = new TableGroup(now());
+            TableGroup 테이블_그룹 = new TableGroup();
             //expect
             assertThatThrownBy(() -> 테이블_그룹.setOrderTables(테이블_목록))
                     .isInstanceOf(IllegalArgumentException.class)
