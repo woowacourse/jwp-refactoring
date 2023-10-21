@@ -3,11 +3,17 @@ package kitchenpos.vo;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Money {
 
-    private static final int ZERO = 0;
+    private static final Money ZERO = Money.valueOf(0);
 
-    private final BigDecimal value;
+    private BigDecimal value;
+
+    protected Money() {
+    }
 
     private Money(final BigDecimal value) {
         validate(value);
@@ -15,7 +21,7 @@ public class Money {
     }
 
     private void validate(final BigDecimal value) {
-        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < ZERO) {
+        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("금액은 0 이하 혹은 null일 수 없습니다.");
         }
     }
@@ -26,6 +32,14 @@ public class Money {
 
     public static Money valueOf(final BigDecimal value) {
         return new Money(value);
+    }
+
+    public static Money empty() {
+        return ZERO;
+    }
+
+    public boolean isSmallerThan(final Money other) {
+        return this.value.compareTo(other.value) < 0;
     }
 
     public boolean isBiggerThan(final Money other) {
