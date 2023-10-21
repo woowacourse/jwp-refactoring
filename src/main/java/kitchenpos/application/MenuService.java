@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu_product.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.repository.MenuProductRepository;
@@ -41,10 +42,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final MenuProducts menuProducts = menu.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final MenuProduct menuProduct : menuProducts.getValues()) {
             final Product product = productRepository.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -56,7 +57,7 @@ public class MenuService {
 
         menuRepository.save(menu);
 
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final MenuProduct menuProduct : menuProducts.getValues()) {
             menuProduct.setMenu(menu);
             menuProductRepository.save(menuProduct);
         }

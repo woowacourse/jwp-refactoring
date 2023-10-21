@@ -1,6 +1,7 @@
 package support.fixture;
 
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu_group.MenuGroup;
 import kitchenpos.domain.menu_product.MenuProduct;
 
@@ -19,7 +20,7 @@ public class MenuBuilder {
 
     public MenuBuilder() {
         this.name = "메뉴" + sequence;
-        this.price = BigDecimal.valueOf(1000 * sequence);
+        this.price = BigDecimal.valueOf(1000L * sequence);
         this.menuGroup = null;
         this.menuProducts = Collections.emptyList();
 
@@ -47,6 +48,7 @@ public class MenuBuilder {
     }
 
     public Menu build() {
+        final MenuProducts menuProducts = new MenuProducts(this.menuProducts);
         return new Menu(name, price, menuGroup, menuProducts);
     }
 }
