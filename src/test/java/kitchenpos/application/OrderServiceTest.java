@@ -51,11 +51,13 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("Leo's Pick"));
         Price price = new Price(BigDecimal.valueOf(1000));
         Product product = productRepository.save(new Product("치킨", price));
+
         menu = menuRepository.save(
-                new Menu("후라이드",
+                Menu.create("후라이드",
                         price,
-                        savedMenuGroup.getId(),
-                        List.of(new MenuProduct(product.getId(), 1L))
+                        savedMenuGroup,
+                        List.of(new MenuProduct(product.getId(), 1L)),
+                        List.of(product)
                 )
         );
     }

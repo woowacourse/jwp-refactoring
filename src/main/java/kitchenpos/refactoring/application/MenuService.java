@@ -1,8 +1,6 @@
 package kitchenpos.refactoring.application;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import kitchenpos.refactoring.application.dto.MenuProductRequest;
 import kitchenpos.refactoring.application.dto.MenuRequest;
@@ -11,7 +9,6 @@ import kitchenpos.refactoring.domain.Menu;
 import kitchenpos.refactoring.domain.MenuGroup;
 import kitchenpos.refactoring.domain.MenuGroupRepository;
 import kitchenpos.refactoring.domain.MenuProduct;
-import kitchenpos.refactoring.domain.MenuProductPriceCalculator;
 import kitchenpos.refactoring.domain.MenuRepository;
 import kitchenpos.refactoring.domain.Price;
 import kitchenpos.refactoring.domain.Product;
@@ -25,19 +22,15 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
-    private final MenuProductPriceCalculator priceCalculator;
-
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository,
-            final MenuProductPriceCalculator priceCalculator
+            final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
-        this.priceCalculator = priceCalculator;
     }
 
     @Transactional
@@ -46,40 +39,34 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         List<MenuProduct> menuProducts = getMenuProducts(menuRequest);
+        List<Product> products = getProducts(menuRequest);
 
-        Map<Long, Product> products = getProducts(menuRequest);
-        Price totalPrice = priceCalculator.calculateTotalPrice(menuProducts, products);
-
-        Menu menu = Menu.of(
-                totalPrice,
+        Menu menu = Menu.create(
                 menuRequest.getName(),
                 price,
-                menuGroup.getId(),
-                menuProducts
+                menuGroup,
+                menuProducts,
+                products
         );
 
-        return MenuResponse.from(menuRepository.save(menu));
+        Menu savedMenu = menuRepository.save(menu);
+
+        return MenuResponse.from(savedMenu);
     }
 
     private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
         return menuRequest.getMenuProducts().stream()
-                .map(menuProductRequest -> new MenuProduct(
-                        menuProductRequest.getProductId(),
-                        menuProductRequest.getQuantity()
-                ))
+                .map(MenuProductRequest::toMenuProduct)
                 .collect(Collectors.toList());
     }
 
-    private Map<Long, Product> getProducts(MenuRequest menuRequest) {
+    private List<Product> getProducts(MenuRequest menuRequest) {
         List<Long> productIds = menuRequest.getMenuProducts().stream()
                 .map(MenuProductRequest::getProductId)
                 .collect(Collectors.toList());
 
-        return productRepository.findAllByIdIn(productIds)
-                .stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
+        return productRepository.findAllByIdIn(productIds);
     }
-
 
     public List<MenuResponse> list() {
         return menuRepository.findAll().stream()

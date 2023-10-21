@@ -3,23 +3,34 @@ package kitchenpos.refactoring.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Component;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-@Component
 public class MenuProductPriceCalculator {
 
-    public Price calculateTotalPrice(List<MenuProduct> menuProducts, Map<Long, Product> products) {
+    private MenuProductPriceCalculator() {
+    }
+
+    public static Price calculateTotalPrice(List<MenuProduct> menuProducts, List<Product> products) {
+        Map<Long, Product> productMap = convertToProductMap(products);
+
         return menuProducts.stream()
-                .map(menuProduct -> multiply(menuProduct, products))
+                .map(menuProduct -> calculateProductPrice(menuProduct, productMap))
                 .reduce(new Price(BigDecimal.ZERO), Price::add);
     }
 
-    private Price multiply(MenuProduct menuProduct, Map<Long, Product> products) {
+    private static Map<Long, Product> convertToProductMap(List<Product> products) {
+        return products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+    }
+
+    private static Price calculateProductPrice(MenuProduct menuProduct, Map<Long, Product> products) {
         Long productId = menuProduct.getProductId().getId();
         Product product = products.get(productId);
-        Price price = product.getPrice();
+
+        Price productPrice = product.getPrice();
         long quantity = menuProduct.getQuantity();
 
-        return price.multiply(quantity);
+        return productPrice.multiply(quantity);
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.refactoring.domain;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.data.annotation.Id;
@@ -20,28 +21,25 @@ public class Menu {
     private Menu() {
     }
 
-    public Menu(String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new ArrayList<>(menuProducts);
     }
 
-    public static Menu of(
-            Price totalPrice,
+    public static Menu create(
             String name,
             Price price,
-            Long menuGroupId,
-            List<MenuProduct> menuProducts
+            MenuGroup menuGroup,
+            List<MenuProduct> menuProducts,
+            List<Product> products
     ) {
+        Price totalPrice = MenuProductPriceCalculator.calculateTotalPrice(menuProducts, products);
         validatePrice(price, totalPrice);
 
-        return new Menu(name, price, menuGroupId, menuProducts);
+        return new Menu(null, name, price, menuGroup.getId(), menuProducts);
     }
 
     private static void validatePrice(Price price, Price totalPrice) {

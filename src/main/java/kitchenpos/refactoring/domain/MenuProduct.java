@@ -17,12 +17,11 @@ public class MenuProduct {
         this(null, productId, quantity);
     }
 
-    public MenuProduct(Long seq, Long productId, long quantity) {
+    private MenuProduct(Long seq, Long productId, long quantity) {
         this.seq = seq;
         this.productId = AggregateReference.to(productId);
         this.quantity = quantity;
     }
-
 
     public Long getSeq() {
         return seq;

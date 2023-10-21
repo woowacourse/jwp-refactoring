@@ -10,7 +10,7 @@ public class Product {
     @Embedded.Empty
     private Price price;
 
-    public Product() {
+    private Product() {
     }
 
     public Product(String name, Price price) {
