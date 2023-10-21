@@ -9,20 +9,15 @@ import java.util.List;
 public class FixtureFactory {
 
     public static Product savedProduct(final Long id, final String name, final BigDecimal price) {
-        return new Product(id, name, price.intValue());
+        return Product.saved(id, name, price.intValue());
     }
 
     public static MenuGroup forSaveMenuGroup(final String groupName) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(groupName);
-        return menuGroup;
+        return MenuGroup.forSave(groupName);
     }
 
     public static MenuGroup savedMenuGroup(final Long id, final String groupName) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(groupName);
-        return menuGroup;
+        return MenuGroup.saved(id, groupName);
     }
 
     public static Menu forSaveMenu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
