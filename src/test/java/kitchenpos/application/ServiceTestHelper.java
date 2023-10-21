@@ -175,9 +175,7 @@ public abstract class ServiceTestHelper {
     }
 
     public TableGroup 테이블_그룹화(final OrderTable... tables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(List.of(tables));
+        TableGroup tableGroup = TableGroup.of(List.of(tables));
         return tableGroupService.create(tableGroup);
     }
 
