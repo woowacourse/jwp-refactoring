@@ -1,33 +1,32 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.product.Name;
+import kitchenpos.domain.product.Price;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
 
 public class Product {
+    @Id
     private Long id;
-    private String name;
-    private BigDecimal price;
+
+    @Embedded.Nullable
+    private Name name;
+
+    @Embedded.Nullable
+    private Price price;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    public Product(final Long id, final Name name, final Price price) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
         this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal multiplyPrice(final Price price) {
+        return this.price.multiply(price);
     }
 }

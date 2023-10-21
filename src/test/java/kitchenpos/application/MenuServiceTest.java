@@ -14,8 +14,8 @@ import javax.sql.DataSource;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -23,16 +23,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@JdbcTest
-@Import({MenuGroupService.class, ProductService.class, JdbcTemplateMenuGroupDao.class, JdbcTemplateMenuProductDao.class, JdbcTemplateProductDao.class})
+@DataJdbcTest
+@Import({MenuGroupService.class, ProductService.class, JdbcTemplateMenuGroupDao.class, JdbcTemplateMenuProductDao.class})
 class MenuServiceTest {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private ProductDao productDao;
 
     private MenuService menuService;
 
@@ -42,7 +45,7 @@ class MenuServiceTest {
                 new JdbcTemplateMenuDao(dataSource),
                 new JdbcTemplateMenuGroupDao(dataSource),
                 new JdbcTemplateMenuProductDao(dataSource),
-                new JdbcTemplateProductDao(dataSource)
+                productDao
         );
     }
 

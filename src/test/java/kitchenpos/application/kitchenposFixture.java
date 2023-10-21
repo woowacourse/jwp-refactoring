@@ -8,6 +8,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Name;
+import kitchenpos.domain.product.Price;
 
 public class kitchenposFixture {
     public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId, final MenuProduct... menuProducts) {
@@ -29,11 +31,7 @@ public class kitchenposFixture {
     }
 
     public static Product 상품만들기(final String name, final String price, final ProductService productService) {
-        final Product product = new Product();
-        product.setName(name);
-        product.setPrice(new BigDecimal(price));
-        final Product savedProduct = productService.create(product);
-        return savedProduct;
+        return productService.create(new Name(name), new Price(new BigDecimal(price)));
     }
 
     public static MenuGroup 메뉴그룹만들기(final MenuGroupService menuGroupService) {
