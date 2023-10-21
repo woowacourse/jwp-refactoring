@@ -1,16 +1,10 @@
 package kitchenpos.exception;
 
-public class InvalidPriceException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-    private static final long serialVersionUID = 1L;
+public class InvalidPriceException extends HttpException {
 
-    private final String message;
-
-    public InvalidPriceException(final String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
+    public InvalidPriceException(String message) {
+        super(HttpStatus.BAD_REQUEST, message);
     }
 }

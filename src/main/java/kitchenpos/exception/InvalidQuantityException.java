@@ -2,9 +2,9 @@ package kitchenpos.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class InvalidNameException extends HttpException {
+public class InvalidQuantityException extends HttpException {
 
-    public InvalidNameException(final String message) {
+    public InvalidQuantityException(final String message) {
         super(HttpStatus.BAD_REQUEST, message);
     }
 }
