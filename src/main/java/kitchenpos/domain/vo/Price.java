@@ -36,7 +36,7 @@ public class Price {
         return price.compareTo(BigDecimal.ZERO) < 0;
     }
 
-    public BigDecimal getPrice() {
+    public BigDecimal value() {
         return price;
     }
 

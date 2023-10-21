@@ -40,7 +40,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price.value();
     }
 
     public void setPrice(final BigDecimal price) {

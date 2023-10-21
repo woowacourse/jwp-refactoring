@@ -11,7 +11,6 @@ public class ProductFixture {
     private static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(10000);
 
     public static Product create() {
-        final Product product = new Product(DEFAULT_NAME + COUNT, new Price(DEFAULT_PRICE));
-        return product;
+        return new Product(DEFAULT_NAME + COUNT, new Price(DEFAULT_PRICE));
     }
 }
