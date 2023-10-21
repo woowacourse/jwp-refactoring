@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.TableService;
 import kitchenpos.dto.request.TableCreationRequest;
 import kitchenpos.dto.request.TableEmptyUpdateRequest;
@@ -25,7 +26,7 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<TableResponse> create(@RequestBody TableCreationRequest request) {
+    public ResponseEntity<TableResponse> create(@Valid @RequestBody TableCreationRequest request) {
         TableResponse response = tableService.create(request);
         URI uri = URI.create("/api/tables/" + response.getId());
 
@@ -42,7 +43,7 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<TableResponse> changeEmpty(
             @PathVariable Long orderTableId,
-            @RequestBody TableEmptyUpdateRequest request
+            @Valid @RequestBody TableEmptyUpdateRequest request
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, request));
@@ -51,9 +52,10 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<TableResponse> changeNumberOfGuests(
             @PathVariable Long orderTableId,
-            @RequestBody TableNumberOfGuestsUpdateRequest request
+            @Valid @RequestBody TableNumberOfGuestsUpdateRequest request
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, request));
     }
+
 }

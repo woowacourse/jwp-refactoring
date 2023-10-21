@@ -1,8 +1,12 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
+
 public class OrderLineItemRequest {
 
+    @NotNull
     private final Long menuId;
+    @NotNull
     private final Long quantity;
 
     public OrderLineItemRequest(Long menuId, Long quantity) {

@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.OrderService;
 import kitchenpos.dto.request.OrderCreationRequest;
 import kitchenpos.dto.response.OrderResponse;
@@ -24,7 +25,7 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody OrderCreationRequest request) {
+    public ResponseEntity<OrderResponse> create(@Valid @RequestBody OrderCreationRequest request) {
         OrderResponse response = orderService.create(request);
         URI uri = URI.create("/api/orders/" + response.getId());
 
@@ -45,4 +46,5 @@ public class OrderRestController {
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request));
     }
+
 }

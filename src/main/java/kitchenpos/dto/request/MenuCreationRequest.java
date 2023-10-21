@@ -4,12 +4,17 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 
 public class MenuCreationRequest {
 
+    @NotNull
     private final String name;
+    @NotNull
     private final BigDecimal price;
+    @NotNull
     private final Long menuGroupId;
+    @NotNull
     private final List<MenuProductRequest> menuProductRequests;
 
     public MenuCreationRequest(

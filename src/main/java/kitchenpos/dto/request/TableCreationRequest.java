@@ -1,8 +1,12 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
+
 public class TableCreationRequest {
 
+    @NotNull
     private final Integer numberOfGuests;
+    @NotNull
     private final Boolean empty;
 
     public TableCreationRequest(Integer numberOfGuests, Boolean empty) {

@@ -2,9 +2,11 @@ package kitchenpos.dto.request;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
 
 public class TableGroupCreationRequest {
 
+    @NotNull
     private final List<OrderTableRequest> orderTables;
 
     public TableGroupCreationRequest(List<OrderTableRequest> orderTables) {

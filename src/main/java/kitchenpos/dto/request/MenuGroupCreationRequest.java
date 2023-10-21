@@ -1,7 +1,10 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
+
 public class MenuGroupCreationRequest {
 
+    @NotNull
     private final String name;
 
     public MenuGroupCreationRequest(String name) {
