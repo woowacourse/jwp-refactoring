@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class OrderTableTest {
 
@@ -37,5 +40,51 @@ class OrderTableTest {
         // expect
         assertThatThrownBy(() -> orderTable.changeOrderTableEmpty(true))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[SUCCESS] 단체 지정이 되어있지 않음을 확인한다.")
+    @Test
+    void success_isGrouped_isFalse() {
+        // given
+        final OrderTable orderTable = new OrderTable(null, 10, true);
+
+        // when
+        final boolean actual = orderTable.isGrouped();
+
+        // then
+        assertThat(actual).isFalse();
+    }
+
+    @DisplayName("[SUCCESS] 단체 지정이 되었음을 확인한다.")
+    @Test
+    void success_isGrouped_isTrue() {
+        // given
+        final OrderTable orderTable = new OrderTable(null, 10, true);
+        final TableGroup tableGroup = TableGroup.emptyOrderTables();
+        tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
+
+        // when
+        final boolean actual = orderTable.isGrouped();
+
+        // then
+        assertThat(actual).isTrue();
+    }
+
+    @DisplayName("[SUCCESS] 단체 지정을 제거하고 비어있는 상태를 false 로 변경한다.")
+    @Test
+    void success_ungroupTableGroup() {
+        // given
+        final OrderTable orderTable = new OrderTable(null, 5, true);
+        final TableGroup tableGroup = TableGroup.emptyOrderTables();
+        tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
+
+        // when
+        orderTable.deassignTableGroup();
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(orderTable.isGrouped()).isFalse();
+            softly.assertThat(orderTable.getTableGroup()).isNull();
+        });
     }
 }

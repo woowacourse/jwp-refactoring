@@ -27,7 +27,7 @@ public class OrderTables {
     }
 
     public void addOrderTables(final OrderTables requestOrderTables) {
-        if (requestOrderTables.orderTableItems.stream().anyMatch(OrderTable::isTableGroupExists)) {
+        if (requestOrderTables.orderTableItems.stream().anyMatch(OrderTable::isGrouped)) {
             throw new IllegalArgumentException("주문 테이블 목록을 생성할 때 이미 단체 지정이 된 주문 테이블이 존재할 수 없습니다.");
         }
 

@@ -46,7 +46,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean isTableGroupExists() {
+    public boolean isGrouped() {
         return tableGroup != null;
     }
 
@@ -60,6 +60,11 @@ public class OrderTable {
 
     public void assignTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+    }
+
+    public void deassignTableGroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 
     public Long getId() {
