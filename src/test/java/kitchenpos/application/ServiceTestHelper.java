@@ -184,12 +184,7 @@ public abstract class ServiceTestHelper {
 
     private List<OrderLineItem> makeOrderLineItems(final Menu[] menus) {
         return Arrays.stream(menus)
-                .map(menu -> {
-                    final OrderLineItem orderLineItem = new OrderLineItem();
-                    orderLineItem.setMenuId(menu.getId());
-                    orderLineItem.setQuantity(1);
-                    return orderLineItem;
-                })
+                .map(menu -> OrderLineItem.of(null, menu.getId(), 1))
                 .collect(Collectors.toUnmodifiableList());
     }
 
