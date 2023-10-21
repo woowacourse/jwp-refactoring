@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 
 class MenuTest {
 
-    private MenuProduct kong = new MenuProduct(Product.of("kong", BigDecimal.valueOf(1000)), 10);
-    private MenuProduct wuga = new MenuProduct(Product.of("wuga", BigDecimal.valueOf(5000)), 3);
+    private final MenuProduct kong = new MenuProduct(Product.of("kong", BigDecimal.valueOf(1000)), 10);
+    private final MenuProduct wuga = new MenuProduct(Product.of("wuga", BigDecimal.valueOf(5000)), 3);
 
 
     @Test

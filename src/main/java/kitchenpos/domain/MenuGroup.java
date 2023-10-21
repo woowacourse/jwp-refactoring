@@ -18,7 +18,7 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    public MenuGroup(String name) {
+    public MenuGroup(final String name) {
         this.name = name;
     }
 

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public abstract class MenuException extends KitchenPosException {
 
-    public MenuException(String message) {
+    public MenuException(final String message) {
         super(message);
     }
 

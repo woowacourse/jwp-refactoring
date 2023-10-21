@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;

@@ -31,7 +31,10 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(final String name, final Price price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+    private Menu(final String name,
+                 final Price price,
+                 final MenuGroup menuGroup,
+                 final List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
@@ -40,16 +43,16 @@ public class Menu {
     }
 
     public static Menu of(final String name,
-                       final BigDecimal price,
-                       final MenuGroup menuGroup,
-                       final List<MenuProduct> menuProducts) {
+                          final BigDecimal price,
+                          final MenuGroup menuGroup,
+                          final List<MenuProduct> menuProducts) {
         Price menuPrice = Price.from(price);
         validateTotalPrice(menuPrice, menuProducts);
 
         return new Menu(name, menuPrice, menuGroup, menuProducts);
     }
 
-    private static void validateTotalPrice(Price price, List<MenuProduct> menuProducts) {
+    private static void validateTotalPrice(final Price price, final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getMenuProductPrice());

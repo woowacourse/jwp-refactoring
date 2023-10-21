@@ -1,8 +1,8 @@
 package kitchenpos.domain.exception;
 
-public class MenuGroupException extends KitchenPosException{
+public abstract class MenuGroupException extends KitchenPosException {
 
-    public MenuGroupException(String message) {
+    public MenuGroupException(final String message) {
         super(message);
     }
 

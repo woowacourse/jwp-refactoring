@@ -8,12 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableGuestRequest;
-import kitchenpos.application.dto.OrderTablesRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
@@ -41,7 +38,7 @@ class TableServiceTest {
     @Mock
     private OrderTableRepository orderTableRepository;
 
-    private OrderTable orderTable = new OrderTable(0);
+    private final OrderTable orderTable = new OrderTable(0);
 
     @Test
     @DisplayName("현재 저장된 주문 테이블을 확인할 수 있다.")

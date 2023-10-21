@@ -1,10 +1,8 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.exception.TableGroupException.CannotAssignOrderTableException;
 import kitchenpos.domain.exception.TableGroupException.InsufficientOrderTableSizeException;

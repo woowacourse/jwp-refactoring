@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
@@ -52,10 +51,10 @@ class OrderServiceTest {
     private OrderTableRepository orderTableRepository;
 
 
-    private OrderLineItem orderLineItem1 = new OrderLineItem(1L, 10);
-    private OrderLineItem orderLineItem2 = new OrderLineItem(1L, 10);
-    private OrderTable orderTable = new OrderTable(10);
-    private Order order = Order.of(orderTable, List.of(orderLineItem1, orderLineItem2));
+    private final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 10);
+    private final OrderLineItem orderLineItem2 = new OrderLineItem(1L, 10);
+    private final OrderTable orderTable = new OrderTable(10);
+    private final Order order = Order.of(orderTable, List.of(orderLineItem1, orderLineItem2));
 
     @BeforeEach
     void init() {

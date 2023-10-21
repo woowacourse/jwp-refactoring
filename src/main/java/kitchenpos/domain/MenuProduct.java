@@ -60,7 +60,7 @@ public class MenuProduct {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(final Product product) {
         this.product = product;
     }
 

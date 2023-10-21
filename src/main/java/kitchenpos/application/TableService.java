@@ -5,7 +5,6 @@ import java.util.List;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.application.dto.OrderTablesRequest;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderTableException.ExistsNotCompletionOrderException;
@@ -49,7 +48,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableGuestRequest orderTableGuestRequest) {
+    public OrderTable changeNumberOfGuests(final Long orderTableId,
+                                           final OrderTableGuestRequest orderTableGuestRequest) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
         savedOrderTable.changeNumberOfGuest(orderTableGuestRequest.getNumberOfGuests());

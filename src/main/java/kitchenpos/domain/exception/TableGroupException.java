@@ -2,7 +2,7 @@ package kitchenpos.domain.exception;
 
 public abstract class TableGroupException extends KitchenPosException {
 
-    public TableGroupException(String message) {
+    public TableGroupException(final String message) {
         super(message);
     }
 

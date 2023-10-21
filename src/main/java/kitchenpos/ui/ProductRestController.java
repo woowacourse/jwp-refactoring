@@ -1,5 +1,7 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
@@ -8,9 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 public class ProductRestController {

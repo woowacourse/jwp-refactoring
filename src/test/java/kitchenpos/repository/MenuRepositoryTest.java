@@ -2,8 +2,6 @@ package kitchenpos.repository;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;

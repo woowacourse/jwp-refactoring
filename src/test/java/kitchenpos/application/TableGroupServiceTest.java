@@ -8,9 +8,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.OrderTablesRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -41,8 +39,8 @@ class TableGroupServiceTest {
     @Mock
     private TableGroupRepository tableGroupRepository;
 
-    private OrderTable orderTable1 = new OrderTable(10);
-    private OrderTable orderTable2 = new OrderTable(10);
+    private final OrderTable orderTable1 = new OrderTable(10);
+    private final OrderTable orderTable2 = new OrderTable(10);
 
     @BeforeEach
     void init() {
