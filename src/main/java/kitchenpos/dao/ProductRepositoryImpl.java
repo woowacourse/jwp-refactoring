@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.entity.ProductEntity;
 import kitchenpos.dao.mapper.ProductMapper;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

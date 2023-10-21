@@ -2,13 +2,13 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
-import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

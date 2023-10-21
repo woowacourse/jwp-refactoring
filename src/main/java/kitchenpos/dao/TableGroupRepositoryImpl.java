@@ -10,7 +10,7 @@ import kitchenpos.dao.mapper.OrderTableMapper;
 import kitchenpos.dao.mapper.TableGroupMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

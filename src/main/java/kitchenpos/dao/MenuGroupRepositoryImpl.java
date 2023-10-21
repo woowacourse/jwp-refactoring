@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.entity.MenuGroupEntity;
 import kitchenpos.dao.mapper.MenuGroupMapper;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

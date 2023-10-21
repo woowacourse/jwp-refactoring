@@ -10,7 +10,7 @@ import kitchenpos.dao.mapper.OrderMapper;
 import kitchenpos.dao.mapper.OrderTableMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Repository;
 

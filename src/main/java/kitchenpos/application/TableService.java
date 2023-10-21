@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

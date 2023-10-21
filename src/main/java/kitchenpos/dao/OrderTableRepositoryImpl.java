@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.entity.OrderTableEntity;
 import kitchenpos.dao.mapper.OrderTableMapper;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
