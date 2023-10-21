@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.vo.Price;
 
@@ -33,6 +35,9 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts;
+
     protected Menu() {
     }
 
@@ -40,6 +45,22 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+    }
+
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        validateMenuProducts(menuProducts);
+        this.menuProducts = menuProducts;
+    }
+
+    private void validateMenuProducts(List<MenuProduct> menuProducts) {
+        long menuProductPriceSum = menuProducts.stream()
+                .map(MenuProduct::calculatePrice)
+                .mapToLong(price -> price.getValue().longValue())
+                .sum();
+
+        if (this.price.isBiggerThan(menuProductPriceSum)) {
+            throw new IllegalArgumentException("메뉴 금액이 상품 금액 합계보다 클 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -56,6 +77,10 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 
     public static MenuBuilder builder() {
