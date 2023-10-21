@@ -71,7 +71,6 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(OrderException.NotFoundOrderException::new);
 
-        savedOrder.validateAvailableChangeStatus();
         savedOrder.changeStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(savedOrder);
     }

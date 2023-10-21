@@ -55,10 +55,11 @@ public class Order {
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
+        validateAvailableChangeStatus();
         this.orderStatus = orderStatus;
     }
 
-    public void validateAvailableChangeStatus() {
+    private void validateAvailableChangeStatus() {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new OrderException.CannotChangeOrderStatusByCurrentOrderStatusException();
         }
