@@ -1,6 +1,7 @@
 package support.fixture;
 
 import kitchenpos.domain.order_table.OrderTable;
+import kitchenpos.domain.table_group.OrderTables;
 import kitchenpos.domain.table_group.TableGroup;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class TableGroupBuilder {
     }
 
     public TableGroup build() {
+        final OrderTables orderTables = new OrderTables(this.orderTables);
         return new TableGroup(orderTables);
     }
 }

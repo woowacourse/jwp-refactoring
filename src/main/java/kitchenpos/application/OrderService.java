@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order_line_item.OrderLineItem;
 import kitchenpos.domain.order_table.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
@@ -64,10 +63,8 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        for (final OrderLineItem orderLineItem : orderLineItems.getValues()) {
-            orderLineItem.setOrder(order);
-            orderLineItemRepository.save(orderLineItem);
-        }
+        orderLineItems.updateOrder(order);
+        orderLineItemRepository.saveAll(orderLineItems.getValues());
 
         return order;
     }

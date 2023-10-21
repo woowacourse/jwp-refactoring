@@ -41,4 +41,8 @@ public class OrderLineItems {
     public boolean isNotSameSize(final int size) {
         return values.size() != size;
     }
+
+    public void updateOrder(final Order order) {
+        values.forEach(value -> value.setOrder(order));
+    }
 }

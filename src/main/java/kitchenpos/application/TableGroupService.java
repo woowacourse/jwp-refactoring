@@ -5,18 +5,18 @@ import kitchenpos.domain.order_table.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.table_group.OrderTables;
 import kitchenpos.domain.table_group.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -29,31 +29,17 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        final OrderTables orderTables = tableGroup.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (orderTables.canNotGroup()) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            if (Objects.isNull(orderTable.getId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
         }
 
         tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(tableGroup);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
-        }
+        orderTables.updateGroup(tableGroup);
+
+        orderTableRepository.saveAll(orderTables.getValues());
 
         return tableGroup;
     }
