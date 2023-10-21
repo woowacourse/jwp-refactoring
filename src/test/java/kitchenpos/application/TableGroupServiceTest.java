@@ -19,6 +19,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,7 +54,7 @@ class TableGroupServiceTest extends IntegrationTest {
         final long emptyCountBefore = countEmpty(existingTables);
 
         // when
-        final TableGroup saved = tableGroupService.create(new TableGroup(existingTables));
+        final TableGroup saved = tableGroupService.create(RequestParser.from(existingTables));
 
         // then
         final long emptyCountAfter = countEmpty(saved.getOrderTables());
@@ -75,10 +76,10 @@ class TableGroupServiceTest extends IntegrationTest {
         final OrderTable newTable = new OrderTable(0, true);
 
         // when
-        final TableGroup tableGroup = new TableGroup(List.of(existingTable, newTable));
+        final List<OrderTable> tablesInGroup = List.of(existingTable, newTable);
 
         // then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(RequestParser.from(tablesInGroup)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -86,7 +87,7 @@ class TableGroupServiceTest extends IntegrationTest {
     @DisplayName("단체 테이블을 개별의 주문 테이블로 분할할 수 있다.")
     void 단체_테이블_분할_성공_저장() {
         // given
-        final TableGroup tableGroup = tableGroupService.create(new TableGroup(tableService.list()));
+        final TableGroup tableGroup = tableGroupService.create(RequestParser.from(tableService.list()));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -108,7 +109,7 @@ class TableGroupServiceTest extends IntegrationTest {
         final OrderTable notAbleToSplitStatusTable = tableService.create(빈_테이블_생성());
         final OrderTable ableToSplitStatusTable = tableService.create(빈_테이블_생성());
         final List<OrderTable> orderTablesInGroup = List.of(notAbleToSplitStatusTable, ableToSplitStatusTable);
-        final TableGroup tableGroup = tableGroupService.create(new TableGroup(orderTablesInGroup));
+        final TableGroup tableGroup = tableGroupService.create(RequestParser.from(orderTablesInGroup));
 
         // when
         final Product chicken = productService.create(치킨_8000원());
