@@ -17,8 +17,8 @@ import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -38,20 +38,24 @@ import org.springframework.context.annotation.Import;
 @DataJdbcTest
 @Import({ProductService.class, MenuService.class,
         JdbcTemplateMenuDao.class, MenuGroupService.class, JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class, JdbcTemplateOrderTableDao.class, OrderService.class,
+        JdbcTemplateMenuProductDao.class, OrderService.class,
         JdbcTemplateOrderDao.class, TableService.class,
         JdbcTemplateOrderLineItemDao.class})
 class TableGroupServiceTest {
 
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
     private TableGroupService tableGroupService;
 
     @BeforeEach
     void SetUp() {
         this.tableGroupService = new TableGroupService(
                 new JdbcTemplateOrderDao(dataSource),
-                new JdbcTemplateOrderTableDao(dataSource),
+                orderTableDao,
                 new JdbcTemplateTableGroupDao(dataSource)
         );
     }
