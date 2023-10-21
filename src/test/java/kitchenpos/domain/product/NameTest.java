@@ -22,7 +22,7 @@ class NameTest {
         // then
         assertThatThrownBy(throwingCallable)
                 .isInstanceOf(InvalidNameException.class)
-                .hasMessage("이름은 공백일 수 없습니다.");
+                .hasMessage("상품 이름은 공백일 수 없습니다.");
     }
 
     @Test
@@ -36,7 +36,7 @@ class NameTest {
         // then
         assertThatThrownBy(throwingCallable)
                 .isInstanceOf(InvalidNameException.class)
-                .hasMessage("이름은 255자를 초과할 수 없습니다.");
+                .hasMessage("상품 이름은 255자를 초과할 수 없습니다.");
     }
 
     @Test

@@ -27,13 +27,13 @@ public class ProductName {
 
     private static void validateNotBlank(final String value) {
         if (value == null || value.isBlank()) {
-            throw new InvalidNameException("이름은 공백일 수 없습니다.");
+            throw new InvalidNameException("상품 이름은 공백일 수 없습니다.");
         }
     }
 
     private static void validateLength(final String value) {
         if (value.length() > MAXIMUM_NAME_LENGTH) {
-            throw new InvalidNameException("이름은 255자를 초과할 수 없습니다.");
+            throw new InvalidNameException("상품 이름은 255자를 초과할 수 없습니다.");
         }
     }
 
