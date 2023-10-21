@@ -22,8 +22,12 @@ public class TableGroup {
 
     protected TableGroup() {}
 
-    public TableGroup(final LocalDateTime createdDate) {
+    private TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public static TableGroup create() {
+        return new TableGroup(LocalDateTime.now());
     }
 
     public Long getId() {

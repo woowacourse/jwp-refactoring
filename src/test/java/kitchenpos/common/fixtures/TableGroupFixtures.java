@@ -1,6 +1,5 @@
 package kitchenpos.common.fixtures;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.table.OrderTableFindRequest;
@@ -30,6 +29,6 @@ public class TableGroupFixtures {
      * ENTITY
      */
     public static TableGroup TABLE_GROUP1() {
-        return new TableGroup(LocalDateTime.now());
+        return TableGroup.create();
     }
 }

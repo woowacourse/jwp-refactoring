@@ -4,7 +4,6 @@ import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.time.LocalDateTime;
 import kitchenpos.exception.OrderTableException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ class OrderTableTest {
     @DisplayName("그룹을 해제한다.")
     void unGroup() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup tableGroup = TableGroup.create();
         OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, true);
         orderTable.confirmTableGroup(tableGroup);
 
