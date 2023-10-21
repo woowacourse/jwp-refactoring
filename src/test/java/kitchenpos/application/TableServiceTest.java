@@ -16,15 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class TableServiceTest extends IntegrationTest {
 
-    // TODO 너무 많은 의존성 해결하기
     @Autowired
     private TableService tableService;
     @Autowired
     private TableGroupService tableGroupService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private MenuService menuService;
 
     @Test
     @DisplayName("주문 테이블 등록 시 전달받은 정보를 새 id로 저장한다.")

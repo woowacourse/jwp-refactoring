@@ -45,7 +45,7 @@ class OrderTest {
         final Order order = 주문_생성_메뉴_당_1개씩_상태_설정(orderTable, COMPLETION, List.of(menu));
 
         // expected
-        assertThatThrownBy(() -> order.setOrderStatus(MEAL))
+        assertThatThrownBy(() -> order.changeOrderStatus(MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

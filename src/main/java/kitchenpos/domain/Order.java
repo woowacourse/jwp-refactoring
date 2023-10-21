@@ -23,20 +23,19 @@ import javax.persistence.Table;
 @Table(name = "orders")
 public class Order {
 
+    @OneToMany(mappedBy = "order")
+    private final List<OrderLineItem> orderLineItems = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
-    // TODO EnumType으로 변경
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     @Column
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
@@ -47,6 +46,26 @@ public class Order {
         orderTable.addOrder(this);
         this.orderStatus = COOKING;
         this.orderedTime = orderedTime;
+    }
+
+    // TODO 의미있는 메서드로 분리
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    public void startMeal() {
+        this.orderStatus = MEAL;
+    }
+
+    public void addOrderLineItem(final OrderLineItem orderLineItem) {
+        orderLineItems.add(orderLineItem);
+    }
+
+    public boolean isInProgress() {
+        return MEAL.equals(orderStatus) || COOKING.equals(orderStatus);
     }
 
     public Long getId() {
@@ -61,28 +80,7 @@ public class Order {
         return orderStatus;
     }
 
-    // TODO setter 네이밍 변경 또는 의미있는 메서드로 나누기
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
-        this.orderStatus = orderStatus;
-    }
-
-    public boolean isInProgress() {
-        return MEAL.equals(orderStatus) || COOKING.equals(orderStatus);
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    // TODO setter
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
-    public void startMeal() {
-        this.orderStatus = MEAL;
     }
 }

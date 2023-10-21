@@ -28,8 +28,13 @@ public class OrderLineItem {
 
     public OrderLineItem(final Order order, final Menu menu, final long quantity) {
         this.order = order;
+        order.addOrderLineItem(this);
         this.menu = menu;
         this.quantity = quantity;
+    }
+
+    public Order getOrder() {
+        return order;
     }
 
     public Menu getMenu() {

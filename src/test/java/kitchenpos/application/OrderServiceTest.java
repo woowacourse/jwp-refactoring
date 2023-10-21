@@ -17,12 +17,14 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +35,8 @@ class OrderServiceTest extends IntegrationTest {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
@@ -58,6 +62,11 @@ class OrderServiceTest extends IntegrationTest {
 
         // then
         assertThat(orderService.list())
+                .map(Order::getId)
+                .filteredOn(id -> Objects.equals(id, saved.getId()))
+                .hasSize(1);
+        assertThat(orderLineItemRepository.findAll())
+                .map(OrderLineItem::getOrder)
                 .map(Order::getId)
                 .filteredOn(id -> Objects.equals(id, saved.getId()))
                 .hasSize(1);
@@ -149,7 +158,7 @@ class OrderServiceTest extends IntegrationTest {
         final Order order = orderService.create(주문_생성_메뉴_당_1개씩(orderTable, List.of(menu)));
 
         // when
-        order.setOrderStatus(MEAL);
+        order.changeOrderStatus(MEAL);
         final Order orderForMeal = orderService.changeOrderStatus(order.getId(), order);
 
         // then
