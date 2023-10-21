@@ -5,32 +5,32 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuCommand;
 import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuGroupDao menuGroupDao,
+            final MenuGroupRepository menuGroupRepository,
             final ProductDao productDao,
             final MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.productDao = productDao;
     }
 
     @Transactional
     public Menu create(final CreateMenuCommand command) {
-        if (!menuGroupDao.existsById(command.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(command.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 

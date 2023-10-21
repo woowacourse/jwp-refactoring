@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.CreateMenuGroupCommand;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,7 +35,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹_리스트를_조회할_수있다() {
         //given
-        List<Long> 모든_그룹_아이디 = menuGroupDao.findAll().stream()
+        List<Long> 모든_그룹_아이디 = menuGroupRepository.findAll().stream()
                 .map(MenuGroup::getId)
                 .collect(Collectors.toList());
 

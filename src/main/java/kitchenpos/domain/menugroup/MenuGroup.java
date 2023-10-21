@@ -1,10 +1,22 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menugroup;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import static java.util.Objects.isNull;
 
+@Entity
 public class MenuGroup {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    protected MenuGroup() {
+    }
 
     public MenuGroup(final String name) {
         if (isNull(name)) {

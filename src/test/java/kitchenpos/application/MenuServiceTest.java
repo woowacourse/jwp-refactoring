@@ -135,7 +135,7 @@ class MenuServiceTest extends ServiceTest {
 
     private MenuGroup 메뉴_그룹_만들기() {
         MenuGroup 저장할_그룹 = new MenuGroup("메뉴그룹");
-        return menuGroupDao.save(저장할_그룹);
+        return menuGroupRepository.save(저장할_그룹);
     }
 
     private List<MenuProduct> 상품_만들기() {
