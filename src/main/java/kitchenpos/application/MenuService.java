@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -18,18 +18,18 @@ import java.util.Objects;
 @Service
 public class MenuService {
     private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
+            final MenuGroupRepository menuGroupRepository,
             final MenuProductDao menuProductDao,
             final ProductRepository productRepository
     ) {
         this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
     }
@@ -42,7 +42,7 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴의 가격이 올바르지 않습니다.");
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 

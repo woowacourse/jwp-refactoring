@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuGroupServiceTest {
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     MenuGroupService menuGroupService;
@@ -29,29 +29,29 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
+        final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
 
-        given(menuGroupDao.save(any()))
+        given(menuGroupRepository.save(any()))
                 .willReturn(menuGroup);
 
         // when & then
         assertThat(menuGroupService.create(menuGroup)).isEqualTo(menuGroup);
-        then(menuGroupDao).should(times(1)).save(any());
+        then(menuGroupRepository).should(times(1)).save(any());
     }
 
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup1 = new MenuGroup();
-        final MenuGroup menuGroup2 = new MenuGroup();
+        final MenuGroup menuGroup1 = new MenuGroup(10L, "치킨");
+        final MenuGroup menuGroup2 = new MenuGroup(11L, "피자");
         final List<MenuGroup> menuGroups = List.of(menuGroup1, menuGroup2);
 
-        given(menuGroupDao.findAll())
+        given(menuGroupRepository.findAll())
                 .willReturn(menuGroups);
 
         // when & then
         assertThat(menuGroupService.list()).isEqualTo(menuGroups);
-        then(menuGroupDao).should(times(1)).findAll();
+        then(menuGroupRepository).should(times(1)).findAll();
     }
 }

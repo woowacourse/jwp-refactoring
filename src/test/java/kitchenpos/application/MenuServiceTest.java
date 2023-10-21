@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -33,7 +33,7 @@ class MenuServiceTest {
     private MenuDao menuDao;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
     private MenuProductDao menuProductDao;
@@ -53,9 +53,7 @@ class MenuServiceTest {
         menu.setName("후라이드 양념 두마리 세트");
         menu.setPrice(BigDecimal.valueOf(30000));
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(10L);
-        menuGroup.setName("치킨");
+        final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
 
         menu.setMenuGroupId(menuGroup.getId());
 
@@ -74,7 +72,7 @@ class MenuServiceTest {
 
         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
 
         given(productRepository.findById(menuProduct1.getProductId()))
@@ -92,7 +90,7 @@ class MenuServiceTest {
 
         // when & then
         assertThat(menuService.create(menu)).isEqualTo(menu);
-        then(menuGroupDao).should(times(1)).existsById(anyLong());
+        then(menuGroupRepository).should(times(1)).existsById(anyLong());
         then(productRepository).should(times(2)).findById(anyLong());
         then(menuDao).should(times(1)).save(any());
         then(menuProductDao).should(times(2)).save(any());
@@ -149,9 +147,7 @@ class MenuServiceTest {
         menu.setName("후라이드 양념 두마리 세트");
         menu.setPrice(BigDecimal.valueOf(30000));
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(10L);
-        menuGroup.setName("치킨");
+        final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
 
         menu.setMenuGroupId(menuGroup.getId());
 
@@ -170,7 +166,7 @@ class MenuServiceTest {
 
         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
 
         // when & then
@@ -188,9 +184,7 @@ class MenuServiceTest {
         menu.setName("후라이드 양념 두마리 세트");
         menu.setPrice(BigDecimal.valueOf(40000));
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(10L);
-        menuGroup.setName("치킨");
+        final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
 
         menu.setMenuGroupId(menuGroup.getId());
 
@@ -209,7 +203,7 @@ class MenuServiceTest {
 
         menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
 
         given(productRepository.findById(menuProduct1.getProductId()))
