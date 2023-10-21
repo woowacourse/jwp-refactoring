@@ -16,7 +16,7 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
-        return productRepository.save(new Product(product.getName(), product.getPrice()));
+        return productRepository.save(product);
     }
 
     public List<Product> list() {

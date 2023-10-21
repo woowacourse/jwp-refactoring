@@ -71,6 +71,6 @@ class ProductTest {
         final Product scaled = new Product("새우탕면", overScaledPrice);
 
         // then
-        assertThat(scaled.getPrice()).hasScaleOf(2);
+        assertThat(scaled.getPrice().value()).hasScaleOf(2);
     }
 }
