@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.dto.OrderPersistence;
+import kitchenpos.order.application.entity.OrderEntity;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.persistence.OrderDao;
@@ -23,7 +23,7 @@ public class OrderRepository {
   }
 
   public Order save(final Order entity) {
-    final Order savedOrder = orderDao.save(OrderPersistence.from(entity)).toOrder();
+    final Order savedOrder = orderDao.save(OrderEntity.from(entity)).toOrder();
 
     final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(entity, savedOrder);
     return new Order(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
@@ -41,13 +41,13 @@ public class OrderRepository {
   }
 
   public Optional<Order> findById(final Long id) {
-    return orderDao.findById(id).map(OrderPersistence::toOrder);
+    return orderDao.findById(id).map(OrderEntity::toOrder);
   }
 
   public List<Order> findAll() {
     final List<Order> orders = orderDao.findAll()
         .stream()
-        .map(OrderPersistence::toOrder)
+        .map(OrderEntity::toOrder)
         .collect(Collectors.toList());
 
     final List<Order> result = new ArrayList<>();

@@ -3,7 +3,7 @@ package kitchenpos.product.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.product.application.dto.ProductPersistence;
+import kitchenpos.product.application.entity.ProductEntity;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.persistence.ProductDao;
@@ -19,11 +19,11 @@ public class ProductRepository {
   }
 
   public Product save(final Product entity) {
-    return productDao.save(ProductPersistence.from(entity)).toProduct();
+    return productDao.save(ProductEntity.from(entity)).toProduct();
   }
 
   public Optional<Product> findById(final Long id) {
-    return productDao.findById(id).map(ProductPersistence::toProduct);
+    return productDao.findById(id).map(ProductEntity::toProduct);
   }
 
   public List<Product> findAll() {

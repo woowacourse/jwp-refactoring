@@ -1,4 +1,4 @@
-package kitchenpos.menu.application.dto;
+package kitchenpos.menu.application.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -6,14 +6,14 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Price;
 
-public class MenuPersistence {
+public class MenuEntity {
 
   private Long id;
   private String name;
   private BigDecimal price;
   private Long menuGroupId;
 
-  public MenuPersistence(final Long id, final String name, final BigDecimal price,
+  public MenuEntity(final Long id, final String name, final BigDecimal price,
       final Long menuGroupId) {
     this.id = id;
     this.name = name;
@@ -21,7 +21,7 @@ public class MenuPersistence {
     this.menuGroupId = menuGroupId;
   }
 
-  public MenuPersistence() {
+  public MenuEntity() {
   }
 
   public Long getId() {
@@ -40,8 +40,8 @@ public class MenuPersistence {
     return menuGroupId;
   }
 
-  public static MenuPersistence from(final Menu menu) {
-    return new MenuPersistence(menu.getId(), menu.getName(), menu.getPrice().getValue(),
+  public static MenuEntity from(final Menu menu) {
+    return new MenuEntity(menu.getId(), menu.getName(), menu.getPrice().getValue(),
         menu.getMenuGroupId());
   }
 

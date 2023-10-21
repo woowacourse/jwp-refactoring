@@ -1,10 +1,10 @@
-package kitchenpos.order.application.dto;
+package kitchenpos.order.application.entity;
 
 import java.time.LocalDateTime;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 
-public class OrderPersistence {
+public class OrderEntity {
 
   private Long id;
   private Long orderTableId;
@@ -12,7 +12,7 @@ public class OrderPersistence {
   private LocalDateTime orderedTime;
 
 
-  public OrderPersistence(final Long id, final Long orderTableId, final String orderStatus,
+  public OrderEntity(final Long id, final Long orderTableId, final String orderStatus,
       final LocalDateTime orderedTime) {
     this.id = id;
     this.orderTableId = orderTableId;
@@ -20,7 +20,7 @@ public class OrderPersistence {
     this.orderedTime = orderedTime;
   }
 
-  public OrderPersistence() {
+  public OrderEntity() {
   }
 
   public Long getId() {
@@ -39,8 +39,8 @@ public class OrderPersistence {
     return orderedTime;
   }
 
-  public static OrderPersistence from(final Order order) {
-    return new OrderPersistence(order.getId(), order.getOrderTableId(),
+  public static OrderEntity from(final Order order) {
+    return new OrderEntity(order.getId(), order.getOrderTableId(),
         order.getOrderStatus().name(), order.getOrderedTime());
   }
 

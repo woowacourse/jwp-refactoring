@@ -3,7 +3,7 @@ package kitchenpos.menu.domain.repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.dto.MenuPersistence;
+import kitchenpos.menu.application.entity.MenuEntity;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.persistence.MenuDao;
@@ -22,13 +22,13 @@ public class MenuRepository {
   }
 
   public Menu save(final Menu entity) {
-    final MenuPersistence savedMenu = menuDao.save(MenuPersistence.from(entity));
+    final MenuEntity savedMenu = menuDao.save(MenuEntity.from(entity));
 
     final List<MenuProduct> savedMenuProducts = saveMenuProducts(entity, savedMenu);
     return savedMenu.toMenu(savedMenuProducts);
   }
 
-  private List<MenuProduct> saveMenuProducts(final Menu entity, final MenuPersistence savedMenu) {
+  private List<MenuProduct> saveMenuProducts(final Menu entity, final MenuEntity savedMenu) {
     final List<MenuProduct> savedMenuProducts = new ArrayList<>();
     for (final MenuProduct menuProduct : entity.getMenuProducts()) {
       final MenuProduct savedMenuProduct = new MenuProduct(savedMenu.getId(),

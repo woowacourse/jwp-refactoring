@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.order.application.dto.OrderPersistence;
+import kitchenpos.order.application.entity.OrderEntity;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -33,7 +33,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
   }
 
   @Override
-  public OrderPersistence save(final OrderPersistence entity) {
+  public OrderEntity save(final OrderEntity entity) {
     if (Objects.isNull(entity.getId())) {
       final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
       final Number key = jdbcInsert.executeAndReturnKey(parameters);
@@ -44,7 +44,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
   }
 
   @Override
-  public Optional<OrderPersistence> findById(final Long id) {
+  public Optional<OrderEntity> findById(final Long id) {
     try {
       return Optional.of(select(id));
     } catch (final EmptyResultDataAccessException e) {
@@ -53,7 +53,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
   }
 
   @Override
-  public List<OrderPersistence> findAll() {
+  public List<OrderEntity> findAll() {
     final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
     return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
   }
@@ -80,7 +80,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
   }
 
-  private OrderPersistence select(final Long id) {
+  private OrderEntity select(final Long id) {
     final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("id", id);
@@ -88,7 +88,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private void update(final OrderPersistence entity) {
+  private void update(final OrderEntity entity) {
     final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("orderStatus", entity.getOrderStatus())
@@ -96,12 +96,12 @@ public class JdbcTemplateOrderDao implements OrderDao {
     jdbcTemplate.update(sql, parameters);
   }
 
-  private OrderPersistence toEntity(final ResultSet resultSet) throws SQLException {
+  private OrderEntity toEntity(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(KEY_COLUMN_NAME);
     final Long orderTableId = resultSet.getLong("order_table_id");
     final String orderStatus = resultSet.getString("order_status");
     final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
 
-    return new OrderPersistence(id, orderTableId, orderStatus, orderedTime);
+    return new OrderEntity(id, orderTableId, orderStatus, orderedTime);
   }
 }

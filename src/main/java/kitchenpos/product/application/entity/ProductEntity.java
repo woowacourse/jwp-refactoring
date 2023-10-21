@@ -1,22 +1,22 @@
-package kitchenpos.product.application.dto;
+package kitchenpos.product.application.entity;
 
 import java.math.BigDecimal;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 
-public class ProductPersistence {
+public class ProductEntity {
 
   private Long id;
   private String name;
   private BigDecimal price;
 
-  public ProductPersistence(final Long id, final String name, final BigDecimal price) {
+  public ProductEntity(final Long id, final String name, final BigDecimal price) {
     this.id = id;
     this.name = name;
     this.price = price;
   }
 
-  public ProductPersistence() {
+  public ProductEntity() {
   }
 
   public Long getId() {
@@ -31,8 +31,8 @@ public class ProductPersistence {
     return price;
   }
 
-  public static ProductPersistence from(final Product product) {
-    return new ProductPersistence(product.getId(), product.getName(),
+  public static ProductEntity from(final Product product) {
+    return new ProductEntity(product.getId(), product.getName(),
         product.getPrice().getValue());
   }
 

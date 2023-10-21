@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.product.application.dto.ProductPersistence;
+import kitchenpos.product.application.entity.ProductEntity;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -33,14 +33,14 @@ public class JdbcTemplateProductDao implements ProductDao {
   }
 
   @Override
-  public ProductPersistence save(final ProductPersistence entity) {
+  public ProductEntity save(final ProductEntity entity) {
     final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
     final Number key = jdbcInsert.executeAndReturnKey(parameters);
     return select(key.longValue());
   }
 
   @Override
-  public Optional<ProductPersistence> findById(final Long id) {
+  public Optional<ProductEntity> findById(final Long id) {
     try {
       return Optional.of(select(id));
     } catch (final EmptyResultDataAccessException e) {
@@ -49,12 +49,12 @@ public class JdbcTemplateProductDao implements ProductDao {
   }
 
   @Override
-  public List<ProductPersistence> findAll() {
+  public List<ProductEntity> findAll() {
     final String sql = "SELECT id, name, price FROM product";
     return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private ProductPersistence select(final Long id) {
+  private ProductEntity select(final Long id) {
     final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("id", id);
@@ -62,11 +62,11 @@ public class JdbcTemplateProductDao implements ProductDao {
         (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private ProductPersistence toEntity(final ResultSet resultSet) throws SQLException {
+  private ProductEntity toEntity(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(KEY_COLUMN_NAME);
     final String name = resultSet.getString("name");
     final BigDecimal price = resultSet.getBigDecimal("price");
 
-    return new ProductPersistence(id, name, price);
+    return new ProductEntity(id, name, price);
   }
 }

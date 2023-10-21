@@ -2,13 +2,13 @@ package kitchenpos.product.persistence;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.product.application.dto.ProductPersistence;
+import kitchenpos.product.application.entity.ProductEntity;
 
 public interface ProductDao {
 
-  ProductPersistence save(ProductPersistence entity);
+  ProductEntity save(ProductEntity entity);
 
-  Optional<ProductPersistence> findById(Long id);
+  Optional<ProductEntity> findById(Long id);
 
-  List<ProductPersistence> findAll();
+  List<ProductEntity> findAll();
 }
