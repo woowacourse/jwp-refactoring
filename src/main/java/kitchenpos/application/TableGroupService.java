@@ -38,10 +38,6 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.unGroup();
-            orderTableRepository.save(orderTable);
-        }
+        orderTables.forEach(OrderTable::unGroup);
     }
 }

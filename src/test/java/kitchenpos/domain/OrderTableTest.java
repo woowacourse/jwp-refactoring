@@ -9,6 +9,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderTableTest {
@@ -101,6 +103,29 @@ class OrderTableTest {
 
         // then
         assertThatThrownBy(() -> tableGroup.addOrderTables(tablesInGroup))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("이미 개별 테이블인 테이블을 단체에서 분할할 수 없다.")
+    void 단체_테이블_분할_실패_개별_테이블() {
+        assertThatThrownBy(() -> 빈_테이블_생성().unGroup())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    @DisplayName("이미 조리 또는 식사 중인 테이블이 존재한다면 단체를 분할할 수 없다.")
+    void 단체_테이블_분할_실패_주문_상태(String orderStatus) {
+        // given
+        final OrderTable table = 빈_테이블_생성();
+        table.group(new TableGroup());
+
+        final OrderStatus unableStatusToSplit = OrderStatus.valueOf(orderStatus);
+        new Order(table).changeOrderStatus(unableStatusToSplit);
+
+        // then
+        assertThatThrownBy(() -> table.unGroup())
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

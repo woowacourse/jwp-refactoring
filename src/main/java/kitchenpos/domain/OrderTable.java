@@ -49,6 +49,10 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
+    public void addOrder(final Order order) {
+        orders.add(order);
+    }
+
     public void group(final TableGroup tableGroup) {
         validateAbleToGroup();
         changeEmpty(false);
@@ -71,8 +75,18 @@ public class OrderTable {
     }
 
     public void unGroup() {
+        validateAbleToUnGroup();
         this.tableGroup = null;
         changeEmpty(false);
+    }
+
+    private void validateAbleToUnGroup() {
+        if (Objects.isNull(tableGroup)) {
+            throw new IllegalArgumentException("이미 개별 테이블이라 단체에서 분할할 수 없습니다.");
+        }
+        if (hasAnyOrderInProgress()) {
+            throw new IllegalArgumentException("이미 조리 또는 식사 중인 주문이 존재해 단체 테이블을 분할할 수 없습니다.");
+        }
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
@@ -92,11 +106,14 @@ public class OrderTable {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
         }
-        final boolean hasAnyOrderInProgress = orders.stream()
-                .anyMatch(Order::isInProgress);
-        if (hasAnyOrderInProgress) {
+        if (hasAnyOrderInProgress()) {
             throw new IllegalArgumentException("조리 또는 식사 중인 테이블을 비울 수 없습니다.");
         }
+    }
+
+    private boolean hasAnyOrderInProgress() {
+        return orders.stream()
+                .anyMatch(Order::isInProgress);
     }
 
     public int getNumberOfGuests() {
@@ -109,10 +126,6 @@ public class OrderTable {
 
     public boolean isNotEmpty() {
         return !empty;
-    }
-
-    public void addOrder(final Order order) {
-        orders.add(order);
     }
 
     public Long getId() {
