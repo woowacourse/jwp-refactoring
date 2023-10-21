@@ -67,7 +67,7 @@ public class MenuService {
             menuProduct.setMenuId(menuId);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
+        savedMenu.updateMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -76,7 +76,7 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.updateMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
         }
 
         return menus;

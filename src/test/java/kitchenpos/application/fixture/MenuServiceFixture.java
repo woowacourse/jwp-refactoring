@@ -46,12 +46,12 @@ public class MenuServiceFixture {
         메뉴_상품들 = List.of(메뉴_상품1, 메뉴_상품2);
 
         저장된_메뉴 = new Menu(메뉴_이름, 메뉴_가격, 메뉴_그룹_아이디, 메뉴_상품들);
-        저장된_메뉴.setId(1L);
+        저장된_메뉴.updateId(1L);
         메뉴_상품1.setMenuId(저장된_메뉴.getMenuGroupId());
         메뉴_상품2.setMenuId(저장된_메뉴.getMenuGroupId());
         저장된_메뉴1 = 저장된_메뉴;
         저장된_메뉴2 = new Menu("메뉴_이름2", BigDecimal.valueOf(5000), 2L, List.of(메뉴_상품1, 메뉴_상품3));
-        저장된_메뉴2.setId(2L);
+        저장된_메뉴2.updateId(2L);
 
         MenuProduct 존재하지_않는_상품을_가진_메뉴_상품 = new MenuProduct(-999L, 2);
         존재하지_않는_상품을_가진_메뉴_상품.setSeq(4L);

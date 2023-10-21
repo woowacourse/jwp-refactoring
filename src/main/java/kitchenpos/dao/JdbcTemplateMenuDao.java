@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -69,11 +70,11 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        final Menu entity = new Menu();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
+        final String name = resultSet.getString("name");
+        final BigDecimal price = resultSet.getBigDecimal("price");
+        final long menuGroupId = resultSet.getLong("menu_group_id");
+        final Menu entity = new Menu(name, price, menuGroupId);
+        entity.updateId(resultSet.getLong("id"));
         return entity;
     }
 }
