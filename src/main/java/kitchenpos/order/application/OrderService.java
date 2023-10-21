@@ -80,7 +80,6 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(orderStatus);
-        orderRepository.save(savedOrder);
 
         return orderId;
     }
