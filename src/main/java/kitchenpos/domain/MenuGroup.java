@@ -16,14 +16,14 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
-    public MenuGroup(){
+    protected MenuGroup(){
     }
 
-    public MenuGroup(String name) {
+    private MenuGroup(String name) {
         this(null, name);
     }
 
-    public MenuGroup(Long id, String name) {
+    private MenuGroup(Long id, String name) {
         this.id = id;
         this.name = name;
     }

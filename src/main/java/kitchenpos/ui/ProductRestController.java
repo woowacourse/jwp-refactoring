@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductRestController {
+
     private final ProductService productService;
 
     public ProductRestController(ProductService productService) {
@@ -31,7 +32,9 @@ public class ProductRestController {
     @GetMapping("/api/products")
     public ResponseEntity<List<Product>> list() {
         List<Product> responses = productService.list();
+
         return ResponseEntity.ok()
                 .body(responses);
     }
+
 }

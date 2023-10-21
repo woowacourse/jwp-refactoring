@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.ui.request.OrderTableCreateRequest;
@@ -37,9 +38,17 @@ public class TableService {
         return orderTable;
     }
 
+
     private OrderTable findOrderTable(Long orderTableId) {
+        validateNull(orderTableId);
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateNull(Object object) {
+        if (Objects.isNull(object)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional

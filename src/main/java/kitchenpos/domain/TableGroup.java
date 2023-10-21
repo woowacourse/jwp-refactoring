@@ -24,14 +24,14 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
-    public TableGroup(LocalDateTime createdDate) {
+    private TableGroup(LocalDateTime createdDate) {
         this(null, createdDate);
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate) {
+    private TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
     }

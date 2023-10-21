@@ -35,4 +35,5 @@ public class MenuRestController {
         return ResponseEntity.ok()
                 .body(responses);
     }
+
 }

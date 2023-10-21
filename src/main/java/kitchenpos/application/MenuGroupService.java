@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupRepository menuGroupRepository;
 
     public MenuGroupService(MenuGroupRepository menuGroupRepository) {
@@ -25,4 +26,5 @@ public class MenuGroupService {
     public List<MenuGroup> list() {
         return menuGroupRepository.findAll();
     }
+
 }

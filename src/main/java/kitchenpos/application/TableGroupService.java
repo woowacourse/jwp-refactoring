@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
@@ -48,8 +48,16 @@ public class TableGroupService {
     }
 
     private OrderTable findOrderTable(Long orderTableId) {
+        validateNull(orderTableId);
+
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateNull(Object object) {
+        if (Objects.isNull(object)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
@@ -58,7 +66,9 @@ public class TableGroupService {
         tableGroup.removeAllOrderTables();
     }
 
-    public TableGroup findTableGroup(Long tableGroupId) {
+    private TableGroup findTableGroup(Long tableGroupId) {
+        validateNull(tableGroupId);
+
         return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
     }

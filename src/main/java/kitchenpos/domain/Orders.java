@@ -41,36 +41,17 @@ public class Orders {
     @OneToMany(mappedBy = "orders", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Orders() {
+    protected Orders() {
     }
 
-    public Orders(OrderTable orderTable) {
-        this(null, orderTable, null, null);
-    }
-
-    public Orders(
-            OrderTable orderTable,
-            LocalDateTime orderedTime
-    ) {
-        this(null, orderTable, null, orderedTime);
-    }
-
-    public Orders(
+    private Orders(
             OrderStatus orderStatus,
             LocalDateTime orderedTime
     ) {
         this(null, null, orderStatus, orderedTime);
     }
 
-    public Orders(
-            OrderTable orderTable,
-            OrderStatus orderStatus,
-            LocalDateTime orderedTime
-    ) {
-        this(null, orderTable, orderStatus, orderedTime);
-    }
-
-    public Orders(
+    private Orders(
             Long id,
             OrderTable orderTable,
             OrderStatus orderStatus,

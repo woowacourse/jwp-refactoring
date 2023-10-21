@@ -34,32 +34,29 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    private List<MenuProduct> menuProducts;
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu() {
+    protected Menu() {
     }
 
-    public Menu(
+    private Menu(
             String name,
             Price price,
-            MenuGroup menuGroup,
-            List<MenuProduct> menuProducts
+            MenuGroup menuGroup
     ) {
-        this(null, name, price, menuGroup, menuProducts);
+        this(null, name, price, menuGroup);
     }
 
-    public Menu(
+    private Menu(
             Long id,
             String name,
             Price price,
-            MenuGroup menuGroup,
-            List<MenuProduct> menuProducts
+            MenuGroup menuGroup
     ) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
     }
 
     public static Menu of(
@@ -70,8 +67,7 @@ public class Menu {
         return new Menu(
                 name,
                 Price.from(price),
-                menuGroup,
-                new ArrayList<>()
+                menuGroup
         );
     }
 

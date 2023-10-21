@@ -29,18 +29,14 @@ public class MenuProduct {
     @Embedded
     private Quantity quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
-    public MenuProduct(Product product, Quantity quantity) {
+    private MenuProduct(Product product, Quantity quantity) {
         this(null, null, product, quantity);
     }
 
-    public MenuProduct(Menu menu, Product product, Quantity quantity) {
-        this(null, menu, product, quantity);
-    }
-
-    public MenuProduct(
+    private MenuProduct(
             Long seq,
             Menu menu,
             Product product,

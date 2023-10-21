@@ -7,13 +7,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItemRepository;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Orders;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import kitchenpos.ui.request.OrderUpdateRequest;
@@ -79,6 +78,8 @@ public class OrderService {
     }
 
     private OrderTable findOrderTable(Long orderTableId) {
+        validateNull(orderTableId);
+
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }
@@ -97,6 +98,8 @@ public class OrderService {
     }
 
     private Orders findOrder(Long orderId) {
+        validateNull(orderId);
+
         return orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
     }

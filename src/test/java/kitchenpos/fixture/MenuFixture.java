@@ -30,7 +30,7 @@ public class MenuFixture {
         Menu menu = Menu.of(
                 "메뉴",
                 price,
-                MenuGroupFixture.떠오르는_메뉴_그룹()
+                MenuGroupFixture.후추와_함께하는_메뉴()
         );
 
         menu.addAllMenuProducts(List.of(menuProduct));

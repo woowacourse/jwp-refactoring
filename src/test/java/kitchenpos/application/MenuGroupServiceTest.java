@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.떠오르는_메뉴_그룹;
-import static kitchenpos.fixture.MenuGroupFixture.싼_메뉴_그룹;
+import static kitchenpos.fixture.MenuGroupFixture.후추와_함께하는_메뉴;
+import static kitchenpos.fixture.MenuGroupFixture.후추는_천재_메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,8 +41,8 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
         // given
         List<MenuGroup> menuGroups = List.of(
                 추천_메뉴_그룹(),
-                떠오르는_메뉴_그룹(),
-                싼_메뉴_그룹()
+                후추와_함께하는_메뉴(),
+                후추는_천재_메뉴()
         );
         List<MenuGroup> expected = new ArrayList<>();
         for (MenuGroup menuGroup : menuGroups) {

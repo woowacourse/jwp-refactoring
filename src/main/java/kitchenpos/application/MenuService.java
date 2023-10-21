@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
@@ -60,13 +58,23 @@ public class MenuService {
     }
 
     private MenuGroup findMenuGroup(Long menuGroupId) {
+        validateNull(menuGroupId);
+
         return menuGroupRepository.findById(menuGroupId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
     private Product findProduct(Long productId) {
+        validateNull(productId);
+
         return productRepository.findById(productId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateNull(Object object) {
+        if (Objects.isNull(object)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Menu> list() {

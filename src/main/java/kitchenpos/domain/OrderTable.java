@@ -36,18 +36,14 @@ public class OrderTable {
     @OneToMany(mappedBy = "orderTable", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private final List<Orders> orders = new ArrayList<>();
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
-    public OrderTable(NumberOfGuests numberOfGuests, boolean empty) {
+    private OrderTable(NumberOfGuests numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(TableGroup tableGroup, NumberOfGuests numberOfGuests, boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
-    }
-
-    public OrderTable(
+    private OrderTable(
             Long id,
             TableGroup tableGroup,
             NumberOfGuests numberOfGuests,

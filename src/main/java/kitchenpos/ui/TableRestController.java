@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TableRestController {
+
     private final TableService tableService;
 
     public TableRestController(TableService tableService) {
@@ -57,4 +58,5 @@ public class TableRestController {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, request));
     }
+
 }

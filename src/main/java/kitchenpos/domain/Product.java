@@ -22,14 +22,14 @@ public class Product {
     @Embedded
     private Price price;
 
-    public Product() {
+    protected Product() {
     }
 
-    public Product(String name, Price price) {
+    private Product(String name, Price price) {
         this(null, name, price);
     }
 
-    public Product(Long id, String name, Price price) {
+    private Product(Long id, String name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
