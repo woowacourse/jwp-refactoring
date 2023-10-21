@@ -102,6 +102,6 @@ public class Order {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        return Objects.hash(id);
     }
 }
