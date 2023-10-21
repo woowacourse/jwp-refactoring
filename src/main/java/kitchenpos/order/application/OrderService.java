@@ -41,15 +41,7 @@ public class OrderService {
 
     @Transactional
     public Long create(final OrderCreateRequest request) {
-        List<OrderCreateRequest.OrderLineItemCreate> orderLineItemCreates = request.getOrderLineItemCreates();
-
-        final List<Long> menuIds = orderLineItemCreates.stream()
-                .map(OrderCreateRequest.OrderLineItemCreate::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemCreates.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        final List<OrderCreateRequest.OrderLineItemCreate> orderLineItemCreates = request.getOrderLineItemCreates();
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
