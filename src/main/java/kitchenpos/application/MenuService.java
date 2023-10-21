@@ -1,8 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -10,27 +14,22 @@ import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductDao menuProductDao;
+    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductDao menuProductDao,
+            final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductDao = menuProductDao;
+        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -59,13 +58,12 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴의 가격이 상품 가격들의 합보다 큽니다.");
         }
 
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
-        final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
+            savedMenuProducts.add(savedMenuProduct);
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -73,12 +71,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuRepository.findAll();
     }
 }

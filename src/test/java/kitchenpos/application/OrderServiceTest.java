@@ -8,9 +8,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -30,7 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private OrderDao orderDao;
@@ -52,13 +53,8 @@ class OrderServiceTest {
         final Order order = new Order();
         order.setId(1L);
 
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
-
-        final Menu menu2 = new Menu();
-        menu2.setId(11L);
-        menu2.setName("후라이드 간장 세트");
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
+        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", BigDecimal.valueOf(30000), 1L);
 
         final OrderLineItem orderLineItem1 = new OrderLineItem();
         orderLineItem1.setOrderId(1L);
@@ -72,7 +68,7 @@ class OrderServiceTest {
 
         order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
 
-        given(menuDao.countByIdIn(any()))
+        given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
 
         final OrderTable orderTable = new OrderTable();
@@ -93,7 +89,7 @@ class OrderServiceTest {
 
         // when & then
         assertThat(orderService.create(order)).isEqualTo(order);
-        then(menuDao).should(times(1)).countByIdIn(any());
+        then(menuRepository).should(times(1)).countByIdIn(any());
         then(orderTableDao).should(times(1)).findById(anyLong());
         then(orderDao).should(times(1)).save(any());
         then(orderLineItemDao).should(times(2)).save(any());
@@ -119,9 +115,7 @@ class OrderServiceTest {
         final Order order = new Order();
         order.setId(1L);
 
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
 
         final OrderLineItem orderLineItem1 = new OrderLineItem();
         orderLineItem1.setOrderId(1L);
@@ -141,49 +135,6 @@ class OrderServiceTest {
                 .hasMessage("상품이 존재하지 않습니다.");
     }
 
-//    @DisplayName("존재하지 않는 주문 테이블이 포함되어 있으면 등록할 수 없다.")
-//    @Test
-//    void create_FailWhenOrderTableNotExist() {
-//        // given
-//        final Order order = new Order();
-//        order.setId(1L);
-//
-//        final Menu menu1 = new Menu();
-//        menu1.setId(10L);
-//        menu1.setName("후라이드 양념 세트");
-//
-//        final Menu menu2 = new Menu();
-//        menu2.setId(11L);
-//        menu2.setName("후라이드 간장 세트");
-//
-//        final OrderLineItem orderLineItem1 = new OrderLineItem();
-//        orderLineItem1.setOrderId(1L);
-//        orderLineItem1.setQuantity(1);
-//        orderLineItem1.setMenuId(menu1.getId());
-//
-//        final OrderLineItem orderLineItem2 = new OrderLineItem();
-//        orderLineItem2.setOrderId(1L);
-//        orderLineItem2.setQuantity(1);
-//        orderLineItem2.setMenuId(menu2.getId());
-//
-//        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-//
-//        given(menuDao.countByIdIn(any()))
-//                .willReturn(2L);
-//
-//        final OrderTable orderTable = new OrderTable();
-//        orderTable.setId(1000L);
-//        order.setOrderTableId(orderTable.getId());
-//
-//        given(orderTableDao.findById(order.getOrderTableId()))
-//                .willReturn(Optional.of(orderTable));
-//
-//        // when & then
-//        assertThatThrownBy(() -> orderService.create(order))
-//                .isInstanceOf(IllegalArgumentException.class)
-//                .hasMessage("주문 테이블이 존재하지 않습니다.");
-//    }
-
     @DisplayName("주문 테이블의 상태가 비어있으면 등록할 수 없다.")
     @Test
     void create_FailWhenOrderTableIsEmpty() {
@@ -191,13 +142,8 @@ class OrderServiceTest {
         final Order order = new Order();
         order.setId(1L);
 
-        final Menu menu1 = new Menu();
-        menu1.setId(10L);
-        menu1.setName("후라이드 양념 세트");
-
-        final Menu menu2 = new Menu();
-        menu2.setId(11L);
-        menu2.setName("후라이드 간장 세트");
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
+        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", BigDecimal.valueOf(30000), 1L);
 
         final OrderLineItem orderLineItem1 = new OrderLineItem();
         orderLineItem1.setOrderId(1L);
@@ -211,7 +157,7 @@ class OrderServiceTest {
 
         order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
 
-        given(menuDao.countByIdIn(any()))
+        given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
 
         final OrderTable orderTable = new OrderTable();
