@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import kitchenpos.application.TableService;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ class TableRestControllerTest {
     @Test
     @DisplayName("POST /api/tables")
     void createProduct() throws Exception {
-        when(tableService.create(5, false)).thenReturn(1L);
+        when(tableService.create(new NumberOfGuests(5), false)).thenReturn(1L);
 
         mockMvc.perform(post("/api/tables")
                         .contentType(MediaType.APPLICATION_JSON)

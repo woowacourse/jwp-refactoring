@@ -27,6 +27,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -97,7 +98,7 @@ class TableGroupServiceTest {
         void notExistingOrderTable(@Autowired TableService tableService) {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
 
-            final OrderTable orderTable2 = new OrderTable(0, true);
+            final OrderTable orderTable2 = new OrderTable(new NumberOfGuests(0), true);
             // 저장하지 않은 orderTable
 
             final TableGroup tableGroup = new TableGroup();

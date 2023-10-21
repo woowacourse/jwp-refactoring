@@ -3,14 +3,15 @@ package kitchenpos.application.response;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 
 public class OrderTableResponse {
     private final Long id;
     private final Long tableGroupId;
-    private final int numberOfGuests;
+    private final NumberOfGuests numberOfGuests;
     private final boolean empty;
 
-    public OrderTableResponse(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTableResponse(final Long id, final Long tableGroupId, final NumberOfGuests numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;

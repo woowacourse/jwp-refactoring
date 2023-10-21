@@ -27,6 +27,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,7 +67,7 @@ class TableServiceTest {
         @Test
         @DisplayName("orderTableId에 해당하는 pathVariable에 주문 테이블 식별자를 제공하여 테이블의 비어있음 여부를 변경할 수 있다.")
         void givenOrderTableId() {
-            final Long savedTableId = tableService.create(6, true);
+            final Long savedTableId = tableService.create(new NumberOfGuests(6), true);
 
             final OrderTableResponse changedTable = tableService.changeEmpty(savedTableId, false);
             assertThat(changedTable).extracting("empty").isEqualTo(false);
@@ -121,19 +122,19 @@ class TableServiceTest {
         @Test
         @DisplayName("orderTableId에 해당하는 pathVariable에 주문 테이블 식별자를, requestBody에 변경하려는 손님 수를 제공하여 변경할 수 있다.")
         void given(@Autowired OrderTableDao orderTableDao) {
-            final Long savedTableId = tableService.create(6, false);
+            final Long savedTableId = tableService.create(new NumberOfGuests(6), false);
 
-            tableService.changeNumberOfGuests(savedTableId, 9);
+            tableService.changeNumberOfGuests(savedTableId, new NumberOfGuests(9));
 
             final Optional<OrderTable> changedOrderTable = orderTableDao.findById(savedTableId);
-            assertThat(changedOrderTable.get().getNumberOfGuests()).isEqualTo(9);
+            assertThat(changedOrderTable.get().getNumberOfGuests()).isEqualTo(new NumberOfGuests(9));
         }
 
         @Test
         @DisplayName("실재하지 않는 주문 테이블의 손님 수를 변경할 수 없다.")
         void notExistingTable() {
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(0L, 9))
+                    () -> tableService.changeNumberOfGuests(0L, new NumberOfGuests(9)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

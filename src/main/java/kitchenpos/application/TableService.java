@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class TableService {
     }
 
     @Transactional
-    public Long create(final int numberOfGuests, boolean empty) {
+    public Long create(final NumberOfGuests numberOfGuests, boolean empty) {
         final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
         return orderTableDao.save(orderTable).getId();
     }
@@ -46,7 +47,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final NumberOfGuests numberOfGuests) {
         final OrderTable savedOrderTable = orderTableDao.findMandatoryById(orderTableId);
         savedOrderTable.setNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTableDao.save(savedOrderTable));

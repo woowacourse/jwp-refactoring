@@ -1,16 +1,18 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
 
 public class OrderTable {
     @Id
     private Long id;
     private Long tableGroupId;
-    private int numberOfGuests;
+    private NumberOfGuests numberOfGuests;
     private boolean empty;
 
-    public OrderTable(final int numberOfGuests, final boolean empty) {
+    public OrderTable(final NumberOfGuests numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -27,15 +29,12 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
-    public int getNumberOfGuests() {
+    @Embedded.Nullable
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
+    public void setNumberOfGuests(final NumberOfGuests numberOfGuests) {
         if (isEmpty()) {
             throw new IllegalArgumentException();
         }

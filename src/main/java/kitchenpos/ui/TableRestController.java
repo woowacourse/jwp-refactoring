@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.util.Map;
 import kitchenpos.application.TableService;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class TableRestController {
     @PostMapping("/api/tables")
     public ResponseEntity<Long> create(@RequestBody final Map<String, Object> parameter) {
         final Long created = tableService.create(
-                Integer.parseInt(String.valueOf(parameter.get("numberOfGuests"))),
+                new NumberOfGuests(Integer.parseInt(String.valueOf(parameter.get("numberOfGuests")))),
                 Boolean.parseBoolean(String.valueOf(parameter.get("empty")))
         );
         final URI uri = URI.create("/api/tables/" + created);
@@ -47,7 +47,7 @@ public class TableRestController {
             @PathVariable final Long orderTableId,
             @RequestBody final Map<String, Object> parameter
     ) {
-        final int numberOfGuests = Integer.parseInt(String.valueOf(parameter.get("numberOfGuests")));
+        final NumberOfGuests numberOfGuests = new NumberOfGuests(Integer.parseInt(String.valueOf(parameter.get("numberOfGuests"))));
         return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
     }
 }
