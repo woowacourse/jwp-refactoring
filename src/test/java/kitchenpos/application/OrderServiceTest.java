@@ -1,109 +1,97 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderChangeRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemCreateRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-class OrderServiceTest extends ServiceTest{
+class OrderServiceTest extends ServiceTest {
 
-    @Autowired
-    private OrderService orderService;
-
-    private OrderLineItem orderLineItem;
-    private Order order;
-    private OrderTable orderTable;
+    private OrderCreateRequest orderCreateRequest;
+    private OrderChangeRequest orderChangeRequest;
 
     @BeforeEach
     void setUp() {
-        orderLineItem = makeOrderLineItem();
-        order = makeOrder(orderLineItem);
-        orderTable = makeOrderTable();
+        orderCreateRequest = makeOrderCreateRequest();
+        orderChangeRequest = makeOrderChangeRequest();
     }
 
     @Test
     void 주문을_생성한다() {
-        Mockito.when(menuDao.countByIdIn(anyList()))
-                .thenReturn(1L);
-        Mockito.when(orderTableDao.findById(anyLong()))
-                .thenReturn(Optional.ofNullable(orderTable));
-        Mockito.when(orderDao.save(any(Order.class)))
-                .thenReturn(order);
-        Mockito.when(orderLineItemDao.save(any(OrderLineItem.class)))
-                .thenReturn(orderLineItem);
+        tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
 
-        Order saved = orderService.create(order);
-        assertThat(saved.getId()).isEqualTo(order.getId());
+        OrderResponse saved = orderService.create(orderCreateRequest);
 
+        assertAll(
+                () -> assertThat(saved.getOrderTableResponse().getId()).isEqualTo(orderCreateRequest.getOrderTableId()),
+                () -> assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString()),
+                () -> assertThat(saved.getOrderLineItems().size()).isEqualTo(1L)
+        );
+    }
+
+    @Test
+    void 주문테이블_불가상태에서_주문생성시_예외발생() {
+        assertThatThrownBy(
+                () -> orderService.create(orderCreateRequest)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 존재하지_않는_주문테이블_조회시_예외발생() {
+        OrderCreateRequest request = makeWrongIdOrderCreateRequest();
+        assertThatThrownBy(
+                () -> orderService.create(request)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 존재하지_않는_메뉴ID로_조회시_예외발생() {
+        OrderCreateRequest request = makeWrongMenuOrderCreateRequest();
+        assertThatThrownBy(
+                () -> orderService.create(request)
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 전체_주문을_조회한다() {
-        Mockito.when(orderDao.findAll())
-                .thenReturn(List.of(order, order));
-        Mockito.when(orderLineItemDao.findAllByOrderId(anyLong()))
-                .thenReturn(List.of(orderLineItem, orderLineItem));
-
-        List<Order> orders = orderService.list();
-
-        assertThat(orders.size()).isEqualTo(2);
+        tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
+        orderService.create(orderCreateRequest);
+        orderService.create(orderCreateRequest);
+        List<OrderResponse> responses = orderService.list();
+        assertThat(responses.size()).isEqualTo(2);
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        Order newOrder = makeOrder(orderLineItem);
-        newOrder.setOrderStatus(OrderStatus.MEAL.toString());
-
-        Mockito.when(orderDao.findById(anyLong()))
-                .thenReturn(Optional.ofNullable(order));
-
-        Mockito.when(orderDao.save(any(Order.class)))
-                .thenReturn(newOrder);
-        Mockito.when(orderLineItemDao.findAllByOrderId(anyLong()))
-                .thenReturn(List.of(orderLineItem, orderLineItem));
-
-        Order updated = orderService.changeOrderStatus(1L, newOrder);
-        assertThat(updated.getOrderStatus()).isEqualTo(newOrder.getOrderStatus());
+        tableService.changeEmpty(1L,new OrderTableChangeEmptyRequest(false));
+        orderService.create(orderCreateRequest);
+        OrderResponse response = orderService.changeOrderStatus(1L, orderChangeRequest);
+        assertThat(response.getOrderStatus().toString()).isEqualTo(orderChangeRequest.getOrderStatus());
     }
 
-    private OrderTable makeOrderTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
-        return orderTable;
+    private OrderCreateRequest makeOrderCreateRequest() {
+        return new OrderCreateRequest(1L, List.of(new OrderLineItemCreateRequest(1L, 1L)));
     }
 
-    private Order makeOrder(OrderLineItem orderLineItem) {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.toString());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(List.of(orderLineItem));
-        return order;
+    private OrderCreateRequest makeWrongIdOrderCreateRequest() {
+        return new OrderCreateRequest(10L, List.of(new OrderLineItemCreateRequest(1L, 1L)));
     }
 
-    private OrderLineItem makeOrderLineItem() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
-        return orderLineItem;
+    private OrderCreateRequest makeWrongMenuOrderCreateRequest() {
+        return new OrderCreateRequest(1L, List.of(new OrderLineItemCreateRequest(10L, 1L)));
+    }
+
+    private OrderChangeRequest makeOrderChangeRequest() {
+        return new OrderChangeRequest("MEAL");
     }
 }

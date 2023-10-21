@@ -7,6 +7,10 @@ public class OrderTableChangeEmptyRequest {
     public OrderTableChangeEmptyRequest() {
     }
 
+    public OrderTableChangeEmptyRequest(Boolean empty) {
+        this.empty = empty;
+    }
+
     public Boolean getEmpty() {
         return empty;
     }

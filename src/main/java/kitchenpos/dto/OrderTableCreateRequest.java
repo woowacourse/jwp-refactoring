@@ -8,6 +8,11 @@ public class OrderTableCreateRequest {
     public OrderTableCreateRequest() {
     }
 
+    public OrderTableCreateRequest(Integer numberOfGuests, Boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Integer getNumberOfGuests() {
         return numberOfGuests;
     }

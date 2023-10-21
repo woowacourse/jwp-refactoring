@@ -1,50 +1,48 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ProductServiceTest extends ServiceTest{
-
-    @Autowired
-    private ProductService productService;
-
-    private Product product;
+class ProductServiceTest extends ServiceTest {
+    private ProductCreateRequest productCreateRequest;
 
     @BeforeEach
-    void setUp(){
-        product = makeProduct();
+    void setUp() {
+        productCreateRequest = makeProductCreateRequestByPrice(BigDecimal.valueOf(17000));
     }
+
     @Test
     void 상품을_생성한다() {
-        Mockito.when(productDao.save(any(Product.class)))
-                .thenReturn(product);
-
-        Product saved = productService.create(product);
-        assertThat(saved.getName()).isEqualTo(product.getName());
+        ProductResponse response = productService.create(productCreateRequest);
+        assertAll(
+                () -> assertThat(response.getName()).isEqualTo(productCreateRequest.getName()),
+                () -> assertThat(response.getPrice()).isEqualTo(productCreateRequest.getPrice())
+        );
     }
 
     @Test
-    void 전체_상품_목록을_조회한다() {
-        Mockito.when(productDao.findAll())
-                .thenReturn(List.of(makeProduct(), makeProduct()));
-
-        assertThat(productService.list().size()).isEqualTo(2);
+    void 가격이_0미만이면_예외발생() {
+        assertThatThrownBy(
+                () -> productService.create(makeProductCreateRequestByPrice(BigDecimal.valueOf(-1)))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Product makeProduct() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("상품1");
-        product.setPrice(BigDecimal.ONE);
-        return product;
+    @Test
+    void 전체_상품_조회() {
+        List<ProductResponse> responses = productService.list();
+        assertThat(responses.size()).isEqualTo(6);
+    }
+
+    private ProductCreateRequest makeProductCreateRequestByPrice(BigDecimal price) {
+        return new ProductCreateRequest("강정치킨", price);
     }
 }

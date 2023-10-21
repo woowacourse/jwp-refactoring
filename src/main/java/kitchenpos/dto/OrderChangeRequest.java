@@ -7,6 +7,10 @@ public class OrderChangeRequest {
     public OrderChangeRequest() {
     }
 
+    public OrderChangeRequest(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     public String getOrderStatus() {
         return orderStatus;
     }

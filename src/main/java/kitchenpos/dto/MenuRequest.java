@@ -13,6 +13,13 @@ public class MenuRequest {
     public MenuRequest() {
     }
 
+    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
     public String getName() {
         return name;
     }

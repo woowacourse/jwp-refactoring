@@ -63,8 +63,11 @@ public class OrderService {
         }
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        return orderRepository.findAll()
+                .stream()
+                .map(OrderResponse::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional

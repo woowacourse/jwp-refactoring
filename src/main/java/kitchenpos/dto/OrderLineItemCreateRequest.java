@@ -8,6 +8,11 @@ public class OrderLineItemCreateRequest {
     public OrderLineItemCreateRequest() {
     }
 
+    public OrderLineItemCreateRequest(Long menuId, Long quantity) {
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
     public Long getMenuId() {
         return menuId;
     }

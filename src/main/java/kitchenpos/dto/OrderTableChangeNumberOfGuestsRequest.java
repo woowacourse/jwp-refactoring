@@ -7,6 +7,10 @@ public class OrderTableChangeNumberOfGuestsRequest {
     public OrderTableChangeNumberOfGuestsRequest() {
     }
 
+    public OrderTableChangeNumberOfGuestsRequest(Integer numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
