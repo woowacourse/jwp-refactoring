@@ -16,10 +16,6 @@ public class Product {
     @Embedded.Nullable
     private Price price;
 
-    public Long getId() {
-        return id;
-    }
-
     public Product(final Long id, final Name name, final Price price) {
         this.id = id;
         this.name = name;
@@ -28,5 +24,17 @@ public class Product {
 
     public BigDecimal multiplyPrice(final Price price) {
         return this.price.multiply(price);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
     }
 }

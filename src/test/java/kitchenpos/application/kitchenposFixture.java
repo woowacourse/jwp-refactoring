@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -31,7 +32,8 @@ public class kitchenposFixture {
     }
 
     public static Product 상품만들기(final String name, final String price, final ProductService productService) {
-        return productService.create(new Name(name), new Price(new BigDecimal(price)));
+        final ProductResponse productResponse = productService.create(new Name(name), new Price(new BigDecimal(price)));
+        return new Product(productResponse.getId(), productResponse.getName(), productResponse.getPrice());
     }
 
     public static MenuGroup 메뉴그룹만들기(final MenuGroupService menuGroupService) {

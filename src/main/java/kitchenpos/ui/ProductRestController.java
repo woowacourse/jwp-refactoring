@@ -5,7 +5,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.application.response.ProductResponse;
 import kitchenpos.domain.product.Name;
 import kitchenpos.domain.product.Price;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +23,11 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final Map<String, Object> parameter) {
+    public ResponseEntity<ProductResponse> create(@RequestBody final Map<String, Object> parameter) {
 
         final Name name = new Name(String.valueOf(parameter.get("name")));
         final Price price = new Price(new BigDecimal(String.valueOf(parameter.get("price"))));
-        final Product created = productService.create(name, price);
+        final ProductResponse created = productService.create(name, price);
         
         final URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri)
@@ -36,9 +36,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
-        return ResponseEntity.ok()
-                .body(productService.list())
-                ;
+    public ResponseEntity<List<ProductResponse>> list() {
+        return ResponseEntity.ok().body(productService.list());
     }
 }

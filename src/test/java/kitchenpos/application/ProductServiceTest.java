@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.application.response.ProductResponse;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.product.Name;
 import kitchenpos.domain.product.Price;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("이름과 가격을 제공하면 새로운 상품을 제공할 수 있다.")
     void givenNameAndPrice() {
-        final Product savedProduct = this.productService.create(new Name("쫀득쫀득 지렁이"), new Price(new BigDecimal("4000")));
+        final ProductResponse savedProduct = this.productService.create(new Name("쫀득쫀득 지렁이"), new Price(new BigDecimal("4000")));
         assertThat(savedProduct).isNotNull();
     }
 
