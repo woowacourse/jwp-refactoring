@@ -1,15 +1,18 @@
 package kitchenpos.application;
 
+import static kitchenpos.application.ProductServiceTest.ProductRequestFixture.상품_생성_요청;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductCreateRequest;
+import kitchenpos.dto.product.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,24 +29,24 @@ class ProductServiceTest {
     @Test
     void 상품을_생성한다() {
         // given
-        Product product = 상품();
+        ProductCreateRequest productCreateRequest = 상품_생성_요청();
 
         // when
-        Product createdProduct = productService.create(product);
+        ProductResponse createdProduct = productService.create(productCreateRequest);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(createdProduct.getId()).isNotNull();
             softly.assertThat(createdProduct).usingRecursiveComparison()
                     .ignoringFields("id")
-                    .isEqualTo(상품());
+                    .isEqualTo(ProductResponse.from(상품()));
         });
     }
 
     @Test
     void 상품을_생성할_때_가격이_0미만이면_예외를_던진다() {
         // given
-        Product invalidProduct = 상품("name", BigDecimal.valueOf(-1L));
+        ProductCreateRequest invalidProduct = 상품_생성_요청(BigDecimal.valueOf(-1L));
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))
@@ -53,7 +56,7 @@ class ProductServiceTest {
     @Test
     void 상품을_생성할_때_가격이_null이면_예외를_던진다() {
         // given
-        Product invalidProduct = 상품("name", null);
+        ProductCreateRequest invalidProduct = 상품_생성_요청(null);
 
         // expect
         assertThatThrownBy(() -> productService.create(invalidProduct))
@@ -66,10 +69,21 @@ class ProductServiceTest {
         Long productId = productDao.save(상품()).getId();
 
         // when
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         // then
         assertThat(products).usingRecursiveComparison()
-                .isEqualTo(List.of(상품(productId)));
+                .isEqualTo(List.of(ProductResponse.from(상품(productId))));
+    }
+
+    static class ProductRequestFixture {
+
+        public static ProductCreateRequest 상품_생성_요청() {
+            return new ProductCreateRequest("productName", BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP));
+        }
+
+        public static ProductCreateRequest 상품_생성_요청(BigDecimal price) {
+            return new ProductCreateRequest("productName", price);
+        }
     }
 }
