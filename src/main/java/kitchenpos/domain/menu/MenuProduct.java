@@ -25,7 +25,7 @@ public class MenuProduct {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
+    public void setMenuId(Long menuId) {
         this.menuId = menuId;
     }
 
