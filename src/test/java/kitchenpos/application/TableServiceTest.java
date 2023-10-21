@@ -83,7 +83,8 @@ class TableServiceTest extends ServiceTest {
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
             //when
-            final Long id = tableService.changeEmpty(orderTable.getId(), !bool);
+            final boolean changingEmpty = !bool;
+            final Long id = tableService.changeEmpty(orderTable.getId(), changingEmpty);
 
             //then
             final OrderTable savedOrderTable = testFixtureBuilder.getEntitySupporter().getOrderTableRepository().findById(id).orElseThrow(IllegalArgumentException::new);
