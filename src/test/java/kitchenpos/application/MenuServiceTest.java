@@ -34,7 +34,10 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 메뉴_등록_성공_저장() {
         // given
-        final List<Product> products = List.of(productService.create(치킨_8000원()), productService.create(피자_8000원()));
+        final List<Product> products = List.of(
+                productService.create(RequestParser.from(치킨_8000원())),
+                productService.create(RequestParser.from(피자_8000원()))
+        );
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
@@ -56,8 +59,7 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("등록되지 않은 메뉴 그룹으로 메뉴를 등록할 수 없다.")
     void 메뉴_등록_실패_등록되지_않은_메뉴_그룹() {
         // given
-        final Product chicken = productService.create(치킨_8000원());
-        final Product pizza = productService.create(피자_8000원());
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup unsavedMenuGroup = new MenuGroup("등록되지 않은 메뉴 그룹");
 
         // when
@@ -73,7 +75,7 @@ class MenuServiceTest extends IntegrationTest {
     void 메뉴_등록_실패_등록되지_않은_상품() {
         // given
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
-        final Product savedProduct = productService.create(치킨_8000원());
+        final Product savedProduct = productService.create(RequestParser.from(치킨_8000원()));
         final Product unsavedProduct = new Product("등록되지 않은 상품", BigDecimal.ONE);
 
         // when

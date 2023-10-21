@@ -11,9 +11,14 @@ import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductCreateRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemCreateRequest;
+import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
 
 public class RequestParser {
+
+    public static ProductCreateRequest from(final Product product) {
+        return new ProductCreateRequest(product.getName(), product.getPrice().value());
+    }
 
     public static TableGroupCreateRequest from(final List<OrderTable> entities) {
         final List<Long> ids = entities.stream()

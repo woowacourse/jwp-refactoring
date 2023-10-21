@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ class ProductServiceTest extends IntegrationTest {
         final Product product = new Product("상품", BigDecimal.TEN);
 
         // when
-        final Product saved = productService.create(product);
+        final Product saved = productService.create(RequestParser.from(product));
 
         // then
         assertThat(productService.list())

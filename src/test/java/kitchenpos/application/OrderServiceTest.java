@@ -45,7 +45,7 @@ class OrderServiceTest extends IntegrationTest {
     void 주문_등록_성공_저장() {
         // given
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
-        final Product chicken = productService.create(치킨_8000원());
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
         // when
@@ -78,7 +78,7 @@ class OrderServiceTest extends IntegrationTest {
     void 주문_등록_실패_존재하지_않는_주문_항목() {
         // given
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
-        final Product chicken = productService.create(치킨_8000원());
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final Product fakePizza = 피자_8000원();
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
 
@@ -97,7 +97,7 @@ class OrderServiceTest extends IntegrationTest {
     void 주문_등록_실패_존재하지_않는_주문_테이블() {
         // given
         final OrderTable fakeOrderTable = 존재하지_않는_주문_테이블_생성();
-        final Product chicken = productService.create(치킨_8000원());
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
 
@@ -111,7 +111,7 @@ class OrderServiceTest extends IntegrationTest {
     void 주문_등록_실패_빈_테이블() {
         // given
         final OrderTable emptyTable = orderTableService.create(빈_테이블_생성());
-        final Product chicken = productService.create(치킨_8000원());
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
 
@@ -125,7 +125,7 @@ class OrderServiceTest extends IntegrationTest {
     void 주문_상태_변경_성공() {
         // given
         final OrderTable orderTable = orderTableService.create(주문_테이블_생성());
-        final Product chicken = productService.create(치킨_8000원());
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
         final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
         final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
 
