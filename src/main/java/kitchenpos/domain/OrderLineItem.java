@@ -33,10 +33,6 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
     public Menu getMenu() {
         return menu;
     }

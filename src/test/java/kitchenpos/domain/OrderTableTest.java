@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.치킨_피자_세트_치킨_8000_1개_피자_8000_1개;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
@@ -58,7 +59,7 @@ class OrderTableTest {
         // when
         /// TODO: 2023/10/20 auditing 
         final Order order = new Order(orderTable, LocalDateTime.now());
-        order.startMeal();
+        order.changeOrderStatus(MEAL);
 
         // then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))

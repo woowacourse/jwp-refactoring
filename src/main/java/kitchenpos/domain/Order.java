@@ -48,16 +48,11 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    // TODO 의미있는 메서드로 분리
     public void changeOrderStatus(final OrderStatus orderStatus) {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException();
         }
         this.orderStatus = orderStatus;
-    }
-
-    public void startMeal() {
-        this.orderStatus = MEAL;
     }
 
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
