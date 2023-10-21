@@ -2,7 +2,7 @@ package kitchenpos.table.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.common.event.ValidateOrdersCompletedEvent;
+import kitchenpos.common.event.ValidateAllOrderCompletedEvent;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.table.dto.request.ChangeTableGuestRequest;
@@ -47,7 +47,7 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        eventPublisher.publishEvent(new ValidateOrdersCompletedEvent(orderTable.getId()));
+        eventPublisher.publishEvent(new ValidateAllOrderCompletedEvent(orderTable.getId()));
         orderTable.changeEmpty(request.getEmpty());
 
         return OrderTableResponse.from(orderTable);

@@ -12,7 +12,7 @@ public class OrderEventListener {
     private OrderService orderService;
 
     @EventListener
-    public void validateOrdersCompleted(ValidateOrdersCompletedEvent event) {
+    public void validateOrdersCompleted(ValidateAllOrderCompletedEvent event) {
         orderService.validateOrdersCompleted(event.getOrderTableId());
     }
 }
