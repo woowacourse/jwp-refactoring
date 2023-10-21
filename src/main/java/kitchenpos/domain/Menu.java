@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
     private Long id;
@@ -18,11 +19,35 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu() {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        this(id, name, price, menuGroupId, null);
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+    }
+
+    public static Menu of(String name, BigDecimal price, Long menuGroupId) {
+        validatePrice(price);
+        return new Menu(name, price, menuGroupId);
+    }
+
+    private static void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("메뉴 가격은 0 미만일 수 없습니다.");
+        }
+    }
+
+    public void validateMenuProductTotalPrice(BigDecimal MenuProductTotalPrice) {
+        if (price.compareTo(MenuProductTotalPrice) > 0) {
+            throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 총액을 초과할 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -51,10 +76,6 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
