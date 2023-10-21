@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Embeddable
 public class OrderTables {
@@ -53,6 +54,19 @@ public class OrderTables {
     public void updateGroup(final TableGroup tableGroup) {
         values.forEach(value -> {
             value.setTableGroup(tableGroup);
+            value.setEmpty(false);
+        });
+    }
+
+    public List<Long> getOrderTableIds() {
+        return values.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
+
+    public void ungroup() {
+        values.forEach(value -> {
+            value.setTableGroup(null);
             value.setEmpty(false);
         });
     }
