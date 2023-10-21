@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductCreateRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -50,21 +48,8 @@ class ProductServiceTest {
     @Test
     @DisplayName("ID로 조회할 때 존재하지 않는 상품이면 예외가 발생한다")
     void findById() {
-        assertThatThrownBy(() -> productService.calculatePrice(0L, 5))
+        assertThatThrownBy(() -> productService.findByIdOrThrow(0L))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 상품입니다.");
-    }
-
-    @Test
-    @DisplayName("상품 가격을 계산할 수 있다")
-    void calculatePrice() {
-        //given
-        final Product product = entityFactory.saveProduct("연어", 5000);
-
-        //when
-        final Price price = productService.calculatePrice(product.getId(), 10);
-
-        //then
-        assertThat(price.equalsWith(50000)).isTrue();
     }
 }

@@ -1,13 +1,10 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
@@ -25,13 +22,6 @@ public class MenuCreateRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity() {
-        final List<MenuProduct> entities = menuProducts.stream()
-                .map(MenuProductRequest::toEntity)
-                .collect(Collectors.toList());
-        return new Menu(name, new Price(price), menuGroupId, entities);
     }
 
     public String getName() {

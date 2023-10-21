@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Price;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -31,21 +32,22 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         menuGroupService.validateExistenceById(request.getMenuGroupId());
 
-        if (request.getPrice().isBiggerThan(calculateSumOfPrice(request))) {
-            throw new IllegalArgumentException("메뉴 가격은 상품 가격들의 합보다 클 수 없습니다.");
-        }
-
-        final Menu menu = menuRepository.save(request.toEntity());
+        final List<MenuProduct> menuProducts = getMenuProducts(request);
+        final Menu menu = menuRepository.save(new Menu(
+                request.getName(),
+                request.getPrice(),
+                request.getMenuGroupId(),
+                menuProducts));
         return MenuResponse.from(menu);
     }
 
-    private Price calculateSumOfPrice(final MenuCreateRequest request) {
+    private List<MenuProduct> getMenuProducts(final MenuCreateRequest request) {
         return request.getMenuProducts().stream()
-                .map(menuProduct ->
-                        productService.calculatePrice(
-                                menuProduct.getProductId(),
-                                menuProduct.getQuantity()))
-                .reduce(Price.ZERO, Price::add);
+                .map(menuProductRequest -> {
+                    final Product product = productService.findByIdOrThrow(menuProductRequest.getProductId());
+                    return new MenuProduct(product, menuProductRequest.getQuantity());
+                })
+                .collect(Collectors.toList());
     }
 
     public List<MenuResponse> list() {

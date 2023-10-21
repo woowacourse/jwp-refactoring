@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductCreateRequest;
 import kitchenpos.ui.dto.ProductResponse;
@@ -33,10 +32,8 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public Price calculatePrice(final long id, final long quantity) {
-        final Product product = productRepository.findById(id)
+    public Product findByIdOrThrow(final long id) {
+        return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
-
-        return product.calculatePrice(quantity);
     }
 }

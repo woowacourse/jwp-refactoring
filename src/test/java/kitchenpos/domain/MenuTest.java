@@ -15,7 +15,7 @@ class MenuTest {
     @DisplayName("메뉴 이름이 존재하지 않으면 예외가 발생한다")
     void create_fail1() {
         //given
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 5));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(new Product(), 5));
 
         //when, then
         assertThatThrownBy(() -> new Menu(" ", new Price(BigDecimal.TEN), 1L, menuProducts))
@@ -27,7 +27,7 @@ class MenuTest {
     @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다")
     void create_fail2() {
         //given
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 5));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(new Product(), 5));
 
         //when, then
         assertThatThrownBy(() -> new Menu("한식 세트", new Price(BigDecimal.TEN), null, menuProducts))

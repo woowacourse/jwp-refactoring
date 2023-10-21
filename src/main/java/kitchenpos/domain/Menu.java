@@ -37,7 +37,7 @@ public class Menu {
 
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
-        validate(name, menuGroupId, menuProducts);
+        validate(name, price, menuGroupId, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -45,7 +45,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validate(final String name, final Long menuGroupId,
+    private void validate(final String name, final Price price, final Long menuGroupId,
                           final List<MenuProduct> menuProducts) {
         if (isBlank(name)) {
             throw new IllegalArgumentException("메뉴 이름이 필요합니다.");
@@ -55,6 +55,17 @@ public class Menu {
         }
         if (isEmpty(menuProducts)) {
             throw new IllegalArgumentException("메뉴 상품이 필요합니다.");
+        }
+        validatePrice(price, menuProducts);
+    }
+
+    private void validatePrice(final Price price, final List<MenuProduct> menuProducts) {
+        final Price sumOfPrice = menuProducts.stream()
+                .map(MenuProduct::calculatePrice)
+                .reduce(Price.ZERO, Price::add);
+
+        if (price.isBiggerThan(sumOfPrice)) {
+            throw new IllegalArgumentException("메뉴 가격은 상품 가격들의 합보다 클 수 없습니다.");
         }
     }
 

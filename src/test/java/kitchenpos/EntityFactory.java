@@ -73,7 +73,7 @@ public class EntityFactory {
 
     public Menu saveMenu() {
         final Product product = saveProduct("연어", 4000);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 4);
+        final MenuProduct menuProduct = new MenuProduct(product, 4);
         final MenuGroup menuGroup = saveMenuGroup("일식");
 
         final Menu request = new Menu("떡볶이 세트", new Price(BigDecimal.valueOf(16000)), menuGroup.getId(),
