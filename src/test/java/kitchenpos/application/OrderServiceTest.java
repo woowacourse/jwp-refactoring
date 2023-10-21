@@ -46,33 +46,18 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(List.of(
-            new OrderLineItem() {{
-                setMenuId(1L);
-                setQuantity(1L);
-            }},
-            new OrderLineItem() {{
-                setMenuId(2L);
-                setQuantity(2L);
-            }}
-        ));
+        final LocalDateTime savedTime = LocalDateTime.now();
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L, 1L, 1L),
+                                                           new OrderLineItem(2L, 1L, 2L, 2L));
+        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), savedTime, orderLineItems);
 
         given(menuDao.countByIdIn(any()))
             .willReturn(2L);
         given(orderTableDao.findById(any()))
-            .willReturn(Optional.of(new OrderTable() {{
-                setId(1L);
-                setEmpty(false);
-            }}));
+            .willReturn(Optional.of(new OrderTable(1L, 1L, 10, false)));
         given(orderDao.save(any()))
-            .willReturn(new Order() {{
-                setId(1L);
-                setOrderTableId(1L);
-                setOrderStatus(OrderStatus.COOKING.name());
-                setOrderedTime(LocalDateTime.now());
-            }});
+            .willReturn(new Order(1L, 1L, OrderStatus.COOKING.name(), savedTime,
+                                  orderLineItems));
 
         // when
         final Order created = orderService.create(order);
@@ -88,8 +73,7 @@ class OrderServiceTest {
     @Test
     void create_emptyOrderLineItems() {
         // given
-        final Order order = new Order();
-        order.setOrderLineItems(Collections.emptyList());
+        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
 
         // when
         // then
@@ -101,18 +85,9 @@ class OrderServiceTest {
     @Test
     void create_differentMenuSize() {
         // given
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(
-            new OrderLineItem() {{
-                setMenuId(1L);
-                setQuantity(1L);
-            }},
-            new OrderLineItem() {{
-                setMenuId(2L);
-                setQuantity(2L);
-            }}
-        ));
-
+        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                                          List.of(new OrderLineItem(1L, 1L, 1L, 1L),
+                                                  new OrderLineItem(2L, 1L, 2L, 2L)));
         given(menuDao.countByIdIn(any()))
             .willReturn(1L);
 
@@ -126,18 +101,11 @@ class OrderServiceTest {
     @Test
     void create_failNotExistOrderTable() {
         // given
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(
-            new OrderLineItem() {{
-                setMenuId(1L);
-                setQuantity(1L);
-            }},
-            new OrderLineItem() {{
-                setMenuId(2L);
-                setQuantity(2L);
-            }}
-        ));
-        order.setOrderTableId(0L);
+        final long notExistedOrderTable = 0L;
+        final Order order = Order.forSave(notExistedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                                          List.of(new OrderLineItem(1L, 1L, 1L, 1L),
+                                                  new OrderLineItem(2L, 1L, 2L, 2L)));
+
         given(menuDao.countByIdIn(any()))
             .willReturn(2L);
         given(orderTableDao.findById(any()))
@@ -153,25 +121,14 @@ class OrderServiceTest {
     @Test
     void create_failEmptyOrderTable() {
         // given
-        final Order order = new Order();
-        order.setOrderLineItems(List.of(
-            new OrderLineItem() {{
-                setMenuId(1L);
-                setQuantity(1L);
-            }},
-            new OrderLineItem() {{
-                setMenuId(2L);
-                setQuantity(2L);
-            }}
-        ));
-        order.setOrderTableId(1L);
+        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                                          List.of(new OrderLineItem(1L, 1L, 1L, 1L),
+                                                  new OrderLineItem(2L, 1L, 2L, 2L)));
+
         given(menuDao.countByIdIn(any()))
             .willReturn(2L);
         given(orderTableDao.findById(any()))
-            .willReturn(Optional.of(new OrderTable() {{
-                setId(1L);
-                setEmpty(true);
-            }}));
+            .willReturn(Optional.of(new OrderTable(1L, 1L, 10, true)));
 
         // when
         // then
@@ -184,12 +141,7 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final Long orderTableId = 1L;
-        final Order order = new Order() {{
-            setId(1L);
-            setOrderTableId(orderTableId);
-            setOrderStatus(OrderStatus.COOKING.name());
-            setOrderedTime(LocalDateTime.now());
-        }};
+        final Order order = new Order(orderTableId, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
 
         given(orderDao.findById(order.getId()))
             .willReturn(Optional.of(order));
@@ -208,12 +160,7 @@ class OrderServiceTest {
     void changeOrderStatus_failNotExistOrder() {
         // given
         final Long orderTableId = 1L;
-        final Order order = new Order() {{
-            setId(1L);
-            setOrderTableId(orderTableId);
-            setOrderStatus(OrderStatus.COOKING.name());
-            setOrderedTime(LocalDateTime.now());
-        }};
+        final Order order = new Order(1L, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
 
         given(orderDao.findById(order.getId()))
             .willReturn(Optional.empty());
@@ -229,12 +176,7 @@ class OrderServiceTest {
     void changeOrderStatus_failStatusIsCompletion() {
         // given
         final Long orderTableId = 1L;
-        final Order order = new Order() {{
-            setId(1L);
-            setOrderTableId(orderTableId);
-            setOrderStatus(OrderStatus.COMPLETION.name());
-            setOrderedTime(LocalDateTime.now());
-        }};
+        final Order order = new Order(1L, orderTableId, OrderStatus.COMPLETION.name(), LocalDateTime.now());
 
         given(orderDao.findById(order.getId()))
             .willReturn(Optional.of(order));

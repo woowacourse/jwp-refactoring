@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
@@ -39,50 +40,26 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(
-            new OrderTable() {{
-                setId(1L);
-                setEmpty(true);
-            }},
-            new OrderTable() {{
-                setId(2L);
-                setEmpty(true);
-            }}
-        ));
+        final List<OrderTable> orderTables = List.of(
+            OrderTable.forSave(1L, 2, true),
+            OrderTable.forSave(2L, 2, true)
+        );
+        final TableGroup tableGroup = TableGroup.forSave(LocalDateTime.now(), orderTables);
 
         given(orderTableDao.findAllByIdIn(any()))
             .willReturn(List.of(
-                new OrderTable() {{
-                    setId(1L);
-                    setEmpty(true);
-                }},
-                new OrderTable() {{
-                    setId(2L);
-                    setEmpty(true);
-                }}
-            ));
+                new OrderTable(1L, null, 2, true),
+                new OrderTable(2L, null, 2, true))
+            );
 
         given(tableGroupDao.save(any()))
-            .willReturn(new TableGroup() {{
-                setId(1L);
-                setOrderTables(List.of(
-                    new OrderTable() {{
-                        setId(1L);
-                        setEmpty(false);
-                    }},
-                    new OrderTable() {{
-                        setId(2L);
-                        setEmpty(false);
-                    }}
-                ));
-            }});
+            .willReturn(new TableGroup(1L, LocalDateTime.now(), orderTables));
 
         // when
         final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(savedTableGroup.getId()).isEqualTo(tableGroup.getId());
+        assertThat(savedTableGroup.getId()).isEqualTo(1L);
         assertThat(savedTableGroup.getOrderTables()).hasSize(2);
         assertThat(savedTableGroup.getOrderTables().get(0).getId()).isEqualTo(1L);
         assertThat(savedTableGroup.getOrderTables().get(0).isEmpty()).isFalse();
@@ -94,8 +71,7 @@ class TableGroupServiceTest {
     @Test
     void create_failEmptyTables() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        final TableGroup tableGroup = TableGroup.forSave(LocalDateTime.now(), Collections.emptyList());
 
         // when
         // then
@@ -107,12 +83,8 @@ class TableGroupServiceTest {
     @Test
     void create_failOneTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(
-            new OrderTable() {{
-                setId(1L);
-                setEmpty(true);
-            }}
+        final TableGroup tableGroup = TableGroup.forSave(LocalDateTime.now(), List.of(
+            OrderTable.forSave(1L, 2, true)
         ));
 
         // when
@@ -125,24 +97,14 @@ class TableGroupServiceTest {
     @Test
     void create_failDifferentSize() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(
-            new OrderTable() {{
-                setId(1L);
-                setEmpty(true);
-            }},
-            new OrderTable() {{
-                setId(2L);
-                setEmpty(true);
-            }}
+        final TableGroup tableGroup = TableGroup.forSave(LocalDateTime.now(), List.of(
+            OrderTable.forSave(1L, 2, true),
+            OrderTable.forSave(2L, 2, true)
         ));
 
         given(orderTableDao.findAllByIdIn(any()))
             .willReturn(List.of(
-                new OrderTable() {{
-                    setId(1L);
-                    setEmpty(true);
-                }}
+                new OrderTable(1L, null, 2, true)
             ));
 
         // when
@@ -155,17 +117,11 @@ class TableGroupServiceTest {
     @Test
     void create_failNotEmptyTable() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(
-            new OrderTable() {{
-                setId(1L);
-                setEmpty(false);
-            }},
-            new OrderTable() {{
-                setId(2L);
-                setEmpty(true);
-            }}
-        ));
+        final List<OrderTable> orderTables = List.of(
+            new OrderTable(1L, null, 2, false),
+            new OrderTable(2L, null, 2, true)
+        );
+        final TableGroup tableGroup = TableGroup.forSave(LocalDateTime.now(), orderTables);
 
         // when
         // then
@@ -177,33 +133,17 @@ class TableGroupServiceTest {
     @Test
     void create_failNotEmptyGroupId() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(
-            new OrderTable() {{
-                setId(1L);
-                setEmpty(true);
-                setTableGroupId(1L);
-            }},
-            new OrderTable() {{
-                setId(2L);
-                setEmpty(true);
-                setTableGroupId(1L);
-            }}
-        ));
+        final List<OrderTable> orderTables = List.of(
+            new OrderTable(1L, null, 2, false),
+            new OrderTable(2L, null, 2, true)
+        );
+        final TableGroup tableGroup = TableGroup.forSave(LocalDateTime.now(), orderTables);
 
         given(orderTableDao.findAllByIdIn(any()))
             .willReturn(List.of(
-                new OrderTable() {{
-                    setId(1L);
-                    setEmpty(true);
-                    setTableGroupId(1L);
-                }},
-                new OrderTable() {{
-                    setId(2L);
-                    setEmpty(true);
-                    setTableGroupId(1L);
-                }}
-            ));
+                new OrderTable(1L, 1L, 2, true),
+                new OrderTable(2L, 1L, 2, true))
+            );
 
         // when
         // then
@@ -219,17 +159,9 @@ class TableGroupServiceTest {
 
         given(orderTableDao.findAllByTableGroupId(any()))
             .willReturn(List.of(
-                new OrderTable() {{
-                    setId(1L);
-                    setEmpty(false);
-                    setTableGroupId(tableGroupId);
-                }},
-                new OrderTable() {{
-                    setId(2L);
-                    setEmpty(false);
-                    setTableGroupId(tableGroupId);
-                }}
-            ));
+                new OrderTable(1L, tableGroupId, 2, false),
+                new OrderTable(2L, tableGroupId, 2, false))
+            );
 
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
             .willReturn(false);
@@ -246,17 +178,9 @@ class TableGroupServiceTest {
         final Long tableGroupId = 1L;
         given(orderTableDao.findAllByTableGroupId(any()))
             .willReturn(List.of(
-                new OrderTable() {{
-                    setId(1L);
-                    setEmpty(false);
-                    setTableGroupId(tableGroupId);
-                }},
-                new OrderTable() {{
-                    setId(2L);
-                    setEmpty(false);
-                    setTableGroupId(tableGroupId);
-                }}
-            ));
+                new OrderTable(1L, tableGroupId, 2, false),
+                new OrderTable(2L, tableGroupId, 2, false))
+            );
 
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
             .willReturn(true);

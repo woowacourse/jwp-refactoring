@@ -6,6 +6,17 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public static OrderTable forSave(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, tableGroupId, numberOfGuests, empty);
+    }
+
     public Long getId() {
         return id;
     }

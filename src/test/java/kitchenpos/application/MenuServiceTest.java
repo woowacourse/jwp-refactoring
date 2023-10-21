@@ -44,67 +44,30 @@ class MenuServiceTest {
     @Test
     void create() {
         // given
-        final Menu menu = new Menu();
-        menu.setName("메뉴");
-        menu.setPrice(BigDecimal.valueOf(30L));
-        menu.setMenuProducts(List.of(
-            new MenuProduct() {{
-                setProductId(1L);
-                setQuantity(1L);
-            }},
-            new MenuProduct() {{
-                setProductId(2L);
-                setQuantity(2L);
-            }}
-        ));
-        menu.setMenuGroupId(1L);
+        final Menu menu = Menu.forSave("메뉴", BigDecimal.valueOf(30L), 1L, List.of(
+            MenuProduct.forSave(1L, 1L),
+            MenuProduct.forSave(2L, 2L))
+        );
 
         given(menuGroupDao.existsById(any(Long.class)))
             .willReturn(true);
         given(productDao.findById(any(Long.class)))
-            .willReturn(Optional.of(new Product() {{
-                setId(1L);
-                setPrice(BigDecimal.TEN);
-            }}))
-            .willReturn(Optional.of(new Product() {{
-                setId(2L);
-                setPrice(BigDecimal.TEN);
-            }}));
+            .willReturn(Optional.of(new Product(1L, "제품1", BigDecimal.TEN)))
+            .willReturn(Optional.of(new Product(2L, "제품2", BigDecimal.TEN)));
         given(menuDao.save(any(Menu.class)))
-            .willReturn(new Menu() {{
-                setId(1L);
-                setName("메뉴");
-                setPrice(BigDecimal.valueOf(30L));
-                setMenuProducts(List.of(
-                    new MenuProduct() {{
-                        setProductId(1L);
-                        setQuantity(1L);
-                    }},
-                    new MenuProduct() {{
-                        setProductId(2L);
-                        setQuantity(2L);
-                    }}
-                ));
-            }});
+            .willReturn(new Menu(1L, "메뉴", BigDecimal.valueOf(30L), 1L, List.of(
+                new MenuProduct(1L, 1L, 1L, 1L),
+                new MenuProduct(2L, 1L, 2L, 2L)
+            )));
         given(menuProductDao.save(any(MenuProduct.class)))
-            .willReturn(new MenuProduct() {{
-                setSeq(1L);
-                setMenuId(1L);
-                setProductId(1L);
-                setQuantity(1L);
-            }})
-            .willReturn(new MenuProduct() {{
-                setSeq(2L);
-                setMenuId(1L);
-                setProductId(2L);
-                setQuantity(2L);
-            }});
+            .willReturn(new MenuProduct(1L, 1L, 1L, 1L))
+            .willReturn(new MenuProduct(2L, 1L, 2L, 2L));
 
         // when
         final Menu created = menuService.create(menu);
 
         // then
-        assertThat(created.getId()).isEqualTo(menu.getId());
+        assertThat(created.getId()).isEqualTo(1L);
         assertThat(created.getName()).isEqualTo(menu.getName());
         assertThat(created.getPrice()).isEqualTo(menu.getPrice());
     }
@@ -113,8 +76,10 @@ class MenuServiceTest {
     @Test
     void create_failNullPrice() {
         // given
-        final Menu menu = new Menu();
-        menu.setPrice(null);
+        final Menu menu = Menu.forSave("메뉴", null, 1L, List.of(
+            MenuProduct.forSave(1L, 1L),
+            MenuProduct.forSave(2L, 2L))
+        );
 
         // when
         // then
@@ -126,8 +91,10 @@ class MenuServiceTest {
     @Test
     void create_failNegativePrice() {
         // given
-        final Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(-1L));
+        final Menu menu = Menu.forSave("메뉴", BigDecimal.valueOf(-1L), 1L, List.of(
+            MenuProduct.forSave(1L, 1L),
+            MenuProduct.forSave(2L, 2L))
+        );
 
         // when
         // then
@@ -139,9 +106,10 @@ class MenuServiceTest {
     @Test
     void create_failNotExistMemberGroupId() {
         // given
-        final Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(30L));
-        menu.setMenuGroupId(1L);
+        final Menu menu = Menu.forSave("메뉴", BigDecimal.valueOf(30L), 0L, List.of(
+            MenuProduct.forSave(1L, 1L),
+            MenuProduct.forSave(2L, 2L))
+        );
 
         // when
         // then
@@ -153,14 +121,8 @@ class MenuServiceTest {
     @Test
     void create_failNotExistProduct() {
         // given
-        final Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(30L));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(List.of(
-            new MenuProduct() {{
-                setProductId(0L);
-                setQuantity(1L);
-            }}
+        final Menu menu = Menu.forSave("메뉴", BigDecimal.valueOf(30L), 1L, List.of(
+            MenuProduct.forSave(0L, 1L)
         ));
 
         given(menuGroupDao.existsById(any(Long.class)))
@@ -178,23 +140,14 @@ class MenuServiceTest {
     @Test
     void create_failGreaterPrice() {
         // given
-        final Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(10L));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(List.of(
-            new MenuProduct() {{
-                setProductId(0L);
-                setQuantity(1L);
-            }}
+        final Menu menu = Menu.forSave("메뉴", BigDecimal.valueOf(10L), 1L, List.of(
+            MenuProduct.forSave(0L, 1L)
         ));
 
         given(menuGroupDao.existsById(any(Long.class)))
             .willReturn(true);
         given(productDao.findById(any(Long.class)))
-            .willReturn(Optional.of(new Product() {{
-                setId(1L);
-                setPrice(BigDecimal.valueOf(5L));
-            }}));
+            .willReturn(Optional.of(new Product(1L, "상품", BigDecimal.valueOf(5L))));
 
         // when
         // then

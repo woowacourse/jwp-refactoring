@@ -27,9 +27,7 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴 그룹");
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹");
         given(menuGroupDao.save(any(MenuGroup.class)))
             .willReturn(menuGroup);
 
@@ -42,13 +40,13 @@ class MenuGroupServiceTest {
 
     @DisplayName("메뉴 그룹을 조회한다.")
     @Test
-    void func() {
+    void list() {
         // given
         final List<MenuGroup> expectedMenuGroups = List.of(
-            new MenuGroup(),
-            new MenuGroup(),
-            new MenuGroup(),
-            new MenuGroup()
+            new MenuGroup(1L, "메뉴 그룹 1"),
+            new MenuGroup(2L, "메뉴 그룹 2"),
+            new MenuGroup(3L, "메뉴 그룹 3"),
+            new MenuGroup(4L, "메뉴 그룹 4")
         );
         given(menuGroupDao.findAll())
             .willReturn(expectedMenuGroups);

@@ -30,22 +30,16 @@ class ProductServiceTest {
     @Test
     void create() {
         // given
-        final Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
-        product.setName("상품");
+        final Product product = Product.forSave("상품", BigDecimal.TEN);
 
         given(productDao.save(any()))
-            .willReturn(new Product() {{
-                setId(1L);
-                setPrice(BigDecimal.TEN);
-                setName("상품");
-            }});
+            .willReturn(new Product(1L, "상품", BigDecimal.TEN));
 
         // when
         final Product savedProduct = productService.create(product);
 
         // then
-        assertThat(savedProduct.getId()).isEqualTo(product.getId());
+        assertThat(savedProduct.getId()).isEqualTo(1L);
         assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice());
         assertThat(savedProduct.getName()).isEqualTo(product.getName());
     }
@@ -54,8 +48,7 @@ class ProductServiceTest {
     @Test
     void create_failNullPrice() {
         // given
-        final Product product = new Product();
-        product.setPrice(null);
+        final Product product = Product.forSave("상품", null);
 
         // when
         // then
@@ -67,8 +60,7 @@ class ProductServiceTest {
     @Test
     void create_failNegativePrice() {
         // given
-        final Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1L));
+        final Product product = Product.forSave("상품", BigDecimal.valueOf(-1L));
 
         // when
         // then
@@ -82,16 +74,8 @@ class ProductServiceTest {
         // given
         given(productDao.findAll())
             .willReturn(List.of(
-                new Product() {{
-                    setId(1L);
-                    setPrice(BigDecimal.TEN);
-                    setName("상품1");
-                }},
-                new Product() {{
-                    setId(2L);
-                    setPrice(BigDecimal.valueOf(1000L));
-                    setName("상품2");
-                }}
+                new Product(1L, "상품1", BigDecimal.TEN),
+                new Product(2L, "상품2", BigDecimal.valueOf(1000L))
             ));
 
         // when
