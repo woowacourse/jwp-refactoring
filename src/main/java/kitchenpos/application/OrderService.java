@@ -58,6 +58,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        // TODO: 2023/10/12 empty table인지 확인
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
