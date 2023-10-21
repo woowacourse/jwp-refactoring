@@ -4,9 +4,9 @@ import java.util.List;
 import kitchenpos.application.dto.ChangeNumberOfQuestsCommand;
 import kitchenpos.application.dto.ChangeTableEmptyCommand;
 import kitchenpos.application.dto.CreateTableCommand;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.time.LocalDateTime.now;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -156,8 +157,8 @@ class TableServiceTest extends ServiceTest {
 
         private void 주문만들기(final OrderTable 생성된_테이블) {
             OrderLineItem 주문상품 = 주문_상품_만들기();
-            Order 주문 = new Order(null, 생성된_테이블.getId(), OrderStatus.COOKING.name(), now(), List.of(주문상품));
-            orderDao.save(주문);
+            Order 주문 = new Order(null, 생성된_테이블.getId(), COOKING, now(), List.of(주문상품));
+            orderRepository.save(주문);
         }
 
         private OrderLineItem 주문_상품_만들기() {

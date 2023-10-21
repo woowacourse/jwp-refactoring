@@ -3,11 +3,10 @@ package kitchenpos.application;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.order.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +28,7 @@ public abstract class ServiceTest {
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
-    protected OrderDao orderDao;
-
-    @Autowired
-    protected OrderLineItemDao orderLineItemDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
     protected OrderTableDao orderTableDao;

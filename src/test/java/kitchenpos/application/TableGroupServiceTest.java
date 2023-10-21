@@ -3,16 +3,19 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.application.dto.CreateTableGroupCommand;
 import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.time.LocalDateTime.now;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -88,9 +91,9 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            Order 주문 = new Order(null, 테이블.getId(), OrderStatus.COMPLETION.name(), now(), List.of(mock(OrderLineItem.class), mock(
-                    OrderLineItem.class)));
-            orderDao.save(주문);
+            OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
+            Order 주문 = new Order(null, 테이블.getId(), COOKING, now(), List.of(주문_항목));
+            orderRepository.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup(null, now(), List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupDao.save(테이블_그룹);
@@ -107,8 +110,9 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            Order 주문 = new Order(null, 테이블.getId(), OrderStatus.COOKING.name(), now(), null);
-            orderDao.save(주문);
+            OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
+            Order 주문 = new Order(null, 테이블.getId(), COOKING, now(), List.of(주문_항목));
+            orderRepository.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup(null, now(), List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupDao.save(테이블_그룹);

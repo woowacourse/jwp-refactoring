@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
 import kitchenpos.application.dto.CreateOrderCommand;
 import kitchenpos.application.dto.CreateOrderCommand.OrderLineItemRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -120,7 +120,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void 주문_리스트_조회() {
         //given
-        var 존재하는_주문_아이디 = orderDao.findAll().stream()
+        var 존재하는_주문_아이디 = orderRepository.findAll().stream()
                 .map(Order::getId)
                 .collect(Collectors.toList());
 
@@ -156,7 +156,7 @@ class OrderServiceTest extends ServiceTest {
             Order 실제주문 = orderService.changeOrderStatus(커맨드);
 
             //then
-            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(실제주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
         }
 
         @Test
@@ -181,8 +181,8 @@ class OrderServiceTest extends ServiceTest {
         void 주문_상태가_COMPLETION이면_예외가_발생한다() {
             //given
             Order 주문 = 주문_생성();
-            주문.changeOrderStatus(OrderStatus.COMPLETION.name());
-            orderDao.save(주문);
+            주문.changeOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(주문);
 
             ChangeOrderStatusCommand 커맨드 = new ChangeOrderStatusCommand(주문.getId(),
                     OrderStatus.COMPLETION.name());

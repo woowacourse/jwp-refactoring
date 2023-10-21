@@ -2,7 +2,8 @@ package kitchenpos.application.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import org.springframework.util.CollectionUtils;
 
 public class CreateOrderCommand {
@@ -11,8 +12,8 @@ public class CreateOrderCommand {
         private Long menuId;
         private int quantity;
 
-        public OrderLineItem toDomain(Long orderId) {
-            return new OrderLineItem(null, orderId, menuId, quantity);
+        public OrderLineItem toDomain(Order order) {
+            return new OrderLineItem(null, order, menuId, quantity);
         }
 
         public OrderLineItemRequest(final Long menuId, final int quantity) {
