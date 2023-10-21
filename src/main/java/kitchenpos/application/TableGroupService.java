@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.TableGroupCreateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -32,27 +33,23 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroup create(final TableGroup tableGroup) {
-        final TableGroup group = TableGroup.of(LocalDateTime.now(), tableGroup.getOrderTables());
-        final List<OrderTable> orderTables = group.getOrderTables();
-
-        validateNumberOfOrderTable(orderTables);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+    public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
+        List<OrderTable> orderTables = tableGroupCreateRequest.getOrderTables().stream()
+                .map(tableRequest -> orderTableRepository.findById(tableRequest.getId())
+                        .orElseThrow(() -> new NoSuchElementException("존재하지 않는 테이블 입니다.")))
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        final TableGroup group = TableGroup.of(LocalDateTime.now(), orderTables);
+        validateNumberOfOrderTable(orderTables);
 
-        validateOrderTableSize(orderTables, savedOrderTables);
-        validateOrderTableStatus(savedOrderTables);
+        validateOrderTableStatus(orderTables);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(group);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
+        for (final OrderTable savedOrderTable : orderTables) {
             savedOrderTable.updateTableGroup(savedTableGroup);
         }
-        savedTableGroup.updateOrderTables(savedOrderTables);
+        savedTableGroup.updateOrderTables(orderTables);
 
         return savedTableGroup;
     }

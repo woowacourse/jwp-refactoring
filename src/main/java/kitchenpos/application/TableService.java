@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.table.TableCreateRequest;
+import kitchenpos.dto.table.TableUpdateEmptyRequest;
+import kitchenpos.dto.table.TableUpdateNumberOfGuestsRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -23,8 +26,8 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public OrderTable create(final OrderTable orderTable) {
-        OrderTable table = OrderTable.of(null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
+    public OrderTable create(final TableCreateRequest request) {
+        OrderTable table = OrderTable.of(null, request.getNumberOfGuests(), request.isEmpty());
         return orderTableRepository.save(table);
     }
 
@@ -33,12 +36,12 @@ public class TableService {
         return orderTableRepository.findAll();
     }
 
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final TableUpdateEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateTableGroup(savedOrderTable);
         validateOrderStatus(savedOrderTable);
-        savedOrderTable.updateEmpty(orderTable.isEmpty());
+        savedOrderTable.updateEmpty(request.isEmpty());
         return orderTableRepository.save(savedOrderTable);
     }
 
@@ -55,8 +58,8 @@ public class TableService {
         }
     }
 
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableUpdateNumberOfGuestsRequest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
