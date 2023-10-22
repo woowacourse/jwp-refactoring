@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class OrderLineItem {
@@ -16,12 +17,14 @@ public class OrderLineItem {
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
-    private long quantity;
 
-    public OrderLineItem() {
+//    @NotNull
+    private Long quantity;
+
+    protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
+    private OrderLineItem(final Long seq, final Order order, final Menu menu, final Long quantity) {
         validateQuantity(quantity);
         this.seq = seq;
         this.order = order;
@@ -29,16 +32,24 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    private OrderLineItem(final Menu menu, final long quantity) {
+    private OrderLineItem(final Menu menu, final Long quantity) {
         this(null, null, menu, quantity);
     }
 
-    public static OrderLineItem create(final Menu menu, final long quantity) {
+    public static OrderLineItem create(final Menu menu, final Long quantity) {
         return new OrderLineItem(menu, quantity);
     }
 
-    private void validateQuantity(final long quantity) {
+    public static OrderLineItem create(final Order order, final Menu menu, final Long quantity) {
+        return new OrderLineItem(null, order, menu, quantity);
+    }
+
+    private void validateQuantity(final Long quantity) {
         // TODO: OrderLineItem readme 작성하기 (validate)
+        if (Objects.isNull(quantity)) {
+            throw new IllegalArgumentException("주문 항목의 수량은 null이 될 수 없습니다.");
+        }
+
         if (quantity < 0) {
             throw new IllegalArgumentException("주문 항목의 수량은 0개 이상이어야 합니다.");
         }
@@ -48,31 +59,15 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getOrderId() {
         return order.getId();
-    }
-
-    public void setOrder(final Order order) {
-        this.order = order;
     }
 
     public Long getMenuId() {
         return menu.getId();
     }
 
-    public void setMenuId(final Menu menu) {
-        this.menu = menu;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

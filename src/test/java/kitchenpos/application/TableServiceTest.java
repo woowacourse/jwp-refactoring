@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.*;
 import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.request.TableEmptyStatusUpdateRequest;
 import kitchenpos.dto.request.TableNumberOfGuestsUpdateRequest;
@@ -15,8 +16,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,9 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({
-        TableService.class
-})
+@Import(TableService.class)
 class TableServiceTest extends ServiceTest {
 
     @Autowired
@@ -40,6 +37,12 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("테이블을 정상적으로 등록할 수 있다.")
     @Test
@@ -118,7 +121,7 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable1 = OrderTable.create(0, true);
         OrderTable orderTable2 = OrderTable.create(0, true);
 
-        TableGroup tableGroup = TableGroup.groupOrderTables(List.of(orderTable1, orderTable2));
+        TableGroup tableGroup = TableGroup.createWithGrouping(List.of(orderTable1, orderTable2));
         TableGroup 테이블그룹 = tableGroupRepository.save(tableGroup);
 
         orderTable1.setTableGroup(테이블그룹);
@@ -136,20 +139,16 @@ class TableServiceTest extends ServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmpty_FailWithInvalidOrderStatus(OrderStatus invalidOrderStatus) {
         // given
-        OrderTable orderTable = orderTableRepository.save(OrderTable.create(0, true));
+        OrderTable orderTable = OrderTable.create(0, false);
+        orderTableRepository.save(orderTable);
 
-        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
-        Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
-
-        Order order = Order.create(orderTable, List.of(OrderLineItem.create(menu, 1)));
+        Order order = Order.create(orderTable);
         order.changeOrderStatus(invalidOrderStatus);
-        order.setOrderTable(orderTable);
-        order.setOrderedTime(LocalDateTime.now());
         orderRepository.save(order);
 
         OrderTable 주문테이블 = orderTableRepository.save(orderTable);
 
-        TableEmptyStatusUpdateRequest request = new TableEmptyStatusUpdateRequest(false);
+        TableEmptyStatusUpdateRequest request = new TableEmptyStatusUpdateRequest(true);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(주문테이블.getId(), request))

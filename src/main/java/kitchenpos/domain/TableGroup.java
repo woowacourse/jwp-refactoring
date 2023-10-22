@@ -10,29 +10,33 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     private TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        // TODO: orderTable들의 tableGroupId 변경하기
-        // TODO: orderTable들의 empty false로 변경하기
         validateOrderTableSize(orderTables.size());
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    private TableGroup(final List<OrderTable> orderTables) {
-        this(null, LocalDateTime.now(), orderTables);
+    private TableGroup(final Long id, final LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
     }
 
-    public static TableGroup groupOrderTables(final List<OrderTable> orderTables) {
-        return new TableGroup(orderTables);
+    public static TableGroup createWithGrouping(final List<OrderTable> orderTables) {
+        return new TableGroup(null, LocalDateTime.now(), orderTables);
+    }
+
+    public static TableGroup createWithoutGrouping() {
+        return new TableGroup(null, LocalDateTime.now());
     }
 
     private void validateOrderTableSize(final int orderTableSize) {
@@ -41,27 +45,22 @@ public class TableGroup {
         }
     }
 
-    public Long getId() {
-        return id;
+    public void group(final List<OrderTable> orderTables) {
+        validateOrderTableSize(orderTables.size());
+        orderTables.forEach(orderTable -> orderTable.group(this));
+        this.orderTables = orderTables;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

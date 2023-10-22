@@ -25,21 +25,32 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        // TODO: orderLineItems의 orderId 변경하기
-        // TODO: orderLineItems의 menuId 변경하기
         validateOrderLineItemsSize(orderLineItems.size());
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private Order(final OrderTable orderTable) {
+        validateOrderTableIsEmpty(orderTable);
+        this.orderTable = orderTable;
+        this.orderStatus = COOKING;
+        this.orderedTime = LocalDateTime.now();
+    }
+
+    private void validateOrderTableIsEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어 있는 경우 주문을 등록할 수 없습니다.");
+        }
     }
 
     private Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
@@ -49,6 +60,11 @@ public class Order {
     public static Order create(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
         return new Order(orderTable, orderLineItems);
     }
+
+    public static Order create(final OrderTable orderTable) {
+        return new Order(orderTable);
+    }
+
 
     private void validateOrderLineItemsSize(final int orderLineItemsSize) {
         if (orderLineItemsSize < 1) {
@@ -64,7 +80,7 @@ public class Order {
         this.id = id;
     }
 
-    public Long getOrderTableId() {
+    public Long getOrderTable() {
         return orderTable.getId();
     }
 
@@ -97,7 +113,8 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItemsSize(orderLineItems.size());
         this.orderLineItems = orderLineItems;
     }
 }

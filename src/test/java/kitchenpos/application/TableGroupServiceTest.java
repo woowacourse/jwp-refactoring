@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +17,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,19 +25,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({
-        TableGroupService.class
-})
+@Import(TableGroupService.class)
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -51,8 +50,8 @@ class TableGroupServiceTest extends ServiceTest {
         orderTable1 = OrderTable.create(0, true);
         orderTable2 = OrderTable.create(0, true);
 
-        orderTable1 = orderTableDao.save(orderTable1);
-        orderTable2 = orderTableDao.save(orderTable2);
+        orderTable1 = orderTableRepository.save(orderTable1);
+        orderTable2 = orderTableRepository.save(orderTable2);
 
         주문테이블1_요청 = new OrderTableRequest(orderTable1.getId());
         주문테이블2_요청 = new OrderTableRequest(orderTable2.getId());
@@ -69,11 +68,11 @@ class TableGroupServiceTest extends ServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(tableGroupDao.findById(actual.getId())).isPresent();
+            softly.assertThat(tableGroupRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getOrderTables()).extracting("empty")
                     .containsExactly(false, false);
-            softly.assertThat(actual.getOrderTables()).extracting("tableGroupId")
-                    .containsExactly(actual.getId(), actual.getId());
+            softly.assertThat(actual.getOrderTables()).extracting("tableGroup")
+                    .containsExactly(actual, actual);
         });
     }
 
@@ -115,7 +114,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_FailWithNotEmptyOrderTable() {
         // given
         OrderTable orderTable3 = OrderTable.create(0, false);
-        orderTable3 = orderTableDao.save(orderTable3);
+        orderTable3 = orderTableRepository.save(orderTable3);
 
         OrderTableRequest 비어있지_않은_주문테이블 = new OrderTableRequest(orderTable3.getId());
         TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청, 비어있지_않은_주문테이블));
@@ -147,18 +146,20 @@ class TableGroupServiceTest extends ServiceTest {
 
         TableGroup 테이블그룹 = tableGroupService.create(request);
 
+        tableGroupService.ungroup(테이블그룹.getId());
+
         // when & then
         assertSoftly(softly -> {
             softly.assertThat(테이블그룹.getOrderTables()).extracting("empty")
                     .containsExactly(false, false);
-            softly.assertThat(테이블그룹.getOrderTables()).extracting("tableGroupId")
-                    .containsExactly(테이블그룹.getId(), 테이블그룹.getId());
+            softly.assertThat(테이블그룹.getOrderTables()).extracting("tableGroup")
+                    .containsExactly(null, null);
         });
 
         tableGroupService.ungroup(테이블그룹.getId());
 
-        TableGroup 그룹해제한_테이블그룹 = tableGroupDao.findById(테이블그룹.getId()).orElseThrow(IllegalArgumentException::new);
-        List<OrderTable> 그룹해제한_주문테이블 = orderTableDao.findAllByTableGroupId(그룹해제한_테이블그룹.getId());
+        TableGroup 그룹해제한_테이블그룹 = tableGroupRepository.findById(테이블그룹.getId()).orElseThrow(IllegalArgumentException::new);
+        List<OrderTable> 그룹해제한_주문테이블 = orderTableRepository.findAllByTableGroupId(그룹해제한_테이블그룹.getId());
 
         assertThat(그룹해제한_주문테이블).hasSize(0);
     }
@@ -172,11 +173,10 @@ class TableGroupServiceTest extends ServiceTest {
 
         TableGroup 테이블그룹 = tableGroupService.create(request);
 
-        Order order = new Order();
+        Order order = Order.create(orderTable1);
         order.changeOrderStatus(invalidOrderStatus);
-        order.setOrderTable(orderTable1);
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+
+        orderRepository.save(order);
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹.getId()))

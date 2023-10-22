@@ -20,7 +20,7 @@ class TableGroupTest {
         List<OrderTable> invalidOrderTable = List.of(orderTable1);
 
         // when & then
-        assertThatThrownBy(() -> TableGroup.groupOrderTables(invalidOrderTable))
+        assertThatThrownBy(() -> TableGroup.createWithGrouping(invalidOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("그룹화 할 테이블 개수는 2 이상이어야 합니다.");
     }
@@ -29,6 +29,6 @@ class TableGroupTest {
     @Test
     void tableGroup() {
         // then
-        assertDoesNotThrow(() -> TableGroup.groupOrderTables(List.of(orderTable1, orderTable2)));
+        assertDoesNotThrow(() -> TableGroup.createWithGrouping(List.of(orderTable1, orderTable2)));
     }
 }

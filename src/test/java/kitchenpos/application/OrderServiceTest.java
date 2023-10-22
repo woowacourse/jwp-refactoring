@@ -20,9 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({
-        OrderService.class
-})
+@Import(OrderService.class)
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
@@ -105,11 +103,11 @@ class OrderServiceTest extends ServiceTest {
                     .containsExactly(actual.getId(), actual.getId());
             softly.assertThat(actual.getOrderLineItems()).extracting("menuId")
                     .contains(후1양1_메뉴.getId(), 간1양1_메뉴.getId());
-            softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         });
     }
 
-    @DisplayName("주문 등록 시, 주문에 속한 수량이 있는 메뉴가 없을 경우 예외가 발생한다.")
+    @DisplayName("주문 등록 시, 주문 항목이 없을 경우 예외가 발생한다.")
     @Test
     void create_FailWithEmptyOrderLineItems() {
         // given
@@ -167,6 +165,9 @@ class OrderServiceTest extends ServiceTest {
         OrderCreateRequest request2 = new OrderCreateRequest(주문테이블.getId(), List.of(후1양1_수량1));
         Order 두마리치킨_1개_주문 = orderService.create(request2);
 
+        orderRepository.save(두마리치킨_2개_주문);
+        orderRepository.save(두마리치킨_1개_주문);
+
         // when
         List<Order> list = orderService.list();
 
@@ -193,7 +194,7 @@ class OrderServiceTest extends ServiceTest {
         Order 주문상태가_변경된_주문 = orderService.changeOrderStatus(주문.getId(), request);
 
         // then
-        assertThat(주문상태가_변경된_주문.getOrderStatus()).isEqualTo(변경할_주문_상태.name());
+        assertThat(주문상태가_변경된_주문.getOrderStatus()).isEqualTo(변경할_주문_상태);
     }
 
     @DisplayName("주문 상태 변경 시, 존재하지 않는 주문일 경우 예외가 발생한다.")
