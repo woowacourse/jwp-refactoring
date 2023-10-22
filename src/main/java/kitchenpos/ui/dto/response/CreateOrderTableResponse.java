@@ -5,10 +5,10 @@ import kitchenpos.domain.TableGroup;
 
 public class CreateOrderTableResponse {
 
-    private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+    private final Long id;
+    private final Long tableGroupId;
+    private final int numberOfGuests;
+    private final boolean empty;
 
     public CreateOrderTableResponse(final OrderTable orderTable) {
         this.id = orderTable.getId();
