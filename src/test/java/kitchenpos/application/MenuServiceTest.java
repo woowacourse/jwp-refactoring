@@ -1,11 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.MenuProductRepository;
+import kitchenpos.persistence.MenuRepository;
 import kitchenpos.persistence.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +24,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -30,13 +32,13 @@ import static org.mockito.Mockito.when;
 class MenuServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
     private ProductRepository productRepository;
@@ -49,117 +51,104 @@ class MenuServiceTest {
         @Test
         void 메뉴를_생성한다() {
             // given
-            final Menu savedMenu = new Menu();
-            savedMenu.setId(1L);
+            final MenuGroup savedMenuGroup = new MenuGroup(1L, "한식");
+            final Menu savedMenu = new Menu(1L, "신메뉴", BigDecimal.valueOf(1000), new MenuGroup(1L, "한식"));
+            final Product savedProduct = new Product(1L, "상품", BigDecimal.valueOf(1000));
+            final MenuProduct savedMenuProduct = new MenuProduct(1L, savedMenu, savedProduct, 1);
 
-            final Product savedProduct = new Product("상품", BigDecimal.valueOf(1000));
-            final MenuProduct savedMenuProduct = new MenuProduct();
-
-            when(menuGroupRepository.existsById(anyLong()))
-                    .thenReturn(true);
+            when(menuGroupRepository.findById(anyLong()))
+                    .thenReturn(Optional.of(savedMenuGroup));
+            when(menuRepository.save(any(Menu.class)))
+                    .thenReturn(savedMenu);
             when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));
-            when(menuDao.save(any(Menu.class)))
-                    .thenReturn(savedMenu);
-            when(menuProductDao.save(any(MenuProduct.class)))
-                    .thenReturn(savedMenuProduct);
+            when(menuProductRepository.saveAll(any()))
+                    .thenReturn(List.of(savedMenuProduct));
 
             // when
-            final Menu menu = new Menu();
-            menu.setMenuGroupId(1L);
-            menu.setPrice(new BigDecimal(1000));
+            final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
+                    List.of(new MenuProductRequest(1L, 1L)));
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(1L);
-            menuProduct.setQuantity(1);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            final Menu result = menuService.create(menu);
+            final Menu result = menuService.create(request);
+            final Menu expect = new Menu(1L, "신메뉴", BigDecimal.valueOf(1000), new MenuGroup(1L, "한식"));
 
             // then
-            assertAll(
-                    () -> assertThat(result.getId()).isEqualTo(1),
-                    () -> assertThat(result.getMenuProducts()).hasSize(1)
-            );
+            assertThat(result)
+                    .usingRecursiveComparison()
+                    .isEqualTo(expect);
         }
 
         @Test
         void 메뉴를_생성할_때_가격이_null이면_실패한다() {
-            // given, when, then
-            assertThatThrownBy(() -> menuService.create(new Menu()))
+            // given
+            final MenuCreateRequest request = new MenuCreateRequest("신메뉴", null, 1L, Collections.emptyList());
+
+            // when, then
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴를_생성할_때_가격이_0보다_작으면_실패한다() {
             // given
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(-1000));
+            final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(-1000), 1L,
+                    List.of(new MenuProductRequest(1L, 1L)));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴를_생성할_때_존재하지_않는_메뉴_그룹_아이디를_전달하면_실패한다() {
             // given
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(1000));
-            menu.setMenuGroupId(1L);
+            final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
+                    List.of(new MenuProductRequest(1L, 1L)));
 
-            when(menuGroupRepository.existsById(anyLong()))
-                    .thenReturn(false);
+            when(menuGroupRepository.findById(anyLong()))
+                    .thenReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴를_생성할_때_존재하지_않는_상품_아이디를_전달하면_실패한다() {
             // given
-            when(menuGroupRepository.existsById(anyLong()))
-                    .thenReturn(true);
+            final MenuGroup savedMenuGroup = new MenuGroup(1L, "한식");
+
+            when(menuGroupRepository.findById(anyLong()))
+                    .thenReturn(Optional.of(savedMenuGroup));
             when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.empty());
 
             // when
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(1000));
-            menu.setMenuGroupId(1L);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(1L);
-            menu.setMenuProducts(List.of(menuProduct));
+            final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
+                    List.of(new MenuProductRequest(1L, 1L)));
 
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴를_생성할_때_전달한_가격과_메뉴_상품들의_가격의_합이_일치하지_않으면_실패한다() {
             // given
+            final MenuGroup savedMenuGroup = new MenuGroup(1L, "한식");
             final Product savedProduct = new Product("상품", BigDecimal.valueOf(500));
 
-            when(menuGroupRepository.existsById(anyLong()))
-                    .thenReturn(true);
+            when(menuGroupRepository.findById(anyLong()))
+                    .thenReturn(Optional.of(savedMenuGroup));
             when(productRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedProduct));
 
             // when
-            final Menu menu = new Menu();
-            menu.setPrice(new BigDecimal(1000));
-            menu.setMenuGroupId(1L);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(1L);
-            menuProduct.setQuantity(1);
-            menu.setMenuProducts(List.of(menuProduct));
+            final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
+                    List.of(new MenuProductRequest(1L, 1L)));
 
             // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -167,7 +156,7 @@ class MenuServiceTest {
     @Test
     void 전체_메뉴_목록을_반환한다() {
         // given
-        when(menuDao.findAll())
+        when(menuRepository.findAll())
                 .thenReturn(Collections.emptyList());
 
         // when
