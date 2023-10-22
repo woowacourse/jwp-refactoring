@@ -17,6 +17,7 @@ import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableCreateRequest;
 import kitchenpos.dto.table.OrderTableIsEmptyUpdateRequest;
@@ -129,7 +130,7 @@ class TableServiceTest {
         void 주문_테이블에_조리_혹은_식사_중인_주문이_있다면_예외를_던진다(String orderStatus) {
             // given
             OrderTableResponse orderTable = tableService.create(주문_테이블_생성_요청());
-            orderDao.save(주문(orderTable.getId(), orderStatus));
+            orderDao.save(주문(orderTable.getId(), OrderStatus.valueOf(orderStatus)));
 
             // expect
             assertThatThrownBy(() -> tableService.changeIsEmpty(orderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))

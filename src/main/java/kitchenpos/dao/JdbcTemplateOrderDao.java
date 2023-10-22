@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -22,7 +23,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private static final RowMapper<Order> ORDER_ROW_MAPPER = (resultSet, rowNumber) -> new Order(
             resultSet.getLong(KEY_COLUMN_NAME),
             resultSet.getLong("order_table_id"),
-            resultSet.getString("order_status"),
+            OrderStatus.valueOf(resultSet.getString("order_status")),
             resultSet.getObject("ordered_time", LocalDateTime.class),
             List.of()
     );
@@ -94,7 +95,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private void update(final Order entity) {
         final String sql = "UPDATE orders SET order_status = (:orderStatus) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderStatus", entity.getOrderStatus())
+                .addValue("orderStatus", entity.getOrderStatusValue())
                 .addValue("id", entity.getId());
         jdbcTemplate.update(sql, parameters);
     }

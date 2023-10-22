@@ -88,7 +88,7 @@ class JdbcTemplateOrderDaoTest {
         @Test
         void 주문이_있으면_true를_반환한다() {
             // given
-            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL.name()));
+            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL));
 
             // when
             boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
@@ -103,7 +103,7 @@ class JdbcTemplateOrderDaoTest {
         @Test
         void 주문이_없으면_false를_반환한다() {
             // given
-            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL.name()));
+            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL));
 
             // when
             boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
@@ -122,7 +122,7 @@ class JdbcTemplateOrderDaoTest {
         @Test
         void 주문이_있으면_true를_반환한다() {
             // given
-            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL.name()));
+            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL));
 
             // when
             boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
@@ -137,7 +137,7 @@ class JdbcTemplateOrderDaoTest {
         @Test
         void 주문이_있으면_false를_반환한다() {
             // given
-            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL.name()));
+            jdbcTemplateOrderDao.save(주문(orderTableId, MEAL));
 
             // when
             boolean actual = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(

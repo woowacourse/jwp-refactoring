@@ -40,7 +40,7 @@ public class OrderResponse {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderTableId(),
-                order.getOrderStatus(),
+                order.getOrderStatusValue(),
                 order.getOrderedTime(),
                 orderLineItemResponses
         );

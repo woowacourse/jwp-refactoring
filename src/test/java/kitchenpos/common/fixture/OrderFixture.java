@@ -10,22 +10,22 @@ import kitchenpos.domain.OrderStatus;
 public class OrderFixture {
 
     public static Order 주문(Long orderTableId) {
-        return new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.MAX, List.of());
+        return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.MAX, List.of());
     }
 
-    public static Order 주문(Long orderTableId, String orderStatus) {
+    public static Order 주문(Long orderTableId, OrderStatus orderStatus) {
         return new Order(orderTableId, orderStatus, LocalDateTime.MAX, List.of());
     }
 
     public static Order 주문(Long orderId, Long orderTableId) {
-        return new Order(orderId, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.MAX, List.of());
+        return new Order(orderId, orderTableId, OrderStatus.COOKING, LocalDateTime.MAX, List.of());
     }
 
     public static Order 주문(Long orderTableId, List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, orderLineItems);
     }
 
-    public static Order 주문(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
+    public static Order 주문(Long orderTableId, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
         return new Order(orderTableId, orderStatus, LocalDateTime.MAX, orderLineItems);
     }
 }

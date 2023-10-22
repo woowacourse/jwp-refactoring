@@ -17,6 +17,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.TableGroupCreateRequest;
 import kitchenpos.dto.table.TableGroupResponse;
@@ -154,7 +155,7 @@ class TableGroupServiceTest {
                     emptyOrderTable_B.getId()
             )));
 
-            saveOrder(emptyOrderTable_A.getId(), COMPLETION.name());
+            saveOrder(emptyOrderTable_A.getId(), COMPLETION);
 
             // when
             tableGroupService.ungroup(tableGroup.getId());
@@ -165,7 +166,7 @@ class TableGroupServiceTest {
                     .isEqualTo(List.of(주문_테이블(), 주문_테이블()));
         }
 
-        private Order saveOrder(Long orderTableId, String orderStatus) {
+        private Order saveOrder(Long orderTableId, OrderStatus orderStatus) {
             return orderDao.save(주문(orderTableId, orderStatus));
         }
 
@@ -178,7 +179,7 @@ class TableGroupServiceTest {
                     emptyOrderTable_B.getId()
             )));
 
-            saveOrder(emptyOrderTable_A.getId(), orderStatus);
+            saveOrder(emptyOrderTable_A.getId(), OrderStatus.valueOf(orderStatus));
 
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

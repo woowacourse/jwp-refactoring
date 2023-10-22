@@ -90,7 +90,7 @@ class OrderServiceTest {
             softly.assertThat(createdOrder).usingRecursiveComparison()
                     .ignoringFields("id", "orderLineItems.seq", "orderLineItems.orderId")
                     .ignoringFieldsOfTypes(LocalDateTime.class)
-                    .isEqualTo(OrderResponse.from(주문(orderTableId, COOKING.name(), List.of(orderLineItem))));
+                    .isEqualTo(OrderResponse.from(주문(orderTableId, COOKING, List.of(orderLineItem))));
         });
     }
 
