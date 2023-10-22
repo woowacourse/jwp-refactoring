@@ -4,9 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -14,46 +11,32 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private Long productId;
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this(null, product, quantity, menu);
+    public MenuProduct(Long productId, long quantity) {
+        this(null, productId, quantity);
     }
 
-    public MenuProduct(Long seq, Product product, long quantity, Menu menu) {
+    public MenuProduct(Long seq, Long productId, long quantity) {
         this.seq = seq;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
-        this.menu = menu;
-    }
-
-    public BigDecimal menuPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     @Override

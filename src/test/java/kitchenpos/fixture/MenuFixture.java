@@ -23,7 +23,7 @@ public class MenuFixture {
 
     public static MenuRequest menuRequest(String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
         List<MenuProductRequest> requests = menuProducts.stream()
-                .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
+                .map(it -> new MenuProductRequest(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuRequest(name, BigDecimal.valueOf(price), menuGroupId, requests);
     }

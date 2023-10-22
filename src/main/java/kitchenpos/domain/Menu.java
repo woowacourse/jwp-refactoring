@@ -46,11 +46,9 @@ public class Menu {
         this.menuProducts = new MenuProducts(menuProducts);
     }
 
-    public void changeMenuProducts(List<MenuProduct> menuProducts) {
+    public void changeMenuProducts(List<MenuProduct> menuProducts, MenuValidator menuValidator) {
         this.menuProducts = new MenuProducts(menuProducts);
-        if (price.getValue().compareTo(this.menuProducts.menuProductsPrice()) > 0) {
-            throw new IllegalArgumentException("가격의 합이 맞지 않습니다");
-        }
+        menuValidator.validate(this);
     }
 
     public Long getId() {

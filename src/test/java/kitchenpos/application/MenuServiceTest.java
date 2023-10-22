@@ -43,7 +43,7 @@ class MenuServiceTest {
         // Given
         Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(menuProduct(product, 10, null)));
+        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(menuProduct(product.getId(), 10)));
 
         // When
         Menu createdMenu = menuService.create(request);
@@ -69,7 +69,7 @@ class MenuServiceTest {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("pizza"));
         Product product = productRepository.save(product("cheese pizza", 10000L));
-        MenuProduct menuProduct = menuProduct(product, 1L, null);
+        MenuProduct menuProduct = menuProduct(product.getId(), 1L);
         MenuRequest request = menuRequest("cheese pizza", 10001L, menuGroup.getId(), List.of(menuProduct));
 
         // expect

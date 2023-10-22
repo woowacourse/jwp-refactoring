@@ -3,10 +3,7 @@ package kitchenpos.domain;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-import static kitchenpos.fixture.MenuProductFixture.menuProduct;
-import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MenuTest {
@@ -20,19 +17,5 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu("menu", price, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이여야합니다");
-        ;
-    }
-
-    @Test
-    void 메뉴의_가격이_메뉴_상품들의_합과_다르면_예외가_발생한다() {
-        // given
-        Product product = product("product", 1000L);
-        MenuProduct menuProduct = menuProduct(product, 1L, null);
-        Menu menu = new Menu("product", BigDecimal.valueOf(1001), null);
-
-        // expect
-        assertThatThrownBy(() -> menu.changeMenuProducts(List.of(menuProduct)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("가격의 합이 맞지 않습니다");
     }
 }
