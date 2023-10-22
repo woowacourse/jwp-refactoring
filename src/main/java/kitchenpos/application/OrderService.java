@@ -41,34 +41,40 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final CreateOrderRequest createOrderRequest) {
-        final List<OrderLineItemDto> orderLineItemDtos = createOrderRequest.getOrderLineItems();
-        final OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
+    public OrderResponse create(CreateOrderRequest createOrderRequest) {
+        OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-
         Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
 
+        List<OrderLineItemDto> orderLineItemDtos = createOrderRequest.getOrderLineItems();
+        addOrderLineItems(orderLineItemDtos, order);
+
+        long orderMenuSize = extractOrderMenuCount(orderLineItemDtos);
+        order.checkEqualMenuCount(orderMenuSize);
+
+        orderRepository.save(order);
+        return OrderResponse.from(order);
+    }
+
+    private long extractOrderMenuCount(List<OrderLineItemDto> orderLineItemDtos) {
+        List<Long> menuIds = orderLineItemDtos.stream()
+                .map(OrderLineItemDto::getMenuId)
+                .collect(Collectors.toList());
+
+        return menuRepository.countByIdIn(menuIds);
+    }
+
+    private void addOrderLineItems(List<OrderLineItemDto> orderLineItemDtos, Order order) {
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
             OrderLineItem orderLineItem = new OrderLineItem(menu, orderLineItemDto.getQuantity());
             order.addOrderLineItem(orderLineItem);
         }
-
-        final List<Long> menuIds = orderLineItemDtos.stream()
-                .map(OrderLineItemDto::getMenuId)
-                .collect(Collectors.toList());
-
-        long orderMenuSize = menuRepository.countByIdIn(menuIds);
-        order.checkEqualMenuCount(orderMenuSize);
-
-        final Order savedOrder = orderRepository.save(order);
-
-        return OrderResponse.from(savedOrder);
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findAll();
         return orders.stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
@@ -76,16 +82,16 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, UpdateOrderStatusRequest updateOrderStatusRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(updateOrderStatusRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        OrderStatus orderStatus = OrderStatus.valueOf(updateOrderStatusRequest.getOrderStatus());
+        order.setOrderStatus(orderStatus.name());
 
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(order);
     }
 }
