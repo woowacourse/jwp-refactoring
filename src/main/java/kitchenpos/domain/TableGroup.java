@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -33,8 +32,13 @@ public class TableGroup {
 
     private void group(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(this);
-            orderTable.updateEmpty(false);
+            orderTable.groupBy(this);
+        }
+    }
+
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroupBy(this);
         }
     }
 
@@ -48,22 +52,6 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void ungroup() {
-        validateUngroupAvailable();
-        for (OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(null);
-            orderTable.updateEmpty(false);
-        }
-    }
-
-    private void validateUngroupAvailable() {
-        for (OrderTable orderTable : orderTables) {
-            if(!orderTable.isOrderCompleted()) {
-                throw new IllegalArgumentException("계산 완료되지 않은 테이블이 남아있어 단체 지정 해제가 불가능합니다.");
-            }
-        }
     }
 
     @Override

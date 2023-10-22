@@ -70,14 +70,31 @@ public class OrderTable {
         return isNull(tableGroup);
     }
 
-    public void checkTableGroupEmpty() {
+    public void updateEmptyIfNoConstraints(final boolean empty) {
+        validateTableGroupEmpty();
+        validateOrderStatus();
+        this.empty = empty;
+    }
+
+    private void validateTableGroupEmpty() {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("단체 지정이 되어있습니다.");
         }
     }
 
-    public void updateEmpty(final boolean empty) {
-        this.empty = empty;
+    private void validateOrderStatus() {
+        if(!isOrderCompleted()) {
+            throw new IllegalArgumentException("계산이 완료되지 않아 테이블의 상태를 바꿀 수 없습니다.");
+        }
+    }
+
+    private boolean isOrderCompleted() {
+        for (Order order : orders) {
+            if (!order.isCompleted()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
@@ -90,17 +107,28 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
+    public void groupBy(final TableGroup tableGroup) {
+        this.empty = false;
         this.tableGroup = tableGroup;
     }
 
-    public boolean isOrderCompleted() {
-        for (Order order : orders) {
-            if (!order.isCompleted()) {
-                return false;
-            }
+    public void ungroupBy(final TableGroup tableGroup) {
+        validateRightTableGroup(tableGroup);
+        validateUngroupAvailable();
+        this.empty = false;
+        this.tableGroup = null;
+    }
+
+    private void validateRightTableGroup(final TableGroup tableGroup) {
+        if(!this.tableGroup.equals(tableGroup)) {
+            throw new IllegalArgumentException("해당 단체에 지정되어 있지 않아 단체 지정 해제가 불가능합니다.");
         }
-        return true;
+    }
+
+    private void validateUngroupAvailable() {
+        if(!isOrderCompleted()) {
+            throw new IllegalArgumentException("계산 완료되지 않은 테이블이 남아있어 단체 지정 해제가 불가능합니다.");
+        }
     }
 
     @Override
