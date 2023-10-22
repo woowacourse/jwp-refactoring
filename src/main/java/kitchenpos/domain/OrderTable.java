@@ -41,6 +41,10 @@ public class OrderTable {
         this(null, null, numberOfGuests, false);
     }
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public void validateOrderTableHasTableGroupId() {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();

@@ -55,10 +55,8 @@ class TableGroupServiceTest {
     @Test
     void create_tableGroup() {
         // given
-        final OrderTable orderTable1 = new OrderTable(5);
-        orderTable1.changeEmptyStatus();
-        final OrderTable orderTable2 = new OrderTable(4);
-        orderTable2.changeEmptyStatus();
+        final OrderTable orderTable1 = new OrderTable(5, true);
+        final OrderTable orderTable2 = new OrderTable(4, true);
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
 
