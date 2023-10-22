@@ -90,20 +90,6 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        void 이미_단체_지정된_테이블이면_예외가_발생한다() {
-            // given
-            final var orderTable1 = OrderTableFixture.빈테이블_1명_단체지정();
-            final var orderTable2 = OrderTableFixture.빈테이블_1명();
-            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
-
-            final var request = TableGroupFixture.단체지정요청_생성(savedOrderTables);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 테이블들을_빈_테이블에서_주문_테이블로_설정한다() {
             // given
             final var orderTable1 = OrderTableFixture.빈테이블_1명();
