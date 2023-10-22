@@ -29,15 +29,20 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = new ArrayList<>();
+        this(id, createdDate, null);
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = makeOrderTables(orderTables);
+    }
+
+    private List<OrderTable> makeOrderTables(List<OrderTable> orderTables) {
+        if (orderTables == null){
+            return new ArrayList<>();
+        }
+        return orderTables;
     }
 
     public void addOrderTable(List<OrderTable> orderTables) {
