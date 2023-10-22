@@ -3,10 +3,8 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,19 +13,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.vo.MenuName;
 import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Menu {
 
-    private static final int NAME_LENGTH_MAXIMUM = 255;
     private static final int MENU_PRODUCT_SIZE_MINIMUM = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String name;
+    @Embedded
+    private MenuName name;
     @Embedded
     private Price price;
     @ManyToOne
@@ -43,8 +41,7 @@ public class Menu {
                 final BigDecimal price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        validateName(name);
-        this.name = name;
+        this.name = MenuName.from(name);
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
         validateMenuProducts(menuProducts);
@@ -52,14 +49,6 @@ public class Menu {
         menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
     }
 
-    private void validateName(final String name) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("메뉴 이름은 필수 항목입니다.");
-        }
-        if (name.length() > NAME_LENGTH_MAXIMUM) {
-            throw new IllegalArgumentException("메뉴 이름의 최대 길이는 " + NAME_LENGTH_MAXIMUM + "입니다.");
-        }
-    }
 
     private void validateMenuProducts(final List<MenuProduct> menuProducts) {
         if (price.isBiggerThan(sumOfMenuProducts(menuProducts))) {
@@ -81,15 +70,8 @@ public class Menu {
         return id;
     }
 
-    public String getName() {
+    public MenuName getName() {
         return name;
-    }
-
-    public Long getMenuGroupId() {
-        if (Objects.isNull(menuGroup)) {
-            return null;
-        }
-        return menuGroup.getId();
     }
 
     public List<MenuProduct> getMenuProducts() {
