@@ -5,18 +5,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
-import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderQueryResponse;
 import kitchenpos.order.application.dto.OrderStatusModifyRequest;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -37,44 +35,36 @@ public class OrderService {
 
   @Transactional
   public OrderQueryResponse create(final OrderCreateRequest request) {
-    final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
-
+    final Order orderRequest = request.toOrder();
+    final OrderLineItems orderLineItemRequests = orderRequest.getOrderLineItems();
     final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
         .orElseThrow(IllegalArgumentException::new);
+    final List<Long> menuIds = orderLineItemRequests.extractMenuIds();
 
-    final List<Long> menuIds = orderLineItemRequests.stream()
-        .map(OrderLineItemCreateRequest::getMenuId)
-        .collect(Collectors.toList());
+    validateOrderCreateRequest(orderLineItemRequests, menuIds, orderTable);
 
-    validateOrderRequest(orderLineItemRequests, menuIds, orderTable);
-
-    final List<OrderLineItem> orderLineItems =
-        orderLineItemRequests.stream()
-            .map(OrderLineItemCreateRequest::toOrderLineItem)
-            .collect(Collectors.toList());
     final Order order = new Order(orderTable.getId(), OrderStatus.COOKING,
-        LocalDateTime.now(), orderLineItems);
+        LocalDateTime.now(), orderLineItemRequests);
 
     return OrderQueryResponse.from(orderRepository.save(order));
   }
 
-  private void validateOrderRequest(final List<OrderLineItemCreateRequest> orderLineItemRequests,
+  private void validateOrderCreateRequest(
+      final OrderLineItems orderLineItems,
       final List<Long> menuIds, final OrderTable orderTable) {
-    validateOrderLineItemsNotEmpty(orderLineItemRequests);
-    validateMenus(orderLineItemRequests, menuIds);
+    validateOrderLineItemsNotEmpty(orderLineItems);
+    validateMenus(orderLineItems, menuIds);
     validateOrderTableNotEmpty(orderTable);
   }
 
-  private void validateOrderLineItemsNotEmpty(
-      final List<OrderLineItemCreateRequest> orderLineItems) {
-    if (CollectionUtils.isEmpty(orderLineItems)) {
+  private void validateOrderLineItemsNotEmpty(final OrderLineItems orderLineItems) {
+    if (orderLineItems.isEmpty()) {
       throw new IllegalArgumentException();
     }
   }
 
-  private void validateMenus(final List<OrderLineItemCreateRequest> orderLineItems,
-      final List<Long> menuIds) {
-    if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+  private void validateMenus(final OrderLineItems orderLineItems, final List<Long> menuIds) {
+    if (orderLineItems.isDifferentSize(menuRepository.countByIdIn(menuIds))) {
       throw new IllegalArgumentException();
     }
   }

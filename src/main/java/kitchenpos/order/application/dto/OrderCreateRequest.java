@@ -3,6 +3,7 @@ package kitchenpos.order.application.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItems;
 
 public class OrderCreateRequest {
 
@@ -30,9 +31,11 @@ public class OrderCreateRequest {
   public Order toOrder() {
     return new Order(
         orderTableId,
-        orderLineItems.stream()
-            .map(OrderLineItemCreateRequest::toOrderLineItem)
-            .collect(Collectors.toList())
+        new OrderLineItems(
+            orderLineItems.stream()
+                .map(OrderLineItemCreateRequest::toOrderLineItem)
+                .collect(Collectors.toList())
+        )
     );
   }
 }

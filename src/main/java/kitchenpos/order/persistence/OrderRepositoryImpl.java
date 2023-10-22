@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import kitchenpos.order.application.entity.OrderEntity;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
@@ -26,19 +27,19 @@ public class OrderRepositoryImpl implements OrderRepository {
   public Order save(final Order entity) {
     final Order savedOrder = orderDao.save(OrderEntity.from(entity)).toOrder();
 
-    final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(entity, savedOrder);
+    final OrderLineItems savedOrderLineItems = saveOrderLineItems(entity, savedOrder);
     return new Order(savedOrder.getId(), savedOrder.getOrderTableId(), savedOrder.getOrderStatus(),
         savedOrder.getOrderedTime(), savedOrderLineItems);
   }
 
-  private List<OrderLineItem> saveOrderLineItems(final Order entity, final Order savedOrder) {
+  private OrderLineItems saveOrderLineItems(final Order entity, final Order savedOrder) {
     final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-    for (final OrderLineItem orderLineItem : entity.getOrderLineItems()) {
+    for (final OrderLineItem orderLineItem : entity.getOrderLineItems().getOrderLineItems()) {
       savedOrderLineItems.add(orderLineItemDao.save(
           new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(),
               orderLineItem.getQuantity())));
     }
-    return savedOrderLineItems;
+    return new OrderLineItems(savedOrderLineItems);
   }
 
   @Override
@@ -56,7 +57,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     final List<Order> result = new ArrayList<>();
     for (final Order order : orders) {
       result.add(new Order(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
-          order.getOrderedTime(), orderLineItemDao.findAllByOrderId(order.getId())));
+          order.getOrderedTime(),
+          new OrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()))));
     }
 
     return result;

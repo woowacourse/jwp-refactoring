@@ -1,8 +1,6 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Order {
 
@@ -10,10 +8,10 @@ public class Order {
   private final Long orderTableId;
   private OrderStatus orderStatus;
   private final LocalDateTime orderedTime;
-  private final List<OrderLineItem> orderLineItems;
+  private final OrderLineItems orderLineItems;
 
   public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
-      final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+      final LocalDateTime orderedTime, final OrderLineItems orderLineItems) {
     this.id = id;
     this.orderTableId = orderTableId;
     this.orderStatus = orderStatus;
@@ -23,17 +21,17 @@ public class Order {
 
   public Order(final Long orderTableId, final OrderStatus orderStatus,
       final LocalDateTime orderedTime,
-      final List<OrderLineItem> orderLineItems) {
+      final OrderLineItems orderLineItems) {
     this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
   }
 
-  public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+  public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
     this(null, orderTableId, null, null, orderLineItems);
   }
 
   public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
       final LocalDateTime orderedTime) {
-    this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
+    this(id, orderTableId, orderStatus, orderedTime, new OrderLineItems());
   }
 
   public Long getId() {
@@ -52,7 +50,7 @@ public class Order {
     return orderedTime;
   }
 
-  public List<OrderLineItem> getOrderLineItems() {
+  public OrderLineItems getOrderLineItems() {
     return orderLineItems;
   }
 

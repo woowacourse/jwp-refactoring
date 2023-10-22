@@ -48,7 +48,7 @@ public class OrderQueryResponse {
 
   public static OrderQueryResponse from(final Order order) {
     final List<OrderLineItemQueryResponse> orderLineItemQueryResponses
-        = order.getOrderLineItems()
+        = order.getOrderLineItems().getOrderLineItems()
         .stream()
         .map(OrderLineItemQueryResponse::from)
         .collect(Collectors.toList());
