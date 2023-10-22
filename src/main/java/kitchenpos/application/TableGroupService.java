@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
@@ -33,33 +33,18 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final List<OrderTable> orderTables = getOrderTable(request.getOrderTableId());
-        validateOrderTable(orderTables);
+        final OrderTables orderTables = getOrderTables(request.getOrderTableId());
         final TableGroup tableGroup = TableGroup.forSave();
         tableGroupRepository.save(tableGroup);
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : orderTables.getOrderTables()) {
             tableGroup.addOrderTable(orderTable);
         }
         return TableGroupResponse.from(tableGroup);
     }
 
-    private List<OrderTable> getOrderTable(final List<Long> orderTableIds) {
+    private OrderTables getOrderTables(final List<Long> orderTableIds) {
         final List<OrderTable> orderTables = orderTableRepository.findAllById(orderTableIds);
-        if (orderTables.isEmpty() || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-        if (orderTableIds.size() != orderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-        return orderTables;
-    }
-
-    private static void validateOrderTable(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
+        return new OrderTables(orderTables);
     }
 
     @Transactional
