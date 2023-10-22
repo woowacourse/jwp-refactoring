@@ -43,10 +43,10 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalStateException("주문 테이블이 존재하지 않습니다."));
         orderTable.validateIsNotEmpty();
-        
-        final Order order = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
-        saveOrderLineItems(menuIds, quantities, order);
-        return order.getId();
+
+        final Order savedOrder = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
+        saveOrderLineItems(menuIds, quantities, savedOrder);
+        return savedOrder.getId();
     }
 
     private void saveOrderLineItems(final List<Long> menuIds, final List<Integer> quantities, final Order order) {
@@ -54,8 +54,7 @@ public class OrderService {
             final Long menuId = menuIds.get(index);
             final Integer quantity = quantities.get(index);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(order.getId(), menuId, quantity);
-            orderLineItemRepository.save(orderLineItem);
+            orderLineItemRepository.save(new OrderLineItem(order.getId(), menuId, quantity));
         }
     }
 
