@@ -15,8 +15,8 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM orders WHERE order_table_id = :orderTableId AND order_status IN :orderStatuses", nativeQuery = true)
-    boolean existsByOrderTableIdAndOrderStatusIn(@Param("orderTableId") Long orderTableId, @Param("orderStatuses") List<String> orderStatuses);
+    @Query("SELECT CASE WHEN COUNT(o) > 0 THEN TRUE ELSE FALSE END FROM Order o WHERE o.orderTable.id = :orderTableId AND o.orderStatus IN :orderStatuses")
+    boolean existsByOrderTableIdAndOrderStatusIn(@Param("orderTableId") Long orderTableId, @Param("orderStatuses") List<OrderStatus> orderStatuses);
 
     @Query("SELECT ot FROM OrderTable ot WHERE ot.id IN :orderTableIds")
     List<OrderTable> findAllByIdIn(@Param("orderTableIds") List<Long> orderTableIds);

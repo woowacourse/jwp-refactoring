@@ -8,7 +8,6 @@ public class MenuCreateRequest {
     private final BigDecimal price;
     private final Long menuGroupId;
 
-
     public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId) {
         this.name = name;
         this.price = price;

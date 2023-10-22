@@ -46,7 +46,7 @@ public class OrderTableService {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateTableGroupIsNotNull();
         if (orderTableRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
+                orderTableId, Arrays.asList(COOKING, MEAL))) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.updateEmpty(isEmpty);
