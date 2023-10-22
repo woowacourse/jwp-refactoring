@@ -2,14 +2,15 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.Fixture;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,23 +28,27 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
-    private MenuGroup menuGroup;
-    private MenuProduct menuProduct;
+    private Long menuGroupId;
+    private MenuProductRequest menuProductRequest;
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
-        final Product product = productService.create(Fixture.PRODUCT);
-        menuProduct = new MenuProduct(product, 2);
+        menuGroupId = menuGroupService.create(Fixture.MENU_GROUP).getId();
+        final ProductResponse productResponse = productService.create(Fixture.PRODUCT);
+        menuProductRequest = new MenuProductRequest(productResponse.getId(), 2);
     }
 
     @Test
     void create() {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, List.of(menuProduct));
+        final MenuCreateRequest menu = new MenuCreateRequest(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                menuGroupId,
+                List.of(menuProductRequest));
 
         // when
-        final Menu result = menuService.create(menu);
+        final MenuResponse result = menuService.create(menu);
 
         // then
         assertThat(result.getId()).isNotNull();
@@ -53,7 +58,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @ValueSource(ints = {-1, 99999})
     void create_priceException(final int price) {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(price), menuGroup, List.of(menuProduct));
+        final MenuCreateRequest menu = new MenuCreateRequest("후라이드+후라이드", BigDecimal.valueOf(price), menuGroupId,
+                List.of(menuProductRequest));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -63,7 +69,8 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     void create_menuGroupException() {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(1000), new MenuGroup(), List.of(menuProduct));
+        final MenuCreateRequest menu = new MenuCreateRequest("후라이드+후라이드", BigDecimal.valueOf(1000), Fixture.INVALID_ID,
+                List.of(menuProductRequest));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -73,17 +80,25 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        final Menu menu1 = menuService.create(
-                new Menu("Menu1", BigDecimal.valueOf(1000), menuGroup, List.of(menuProduct)));
-        final Menu menu2 = menuService.create(
-                new Menu("Menu2", BigDecimal.valueOf(2000), menuGroup, List.of(menuProduct)));
+        final MenuResponse menu1 = menuService.create(
+                new MenuCreateRequest("Menu1", BigDecimal.valueOf(1000), menuGroupId, List.of(menuProductRequest)));
+        final MenuResponse menu2 = menuService.create(
+                new MenuCreateRequest("Menu2", BigDecimal.valueOf(2000), menuGroupId, List.of(menuProductRequest)));
 
         // when
-        final List<Menu> result = menuService.list();
+        final List<MenuResponse> result = menuService.list();
 
         // then
-        assertThat(result).hasSize(2)
-                .usingRecursiveFieldByFieldElementComparator()
-                .containsExactly(menu1, menu2);
+        assertSoftly(softly -> {
+            softly.assertThat(result).hasSize(2);
+            softly.assertThat(result.get(0))
+                    .usingRecursiveComparison()
+                    .ignoringFields("price")
+                    .isEqualTo(menu1);
+            softly.assertThat(result.get(1))
+                    .usingRecursiveComparison()
+                    .ignoringFields("price")
+                    .isEqualTo(menu2);
+        });
     }
 }

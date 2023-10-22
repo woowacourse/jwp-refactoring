@@ -13,14 +13,17 @@ public class MenuProduct {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private final Menu menu;
+    private Menu menu;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private final Product product;
-    private final long quantity;
+    private Product product;
+    private long quantity;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long seq;
+    private Long seq;
+
+    MenuProduct() {
+    }
 
     private MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
         this.seq = seq;

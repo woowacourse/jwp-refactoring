@@ -44,6 +44,10 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public void initMenuProducts(final List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
+    }
+
     public Long getId() {
         return id;
     }
