@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.Price.ZERO_PRICE;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -16,7 +18,8 @@ import javax.persistence.OneToMany;
 @Entity
 public class Menu {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -40,7 +43,21 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public void addMenuProduct(final MenuProduct menuProduct) {
+    public void addMenuProducts(final List<MenuProduct> menuProducts) {
+        validateMenuProducts(menuProducts);
+        menuProducts.forEach(this::addMenuProduct);
+    }
+
+    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
+        final Price sum = menuProducts.stream()
+                .map(it -> it.getProduct().getPrice().multiply(it.getQuantity()))
+                .reduce(ZERO_PRICE, Price::add);
+        if (price.isBiggerThan(sum)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void addMenuProduct(final MenuProduct menuProduct) {
         menuProduct.setMenu(this);
         menuProducts.add(menuProduct);
     }

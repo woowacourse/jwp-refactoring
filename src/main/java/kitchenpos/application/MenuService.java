@@ -35,23 +35,20 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), menuGroup);
-
-        Price sum = new Price(BigDecimal.ZERO);
-        final List<MenuProductCreateDto> menuProducts = request.getMenuProducts();
-        for (MenuProductCreateDto menuProductDto : menuProducts) {
-            Product product = productRepository.findById(menuProductDto.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(menuProductDto.getQuantity()));
-
-            MenuProduct menuProduct = new MenuProduct(product, menuProductDto.getQuantity());
-            menu.addMenuProduct(menuProduct);
-        }
-        if (menu.getPrice().isBiggerThan(sum)) {
-            throw new IllegalArgumentException();
-        }
+        menu.addMenuProducts(getMenuProducts(request));
 
         menuRepository.save(menu);
         return MenuDto.toDto(menu);
+    }
+
+    private List<MenuProduct> getMenuProducts(final MenuCreateDto request) {
+        return request.getMenuProducts().stream()
+                .map(menuProductDto -> {
+                    Product product = productRepository.findById(menuProductDto.getProductId())
+                            .orElseThrow(IllegalArgumentException::new);
+                    return new MenuProduct(product, menuProductDto.getQuantity());
+                })
+                .collect(Collectors.toList());
     }
 
     public List<MenuDto> list() {

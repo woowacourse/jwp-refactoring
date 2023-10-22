@@ -36,6 +36,7 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertThat(menuRepository.findById(response.getId())).isPresent();
+        assertThat(menuProductRepository.findAll().size()).isEqualTo(2);
     }
 
     @Test
@@ -119,11 +120,11 @@ class MenuServiceTest extends ServiceTest {
         final var 양념치킨 = productRepository.save(양념치킨_16000);
 
         final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-        후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+        후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
         menuRepository.save(후라이드메뉴);
 
-        final var 양념메뉴 = 메뉴("싼양념", 20000, 두마리메뉴);
-        양념메뉴.addMenuProduct(메뉴상품(양념치킨, 1));
+        final var 양념메뉴 = 메뉴("싼양념", 15000, 두마리메뉴);
+        양념메뉴.addMenuProducts(List.of(메뉴상품(양념치킨, 1)));
         menuRepository.save(양념메뉴);
 
         final var 메뉴목록 = List.of(후라이드메뉴, 양념메뉴);

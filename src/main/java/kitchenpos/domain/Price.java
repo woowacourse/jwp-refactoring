@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
-    private static final BigDecimal ZERO = BigDecimal.ZERO;
+    public static final Price ZERO_PRICE = new Price(BigDecimal.ZERO);
 
     @Column(name = "price")
     private BigDecimal value;
@@ -22,7 +22,7 @@ public class Price {
     }
 
     private void validate(BigDecimal value) {
-        if (Objects.isNull(value) || value.compareTo(ZERO) < 0) {
+        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
