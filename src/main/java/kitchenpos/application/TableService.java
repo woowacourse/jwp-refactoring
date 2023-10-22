@@ -10,11 +10,10 @@ import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
 import kitchenpos.exception.CannotChangeGroupedTableEmptyException;
 import kitchenpos.exception.InvalidRequestFormatException;
-import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -76,10 +75,7 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new CannotChangeEmptyTableNumberOfGuestsException();
-        }
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
         return OrderTableResponse.from(orderTable);
     }

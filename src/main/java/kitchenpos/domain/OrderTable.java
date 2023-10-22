@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
 import kitchenpos.exception.OrderTableCannotBeGroupedException;
 
 @Entity
@@ -42,10 +43,6 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public void addToTableGroup(TableGroup tableGroup) {
         validateCanBeAddedToNewTableGroup();
         this.tableGroup = tableGroup;
@@ -57,12 +54,19 @@ public class OrderTable {
         }
     }
 
-    public int getNumberOfGuests() {
-        return numberOfGuests;
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (isEmpty()) {
+            throw new CannotChangeEmptyTableNumberOfGuestsException();
+        }
+        this.numberOfGuests = numberOfGuests;
     }
 
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 
     public void setEmpty(boolean empty) {
