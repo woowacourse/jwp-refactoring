@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.application.dto.request.CreateTableGroupRequest.TableInfo;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.never;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Mock
     private OrderTableRepository orderTableRepository;
     @Mock
@@ -130,7 +130,7 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
                 .willReturn(true);
 
         // when, then
@@ -147,7 +147,7 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
                 .willReturn(false);
 
         // when, then

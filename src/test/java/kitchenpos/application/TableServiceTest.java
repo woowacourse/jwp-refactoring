@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableGuests;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.times;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -58,7 +58,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(1, false);
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), eq(List.of("COOKING", "MEAL"))))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), eq(List.of("COOKING", "MEAL"))))
                 .willReturn(false);
 
         // when, then
@@ -69,7 +69,7 @@ class TableServiceTest {
     void 상태를_바꾸려는_테이블은_반드시_존재해야_한다() {
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false)))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderDao).should(never()).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
+        then(orderRepository).should(never()).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
     }
 
     @Test
@@ -92,7 +92,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(3, false);
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, List.of("COOKING", "MEAL")))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of("COOKING", "MEAL")))
                 .willReturn(true);
 
         // when, then
