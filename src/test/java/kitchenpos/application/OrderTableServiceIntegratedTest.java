@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class TableServiceIntegratedTest extends ServiceIntegrateTest {
+class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
 
     @Autowired
     private OrderTableService orderTableService;
@@ -49,7 +50,8 @@ class TableServiceIntegratedTest extends ServiceIntegrateTest {
             OrderTable orderTable2 = 주문_테이블_생성();
             orderTableRepository.save(orderTable1);
             orderTableRepository.save(orderTable2);
-            TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2), now());
+            final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(orderTables, now());
             this.tableGroup = tableGroupRepository.save(tableGroup);
         }
 
@@ -68,7 +70,8 @@ class TableServiceIntegratedTest extends ServiceIntegrateTest {
         void setUp() {
             OrderTable orderTable1 = 주문_테이블_생성();
             OrderTable orderTable2 = 주문_테이블_생성();
-            TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2), now());
+            final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(orderTables, now());
             TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
             orderTable1.updateTableGroup(savedTableGroup);
@@ -119,7 +122,8 @@ class TableServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 주문_테이블의_tableGroupId가_존재한다면_예외가_발생한다() {
             // given
-            TableGroup tableGroup = new TableGroup(List.of(orderTable), now());
+            OrderTables orderTables = new OrderTables(List.of(orderTable));
+            TableGroup tableGroup = new TableGroup(orderTables, now());
             orderTable.updateTableGroup(tableGroup);
             orderTableRepository.save(orderTable);
 

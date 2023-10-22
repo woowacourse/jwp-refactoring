@@ -61,13 +61,14 @@ public class Orders {
         return orderLineItems;
     }
 
-    public void updateOrderStatus(OrderStatus orderStatus) {
+    public void updateOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
-    public void validateStatusIsEqualTo(OrderStatus orderStatus) {
-        if (Objects.equals(COMPLETION, orderStatus)) {
+    public void validateStatusIsEqualTo(final OrderStatus orderStatus) {
+        if (Objects.equals(this.orderStatus, orderStatus)) {
             throw new IllegalArgumentException();
         }
     }
+
 }

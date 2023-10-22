@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.domain.OrderStatus.COOKING;
+
 @Service
 public class OrderTableService {
 
@@ -43,7 +46,7 @@ public class OrderTableService {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateTableGroupIsNotNull();
         if (orderTableRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableId, Arrays.asList(COOKING.name(), MEAL.name()))) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.updateEmpty(isEmpty);

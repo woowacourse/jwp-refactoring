@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
@@ -95,7 +96,8 @@ class TableGroupServiceIntegratedTest extends ServiceIntegrateTest {
             // Given
             OrderTable 주문_테이블1 = 주문_테이블_생성();
             OrderTable 주문_테이블2 = 주문_테이블_생성();
-            주문_테이블2.updateTableGroup(new TableGroup(List.of(주문_테이블1, 주문_테이블2), now()));
+            final OrderTables orderTables = new OrderTables(List.of(주문_테이블1, 주문_테이블2));
+            주문_테이블2.updateTableGroup(new TableGroup(orderTables, now()));
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
             OrderTable orderTable2 = orderTableRepository.save(주문_테이블2);
             TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable1.getId(), orderTable2.getId()));
@@ -120,7 +122,8 @@ class TableGroupServiceIntegratedTest extends ServiceIntegrateTest {
             OrderTable 주문_테이블2 = 주문_테이블_생성();
             OrderTable orderTable1 = orderTableRepository.save(주문_테이블1);
             OrderTable orderTable2 = orderTableRepository.save(주문_테이블2);
-            TableGroup request = new TableGroup(List.of(orderTable1, orderTable2), now());
+            final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+            TableGroup request = new TableGroup(orderTables, now());
             tableGroupId = tableGroupRepository.save(request).getId();
         }
 
@@ -134,12 +137,10 @@ class TableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         void 통합_계산_주문들_중_하나라도_COOKING_또는_MEAL이면_예외가_발생한다() {
             // given
             TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-            Orders orders1 = 주문_생성(tableGroup.getOrderTables().get(0));
-            Orders orders2 = 주문_생성(tableGroup.getOrderTables().get(1));
-            Orders savedOrder1 = orderRepository.save(orders1);
-            Orders savedOrder2 = orderRepository.save(orders2);
-            System.out.println("savedOrder1.getId() = " + savedOrder1.getId());
-            System.out.println("savedOrder2.getId() = " + savedOrder2.getId());
+            Orders orders1 = 주문_생성(tableGroup.getOrderTables().getValues().get(0));
+            Orders orders2 = 주문_생성(tableGroup.getOrderTables().getValues().get(1));
+            orderRepository.save(orders1);
+            orderRepository.save(orders2);
 
             // when, then
             assertThrows(IllegalArgumentException.class, () -> tableGroupService.ungroup(tableGroupId));

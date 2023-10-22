@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -31,17 +32,17 @@ public class TableGroupService {
 
     @Transactional
     public Long create(final TableGroupCreateRequest request) {
-        final List<OrderTable> orderTables = request.getOrderTableIds().stream()
-                .map(id -> orderTableRepository.getById(id))
-                .collect(Collectors.toList());
-        validateOrderTablesSize(orderTables);
+        OrderTables orderTables = new OrderTables(
+                request.getOrderTableIds().stream()
+                        .map(id -> orderTableRepository.getById(id))
+                        .collect(Collectors.toList())
+        );
+        orderTables.validateOrderTablesSize();
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = orderTables.getValuesId();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        validateOrderTablesSizeEqualToSavedOrderTablesSize(orderTables, savedOrderTables);
+        orderTables.validateOrderTablesSizeEqualToSavedOrderTablesSize(savedOrderTables);
         validateSavedOrderIsEmpty(savedOrderTables);
 
         TableGroup tableGroup = new TableGroup(orderTables, LocalDateTime.now());
@@ -56,31 +57,13 @@ public class TableGroupService {
         }
     }
 
-    private static void validateOrderTablesSizeEqualToSavedOrderTablesSize(List<OrderTable> orderTables, List<OrderTable> savedOrderTables) {
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private static void validateOrderTablesSize(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = tableGroupRepository.getById(tableGroupId).getOrderTables();
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final OrderTables orderTables = tableGroupRepository.getById(tableGroupId).getOrderTables();
+        final List<Long> orderTableIds = orderTables.getValuesId();
         validateOrderTableStatus(orderTableIds);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.updateEmpty(false);
-            orderTable.updateTableGroup(null);
-            orderTableRepository.save(orderTable);
-        }
+        orderTables.updateInfo();
+//        orderTableRepository.save(orderTable);
     }
 
     private void validateOrderTableStatus(final List<Long> orderTableIds) {
