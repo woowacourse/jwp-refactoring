@@ -12,15 +12,15 @@ public class Product {
     private String name;
     
     @Embedded
-    private Price price;
+    private ProductPrice price;
     
-    public Product(final String name, final Price price) {
+    public Product(final String name, final ProductPrice price) {
         this(null, name, price);
     }
     
     public Product(final Long id,
                    final String name,
-                   final Price price) {
+                   final ProductPrice price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -34,7 +34,7 @@ public class Product {
         return name;
     }
     
-    public Price getPrice() {
+    public ProductPrice getPrice() {
         return price;
     }
 }
