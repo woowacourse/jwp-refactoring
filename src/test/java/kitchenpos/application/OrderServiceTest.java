@@ -1,10 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Collections;
+import java.util.Optional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -16,14 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -37,7 +36,7 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private OrderLineItemDao orderLineItemDao;
@@ -54,7 +53,7 @@ class OrderServiceTest {
             final var order = OrderFixture.주문_망고치킨_2개();
             given(orderDao.save(any()))
                     .willReturn(order);
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(OrderTableFixture.주문테이블_2명_id_1()));
@@ -82,7 +81,7 @@ class OrderServiceTest {
         void 주문_항목_중_실제_메뉴에_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
             // given
             final var order = OrderFixture.주문_망고치킨_2개();
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn(0L);
 
             // when & then
@@ -94,7 +93,7 @@ class OrderServiceTest {
         void 주문의_주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
             final var order = OrderFixture.주문_망고치킨_2개();
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.empty());
@@ -108,7 +107,7 @@ class OrderServiceTest {
         void 빈_테이블이면_예외가_발생한다() {
             // given
             final var order = OrderFixture.주문_망고치킨_2개();
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(OrderTableFixture.빈테이블_1명()));
@@ -124,7 +123,7 @@ class OrderServiceTest {
             final var order = OrderFixture.주문_망고치킨_2개();
             given(orderDao.save(any()))
                     .willReturn(order);
-            given(menuDao.countByIdIn(any()))
+            given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(OrderTableFixture.주문테이블_2명_id_1()));

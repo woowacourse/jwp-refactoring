@@ -6,12 +6,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -31,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private MenuGroupDao menuGroupDao;
@@ -40,7 +39,7 @@ class MenuServiceTest {
     private ProductRepository productRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -52,7 +51,7 @@ class MenuServiceTest {
         void 메뉴를_등록할_수_있다() {
             // given
             final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuDao.save(any()))
+            given(menuRepository.save(any()))
                     .willReturn(menu);
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
@@ -66,7 +65,7 @@ class MenuServiceTest {
 
             final var menuProduct1 = MenuProductFixture.메뉴상품_망고_2개();
             final var menuProduct2 = MenuProductFixture.메뉴상품_치킨_1개();
-            given(menuProductDao.save(any()))
+            given(menuProductRepository.save(any()))
                     .willReturn(menuProduct1, menuProduct2);
 
             // when
@@ -80,8 +79,7 @@ class MenuServiceTest {
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            menu.setPrice(BigDecimal.valueOf(-1));
+            final var menu = MenuFixture.메뉴_망고치킨_N원_신메뉴(-1);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -138,7 +136,7 @@ class MenuServiceTest {
         void 메뉴_목록을_조회할_수_있다() {
             // given
             final var menus = Collections.singletonList(MenuFixture.메뉴_망고치킨_17000원_신메뉴());
-            given(menuDao.findAll())
+            given(menuRepository.findAll())
                     .willReturn(menus);
 
             // when

@@ -6,16 +6,10 @@ import kitchenpos.domain.MenuProduct;
 public class MenuProductFixture {
 
     public static MenuProduct 메뉴상품_망고_2개() {
-        final var menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2L);
-        return menuProduct;
+        return new MenuProduct(MenuFixture.메뉴_망고치킨_17000원_신메뉴(), ProductFixture.상품_망고_1000원(), 2L);
     }
 
     public static MenuProduct 메뉴상품_치킨_1개() {
-        final var menuProduct = new MenuProduct();
-        menuProduct.setProductId(2L);
-        menuProduct.setQuantity(1L);
-        return menuProduct;
+        return new MenuProduct(MenuFixture.메뉴_망고치킨_17000원_신메뉴(), ProductFixture.상품_치킨_15000원(), 1L);
     }
 }
