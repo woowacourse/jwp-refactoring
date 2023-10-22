@@ -13,8 +13,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
+        this(id, null, numberOfGuests, empty);
     }
 
     public void updateEmpty(final boolean empty) {

@@ -9,12 +9,7 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFixture {
 
     public static TableGroup createTableGroup(final Long id, final List<OrderTable> orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setOrderTables(orderTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        return tableGroup;
+        return new TableGroup(id, LocalDateTime.now(), orderTables);
     }
 
     public static TableGroup createTableGroup(final Long id) {

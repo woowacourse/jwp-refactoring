@@ -115,7 +115,7 @@ class TableGroupServiceTest {
         orderTable2.updateEmpty(true);
 
         final TableGroup tableGroup = createTableGroup(1L, List.of(orderTable1, orderTable2));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
 
         given(orderTableDao.findAllByIdIn(anyList()))
             .willReturn(List.of(orderTable1, orderTable2));
@@ -133,7 +133,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = createOrderTable(1L, 3L, 3);
 
         final TableGroup tableGroup = createTableGroup(1L, List.of(orderTable1, orderTable2));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
 
         given(orderTableDao.findAllByIdIn(anyList()))
             .willReturn(List.of(orderTable1, orderTable2));
@@ -151,7 +151,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = createOrderTable(1L, 3);
 
         final TableGroup tableGroup = createTableGroup(1L, List.of(orderTable1, orderTable2));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
         orderTable1.groupBy(tableGroup);
         orderTable2.groupBy(tableGroup);
 
@@ -174,7 +174,7 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = createOrderTable(1L, 3);
 
         final TableGroup tableGroup = createTableGroup(1L, List.of(orderTable1, orderTable2));
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
         orderTable1.groupBy(tableGroup);
         orderTable2.groupBy(tableGroup);
 
