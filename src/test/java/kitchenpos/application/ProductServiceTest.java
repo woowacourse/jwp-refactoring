@@ -1,32 +1,21 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class ProductServiceTest {
+@DisplayNameGeneration(ReplaceUnderscores.class)
+class ProductServiceTest extends ServiceTest {
 
-    @Mock
-    private ProductRepository productRepository;
-
-    @InjectMocks
+    @Autowired
     private ProductService productService;
 
     @Nested
@@ -35,17 +24,15 @@ class ProductServiceTest {
         @Test
         void 상품을_등록할_수_있다() {
             // given
-            final var product = ProductFixture.상품_망고_1000원();
             final var request = ProductFixture.상품요청_망고_1000원();
-            given(productRepository.save(any()))
-                    .willReturn(product);
 
             // when
             final var actual = productService.create(request);
 
             // then
-            final var expected = ProductResponse.toResponse(product);
+            final var expected = ProductResponse.toResponse(ProductFixture.상품_망고_1000원());
             assertThat(actual).usingRecursiveComparison()
+                    .ignoringFields("id")
                     .isEqualTo(expected);
         }
     }
@@ -56,18 +43,17 @@ class ProductServiceTest {
         @Test
         void 상품_목록을_조회할_수_있다() {
             // given
-            final var products = List.of(ProductFixture.상품_망고_1000원(), ProductFixture.상품_치킨_15000원());
-            given(productRepository.findAll())
-                    .willReturn(products);
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
 
             // when
             final var actual = productService.list();
 
             // then
-            final var expected = products.stream()
-                    .map(ProductResponse::toResponse)
-                    .collect(Collectors.toList());
+            final var expected = List.of(ProductResponse.toResponse(product1), ProductResponse.toResponse(product2));
             assertThat(actual).usingRecursiveComparison()
+                    .ignoringFields("id")
                     .isEqualTo(expected);
         }
     }
