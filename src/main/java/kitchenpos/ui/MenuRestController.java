@@ -13,16 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MenuRestController {
+
     private final MenuService menuService;
 
-    public MenuRestController(final MenuService menuService) {
+    public MenuRestController(MenuService menuService) {
         this.menuService = menuService;
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<MenuResponse> create(@RequestBody final MenuCreateRequest menuCreateRequest) {
-        final MenuResponse menuResponse = menuService.create(menuCreateRequest);
-        final URI uri = URI.create("/api/menus/" + menuResponse.getId());
+    public ResponseEntity<MenuResponse> create(@RequestBody MenuCreateRequest menuCreateRequest) {
+        MenuResponse menuResponse = menuService.create(menuCreateRequest);
+        URI uri = URI.create("/api/menus/" + menuResponse.getId());
         return ResponseEntity.created(uri)
                 .body(menuResponse);
     }

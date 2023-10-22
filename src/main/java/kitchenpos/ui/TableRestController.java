@@ -16,17 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TableRestController {
+
     private final TableService tableService;
 
-    public TableRestController(final TableService tableService) {
+    public TableRestController(TableService tableService) {
         this.tableService = tableService;
     }
 
     @PostMapping("/api/tables")
     public ResponseEntity<OrderTableResponse> create(
-            @RequestBody final OrderTableCreateRequest orderTableCreateRequest) {
-        final OrderTableResponse orderTableResponse = tableService.create(orderTableCreateRequest);
-        final URI uri = URI.create("/api/tables/" + orderTableResponse.getId());
+            @RequestBody OrderTableCreateRequest orderTableCreateRequest
+    ) {
+        OrderTableResponse orderTableResponse = tableService.create(orderTableCreateRequest);
+        URI uri = URI.create("/api/tables/" + orderTableResponse.getId());
         return ResponseEntity.created(uri)
                 .body(orderTableResponse);
     }
@@ -39,8 +41,8 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponse> changeEmpty(
-            @PathVariable final Long orderTableId,
-            @RequestBody final OrderTableUpdateRequest orderTableUpdateRequest
+            @PathVariable Long orderTableId,
+            @RequestBody OrderTableUpdateRequest orderTableUpdateRequest
     ) {
         OrderTableResponse orderTableResponse = tableService.changeEmpty(orderTableId, orderTableUpdateRequest);
         return ResponseEntity.ok()
@@ -49,8 +51,8 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
-            @PathVariable final Long orderTableId,
-            @RequestBody final OrderTableUpdateRequest orderTableUpdateRequest
+            @PathVariable Long orderTableId,
+            @RequestBody OrderTableUpdateRequest orderTableUpdateRequest
     ) {
         OrderTableResponse orderTableResponse = tableService.changeNumberOfGuests(orderTableId,
                 orderTableUpdateRequest);

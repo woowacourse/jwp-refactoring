@@ -12,9 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 

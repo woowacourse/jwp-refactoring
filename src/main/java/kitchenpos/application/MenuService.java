@@ -17,14 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
+            MenuRepository menuRepository,
+            MenuGroupRepository menuGroupRepository,
+            ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -32,7 +33,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
+    public MenuResponse create(MenuCreateRequest menuCreateRequest) {
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 메뉴 그룹이 없습니다."));

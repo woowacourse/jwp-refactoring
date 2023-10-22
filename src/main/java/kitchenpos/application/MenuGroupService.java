@@ -12,14 +12,15 @@ import java.util.List;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
-    public MenuGroupResponse create(final MenuGroupCreateRequest menuGroupCreateRequest) {
+    public MenuGroupResponse create(MenuGroupCreateRequest menuGroupCreateRequest) {
         MenuGroup menuGroup = MenuGroup.builder()
                 .name(menuGroupCreateRequest.getName())
                 .build();

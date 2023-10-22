@@ -19,14 +19,15 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            MenuRepository menuRepository,
+            OrderRepository orderRepository,
+            OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -34,7 +35,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
+    public OrderResponse create(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemDto> orderLineItemDtos = orderCreateRequest.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
