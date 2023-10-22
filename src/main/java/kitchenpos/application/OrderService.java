@@ -54,7 +54,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (request.getOrderLineItems().size() != menuRepository.countByIdIn(requestMenuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상품 목록 개수와 실제 메뉴 개수와 같지 않습니다. 주문할 수 있는 상품인지 확인해주세요.");
         }
     }
 
