@@ -112,26 +112,8 @@ class TableServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_메서드는_변경할_orderTableId의_orderStatu가_COMPLETION이_아니면_예외가_발생한다(final String invalidOrderStatus) {
         // given
-        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
-        final Menu menu = Menu.of(
-                "메뉴",
-                BigDecimal.TEN,
-                List.of(persistMenuProduct),
-                persistMenuGroup
-        );
-        final Menu persistMenu = menuRepository.save(menu);
-        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
-        final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
-        final Order order = new Order(
-                persistOrderTable,
-                orderStatus,
-                LocalDateTime.now().minusHours(3),
-                List.of(orderLineItem)
-        );
-        orderRepository.save(order);
+        final Menu persistMenu = persistMenu();
+        final OrderTable persistOrderTable = persistOrderTable(invalidOrderStatus, persistMenu);
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
 
         // when & then
@@ -173,5 +155,34 @@ class TableServiceTest {
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-999L, request))
                 .isInstanceOf(OrderTableNotFoundException.class);
+    }
+
+    private Menu persistMenu() {
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
+        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
+        final Menu menu = Menu.of(
+                "메뉴",
+                BigDecimal.TEN,
+                List.of(persistMenuProduct),
+                persistMenuGroup
+        );
+
+        return menuRepository.save(menu);
+    }
+
+    private OrderTable persistOrderTable(final String invalidOrderStatus, final Menu persistMenu) {
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
+        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
+        final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
+        final Order order = new Order(
+                persistOrderTable,
+                orderStatus,
+                LocalDateTime.now().minusHours(3),
+                List.of(orderLineItem)
+        );
+        orderRepository.save(order);
+
+        return persistOrderTable;
     }
 }
