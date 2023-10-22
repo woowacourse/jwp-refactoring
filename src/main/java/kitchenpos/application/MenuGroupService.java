@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MenuGroupService {
@@ -29,9 +28,6 @@ public class MenuGroupService {
     }
 
     public List<MenuGroupResponse> list() {
-        return menuGroupRepository.findAll()
-                .stream()
-                .map(MenuGroupResponse::from)
-                .collect(Collectors.toList());
+        return MenuGroupResponse.from(menuGroupRepository.findAll());
     }
 }

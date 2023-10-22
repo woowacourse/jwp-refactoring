@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -27,9 +26,6 @@ public class ProductService {
     }
 
     public List<ProductResponse> list() {
-        return productRepository.findAll()
-                .stream()
-                .map(ProductResponse::from)
-                .collect(Collectors.toList());
+        return ProductResponse.from(productRepository.findAll());
     }
 }

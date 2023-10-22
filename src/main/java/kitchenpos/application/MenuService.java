@@ -59,9 +59,6 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        return menuRepository.joinMenuGroupAll()
-                .stream()
-                .map(MenuResponse::from)
-                .collect(Collectors.toList());
+        return MenuResponse.from(menuRepository.joinMenuGroupAll());
     }
 }

@@ -45,6 +45,12 @@ public class MenuResponse {
                 .collect(Collectors.toList());
     }
 
+    public static List<MenuResponse> from(final List<Menu> menus) {
+        return menus.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
+    }
+
     public long getId() {
         return id;
     }
