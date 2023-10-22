@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuGroupServiceTest {
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
@@ -27,8 +27,8 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹");
-        given(menuGroupDao.save(any(MenuGroup.class)))
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹", null);
+        given(menuGroupRepository.save(any(MenuGroup.class)))
             .willReturn(menuGroup);
 
         // when
@@ -43,12 +43,12 @@ class MenuGroupServiceTest {
     void list() {
         // given
         final List<MenuGroup> expectedMenuGroups = List.of(
-            new MenuGroup(1L, "메뉴 그룹 1"),
-            new MenuGroup(2L, "메뉴 그룹 2"),
-            new MenuGroup(3L, "메뉴 그룹 3"),
-            new MenuGroup(4L, "메뉴 그룹 4")
+            new MenuGroup(1L, "메뉴 그룹 1", null),
+            new MenuGroup(2L, "메뉴 그룹 2", null),
+            new MenuGroup(3L, "메뉴 그룹 3", null),
+            new MenuGroup(4L, "메뉴 그룹 4", null)
         );
-        given(menuGroupDao.findAll())
+        given(menuGroupRepository.findAll())
             .willReturn(expectedMenuGroups);
 
         // when

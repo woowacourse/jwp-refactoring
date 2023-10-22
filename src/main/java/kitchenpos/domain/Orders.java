@@ -1,23 +1,30 @@
 package kitchenpos.domain;
 
 import java.util.List;
-import org.springframework.data.relational.core.mapping.MappedCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
+@Embeddable
 public class Orders {
 
-    @MappedCollection(idColumn = "id")
+    @OneToMany(mappedBy = "orderTable")
+    @JoinColumn(name = "order_table_id")
     private List<Order> orders;
+
+    protected Orders() {
+    }
 
     public Orders(final List<Order> orders) {
         this.orders = orders;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public boolean hasNotCompletion() {
+    public boolean hasProceedingOrder() {
         return orders.stream()
             .anyMatch(order -> !order.isCompleted());
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 }

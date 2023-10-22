@@ -1,25 +1,26 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.data.relational.core.mapping.MappedCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
+@Embeddable
 public class OrderLineItems {
 
-    @MappedCollection(idColumn = "id")
-    private final List<OrderLineItem> orderLineItems;
+    @OneToMany
+    @JoinColumn(name = "order_id")
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    public OrderLineItems() {
+    }
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems) {
-        validate(orderLineItems);
         this.orderLineItems = orderLineItems;
     }
 
-    private void validate(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems == null || orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
-        }
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return new ArrayList<>(orderLineItems);
     }
 }

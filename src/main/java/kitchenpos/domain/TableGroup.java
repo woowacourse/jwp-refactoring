@@ -2,44 +2,44 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
 
+    @Id
     private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+    @Embedded
+    private OrderTables orderTables;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    protected TableGroup() {
     }
 
-    public static TableGroup forSave(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        return new TableGroup(null, createdDate, orderTables);
+    public TableGroup(final Long id, final List<OrderTable> orderTables) {
+        this.id = id;
+        this.orderTables = new OrderTables(orderTables);
+        this.orderTables.registerTableGroup(this);
+    }
+
+    public static TableGroup forSave(final List<OrderTable> orderTables) {
+        return new TableGroup(null, orderTables);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

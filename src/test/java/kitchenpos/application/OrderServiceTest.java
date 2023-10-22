@@ -5,18 +5,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,16 +29,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -46,25 +47,23 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final LocalDateTime savedTime = LocalDateTime.now();
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L, 1L, 1L),
-                                                           new OrderLineItem(2L, 1L, 2L, 2L));
-        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), savedTime, orderLineItems);
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L),
+                                                           new OrderLineItem(2L, 2L));
+        final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems);
 
-        given(menuDao.countByIdIn(any()))
-            .willReturn(2L);
-        given(orderTableDao.findById(any()))
-            .willReturn(Optional.of(new OrderTable(1L, 1L, 10, false)));
-        given(orderDao.save(any()))
-            .willReturn(new Order(1L, 1L, OrderStatus.COOKING.name(), savedTime,
-                                  orderLineItems));
+        given(menuRepository.existsById(any()))
+            .willReturn(true)
+            .willReturn(true);
+        given(orderLineItemRepository.findAllById(any()))
+            .willReturn(orderLineItems);
+        given(orderRepository.save(any()))
+            .willReturn(new Order(1L, OrderStatus.COOKING, orderLineItems));
 
         // when
-        final Order created = orderService.create(order);
+        final Order created = orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(1L, 2L)));
 
         // then
         assertThat(created.getId()).isEqualTo(1L);
-        assertThat(created.getOrderTableId()).isEqualTo(order.getOrderTableId());
         assertThat(created.getOrderStatus()).isEqualTo(order.getOrderStatus());
         assertThat(created.getOrderedTime()).isNotNull();
     }
@@ -73,11 +72,13 @@ class OrderServiceTest {
     @Test
     void create_emptyOrderLineItems() {
         // given
-        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
+        final OrderCreateRequest cooking = new OrderCreateRequest(1L, "COOKING", Collections.emptyList());
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> {
+            orderService.create(cooking);
+        })
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -85,15 +86,13 @@ class OrderServiceTest {
     @Test
     void create_differentMenuSize() {
         // given
-        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
-                                          List.of(new OrderLineItem(1L, 1L, 1L, 1L),
-                                                  new OrderLineItem(2L, 1L, 2L, 2L)));
-        given(menuDao.countByIdIn(any()))
-            .willReturn(1L);
+        given(menuRepository.existsById(any()))
+            .willReturn(true)
+            .willReturn(false);
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(1L, 2L))))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -101,19 +100,15 @@ class OrderServiceTest {
     @Test
     void create_failNotExistOrderTable() {
         // given
-        final long notExistedOrderTable = 0L;
-        final Order order = Order.forSave(notExistedOrderTable, OrderStatus.COOKING.name(), LocalDateTime.now(),
-                                          List.of(new OrderLineItem(1L, 1L, 1L, 1L),
-                                                  new OrderLineItem(2L, 1L, 2L, 2L)));
-
-        given(menuDao.countByIdIn(any()))
-            .willReturn(2L);
-        given(orderTableDao.findById(any()))
+        given(menuRepository.existsById(any()))
+            .willReturn(true)
+            .willReturn(true);
+        given(orderTableRepository.findById(0L))
             .willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(0L, "COOKING", List.of(1L, 2L))))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -121,18 +116,15 @@ class OrderServiceTest {
     @Test
     void create_failEmptyOrderTable() {
         // given
-        final Order order = Order.forSave(1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
-                                          List.of(new OrderLineItem(1L, 1L, 1L, 1L),
-                                                  new OrderLineItem(2L, 1L, 2L, 2L)));
-
-        given(menuDao.countByIdIn(any()))
-            .willReturn(2L);
-        given(orderTableDao.findById(any()))
-            .willReturn(Optional.of(new OrderTable(1L, 1L, 10, true)));
+        given(menuRepository.existsById(any()))
+            .willReturn(true)
+            .willReturn(true);
+        given(orderTableRepository.findById(any()))
+            .willReturn(Optional.of(new OrderTable(1L, 10, true, Collections.emptyList(), null)));
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(1L, 2L))))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -140,34 +132,34 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        final Long orderTableId = 1L;
-        final Order order = new Order(orderTableId, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Order order = new Order(1L, OrderStatus.COOKING, List.of(
+            new OrderLineItem(1L, 1L),
+            new OrderLineItem(2L, 2L)
+        ));
 
-        given(orderDao.findById(order.getId()))
+        given(orderRepository.findById(any()))
             .willReturn(Optional.of(order));
 
         // when
-        final Order changed = orderService.changeOrderStatus(orderTableId, order);
+        final Order changed = orderService.changeOrderStatus(order.getId(),
+                                                             new OrderChangeOrderStatusRequest("COMPLETION"));
 
         // then
         assertThat(changed.getId()).isEqualTo(order.getId());
-        assertThat(changed.getOrderTableId()).isEqualTo(order.getOrderTableId());
-        assertThat(changed.getOrderStatus()).isEqualTo(order.getOrderStatus());
+        assertThat(changed.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 
     @DisplayName("주문이 존재하지 않으면 예외가 발생한다.")
     @Test
     void changeOrderStatus_failNotExistOrder() {
         // given
-        final Long orderTableId = 1L;
-        final Order order = new Order(1L, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
-
-        given(orderDao.findById(order.getId()))
+        final Long orderId = 0L;
+        given(orderRepository.findById(orderId))
             .willReturn(Optional.empty());
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderTableId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, new OrderChangeOrderStatusRequest("COOKING")))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -176,14 +168,16 @@ class OrderServiceTest {
     void changeOrderStatus_failStatusIsCompletion() {
         // given
         final Long orderTableId = 1L;
-        final Order order = new Order(1L, orderTableId, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        final Order order = new Order(1L, OrderStatus.COMPLETION,
+                                      List.of(new OrderLineItem(1L, 1L)));
 
-        given(orderDao.findById(order.getId()))
+        given(orderRepository.findById(order.getId()))
             .willReturn(Optional.of(order));
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderTableId, order))
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(orderTableId, new OrderChangeOrderStatusRequest("COMPLETION")))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

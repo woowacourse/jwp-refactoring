@@ -2,12 +2,17 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import org.springframework.data.relational.core.mapping.Column;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class MenuPrice {
 
-    @Column("price")
-    private final BigDecimal value;
+    @Column(name = "price")
+    private BigDecimal value;
+
+    public MenuPrice() {
+    }
 
     public MenuPrice(final BigDecimal value) {
         validate(value);

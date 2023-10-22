@@ -1,51 +1,96 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
+
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
     private boolean empty;
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+    @Embedded
+    private Orders orders;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+
+    protected OrderTable() {
     }
 
-    public static OrderTable forSave(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        return new OrderTable(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(final Long id, final int numberOfGuests, final boolean empty, final List<Order> orders,
+                      final TableGroup tableGroup) {
+        this.id = id;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
+        this.empty = empty;
+        this.orders = new Orders(orders);
+        this.tableGroup = tableGroup;
+    }
+
+    public static OrderTable forSave(final int numberOfGuests, final boolean empty, final List<Order> orders) {
+        return new OrderTable(null, numberOfGuests, empty, orders, null);
+    }
+
+    public void changeEmpty() {
+        if (hasProceedingOrder()) {
+            throw new IllegalArgumentException("주문이 완료되지 않은 테이블은 빈 테이블로 설정할 수 없습니다.");
+        }
+
+        this.empty = true;
+    }
+
+    public boolean hasProceedingOrder() {
+        return orders.hasProceedingOrder();
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블의 손님 수는 변경할 수 없습니다.");
+        }
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
+    }
+
+    public void registerTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public boolean hasTableGroup() {
+        return tableGroup != null;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    public List<Order> getOrders() {
+        return new ArrayList<>(orders.getOrders());
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public boolean isNotEmpty() {
+        return !empty;
     }
 }

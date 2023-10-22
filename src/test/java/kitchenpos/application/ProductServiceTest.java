@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -30,13 +31,13 @@ class ProductServiceTest {
     @Test
     void create() {
         // given
-        final Product product = Product.forSave("상품", BigDecimal.TEN);
+        final Product product = new Product(1L, "상품", BigDecimal.TEN);
 
         given(productDao.save(any()))
-            .willReturn(new Product(1L, "상품", BigDecimal.TEN));
+            .willReturn(product);
 
         // when
-        final Product savedProduct = productService.create(product);
+        final Product savedProduct = productService.create(new ProductCreateRequest("상품", BigDecimal.TEN));
 
         // then
         assertThat(savedProduct.getId()).isEqualTo(1L);
@@ -48,11 +49,9 @@ class ProductServiceTest {
     @Test
     void create_failNullPrice() {
         // given
-        final Product product = Product.forSave("상품", null);
-
         // when
         // then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new ProductCreateRequest("상품", null)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,11 +59,9 @@ class ProductServiceTest {
     @Test
     void create_failNegativePrice() {
         // given
-        final Product product = Product.forSave("상품", BigDecimal.valueOf(-1L));
-
         // when
         // then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(new ProductCreateRequest("상품", BigDecimal.valueOf(-1L))))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

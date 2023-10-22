@@ -1,12 +1,17 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
-import org.springframework.data.relational.core.mapping.Column;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class NumberOfGuests {
 
-    @Column("number_of_guests")
+    @Column(name = "number_of_guests")
     private int value;
+
+    protected NumberOfGuests() {
+    }
 
     public NumberOfGuests(final int value) {
         validate(value);
