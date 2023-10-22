@@ -11,7 +11,7 @@ import static org.mockito.Mockito.times;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -26,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -120,7 +120,7 @@ class TableServiceTest {
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
 
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(true);
 
         // when & then

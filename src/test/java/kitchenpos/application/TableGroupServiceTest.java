@@ -10,7 +10,7 @@ import static org.mockito.Mockito.times;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
@@ -27,7 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -138,7 +138,7 @@ class TableGroupServiceTest {
         given(orderTableRepository.findAllByTableGroupId(tableGroup.getId()))
                 .willReturn(orderTables);
 
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 List.of(orderTable1.getId(), orderTable2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
         )).willReturn(false);
@@ -153,7 +153,7 @@ class TableGroupServiceTest {
 
         // then
         then(orderTableRepository).should(times(1)).findAllByTableGroupId(1L);
-        then(orderDao).should(times(1)).existsByOrderTableIdInAndOrderStatusIn(anyList(), any());
+        then(orderRepository).should(times(1)).existsByOrderTableIdInAndOrderStatusIn(anyList(), any());
         then(orderTableRepository).should(times(2)).save(any());
     }
 
@@ -171,7 +171,7 @@ class TableGroupServiceTest {
         given(orderTableRepository.findAllByTableGroupId(1L))
                 .willReturn(orderTables);
 
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 List.of(orderTable1.getId(), orderTable2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
         )).willReturn(true);

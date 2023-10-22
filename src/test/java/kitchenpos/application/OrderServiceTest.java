@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -35,10 +35,10 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -51,23 +51,15 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
         final Menu menu2 = new Menu(11L, "후라이드 간장 세트", BigDecimal.valueOf(30000), 1L);
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
-
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(menu2.getId());
-
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
+        order.addOrderLineItem(orderLineItem1);
+        order.addOrderLineItem(orderLineItem2);
 
         given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
@@ -75,34 +67,32 @@ class OrderServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
         final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, false);
 
-        order.setOrderTableId(orderTable.getId());
+        final Order updatedOrder = new Order(
+                order.getId(),
+                orderTable.getId(),
+                order.getOrderStatus(),
+                order.getOrderLineItems()
+        );
 
-        given(orderTableRepository.findById(order.getOrderTableId()))
+        given(orderTableRepository.findById(any()))
                 .willReturn(Optional.of(orderTable));
 
-        given(orderDao.save(any()))
-                .willReturn(order);
-
-        given(orderLineItemDao.save(orderLineItem1))
-                .willReturn(orderLineItem1);
-
-        given(orderLineItemDao.save(orderLineItem2))
-                .willReturn(orderLineItem2);
+        given(orderRepository.save(any()))
+                .willReturn(updatedOrder);
 
         // when & then
-        assertThat(orderService.create(order)).isEqualTo(order);
+        assertThat(orderService.create(updatedOrder)).isEqualTo(updatedOrder);
         then(menuRepository).should(times(1)).countByIdIn(any());
         then(orderTableRepository).should(times(1)).findById(anyLong());
-        then(orderDao).should(times(1)).save(any());
-        then(orderLineItemDao).should(times(2)).save(any());
+        then(orderRepository).should(times(1)).save(any());
+        then(orderLineItemRepository).should(times(2)).save(any());
     }
 
     @DisplayName("주문 항목이 존재하지 않으면 등록할 수 없다.")
     @Test
     void create_FailWhenOrderLineItemsNotExist() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -114,22 +104,15 @@ class OrderServiceTest {
     @Test
     void create_FailWhenMenuNotExist() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, 11L, 1);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(11L);
-
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
+        order.addOrderLineItem(orderLineItem1);
+        order.addOrderLineItem(orderLineItem2);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -141,23 +124,16 @@ class OrderServiceTest {
     @Test
     void create_FailWhenOrderTableIsEmpty() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
         final Menu menu2 = new Menu(11L, "후라이드 간장 세트", BigDecimal.valueOf(30000), 1L);
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1);
-        orderLineItem1.setMenuId(menu1.getId());
+        final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(order, menu2.getId(), 1);
 
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1);
-        orderLineItem2.setMenuId(menu2.getId());
-
-        order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
+        order.addOrderLineItem(orderLineItem1);
+        order.addOrderLineItem(orderLineItem2);
 
         given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
@@ -165,13 +141,18 @@ class OrderServiceTest {
         final TableGroup tableGroup = new TableGroup(10L);
         final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, true);
 
-        order.setOrderTableId(orderTable.getId());
+        final Order udpatedOrder = new Order(
+                order.getId(),
+                orderTable.getId(),
+                order.getOrderStatus(),
+                order.getOrderLineItems()
+        );
 
-        given(orderTableRepository.findById(order.getOrderTableId()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(udpatedOrder))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블의 상태가 비어있습니다.");
     }
@@ -180,64 +161,42 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final Order order1 = new Order();
-        order1.setId(1L);
+        final Order order1 = new Order(1L, null, OrderStatus.COOKING.name());
 
-        final Order order2 = new Order();
-        order2.setId(2L);
+        final Order order2 = new Order(2L, null, OrderStatus.COOKING.name());
 
         final List<Order> orders = List.of(order1, order2);
 
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(order1.getId());
-
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(order2.getId());
-
-        given(orderDao.findAll())
+        given(orderRepository.findAll())
                 .willReturn(orders);
-        given(orderLineItemDao.findAllByOrderId(order1.getId()))
-                .willReturn(List.of(orderLineItem1));
-        given(orderLineItemDao.findAllByOrderId(order2.getId()))
-                .willReturn(List.of(orderLineItem2));
 
         // when & then
         assertThat(orderService.list()).isEqualTo(orders);
-        then(orderDao).should(times(1)).findAll();
-        then(orderLineItemDao).should(times(2)).findAllByOrderId(anyLong());
+        then(orderRepository).should(times(1)).findAll();
     }
 
     @DisplayName("특정 주문의 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        final Order order = new Order(1L, null, OrderStatus.COOKING.name());
 
-        given(orderDao.findById(1L))
+        given(orderRepository.findById(1L))
                 .willReturn(Optional.of(order));
-        given(orderDao.save(order))
-                .willReturn(order);
-        given(orderLineItemDao.findAllByOrderId(order.getId()))
-                .willReturn(List.of(new OrderLineItem()));
 
         // when
         orderService.changeOrderStatus(1L, order);
 
         // then
-        then(orderDao).should(times(1)).findById(1L);
-        then(orderDao).should(times(1)).save(order);
-        then(orderLineItemDao).should(times(1)).findAllByOrderId(1L);
+        then(orderRepository).should(times(1)).findById(1L);
+        then(orderRepository).should(times(1)).save(any());
     }
 
     @DisplayName("해당 주문이 존재하지 않으면 변경할 수 없다.")
     @Test
     void changeOrderStatus_FailWhenOrderNotExist() {
         // given
-        final Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        final Order order = new Order(1L, null, OrderStatus.MEAL.name());
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(2L, order))
@@ -249,11 +208,9 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_FailWhenOrderStatusAlreadyCompletion() {
         // given
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setId(1L);
+        final Order order = new Order(1L, null, OrderStatus.COMPLETION.name());
 
-        given(orderDao.findById(1L))
+        given(orderRepository.findById(1L))
                 .willReturn(Optional.of(order));
 
         // when & then
