@@ -1,4 +1,4 @@
-package kitchenpos.menu_group.request;
+package kitchenpos.menu.request;
 
 public class MenuGroupCreateRequest {
 

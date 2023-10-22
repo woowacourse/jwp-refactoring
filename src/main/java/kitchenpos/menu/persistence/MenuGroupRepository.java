@@ -1,6 +1,6 @@
-package kitchenpos.menu_group.persistence;
+package kitchenpos.menu.persistence;
 
-import kitchenpos.menu_group.MenuGroup;
+import kitchenpos.menu.MenuGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {

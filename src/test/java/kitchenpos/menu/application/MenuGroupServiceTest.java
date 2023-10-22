@@ -1,13 +1,13 @@
-package kitchenpos.menu_group.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.menu_group.MenuGroup;
-import kitchenpos.menu_group.persistence.MenuGroupRepository;
-import kitchenpos.menu_group.request.MenuGroupCreateRequest;
+import kitchenpos.menu.MenuGroup;
+import kitchenpos.menu.persistence.MenuGroupRepository;
+import kitchenpos.menu.request.MenuGroupCreateRequest;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
