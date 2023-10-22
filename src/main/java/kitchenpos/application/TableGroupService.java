@@ -9,7 +9,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -38,10 +37,6 @@ public class TableGroupService {
     public TableGroup create(final TableGroupRequest request) {
         final TableGroup tableGroup = request.toTableGroup();
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
