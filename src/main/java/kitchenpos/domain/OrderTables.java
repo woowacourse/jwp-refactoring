@@ -19,11 +19,12 @@ public class OrderTables {
     }
 
     public void validateIsEmptyAndTableGroupIdIsNull() {
-        values.stream()
-                .filter(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()))
-                .anyMatch(orderTable -> {
-                    throw new IllegalArgumentException("주문 테이블이 비어있지 않거나 이미 그룹화된 테이블입니다.");
-                });
+        final boolean isEmptyAndTableGroupIdIsNull = values.stream()
+                .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()));
+
+        if (isEmptyAndTableGroupIdIsNull) {
+            throw new IllegalArgumentException("주문 테이블이 비어있지 않거나 이미 그룹화된 테이블입니다.");
+        }
     }
 
     public void updateTableGroupIdAndEmpty(final Long tableGroupId, final boolean empty) {

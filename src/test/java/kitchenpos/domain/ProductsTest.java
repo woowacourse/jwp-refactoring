@@ -18,6 +18,6 @@ class ProductsTest {
         //when, then
         Assertions.assertThatThrownBy(() -> products.validateSum(List.of(2, 1), new BigDecimal(80000)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 금액이 총 상품 금액보다 작을 수 없습니다.");
+                .hasMessage("주문 금액이 총 상품 금액보다 클 수 없습니다.");
     }
 }
