@@ -42,7 +42,7 @@ public class Menu {
 
     public void validatePriceIsNullOrMinus() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴의 가격은 Null이거나 음수일 수 없습니다.");
         }
     }
 

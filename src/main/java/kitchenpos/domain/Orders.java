@@ -65,9 +65,9 @@ public class Orders {
         this.orderStatus = orderStatus;
     }
 
-    public void validateStatusIsEqualTo(final OrderStatus orderStatus) {
-        if (Objects.equals(this.orderStatus, orderStatus)) {
-            throw new IllegalArgumentException();
+    public void validateStatusIsEqualTo() {
+        if (Objects.equals(this.orderStatus, COMPLETION)) {
+            throw new IllegalArgumentException("이미 완료된 주문의 상태는 변경할 수 없습니다!");
         }
     }
 

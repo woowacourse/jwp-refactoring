@@ -54,19 +54,19 @@ public class OrderTable {
 
     public void validateTableGroupIsNotNull() {
         if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("TableGroup이 Null일 수 없습니다.");
         }
     }
 
     public void validateNumberOfGuests() {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("손님의 수가 음수일 수 없습니다.");
         }
     }
 
     public void validateIsEmpty() {
         if (isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("OrderTable이 비어있지 않아야 합니다.");
         }
     }
 

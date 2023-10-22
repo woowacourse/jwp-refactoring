@@ -7,6 +7,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     default Product getById(final Long productId) {
         return findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("id가 " + productId + "인 Product를 찾을 수 없습니다!"));
     }
 }
