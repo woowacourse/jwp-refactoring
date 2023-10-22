@@ -17,6 +17,7 @@ import kitchenpos.order.exception.OrderLineItemEmptyException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.exception.OrderTableEmptyException;
+import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderFixture.주문_생성_요청;
+import static kitchenpos.fixture.OrderFixture.주문_생성_요청_잘못된_주문_테이블;
 import static kitchenpos.fixture.OrderFixture.주문_업데이트_요청;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_품목_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
@@ -96,10 +98,10 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_품목이_주문_테이블에_있지_않으면_예외를_발생시킨다() {
         // given
-        Menu menu = new Menu("name", 100L, null, null);
+        Menu menu = new Menu("name", 100L, null, List.of());
 
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
-        OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
+        OrderLineItem orderLineItem = 주문_품목_생성(-100L, 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
 
         // when & then
@@ -110,23 +112,23 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블이_없다면_예외를_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(10, true);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
 
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), List.of()));
         OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
-        OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
+        OrderCreateRequest req = 주문_생성_요청_잘못된_주문_테이블(orderTable, List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(req))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
     void 주문_테이블이_비어있다면_예외를_발생한다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), List.of()));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, true));
         OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
@@ -139,7 +141,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문을_모두_조회한다() {
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성());
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup.getId(), null));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup.getId(), List.of()));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         orderRepository.save(OrderFixture.주문_생성(orderTable.getId(), COOKING.name(), List.of(주문_품목_생성(menu.getId(), 1L))));
 
@@ -156,7 +158,7 @@ class OrderServiceTest extends IntegrationTestHelper {
         String orderStatus = COOKING.name();
 
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
-        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
+        Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), List.of()));
         OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
 

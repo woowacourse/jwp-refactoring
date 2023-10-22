@@ -14,6 +14,7 @@ import kitchenpos.order.exception.OrderLineItemEmptyException;
 import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.exception.OrderTableEmptyException;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,13 +37,24 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderCreateRequest req) {
-        OrderTable orderTable = orderTableRepository.findById(req.getOrderTableId())
-                .orElseThrow(OrderTableNotFoundException::new);
+        // 1. 주문 품목이 비어 있다면 예외
+        if(req.getOrderLineItems().isEmpty()) {
+            throw new OrderLineItemEmptyException();
+        }
 
+        // 2. 주문 테이블이 없다면 예외
+        OrderTable orderTable = findOrderTable(req);
+
+        // 3. 주문 테이블이 비어있다면 예외
+        if (!orderTableRepository.existsByIdAndEmptyIsFalse(req.getOrderTableId())) {
+            throw new OrderTableEmptyException();
+        }
+
+
+        // 4. 매핑
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemCreateRequest orderLineItemReq : req.getOrderLineItems()) {
-            Menu menu = menuRepository.findById(orderLineItemReq.getMenuId())
-                    .orElseThrow(MenuNotFoundException::new);
+            Menu menu = findMenu(orderLineItemReq);
 
             OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemReq.getQuantity());
             orderLineItems.add(orderLineItem);
@@ -53,7 +65,19 @@ public class OrderService {
             throw new OrderLineItemEmptyException();
         }
 
+
+
         return orderRepository.save(order);
+    }
+
+    private OrderTable findOrderTable(final OrderCreateRequest req) {
+        return orderTableRepository.findById(req.getOrderTableId())
+                .orElseThrow(OrderTableNotFoundException::new);
+    }
+
+    private Menu findMenu(final OrderLineItemCreateRequest orderLineItemReq) {
+        return menuRepository.findById(orderLineItemReq.getMenuId())
+                .orElseThrow(MenuNotFoundException::new);
     }
 
     @Transactional(readOnly = true)

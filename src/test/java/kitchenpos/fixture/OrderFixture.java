@@ -38,6 +38,15 @@ public class OrderFixture {
         return new OrderCreateRequest(orderTable.getId(), orderLineItemCreateRequests);
     }
 
+    public static OrderCreateRequest 주문_생성_요청_잘못된_주문_테이블(final OrderTable orderTable,
+                                              final List<OrderLineItem> orderLineItems) {
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderLineItems.stream()
+                .map(it -> new OrderLineItemCreateRequest(it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
+
+        return new OrderCreateRequest(-1L, orderLineItemCreateRequests);
+    }
+
     public static OrderUpdateRequest 주문_업데이트_요청(final Order order) {
         return new OrderUpdateRequest(order.getOrderStatus());
     }
