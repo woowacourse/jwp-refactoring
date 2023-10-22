@@ -35,7 +35,7 @@ class OrderTableTest {
 
             // then
             assertThat(orderTable.getId()).isEqualTo(1L);
-            assertThat(orderTable.getTableGroupId()).isNull();
+            assertThat(orderTable.findTableGroupId()).isNull();
         }
     }
 

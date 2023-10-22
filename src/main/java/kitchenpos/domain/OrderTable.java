@@ -68,6 +68,13 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public Long findTableGroupId() {
+        if (tableGroup == null) {
+            return null;
+        }
+        return tableGroup.getId();
+    }
+
     public void ungroup() {
         this.tableGroup = null;
     }
@@ -82,12 +89,5 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public Long getTableGroupId() {
-        if (tableGroup == null) {
-            return null;
-        }
-        return tableGroup.getId();
     }
 }

@@ -14,7 +14,7 @@ public class OrderTableResponse {
             orderTable.getId(),
             orderTable.isEmpty(),
             orderTable.getNumberOfGuests(),
-            orderTable.getTableGroupId()
+            orderTable.findTableGroupId()
         );
     }
 
