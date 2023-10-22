@@ -1,5 +1,25 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.*;
+import kitchenpos.fixture.MenuProductFixtures;
+import kitchenpos.fixture.OrderFixtures;
+import kitchenpos.fixture.OrderLineItemFixtures;
+import kitchenpos.request.MenuCreateRequest;
+import kitchenpos.request.MenuProductDto;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
 import static kitchenpos.fixture.OrderTableFixtures.createEmptyTable;
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
@@ -7,30 +27,6 @@ import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.MenuFixtures;
-import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
-import kitchenpos.fixture.OrderLineItemFixtures;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -123,7 +119,7 @@ class TableGroupServiceTest extends ServiceTest {
                 createTableGroup(orderTable1, orderTable2)
         );
 
-        Menu menu = menuService.create(createMenu("양념치킨", 17_000));
+        Menu menu = menuService.create(getMenuCreateRequest("양념치킨", 17_000));
         Order order = createOrder(orderTable1, orderStatus, menu);
         Order savedOrder = orderDao.save(order);
 
@@ -133,15 +129,15 @@ class TableGroupServiceTest extends ServiceTest {
 
     }
 
-    private Menu createMenu(String name, int price) {
+    private MenuCreateRequest getMenuCreateRequest(String name, int price) {
         Product product = productDao.save(양념치킨_17000원);
         MenuProduct menuProduct = MenuProductFixtures.create(product, 1);
         MenuGroup menuGroup = menuGroupDao.save(한마리_메뉴);
-        return MenuFixtures.create(
+        return new MenuCreateRequest(
                 name,
-                price,
-                menuGroup,
-                List.of(menuProduct)
+                BigDecimal.valueOf(price),
+                menuGroup.getId(),
+                MenuProductDto.of(List.of(menuProduct))
         );
     }
 
