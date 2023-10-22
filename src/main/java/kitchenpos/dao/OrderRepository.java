@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import java.util.List;
 import kitchenpos.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 

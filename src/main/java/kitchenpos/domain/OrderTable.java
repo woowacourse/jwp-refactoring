@@ -3,10 +3,12 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
@@ -18,8 +20,11 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
+    @JoinColumn(name = "fk_order_table_to_table_group")
     private TableGroup tableGroup;
+    @Column(nullable = false)
     private int numberOfGuests;
+    @Column(nullable = false)
     private boolean empty;
     @OneToMany(mappedBy = "orderTable")
     private List<Order> orders = new ArrayList<>();
