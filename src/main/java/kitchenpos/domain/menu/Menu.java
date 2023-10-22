@@ -31,8 +31,8 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.id = id;
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this.id = null;
         this.name = name;
         this.price = new MenuPrice(price);
         this.menuGroupId = menuGroupId;

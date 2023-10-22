@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,20 +9,18 @@ import java.util.List;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableDao orderTableDao) {
         this.orderTableDao = orderTableDao;
     }
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-
         return orderTableDao.save(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableDao.findAll();
     }
@@ -33,14 +28,11 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        List<Order> orders = orderDao.findAllByOrderTableId(orderTableId);
-        savedOrderTable.setOrders(new Orders(orders));
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         savedOrderTable.changeEmpty(empty);
 
-        return orderTableDao.save(savedOrderTable);
+        return savedOrderTable;
     }
 
     @Transactional

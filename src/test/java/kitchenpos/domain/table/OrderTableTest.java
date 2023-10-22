@@ -17,8 +17,7 @@ class OrderTableTest {
 
     @Test
     void 테이블_그룹이_되어_있으면_비울_수_없다() {
-        OrderTable orderTable = new OrderTable(3, false);
-        orderTable.setTableGroupId(1L);
+        OrderTable orderTable = new OrderTable(3, false, true);
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -27,9 +26,10 @@ class OrderTableTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
     void 주문_상태가_조리중_또는_식사중이면_비울_수_없다(OrderStatus orderStatus) {
-        OrderTable orderTable = new OrderTable(3, false);
+        OrderTable orderTable = new OrderTable(3, false, false);
         OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
-        Order order = new Order(orderTable, List.of(orderLineItem));
+        Order order = new Order(List.of(orderLineItem));
+        orderTable.createdOrder(order);
         order.changeOrderStatus(orderStatus);
         orderTable.setOrders(new Orders(List.of(order)));
 
@@ -39,7 +39,7 @@ class OrderTableTest {
 
     @Test
     void 테이블이_비어있으면_손님_수를_변경할_수_없다() {
-        OrderTable orderTable = new OrderTable(3, true);
+        OrderTable orderTable = new OrderTable(3, true, false);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(3))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -48,7 +48,7 @@ class OrderTableTest {
     @ValueSource(ints = {0, -1})
     @ParameterizedTest
     void 손님_수를_바꿀_때_양수이어야_한다(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable(3, false);
+        OrderTable orderTable = new OrderTable(3, false, false);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(numberOfGuests))
                 .isInstanceOf(IllegalArgumentException.class);

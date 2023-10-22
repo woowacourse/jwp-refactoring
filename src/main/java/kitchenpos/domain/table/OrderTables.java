@@ -2,13 +2,15 @@ package kitchenpos.domain.table;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.List;
 
 @Embeddable
 public class OrderTables {
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "table_group_id")
+    @OneToMany(fetch = FetchType.LAZY)
     private List<OrderTable> collection;
 
     public OrderTables() {
@@ -22,6 +24,7 @@ public class OrderTables {
         validateOrderTables(collection);
         for (OrderTable orderTable : collection) {
             orderTable.makeFull();
+            orderTable.makeGrouped();
         }
         return new TableGroup(null, collection);
     }

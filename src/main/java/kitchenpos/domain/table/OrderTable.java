@@ -1,5 +1,6 @@
 package kitchenpos.domain.table;
 
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.Orders;
 
 import javax.persistence.Embedded;
@@ -17,32 +18,31 @@ public class OrderTable {
     @Id
     private Long id;
 
-    private Long tableGroupId;
-
     private int numberOfGuests;
 
     @Embedded
-    private Orders orders;
+    private Orders orders = new Orders();
 
     private boolean empty;
+
+    private boolean grouped;
 
     public OrderTable() {
     }
 
-    public OrderTable(Long id, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, int numberOfGuests, boolean empty, boolean grouped) {
         this.id = id;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.tableGroupId = null;
+        this.grouped = grouped;
     }
 
-    public OrderTable(int numberOfGuests, boolean empty) {
-        this(null, numberOfGuests, empty);
-        this.tableGroupId = null;
+    public OrderTable(int numberOfGuests, boolean empty, boolean grouped) {
+        this(null, numberOfGuests, empty, grouped);
     }
 
     public void changeEmpty(boolean empty) {
-        if (this.tableGroupId != null) {
+        if (this.grouped) {
             throw new IllegalArgumentException();
         }
         if (orders.inCookingOrMeal()) {
@@ -68,20 +68,36 @@ public class OrderTable {
     }
 
     public boolean hasTableGroup() {
-        return this.tableGroupId != null;
+        return this.grouped;
     }
 
     public boolean hasNoTableGroup() {
-        return this.tableGroupId == null;
+        return !this.grouped;
     }
 
     public void unGroup() {
-        this.tableGroupId = null;
+        this.grouped = false;
         this.empty = true;
     }
 
     public boolean isNotEmpty() {
         return !this.empty;
+    }
+
+    public void makeFull() {
+        this.empty = false;
+    }
+
+    public void makeGrouped() {
+        this.grouped = true;
+    }
+
+    public void createdOrder(Order order) {
+        if (this.empty) {
+            throw new IllegalArgumentException("테이블이 비어있으면 주문할 수 없습니다.");
+        }
+        order.setOrderTableId(this.id);
+        this.orders.add(order);
     }
 
     public Long getId() {
@@ -92,35 +108,19 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
-    }
-
     public void setOrders(Orders orders) {
         this.orders = orders;
     }
 
-    public void makeFull() {
-        this.empty = false;
+    public boolean isGrouped() {
+        return grouped;
     }
 }

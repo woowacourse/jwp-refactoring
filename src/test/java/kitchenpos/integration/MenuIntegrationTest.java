@@ -31,8 +31,8 @@ class MenuIntegrationTest extends IntegrationTest {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(null, product, 1L);
-        Menu menu = new Menu(null, "메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
+        MenuProduct menuProduct = new MenuProduct(product, 1L);
+        Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
 
         // when, then
@@ -46,8 +46,8 @@ class MenuIntegrationTest extends IntegrationTest {
         // given
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
-        MenuProduct menuProduct = new MenuProduct(null, product, 1L);
-        Menu menu = new Menu(null, "메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
+        MenuProduct menuProduct = new MenuProduct(product, 1L);
+        Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
         Menu saved = menuService.create(menu);
 
         // when

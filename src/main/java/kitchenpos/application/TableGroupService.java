@@ -1,10 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.Orders;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
@@ -15,12 +12,13 @@ import java.util.List;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+    public TableGroupService(
+            final OrderTableDao orderTableDao,
+            final TableGroupDao tableGroupDao
+    ) {
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -39,11 +37,6 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            orderTableDao.save(savedOrderTable);
-        }
         savedTableGroup.setOrderTables(savedOrderTables);
 
         return savedTableGroup;
@@ -51,12 +44,10 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
 
-        for (OrderTable orderTable : orderTables) {
-            List<Order> orders = orderDao.findAllByOrderTableId(orderTable.getId());
-            orderTable.setOrders(new Orders(orders));
-        }
+        List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         OrderTables groupedOrderTables = new OrderTables(orderTables);
         groupedOrderTables.unGroup();
