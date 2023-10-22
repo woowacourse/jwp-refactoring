@@ -1,13 +1,26 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
+@Table(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
+
+    @Transient
     private List<OrderLineItem> orderLineItems;
 
     public Long getId() {

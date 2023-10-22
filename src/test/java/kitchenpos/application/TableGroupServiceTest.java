@@ -6,6 +6,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.dto.CreateTableGroupOrderTableRequest;
 import kitchenpos.ui.dto.CreateTableGroupRequest;
 import org.assertj.core.api.SoftAssertions;
@@ -32,6 +33,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -153,35 +157,13 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
 
         // then
-        final List<OrderTable> actual = orderTableDao.findAllByIdIn(List.of(그룹화된_세명_테이블.getId(), 그룹화된_네명_테이블.getId()));
+        final List<OrderTable> actual = orderTableRepository.findAllByIdIn(List.of(그룹화된_세명_테이블.getId(), 그룹화된_네명_테이블.getId()));
 
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.get(0).getTableGroupId()).isNull();
             softAssertions.assertThat(actual.get(0).isEmpty()).isFalse();
             softAssertions.assertThat(actual.get(1).getTableGroupId()).isNull();
             softAssertions.assertThat(actual.get(1).isEmpty()).isFalse();
-        });
-    }
-
-    @Test
-    @DisplayName("테이블 그룹을 해제할 때 해제하려는 테이블의 주문이 조리중이나 식사중이면 예외가 발생한다")
-    void ungroup_invalidOrderStatus() {
-        // given
-        final OrderTable 세명_테이블 = orderTableDao.save(orderTable(3, true));
-        final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupDao.save(tableGroup());
-        final OrderTable 그룹화된_세명_테이블 = orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
-        final OrderTable 그룹화된_네명_테이블 = orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
-
-        // when
-        tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
-
-        // then
-        final List<OrderTable> actual = orderTableDao.findAllByIdIn(List.of(그룹화된_세명_테이블.getId(), 그룹화된_네명_테이블.getId()));
-
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual.get(0).getTableGroupId()).isNull();
-            softAssertions.assertThat(actual.get(1).getTableGroupId()).isNull();
         });
     }
 
