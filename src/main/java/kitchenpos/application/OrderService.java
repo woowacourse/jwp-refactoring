@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
@@ -16,66 +16,57 @@ import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final OrderCreateRequest request) {
         final OrderTable orderTable = findOrderTable(request.getOrderTableId());
-        final Order savedOrder = orderRepository.save(new Order(orderTable));
+        final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
+        validateMenuToOrder(orderLineItemRequests);
 
-        final List<OrderLineItemCreateRequest> orderLineItems = request.getOrderLineItems();
-        validateMenuToOrder(orderLineItems);
-        for (final OrderLineItemCreateRequest orderLineItem : orderLineItems) {
-            final Optional<Menu> menuToOrder = menuRepository.findById(orderLineItem.getMenuId());
-            orderLineItemRepository.save(
-                    new OrderLineItem(savedOrder, menuToOrder.get(), orderLineItem.getQuantity())
-            );
-        }
-
-        return savedOrder;
+        return orderRepository.save(new Order(
+                orderTable,
+                createOrderLineItems(orderLineItemRequests))
+        );
     }
 
     private OrderTable findOrderTable(final long orderTableId) {
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        /// TODO: 2023/10/22  도메인 로직 이동
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
-        }
-        return orderTable;
     }
 
-    /// TODO: 2023/10/22  도메인 로직 이동
     private void validateMenuToOrder(final List<OrderLineItemCreateRequest> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private List<OrderLineItem> createOrderLineItems(List<OrderLineItemCreateRequest> orderLineItems) {
+        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        for (final OrderLineItemCreateRequest orderLineItem : orderLineItems) {
+            final Optional<Menu> menuToOrder = menuRepository.findById(orderLineItem.getMenuId());
+            savedOrderLineItems.add(new OrderLineItem(menuToOrder.get(), orderLineItem.getQuantity()));
+        }
+        return savedOrderLineItems;
     }
 
     public List<Order> list() {

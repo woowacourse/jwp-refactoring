@@ -106,20 +106,6 @@ class OrderServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("빈 테이블에서 주문을 등록할 수 없다.")
-    void 주문_등록_실패_빈_테이블() {
-        // given
-        final OrderTable emptyTable = orderTableService.create(new OrderTableCreateRequest(0, true));
-        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
-        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
-        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
-
-        // expected
-        assertThatThrownBy(() -> orderService.create(RequestParser.of(emptyTable, List.of(menu))))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     @DisplayName("주문의 상태를 변경할 수 있다.")
     void 주문_상태_변경_성공() {
         // given

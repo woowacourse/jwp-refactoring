@@ -26,18 +26,16 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this.order = order;
-        order.addOrderLineItem(this);
+    public OrderLineItem(final Menu menu, final long quantity) {
         this.menu = menu;
         this.quantity = quantity;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public long getQuantity() {
-        return quantity;
+    public Menu getMenu() {
+        return menu;
     }
 }

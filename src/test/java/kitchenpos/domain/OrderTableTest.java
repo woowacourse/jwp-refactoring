@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static kitchenpos.domain.vo.OrderStatus.COOKING;
 import static kitchenpos.domain.vo.OrderStatus.MEAL;
+import static kitchenpos.fixture.OrderFixture.주문항목_1개_메뉴_1000원_할인_치킨;
 import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,6 +16,17 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderTableTest {
+
+    @Test
+    @DisplayName("빈 테이블에서 주문을 등록할 수 없다.")
+    void 주문_등록_실패_빈_테이블() {
+        // given
+        final OrderTable emptyTable = 빈_테이블_생성();
+
+        // expected
+        assertThatThrownBy(() -> emptyTable.placeOrder(new Order()))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
     @Test
     @DisplayName("특정 테이블의 방문한 손님 수는 0 이상이어야 한다.")
@@ -57,7 +69,7 @@ class OrderTableTest {
         final OrderTable orderTable = 주문_테이블_생성();
 
         // when
-        final Order order = new Order(orderTable);
+        final Order order = new Order(orderTable, 주문항목_1개_메뉴_1000원_할인_치킨());
         order.changeOrderStatus(MEAL);
 
         // then
@@ -72,7 +84,7 @@ class OrderTableTest {
         final OrderTable orderTable = 주문_테이블_생성();
 
         // when
-        final Order order = new Order(orderTable);
+        final Order order = new Order(orderTable, 주문항목_1개_메뉴_1000원_할인_치킨());
         order.changeOrderStatus(COOKING);
         // then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
@@ -123,10 +135,11 @@ class OrderTableTest {
         table.group(new TableGroup());
 
         final OrderStatus unableStatusToSplit = OrderStatus.valueOf(orderStatus);
-        new Order(table).changeOrderStatus(unableStatusToSplit);
+        final Order order = new Order(table, 주문항목_1개_메뉴_1000원_할인_치킨());
+        order.changeOrderStatus(unableStatusToSplit);
 
         // then
-        assertThatThrownBy(() -> table.unGroup())
+        assertThatThrownBy(table::unGroup)
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -50,7 +50,14 @@ public class OrderTable {
     }
 
     public void placeOrder(final Order order) {
+        validateAbleToOrder();
         orders.add(order);
+    }
+
+    private void validateAbleToOrder() {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
+        }
     }
 
     public void group(final TableGroup tableGroup) {

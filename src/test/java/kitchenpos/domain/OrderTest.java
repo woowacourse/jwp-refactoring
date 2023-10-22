@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     @Test
-    @DisplayName("새로 생성 주문의 상태는 '조리' 상태이다.")
+    @DisplayName("새로 생성한 주문의 상태는 '조리' 상태이다.")
     void 주문_생성_성공_주문_상태_조리() {
         // given
         final OrderTable orderTable = 주문_테이블_생성();
@@ -32,6 +33,14 @@ class OrderTest {
 
         // then
         assertThat(order.getOrderStatus()).isEqualTo(COOKING);
+    }
+
+    @Test
+    @DisplayName("주문 항목은 최소 1개 이상이어야 한다.")
+    void 주문_생성_실패_주문_항목_없음() {
+        // expected
+        assertThatThrownBy(() -> new Order(주문_테이블_생성(), Collections.emptyList()))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
