@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.ProductFixture;
+import kitchenpos.ui.dto.CreateProductRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,16 +30,16 @@ class ProductServiceTest {
     @DisplayName("상품을 등록한다")
     void create() {
         // given
-        final Product product = product("강정치킨", BigDecimal.valueOf(17000));
+        final CreateProductRequest request = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
 
         // when
-        final Product actual = productService.create(product);
+        final Product actual = productService.create(request);
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual.getName()).isEqualTo(product.getName());
-            softAssertions.assertThat(actual.getPrice()).isEqualByComparingTo(product.getPrice());
+            softAssertions.assertThat(actual.getName()).isEqualTo(request.getName());
+            softAssertions.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
         });
     }
 
@@ -48,7 +48,7 @@ class ProductServiceTest {
     void create_invalidPrice() {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
-        final Product invalidProduct = product("-1원 상품", invalidPrice);
+        final CreateProductRequest invalidProduct = new CreateProductRequest("-1원 상품", invalidPrice);
 
         // when & then
         assertThatThrownBy(() -> productService.create(invalidProduct))

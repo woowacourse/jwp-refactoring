@@ -6,6 +6,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.CreateTableGroupOrderTableRequest;
+import kitchenpos.ui.dto.CreateTableGroupRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,10 +48,13 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
         final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
-        final TableGroup 두명_네명_테이블 = tableGroup(List.of(두명_테이블, 네명_테이블));
+
+        final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
+        final CreateTableGroupOrderTableRequest 네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
+        final CreateTableGroupRequest tableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 네명_테이블_아이디));
 
         // when
-        final TableGroup actual = tableGroupService.create(두명_네명_테이블);
+        final TableGroup actual = tableGroupService.create(tableGroup);
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -62,7 +67,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록할 때 테이블 목록이 비어있으면 예외가 발생한다")
     void create_emptyOrderTables() {
         // given
-        final TableGroup invalidTableGroup = tableGroup(Collections.emptyList());
+        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(Collections.emptyList());
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -74,7 +79,8 @@ class TableGroupServiceTest {
     void create_oneOrderTable() {
         // given
         final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
-        final TableGroup invalidTableGroup = tableGroup(List.of(두명_테이블));
+        final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
+        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
@@ -86,13 +92,14 @@ class TableGroupServiceTest {
     void create_invalidNumberOfTable() {
         // given
         final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
-        final OrderTable 네명_테이블 = orderTable(4, true);
-        네명_테이블.setId(10L);
 
-        final TableGroup 두명_네명_테이블 = tableGroup(List.of(두명_테이블, 네명_테이블));
+        final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
+        final CreateTableGroupOrderTableRequest 존재하지_않는_테이블_아이디 = new CreateTableGroupOrderTableRequest(10L);
+
+        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 존재하지_않는_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(두명_네명_테이블))
+        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,10 +109,13 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
         final OrderTable 네명_테이블_사용중 = orderTableDao.save(orderTable(4, false));
-        final TableGroup 두명_네명_테이블 = tableGroup(List.of(두명_테이블, 네명_테이블_사용중));
+
+        final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
+        final CreateTableGroupOrderTableRequest 사용중인_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블_사용중.getId());
+        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 사용중인_네명_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(두명_네명_테이블))
+        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -120,10 +130,12 @@ class TableGroupServiceTest {
         orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
         orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
 
-        final TableGroup 두명_네명_테이블 = tableGroup(List.of(두명_테이블, 네명_테이블));
+        final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
+        final CreateTableGroupOrderTableRequest 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
+        final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 그룹화된_네명_테이블_아이디));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(두명_네명_테이블))
+        assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

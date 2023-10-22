@@ -13,6 +13,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.CreateOrderLineItemRequest;
+import kitchenpos.ui.dto.CreateOrderRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -72,10 +74,9 @@ class OrderServiceTest {
     void create() {
         // given
         final OrderTable 주문_테이블 = orderTableDao.save(orderTable(3, false));
+        final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
 
-        final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
-
-        final Order order = order(주문_테이블.getId(), List.of(주문항목));
+        final CreateOrderRequest order = new CreateOrderRequest(주문_테이블.getId(), List.of(주문항목));
 
         // when
         final Order actual = orderService.create(order);
@@ -93,13 +94,12 @@ class OrderServiceTest {
     void create_emptyOrderLineItems() {
         // given
         final OrderTable 주문_테이블 = orderTableDao.save(orderTable(3, false));
+        final List<CreateOrderLineItemRequest> 빈_주문_항목 = Collections.emptyList();
 
-        final List<OrderLineItem> 빈_주문_항목 = Collections.emptyList();
-
-        final Order order = order(주문_테이블.getId(), 빈_주문_항목);
+        final CreateOrderRequest invlaidOrder = new CreateOrderRequest(주문_테이블.getId(), 빈_주문_항목);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(invlaidOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -109,13 +109,13 @@ class OrderServiceTest {
         // given
         final OrderTable 주문_테이블 = orderTableDao.save(orderTable(3, false));
 
-        final OrderLineItem 주문항목1 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
-        final OrderLineItem 주문항목2 = orderLineItem(후라이드_2개_메뉴.getId(), 2l);
+        final CreateOrderLineItemRequest 후라이드_2개_메뉴_1개 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
+        final CreateOrderLineItemRequest 후라이드_2개_메뉴_2개 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 2l);
 
-        final Order order = order(주문_테이블.getId(), List.of(주문항목1, 주문항목2));
+        final CreateOrderRequest invalidOrder = new CreateOrderRequest(주문_테이블.getId(), List.of(후라이드_2개_메뉴_1개, 후라이드_2개_메뉴_2개));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(invalidOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,13 +123,12 @@ class OrderServiceTest {
     @DisplayName("주문을 등록할 때 주문테이블을 찾을 수 없으면 예외가 발생한다")
     void create_invalidOrderTable() {
         // given
-        final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
-
         final long invalidOrderTableId = -999L;
-        final Order order = order(invalidOrderTableId, List.of(주문항목));
+        final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
+        final CreateOrderRequest invalidOrder = new CreateOrderRequest(invalidOrderTableId, List.of(주문항목));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(invalidOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -139,12 +138,12 @@ class OrderServiceTest {
         // given
         final OrderTable 비어있는_테이블 = orderTableDao.save(orderTable(3, true));
 
-        final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
+        final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
 
-        final Order order = order(비어있는_테이블.getId(), List.of(주문항목));
+        final CreateOrderRequest invalidOrder = new CreateOrderRequest(비어있는_테이블.getId(), List.of(주문항목));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(invalidOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

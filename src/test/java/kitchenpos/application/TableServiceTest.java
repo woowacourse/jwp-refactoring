@@ -4,6 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.CreateOrderTableRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ class TableServiceTest {
     @DisplayName("테이블을 등록한다")
     void create() {
         // given
-        final OrderTable orderTable = orderTable(2, true);
+        final CreateOrderTableRequest orderTable = new CreateOrderTableRequest(2, true);
 
         // when
         final OrderTable actual = tableService.create(orderTable);

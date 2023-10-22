@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.CreateProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,8 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
+    public Product create(final CreateProductRequest request) {
+        final Product product = request.toEntity();
         final BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
