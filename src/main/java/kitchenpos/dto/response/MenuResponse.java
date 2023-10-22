@@ -7,11 +7,14 @@ import kitchenpos.domain.Menu;
 
 public class MenuResponse {
 
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final MenuGroupResponse menuGroupResponse;
-    private final List<MenuProductResponse> menuProductResponses;
+    private Long id;
+    private String name;
+    private BigDecimal price;
+    private MenuGroupResponse menuGroupResponse;
+    private List<MenuProductResponse> menuProductResponses;
+
+    public MenuResponse() {
+    }
 
     private MenuResponse(
             Long id,

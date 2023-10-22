@@ -7,9 +7,12 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupResponse {
 
-    private final Long id;
-    private final LocalDateTime createdDate;
-    private final List<OrderTableResponse> orderTables;
+    private Long id;
+    private LocalDateTime createdDate;
+    private List<OrderTableResponse> orderTables;
+
+    public TableGroupResponse() {
+    }
 
     private TableGroupResponse(Long id, LocalDateTime createdDate, List<OrderTableResponse> orderTables) {
         this.id = id;

@@ -7,11 +7,14 @@ import kitchenpos.domain.Order;
 
 public class OrderResponse {
 
-    private final Long id;
-    private final OrderTableResponse orderTableResponse;
-    private final String orderStatus;
-    private final LocalDateTime orderedTime;
-    private final List<OrderLineItemResponse> orderLineItems;
+    private Long id;
+    private OrderTableResponse orderTableResponse;
+    private String orderStatus;
+    private LocalDateTime orderedTime;
+    private List<OrderLineItemResponse> orderLineItems;
+
+    public OrderResponse() {
+    }
 
     private OrderResponse(
             Long id,

@@ -2,19 +2,19 @@ package kitchenpos.domain;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     default OrderTable getById(Long id) {
-        return findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 주문 테이블이 없습니다."));
+        return findById(id).orElseThrow(() -> new OrderTableException("해당하는 주문 테이블이 없습니다."));
     }
-
-    List<OrderTable> findAll();
 
     default List<OrderTable> getAllByIdIn(List<Long> ids) {
         List<OrderTable> orderTables = findAllByIdIn(ids);
         if (orderTables.size() != ids.size()) {
-            throw new IllegalArgumentException("존재하지 않는 주문 테이블의 ID가 포함되어 있습니다.");
+            throw new OrderTableException("존재하지 않는 주문 테이블의 ID가 포함되어 있습니다.");
         }
         return orderTables;
     }

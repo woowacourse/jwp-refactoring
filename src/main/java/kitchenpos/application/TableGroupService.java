@@ -50,7 +50,7 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTablesOfTableGroup = orderTableRepository.findAllByTableGroupId(tableGroupId);
         List<Order> ordersOfTableGroup = orderRepository.findAllByOrderTableIn(orderTablesOfTableGroup);
-        ordersOfTableGroup.forEach(Order::checkOrderStatusIsCompletion);
+        ordersOfTableGroup.forEach(Order::validateOrderStatusIsCompletion);
 
         orderTablesOfTableGroup.forEach(OrderTable::ungroup);
     }

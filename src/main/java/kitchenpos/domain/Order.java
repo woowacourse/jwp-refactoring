@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,13 +26,14 @@ public class Order {
     @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
@@ -47,8 +50,12 @@ public class Order {
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
     ) {
+        if (orderTable.isEmpty()) {
+            throw new OrderException("빈 테이블을 등록할 수 없습니다.");
+        }
+
         if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 없습니다.");
+            throw new OrderException("주문 항목이 없습니다.");
         }
 
         this.id = id;
@@ -63,11 +70,19 @@ public class Order {
     }
 
     public void changeOrderStatus(String orderStatus) {
+        OrderStatus.checkIfHas(orderStatus);
+
         if (this.orderStatus == OrderStatus.COMPLETION) {
-            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+            throw new OrderException("이미 완료된 주문입니다.");
         }
 
         this.orderStatus = OrderStatus.valueOf(orderStatus);
+    }
+
+    public void validateOrderStatusIsCompletion() {
+        if (orderStatus == OrderStatus.MEAL || orderStatus == OrderStatus.COOKING) {
+            throw new OrderException("주문 상태가 주문 완료가 아닙니다.");
+        }
     }
 
     public Long getId() {
@@ -88,11 +103,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void checkOrderStatusIsCompletion() {
-        if (orderStatus == OrderStatus.MEAL || orderStatus == OrderStatus.COOKING) {
-            throw new IllegalStateException("주문 상태가 주문 완료가 아닙니다.");
-        }
     }
 }

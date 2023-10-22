@@ -4,9 +4,12 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
 
-    private final Long seq;
-    private final MenuResponse menu;
-    private final long quantity;
+    private Long seq;
+    private MenuResponse menu;
+    private long quantity;
+
+    public OrderLineItemResponse() {
+    }
 
     private OrderLineItemResponse(Long seq, MenuResponse menu, long quantity) {
         this.seq = seq;

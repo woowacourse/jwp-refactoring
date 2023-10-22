@@ -2,7 +2,10 @@ package kitchenpos.dto.request;
 
 public class OrderUpdateRequest {
 
-    private final String orderStatus;
+    private String orderStatus;
+
+    public OrderUpdateRequest() {
+    }
 
     public OrderUpdateRequest(String orderStatus) {
         this.orderStatus = orderStatus;

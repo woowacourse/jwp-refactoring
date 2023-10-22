@@ -4,8 +4,11 @@ import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupResponse {
 
-    private final Long id;
-    private final String name;
+    private Long id;
+    private String name;
+
+    public MenuGroupResponse() {
+    }
 
     private MenuGroupResponse(Long id, String name) {
         this.id = id;

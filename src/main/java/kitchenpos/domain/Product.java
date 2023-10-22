@@ -39,7 +39,7 @@ public class Product {
 
     private void validateName(String name) {
         if (name.isBlank() || name.length() > 255) {
-            throw new IllegalArgumentException("상품의 이름이 유효하지 않습니다.");
+            throw new ProductException("상품의 이름이 유효하지 않습니다.");
         }
     }
 
@@ -48,7 +48,7 @@ public class Product {
                 || price.compareTo(BigDecimal.ZERO) < 0
                 || price.compareTo(BigDecimal.valueOf(Math.pow(10, 20))) >= 0
         ) {
-            throw new IllegalArgumentException("상품의 가격이 유효하지 않습니다.");
+            throw new ProductException("상품의 가격이 유효하지 않습니다.");
         }
     }
 

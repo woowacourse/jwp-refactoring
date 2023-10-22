@@ -1,15 +1,11 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -21,7 +17,7 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "table_group")
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {
@@ -44,14 +40,14 @@ public class TableGroup {
 
     private void validateOrderTables(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("주문 테이블의 수가 유효하지 않습니다.");
+            throw new TableGroupException("주문 테이블의 수가 유효하지 않습니다.");
         }
 
-        for (OrderTable orderTable : orderTables) {
+        orderTables.forEach(orderTable -> {
             if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException("주문 테이블의 상태가 유효하지 않습니다.");
+                throw new TableGroupException("주문 테이블의 상태가 유효하지 않습니다.");
             }
-        }
+        });
     }
 
     public Long getId() {

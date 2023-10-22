@@ -1,22 +1,16 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductRepository;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.*;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -47,23 +41,24 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.getById(menuGroupId);
 
         List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProducts();
-        List<MenuProduct> menuProducts = createMenuProducts(menuProductCreateRequests);
 
-        Menu menu = new Menu(name, price, menuGroup, menuProducts);
+        Menu menu = new Menu(name, price, menuGroup);
+        List<MenuProduct> menuProducts = createMenuProducts(menuProductCreateRequests, menu);
+        menu.addMenuProducts(menuProducts);
 
-        menuProductRepository.saveAll(menuProducts);
         Menu savedMenu = menuRepository.save(menu);
+        menuProductRepository.saveAll(menuProducts);
 
         return MenuResponse.from(savedMenu);
     }
 
-    private List<MenuProduct> createMenuProducts(List<MenuProductCreateRequest> menuProductCreateRequests) {
+    private List<MenuProduct> createMenuProducts(List<MenuProductCreateRequest> menuProductCreateRequests, Menu menu) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
             Long productId = menuProductCreateRequest.getProductId();
             Product product = productRepository.getById(productId);
             long quantity = menuProductCreateRequest.getQuantity();
-            menuProducts.add(new MenuProduct(product, quantity));
+            menuProducts.add(new MenuProduct(menu, product, quantity));
         }
         return menuProducts;
     }
