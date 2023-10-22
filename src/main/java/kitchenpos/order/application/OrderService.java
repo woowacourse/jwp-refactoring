@@ -64,11 +64,7 @@ public class OrderService {
 
         final List<OrderResponse> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
-            final List<Long> orderLineItemIds = order.getOrderLineItems()
-                    .stream()
-                    .map(OrderLineItem::getSeq)
-                    .collect(Collectors.toList());
-            orderResponses.add(new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemIds));
+            orderResponses.add(OrderResponse.from(order));
         }
 
         return orderResponses;
