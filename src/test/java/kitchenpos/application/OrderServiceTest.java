@@ -13,6 +13,7 @@ import kitchenpos.dto.request.order.ChangeOrderRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
 import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +36,7 @@ class OrderServiceTest extends ServiceTest {
                 OrderLineItemsDto.from(new OrderLineItem(1L, 1L, 1L, new Quantity(1L))),
                 OrderLineItemsDto.from(new OrderLineItem(2L, 2L, 2L, new Quantity(2L)))
         );
-        final CreateOrderRequest request = getRequest(CreateOrderRequest.class, 5L, dto);
+        final CreateOrderRequest request = ObjectCreator.getObject(CreateOrderRequest.class, 5L, dto);
         // when
         final OrderResponse actual = orderService.create(request);
 
@@ -72,7 +73,7 @@ class OrderServiceTest extends ServiceTest {
                     )
             );
         }
-        return getRequest(CreateOrderRequest.class, id, dto);
+        return ObjectCreator.getObject(CreateOrderRequest.class, id, dto);
     }
 
     private static Stream<Arguments> orderTableProvider() {
@@ -99,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final ChangeOrderRequest request = getRequest(ChangeOrderRequest.class, "COMPLETION");
+        final ChangeOrderRequest request = ObjectCreator.getObject(ChangeOrderRequest.class, "COMPLETION");
 
         // when
         final OrderResponse actual = orderService.changeOrderStatus(1L, request);

@@ -9,6 +9,7 @@ import kitchenpos.dto.request.table.ChangeEmptyRequest;
 import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.table.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +29,7 @@ class TableServiceTest extends ServiceTest {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given & when
         final int newTableId = tableService.list().size() + 1;
-        final CreateOrderTableRequest request = getRequest(CreateOrderTableRequest.class, 2);
+        final CreateOrderTableRequest request = ObjectCreator.getObject(CreateOrderTableRequest.class, 2);
 
         final OrderTableResponse actual = tableService.create(request);
 
@@ -49,7 +50,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty(String name, Boolean empty)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final ChangeEmptyRequest request = getRequest(ChangeEmptyRequest.class, empty);
+        final ChangeEmptyRequest request = ObjectCreator.getObject(ChangeEmptyRequest.class, empty);
 
         // when
         final OrderTableResponse actual = tableService.changeEmpty(1L, request);
@@ -70,7 +71,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_FailWithNonExistTable()
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final ChangeEmptyRequest request = getRequest(ChangeEmptyRequest.class, true);
+        final ChangeEmptyRequest request = ObjectCreator.getObject(ChangeEmptyRequest.class, true);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(-1L, request))
@@ -84,7 +85,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_FailWithCookingOrEating(final String name, final Long id, final Class exception)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final ChangeEmptyRequest request = getRequest(ChangeEmptyRequest.class, true);
+        final ChangeEmptyRequest request = ObjectCreator.getObject(ChangeEmptyRequest.class, true);
 
         // when & then
         assertThatThrownBy(
@@ -98,7 +99,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests()
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final ChangeNumberOfGuestsRequest request = getRequest(ChangeNumberOfGuestsRequest.class, 3);
+        final ChangeNumberOfGuestsRequest request = ObjectCreator.getObject(ChangeNumberOfGuestsRequest.class, 3);
 
         // when
         final OrderTableResponse actual = tableService.changeNumberOfGuests(5L, request);
@@ -116,7 +117,8 @@ class TableServiceTest extends ServiceTest {
             final int numberOfGuests
     ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final ChangeNumberOfGuestsRequest request = getRequest(ChangeNumberOfGuestsRequest.class, numberOfGuests);
+        final ChangeNumberOfGuestsRequest request = ObjectCreator.getObject(ChangeNumberOfGuestsRequest.class,
+                numberOfGuests);
 
         // when & then
         assertThatThrownBy(
@@ -136,8 +138,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests_FailedEmpty()
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
-        final ChangeNumberOfGuestsRequest request = getRequest(ChangeNumberOfGuestsRequest.class
-                , 0);
+        final ChangeNumberOfGuestsRequest request = ObjectCreator.getObject(ChangeNumberOfGuestsRequest.class, 0);
 
         // when & then
         assertThatThrownBy(

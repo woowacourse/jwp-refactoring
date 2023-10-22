@@ -10,6 +10,7 @@ import kitchenpos.dto.request.tablegroup.CreateTableGroupRequest;
 import kitchenpos.dto.request.tablegroup.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,9 +31,9 @@ class TableGroupServiceTest extends ServiceTest {
     void create()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTableRequest orderTableRequest1 = getRequest(OrderTableRequest.class, 1L, 1L);
-        final OrderTableRequest orderTableRequest2 = getRequest(OrderTableRequest.class, 2L, 1L);
-        final CreateTableGroupRequest request = getRequest(
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, 2L, 1L);
+        final CreateTableGroupRequest request = ObjectCreator.getObject(
                 CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest1, orderTableRequest2)
         );
@@ -49,8 +50,8 @@ class TableGroupServiceTest extends ServiceTest {
     void create_Fail()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTableRequest orderTableRequest = getRequest(OrderTableRequest.class, 1L, 1L);
-        final CreateTableGroupRequest tableGroupRequest = getRequest(CreateTableGroupRequest.class, 1L,
+        final OrderTableRequest orderTableRequest = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final CreateTableGroupRequest tableGroupRequest = ObjectCreator.getObject(CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest));
 
         // when & then
@@ -63,9 +64,9 @@ class TableGroupServiceTest extends ServiceTest {
     void create_FailEmptyTable()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         //
-        final OrderTableRequest orderTableRequest1 = getRequest(OrderTableRequest.class, 1L, 1L);
-        final OrderTableRequest orderTableRequest2 = getRequest(OrderTableRequest.class, 5L, 1L);
-        final CreateTableGroupRequest tableGroup = getRequest(
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, 5L, 1L);
+        final CreateTableGroupRequest tableGroup = ObjectCreator.getObject(
                 CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest1, orderTableRequest2)
         );
@@ -79,9 +80,9 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup()
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTableRequest orderTableRequest1 = getRequest(OrderTableRequest.class, 1L, 1L);
-        final OrderTableRequest orderTableRequest2 = getRequest(OrderTableRequest.class, 2L, 1L);
-        final CreateTableGroupRequest tableGroup = getRequest(
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, 2L, 1L);
+        final CreateTableGroupRequest tableGroup = ObjectCreator.getObject(
                 CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest1, orderTableRequest2)
         );
@@ -107,9 +108,9 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup_FailNonExistTable(final String name, final Long id, final Class exception)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTableRequest orderTableRequest1 = getRequest(OrderTableRequest.class, 1L, 1L);
-        final OrderTableRequest orderTableRequest2 = getRequest(OrderTableRequest.class, id, 1L);
-        final CreateTableGroupRequest request = getRequest(
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, id, 1L);
+        final CreateTableGroupRequest request = ObjectCreator.getObject(
                 CreateTableGroupRequest.class, 1L,
                 List.of(orderTableRequest1, orderTableRequest2)
         );

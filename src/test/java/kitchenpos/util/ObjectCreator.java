@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
-public class RequestCreator {
+public class ObjectCreator {
 
     public static  <T> T getObject(final Class<T> requestClass, final Object... input)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

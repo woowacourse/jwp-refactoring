@@ -13,6 +13,7 @@ import kitchenpos.domain.value.Quantity;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.MenuProductDto;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,7 +36,7 @@ class MenuServiceTest extends ServiceTest {
                 MenuProductDto.from(new MenuProduct(1L,1L,1L,new Quantity(1L))),
                 MenuProductDto.from(new MenuProduct(2L,2L,2L,new Quantity(2L)))
         );
-        final CreateMenuRequest request = getRequest(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
+        final CreateMenuRequest request = ObjectCreator.getObject(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
         // when
         final MenuResponse actual = menuService.create(request);
 
@@ -54,7 +55,6 @@ class MenuServiceTest extends ServiceTest {
             final Class exception,
             final String message
     ) {
-        // given
         // when & then
         assertThatThrownBy(() -> menuService.create(createMenuRequest(products,price,menuGroupId)))
                 .isInstanceOf(exception)
@@ -70,7 +70,7 @@ class MenuServiceTest extends ServiceTest {
         for (Long productId : products) {
             dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, new Quantity(productId))));
         }
-        return getRequest(CreateMenuRequest.class, "test", price, menuGroupId, dto);
+        return ObjectCreator.getObject(CreateMenuRequest.class, "test", price, menuGroupId, dto);
     }
 
     private static Stream<Arguments> menuParameterProvider() {

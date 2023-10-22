@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import kitchenpos.dto.request.menugroup.CreateMenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ class MenuGroupServiceTest extends ServiceTest {
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
         final int newMenuGroupId = menuGroupService.list().size() + 1;
-        final CreateMenuGroupRequest request = getRequest(CreateMenuGroupRequest.class, "test");
+        final CreateMenuGroupRequest request = ObjectCreator.getObject(CreateMenuGroupRequest.class, "test");
         // when
         final MenuGroupResponse actual = menuGroupService.create(request);
 

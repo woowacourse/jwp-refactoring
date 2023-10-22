@@ -25,7 +25,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", fetch = LAZY, cascade = ALL)
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public Long getId() {
