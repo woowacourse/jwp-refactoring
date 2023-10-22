@@ -12,10 +12,6 @@ public class TableCreateDto {
         this.empty = empty;
     }
 
-    public OrderTable toDomain() {
-        return new OrderTable(numberOfGuests, empty);
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

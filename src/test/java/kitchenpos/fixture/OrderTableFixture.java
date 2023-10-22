@@ -25,28 +25,23 @@ public class OrderTableFixture {
 
     public static OrderTable 빈테이블() {
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        orderTable.changeEmpty(true);
         return orderTable;
     }
 
     public static OrderTable 비지않은_테이블() {
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        orderTable.changeEmpty(false);
         return orderTable;
     }
 
     public static OrderTable 주문테이블(final int numbersOfGuest) {
         OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numbersOfGuest);
+        orderTable.changeNumberOfGuests(numbersOfGuest);
         return orderTable;
     }
 
     public static OrderTable 주문테이블(final int numberOfGuests, final boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-        return orderTable;
+        return new OrderTable(numberOfGuests, empty);
     }
 }

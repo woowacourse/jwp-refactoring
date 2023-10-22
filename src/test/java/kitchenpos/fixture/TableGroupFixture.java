@@ -19,8 +19,7 @@ public class TableGroupFixture {
 
     public static TableGroup 테이블그룹(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup.addOrderTables(orderTables);
         return tableGroup;
     }
 }

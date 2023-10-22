@@ -5,12 +5,12 @@ import static kitchenpos.fixture.MenuGroupFixture.메뉴그룹_두마리메뉴;
 import static kitchenpos.fixture.MenuProductFixture.메뉴상품;
 import static kitchenpos.fixture.OrderFixture.주문;
 import static kitchenpos.fixture.OrderLineItemFixture.주문상품;
-import static kitchenpos.fixture.OrderTableFixture.주문테이블;
+import static kitchenpos.fixture.OrderTableFixture.빈테이블;import static kitchenpos.fixture.OrderTableFixture.주문테이블;
 import static kitchenpos.fixture.OrderTableFixture.주문테이블_EMPTY_변경_요청;
 import static kitchenpos.fixture.OrderTableFixture.주문테이블_생성_요청;
 import static kitchenpos.fixture.OrderTableFixture.주문테이블_손님수_변경_요청;
 import static kitchenpos.fixture.ProductFixture.후라이드_16000;
-import static org.assertj.core.api.Assertions.assertThat;
+import static kitchenpos.fixture.TableGroupFixture.테이블그룹;import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
@@ -38,7 +38,7 @@ class TableServiceTest extends ServiceTest {
             final var response = tableService.create(request);
 
             // then
-            assertThat(orderTableDao.findById(response.getId())).isPresent();
+            assertThat(orderTableRepository.findById(response.getId())).isPresent();
         }
     }
 
@@ -48,7 +48,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블의_empty여부를_변경할_수_있다() {
             // given
-            final var saved = orderTableDao.save(주문테이블(3, true));
+            final var saved = orderTableRepository.save(주문테이블(3, true));
 
             final var request = 주문테이블_EMPTY_변경_요청(false);
 
@@ -82,7 +82,7 @@ class TableServiceTest extends ServiceTest {
             후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
-            final var 테이블 = orderTableDao.save(주문테이블(3, true));
+            final var 테이블 = orderTableRepository.save(주문테이블(3, true));
 
             final var order = orderDao.save(주문(테이블.getId(), orderStatus.name()));
             orderLineItemDao.save(주문상품(order.getId(), 후라이드메뉴.getId(), 1));
@@ -93,6 +93,19 @@ class TableServiceTest extends ServiceTest {
             assertThatThrownBy(() -> tableService.changeEmpty(테이블.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
+        @Test
+        void 테이블이_테이블그룹에_포함되어있으면_변경할_수_없다() {
+            // given
+            final var 테이블1 = orderTableRepository.save(빈테이블());
+            final var 테이블2 = orderTableRepository.save(빈테이블());
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
+
+            final var request = 주문테이블_EMPTY_변경_요청(false);
+
+            assertThatThrownBy(() -> tableService.changeEmpty(테이블1.getId(), request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
     }
 
     @Nested
@@ -101,7 +114,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블의_손님_수를_변경할_수_있다() {
             // given
-            final var saved = orderTableDao.save(주문테이블(3, false));
+            final var saved = orderTableRepository.save(주문테이블(3, false));
 
             final var request = 주문테이블_손님수_변경_요청(5);
 
@@ -115,7 +128,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 바꾸려는_손님_수가_0미만이면_변경할_수_없다() {
             // given
-            final var saved = orderTableDao.save(주문테이블(3, false));
+            final var saved = orderTableRepository.save(주문테이블(3, false));
 
             final var request = 주문테이블_손님수_변경_요청(-3);
 
@@ -138,7 +151,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 빈_테이블이면_변경할_수_없다() {
             // given
-            final var saved = orderTableDao.save(주문테이블(3, true));
+            final var saved = orderTableRepository.save(주문테이블(3, true));
 
             final var request = 주문테이블_손님수_변경_요청(5);
 
@@ -154,9 +167,9 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블의_목록을_조회할_수_있다() {
             // given
-            final var 테이블1 = orderTableDao.save(주문테이블(3, true));
-            final var 테이블2 = orderTableDao.save(주문테이블(5, false));
-            final var 테이블3 = orderTableDao.save(주문테이블(2, true));
+            final var 테이블1 = orderTableRepository.save(주문테이블(3, true));
+            final var 테이블2 = orderTableRepository.save(주문테이블(5, false));
+            final var 테이블3 = orderTableRepository.save(주문테이블(2, true));
             final var 테이블목록 = List.of(테이블1, 테이블2, 테이블3);
 
             final var expected = 테이블목록.stream()

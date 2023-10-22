@@ -30,27 +30,17 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 테이블_그룹을_생성할_수_있다() {
             // given
-            final var 테이블1 = orderTableDao.save(빈테이블());
-            final var 테이블2 = orderTableDao.save(빈테이블());
+            final var 테이블1 = orderTableRepository.save(빈테이블());
+            final var 테이블2 = orderTableRepository.save(빈테이블());
             final var request = 테이블그룹_생성_요청(List.of(테이블1.getId(), 테이블2.getId()));
 
             // when
             final var response = tableGroupService.create(request);
 
             // then
-            assertThat(tableGroupDao.findById(response.getId())).isPresent();
-        }
-
-        @Test
-        void 묶으려는_테이블이_2개미만이면_생성할_수_없다() {
-            // given
-            final var 테이블1 = orderTableDao.save(빈테이블());
-
-            final var request = 테이블그룹_생성_요청(List.of(테이블1.getId()));
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThat(tableGroupRepository.findById(response.getId())).isPresent();
+            assertThat(테이블1.getTableGroup().getId()).isEqualTo(response.getId());
+            assertThat(테이블2.getTableGroup().getId()).isEqualTo(response.getId());
         }
 
         @Test
@@ -65,10 +55,22 @@ class TableGroupServiceTest extends ServiceTest {
         }
 
         @Test
-        void 빈테이블이_아니면_생성할_수_없다() {
+        void 묶으려는_테이블이_2개미만이면_생성할_수_없다() {
             // given
-            final var 테이블1 = orderTableDao.save(비지않은_테이블());
-            final var 테이블2 = orderTableDao.save(빈테이블());
+            final var 테이블1 = orderTableRepository.save(빈테이블());
+
+            final var request = 테이블그룹_생성_요청(List.of(테이블1.getId()));
+
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 테이블이_비어있지_않으면_생성할_수_없다() {
+            // given
+            final var 테이블1 = orderTableRepository.save(비지않은_테이블());
+            final var 테이블2 = orderTableRepository.save(빈테이블());
 
             final var request = 테이블그룹_생성_요청(List.of(테이블1.getId(), 테이블2.getId()));
 
@@ -80,17 +82,11 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 이미_테이블_그룹을_가진_테이블이면_생성할_수_없다() {
             // given
-            final var 테이블1 = orderTableDao.save(빈테이블());
-            final var 테이블2 = orderTableDao.save(빈테이블());
-            final var 테이블3 = orderTableDao.save(빈테이블());
+            final var 테이블1 = orderTableRepository.save(빈테이블());
+            final var 테이블2 = orderTableRepository.save(빈테이블());
+            final var 테이블3 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹1 = tableGroupDao.save(테이블그룹(List.of(테이블1, 테이블2)));
-            테이블1.setTableGroupId(테이블그룹1.getId());
-            테이블1.setEmpty(false);
-            orderTableDao.save(테이블1);
-            테이블2.setTableGroupId(테이블그룹1.getId());
-            테이블2.setEmpty(false);
-            orderTableDao.save(테이블2);
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
 
             final var request = 테이블그룹_생성_요청(List.of(테이블1.getId(), 테이블3.getId()));
 
@@ -104,24 +100,18 @@ class TableGroupServiceTest extends ServiceTest {
     class 테이블_그룹_삭제 {
 
         @Test
-        void 테이블_그룹을_삭제할_수_있다() {
+        void 다테이블_그룹을_삭제할_수_있다() {
             // given
-            final var 테이블1 = orderTableDao.save(빈테이블());
-            final var 테이블2 = orderTableDao.save(빈테이블());
+            final var 테이블1 = orderTableRepository.save(빈테이블());
+            final var 테이블2 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupDao.save(테이블그룹(List.of(테이블1, 테이블2)));
-            테이블1.setTableGroupId(테이블그룹.getId());
-            테이블1.setEmpty(false);
-            orderTableDao.save(테이블1);
-            테이블2.setTableGroupId(테이블그룹.getId());
-            테이블2.setEmpty(false);
-            orderTableDao.save(테이블2);
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
 
             // when
             tableGroupService.ungroup(테이블그룹.getId());
 
             // then
-            assertThat(orderTableDao.findAllByTableGroupId(테이블그룹.getId())).isEmpty();
+            assertThat(orderTableRepository.findAllByTableGroupId(테이블그룹.getId())).isEmpty();
         }
 
         @ParameterizedTest
@@ -136,16 +126,10 @@ class TableGroupServiceTest extends ServiceTest {
             후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
             menuRepository.save(후라이드메뉴);
 
-            final var 테이블1 = orderTableDao.save(빈테이블());
-            final var 테이블2 = orderTableDao.save(빈테이블());
+            final var 테이블1 = orderTableRepository.save(빈테이블());
+            final var 테이블2 = orderTableRepository.save(빈테이블());
 
-            final var 테이블그룹 = tableGroupDao.save(테이블그룹(List.of(테이블1, 테이블2)));
-            테이블1.setTableGroupId(테이블그룹.getId());
-            테이블1.setEmpty(false);
-            orderTableDao.save(테이블1);
-            테이블2.setTableGroupId(테이블그룹.getId());
-            테이블2.setEmpty(false);
-            orderTableDao.save(테이블2);
+            final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
 
             final var order = orderDao.save(주문(테이블1.getId(), orderStatus.name()));
             final var 주문상품 = orderLineItemDao.save(주문상품(order.getId(), 후라이드메뉴.getId(), 1));
