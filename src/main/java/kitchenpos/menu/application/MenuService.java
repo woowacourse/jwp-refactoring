@@ -46,7 +46,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        validatePriceLessThenProductsSum(request, price);
+        validatePriceLessThenProductsSum(request.getMenuProductCreates(), price);
 
         final Menu savedMenu = menuRepository.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), Collections.emptyList()));
 
@@ -58,9 +58,9 @@ public class MenuService {
         return savedMenu.getId();
     }
 
-    private void validatePriceLessThenProductsSum(final MenuCreateRequest request, final Price price) {
+    private void validatePriceLessThenProductsSum(final List<MenuCreateRequest.MenuProductCreate> menuProductCreates, final Price price) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuCreateRequest.MenuProductCreate menuProductCreate : request.getMenuProductCreates()) {
+        for (final MenuCreateRequest.MenuProductCreate menuProductCreate : menuProductCreates) {
             final Product product = productRepository.findById(menuProductCreate.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductCreate.getQuantity())));
