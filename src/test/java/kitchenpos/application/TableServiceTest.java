@@ -8,6 +8,7 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,22 +78,23 @@ class TableServiceTest extends IntegrationTest {
         final OrderTable table = tableService.create(new OrderTableCreateRequest(0, false));
 
         // when
-        final int numberOfGuests = 10;
+        int numberOfGuests = 10;
+        OrderTableUpdateNumberOfGuestsRequest request = new OrderTableUpdateNumberOfGuestsRequest(10);
         table.changeNumberOfGuests(numberOfGuests);
-        tableService.changeNumberOfGuests(table.getId(), table);
+        tableService.changeNumberOfGuests(table.getId(), request);
 
         // then
-        assertThat(table.getNumberOfGuests()).isEqualTo(numberOfGuests);
+        assertThat(table.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
         assertThat(tableService.list())
                 .filteredOn(found -> Objects.equals(found.getId(), table.getId()))
-                .filteredOn(found -> Objects.equals(found.getNumberOfGuests(), numberOfGuests))
+                .filteredOn(found -> Objects.equals(found.getNumberOfGuests(), request.getNumberOfGuests()))
                 .hasSize(1);
     }
 
     @Test
     @DisplayName("존재하지 않는 테이블의 손님 수를 변경할 수 없다.")
     void 주문_테이블_방문한_손님수_변경_실패() {
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, new OrderTable(10, false)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, new OrderTableUpdateNumberOfGuestsRequest(10)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
