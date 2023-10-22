@@ -22,7 +22,7 @@ public class ProductResponse {
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
-                product.getPrice()
+                product.getPrice().getValue()
         );
     }
 

@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.PriceException;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductException;
 import kitchenpos.domain.ProductRepository;
@@ -49,8 +50,8 @@ class ProductServiceTest {
         ProductCreateRequest 상품_생성_요청 = new ProductCreateRequest("상품", new BigDecimal(-1));
 
         assertThatThrownBy(() -> productService.create(상품_생성_요청))
-                .isInstanceOf(ProductException.class)
-                .hasMessage("상품의 가격이 유효하지 않습니다.");
+                .isInstanceOf(PriceException.class)
+                .hasMessage("가격이 유효하지 않습니다.");
     }
 
     @Test
@@ -58,8 +59,8 @@ class ProductServiceTest {
         ProductCreateRequest 상품_생성_요청 = new ProductCreateRequest("상품", BigDecimal.valueOf(Math.pow(10, 20)));
 
         assertThatThrownBy(() -> productService.create(상품_생성_요청))
-                .isInstanceOf(ProductException.class)
-                .hasMessage("상품의 가격이 유효하지 않습니다.");
+                .isInstanceOf(PriceException.class)
+                .hasMessage("가격이 유효하지 않습니다.");
     }
 
     @Test

@@ -26,7 +26,7 @@ class ProductTest {
     @ParameterizedTest
     void 상품의_가격은_0원_이상_100조원_미만이어야_한다(String price) {
         assertThatThrownBy(() -> 새로운_상품(null, "상품", new BigDecimal(price)))
-                .isInstanceOf(ProductException.class)
-                .hasMessage("상품의 가격이 유효하지 않습니다.");
+                .isInstanceOf(PriceException.class)
+                .hasMessage("가격이 유효하지 않습니다.");
     }
 }

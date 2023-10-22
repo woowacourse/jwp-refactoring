@@ -14,6 +14,6 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{host}}/api/table-groups/1
+DELETE {{host}}/api/table-groups/2
 
 ###

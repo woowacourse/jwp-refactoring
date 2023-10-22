@@ -17,6 +17,7 @@ import kitchenpos.domain.MenuGroupException;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.PriceException;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductException;
 import kitchenpos.domain.ProductRepository;
@@ -86,8 +87,8 @@ class MenuServiceTest {
         MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal(-1), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
         assertThatThrownBy(() -> menuService.create(메뉴_생성_요청))
-                .isInstanceOf(MenuException.class)
-                .hasMessage("메뉴의 가격이 유효하지 않습니다.");
+                .isInstanceOf(PriceException.class)
+                .hasMessage("가격이 유효하지 않습니다.");
     }
 
     @Test
@@ -96,8 +97,8 @@ class MenuServiceTest {
         MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", BigDecimal.valueOf(Math.pow(10, 20)), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
         assertThatThrownBy(() -> menuService.create(메뉴_생성_요청))
-                .isInstanceOf(MenuException.class)
-                .hasMessage("메뉴의 가격이 유효하지 않습니다.");
+                .isInstanceOf(PriceException.class)
+                .hasMessage("가격이 유효하지 않습니다.");
     }
 
     @Test

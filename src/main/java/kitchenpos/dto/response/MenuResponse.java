@@ -37,7 +37,7 @@ public class MenuResponse {
                 .map(MenuProductResponse::from)
                 .collect(Collectors.toList());
 
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menuGroupResponse, menuProductResponses);
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menuGroupResponse, menuProductResponses);
     }
 
     public Long getId() {

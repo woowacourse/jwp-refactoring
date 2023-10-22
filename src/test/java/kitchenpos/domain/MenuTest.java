@@ -31,8 +31,8 @@ class MenuTest {
     @ParameterizedTest
     void 메뉴의_가격은_0원_이상_100조원_미만이어야_한다(String price) {
         assertThatThrownBy(() -> 새로운_메뉴("메뉴", new BigDecimal(price), 새로운_메뉴_그룹(null, "메뉴 그룹")))
-                .isInstanceOf(MenuException.class)
-                .hasMessage("메뉴의 가격이 유효하지 않습니다.");
+                .isInstanceOf(PriceException.class)
+                .hasMessage("가격이 유효하지 않습니다.");
     }
 
     @Test
