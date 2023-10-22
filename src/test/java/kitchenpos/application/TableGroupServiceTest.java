@@ -10,8 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.sql.DataSource;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
@@ -26,7 +26,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +72,7 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup savedTableGroup = tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
+            final TableGroupResponse savedTableGroup = tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
             assertThat(savedTableGroup).isNotNull();
             assertThat(savedTableGroup.getId()).isNotNull();
@@ -128,13 +127,11 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup savedTableGroup = tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
+            final TableGroupResponse savedTableGroup = tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
-            assertThat(
-                    savedTableGroup.getOrderTables()
-                            .stream().map(OrderTable::getId)
-                            .collect(Collectors.toList())
-            ).contains(savedOrderTable.getId(), savedOrderTable2.getId());
+            assertThat(savedTableGroup.getOrderTables())
+                    .extracting("id")
+                    .contains(savedOrderTable.getId(), savedOrderTable2.getId());
         }
 
         @Test
@@ -151,7 +148,7 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, true);
             final OrderTable savedOrderTable2 = 주문테이블만들기(tableService, true);
 
-            final TableGroup savedTableGroup = tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
+            final TableGroupResponse savedTableGroup = tableGroupService.create(List.of(savedOrderTable.getId(), savedOrderTable2.getId()));
 
             주어진_OrderTable로_주문하기(productService, menuService, menuGroupService, orderService, savedOrderTable);
 

@@ -1,10 +1,12 @@
 package kitchenpos.domain.ordertable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 import org.springframework.data.relational.core.mapping.Column;
 
 public class NumberOfGuests {
     @Column("NUMBER_OF_GUESTS")
+    @JsonProperty("number_of_guests")
     private final int value;
 
     public NumberOfGuests(final int value) {

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupCustomDao;
@@ -27,7 +28,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final List<Long> orderTableIds) {
+    public TableGroupResponse create(final List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -37,7 +38,7 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        return tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+        return TableGroupResponse.from(tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables)));
     }
 
     @Transactional
