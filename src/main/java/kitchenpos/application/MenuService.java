@@ -44,20 +44,6 @@ public class MenuService {
         return MenuResponse.of(saveMenu(request));
     }
 
-    private Menu saveMenu(final MenuCreateRequest request) {
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 메뉴 그룹 ID가 존재하지 않습니다."));
-        Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
-
-        for (MenuProductRequest menuProduct : request.getMenuProducts()) {
-            Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 제품 ID가 존재하지 않습니다."));
-            menuProductRepository.save(new MenuProduct(menu, product, menuProduct.getQuantity()));
-        }
-
-        return menu;
-    }
-
     /*
     국물 떡볶이 세트 (국물 떡볶이 1인분, 순대 1인분) 8000원
     국물 떡볶이 6000원
@@ -70,14 +56,25 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 제품 ID가 존재하지 않습니다."));
+            final Product product = productRepository.getById(menuProduct.getProductId());
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴 가격은 단품을 가격보다 높을 수 없습니다.");
         }
+    }
+
+    private Menu saveMenu(final MenuCreateRequest request) {
+        MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
+        Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
+
+        for (MenuProductRequest menuProduct : request.getMenuProducts()) {
+            Product product = productRepository.getById(menuProduct.getProductId());
+            menuProductRepository.save(new MenuProduct(menu, product, menuProduct.getQuantity()));
+        }
+
+        return menu;
     }
 
     public List<MenuResponse> list() {

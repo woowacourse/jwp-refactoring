@@ -35,8 +35,7 @@ public class OrderTableService {
     }
 
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable orderTable = orderTableRepository.getById(orderTableId);
 
         orderTable.setEmpty(request.isEmpty());
 
@@ -47,8 +46,7 @@ public class OrderTableService {
             final Long orderTableId,
             final OrderTableChangeNumberOfGuestsRequest request
     ) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 

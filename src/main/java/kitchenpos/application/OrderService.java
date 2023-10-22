@@ -40,14 +40,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
 
         final Order order = orderRepository.save(new Order(orderTable));
 
         for (OrderLineRequest orderLineItem : request.getOrderLineItems()) {
-            Menu menu = menuRepository.findById(orderLineItem.getMenuId())
-                    .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
+            Menu menu = menuRepository.getById(orderLineItem.getMenuId());
 
             orderLineItemRepository.save(new OrderLineItem(order, menu, orderLineItem.getQuantity()));
         }
@@ -65,8 +63,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 주문입니다."));
+        final Order savedOrder = orderRepository.getById(orderId);
 
         savedOrder.setOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
