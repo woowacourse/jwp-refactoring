@@ -10,12 +10,18 @@ import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
+import kitchenpos.exception.CannotChangeGroupedTableEmptyException;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
+import kitchenpos.exception.OrderStatusNotChangeableException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
 
     private final OrderRepository orderRepository;
@@ -27,13 +33,13 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(OrderTableCreateRequest request) {
         OrderTable orderTable = orderTableRepository.save(
                 new OrderTable(request.getNumberOfGuests(), request.getEmpty()));
         return OrderTableResponse.from(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
@@ -41,20 +47,19 @@ public class TableService {
                 .collect(toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
 
         if (Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+            throw new CannotChangeGroupedTableEmptyException();
         }
 
         List<Orders> orders = orderRepository.findAllByOrderTable(orderTable);
         boolean isStatusNotChangeable = orders.stream()
-                .anyMatch(Orders::isStatusNotChangeable);
+                .anyMatch(Orders::isOrderUnCompleted);
         if (isStatusNotChangeable) {
-            throw new IllegalArgumentException();
+            throw new OrderStatusNotChangeableException();
         }
 
         orderTable.setEmpty(request.getEmpty());
@@ -62,20 +67,17 @@ public class TableService {
         return OrderTableResponse.from(orderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-            final OrderTableChangeNumberOfGuestsRequest request) {
-        int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            OrderTableChangeNumberOfGuestsRequest request) {
+        if (request.getNumberOfGuests() < 0) {
+            throw new InvalidNumberOfGuestsException();
         }
 
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new CannotChangeEmptyTableNumberOfGuestsException();
         }
         orderTable.setNumberOfGuests(request.getNumberOfGuests());
 
