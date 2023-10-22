@@ -1,7 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Collections;
+import java.util.Optional;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -12,21 +19,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableDao orderTableDao;
@@ -81,7 +80,7 @@ class TableServiceTest {
             final var orderTable = OrderTableFixture.주문테이블_1명();
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any()))
                     .willReturn(false);
 
             final var expected = OrderTableFixture.빈테이블_1명();
@@ -128,7 +127,7 @@ class TableServiceTest {
             final var orderTable = OrderTableFixture.주문테이블_1명();
             given(orderTableDao.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any()))
                     .willReturn(true);
 
             // when & then

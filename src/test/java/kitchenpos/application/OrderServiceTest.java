@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,11 +10,10 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -30,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableDao orderTableDao;
@@ -39,7 +41,7 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -50,8 +52,8 @@ class OrderServiceTest {
         @Test
         void 주문을_등록할_수_있다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
-            given(orderDao.save(any()))
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
+            given(orderRepository.save(any()))
                     .willReturn(order);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
@@ -69,8 +71,7 @@ class OrderServiceTest {
         @Test
         void 주문_항목이_비어있으면_예외가_발생한다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
-            order.setOrderLineItems(Collections.emptyList());
+            final var order = OrderFixture.주문_망고치킨_2개_빈주문항목(COOKING);
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
@@ -80,7 +81,7 @@ class OrderServiceTest {
         @Test
         void 주문_항목_중_실제_메뉴에_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(0L);
 
@@ -92,7 +93,7 @@ class OrderServiceTest {
         @Test
         void 주문의_주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
             given(orderTableDao.findById(any()))
@@ -106,7 +107,7 @@ class OrderServiceTest {
         @Test
         void 빈_테이블이면_예외가_발생한다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
             given(orderTableDao.findById(any()))
@@ -120,8 +121,8 @@ class OrderServiceTest {
         @Test
         void 주문_상태가_조리로_등록된다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
-            given(orderDao.save(any()))
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
+            given(orderRepository.save(any()))
                     .willReturn(order);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
@@ -133,7 +134,7 @@ class OrderServiceTest {
 
             // then
             assertThat(actual.getOrderStatus())
-                    .isEqualTo(OrderStatus.COOKING.name());
+                    .isEqualTo(COOKING.name());
         }
     }
 
@@ -143,10 +144,10 @@ class OrderServiceTest {
         @Test
         void 주문_목록을_조회할_수_있다() {
             // given
-            final var orders = Collections.singletonList(OrderFixture.주문_망고치킨_2개());
-            given(orderDao.findAll())
+            final var orders = Collections.singletonList(OrderFixture.주문_망고치킨_2개(COOKING));
+            given(orderRepository.findAll())
                     .willReturn(orders);
-            given(orderLineItemDao.findAllByOrderId(any()))
+            given(orderLineItemRepository.findAllByOrderId(any()))
                     .willReturn(Collections.singletonList(OrderLineItemFixture.주문항목_망고치킨_2개()));
 
             // when
@@ -164,14 +165,14 @@ class OrderServiceTest {
         @Test
         void 주문_상태를_변경할_수_있다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
-            given(orderDao.findById(any()))
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
+            given(orderRepository.findById(any()))
                     .willReturn(Optional.of(order));
 
-            final var changedOrder = OrderFixture.주문_망고치킨_2개_식사();
-            given(orderDao.save(any()))
+            final var changedOrder = OrderFixture.주문_망고치킨_2개(MEAL);
+            given(orderRepository.save(any()))
                     .willReturn(changedOrder);
-            given(orderLineItemDao.findAllByOrderId(any()))
+            given(orderLineItemRepository.findAllByOrderId(any()))
                     .willReturn(Collections.singletonList(OrderLineItemFixture.주문항목_망고치킨_2개()));
 
             // when
@@ -179,14 +180,14 @@ class OrderServiceTest {
 
             // then
             assertThat(actual.getOrderStatus())
-                    .isEqualTo(OrderStatus.MEAL.name());
+                    .isEqualTo(MEAL.name());
         }
 
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개();
-            given(orderDao.findById(any()))
+            final var order = OrderFixture.주문_망고치킨_2개(COOKING);
+            given(orderRepository.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -198,8 +199,8 @@ class OrderServiceTest {
         @Test
         void 주문_상태가_계산_완료면_예외가_발생한다() {
             // given
-            final var order = OrderFixture.주문_망고치킨_2개_주문완료();
-            given(orderDao.findById(any()))
+            final var order = OrderFixture.주문_망고치킨_2개(COMPLETION);
+            given(orderRepository.findById(any()))
                     .willReturn(Optional.of(order));
 
             // when & then

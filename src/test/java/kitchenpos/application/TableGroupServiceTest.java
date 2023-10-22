@@ -1,8 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -14,15 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -32,7 +31,7 @@ class TableGroupServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableDao orderTableDao;
@@ -135,7 +134,7 @@ class TableGroupServiceTest {
             final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
             given(orderTableDao.findAllByTableGroupId(any()))
                     .willReturn(tableGroup.getOrderTables());
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .willReturn(false);
 
             // when & then
@@ -148,7 +147,7 @@ class TableGroupServiceTest {
             final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
             given(orderTableDao.findAllByTableGroupId(any()))
                     .willReturn(tableGroup.getOrderTables());
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .willReturn(true);
 
             // when & then
