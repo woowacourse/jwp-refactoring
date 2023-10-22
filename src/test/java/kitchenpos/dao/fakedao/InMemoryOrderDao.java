@@ -28,16 +28,4 @@ public class InMemoryOrderDao implements OrderDao {
     public List<Order> findAll() {
         return orders;
     }
-
-    @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
-        return existsByOrderTableIdInAndOrderStatusIn(List.of(orderTableId), orderStatuses);
-    }
-
-    @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses) {
-        return orders.stream()
-                     .filter(order -> orderTableIds.contains(order.getOrderTableId()))
-                     .anyMatch(order -> orderStatuses.contains(order.getOrderStatus()));
-    }
 }

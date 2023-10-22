@@ -5,20 +5,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.fakedao.InMemoryMenuDao;
 import kitchenpos.dao.fakedao.InMemoryOrderDao;
-import kitchenpos.dao.fakedao.InMemoryOrderLineItemDao;
 import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
 import kitchenpos.domain.MenuFactory;
-import kitchenpos.domain.OrderFactory;
-import kitchenpos.domain.OrderLineItemFactory;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTableFactory;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.exception.EntityNotFoundException;
+import kitchenpos.exception.InvalidOrderException;
+import kitchenpos.exception.InvalidOrderStatusException;
+import kitchenpos.ui.OrderCreateRequest;
+import kitchenpos.ui.OrderLineItemCreateRequest;
+import kitchenpos.ui.request.OrderStatusChangeRequest;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,14 +38,12 @@ class OrderServiceTest {
     private MenuDao menuDao;
     private OrderDao orderDao;
     private OrderTableDao orderTableDao;
-    private OrderLineItemDao orderLineItemDao;
 
     @BeforeEach
     void setUp() {
         menuDao = new InMemoryMenuDao();
         orderDao = new InMemoryOrderDao();
         orderTableDao = new InMemoryOrderTableDao();
-        orderLineItemDao = new InMemoryOrderLineItemDao();
     }
 
     @Nested
@@ -49,14 +53,14 @@ class OrderServiceTest {
         void 주문한_메뉴가_하나도_없다면_에외가_발생한다() {
             // given
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
-            final var order = OrderFactory.createOrderOf(table.getId());
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+            final var order = new OrderCreateRequest(table.getId(), Collections.emptyList());
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> orderService.create(order);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(InvalidOrderException.class);
         }
 
         @Test
@@ -64,17 +68,16 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup);
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = OrderFactory.createOrderOf(table.getId(), orderLineItem);
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+            final var order = new OrderCreateRequest(table.getId(), List.of(new OrderLineItemCreateRequest(menu.getId(), 1L)));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> orderService.create(order);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(EntityNotFoundException.class);
         }
 
         @Test
@@ -82,16 +85,16 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
+            final var orderLineItem = new OrderLineItemCreateRequest(menu.getId(), 1L);
 
-            final var order = OrderFactory.createOrderOf(Long.MAX_VALUE, orderLineItem);
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+            final var order = new OrderCreateRequest(1L, List.of(orderLineItem));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> orderService.create(order);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(EntityNotFoundException.class);
         }
 
         @Test
@@ -99,17 +102,17 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
+            final var orderLineItem = new OrderLineItemCreateRequest(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
 
-            final var order = OrderFactory.createOrderOf(table.getId(), orderLineItem);
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+            final var order = new OrderCreateRequest(table.getId(), List.of(orderLineItem));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             // when
             final ThrowingCallable throwingCallable = () -> orderService.create(order);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(InvalidOrderException.class);
         }
 
         @Test
@@ -117,19 +120,18 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
+            final var orderLineItem = new OrderLineItemCreateRequest(menu.getId(), 1L);
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = OrderFactory.createOrderOf(table.getId(), orderLineItem);
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+            final var order = new OrderCreateRequest(table.getId(), List.of(orderLineItem));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
             // when
             final var savedOrder = orderService.create(order);
 
             // then
             assertAll(
-                    () -> assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING"),
-                    () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
+                    () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                     () -> assertThat(savedOrder.getOrderLineItems()).hasSize(1)
             );
         }
@@ -143,21 +145,19 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
-            final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
+            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = orderDao.save(OrderFactory.createOrderOf(table.getId(), orderLineItem));
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-            order.setOrderStatus(OrderStatus.COMPLETION.name());
+            final var order = orderDao.save(new Order(1L, table, OrderStatus.COMPLETION, List.of(orderLineItem), null));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
-            final var nextOrder = OrderFactory.createOrderOf(3L, orderLineItem);
-            nextOrder.setOrderStatus(OrderStatus.MEAL.name());
+            final var nextOrder = new OrderStatusChangeRequest("MEAL");
 
             // when
             final ThrowingCallable throwingCallable = () -> orderService.changeOrderStatus(order.getId(), nextOrder);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(InvalidOrderStatusException.class);
         }
 
         @Test
@@ -165,21 +165,19 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
-            final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
+            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = orderDao.save(OrderFactory.createOrderOf(table.getId(), orderLineItem));
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-            order.setOrderStatus(OrderStatus.MEAL.name());
+            final var order = orderDao.save(new Order(1L, table, OrderStatus.MEAL, List.of(orderLineItem), null));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
-            final var nextOrder = OrderFactory.createOrderOf(3L, orderLineItem);
-            nextOrder.setOrderStatus(OrderStatus.COOKING.name());
+            final var nextOrder = new OrderStatusChangeRequest("COOKING");
 
             // when
             final ThrowingCallable throwingCallable = () -> orderService.changeOrderStatus(order.getId(), nextOrder);
 
             // then
-            assertThatThrownBy(throwingCallable).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(throwingCallable).isInstanceOf(InvalidOrderStatusException.class);
         }
 
         @ParameterizedTest
@@ -188,21 +186,19 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = OrderLineItemFactory.createOrderLineItemOf(menu.getId(), 1L);
-            final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
+            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
-            final var order = orderDao.save(OrderFactory.createOrderOf(table.getId(), orderLineItem));
-            final var orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-            order.setOrderStatus(previous.name());
+            final var order = orderDao.save(new Order(1L, table, previous, List.of(orderLineItem), null));
+            final var orderService = new OrderService(menuDao, orderDao, orderTableDao);
 
-            final var nextOrder = OrderFactory.createOrderOf(1L, orderLineItem);
-            nextOrder.setOrderStatus(next.name());
+            final var nextOrder = new OrderStatusChangeRequest(next.name());
 
             // when
             final var savedOrder = orderService.changeOrderStatus(order.getId(), nextOrder);
 
             // then
-            assertThat(savedOrder.getOrderStatus()).isEqualTo(next.name());
+            assertThat(savedOrder.getOrderStatus()).isEqualTo(next);
         }
     }
 }

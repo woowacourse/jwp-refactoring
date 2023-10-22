@@ -36,11 +36,4 @@ public class InMemoryOrderTableDao implements OrderTableDao {
                           .filter(orderTable -> ids.contains(orderTable.getId()))
                           .collect(Collectors.toList());
     }
-
-    @Override
-    public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
-        return orderTables.stream()
-                          .filter(orderTable -> orderTable.getTableGroupId().equals(tableGroupId))
-                          .collect(Collectors.toList());
-    }
 }

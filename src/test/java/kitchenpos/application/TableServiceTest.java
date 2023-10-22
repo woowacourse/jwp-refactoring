@@ -4,16 +4,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.fakedao.InMemoryMenuDao;
 import kitchenpos.dao.fakedao.InMemoryOrderDao;
 import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
-import kitchenpos.domain.OrderFactory;
-import kitchenpos.domain.OrderLineItemFactory;
+import kitchenpos.domain.MenuFactory;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTableFactory;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.exception.CannotChangeEmptyException;
 import kitchenpos.exception.InvalidGuestNumberException;
 import kitchenpos.ui.request.OrderTableChangeEmptyRequest;
@@ -31,11 +36,13 @@ class TableServiceTest {
 
     private OrderDao fakeOrderDao;
     private OrderTableDao fakeOrderTableDao;
+    private MenuDao fakeMenuDao;
 
     @BeforeEach
     void setUp() {
         fakeOrderDao = new InMemoryOrderDao();
         fakeOrderTableDao = new InMemoryOrderTableDao();
+        fakeMenuDao = new InMemoryMenuDao();
     }
 
     @Nested
@@ -94,18 +101,20 @@ class TableServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
         void 주문_상태가_조리중_또는_식사중인_테이블은_비어있는지_여부를_수정할_수_없다(final OrderStatus orderStatus) {
             // given
-            final var table = OrderTableFactory.createOrderTableOf(0, false);
-            final var savedTable = fakeOrderTableDao.save(table);
-            final var savedOrder = fakeOrderDao.save(OrderFactory.createOrderOf(savedTable.getId(), OrderLineItemFactory.createOrderLineItemOf(1L, 1L)));
-            savedOrder.setOrderStatus(orderStatus.name());
-            table.addOrder(savedOrder);
+            final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
+            final var menu = fakeMenuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
+            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var table = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
+
+            final var order = fakeOrderDao.save(new Order(1L, table, orderStatus, List.of(orderLineItem), null));
+            table.addOrder(order);
 
             final var tableService = new TableService(fakeOrderTableDao);
 
             final var request = new OrderTableChangeEmptyRequest(true);
 
             // when
-            final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(savedTable.getId(), request);
+            final ThrowingCallable throwingCallable = () -> tableService.changeEmpty(table.getId(), request);
 
             // then
             assertThatThrownBy(throwingCallable).isInstanceOf(CannotChangeEmptyException.class);
@@ -114,9 +123,11 @@ class TableServiceTest {
         @Test
         void 테이블_그룹이_지정되어있다면_비어있는_상태로_변경할_수_없다() {
             // given
-            final var table = OrderTableFactory.createOrderTableOf(0, false);
+            final var table = OrderTableFactory.createOrderTableOf(0, true);
             final var savedTable = fakeOrderTableDao.save(table);
-            final var tableGroup = new TableGroup(List.of(savedTable));
+            final var table2 = OrderTableFactory.createOrderTableOf(0, true);
+            final var savedTable2 = fakeOrderTableDao.save(table2);
+            final var tableGroup = new TableGroup(List.of(savedTable, savedTable2));
 
             final var tableService = new TableService(fakeOrderTableDao);
 
