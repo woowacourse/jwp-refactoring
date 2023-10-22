@@ -34,8 +34,10 @@ public class DataCleaner {
     }
 
     private static String changeCamelToSnakeCase(final EntityType<?> entity) {
-        final String lowerCase = entity.getName().replaceAll(CAMEL_CASE_REGEX, SNAKE_CASE_REGEX).toLowerCase();
-        System.out.println(lowerCase);
+        String lowerCase = entity.getName().replaceAll(CAMEL_CASE_REGEX, SNAKE_CASE_REGEX).toLowerCase();
+        if (lowerCase.equals("order")) {
+            lowerCase = "orders";
+        }
         return lowerCase;
     }
 

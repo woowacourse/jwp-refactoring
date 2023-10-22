@@ -2,13 +2,49 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Table(name = "orders")
+@Entity
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private Long orderTableId;
+
+    @Column
     private String orderStatus;
-    private LocalDateTime orderedTime;
+
+    @Column
+    private LocalDateTime orderedTime = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(final Long id, final Long orderTableId,
+                 final String orderStatus,
+                 final List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order forSave(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        return new Order(null, orderTableId, null, orderLineItems);
+    }
 
     public Long getId() {
         return id;

@@ -13,7 +13,7 @@ public class FixtureFactory {
                                                    final long quantity) {
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(id);
-        orderLineItem.setOrderId(orderId);
+        orderLineItem.setOrder(new Order());
         orderLineItem.setMenuId(menuId);
         orderLineItem.setQuantity(quantity);
         return orderLineItem;
