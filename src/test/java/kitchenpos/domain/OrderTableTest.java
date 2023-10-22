@@ -161,4 +161,52 @@ class OrderTableTest {
             });
         }
     }
+
+    @DisplayName("손님 수 변경")
+    @Nested
+    class ChangeNumberOfGuests {
+
+        @DisplayName("[SUCCESS] 손님 수를 변경한다.")
+        @Test
+        void success_changeNumberOfGuests() {
+            // given
+            final OrderTable orderTable = new OrderTable(null, 5, false);
+
+            // when
+            orderTable.changeNumberOfGuests(10);
+
+            // then
+            assertThat(orderTable)
+                    .usingRecursiveComparison()
+                    .isEqualTo(
+                            new OrderTable(null, 10, false)
+                    );
+        }
+
+        @DisplayName("[EXCEPTION] 주문 테이블이 비어있는 경우 예외가 발생한다.")
+        @Test
+        void throwException_changeNumberOfGuests_when_isEmpty() {
+            // given
+            final boolean isEmpty = true;
+
+            // when
+            final OrderTable orderTable = new OrderTable(null, 5, isEmpty);
+
+            // then
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(10))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("[EXCEPTION] 변경할 손님 수가 음수일 경우 예외가 발생한다.")
+        @ParameterizedTest
+        @ValueSource(ints = {-1, -2, -10, -1000000})
+        void throwException_changeNumberOfGuests_when_negative(final int negativeNumberOfGuests) {
+            // given
+            final OrderTable orderTable = new OrderTable(null, 5, false);
+
+            // expect
+            assertThatThrownBy(() -> orderTable.changeNumberOfGuests(negativeNumberOfGuests))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }

@@ -70,6 +70,17 @@ public class OrderTable {
         this.empty = false;
     }
 
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("주문 테이블이 비어있는 상태일 경우 손님 수를 변경할 수 없습니다.");
+        }
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("변경할 손님 수는 음이 아닌 정수이어야 합니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
@@ -88,9 +99,5 @@ public class OrderTable {
 
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 }
