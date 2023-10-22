@@ -14,12 +14,13 @@ import java.util.Optional;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +41,7 @@ class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -71,11 +72,12 @@ class OrderServiceTest {
         given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1000L);
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, false);
+
         order.setOrderTableId(orderTable.getId());
 
-        given(orderTableDao.findById(order.getOrderTableId()))
+        given(orderTableRepository.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
 
         given(orderDao.save(any()))
@@ -90,7 +92,7 @@ class OrderServiceTest {
         // when & then
         assertThat(orderService.create(order)).isEqualTo(order);
         then(menuRepository).should(times(1)).countByIdIn(any());
-        then(orderTableDao).should(times(1)).findById(anyLong());
+        then(orderTableRepository).should(times(1)).findById(anyLong());
         then(orderDao).should(times(1)).save(any());
         then(orderLineItemDao).should(times(2)).save(any());
     }
@@ -160,12 +162,12 @@ class OrderServiceTest {
         given(menuRepository.countByIdIn(any()))
                 .willReturn(2L);
 
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1000L);
-        orderTable.setEmpty(true);
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, true);
+
         order.setOrderTableId(orderTable.getId());
 
-        given(orderTableDao.findById(order.getOrderTableId()))
+        given(orderTableRepository.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
 
         // when & then

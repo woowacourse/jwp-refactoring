@@ -12,7 +12,7 @@ import static org.mockito.Mockito.times;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ class TableServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -38,8 +38,9 @@ class TableServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        given(orderTableDao.save(orderTable))
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(tableGroup, 2, true);
+        given(orderTableRepository.save(orderTable))
                 .willReturn(orderTable);
 
         // when & then
@@ -50,11 +51,12 @@ class TableServiceTest {
     @Test
     void list() {
         // given
-        final OrderTable orderTable1 = new OrderTable();
-        final OrderTable orderTable2 = new OrderTable();
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable1 = new OrderTable(tableGroup, 2, true);
+        final OrderTable orderTable2 = new OrderTable(tableGroup, 3, true);
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
-        given(orderTableDao.findAll())
+        given(orderTableRepository.findAll())
                 .willReturn(orderTables);
 
         // when & then
@@ -65,26 +67,26 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(1L, null, 2, true);
 
-        given(orderTableDao.findById(1L))
+        given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
-        given(orderTableDao.save(orderTable))
+        given(orderTableRepository.save(orderTable))
                 .willReturn(orderTable);
 
         // when & then
         assertThat(tableService.changeEmpty(1L, orderTable)).isEqualTo(orderTable);
-        then(orderTableDao).should(times(1)).findById(anyLong());
-        then(orderTableDao).should(times(1)).save(any());
+        then(orderTableRepository).should(times(1)).findById(anyLong());
+        then(orderTableRepository).should(times(1)).save(any());
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 변경할 수 없다.")
     @Test
     void changeEmpty_FailWhenTableIsEmpty() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final TableGroup tableGroup = new TableGroup(10L);
+        final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
@@ -96,14 +98,11 @@ class TableServiceTest {
     @Test
     void changeEmpty_FailWhenGroupAlreadyAssigned() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final TableGroup tableGroup = new TableGroup(10L);
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(10L);
-        orderTable.setTableGroupId(tableGroup.getId());
+        final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
 
-        given(orderTableDao.findById(1L))
+        given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
 
         // when & then
@@ -116,10 +115,9 @@ class TableServiceTest {
     @Test
     void changeEmpty_FailWhenOrderStatusIsNotCompletion() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final OrderTable orderTable = new OrderTable(1L, null, 3, true);
 
-        given(orderTableDao.findById(1L))
+        given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
 
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
@@ -135,35 +133,30 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        final OrderTable beforeTable = new OrderTable();
-        beforeTable.setId(1L);
-        beforeTable.setEmpty(false);
-        beforeTable.setNumberOfGuests(1);
+        final TableGroup tableGroup = new TableGroup(10L);
 
-        final OrderTable afterTable = new OrderTable();
-        afterTable.setId(1L);
-        afterTable.setEmpty(false);
-        afterTable.setNumberOfGuests(8);
+        final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
+        final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, false);
 
-        given(orderTableDao.findById(1L))
-                .willReturn(Optional.of(afterTable));
+        given(orderTableRepository.findById(1L))
+                .willReturn(Optional.of(beforeTable));
 
-        given(orderTableDao.save(afterTable))
+        given(orderTableRepository.save(any()))
                 .willReturn(afterTable);
 
         // when & then
-        assertThat(tableService.changeNumberOfGuests(1L, beforeTable)).isEqualTo(afterTable);
-        then(orderTableDao).should(times(1)).findById(1L);
-        then(orderTableDao).should(times(1)).save(any());
+        assertThat(tableService.changeNumberOfGuests(1L, afterTable)).isEqualTo(afterTable);
+        then(orderTableRepository).should(times(1)).findById(1L);
+        then(orderTableRepository).should(times(1)).save(any());
     }
 
     @DisplayName("테이블에 할당된 손님의 수가 0 미만이면 조정할 수 없다.")
     @Test
     void changeNumberOfGuests_FailWhenChangeGuestNumUnderZero() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(-1);
+        final TableGroup tableGroup = new TableGroup(10L);
+
+        final OrderTable orderTable = new OrderTable(1L, tableGroup, -1, false);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -175,11 +168,11 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_FailWhenOrderTableNotExist() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(5);
+        final TableGroup tableGroup = new TableGroup(10L);
 
-        given(orderTableDao.findById(1L))
+        final OrderTable orderTable = new OrderTable(1L, tableGroup, 5, true);
+
+        given(orderTableRepository.findById(1L))
                 .willReturn(Optional.empty());
 
         // when & then
@@ -192,17 +185,12 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_FailWhenTableIsEmpty() {
         // given
-        final OrderTable beforeTable = new OrderTable();
-        beforeTable.setId(1L);
-        beforeTable.setEmpty(false);
-        beforeTable.setNumberOfGuests(1);
+        final TableGroup tableGroup = new TableGroup(10L);
 
-        final OrderTable afterTable = new OrderTable();
-        afterTable.setId(1L);
-        afterTable.setEmpty(true);
-        afterTable.setNumberOfGuests(8);
+        final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
+        final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, true);
 
-        given(orderTableDao.findById(1L))
+        given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(afterTable));
 
         // when & then
