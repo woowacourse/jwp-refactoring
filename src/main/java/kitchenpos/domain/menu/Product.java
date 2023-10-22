@@ -29,9 +29,16 @@ public class Product {
     }
 
     public Product(final Long id, final String name, final Price price) {
+        validateProduct(price);
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    private void validateProduct(final Price price) {
+        if (price == null) {
+            throw new IllegalArgumentException(String.format("가격은 null 일 수 없습니다. 입력값 = %s", price));
+        }
     }
 
     public Long getId() {

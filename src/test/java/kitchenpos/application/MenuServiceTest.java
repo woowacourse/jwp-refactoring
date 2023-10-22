@@ -92,10 +92,9 @@ class MenuServiceTest {
             final MenuProduct frenchFries = menuProduct(potato(), 1);
 
             final BigDecimal underZeroPrice = BigDecimal.valueOf(-1);
-            final Menu expected = menu("우동세트", underZeroPrice, western(), List.of(wooDong, frenchFries));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(menu("우동세트", underZeroPrice, western(), List.of(wooDong, frenchFries))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -132,7 +131,7 @@ class MenuServiceTest {
         @Test
         void 상품이_저장되어_있지_않으면_메뉴를_생성할_수_없다() {
             // given
-            final Product noneExistedProduct = product("noneExistedProduct", BigDecimal.valueOf(-1));
+            final Product noneExistedProduct = product("noneExistedProduct", BigDecimal.valueOf(0));
             final MenuProduct wooDong = menuProduct(noneExistedProduct, 1);
             final MenuProduct frenchFries = menuProduct(potato(), 1);
             final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));

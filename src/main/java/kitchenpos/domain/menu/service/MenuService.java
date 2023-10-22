@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,10 +43,6 @@ public class MenuService {
 
     private void validateMenu(final Menu menu) {
         final Price price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.isUnderZero()) {
-            throw new IllegalArgumentException();
-        }
 
         if (!menuGroupRepository.existsById(menu.getMenuGroup().getId())) {
             throw new IllegalArgumentException();

@@ -51,21 +51,15 @@ class ProductServiceTest {
 
         @Test
         void 상품의_가격이_null이면_상품을_생성할_수_없다() {
-            // given
-            final Product expected = new Product("치킨", null);
-
             // when, then
-            assertThatThrownBy(() -> productService.create(expected))
+            assertThatThrownBy(() -> productService.create(new Product("치킨", null)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품의_가격이_0보다_작으면_상품을_생성할_수_없다() {
-            // given
-            final Product expected = product("치킨", BigDecimal.valueOf(-1));
-
             // when, then
-            assertThatThrownBy(() -> productService.create(expected))
+            assertThatThrownBy(() -> productService.create(product("치킨", BigDecimal.valueOf(-1))))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

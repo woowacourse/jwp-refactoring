@@ -2,6 +2,7 @@ package kitchenpos.domain.common;
 
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Embeddable
 public class Price {
@@ -14,15 +15,22 @@ public class Price {
     }
 
     public Price(final BigDecimal price) {
+        validatePrice(price);
         this.price = price;
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || isUnderZero(price)) {
+            throw new IllegalArgumentException(String.format("가격은 null 또는 0원 보다 작을 수 없습니다. 입력값 = %s", price));
+        }
+    }
+
+    private boolean isUnderZero(final BigDecimal price) {
+        return BigDecimal.ZERO.compareTo(price) > 0;
     }
 
     public static Price zero() {
         return ZERO;
-    }
-
-    public boolean isUnderZero() {
-        return price.compareTo(BigDecimal.ZERO) < 0;
     }
 
     public Price add(final BigDecimal price) {
