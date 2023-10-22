@@ -63,12 +63,11 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.getValuesId();
         validateOrderTableStatus(orderTableIds);
         orderTables.updateInfo();
-//        orderTableRepository.save(orderTable);
     }
 
     private void validateOrderTableStatus(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }
