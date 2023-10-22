@@ -1,115 +1,74 @@
 package kitchenpos.application;
 
-import kitchenpos.application.exception.OrderServiceException.CompletionOrderException;
-import kitchenpos.application.exception.OrderServiceException.EmptyOrderLineItemsException;
-import kitchenpos.application.exception.OrderServiceException.EmptyOrderTableException;
-import kitchenpos.application.exception.OrderServiceException.NotExistsMenuException;
-import kitchenpos.application.exception.OrderServiceException.NotExistsOrderException;
-import kitchenpos.application.exception.OrderServiceException.NotExistsOrderTableException;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
+import kitchenpos.domain.exception.OrderException.NotExistsMenuException;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+
+    public OrderService(final MenuRepository menuRepository,
+                        final OrderRepository orderRepository,
+                        final OrderTableRepository orderTableRepository) {
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderRequest orderRequest) {
+        final OrderTable orderTable = orderTableRepository.getById(orderRequest.getOrderTableId());
+        List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
+        validateOrder(orderLineItems, orderTable);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new EmptyOrderLineItemsException();
-        }
+        return orderRepository.save(Order.of(orderTable, orderLineItems));
+    }
 
+    private void validateOrder(final List<OrderLineItem> orderLineItems, final OrderTable orderTable) {
+        validateOrderLineItems(orderLineItems);
+        validateOrderTable(orderTable);
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new NotExistsMenuException();
         }
+    }
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(() -> new NotExistsOrderTableException(order.getOrderTableId()));
-
+    private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new EmptyOrderTableException(orderTable.getId());
         }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(() -> new NotExistsOrderException(orderId));
+    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
+        final Order savedOrder = orderRepository.getById(orderId);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new CompletionOrderException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        savedOrder.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
 
         return savedOrder;
     }

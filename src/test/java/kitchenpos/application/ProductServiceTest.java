@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
-import kitchenpos.application.exception.ProductServiceException.NoPriceException;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,39 +23,22 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
-    private Product product = new Product();
+    private Product product;
 
     @BeforeEach
     void init() {
-        product.setPrice(BigDecimal.valueOf(1000));
+        product = Product.of("kong", BigDecimal.valueOf(1000));
     }
 
     @Test
     @DisplayName("상품을 생성할 수 있다.")
     void create_success() {
-        productService.create(product);
+        ProductRequest productRequest = new ProductRequest("wuga", BigDecimal.valueOf(1000));
+        productService.create(productRequest);
 
-        verify(productDao, times(1)).save(product);
-    }
-
-    @Test
-    @DisplayName("상품의 가격이 0원 미만이면 예외가 발생한다.")
-    void create_fail_price1() {
-        product.setPrice(BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(NoPriceException.class);
-    }
-
-    @Test
-    @DisplayName("상품의 가격이 null이면 예외가 발생한다.")
-    void create_fail_price2() {
-        product.setPrice(null);
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(NoPriceException.class);
+        verify(productRepository, times(1)).save(any());
     }
 
     @Test
@@ -63,6 +46,6 @@ class ProductServiceTest {
     void list_success() {
         productService.list();
 
-        verify(productDao, times(1)).findAll();
+        verify(productRepository, times(1)).findAll();
     }
 }
