@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.product.Product;
 
@@ -18,7 +17,7 @@ public class MenuProduct {
     @Id
     private Long seq;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 

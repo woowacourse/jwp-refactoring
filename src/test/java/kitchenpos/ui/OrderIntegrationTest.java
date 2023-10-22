@@ -42,6 +42,7 @@ public class OrderIntegrationTest extends IntegrationTest {
 
         @Test
         void 주문을_정상적으로_등록한다() {
+            // given
             final var product = new Product("후라이드", BigDecimal.valueOf(16000));
             productDao.save(product);
             final var menuProduct = new MenuProduct(product, 1L);
@@ -49,7 +50,6 @@ public class OrderIntegrationTest extends IntegrationTest {
             final var menu = menuDao.save(new Menu("후라이드", BigDecimal.valueOf(16000), List.of(menuProduct), menuGroup));
             final var orderTable = orderTableDao.save(new OrderTable(1, false));
 
-            // given
             final var request = new OrderCreateRequest(
                     orderTable.getId(),
                     List.of(new OrderLineItemCreateRequest(menu.getId(), 1))
