@@ -3,6 +3,9 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -17,16 +20,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
-import static kitchenpos.fixture.MenuFixture.menu;
+import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.fixture.OrderFixture.order;
-import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.TableGroupFixture.tableGroup;
 import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
+import static kitchenpos.fixture.TableGroupFixture.tableGroupWithoutOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -42,7 +45,11 @@ class TableGroupServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private TableGroupRepository tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Test
     void 단체_지정을_생성한다() {
@@ -119,12 +126,13 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성할_때_이미_단체_지정이_되어있으면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup(List.of(orderTable, orderTable(10, true))), 3, true));
-        TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
+        TableGroup tableGroup = tableGroupRepository.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
+        OrderTable orderTable1 = orderTableRepository.save(orderTable(tableGroup, 10, true));
+        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 10, true));
+        TableGroupRequest request = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("단체 지정은 빈 테이블만 가능합니다");
     }
@@ -132,32 +140,25 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
-        OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
-        orderRepository.save(order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(menu("name", 1000L, null), order(orderTable, new ArrayList<>()), 1L))));
+        TableGroup tableGroup = tableGroupRepository.save(tableGroup(List.of()));
+        orderTableRepository.save(orderTable(tableGroup, 0, true));
+        orderTableRepository.save(orderTable(tableGroup, 0, true));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
 
         // then
-        assertSoftly(softly -> {
-            softly.assertThat(orderTableRepository.findById(orderTable.getId())).isPresent();
-            softly.assertThat(orderTableRepository.findById(orderTable.getId()).get().getTableGroup()).isNull();
-            softly.assertThat(orderTableRepository.findById(orderTable.getId()).get().isEmpty()).isFalse();
-            softly.assertThat(orderTableRepository.findById(orderTable2.getId())).isPresent();
-            softly.assertThat(orderTableRepository.findById(orderTable2.getId()).get().getTableGroup()).isNull();
-            softly.assertThat(orderTableRepository.findById(orderTable2.getId()).get().isEmpty()).isFalse();
-        });
+        assertThat(orderTableRepository.findAllByTableGroupId(tableGroup.getId())).isEmpty();
     }
 
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
     void 단체_지정을_해제할_때_주문의_상태가_조리_혹은_식사_이면_예외가_발생한다(OrderStatus orderStatus) {
         // given
-        TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
+        TableGroup tableGroup = tableGroupRepository.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
-        orderRepository.save(order(orderTable, orderStatus, List.of(orderLineItem(menu("name", 1000L, null), order(orderTable, new ArrayList<>()), 1L))));
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
+        orderRepository.save(order(orderTable, orderStatus, List.of()));
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

@@ -81,7 +81,7 @@ class OrderServiceTest {
     void 주문_테이블이_존재하지_않는다면_예외가_발생한다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup.getId(), List.of()));
         OrderRequest request = orderRequest(MAX_VALUE, List.of(orderLineItem(menu, null, 1L)));
 
         // expect
@@ -95,7 +95,7 @@ class OrderServiceTest {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(orderTable(10, false));
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup.getId(), List.of()));
         OrderRequest request = orderRequest(savedOrderTable.getId(), List.of(orderLineItem(menu, order(savedOrderTable, List.of()), 1L)));
 
         // when
@@ -116,7 +116,7 @@ class OrderServiceTest {
         // given
 
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup, List.of()));
+        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup.getId(), List.of()));
 
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order1 = orderRepository.save(order(orderTable, MEAL, List.of()));

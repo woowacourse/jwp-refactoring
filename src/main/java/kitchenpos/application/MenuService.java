@@ -36,7 +36,7 @@ public class MenuService {
     public Menu create(MenuRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재 해야합니다"));
-        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup.getId());
         setupMenuProducts(request, menu);
         return menuRepository.save(menu);
     }

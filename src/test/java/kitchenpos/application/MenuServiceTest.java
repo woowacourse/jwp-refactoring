@@ -93,10 +93,9 @@ class MenuServiceTest {
     void 전체_메뉴를_조회할_수_있다() {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("chicken"));
-        Product product = productRepository.save(product("fried chicken", 10000L));
 
-        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup, List.of()));
-        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup, List.of()));
+        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
+        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of()));
 
         // when
         List<Menu> result = menuService.list();
