@@ -25,7 +25,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private final List<OrderLineItem> orderLineItems;
     private OrderStatus orderStatus;
-
+    
     private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
                   final LocalDateTime orderedTime,
                   final List<OrderLineItem> orderLineItems) {
@@ -41,11 +41,7 @@ public class Order {
     }
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, null, orderLineItems);
-    }
-
-    public Order startCook(final OrderTable orderTable) {
-        return new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), this.orderLineItems);
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

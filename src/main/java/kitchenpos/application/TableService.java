@@ -3,10 +3,15 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +27,22 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable request) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(saved);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResponse::of)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow();
+                .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException();
@@ -46,15 +54,18 @@ public class TableService {
         }
 
         orderTable.changeEmpty(request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(saved);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        return orderTableRepository.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(saved);
     }
 }
