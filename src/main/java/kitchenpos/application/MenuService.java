@@ -6,7 +6,9 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,24 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Service
 public class MenuService {
     private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
-
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductRepository productRepository
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productRepository = productRepository;
-    }
 
     @Transactional
     public Menu create(final Menu menu) {
@@ -42,7 +33,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 

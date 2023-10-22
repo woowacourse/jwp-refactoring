@@ -1,22 +1,28 @@
 package kitchenpos.domain;
 
+import lombok.Getter;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Getter
+@Entity
 public class MenuGroup {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
     private String name;
 
-    public Long getId() {
-        return id;
+    protected MenuGroup() {}
+
+    public MenuGroup(final String name) {
+        this(null, name);
     }
 
-    public void setId(final Long id) {
+    public MenuGroup(final Long id, final String name) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
         this.name = name;
     }
 }
