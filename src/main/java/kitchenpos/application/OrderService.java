@@ -42,7 +42,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목이 없으면 주문할 수 없습니다");
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -50,7 +50,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 메뉴는 주문할 수 없습니다");
         }
 
         order.setId(null);
@@ -59,7 +59,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 주문테이블에서는 주문할 수 없습니다");
         }
 
         order.setOrderTableId(orderTable.getId());
@@ -95,7 +95,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 종료된 주문입니다");
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
