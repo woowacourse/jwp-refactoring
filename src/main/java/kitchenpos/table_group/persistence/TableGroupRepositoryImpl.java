@@ -43,14 +43,25 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
 
   @Override
   public Optional<TableGroup> findById(final Long id) {
-    return tableGroupDao.findById(id).map(TableGroupEntity::toTableGroup);
-  }// TODO: 2023/10/22 orderTables 값 채워주기
+    final OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(id)
+        .stream()
+        .map(OrderTableEntity::toOrderTable)
+        .collect(Collectors.toList()));
+    return tableGroupDao.findById(id).map(entity -> entity.toTableGroup(orderTables));
+  }
 
   @Override
   public List<TableGroup> findAll() {
     return tableGroupDao.findAll()
         .stream()
-        .map(TableGroupEntity::toTableGroup)
+        .map(entity -> {
+          final OrderTables orderTables = new OrderTables(
+              orderTableDao.findAllByTableGroupId(entity.getId())
+                  .stream()
+                  .map(OrderTableEntity::toOrderTable)
+                  .collect(Collectors.toList()));
+          return entity.toTableGroup(orderTables);
+        })
         .collect(Collectors.toList());
   }
 }
