@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -38,7 +39,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         validateMenuPrice(request);
         return MenuResponse.of(saveMenu(request));
@@ -66,17 +66,18 @@ public class MenuService {
     }
 
     private Menu saveMenu(final MenuCreateRequest request) {
-        MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
-        Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
+        final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
+        final Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
 
         for (MenuProductRequest menuProduct : request.getMenuProducts()) {
-            Product product = productRepository.getById(menuProduct.getProductId());
+            final Product product = productRepository.getById(menuProduct.getProductId());
             menuProductRepository.save(new MenuProduct(menu, product, menuProduct.getQuantity()));
         }
 
         return menu;
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return menuRepository.findAll()
                 .stream()

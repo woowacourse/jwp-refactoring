@@ -87,7 +87,7 @@ public class OrderTable {
         }
     }
 
-    public void changeNumberOfGuests(int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         if (empty) {
             throw new IllegalArgumentException("주문을 등록할 수 없는 상태에서는 방문한 손님 수를 변경할 수 없습니다.");
         }

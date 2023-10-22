@@ -22,7 +22,7 @@ public class OrderTableService {
     }
 
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return OrderTableResponse.of(orderTableRepository.save(orderTable));
     }
 

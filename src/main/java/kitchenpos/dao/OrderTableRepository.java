@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
-    List<OrderTable> findAllByIdIn(List<Long> ids);
+    List<OrderTable> findAllByIdIn(final List<Long> ids);
 
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+    List<OrderTable> findAllByTableGroupId(final Long tableGroupId);
 
-    default OrderTable getById(Long orderTableId){
+    default OrderTable getById(final Long orderTableId){
         return findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }

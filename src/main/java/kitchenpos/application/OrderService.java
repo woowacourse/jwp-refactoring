@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuRepository menuRepository;
@@ -38,14 +39,13 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
 
         final Order order = orderRepository.save(new Order(orderTable));
 
         for (OrderLineRequest orderLineItem : request.getOrderLineItems()) {
-            Menu menu = menuRepository.getById(orderLineItem.getMenuId());
+            final Menu menu = menuRepository.getById(orderLineItem.getMenuId());
 
             orderLineItemRepository.save(new OrderLineItem(order, menu, orderLineItem.getQuantity()));
         }
@@ -53,6 +53,7 @@ public class OrderService {
         return OrderResponse.of(order);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
@@ -61,7 +62,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderRepository.getById(orderId);
 
