@@ -69,11 +69,11 @@ class MenuTest {
         }
     }
 
-    @DisplayName("MenuProduct 엔티티 추가 테스트")
+    @DisplayName("메뉴 상품 엔티티 추가 테스트")
     @Nested
     class MenuProductAddTest {
 
-        @DisplayName("MenuProduct 엔티티를 추가한다.")
+        @DisplayName("메뉴 상품 엔티티를 추가한다.")
         @Test
         void menuProductAddTest() {
             //given
