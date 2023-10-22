@@ -31,8 +31,7 @@ public class OrderRestController {
 
     @GetMapping("/api/orders")
     public ResponseEntity<List<Order>> list() {
-        return ResponseEntity.ok()
-                .body(orderService.list());
+        return ResponseEntity.ok().body(orderService.list());
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
