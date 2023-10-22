@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.tablegroup;
 
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;

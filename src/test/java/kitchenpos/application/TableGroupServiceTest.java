@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
