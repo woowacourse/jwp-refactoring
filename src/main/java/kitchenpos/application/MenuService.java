@@ -45,8 +45,8 @@ public class MenuService {
         List<MenuProduct> menuProducts = createMenuProducts(menuProductRequests);
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
 
-        Menu savedMenu = menuRepository.save(menu);
-        return MenuResponse.from(savedMenu);
+        menuRepository.save(menu);
+        return MenuResponse.from(menu);
     }
 
     private MenuGroup findMenuGroup(MenuRequest menuRequest) {
