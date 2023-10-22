@@ -85,7 +85,7 @@ class ProductServiceTest {
     @Test
     void 목록_조회() {
         // given
-        List<Product> products = List.of(ProductFixture.builder().build());
+        List<Product> products = List.of(ProductFixture.builder().withPrice(1000L).build());
         given((productRepository.findAll()))
             .willReturn(products);
 

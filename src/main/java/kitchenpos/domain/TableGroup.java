@@ -1,8 +1,10 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,10 +22,16 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
     public TableGroup() {
+    }
+
+    public TableGroup(Long id, LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = new ArrayList<>();
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
@@ -32,7 +40,7 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public void addOrderTables(List<OrderTable> orderTables) {
+    public void addOrderTable(List<OrderTable> orderTables) {
         validate(orderTables);
         this.orderTables = orderTables.stream()
             .map(orderTable -> {

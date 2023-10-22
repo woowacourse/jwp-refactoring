@@ -22,7 +22,7 @@ public class MenuProductResponse {
         return new MenuProductResponse(
             menuProduct.getId(),
             menuProduct.getMenu().getId(),
-            menuProduct.getProductId(),
+            menuProduct.getProduct().getId(),
             menuProduct.getQuantity()
         );
     }

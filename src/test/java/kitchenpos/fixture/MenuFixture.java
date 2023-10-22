@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 
 public class MenuFixture {
 
@@ -50,7 +51,7 @@ public class MenuFixture {
         return new Menu(
             id,
             name,
-            price,
+            new Price(price),
             menuGroupId,
             menuProducts
         );

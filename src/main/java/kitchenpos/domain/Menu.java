@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,17 +20,18 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts;
 
     public Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -36,16 +39,23 @@ public class Menu {
         this.menuProducts = new ArrayList<>(menuProducts);
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
-        if (menuProduct.getMenu().getId() != id) {
-            throw new IllegalArgumentException("해당 메뉴의 상품이 아닙니다.");
-        }
-        this.menuProducts.add(menuProduct);
-    }
-
     public void addMenuProducts(List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
-            addMenuProduct(menuProduct);
+            if (menuProduct.getMenu().getId() != id) {
+                throw new IllegalArgumentException("해당 메뉴의 상품이 아닙니다.");
+            }
+            this.menuProducts.add(menuProduct);
+        }
+        validatePrice();
+    }
+
+    private void validatePrice() {
+        Price totalPrice = new Price(BigDecimal.valueOf(0));
+        for (MenuProduct menuProduct : menuProducts) {
+            totalPrice = totalPrice.plus(menuProduct.price());
+        }
+        if (price.compareTo(totalPrice) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 총합보다 비쌀 수 없습니다.");
         }
     }
 
@@ -57,7 +67,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

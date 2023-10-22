@@ -122,7 +122,7 @@ public abstract class RepositoryTest {
     }
 
     private TableGroup prepareTableGroup() {
-        return tableGroupRepository.save(new TableGroup(null, LocalDateTime.now(), new ArrayList<>()));
+        return tableGroupRepository.save(new TableGroup(null, LocalDateTime.now()));
     }
 
     protected OrderTable makeOrderTable(){

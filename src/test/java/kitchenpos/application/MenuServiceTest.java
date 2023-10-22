@@ -4,15 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
@@ -97,17 +101,20 @@ class MenuServiceTest {
                 MenuCreateRequest request = new MenuCreateRequest(
                     null,
                     BigDecimal.valueOf(6600),
-                    null,
+                    1L,
                     List.of(
                         new MenuProductCreateRequest(1L, 5L),
                         new MenuProductCreateRequest(2L, 3L))
                 );
 
-                given(productRepository.findById(anyLong()))
-                    .willReturn(
-                        Optional.of(PRODUCT_1000),
-                        Optional.of(PRODUCT_500)
-                    );
+                given(menuGroupRepository.findById(anyLong()))
+                    .willReturn(Optional.of(new MenuGroup(null, "menuGroup")));
+
+                given(productRepository.findAllByIdIn(anyList()))
+                    .willReturn(List.of(
+                        PRODUCT_1000,
+                        PRODUCT_500
+                    ));
 
                 // when && then
                 assertThatThrownBy(() -> menuService.create(request))
@@ -124,8 +131,8 @@ class MenuServiceTest {
                 1L,
                 List.of(new MenuProductCreateRequest(1L, 5L)));
 
-            given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(false);
+            given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
 
             // when && then
             assertThatThrownBy(() -> menuService.create(request))
@@ -141,10 +148,10 @@ class MenuServiceTest {
                 1L,
                 List.of(new MenuProductCreateRequest(1L, 5L)));
 
-            given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
-            given(productRepository.findById(anyLong()))
-                .willReturn(Optional.empty());
+            given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(null, "menuGroup")));
+            given(productRepository.findAllByIdIn(anyList()))
+                .willReturn(Collections.emptyList());
 
             // when && then
             assertThatThrownBy(() -> menuService.create(request))
@@ -167,28 +174,27 @@ class MenuServiceTest {
                     secondMenuProductRequest)
             );
 
-            given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
-            given(productRepository.findById(anyLong()))
-                .willReturn(
-                    Optional.of(PRODUCT_1000),
-                    Optional.of(PRODUCT_500)
-                );
-
-            Long menuId = 1L;
-            given(menuRepository.save(any()))
-                .willReturn(new Menu(
-                    menuId,
-                    menuName,
-                    menuPrice,
-                    menuGroupId,
-                    new ArrayList<>()
+            given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(new MenuGroup(null, "menuGroup")));
+            given(productRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    PRODUCT_1000,
+                    PRODUCT_500
                 ));
 
-            given(menuProductRepository.save(any()))
-                .willReturn(
-                    toEntity(1L, menuId, firstMenuProductRequest),
-                    toEntity(2L, menuId, secondMenuProductRequest));
+            Long menuId = 1L;
+            Menu menu = new Menu(
+                menuId,
+                menuName,
+                new Price(menuPrice),
+                menuGroupId,
+                new ArrayList<>()
+            );
+            menu.addMenuProducts(List.of(
+                    new MenuProduct(1L, PRODUCT_1000, menu, 5),
+                    new MenuProduct(2L, PRODUCT_500, menu, 3)));
+            given(menuRepository.save(any()))
+                .willReturn(menu);
 
             // when
             MenuResponse actual = menuService.create(request);
@@ -202,10 +208,6 @@ class MenuServiceTest {
             });
         }
 
-        private MenuProduct toEntity(Long seq, Long menuId, MenuProductCreateRequest menuProductCreateRequest) {
-            return new MenuProduct(seq, menuProductCreateRequest.getProductId(), MenuFixture.builder().withId(menuId).build(),
-                menuProductCreateRequest.getQuantity());
-        }
     }
 
     @Test
@@ -223,12 +225,11 @@ class MenuServiceTest {
         Menu menu = MenuFixture.builder()
             .withId(menuId)
             .withMenuProducts(ofFirstMenu)
+            .withPrice(1000L)
             .build();
 
         given(menuRepository.findAll())
             .willReturn(List.of(menu));
-        given(menuProductRepository.findAllByMenuId(anyLong()))
-            .willReturn(ofFirstMenu);
 
         // when
         List<MenuResponse> actual = menuService.list();

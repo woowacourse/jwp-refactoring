@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,7 +14,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private TableGroup tableGroup;
 
     private int numberOfGuests;
@@ -30,12 +31,23 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public Order order(Order order) {
+        if (empty) {
+            throw new IllegalArgumentException("해당 테이블은 비어있습니다.");
+        }
+        order.tabling(this);
+        return null;
+    }
+
     public void ungroup() {
         tableGroup = null;
         empty = false;
     }
 
     public void changeEmpty(boolean empty) {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException("해당 주문 테이블은 그룹화 되어있기 때문에 빈 여부를 변경할 수 없습니다");
+        }
         this.empty = empty;
     }
 
@@ -46,7 +58,7 @@ public class OrderTable {
 
     private void validate(int numberOfGuests) {
         if (empty) {
-            throw new IllegalArgumentException("빈 테이블은 손님 수를 바꿀 수 없ㅅ브니다");
+            throw new IllegalArgumentException("빈 테이블은 손님 수를 바꿀 수 없습니다");
         }
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님 수는 0보다 커야합니다");

@@ -31,22 +31,21 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.getOrderTableIdss();
+        List<Long> orderTableIds = request.getOrderTableIds();
+        final List<OrderTable> savedOrderTables = findOrderTables(orderTableIds);
+        final TableGroup savedTableGroup = tableGroupRepository.save(
+            new TableGroup(null, LocalDateTime.now()));
+        savedTableGroup.addOrderTable(savedOrderTables);
+        return TableGroupResponse.of(savedTableGroup);
+    }
+
+    private List<OrderTable> findOrderTables(List<Long> orderTableIds) {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재 하지 않는 주문 테이블이 있습니다.");
         }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(
-            new TableGroup(null, LocalDateTime.now(), savedOrderTables));
-
-        savedTableGroup.addOrderTables(savedOrderTables);
-
-        for (final OrderTable savedOrderTable : savedTableGroup.getOrderTables()) {
-            orderTableRepository.save(savedOrderTable);
-        }
-        return TableGroupResponse.of(savedTableGroup);
+        return savedOrderTables;
     }
 
     @Transactional
@@ -59,12 +58,11 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료되지 않은 주문이 있습니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
-            orderTableRepository.save(orderTable);
         }
     }
 }

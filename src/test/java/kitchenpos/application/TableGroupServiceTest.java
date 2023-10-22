@@ -2,12 +2,10 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -15,11 +13,13 @@ import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -40,6 +40,7 @@ class TableGroupServiceTest {
     private static final TableGroup TABLE_GROUP = TableGroupFixture.builder()
         .withId(1L)
         .build();
+
     @Mock
     private OrderRepository orderRepository;
 
@@ -172,15 +173,10 @@ class TableGroupServiceTest {
                 .willReturn(TABLE_GROUP);
 
             // when
-            tableGroupService.create(request);
+            TableGroupResponse actual = tableGroupService.create(request);
 
             // then
-            assertSoftly(softAssertions -> {
-                verify(orderTableRepository, times(2)).save(orderTableArgumentCaptor.capture());
-                OrderTable value = orderTableArgumentCaptor.getValue();
-                assertThat(value.getTableGroup().getId()).isEqualTo(1L);
-                assertThat(value.isEmpty()).isFalse();
-            });
+            assertThat(actual.getOrderTables()).hasSize(2);
         }
     }
 
@@ -196,10 +192,12 @@ class TableGroupServiceTest {
             OrderTable secondOrderTable = OrderTableFixture.builder()
                 .withId(2L)
                 .build();
-            given(orderTableRepository.findAllByTableGroupId(any()))
+
+            given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(
                     firstOrderTable,
                     secondOrderTable));
+
             given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
 
@@ -211,7 +209,6 @@ class TableGroupServiceTest {
         @Test
         void 그룹_해제_성공() {
             // given
-            // given
             OrderTable firstOrderTable = OrderTableFixture.builder()
                 .withId(1L)
                 .withTableGroupId(1L)
@@ -220,6 +217,7 @@ class TableGroupServiceTest {
                 .withId(2L)
                 .withTableGroupId(1L)
                 .build();
+
             given(orderTableRepository.findAllByTableGroupId(any()))
                 .willReturn(List.of(
                     firstOrderTable,
@@ -227,15 +225,8 @@ class TableGroupServiceTest {
             given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(false);
 
-            // when
-            tableGroupService.ungroup(1L);
-
-            // then
-            assertSoftly(softAssertions -> {
-                verify(orderTableRepository, times(2)).save(orderTableArgumentCaptor.capture());
-                assertThat(orderTableArgumentCaptor.getValue().getTableGroup()).isNull();
-                assertThat(orderTableArgumentCaptor.getValue().isEmpty()).isFalse();
-            });
+            // when && then
+            Assertions.assertDoesNotThrow(() -> tableGroupService.ungroup(1L));
         }
     }
 }

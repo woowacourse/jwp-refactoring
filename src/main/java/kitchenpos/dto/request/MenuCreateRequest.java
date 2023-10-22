@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Price;
 
 public class MenuCreateRequest {
 
@@ -21,7 +22,7 @@ public class MenuCreateRequest {
     }
 
     public Menu toEntity() {
-        return new Menu(null, name, price, menuGroupId, new ArrayList<>());
+        return new Menu(null, name, new Price(price), menuGroupId, new ArrayList<>());
     }
 
     public String getName() {

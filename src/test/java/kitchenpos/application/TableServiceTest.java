@@ -15,6 +15,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableEmptyChangeRequest;
 import kitchenpos.dto.request.OrderTableGuestChangeRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -136,20 +137,11 @@ class TableServiceTest {
             given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(false);
 
-            given(orderTableRepository.save(any()))
-                .willReturn(OrderTableFixture.builder()
-                    .withEmpty(changeEmpty)
-                    .build());
-
             // when
-            tableService.changeEmpty(orderTableId, request);
+            OrderTableResponse actual = tableService.changeEmpty(orderTableId, request);
 
             // then
-            assertSoftly(softAssertions -> {
-                verify(orderTableRepository, times(1)).save(orderTableArgumentCaptor.capture());
-                OrderTable captorValue = orderTableArgumentCaptor.getValue();
-                assertThat(captorValue.isEmpty()).isEqualTo(changeEmpty);
-            });
+            assertThat(actual.isEmpty()).isEqualTo(changeEmpty);
         }
     }
 
@@ -206,10 +198,6 @@ class TableServiceTest {
             // given
             OrderTableGuestChangeRequest request = new OrderTableGuestChangeRequest(1);
 
-            OrderTable requestOrderTable = OrderTableFixture.builder()
-                .withNumberOfGuests(1)
-                .build();
-
             OrderTable orderTable = OrderTableFixture.builder()
                 .withEmpty(false)
                 .build();
@@ -217,18 +205,11 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
-            given(orderTableRepository.save(any()))
-                .willReturn(orderTable);
-
             // when
-            tableService.changeNumberOfGuests(orderTableId, request);
+            OrderTableResponse actual = tableService.changeNumberOfGuests(orderTableId, request);
 
             // then
-            assertSoftly(softAssertions -> {
-                verify(orderTableRepository, times(1)).save(orderTableArgumentCaptor.capture());
-                OrderTable value = orderTableArgumentCaptor.getValue();
-                assertThat(value.getNumberOfGuests()).isEqualTo(1);
-            });
+            assertThat(actual.getNumberOfGuests()).isEqualTo(1);
         }
     }
 }

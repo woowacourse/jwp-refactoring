@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,7 +26,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
@@ -77,7 +79,14 @@ public class Order {
         }
     }
 
+    public void tabling(OrderTable orderTable) {
+        this.orderTableId = orderTable.getId();
+    }
+
     public void changeStatus(OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus.name();
     }
 

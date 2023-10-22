@@ -6,18 +6,18 @@ import java.util.List;
 public class TableGroupCreateRequest {
 
     private final LocalDateTime createdDate;
-    private final List<Long> orderTableIdss;
+    private final List<Long> orderTableIds;
 
-    public TableGroupCreateRequest(LocalDateTime createdDate, List<Long> orderTableIdss) {
+    public TableGroupCreateRequest(LocalDateTime createdDate, List<Long> orderTableIds) {
         this.createdDate = createdDate;
-        this.orderTableIdss = orderTableIdss;
+        this.orderTableIds = orderTableIds;
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public List<Long> getOrderTableIdss() {
-        return orderTableIdss;
+    public List<Long> getOrderTableIds() {
+        return orderTableIds;
     }
 }

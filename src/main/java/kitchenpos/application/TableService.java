@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
@@ -37,21 +36,17 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyChangeRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.changeEmpty(request.isEmpty());
+        orderTable.changeEmpty(request.isEmpty());
 
-        return OrderTableResponse.of(orderTableRepository.save(savedOrderTable));
+        return OrderTableResponse.of(orderTable);
     }
 
     @Transactional
@@ -59,11 +54,11 @@ public class TableService {
                                                    final OrderTableGuestChangeRequest request) {
         final int numberOfGuests = request.getNumbersOfGuest();
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        savedOrderTable.changeNumbersOfGuests(numberOfGuests);
+        orderTable.changeNumbersOfGuests(numberOfGuests);
 
-        return OrderTableResponse.of(orderTableRepository.save(savedOrderTable));
+        return OrderTableResponse.of(orderTable);
     }
 }

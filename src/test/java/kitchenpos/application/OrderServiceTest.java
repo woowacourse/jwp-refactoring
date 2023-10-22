@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
@@ -19,8 +20,8 @@ import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineRequest;
 import kitchenpos.dto.request.OrderStatusChangeRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -80,18 +81,22 @@ class OrderServiceTest {
         }
 
         @Test
-        void 같은_메뉴에_대한_주문_항목이_있으면_예외() {
+        void 존재하지_않는_메뉴가_포함되어_있으면_예외() {
             // given
             OrderCreateRequest request = new OrderCreateRequest(1L,
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
                 List.of(
-                    new OrderLineRequest(1L, 10L),
-                    new OrderLineRequest(1L, 5L)
+                    new OrderLineRequest(1L, 10L)
                 ));
 
-            given(menuRepository.countByIdIn(anyList()))
-                .willReturn(1L);
+            given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.of(
+                    OrderTableFixture.builder().build()
+                ));
+
+            given(menuRepository.findAllByIdIn(anyList()))
+                .willReturn(Collections.emptyList());
 
             // when && then
             assertThatThrownBy(() -> orderService.create(request))
@@ -108,9 +113,6 @@ class OrderServiceTest {
                     new OrderLineRequest(1L, 10L),
                     new OrderLineRequest(1L, 5L)
                 ));
-
-            given(menuRepository.countByIdIn(anyList()))
-                .willReturn(2L);
 
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
@@ -132,8 +134,13 @@ class OrderServiceTest {
                 .withEmpty(true)
                 .build();
 
-            given(menuRepository.countByIdIn(anyList()))
-                .willReturn(1L);
+            given(menuRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    MenuFixture.builder()
+                        .withId(1L)
+                        .withPrice(1000L)
+                        .build()
+                ));
 
             given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
@@ -146,56 +153,48 @@ class OrderServiceTest {
 
         @Test
         void 생성_성공() {
-            {
-                // given
-                OrderLineRequest firstOrderLineRequest = new OrderLineRequest(1L, 10L);
-                OrderLineRequest secondOrderLineRequest = new OrderLineRequest(2L, 5L);
-                OrderCreateRequest request = new OrderCreateRequest(1L,
-                    OrderStatus.COOKING.name(),
-                    LocalDateTime.now(),
-                    List.of(
-                        firstOrderLineRequest,
-                        secondOrderLineRequest
-                    ));
+            // given
+            OrderLineRequest firstOrderLineRequest = new OrderLineRequest(1L, 10L);
+            OrderCreateRequest request = new OrderCreateRequest(1L,
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                List.of(firstOrderLineRequest));
 
-                OrderTable orderTable = OrderTableFixture.builder()
-                    .withEmpty(false)
-                    .build();
+            OrderTable orderTable = OrderTableFixture.builder()
+                .withEmpty(false)
+                .build();
 
-                given(menuRepository.countByIdIn(anyList()))
-                    .willReturn(2L);
+            given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.of(orderTable));
 
-                given(orderTableRepository.findById(anyLong()))
-                    .willReturn(Optional.of(orderTable));
-
-                long orderId = 1L;
-                given(orderRepository.save(any())).willReturn(
-                    OrderFixture.builder()
-                        .withId(orderId)
-                        .withOrderStatus(OrderStatus.COOKING.name())
-                        .withOrderedTime(LocalDateTime.now())
+            given(menuRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    MenuFixture.builder()
+                        .withId(1L)
+                        .withPrice(1000L)
                         .build()
-                );
+                ));
 
-                given(orderLineItemRepository.save(any()))
-                    .willReturn(toEntity(1L, orderId, firstOrderLineRequest),
-                        toEntity(2L, orderId, secondOrderLineRequest));
+            long orderId = 1;
+            given(orderRepository.save(any())).willReturn(
+                OrderFixture.builder()
+                    .withId(orderId)
+                    .withOrderStatus(OrderStatus.COOKING.name())
+                    .withOrderedTime(LocalDateTime.now())
+                    .build()
+            );
 
-                // when
-                OrderResponse actual = orderService.create(request);
+            // when
+            OrderResponse actual = orderService.create(request);
 
-                // then
-                assertSoftly(softAssertions -> {
-                    assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-                    assertThat(actual.getOrderedTime()).isNotNull();
-                    assertThat(actual.getOrderLineItems())
-                        .allMatch(orderLineItem -> orderLineItem.getOrderId().equals(orderId));
-                });
-            }
-        }
+            // then
+            assertSoftly(softAssertions -> {
+                assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                assertThat(actual.getOrderedTime()).isNotNull();
+                assertThat(actual.getOrderLineItems())
+                    .allMatch(orderLineItem -> orderLineItem.getOrderId().equals(orderId));
+            });
 
-        private OrderLineItem toEntity(Long seq, Long orderId, OrderLineRequest orderLineRequest) {
-            return new OrderLineItem(seq, orderLineRequest.getMenuId(), new Order(orderId, null, null, null, null), orderLineRequest.getQuantity());
         }
     }
 
@@ -211,22 +210,11 @@ class OrderServiceTest {
                 order
             ));
 
-        OrderLineItem orderLineItem = OrderLineItemFixture.builder()
-            .withOrderId(orderId)
-            .build();
-        given(orderLineItemRepository.findAllByOrderId(anyLong()))
-            .willReturn(
-                List.of(orderLineItem)
-            );
-
         // when
         List<OrderResponse> actual = orderService.list();
 
         // then
-        assertSoftly(softAssertions -> {
-            assertThat(actual).hasSize(1);
-            assertThat(actual).allMatch(od -> od.getOrderLineItems().size() == 1);
-        });
+        assertThat(actual).hasSize(1);
     }
 
     @Nested
@@ -276,14 +264,6 @@ class OrderServiceTest {
 
             given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(savedOrder));
-
-            given(orderRepository.save(any()))
-                .willReturn(OrderFixture.builder()
-                    .withOrderStatus(completionStatus)
-                    .build());
-
-            given(orderLineItemRepository.findAllByOrderId(anyLong()))
-                .willReturn(List.of(OrderLineItemFixture.builder().build()));
 
             // when
             OrderResponse actual = orderService.changeOrderStatus(orderId, request);
