@@ -2,13 +2,13 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.ordertable.OrderTable;
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 public class TableGroup {
@@ -20,22 +20,22 @@ public class TableGroup {
     @OneToMany
     private List<OrderTable> orderTables;
 
-    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    public TableGroup() {
-
+    protected TableGroup() {
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
-        this(null, orderTables);
+    public TableGroup(final List<OrderTable> orderTables, final LocalDateTime createdDate) {
+        this(null, orderTables, createdDate);
     }
 
-    public TableGroup(final Long id, final List<OrderTable> orderTables) {
+    public TableGroup(final Long id, final List<OrderTable> orderTables, final LocalDateTime createdDate) {
         this.id = id;
         validateCanGroup(orderTables);
         orderTables.forEach(orderTable -> orderTable.group(this));
         this.orderTables = orderTables;
+        this.createdDate = createdDate;
     }
 
     private void validateCanGroup(final List<OrderTable> orderTables) {

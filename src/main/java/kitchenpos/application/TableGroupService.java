@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -25,7 +26,7 @@ public class TableGroupService {
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<OrderTable> savedOrderTables = findAllByIds(request.getOrderTableIds());
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables);
+        final TableGroup tableGroup = new TableGroup(savedOrderTables, LocalDateTime.now());
 
         return tableGroupDao.save(tableGroup);
     }

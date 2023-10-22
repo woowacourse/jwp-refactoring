@@ -35,7 +35,7 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final List<MenuProduct> menuProducts, final MenuGroup menuGroup) {
@@ -79,7 +79,6 @@ public class Menu {
     public void setName(final String name) {
         this.name = new MenuName(name);
     }
-
 
     public BigDecimal getPrice() {
         return price.getValue();

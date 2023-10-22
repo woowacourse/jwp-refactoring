@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -127,7 +128,7 @@ class TableServiceTest {
             final var savedTable = fakeOrderTableDao.save(table);
             final var table2 = OrderTableFactory.createOrderTableOf(0, true);
             final var savedTable2 = fakeOrderTableDao.save(table2);
-            final var tableGroup = new TableGroup(List.of(savedTable, savedTable2));
+            final var tableGroup = new TableGroup(List.of(savedTable, savedTable2), LocalDateTime.now());
 
             final var tableService = new TableService(fakeOrderTableDao);
 

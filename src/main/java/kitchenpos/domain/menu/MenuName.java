@@ -20,7 +20,6 @@ public class MenuName {
         this.value = value;
     }
 
-
     private void validate(final String value) {
         validateNotBlank(value);
         validateLength(value);

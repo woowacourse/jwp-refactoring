@@ -38,7 +38,6 @@ public class OrderTable {
     @Column(name = "empty", nullable = false)
     private Boolean empty;
 
-
     protected OrderTable() {
     }
 

@@ -37,10 +37,10 @@ public class Order {
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
 
-    @JoinColumn(name = "ordered_time")
+    @JoinColumn(name = "ordered_time", nullable = false, updatable = false)
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
