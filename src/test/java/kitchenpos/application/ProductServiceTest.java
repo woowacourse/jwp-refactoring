@@ -3,6 +3,8 @@ package kitchenpos.application;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.domain.menu.service.ProductService;
+import kitchenpos.domain.menu.service.dto.ProductCreateRequest;
+import kitchenpos.domain.menu.service.dto.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +18,10 @@ import static kitchenpos.application.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.only;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -36,30 +40,31 @@ class ProductServiceTest {
         @Test
         void 상품을_생성할_수_있다() {
             // given
-            final Product expected = product("치킨", BigDecimal.valueOf(20_000));
-            given(productRepository.save(expected)).willReturn(expected);
+            final ProductCreateRequest normalRequest = new ProductCreateRequest("치킨", 20_000L);
+            final Product expected = spy(product(normalRequest.getName(), BigDecimal.valueOf(normalRequest.getPrice())));
+            given(productRepository.save(any(Product.class))).willReturn(expected);
+
+            final long savedId = 1L;
+            given(expected.getId()).willReturn(savedId);
 
             // when
-            final Product actual = productService.create(expected);
+            final ProductResponse actual = productService.create(normalRequest);
 
             // then
             assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
                     () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
-                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice())
+                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue())
             );
         }
 
         @Test
-        void 상품의_가격이_null이면_상품을_생성할_수_없다() {
-            // when, then
-            assertThatThrownBy(() -> productService.create(new Product("치킨", null)))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 상품의_가격이_0보다_작으면_상품을_생성할_수_없다() {
+            // given
+            final ProductCreateRequest underZeroPriceRequest = new ProductCreateRequest("치킨", -1L);
+
             // when, then
-            assertThatThrownBy(() -> productService.create(product("치킨", BigDecimal.valueOf(-1))))
+            assertThatThrownBy(() -> productService.create(underZeroPriceRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
