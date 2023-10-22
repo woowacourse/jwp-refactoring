@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -35,25 +36,17 @@ class ProductServiceTest {
         void 상품을_등록할_수_있다() {
             // given
             final var product = ProductFixture.상품_망고_1000원();
+            final var request = ProductFixture.상품요청_망고_1000원();
             given(productRepository.save(any()))
                     .willReturn(product);
 
             // when
-            final var actual = productService.create(product);
+            final var actual = productService.create(request);
 
             // then
+            final var expected = ProductResponse.toResponse(product);
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(product);
-        }
-
-        @Test
-        void 상품의_가격이_0보다_작으면_예외가_발생한다() {
-            // given
-            final var product = ProductFixture.상품_망고_N원(-1);
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isEqualTo(expected);
         }
     }
 
@@ -71,8 +64,11 @@ class ProductServiceTest {
             final var actual = productService.list();
 
             // then
+            final var expected = products.stream()
+                    .map(ProductResponse::toResponse)
+                    .collect(Collectors.toList());
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(products);
+                    .isEqualTo(expected);
         }
     }
 }

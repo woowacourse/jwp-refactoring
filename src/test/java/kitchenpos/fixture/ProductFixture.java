@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -16,5 +17,9 @@ public class ProductFixture {
 
     public static Product 상품_치킨_15000원() {
         return new Product("치킨", BigDecimal.valueOf(15000));
+    }
+
+    public static ProductCreateRequest 상품요청_망고_1000원() {
+        return new ProductCreateRequest("망고", BigDecimal.valueOf(1000));
     }
 }
