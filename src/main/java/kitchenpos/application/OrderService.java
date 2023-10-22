@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;

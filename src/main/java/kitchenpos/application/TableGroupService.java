@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service
 public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;

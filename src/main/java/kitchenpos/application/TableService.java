@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Service
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;

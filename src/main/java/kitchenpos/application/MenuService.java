@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Service
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-@RestController
 public class TableGroupRestController {
     private final TableGroupService tableGroupService;
 
