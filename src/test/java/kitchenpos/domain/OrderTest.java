@@ -28,7 +28,7 @@ class OrderTest {
     @Test
     void success_create() {
         // given
-        final OrderTable orderTable = new OrderTable(null, 10, false);
+        final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
 
         // expect
         assertThatCode(() -> Order.ofEmptyOrderLineItems(orderTable))
@@ -39,7 +39,7 @@ class OrderTest {
     @Test
     void success_ofEmptyOrderLineItems() {
         // given
-        final OrderTable orderTable = new OrderTable(null, 10, false);
+        final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
         final Order actual = Order.ofEmptyOrderLineItems(orderTable);
 
         // expect
@@ -59,7 +59,7 @@ class OrderTest {
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
-        final OrderTable orderTable = new OrderTable(null, 10, false);
+        final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
         final Order order = Order.ofEmptyOrderLineItems(orderTable);
 
         // when
@@ -88,7 +88,7 @@ class OrderTest {
         @EnumSource(OrderStatus.class)
         void success_changeOrderStatus(final OrderStatus orderStatus) {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(5, false);
             final Order order = Order.ofEmptyOrderLineItems(orderTable);
 
             // when
@@ -102,7 +102,7 @@ class OrderTest {
         @Test
         void throwException_when_changeOrderStatus_Completion_to_Completion() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 10, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
             final Order order = Order.ofEmptyOrderLineItems(orderTable);
             order.changeOrderStatus(OrderStatus.COMPLETION);
 
@@ -121,7 +121,7 @@ class OrderTest {
         @EnumSource(OrderStatus.class)
         void success_changeOrderTableEmpty_full(final OrderStatus orderStatus) {
             // given
-            final Order order = Order.ofEmptyOrderLineItems(new OrderTable(null, 5, true));
+            final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(5, true));
             order.changeOrderStatus(orderStatus);
 
             // when
@@ -135,7 +135,7 @@ class OrderTest {
         @Test
         void success_changeOrderTableEmpty_when_orderStatus_isCompletion() {
             // given
-            final Order order = Order.ofEmptyOrderLineItems(new OrderTable(null, 5, true));
+            final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(5, true));
             order.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when
@@ -149,7 +149,7 @@ class OrderTest {
         @Test
         void throwException_changeOrderTableEmpty_when_orderStatus_isNotCompletion() {
             // given
-            final Order order = Order.ofEmptyOrderLineItems(new OrderTable(null, 5, true));
+            final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(5, true));
 
             // expected
             assertThatThrownBy(() -> order.changeOrderTableEmpty(true))
@@ -166,8 +166,8 @@ class OrderTest {
         @Test
         void success_ungroupOrderTable() {
             // given
-            final OrderTable orderTableOne = new OrderTable(null, 5, true);
-            final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
+            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
             TableGroup.withOrderTables(List.of(
                     orderTableOne,
                     orderTableTwo
@@ -188,8 +188,8 @@ class OrderTest {
         @MethodSource("getOrderStatusWithoutCompletion")
         void throwException_ungroupOrderTable_when_orderStatus_isNotCompletion(final OrderStatus orderStatus) {
             // given
-            final OrderTable orderTableOne = new OrderTable(null, 5, true);
-            final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
+            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
             TableGroup.withOrderTables(List.of(
                     orderTableOne,
                     orderTableTwo

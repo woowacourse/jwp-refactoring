@@ -22,14 +22,14 @@ public class Product {
     @Embedded
     private Price price;
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(final Name name, final Price price) {
         this(null, name, price);
     }
 
-    public Product(final Long id, final Name name, final Price price) {
+    protected Product(final Long id, final Name name, final Price price) {
         validate(price);
         this.id = id;
         this.name = name;

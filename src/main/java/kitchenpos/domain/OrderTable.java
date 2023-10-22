@@ -12,7 +12,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class OrderTable {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JoinColumn(name = "table_group_id")
@@ -25,25 +26,29 @@ public class OrderTable {
     @Column(name = "empty")
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
-    public OrderTable(final TableGroup tableGroup,
-                      final int numberOfGuests,
-                      final boolean empty
+    protected OrderTable(final TableGroup tableGroup,
+                         final int numberOfGuests,
+                         final boolean empty
     ) {
         this(null, tableGroup, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id,
-                      final TableGroup tableGroup,
-                      final int numberOfGuests,
-                      final boolean empty
+    protected OrderTable(final Long id,
+                         final TableGroup tableGroup,
+                         final int numberOfGuests,
+                         final boolean empty
     ) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static OrderTable withoutTableGroup(final int numberOfGuests, final boolean empty) {
+        return new OrderTable(null, numberOfGuests, empty);
     }
 
     public boolean isGrouped() {

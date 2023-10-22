@@ -20,8 +20,8 @@ class TableGroupTest {
         @Test
         void success_create() {
             assertThatCode(() -> TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 10, true),
-                    new OrderTable(null, 10, true)
+                    OrderTable.withoutTableGroup(10, true),
+                    OrderTable.withoutTableGroup(10, true)
             ))).doesNotThrowAnyException();
         }
 
@@ -29,7 +29,7 @@ class TableGroupTest {
         @Test
         void throwException_create_when_orderTables_sizeIsLessThan2() {
             assertThatThrownBy(() -> TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 10, true)
+                    OrderTable.withoutTableGroup(10, true)
             ))).isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -38,14 +38,14 @@ class TableGroupTest {
         void throwException_create_when_orderTable_isAlreadyAssigned() {
             // given
             final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 10, true),
-                    new OrderTable(null, 10, true)
+                    OrderTable.withoutTableGroup(10, true),
+                    OrderTable.withoutTableGroup(10, true)
             ));
 
             // when
-            final OrderTable alreadyAssignedOrderTable = new OrderTable(null, 10, true);
+            final OrderTable alreadyAssignedOrderTable = OrderTable.withoutTableGroup(10, true);
             alreadyAssignedOrderTable.assignTableGroup(tableGroup);
-            final OrderTable orderTable = new OrderTable(null, 10, true);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(10, true);
 
             // then
             assertThatThrownBy(() -> TableGroup.withOrderTables(List.of(
@@ -58,8 +58,8 @@ class TableGroupTest {
         @Test
         void throwException_create_when_orderTable_isNotEmpty() {
             assertThatThrownBy(() -> TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 10, false),
-                    new OrderTable(null, 10, false)
+                    OrderTable.withoutTableGroup(10, false),
+                    OrderTable.withoutTableGroup(10, false)
             ))).isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -68,8 +68,8 @@ class TableGroupTest {
     @Test
     void success_addOrderTablesAndChangeEmptyFull() {
         // given
-        final OrderTable orderTableOne = new OrderTable(null, 10, true);
-        final OrderTable orderTableTwo = new OrderTable(null, 10, true);
+        final OrderTable orderTableOne = OrderTable.withoutTableGroup(10, true);
+        final OrderTable orderTableTwo = OrderTable.withoutTableGroup(10, true);
         final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
                 orderTableOne,
                 orderTableTwo

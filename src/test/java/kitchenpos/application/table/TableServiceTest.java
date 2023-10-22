@@ -68,8 +68,7 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void success_changeEmpty_when_order_isExists() {
             // given
-            final TableGroup noTableGroup = null;
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
             final Order savedOrderStatus = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
 
@@ -91,8 +90,7 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void success_changeEmpty_when_order_isNotExists() {
             // given
-            final TableGroup noTableGroup = null;
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
 
             // when
             final OrderTableResponse actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
@@ -112,10 +110,10 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_changeEmpty_orderTable_isIn_tableGroup() {
             // given
-            final OrderTable savedOrderTableWithFiveGuests = orderTableRepository.save(new OrderTable(null, 5, true));
+            final OrderTable savedOrderTableWithFiveGuests = orderTableRepository.save(OrderTable.withoutTableGroup(5, true));
             final List<OrderTable> savedOrderTables = List.of(
                     savedOrderTableWithFiveGuests,
-                    orderTableRepository.save(new OrderTable(null, 10, false))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, false))
             );
             tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
 
@@ -140,7 +138,7 @@ class TableServiceTest extends ApplicationTestConfig {
                     )
             );
             final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10)));
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
             final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(orderLineItems);
             savedOrder.changeOrderStatus(orderStatus);
@@ -166,7 +164,7 @@ class TableServiceTest extends ApplicationTestConfig {
         @ValueSource(ints = {-1, -2, -10, -100})
         void throwException_when_changeNumberOfGuests_orderTable_numberOfGuests_isLessThanZero(final int negativeValue) {
             // given
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, true));
             final TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(negativeValue);
 
             // expect
@@ -178,7 +176,7 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_changeNumberOfGuests_orderTableIsEmpty() {
             // given
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, true));
             final TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(10);
 
             // expect

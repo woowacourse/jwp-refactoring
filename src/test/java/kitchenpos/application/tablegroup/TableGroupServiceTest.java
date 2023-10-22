@@ -58,8 +58,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void success_create() {
             // given
             final List<OrderTable> savedOrderTables = List.of(
-                    orderTableRepository.save(new OrderTable(null, 5, true)),
-                    orderTableRepository.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
 
             // when
@@ -98,7 +98,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             return Stream.of(
                     Arguments.arguments(List.of()),
                     Arguments.arguments(List.of(
-                            new OrderTable(null, 5, true)
+                            OrderTable.withoutTableGroup(5, true)
                     ))
             );
         }
@@ -107,8 +107,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_orderTablesSize_isNotEqualTo_findOrderTablesSize() {
             // given
-            final OrderTable unsavedOrderTable = new OrderTable(null, 5, false);
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, false));
+            final OrderTable unsavedOrderTable = OrderTable.withoutTableGroup(5, false);
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
 
             final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(unsavedOrderTable, savedOrderTable));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
@@ -122,10 +122,10 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_orderTable_isNotEmpty() {
             // given
-            final OrderTable savedOrderTableEmpty = orderTableRepository.save(new OrderTable(null, 10, false));
+            final OrderTable savedOrderTableEmpty = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
 
             // when
-            final OrderTable savedOrderTableNotEmpty = orderTableRepository.save(new OrderTable(null, 5, false));
+            final OrderTable savedOrderTableNotEmpty = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
             final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableEmpty, savedOrderTableNotEmpty));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
@@ -140,8 +140,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void throwException_when_orderTable_hasAlreadyTableGroup() {
             // given
             final List<OrderTable> savedOrderTables = List.of(
-                    orderTableRepository.save(new OrderTable(null, 5, true)),
-                    orderTableRepository.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
             tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
 
@@ -165,8 +165,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void success_ungroup() {
             // given
             final List<OrderTable> savedOrderTables = List.of(
-                    orderTableRepository.save(new OrderTable(null, 5, true)),
-                    orderTableRepository.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
 
             final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
@@ -182,8 +182,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             assertThat(actual).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(List.of(
-                            new OrderTable(null, 5, false),
-                            new OrderTable(null, 10, false)
+                            OrderTable.withoutTableGroup(5, false),
+                            OrderTable.withoutTableGroup(10, false)
                     ));
         }
 
@@ -213,7 +213,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         }
 
         private OrderTable createOrder(final OrderStatus orderStatus, final Menu menu, final int numberOfGuests) {
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, numberOfGuests, true));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(numberOfGuests, true));
             final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(1));
             final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(List.of(orderLineItem));

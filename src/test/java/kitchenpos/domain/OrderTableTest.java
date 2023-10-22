@@ -14,16 +14,35 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class OrderTableTest {
 
-    @DisplayName("생성한다.")
+    @DisplayName("주문 테이블 생성")
     @Nested
-    class CreateNestedClass {
+    class CreateNestedTest {
+
+        @DisplayName("[SUCCESS] 단체 지정이 되지 않은 주문 테이블을 생성한다.")
+        @Test
+        void success_withoutTableGroup() {
+            // given
+            final OrderTable actual = OrderTable.withoutTableGroup(5, true);
+
+            // expect
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getTableGroup()).isNull();
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(5);
+                softly.assertThat(actual.isEmpty()).isTrue();
+            });
+        }
+    }
+
+    @DisplayName("빈 상태 변경")
+    @Nested
+    class ChangeOrderTableEmptyNestedTest {
 
         @DisplayName("[SUCCESS] 주문 테이블이 빈 상태를 변경한다.")
         @ParameterizedTest
         @ValueSource(booleans = {true, false})
         void success_changeOrderTableFull(final boolean expected) {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(5, false);
 
             // when
             orderTable.changeOrderTableEmpty(expected);
@@ -37,12 +56,12 @@ class OrderTableTest {
         void throwException_changeOrderTableEmpty_when_tableGroupIsNotNull() {
             // given
             final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 10, true),
-                    new OrderTable(null, 10, true)
+                    OrderTable.withoutTableGroup(10, true),
+                    OrderTable.withoutTableGroup(10, true)
             ));
 
             // when
-            final OrderTable orderTable = new OrderTable(null, 10, true);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(10, true);
             orderTable.assignTableGroup(tableGroup);
 
             // then
@@ -58,7 +77,7 @@ class OrderTableTest {
         @Test
         void success_isGrouped_isFalse() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 10, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
 
             // when
             final boolean actual = orderTable.isGrouped();
@@ -71,8 +90,8 @@ class OrderTableTest {
         @Test
         void success_isGrouped_isTrue() {
             // given
-            final OrderTable orderTableOne = new OrderTable(null, 10, true);
-            final OrderTable orderTableTwo = new OrderTable(null, 10, true);
+            final OrderTable orderTableOne = OrderTable.withoutTableGroup(10, true);
+            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(10, true);
             TableGroup.withOrderTables(List.of(
                     orderTableOne,
                     orderTableTwo
@@ -95,11 +114,11 @@ class OrderTableTest {
         void success_assignTableGroup() {
             // given
             final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 5, true),
-                    new OrderTable(null, 5, true)
+                    OrderTable.withoutTableGroup(5, true),
+                    OrderTable.withoutTableGroup(5, true)
             ));
 
-            final OrderTable orderTableOne = new OrderTable(null, 5, true);
+            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
 
             // when
             orderTableOne.assignTableGroup(tableGroup);
@@ -115,8 +134,8 @@ class OrderTableTest {
         @Test
         void throwException_assignTableGroup_when_tableGroup_isAlreadyAssigned() {
             // given
-            final OrderTable orderTableOne = new OrderTable(null, 5, true);
-            final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
+            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
             final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
                     orderTableOne,
                     orderTableTwo
@@ -141,8 +160,8 @@ class OrderTableTest {
         @Test
         void success_ungroupTableGroup() {
             // given
-            final OrderTable orderTableOne = new OrderTable(null, 5, true);
-            final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+            final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
+            final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
             TableGroup.withOrderTables(List.of(
                     orderTableOne,
                     orderTableTwo
@@ -170,7 +189,7 @@ class OrderTableTest {
         @Test
         void success_changeNumberOfGuests() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(5, false);
 
             // when
             orderTable.changeNumberOfGuests(10);
@@ -179,7 +198,7 @@ class OrderTableTest {
             assertThat(orderTable)
                     .usingRecursiveComparison()
                     .isEqualTo(
-                            new OrderTable(null, 10, false)
+                            OrderTable.withoutTableGroup(10, false)
                     );
         }
 
@@ -190,7 +209,7 @@ class OrderTableTest {
             final boolean isEmpty = true;
 
             // when
-            final OrderTable orderTable = new OrderTable(null, 5, isEmpty);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(5, isEmpty);
 
             // then
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(10))
@@ -202,7 +221,7 @@ class OrderTableTest {
         @ValueSource(ints = {-1, -2, -10, -1000000})
         void throwException_changeNumberOfGuests_when_negative(final int negativeNumberOfGuests) {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(5, false);
 
             // expect
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(negativeNumberOfGuests))

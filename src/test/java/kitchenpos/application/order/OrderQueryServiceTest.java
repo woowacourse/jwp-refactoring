@@ -47,7 +47,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
                 MenuProduct.withoutMenu(savedProduct, new Quantity(10))
         ));
         final Menu savedMenu = menuRepository.save(menu);
-        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
         final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
         final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10)));

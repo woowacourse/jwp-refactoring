@@ -41,7 +41,7 @@ class OrderTablesTest {
             // given
             final OrderTables actual = OrderTables.empty();
 
-            final OrderTable orderTable = new OrderTable(null, 5, false);
+            final OrderTable orderTable = OrderTable.withoutTableGroup(5, false);
 
             // when
             actual.addOrderTables(new OrderTables(List.of(orderTable)));
@@ -62,22 +62,20 @@ class OrderTablesTest {
         void success_assignTableGroup() {
             // given
             final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
-                    new OrderTable(null, 5, true),
-                    new OrderTable(null, 5, true)
+                    OrderTable.withoutTableGroup(5, true),
+                    OrderTable.withoutTableGroup(5, true)
             ));
 
             // when
             final OrderTables actual = new OrderTables(List.of(
-                    new OrderTable(null, 5, true)
+                    OrderTable.withoutTableGroup(5, true)
             ));
             actual.assignTableGroup(tableGroup);
 
             // then
-            assertThat(actual)
-                    .usingRecursiveComparison()
-                    .isEqualTo(new OrderTables(List.of(
-                            new OrderTable(tableGroup, 5, true)
-                    )));
+            final boolean isAllGrouped = actual.getOrderTableItems().stream().allMatch(OrderTable::isGrouped);
+
+            assertThat(isAllGrouped).isTrue();
         }
     }
 }

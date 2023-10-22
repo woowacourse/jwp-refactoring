@@ -33,7 +33,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     @Test
     void success_findOrderById() {
         // given
-        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 5, true));
+        final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(5, true));
         final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
 
         em.flush();
@@ -63,7 +63,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     @Test
     void success_findOrderByOrderTableId() {
         // given
-        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 5, true));
+        final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(5, true));
         final Order expected = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
 
         em.flush();
@@ -94,8 +94,8 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     void success_findOrdersByTableGroupId() {
         // given
         final Menu savedMenu = createMenu();
-        final OrderTable orderTableOne = new OrderTable(null, 5, true);
-        final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+        final OrderTable orderTableOne = OrderTable.withoutTableGroup(5, true);
+        final OrderTable orderTableTwo = OrderTable.withoutTableGroup(5, true);
         final TableGroup savedTableGroup = TableGroup.withOrderTables(List.of(
                 orderTableOne,
                 orderTableTwo
@@ -139,7 +139,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     void success_existsByOrderTableIdAndOrderStatusIn() {
         // given
         final Menu savedMenu = createMenu();
-        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, false));
+        final OrderTable savedOrderTable = persistOrderTable(OrderTable.withoutTableGroup(10, false));
         final Order savedOrder = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
         savedOrder.addOrderLineItems(List.of(
                 OrderLineItem.withoutOrder(savedMenu, new Quantity(1))

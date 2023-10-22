@@ -67,7 +67,7 @@ class OrderServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_create_order_when_orderLineItemsIsEmpty() {
             // given
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
             // when
             final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of(
@@ -84,7 +84,7 @@ class OrderServiceTest extends ApplicationTestConfig {
         void throwException_create_order_when_orderLineItemsSize_IsNotEqualTo_menuCountsSize() {
             // given
             final Menu savedMenu = createMenu();
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
             // when
             final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(), List.of(
@@ -127,7 +127,7 @@ class OrderServiceTest extends ApplicationTestConfig {
     }
 
     private OrderTable createOrderTable(final int numberOfGuests, final boolean empty) {
-        return orderTableRepository.save(new OrderTable(null, numberOfGuests, empty));
+        return orderTableRepository.save(OrderTable.withoutTableGroup(numberOfGuests, empty));
     }
 
     @DisplayName("주문 상태 변경")
