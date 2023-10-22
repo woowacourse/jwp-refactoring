@@ -8,35 +8,20 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
-    @Mock
-    private TableGroupRepository tableGroupRepository;
-
-    @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
-    private OrderTableRepository orderTableRepository;
-
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
     @Nested
@@ -45,82 +30,94 @@ class TableGroupServiceTest {
         @Test
         void 테이블들을_단체_지정할_수_있다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableRepository.findAllByIdIn(any()))
-                    .willReturn(tableGroup.getOrderTables());
-            given(tableGroupRepository.save(any()))
-                    .willReturn(tableGroup);
+            final var orderTable1 = OrderTableFixture.빈테이블_1명();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var request = TableGroupFixture.단체지정요청_생성(savedOrderTables);
 
             // when
-            final var actual = tableGroupService.create(tableGroup);
+            final var actual = tableGroupService.create(request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(tableGroup);
+            final var orderTableResponse1 = OrderTableResponse.toResponse(orderTable1);
+            final var orderTableResponse2 = OrderTableResponse.toResponse(orderTable2);
+            final var expected = List.of(orderTableResponse1, orderTableResponse2);
+            assertThat(actual.getOrderTables()).usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(expected);
         }
 
         @Test
         void 한_개_이하의_주문_테이블을_단체_지정할_경우_예외가_발생한다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_빈테이블_1개();
+            final var orderTable = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
+
+            final var request = TableGroupFixture.단체지정요청_생성(Collections.singletonList(savedOrderTable));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 단체_지정하려는_주문_테이블_중_실제_주문_테이블에_존재하지_않는_테이블이_있으면_예외가_발생한다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableRepository.findAllByIdIn(any()))
-                    .willReturn(Collections.emptyList());
+            final var orderTable1 = OrderTableFixture.빈테이블_1명();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable1);
+
+            final var request = TableGroupFixture.단체지정요청_생성(List.of(savedOrderTable, orderTable2));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 빈_테이블이_아니면_예외가_발생한다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
-            given(orderTableRepository.findAllByIdIn(any()))
-                    .willReturn(tableGroup.getOrderTables());
+            final var orderTable1 = OrderTableFixture.주문테이블_N명(1);
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var request = TableGroupFixture.단체지정요청_생성(savedOrderTables);
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 이미_단체_지정된_테이블이면_예외가_발생한다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableRepository.findAllByIdIn(any()))
-                    .willReturn(List.of(OrderTableFixture.빈테이블_1명_단체지정(), OrderTableFixture.빈테이블_1명_단체지정()));
+            final var orderTable1 = OrderTableFixture.빈테이블_1명_단체지정();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var request = TableGroupFixture.단체지정요청_생성(savedOrderTables);
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블들을_빈_테이블에서_주문_테이블로_설정한다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableRepository.findAllByIdIn(any()))
-                    .willReturn(tableGroup.getOrderTables());
-            given(tableGroupRepository.save(any()))
-                    .willReturn(tableGroup);
+            final var orderTable1 = OrderTableFixture.빈테이블_1명();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var request = TableGroupFixture.단체지정요청_생성(savedOrderTables);
 
             // when
-            final var actual = tableGroupService.create(tableGroup);
+            final var actual = tableGroupService.create(request);
 
             // then
             for (final var orderTable : actual.getOrderTables()) {
-                assertThat(orderTable.isEmpty())
-                        .isFalse();
+                assertThat(orderTable.isEmpty()).isFalse();
             }
         }
     }
@@ -131,14 +128,15 @@ class TableGroupServiceTest {
         @Test
         void 단체_지정을_해제할_수_있다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
-            given(orderTableRepository.findAllByTableGroupId(any()))
-                    .willReturn(tableGroup.getOrderTables());
-            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
-                    .willReturn(false);
+            final var orderTable1 = OrderTableFixture.빈테이블_1명();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var tableGroup = TableGroupFixture.단체지정_여러_테이블(savedOrderTables);
+            final var savedTableGroup = 단일_단체지정_저장(tableGroup);
 
             // when & then
-            assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
+            assertDoesNotThrow(() -> tableGroupService.ungroup(savedTableGroup.getId()));
         }
 
         @Test

@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
@@ -18,17 +17,25 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "tableGroup", cascade = {PERSIST, REMOVE})
+    @OneToMany(mappedBy = "tableGroup", cascade = PERSIST)
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+    public TableGroup(final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            addOrderTable(orderTable);
+        }
+    }
+
+    public void addOrderTable(final OrderTable orderTable) {
+        this.orderTables.add(orderTable);
+        if (orderTable.getTableGroup() != this) {
+            orderTable.setTableGroup(this);
+        }
     }
 
     public Long getId() {

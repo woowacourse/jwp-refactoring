@@ -3,11 +3,16 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,15 @@ public abstract class ServiceTest {
     @Autowired
     protected MenuProductRepository menuProductRepository;
 
+    @Autowired
+    protected TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    protected OrderTableRepository orderTableRepository;
+
+    @Autowired
+    protected OrderRepository orderRepository;
+
     protected void 복수_상품_저장(final Product... products) {
         productRepository.saveAll(List.of(products));
     }
@@ -44,5 +58,17 @@ public abstract class ServiceTest {
 
     protected Menu 단일_메뉴_저장(final Menu menu) {
         return menuRepository.save(menu);
+    }
+
+    protected OrderTable 단일_주문테이블_저장(final OrderTable orderTable) {
+        return orderTableRepository.save(orderTable);
+    }
+
+    protected List<OrderTable> 복수_주문테이블_저장(final OrderTable... orderTables) {
+        return orderTableRepository.saveAll(List.of(orderTables));
+    }
+
+    protected TableGroup 단일_단체지정_저장(final TableGroup tableGroup) {
+        return tableGroupRepository.save(tableGroup);
     }
 }
