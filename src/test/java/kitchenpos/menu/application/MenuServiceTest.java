@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -47,6 +49,8 @@ class MenuServiceTest {
     private MenuProductRepository menuProductRepository;
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private ApplicationEventPublisher publisher;
 
     @Nested
     class CreateTest {
@@ -123,6 +127,7 @@ class MenuServiceTest {
             given(productRepository.findById(2L)).willReturn(Optional.of(product2));
             given(productRepository.findById(3L)).willReturn(Optional.of(product3));
             given(menuRepository.save(any())).willReturn(menu);
+            doNothing().when(publisher).publishEvent(any(SaveMenuProductsEvent.class));
 
             // when
             final Menu savedMenu = menuService.create(request);
@@ -130,7 +135,6 @@ class MenuServiceTest {
             // then
             assertSoftly(softly -> {
                 verify(menuRepository, times(1)).save(any());
-                verify(menuProductRepository, times(3)).save(any());
                 assertThat(savedMenu).usingRecursiveComparison().isEqualTo(menu);
             });
         }

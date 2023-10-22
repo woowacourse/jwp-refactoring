@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import kitchenpos.orderlineitem.application.TableService;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;

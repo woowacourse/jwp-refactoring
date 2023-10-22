@@ -1,7 +1,6 @@
-package kitchenpos.orderlineitem.application;
+package kitchenpos.order.application;
 
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.application.OrderRepository;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
