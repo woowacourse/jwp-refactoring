@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@RequiredArgsConstructor
 @Service
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
+
+    public MenuService(final MenuDao menuDao,
+                       final MenuGroupRepository menuGroupRepository,
+                       final MenuProductDao menuProductDao,
+                       final ProductRepository productRepository) {
+        this.menuDao = menuDao;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductDao = menuProductDao;
+        this.productRepository = productRepository;
+    }
 
     @Transactional
     public Menu create(final Menu menu) {
