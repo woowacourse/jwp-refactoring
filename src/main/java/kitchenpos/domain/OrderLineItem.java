@@ -1,40 +1,65 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
 public class OrderLineItem {
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @Column(nullable = false)
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    protected OrderLineItem() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public OrderLineItem(final Long id,
+                         final Order order,
+                         final Menu menu,
+                         final long quantity) {
+        this.id = id;
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Long getId() {
+        return id;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final OrderLineItem that = (OrderLineItem) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

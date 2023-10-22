@@ -16,7 +16,7 @@ public class OrderLineItemFixture {
                                                     final Long menuId,
                                                     final long quantity) {
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
+        orderLineItem.setOrder(orderId);
         orderLineItem.setMenuId(menuId);
         orderLineItem.setQuantity(quantity);
         return orderLineItem;
@@ -45,7 +45,7 @@ public class OrderLineItemFixture {
 
         public OrderLineItem build() {
             final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setOrderId(orderId);
+            orderLineItem.setOrder(orderId);
             orderLineItem.setMenuId(menuId);
             orderLineItem.setQuantity(quantity);
             return orderLineItem;

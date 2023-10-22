@@ -28,7 +28,7 @@ class OrderLineItemDaoTest extends DaoTest {
         final OrderLineItem saveOrderLineItem = saveOrderLineItem(saveOrder.getId(), saveMenu.getId(), 3);
 
         // then
-        assertThat(saveOrderLineItem.getSeq()).isNotNull();
+        assertThat(saveOrderLineItem.getId()).isNotNull();
     }
 
     @DisplayName("OrderLineItem ID로 OrderLineItem 조회 - 조회됨, ID가 존재하는 경우")
@@ -44,11 +44,11 @@ class OrderLineItemDaoTest extends DaoTest {
         final OrderLineItem saveOrderLineItem = saveOrderLineItem(saveOrder.getId(), saveMenu.getId(), 3);
 
         // when
-        final OrderLineItem foundOrderLineItem = orderLineItemDao.findById(saveOrderLineItem.getSeq())
+        final OrderLineItem foundOrderLineItem = orderLineItemDao.findById(saveOrderLineItem.getId())
                 .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 orderLineItem이 없습니다."));
 
         // then
-        assertThat(foundOrderLineItem.getSeq()).isEqualTo(saveOrderLineItem.getSeq());
+        assertThat(foundOrderLineItem.getId()).isEqualTo(saveOrderLineItem.getId());
     }
 
     @DisplayName("OrderLineItem ID로 OrderLineItem 조회 - 조회되지 않음, ID가 존재하지 않는 경우")
@@ -64,7 +64,7 @@ class OrderLineItemDaoTest extends DaoTest {
         final OrderLineItem saveOrderLineItem = saveOrderLineItem(saveOrder.getId(), saveMenu.getId(), 3);
 
         // when
-        final Optional<OrderLineItem> foundOrderLineItem = orderLineItemDao.findById(saveOrderLineItem.getSeq() + 1);
+        final Optional<OrderLineItem> foundOrderLineItem = orderLineItemDao.findById(saveOrderLineItem.getId() + 1);
 
         assertThat(foundOrderLineItem.isPresent()).isFalse();
     }

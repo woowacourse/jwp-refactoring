@@ -1,40 +1,64 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    protected MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public MenuProduct(final Long id,
+                       final Menu menu,
+                       final Product product,
+                       final long quantity) {
+        this.id = id;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Long getId() {
+        return id;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final MenuProduct that = (MenuProduct) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
