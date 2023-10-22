@@ -1,54 +1,40 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.sql.DataSource;
 import java.util.List;
-import java.util.Optional;
 
+import static kitchenpos.fixture.MenuFixture.양념치킨;
 import static kitchenpos.fixture.OrderTableFixture.테이블1;
+import static kitchenpos.fixture.OrderTableFixture.테이블2;
 import static kitchenpos.fixture.OrderTableFixture.테이블9;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@JdbcTest
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TableServiceTest {
 
     @Autowired
-    private DataSource dataSource;
-
+    private OrderService orderService;
+    @Autowired
+    private TableGroupService tableGroupService;
+    @Autowired
     private TableService tableService;
-
-    @Mock
-    private OrderDao mockedOrderDao;
-    @Mock
-    private OrderTableDao mockedOrderTableDao;
-
-    @BeforeEach
-    void setUp() {
-        var orderDao = new JdbcTemplateOrderDao(dataSource);
-        var orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        this.tableService = new TableService(orderDao, orderTableDao);
-    }
 
     @Test
     void 테이블을_등록한다() {
@@ -94,11 +80,8 @@ class TableServiceTest {
     @Test
     void 테이블_비움_변경시_조리중이나_식사중이면_안된다() {
         var table = 테이블1();
-        this.tableService = new TableService(mockedOrderDao, new JdbcTemplateOrderTableDao(dataSource));
-        when(mockedOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                eq(table.getId()),
-                eq(List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-        ).thenReturn(true);
+
+        orderFromTable1(양념치킨());
 
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), new OrderTable()))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -106,11 +89,10 @@ class TableServiceTest {
 
     @Test
     void 테이블_비움_변경시_테이블그룹이_없어야한다() {
-        this.tableService = new TableService(new JdbcTemplateOrderDao(dataSource), mockedOrderTableDao);
-
         var table = 테이블1();
-        table.setTableGroupId(1L);
-        when(mockedOrderTableDao.findById(eq(table.getId()))).thenReturn(Optional.of(table));
+        var tableGroup = new TableGroup();
+        tableGroup.setOrderTables(List.of(table, 테이블2()));
+        tableGroupService.create(tableGroup);
 
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), new OrderTable()))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -194,5 +176,22 @@ class TableServiceTest {
         assertThat(actual)
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
+    }
+
+    private Order orderFromTable1(Menu menu) {
+        var fullTable = 테이블1();
+        fullTable.setEmpty(false);
+        try {
+            tableService.changeEmpty(fullTable.getId(), fullTable);
+        } catch (IllegalArgumentException ignored) {
+
+        }
+        var order = new Order();
+        order.setOrderTableId(fullTable.getId());
+        var item = new OrderLineItem();
+        item.setMenuId(menu.getId());
+        order.setOrderLineItems(List.of(item));
+
+        return orderService.create(order);
     }
 }

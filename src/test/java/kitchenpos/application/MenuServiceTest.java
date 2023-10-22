@@ -1,19 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixture.MenuFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.Collections;
 
@@ -24,22 +19,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@JdbcTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class MenuServiceTest {
 
     @Autowired
-    private DataSource dataSource;
-
     private MenuService menuService;
-
-    @BeforeEach
-    void setUp() {
-        var menuDao = new JdbcTemplateMenuDao(dataSource);
-        var menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-        var menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
-        var productDao = new JdbcTemplateProductDao(dataSource);
-        this.menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-    }
 
     @Test
     void 모든_메뉴들을_가져온다() {

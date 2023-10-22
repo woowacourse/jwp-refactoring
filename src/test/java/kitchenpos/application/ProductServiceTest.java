@@ -1,15 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.fixture.ProductFixture;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 
 import static kitchenpos.fixture.ProductFixture.바닐라라떼;
@@ -18,18 +16,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@JdbcTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class ProductServiceTest {
 
     @Autowired
-    private DataSource dataSource;
-
     private ProductService productService;
-
-    @BeforeEach
-    void setUp() {
-        this.productService = new ProductService(new JdbcTemplateProductDao(dataSource));
-    }
 
     @Test
     void 상품_등록시_가격은_비워둘_수_없다() {
