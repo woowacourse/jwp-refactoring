@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuCreateRequest;
@@ -31,5 +32,12 @@ public class MenuFixture {
                 .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuCreateRequest(menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menuProductRequests);
+    }
+
+    public static MenuCreateRequest 메뉴요청_망고치킨_N원_생성(final int price, final MenuGroup menuGroup, final MenuProduct... menuProducts) {
+        final var menuProductRequests = Arrays.stream(menuProducts)
+                .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
+                .collect(Collectors.toList());
+        return new MenuCreateRequest("망고 치킨", BigDecimal.valueOf(price), menuGroup.getId(), menuProductRequests);
     }
 }

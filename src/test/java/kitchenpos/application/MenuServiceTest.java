@@ -56,8 +56,16 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            final var menu = MenuFixture.메뉴_망고치킨_N원_신메뉴(-1);
-            final var request = MenuFixture.메뉴요청_생성(menu);
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
+
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
+
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+            final var request = MenuFixture.메뉴요청_망고치킨_N원_생성(-1, savedMenuGroup, menuProduct1, menuProduct2);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
@@ -111,8 +119,7 @@ class MenuServiceTest extends ServiceTest {
 
             final var menuProduct1 = MenuProductFixture.메뉴상품_생성(invalidProduct, 2L);
             final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
-            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct1, menuProduct2);
-            final var request = MenuFixture.메뉴요청_생성(menu);
+            final var request = MenuFixture.메뉴요청_망고치킨_N원_생성(17_000, savedMenuGroup, menuProduct1, menuProduct2);
 
             // when & then
             assertThatThrownBy(() -> menuService.create(request))
