@@ -64,7 +64,7 @@ class TableServiceTest {
             verify(orderTableDao, times(1)).save(orderTableArgumentCaptor.capture());
             OrderTable savedOrderTabled = orderTableArgumentCaptor.getValue();
             assertThat(savedOrderTabled.getId()).isNull();
-            assertThat(savedOrderTabled.getTableGroupId()).isNull();
+            assertThat(savedOrderTabled.getTableGroup()).isNull();
             assertThat(savedOrderTabled.isEmpty()).isEqualTo(true);
             assertThat(savedOrderTabled.getNumberOfGuests()).isEqualTo(100);
         });

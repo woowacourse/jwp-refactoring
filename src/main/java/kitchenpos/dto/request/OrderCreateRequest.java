@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderCreateRequest {
+
     private final Long orderTableId;
     private final String orderStatus;
     private final LocalDateTime orderedTime;

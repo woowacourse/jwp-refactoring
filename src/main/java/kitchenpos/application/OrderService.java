@@ -1,5 +1,10 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -16,24 +21,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+        final MenuDao menuDao,
+        final OrderDao orderDao,
+        final OrderLineItemDao orderLineItemDao,
+        final OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
@@ -50,15 +50,15 @@ public class OrderService {
         }
 
         final List<Long> menuIds = orderLines.stream()
-                .map(OrderLineRequest::getMenuId)
-                .collect(Collectors.toList());
+            .map(OrderLineRequest::getMenuId)
+            .collect(Collectors.toList());
 
         if (orderLines.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("해당 테이블은 비어있습니다.");
@@ -73,7 +73,7 @@ public class OrderService {
         final Order savedOrder = orderDao.save(newOrder);
 
         for (final OrderLineRequest orderLineItem : orderLines) {
-            OrderLineItem newOrderLineItem = new OrderLineItem(null, savedOrder.getId(), orderLineItem.getMenuId(),
+            OrderLineItem newOrderLineItem = new OrderLineItem(null, savedOrder.getId(), savedOrder,
                 orderLineItem.getQuantity());
             savedOrder.addOrderLineItem(orderLineItemDao.save(newOrderLineItem));
         }
@@ -94,7 +94,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();

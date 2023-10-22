@@ -178,7 +178,7 @@ class TableGroupServiceTest {
             assertSoftly(softAssertions -> {
                 verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
                 OrderTable value = orderTableArgumentCaptor.getValue();
-                assertThat(value.getTableGroupId()).isEqualTo(1L);
+                assertThat(value.getTableGroup().getId()).isEqualTo(1L);
                 assertThat(value.isEmpty()).isFalse();
             });
         }
@@ -233,7 +233,7 @@ class TableGroupServiceTest {
             // then
             assertSoftly(softAssertions ->{
                 verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
-                assertThat(orderTableArgumentCaptor.getValue().getTableGroupId()).isNull();
+                assertThat(orderTableArgumentCaptor.getValue().getTableGroup()).isNull();
                 assertThat(orderTableArgumentCaptor.getValue().isEmpty()).isFalse();
             });
         }

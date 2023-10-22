@@ -3,13 +3,28 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long orderTableId;
+
     private String orderStatus;
+
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
@@ -25,7 +40,7 @@ public class Order {
     }
 
     private List<OrderLineItem> makeList(List<OrderLineItem> orderLineItems) {
-        if(orderLineItems == null){
+        if (orderLineItems == null) {
             return new ArrayList<>();
         }
         return new ArrayList<>(orderLineItems);
@@ -42,7 +57,7 @@ public class Order {
     }
 
     private void invalidOrderId(OrderLineItem orderLineItem) {
-        if (orderLineItem.getOrderId() != id) {
+        if (orderLineItem.getOrder().getId() != id) {
             throw new IllegalArgumentException("추가한 주문 상품은 해당 주문의 상품이 아닙니다");
         }
     }

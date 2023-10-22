@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 
 public class MenuResponse {
+
     private final Long id;
     private final String name;
     private final BigDecimal price;
@@ -21,7 +22,7 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse of(Menu menu){
+    public static MenuResponse of(Menu menu) {
         return new MenuResponse(
             menu.getId(),
             menu.getName(),

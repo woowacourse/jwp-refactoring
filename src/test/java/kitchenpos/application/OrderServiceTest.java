@@ -195,7 +195,7 @@ class OrderServiceTest {
         }
 
         private OrderLineItem toEntity(Long seq, Long orderId, OrderLineRequest orderLineRequest) {
-            return new OrderLineItem(seq, orderId, orderLineRequest.getMenuId(), orderLineRequest.getQuantity());
+            return new OrderLineItem(seq, orderLineRequest.getMenuId(), new Order(orderId, null, null, null, null), orderLineRequest.getQuantity());
         }
     }
 

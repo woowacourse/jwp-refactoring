@@ -3,13 +3,24 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+@Entity
 public class TableGroup {
 
     private static final int MIN_ORDER_TABLE_SIZE = 2;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public TableGroup() {
@@ -25,7 +36,7 @@ public class TableGroup {
         validate(orderTables);
         this.orderTables = orderTables.stream()
             .map(orderTable -> {
-                orderTable.grouping(id);
+                orderTable.grouping(this);
                 orderTable.filling();
                 return orderTable;
             }).collect(Collectors.toList());
@@ -61,7 +72,7 @@ public class TableGroup {
 
     private void checkNotGrouped(List<OrderTable> orderTables) {
         orderTables.stream()
-            .filter(orderTable -> orderTable.getTableGroupId() != null)
+            .filter(orderTable -> orderTable.getTableGroup() != null)
             .findAny()
             .ifPresent(orderTable -> {
                 throw new IllegalArgumentException("주문 테이블이 이미 그룹화 되어 있습니다.");

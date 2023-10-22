@@ -6,13 +6,13 @@ import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
 
-    private final Long seq;
+    private final Long id;
     private final Long orderId;
     private final Long menuId;
     private final long quantity;
 
-    public OrderLineItemResponse(Long seq, Long orderId, Long menuId, long quantity) {
-        this.seq = seq;
+    public OrderLineItemResponse(Long id, Long orderId, Long menuId, long quantity) {
+        this.id = id;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
@@ -20,8 +20,8 @@ public class OrderLineItemResponse {
 
     public static OrderLineItemResponse of(OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(
-            orderLineItem.getSeq(),
-            orderLineItem.getOrderId(),
+            orderLineItem.getId(),
+            orderLineItem.getOrder().getId(),
             orderLineItem.getMenuId(),
             orderLineItem.getQuantity()
         );
@@ -33,8 +33,8 @@ public class OrderLineItemResponse {
             .collect(Collectors.toList());
     }
 
-    public Long getSeq() {
-        return seq;
+    public Long getId() {
+        return id;
     }
 
     public Long getOrderId() {

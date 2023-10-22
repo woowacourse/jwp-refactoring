@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroupCreateRequest {
+
     private final LocalDateTime createdDate;
     private final List<Long> orderTableIdss;
 

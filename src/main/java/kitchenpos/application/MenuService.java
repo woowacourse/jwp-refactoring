@@ -71,8 +71,8 @@ public class MenuService {
         for (final MenuProductCreateRequest menuProductRequest : menuProducts) {
             MenuProduct newMenuProduct = new MenuProduct(
                 null,
-                savedMenu.getId(),
                 menuProductRequest.getProductId(),
+                savedMenu,
                 menuProductRequest.getQuantity());
             savedMenu.addMenuProduct(menuProductDao.save(newMenuProduct));
         }

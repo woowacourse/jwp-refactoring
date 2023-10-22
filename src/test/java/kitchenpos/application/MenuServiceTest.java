@@ -203,7 +203,7 @@ class MenuServiceTest {
         }
 
         private MenuProduct toEntity(Long seq, Long menuId, MenuProductCreateRequest menuProductCreateRequest) {
-            return new MenuProduct(seq, menuId, menuProductCreateRequest.getProductId(),
+            return new MenuProduct(seq, menuProductCreateRequest.getProductId(), MenuFixture.builder().withId(menuId).build(),
                 menuProductCreateRequest.getQuantity());
         }
     }

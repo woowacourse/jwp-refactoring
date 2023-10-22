@@ -3,6 +3,7 @@ package kitchenpos.dto.response;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableResponse {
 
@@ -18,10 +19,11 @@ public class OrderTableResponse {
         this.empty = empty;
     }
 
-    public static OrderTableResponse of(OrderTable orderTable){
+    public static OrderTableResponse of(OrderTable orderTable) {
+        TableGroup tableGroup = orderTable.getTableGroup();
         return new OrderTableResponse(
             orderTable.getId(),
-            orderTable.getTableGroupId(),
+            tableGroup == null ? null : tableGroup.getId(),
             orderTable.getNumberOfGuests(),
             orderTable.isEmpty()
         );
