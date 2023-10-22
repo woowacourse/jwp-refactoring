@@ -32,6 +32,15 @@ public class Price {
         }
     }
 
+    public Long getMultiplyPrice(final Long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity))
+                .longValue();
+    }
+
+    public boolean isExpensiveThan(final BigDecimal price) {
+        return this.price.compareTo(price) > 0;
+    }
+
     public Long getPrice() {
         return price.longValue();
     }

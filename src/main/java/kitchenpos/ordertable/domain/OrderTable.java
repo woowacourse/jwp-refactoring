@@ -1,5 +1,8 @@
 package kitchenpos.ordertable.domain;
 
+import kitchenpos.ordertable.exception.CannotChangeNumberOfGuestBecauseOfEmptyTableException;
+import kitchenpos.ordertable.exception.NumberOfGuestsInvalidException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,6 +45,14 @@ public class OrderTable {
     }
 
     public void updateNumberOfGuests(final int numberOfGuests) {
+        if(numberOfGuests <= 0) {
+            throw new NumberOfGuestsInvalidException();
+        }
+
+        if(empty) {
+            throw new CannotChangeNumberOfGuestBecauseOfEmptyTableException();
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 

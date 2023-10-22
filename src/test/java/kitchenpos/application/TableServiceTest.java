@@ -142,8 +142,8 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 인원_변경하려는_주문_테이블이_빈_테이블이면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(0, true)));
-        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(0, false));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(10, true)));
+        OrderTableChangeNumberOfGuestRequest changeTableRequest = new OrderTableChangeNumberOfGuestRequest(5);
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest))
