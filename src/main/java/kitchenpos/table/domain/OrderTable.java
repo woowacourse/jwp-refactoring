@@ -72,6 +72,10 @@ public class OrderTable {
         return this.isEmpty() && Objects.isNull(this.tableGroup);
     }
 
+    public boolean isTableGroupNull() {
+        return Objects.isNull(this.tableGroup);
+    }
+
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
