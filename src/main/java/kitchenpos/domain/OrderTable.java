@@ -63,6 +63,7 @@ public class OrderTable {
     }
 
     public void attachTableGroup(final TableGroup tableGroup) {
+        validateTableGroupIsNull();
         this.tableGroup = tableGroup;
         this.empty = false;
         tableGroup.getOrderTables().add(this);
@@ -80,7 +81,7 @@ public class OrderTable {
 
     private void validateOrderCompletion() {
         for (Order order : orders) {
-            if (order.getOrderStatus() != OrderStatus.COMPLETION){
+            if (order.getOrderStatus() != OrderStatus.COMPLETION) {
                 throw new IllegalArgumentException("주문 완료 상태일때만 테이블 분리가 가능합니다.");
             }
         }
