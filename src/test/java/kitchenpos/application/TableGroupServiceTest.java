@@ -8,6 +8,7 @@ import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderCreateRequest.OrderLineRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
@@ -113,7 +114,7 @@ public class TableGroupServiceTest {
                 new OrderTableRequest(2L)
         ));
 
-        TableGroup tableGroup = tableGroupService.create(request);
+        TableGroupResponse tableGroup = tableGroupService.create(request);
         orderService.create(new OrderCreateRequest(
                 tableGroup.getId(),
                 List.of(new OrderLineRequest(1L, 1))
@@ -131,7 +132,7 @@ public class TableGroupServiceTest {
                 new OrderTableRequest(2L)
         ));
 
-        TableGroup tableGroup = tableGroupService.create(request);
+        TableGroupResponse tableGroup = tableGroupService.create(request);
 
         tableGroupService.ungroup(tableGroup.getId());
 

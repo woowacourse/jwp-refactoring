@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -17,21 +19,24 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        return orderTableRepository.save(orderTable);
+    public OrderTableResponse create(final OrderTable orderTable) {
+        return OrderTableResponse.of(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll()
+                .stream()
+                .map(OrderTableResponse::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
-        return savedOrderTable;
+        return OrderTableResponse.of(savedOrderTable);
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {
@@ -46,12 +51,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
-        return orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.of(orderTableRepository.save(savedOrderTable));
     }
 }

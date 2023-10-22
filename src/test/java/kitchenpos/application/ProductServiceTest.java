@@ -1,10 +1,7 @@
 package kitchenpos.application;
 
-import static org.mockito.Mockito.verify;
-
 import java.math.BigDecimal;
 import java.util.List;
-import javax.persistence.EntityManager;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.dao.ProductRepository;

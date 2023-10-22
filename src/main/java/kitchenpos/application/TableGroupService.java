@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
@@ -31,10 +32,10 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> savedOrderTables = getOrderTables(request);
 
-        return saveTableGroup(savedOrderTables);
+        return TableGroupResponse.of(saveTableGroup(savedOrderTables));
     }
 
     private List<OrderTable> getOrderTables(final TableGroupCreateRequest request) {

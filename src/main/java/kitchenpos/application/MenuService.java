@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuCreateRequest.MenuProductRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -37,19 +39,19 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         validateMenuPrice(request);
-        return saveMenu(request);
+        return MenuResponse.of(saveMenu(request));
     }
 
     private Menu saveMenu(final MenuCreateRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(()->new IllegalArgumentException("해당 메뉴 그룹 ID가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 메뉴 그룹 ID가 존재하지 않습니다."));
         Menu menu = menuRepository.save(new Menu(request.getName(), Price.of(request.getPrice()), menuGroup));
 
         for (MenuProductRequest menuProduct : request.getMenuProducts()) {
             Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(()->new IllegalArgumentException("해당 제품 ID가 존재하지 않습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("해당 제품 ID가 존재하지 않습니다."));
             menuProductRepository.save(new MenuProduct(menu, product, menuProduct.getQuantity()));
         }
 
@@ -69,7 +71,7 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(()->new IllegalArgumentException("해당 제품 ID가 존재하지 않습니다."));
+                    .orElseThrow(() -> new IllegalArgumentException("해당 제품 ID가 존재하지 않습니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
@@ -78,7 +80,10 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll()
+                .stream()
+                .map(MenuResponse::of)
+                .collect(Collectors.toList());
     }
 }

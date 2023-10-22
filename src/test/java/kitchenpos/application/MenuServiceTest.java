@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuCreateRequest.MenuProductRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -93,7 +94,7 @@ class MenuServiceTest {
                 List.of(menuProductRequest)
         );
 
-        Menu menu = menuService.create(menuCreateRequest);
+        MenuResponse menu = menuService.create(menuCreateRequest);
         manager.flush();
         manager.clear();
         Menu saveMenu = menuRepository.findById(menu.getId()).orElseThrow();
