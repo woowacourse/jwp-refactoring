@@ -92,11 +92,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());
@@ -187,11 +188,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
@@ -232,11 +234,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
@@ -273,11 +276,12 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 

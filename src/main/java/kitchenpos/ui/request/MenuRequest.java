@@ -23,13 +23,7 @@ public class MenuRequest {
     }
 
     public Menu toMenu() {
-        final Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 
     public Long getId() {

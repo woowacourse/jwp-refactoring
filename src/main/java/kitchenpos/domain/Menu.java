@@ -27,6 +27,7 @@ public class Menu extends BaseDate {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -41,6 +42,12 @@ public class Menu extends BaseDate {
     public Menu() {
     }
 
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -53,34 +60,24 @@ public class Menu extends BaseDate {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-        this.price = price;
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void changeMenuProducts(final List<MenuProduct> menuProducts) {
+        validateMenuProducts(menuProducts);
+        this.menuProducts = menuProducts;
+    }
+
+    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -89,7 +86,6 @@ public class Menu extends BaseDate {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
-        this.menuProducts = menuProducts;
     }
 
     @Override

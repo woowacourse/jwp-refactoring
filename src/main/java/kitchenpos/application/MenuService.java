@@ -48,7 +48,7 @@ public class MenuService {
             menuProduct.setMenu(savedMenu);
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
+        savedMenu.changeMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
@@ -57,7 +57,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            menu.changeMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
         }
 
         return menus;
