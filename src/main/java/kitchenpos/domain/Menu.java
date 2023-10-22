@@ -64,6 +64,9 @@ public class Menu {
 
     public void addMenuProducts(final List<MenuProduct> menuProducts) {
         validatePrice(menuProducts);
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.updateMenu(this);
+        }
         this.menuProducts.addAll(menuProducts);
     }
 

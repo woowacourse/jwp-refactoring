@@ -36,22 +36,28 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
-        final Menu savedMenu = menuRepository.save(menu);
+        final Menu menu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                findMenuGroupById(request.getMenuGroupId())
+        );
+        menu.addMenuProducts(extractMenuProduct(request.getMenuProducts()));
 
-        menu.addMenuProducts(extractMenuProduct(menu, request.getMenuProducts()));
+        menuRepository.save(menu);
         menuProductRepository.saveAll(menu.getMenuProducts());
-
-        return MenuResponse.from(savedMenu);
+        return MenuResponse.from(menu);
     }
 
-    private List<MenuProduct> extractMenuProduct(final Menu menu, final List<MenuProductRequest> request) {
+    private MenuGroup findMenuGroupById(final long id) {
+        return menuGroupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
+    }
+
+    private List<MenuProduct> extractMenuProduct(final List<MenuProductRequest> request) {
         final Map<Product, Long> productsAndQuantities = findByProductId(request);
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (Map.Entry<Product, Long> entry : productsAndQuantities.entrySet()) {
-            menuProducts.add(new MenuProduct(menu, entry.getKey(), entry.getValue()));
+            menuProducts.add(new MenuProduct(entry.getKey(), entry.getValue()));
         }
         return menuProducts;
     }

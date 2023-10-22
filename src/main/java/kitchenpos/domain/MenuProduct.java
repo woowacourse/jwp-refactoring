@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static java.util.Objects.nonNull;
+
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,8 +31,7 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Menu menu, final Product product, final long quantity) {
-        this.menu = menu;
+    public MenuProduct(final Product product, final long quantity) {
         this.product = product;
         this.quantity = quantity;
     }
@@ -53,6 +54,13 @@ public class MenuProduct {
 
     public Price getTotalPrice() {
         return product.getPrice().multiply(quantity);
+    }
+
+    public void updateMenu(final Menu menu) {
+        if(nonNull(this.menu)){
+            throw new IllegalArgumentException("이미 메뉴가 지정되어 있어 변경할 수 없습니다.");
+        }
+        this.menu = menu;
     }
 
     @Override
