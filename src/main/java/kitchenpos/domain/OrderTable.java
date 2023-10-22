@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,7 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.domain.vo.NumberOfGuests;
 
 @Entity
 @Table(name = "order_table")
@@ -23,23 +28,58 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column(name = "number_of_guests")
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @Column(name = "empty")
     private boolean empty;
+
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
 
     private OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
         this.empty = empty;
     }
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public boolean isGrouped() {
+        return tableGroup != null;
+    }
+
+    public boolean isAllOfOrderCompleted() {
+        return orders.stream()
+                .allMatch(Order::isCompleted);
+    }
+
+    public void group(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
+    }
+
+    public void changeTableStatus(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
+    }
+
+    public void addOrder(Order order) {
+        if (!orders.contains(order)) {
+            orders.add(order);
+        }
     }
 
     public Long getId() {
@@ -51,7 +91,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getNumberOfGuests();
     }
 
     public static OrderTableBuilder builder() {

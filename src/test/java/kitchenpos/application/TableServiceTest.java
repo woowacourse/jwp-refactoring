@@ -2,56 +2,61 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.anyList;
-import static org.mockito.BDDMockito.anyLong;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.request.OrderTableCreateRequest;
+import kitchenpos.application.request.OrderTableUpdateRequest;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceMockTest
+@ServiceTest
 class TableServiceTest {
 
-    @InjectMocks
+    @Autowired
     private TableService tableService;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     void 주문_테이블을_생성한다() {
-        OrderTable 주문_테이블_A = OrderTableFixture.주문_테이블_A;
-        given(orderTableDao.save(any(OrderTable.class)))
-                .willReturn(주문_테이블_A);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(10, false);
 
-        OrderTable response = tableService.create(주문_테이블_A);
+        OrderTableResponse response = tableService.create(orderTableCreateRequest);
 
-        assertThat(response).usingRecursiveComparison().isEqualTo(주문_테이블_A);
+        assertAll(
+                () -> assertThat(response.getId()).isPositive(),
+                () -> assertThat(response.getNumberOfGuests()).isEqualTo(10)
+        );
     }
 
     @Test
     void 모든_주문_테이블을_조회한다() {
-        OrderTable 주문_테이블_A = OrderTableFixture.주문_테이블_A;
-        OrderTable 주문_테이블_B = OrderTableFixture.주문_테이블_B_EMPTY_상태;
-        given(orderTableDao.findAll())
-                .willReturn(List.of(주문_테이블_A, 주문_테이블_B));
+        orderTableRepository.save(OrderTable.builder().numberOfGuests(10).empty(false).build());
+        orderTableRepository.save(OrderTable.builder().numberOfGuests(5).empty(false).build());
 
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTableResponse> orderTableResponses = tableService.list();
 
-        assertThat(orderTables).usingRecursiveComparison().isEqualTo(List.of(주문_테이블_A, 주문_테이블_B));
+        assertThat(orderTableResponses).hasSizeGreaterThanOrEqualTo(2);
     }
 
     @Nested
@@ -59,41 +64,63 @@ class TableServiceTest {
 
         @Test
         void 정상적으로_변경한다() {
-            OrderTable 주문_테이블_상태_변경_EMPTY = OrderTableFixture.주문_테이블_J_상태_변경_EMPTY;
-            OrderTable 주문_테이블_D_NOT_EMPTY_상태 = OrderTableFixture.주문_테이블_D_NOT_EMPTY_상태;
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_테이블_상태_변경_EMPTY));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                    .willReturn(false);
-            given(orderTableDao.save(any(OrderTable.class)))
-                    .willReturn(주문_테이블_D_NOT_EMPTY_상태);
+            OrderTable orderTable = orderTableRepository.save(
+                    OrderTable.builder().empty(false).numberOfGuests(4).build());
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, true);
 
-            OrderTable response = tableService.changeEmpty(주문_테이블_상태_변경_EMPTY.getId(), 주문_테이블_D_NOT_EMPTY_상태);
+            OrderTableResponse orderTableResponse = tableService.changeEmpty(orderTable.getId(),
+                    orderTableUpdateRequest);
 
-            assertThat(response.isEmpty()).isEqualTo(주문_테이블_D_NOT_EMPTY_상태.isEmpty());
+            assertThat(orderTableResponse.isEmpty()).isTrue();
         }
 
         @Test
         void 주문_테이블을_찾을_수_없으면_예외가_발생한다() {
-            OrderTable 주문_테이블_D_NOT_EMPTY_상태 = OrderTableFixture.주문_테이블_D_NOT_EMPTY_상태;
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.empty());
+            Long wrongOrderTableId = -1L;
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, true);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(-1L, 주문_테이블_D_NOT_EMPTY_상태))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, orderTableUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("일치하는 주문 테이블이 존재하지 않습니다.");
+        }
+
+        @Test
+        void 주문_테이블이_그룹에_포함되어_있으면_예외가_발생한다() {
+            OrderTable savedOrderTable = orderTableRepository.save(
+                    OrderTable.builder()
+                            .numberOfGuests(4)
+                            .empty(false)
+                            .build()
+            );
+            tableGroupRepository.save(TableGroup.builder()
+                    .orderTables(List.of(savedOrderTable))
+                    .build()
+            );
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, true);
+
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 그룹에 속한 주문 테이블의 상태를 변경할 수 없습니다.");
         }
 
         @Test
         void 주문_테이블의_주문_중_COMPLETION_상태가_아닌_주문이_존재하면_예외가_발생한다() {
-            OrderTable 주문_테이블_B_Empty_상태 = OrderTableFixture.주문_테이블_B_EMPTY_상태;
-            OrderTable 주문_테이블_D_NOT_EMPTY_상태 = OrderTableFixture.주문_테이블_D_NOT_EMPTY_상태;
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_테이블_B_Empty_상태));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                    .willReturn(true);
+            OrderTable savedOrderTable = orderTableRepository.save(
+                    OrderTable.builder()
+                            .numberOfGuests(4)
+                            .empty(false)
+                            .build()
+            );
+            orderRepository.save(Order.builder()
+                    .orderTable(savedOrderTable)
+                    .orderStatus(OrderStatus.MEAL)
+                    .build()
+            );
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, true);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(주문_테이블_B_Empty_상태.getId(), 주문_테이블_D_NOT_EMPTY_상태))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블에 진행 중인 주문이 존재합니다.");
         }
     }
 
@@ -102,55 +129,45 @@ class TableServiceTest {
 
         @Test
         void 정상적으로_변경한다() {
-            OrderTable 주문_테이블_I_손님_10명 = OrderTableFixture.주문_테이블_I_손님_변경_10명;
-            OrderTable 주문_테이블_H_손님_5명 = OrderTableFixture.주문_테이블_H_손님_변경_5명;
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_테이블_I_손님_10명));
-            given(orderTableDao.save(any(OrderTable.class)))
-                    .willReturn(주문_테이블_H_손님_5명);
+            OrderTable orderTable = orderTableRepository.save(OrderTable.builder().numberOfGuests(2).build());
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, false);
 
-            OrderTable response = tableService.changeNumberOfGuests(주문_테이블_I_손님_10명.getId(), 주문_테이블_H_손님_5명);
+            OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(),
+                    orderTableUpdateRequest);
 
-            assertThat(response.getNumberOfGuests()).isEqualTo(주문_테이블_H_손님_5명.getNumberOfGuests());
-        }
-
-        @Test
-        void 변경하는_손님_수가_0명_이면_예외가_발생한다() {
-            OrderTable 주문_테이블_A_손님_10명 = OrderTableFixture.주문_테이블_A;
-            OrderTable 주문_테이블_F_손님_0명 = OrderTableFixture.주문_테이블_F_손님_0명;
-
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블_A_손님_10명.getId(), 주문_테이블_F_손님_0명))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 변경하는_손님_수가_음수_이면_예외가_발생한다() {
-            OrderTable 주문_테이블_A_손님_10명 = OrderTableFixture.주문_테이블_A;
-            OrderTable 주문_테이블_G_손님_음수 = OrderTableFixture.주문_테이블_G_손님_음수;
-
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블_A_손님_10명.getId(), 주문_테이블_G_손님_음수))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThat(response.getNumberOfGuests()).isEqualTo(10);
         }
 
         @Test
         void 존재하지_않는_주문_테이블이면_예외가_발생한다() {
-            OrderTable 주문_테이블_H_손님_5명 = OrderTableFixture.주문_테이블_H_손님_변경_5명;
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.empty());
+            Long wrongOrderTableId = -1L;
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(10, false);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, 주문_테이블_H_손님_5명))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongOrderTableId, orderTableUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("일치하는 주문 테이블이 존재하지 않습니다.");
         }
 
         @Test
         void 변경하는_주문_테이블이_EMTPY_상태이면_예외가_발생한다() {
-            OrderTable 주문_테이블_B_Empty_상태 = OrderTableFixture.주문_테이블_B_EMPTY_상태;
-            OrderTable 주문_테이블_H_손님_5명 = OrderTableFixture.주문_테이블_H_손님_변경_5명;
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_테이블_B_Empty_상태));
+            OrderTable orderTable = orderTableRepository.save(
+                    OrderTable.builder().numberOfGuests(2).empty(true).build());
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(5, false);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문_테이블_B_Empty_상태.getId(), 주문_테이블_H_손님_5명))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("EMPTY 상태인 주문 테이블의 손님 수를 변경할 수 없습니다.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(ints = {0, -1})
+        void 변경하는_손님_수가_1명_미만_이면_예외가_발생한다(int value) {
+            OrderTable orderTable = orderTableRepository.save(OrderTable.builder().numberOfGuests(2).build());
+            OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(value, false);
+
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableUpdateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("손님 수는 최소 1명 이상이어야 합니다.");
         }
     }
 }

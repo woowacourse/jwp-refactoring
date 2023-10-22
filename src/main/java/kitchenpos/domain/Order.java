@@ -42,6 +42,7 @@ public class Order {
 
     private Order(OrderTable orderTable, OrderStatus orderStatus) {
         this.orderTable = orderTable;
+        orderTable.addOrder(this);
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
     }
