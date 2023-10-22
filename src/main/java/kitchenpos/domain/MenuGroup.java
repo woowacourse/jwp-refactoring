@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,5 +31,22 @@ public class MenuGroup {
 
     public String getName() {
         return name.getValue();
+    }
+
+    @Override
+    public boolean equals(final Object target) {
+        if (this == target) {
+            return true;
+        }
+        if (target == null || getClass() != target.getClass()) {
+            return false;
+        }
+        final MenuGroup targetMenuGroup = (MenuGroup) target;
+        return Objects.equals(getId(), targetMenuGroup.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

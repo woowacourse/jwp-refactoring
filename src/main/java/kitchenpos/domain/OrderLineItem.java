@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -51,5 +52,22 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(final Object target) {
+        if (this == target) {
+            return true;
+        }
+        if (target == null || getClass() != target.getClass()) {
+            return false;
+        }
+        final OrderLineItem targetOrderLineItem = (OrderLineItem) target;
+        return Objects.equals(getSeq(), targetOrderLineItem.getSeq());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSeq());
     }
 }
