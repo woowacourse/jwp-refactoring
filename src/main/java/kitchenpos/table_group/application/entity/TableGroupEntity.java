@@ -1,8 +1,7 @@
 package kitchenpos.table_group.application.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.table_group.domain.OrderTables;
 import kitchenpos.table_group.domain.TableGroup;
 
 public class TableGroupEntity {
@@ -34,7 +33,7 @@ public class TableGroupEntity {
     return new TableGroup(id, createdDate);
   }
 
-  public TableGroup toTableGroup(final List<OrderTable> orderTables) {
+  public TableGroup toTableGroup(final OrderTables orderTables) {
     return new TableGroup(id, createdDate, orderTables);
   }
 }

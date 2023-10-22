@@ -25,6 +25,10 @@ public class OrderTable {
     this(null, null, numberOfGuests, empty);
   }
 
+  public OrderTable(final Long id) {
+    this(id, null, 0, true);
+  }
+
   public Long getId() {
     return id;
   }

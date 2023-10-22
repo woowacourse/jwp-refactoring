@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.menu_group.application.dto.MenuGroupCreateRequest;
 import kitchenpos.menu_group.application.dto.MenuGroupQueryResponse;
-import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.menu_group.application.entity.MenuGroupEntity;
 import kitchenpos.menu_group.persistence.MenuGroupDao;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +28,7 @@ class MenuGroupServiceTest extends ServiceIntegrateTest {
     final String name = "추천 메뉴";
     final MenuGroupQueryResponse savedManuGroup = menuGroupService.create(
         new MenuGroupCreateRequest(name));
-    final MenuGroup actual = menuGroupDao.findById(savedManuGroup.getId()).get();
+    final MenuGroupEntity actual = menuGroupDao.findById(savedManuGroup.getId()).get();
 
     //then
     Assertions.assertAll(

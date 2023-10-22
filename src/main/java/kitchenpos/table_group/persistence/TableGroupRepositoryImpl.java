@@ -9,6 +9,7 @@ import kitchenpos.order_table.application.entity.OrderTableEntity;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.entity.TableGroupEntity;
+import kitchenpos.table_group.domain.OrderTables;
 import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.table_group.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Repository;
@@ -31,13 +32,13 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
         TableGroupEntity.from(new TableGroup(LocalDateTime.now())));
 
     final List<OrderTable> savedOrderTables = new ArrayList<>();
-    for (final OrderTable orderTable : entity.getOrderTables()) {
+    for (final OrderTable orderTable : entity.getOrderTables().getOrderTables()) {
       savedOrderTables.add(
           orderTableDao.save(new OrderTableEntity(orderTable.getId(), savedTableGroup.getId(),
               orderTable.getNumberOfGuests(), false)).toOrderTable());
     }
 
-    return savedTableGroup.toTableGroup(savedOrderTables);
+    return savedTableGroup.toTableGroup(new OrderTables(savedOrderTables));
   }
 
   @Override
