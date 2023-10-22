@@ -46,6 +46,11 @@ public class Menu {
         this.price = Price.from(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+        initMenuProduct(menuProducts);
+    }
+
+    private void initMenuProduct(final List<MenuProduct> menuProducts) {
+        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
     }
 
     public Long getId() {
@@ -56,8 +61,8 @@ public class Menu {
         return name;
     }
 
-    public Price getPrice() {
-        return price;
+    public Long getPrice() {
+        return price.getPrice();
     }
 
     public Long getMenuGroupId() {

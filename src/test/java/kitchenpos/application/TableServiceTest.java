@@ -42,7 +42,7 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블을_생성한다() {
         // given
-        OrderTable orderTable = 주문_테이블_생성(null, 10, false);
+        OrderTable orderTable = 주문_테이블_생성(10, false);
         OrderTableCreateRequest req = 주문_테이블_생성_요청(orderTable);
 
         // when
@@ -58,7 +58,7 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 모든_주문_테이블을_반환한다() {
         // given
-        OrderTable orderTable = 주문_테이블_생성(null, 10, false);
+        OrderTable orderTable = 주문_테이블_생성(10, false);
         OrderTableCreateRequest req = 주문_테이블_생성_요청(orderTable);
         OrderTable savedOrderTable = tableService.create(req);
 
@@ -76,10 +76,10 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블을_빈_상태로_변경한다() {
         // given
-        OrderTableCreateRequest req = 주문_테이블_생성_요청(주문_테이블_생성(null, 1, false));
+        OrderTableCreateRequest req = 주문_테이블_생성_요청(주문_테이블_생성(1, false));
         OrderTable orderTable = tableService.create(req);
 
-        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
+        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(1, true));
 
         // when
         OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), changedTableRequest);
@@ -93,8 +93,8 @@ class TableServiceTest extends IntegrationTestHelper {
         // given
         Long invalidOrderTableId = -1L;
 
-        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
-        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(1, false)));
+        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(1, true));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, changedTableRequest))
@@ -104,8 +104,8 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블을_빈_상태로_변경시에_밥을_먹는중이라면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
-        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(null, 1, true));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(1, false)));
+        OrderTableChangeEmptyRequest changedTableRequest = 주문_테이블_상태_업데이트_요청(주문_테이블_생성(1, true));
         orderRepository.save(주문_생성(orderTable.getId(), COOKING.name(), List.of(
                 OrderLineItemFixture.주문_품목_생성(null, 10L)
         )));
@@ -118,8 +118,8 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블의_손님_수를_변경한다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
-        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, 10, true));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(1, false)));
+        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(10, true));
 
 
         // when
@@ -132,18 +132,18 @@ class TableServiceTest extends IntegrationTestHelper {
     @Test
     void 변경하려는_주문_테이블의_손님_수가_0보다_작다면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 1, false)));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(1, false)));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, -1, true))))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(-1, true))))
                 .isInstanceOf(NumberOfGuestsInvalidException.class);
     }
 
     @Test
     void 인원_변경하려는_주문_테이블이_빈_테이블이면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(null, 0, true)));
-        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(null, 0, false));
+        OrderTable orderTable = tableService.create(주문_테이블_생성_요청(주문_테이블_생성(0, true)));
+        OrderTableChangeNumberOfGuestRequest changeTableRequest = 주문_테이블_손님_수_업데이트_요청(주문_테이블_생성(0, false));
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest))

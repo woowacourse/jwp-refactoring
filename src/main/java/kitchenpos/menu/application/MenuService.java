@@ -7,7 +7,6 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.exception.MenuGroupNotFoundException;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +17,13 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
+            final MenuGroupRepository menuGroupRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
     }
 
     @Transactional

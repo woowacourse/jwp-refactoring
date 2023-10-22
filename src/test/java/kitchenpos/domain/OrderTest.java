@@ -25,7 +25,7 @@ class OrderTest {
     @Test
     void 주문_테이블이_비어있다면_예외를_발생한다() {
         // given
-        OrderTable orderTable = 주문_테이블_생성(null, 10, true);
+        OrderTable orderTable = 주문_테이블_생성(10, true);
 
         // when & then
         assertThatThrownBy(() -> new Order(orderTable.getId(), COOKING.name(), List.of()))
@@ -35,7 +35,7 @@ class OrderTest {
     @Test
     void 주문_품목이_비어있다면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = 주문_테이블_생성(null, 10, false);
+        OrderTable orderTable = 주문_테이블_생성(10, false);
 
         // when & then
         assertThatThrownBy(() -> orderTable.getTableGroupId())
@@ -45,7 +45,7 @@ class OrderTest {
     @Test
     void 이미_완료된_주문은_바꿀_수_없다() {
         // given
-        OrderTable orderTable = 주문_테이블_생성(null, 10, false);
+        OrderTable orderTable = 주문_테이블_생성(10, false);
         Order order = 주문_생성(orderTable.getId(), COMPLETION.name(), List.of());
 
         // when & then

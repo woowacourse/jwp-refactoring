@@ -92,7 +92,7 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(2);
             softly.assertThat(result.get(0).getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
-            softly.assertThat(result.get(0).getPrice().longValue()).isEqualTo(menu.getPrice());
+            softly.assertThat(result.get(0).getPrice().longValue()).isEqualTo(menu.getPrice().longValue());
             softly.assertThat(result.get(0).getMenuProducts()).hasSize(1);
         });
     }

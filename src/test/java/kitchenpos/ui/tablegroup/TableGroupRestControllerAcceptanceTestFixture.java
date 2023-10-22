@@ -12,6 +12,8 @@ import kitchenpos.tablegroup.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +44,7 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
         TableGroupResponse result = response.as(TableGroupResponse.class);
 
         assertThat(result.getId())
-                .isEqualTo(tableGroup.getId());
+                .isEqualTo(2L);
     }
 
     protected ExtractableResponse 단체를_제거한다(final String url) {
@@ -60,7 +62,7 @@ class TableGroupRestControllerAcceptanceTestFixture extends IntegrationTestHelpe
         assertThat(statusCode).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 
-    protected TableGroupResponse 단체_데이터_생성(final TableGroup tableGroup) {
-        return tableGroupService.create(단체_지정_생성_요청(tableGroup));
+    protected TableGroupResponse 단체_데이터_생성(final List<Long> orderTableIds) {
+        return tableGroupService.create(단체_지정_생성_요청(orderTableIds));
     }
 }

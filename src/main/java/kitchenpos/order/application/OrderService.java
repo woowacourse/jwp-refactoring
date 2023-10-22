@@ -1,12 +1,13 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.exception.MenuNotFoundException;
 import kitchenpos.order.application.dto.OrderCreateRequest;
+import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderUpdateRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderLineItemEmptyException;
@@ -17,8 +18,8 @@ import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -26,13 +27,11 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
 
-    public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final OrderLineItemRepository orderLineItemRepository) {
+    public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Transactional
@@ -40,22 +39,20 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(req.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        req.getOrderLineItems()
-                .stream()
-                .map(it -> menuRepository.findById(it.getMenuId())
-                        .orElseThrow(MenuNotFoundException::new))
-                .collect(Collectors.toList());
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (OrderLineItemCreateRequest orderLineItemReq : req.getOrderLineItems()) {
+            Menu menu = menuRepository.findById(orderLineItemReq.getMenuId())
+                    .orElseThrow(MenuNotFoundException::new);
 
-        List<OrderLineItem> orderLineItems = req.getOrderLineItems()
-                .stream()
-                .map(it -> orderLineItemRepository.save(new OrderLineItem(it.getMenuId(), it.getQuantity())))
-                .collect(Collectors.toList());
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemReq.getQuantity());
+            orderLineItems.add(orderLineItem);
+        }
+        Order order = Order.createDefault(orderTable.getId(), orderLineItems);
 
         if (orderLineItems.size() != req.getOrderLineItems().size()) {
             throw new OrderLineItemEmptyException();
         }
 
-        Order order = Order.createDefault(orderTable.getId(), orderLineItems);
         return orderRepository.save(order);
     }
 

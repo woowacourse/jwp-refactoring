@@ -62,7 +62,7 @@ public class TableService {
 
     private boolean isStatusCookingOrMeal(final OrderTable savedOrderTable) {
         return orderRepository.existsByOrderTableIdAndOrderStatusIsIn(
-                savedOrderTable, UNGROUP_ORDER_STATUSES
+                savedOrderTable.getId(), UNGROUP_ORDER_STATUSES
         );
     }
 

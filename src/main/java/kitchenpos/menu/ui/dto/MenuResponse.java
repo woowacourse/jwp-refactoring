@@ -28,7 +28,7 @@ public class MenuResponse {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
-                menu.getPrice().getPrice(),
+                menu.getPrice(),
                 menu.getMenuGroupId(),
                 menu.getMenuProducts()
                         .stream()

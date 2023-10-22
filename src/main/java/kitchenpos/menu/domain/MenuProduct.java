@@ -2,7 +2,6 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.common.domain.Quantity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,7 +27,7 @@ public class MenuProduct {
     @Embedded
     private Quantity quantity;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
@@ -50,6 +49,14 @@ public class MenuProduct {
 
     public Long getQuantity() {
         return quantity.getQuantity();
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     @Override

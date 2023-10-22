@@ -11,7 +11,6 @@ import kitchenpos.ordertable.exception.CannotUnGroupBecauseOfStatusException;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.exception.TableGroupInvalidSizeException;
 import kitchenpos.tablegroup.exception.TableNotFoundException;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -23,7 +22,6 @@ import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
-import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성;
 import static kitchenpos.fixture.TableGroupFixture.단체_지정_생성_요청;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -45,10 +43,9 @@ class TableGroupServiceTest extends IntegrationTestHelper {
     @Test
     void 단체_지정을_저장한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 10, true));
-        OrderTable otherTable = orderTableRepository.save(new OrderTable(2L, 20, true));
-        TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
-        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable otherTable = orderTableRepository.save(new OrderTable(20, true));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(otherTable.getId(), orderTable.getTableGroupId()));
 
         // when
         TableGroupResponse result = tableGroupService.create(request);
@@ -66,9 +63,8 @@ class TableGroupServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블이_2개보다_적다면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 10, true));
-        TableGroup tableGroup = 단체_지정_생성(List.of(orderTable));
-        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(10, true));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(orderTable.getId()));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -77,10 +73,9 @@ class TableGroupServiceTest extends IntegrationTestHelper {
 
     @Test
     void 다른_주문_테이블이_들어오면_예외를_발생시킨다() {
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 10, true));
-        OrderTable otherTable = 주문_테이블_생성(null, 20, true);
-        TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
-        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(10, true));
+        OrderTable otherTable = 주문_테이블_생성(20, true);
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(orderTable.getId(), otherTable.getId()));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -90,10 +85,9 @@ class TableGroupServiceTest extends IntegrationTestHelper {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 10, true));
-        OrderTable otherTable = orderTableRepository.save(주문_테이블_생성(null, 20, true));
-        TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
-        TableGroupCreateRequest request = 단체_지정_생성_요청(tableGroup);
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(10, true));
+        OrderTable otherTable = orderTableRepository.save(주문_테이블_생성(20, true));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(otherTable.getId(), orderTable.getId()));
 
         TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
@@ -104,14 +98,16 @@ class TableGroupServiceTest extends IntegrationTestHelper {
     @Test
     void 밥_먹는데_단체_지정을_풀어버리면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 10, true));
-        OrderTable otherTable = orderTableRepository.save(주문_테이블_생성(null, 20, true));
-        TableGroup tableGroup = 단체_지정_생성(List.of(orderTable, otherTable));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(10, true));
+        OrderTable otherTable = orderTableRepository.save(주문_테이블_생성(20, true));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(otherTable.getId(), orderTable.getId()));
+        TableGroupResponse savedTableGroup = tableGroupService.create(request);
+
         Order order = 주문_생성(otherTable.getId(), OrderStatus.COOKING.name(), List.of(new OrderLineItem(null, 10L)));
         orderRepository.save(order);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                 .isInstanceOf(CannotUnGroupBecauseOfStatusException.class);
     }
 }

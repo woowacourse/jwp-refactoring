@@ -16,7 +16,7 @@ public class OrderTableCreateRequest {
     }
 
     public OrderTable toDomain() {
-        return new OrderTable(null, numberOfGuests, empty);
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

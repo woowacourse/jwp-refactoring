@@ -51,6 +51,14 @@ public class OrderLineItem {
         return quantity.getQuantity();
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(final Order order) {
+        this.order = order;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

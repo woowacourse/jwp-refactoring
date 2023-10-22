@@ -1,8 +1,8 @@
 package kitchenpos.order.domain;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -31,11 +31,10 @@ public class Order {
     @Column(nullable = false)
     private String orderStatus;
 
-    @CreatedDate
     @Column(nullable = false, name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -44,7 +43,14 @@ public class Order {
     public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
+        this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+
+        initOrderLineItems(orderLineItems);
+    }
+
+    private void initOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
     }
 
     public static Order createDefault(final Long orderTableId, final List<OrderLineItem> orderLineItems) {

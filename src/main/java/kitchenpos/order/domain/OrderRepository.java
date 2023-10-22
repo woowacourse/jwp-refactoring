@@ -1,6 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public interface OrderRepository extends Repository<Order, Long> {
 
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIsIn(OrderTable orderTable, List<String> orderStatuses);
+    boolean existsByOrderTableIdAndOrderStatusIsIn(Long orderTableId, List<String> orderStatuses);
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
 }

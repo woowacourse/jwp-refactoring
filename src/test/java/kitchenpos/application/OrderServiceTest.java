@@ -60,7 +60,7 @@ class OrderServiceTest extends IntegrationTestHelper {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성());
         Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup.getId(), List.of()));
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
 
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menu.getId(), 1);
 
@@ -85,7 +85,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_품목이_비어있다면_예외를_발생시킨다() {
         // given
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of());
 
         // when & then
@@ -98,7 +98,7 @@ class OrderServiceTest extends IntegrationTestHelper {
         // given
         Menu menu = new Menu("name", 100L, null, null);
 
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
 
@@ -110,7 +110,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     @Test
     void 주문_테이블이_없다면_예외를_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, 10, true);
+        OrderTable orderTable = new OrderTable(10, true);
 
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
@@ -127,7 +127,7 @@ class OrderServiceTest extends IntegrationTestHelper {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, true));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, true));
         OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
         OrderCreateRequest req = 주문_생성_요청(orderTable, List.of(orderLineItem));
 
@@ -140,7 +140,7 @@ class OrderServiceTest extends IntegrationTestHelper {
     void 주문을_모두_조회한다() {
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성());
         Menu menu = menuRepository.save(메뉴_생성("메뉴", 100L, menuGroup.getId(), null));
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         orderRepository.save(OrderFixture.주문_생성(orderTable.getId(), COOKING.name(), List.of(주문_품목_생성(menu.getId(), 1L))));
 
         // when
@@ -157,7 +157,7 @@ class OrderServiceTest extends IntegrationTestHelper {
 
         MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹_생성("그룹"));
         Menu menu = menuRepository.save(메뉴_생성("메뉴", 1000L, menuGroup.getId(), null));
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(null, 1, false));
+        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         OrderLineItem orderLineItem = 주문_품목_생성(menu.getId(), 1L);
 
         Order changedOrder = 주문_생성(orderTable.getId(), orderStatus, List.of(orderLineItem));
