@@ -58,8 +58,7 @@ class TableGroupServiceTest {
             filledOrderTable = orderTableDao.save(주문_테이블());
 
             OrderTable orderTable = 주문_테이블();
-            Long tableGroupId = tableGroupDao.save(단체_지정(List.of(orderTable))).getId();
-            orderTable.setTableGroupId(tableGroupId);
+            tableGroupDao.save(단체_지정(List.of(orderTable)));
             groupedOrderTable = orderTableDao.save(orderTable);
         }
 
