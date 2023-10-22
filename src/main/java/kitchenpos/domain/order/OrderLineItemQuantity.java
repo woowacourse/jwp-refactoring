@@ -19,8 +19,8 @@ public class OrderLineItemQuantity {
     }
 
     private void validate(final Long value) {
-        if (value == null || value < 0) {
-            throw new InvalidQuantityException("주문 상품 수량은 0 이상이어야 합니다.");
+        if (value == null || value < 1) {
+            throw new InvalidQuantityException("주문 상품 수량은 1 이상이어야 합니다.");
         }
     }
 
