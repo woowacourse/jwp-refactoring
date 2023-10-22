@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class MenuServiceTest {
     @DisplayName("메뉴 생성 테스트")
     public void createMenuTest() {
         // Given
-        final Menu menu = new Menu(1L, "후라이드+후라이드", BigDecimal.valueOf(10000), 1L, null);
+        final Menu menu = new Menu(1L, "후라이드+후라이드", Money.valueOf(10000), 1L, null);
         final Product product = new Product(1L, "후라이드", BigDecimal.valueOf(16000));
         final MenuProduct menuProduct = new MenuProduct(1L, 1L, 1L, 1);
         menu.setMenuProducts(List.of(menuProduct));

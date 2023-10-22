@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Money;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -72,7 +73,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
         final Menu entity = new Menu();
         entity.setId(resultSet.getLong("id"));
         entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
+        entity.setPrice(Money.valueOf(resultSet.getBigDecimal("price")));
         entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
         return entity;
     }

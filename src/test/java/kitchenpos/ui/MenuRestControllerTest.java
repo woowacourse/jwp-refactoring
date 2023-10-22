@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Money;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ public class MenuRestControllerTest {
     @DisplayName("POST /api/menus - Menu 생성")
     public void create() throws Exception {
         //given
-        final Menu menu = new Menu(1L, "치킨", BigDecimal.valueOf(10000), 1L, null);
+        final Menu menu = new Menu(1L, "치킨", Money.valueOf(10000), 1L, null);
         given(menuService.create(any(Menu.class))).willReturn(menu);
 
         //when & then
@@ -55,8 +55,8 @@ public class MenuRestControllerTest {
     @DisplayName("GET /api/menus - 모든 Menu 조회")
     public void list() throws Exception {
         // given
-        final Menu menu1 = new Menu(1L, "치킨", BigDecimal.valueOf(10000), 1L, null);
-        final Menu menu2 = new Menu(2L, "피자", BigDecimal.valueOf(20000), 1L, null);
+        final Menu menu1 = new Menu(1L, "치킨", Money.valueOf(10000), 1L, null);
+        final Menu menu2 = new Menu(2L, "피자", Money.valueOf(20000), 1L, null);
         given(menuService.list()).willReturn(List.of(
                 menu1,
                 menu2

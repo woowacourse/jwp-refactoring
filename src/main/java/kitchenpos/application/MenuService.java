@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,9 +37,9 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+        final Money price = menu.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(price)) {
             throw new IllegalArgumentException();
         }
 
@@ -55,7 +56,7 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
-        if (price.compareTo(sum) > 0) {
+        if (price.compareTo(Money.valueOf(sum)) > 0) {
             throw new IllegalArgumentException();
         }
 

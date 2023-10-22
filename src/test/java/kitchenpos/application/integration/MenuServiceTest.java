@@ -3,6 +3,7 @@ package kitchenpos.application.integration;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -33,7 +34,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void create_menu() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(1600000, 2);
+        final Money price = Money.valueOf(BigDecimal.valueOf(1600000, 2));
         final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when
@@ -51,7 +52,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void cannot_create_menu_with_empty_name() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(16000.00);
+        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
         final Menu menu = new Menu(null, price, menuGroup.getId(), menuProducts);
 
         //when & then
@@ -63,7 +64,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void cannot_create_menu_with_empty_price() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = null;
+        final Money price = null;
         final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when & then
@@ -75,7 +76,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void cannot_create_menu_with_negative_price() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(-16000.00);
+        final Money price = Money.valueOf(BigDecimal.valueOf(-16000.00));
         final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when & then
@@ -87,7 +88,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void cannot_create_menu_with_empty_menu_group_id() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(16000.00);
+        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
         final Menu menu = new Menu("후라이드", price, null, menuProducts);
 
         //when & then
@@ -99,7 +100,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void cannot_create_menu_with_invalid_menu_group_id() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(16000.00);
+        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
         final Menu menu = new Menu("후라이드", price, 100L, menuProducts);
 
         //when & then
@@ -112,7 +113,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void cannot_create_menu_with_empty_menu_products() {
         //given
         final List<MenuProduct> menuProducts = null;
-        final BigDecimal price = BigDecimal.valueOf(16000.00);
+        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
         final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when & then
@@ -124,7 +125,7 @@ class MenuServiceTest extends ApplicationIntegrationTest {
     void list_menus() {
         //given
         final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final BigDecimal price = BigDecimal.valueOf(16000.00);
+        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
         final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
         final Menu createdMenu = menuService.create(menu);
 

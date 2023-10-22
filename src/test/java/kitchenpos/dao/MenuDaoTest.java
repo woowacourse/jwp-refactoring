@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import kitchenpos.domain.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class MenuDaoTest {
         //given
         kitchenpos.domain.Menu menu = new kitchenpos.domain.Menu();
         menu.setName("menu1");
-        menu.setPrice(new BigDecimal("100.00"));
+        menu.setPrice(Money.valueOf(new BigDecimal("100.00")));
         menu.setMenuGroupId(1L);
 
         //when

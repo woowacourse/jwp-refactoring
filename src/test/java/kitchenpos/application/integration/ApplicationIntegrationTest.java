@@ -9,6 +9,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -48,7 +49,7 @@ public abstract class ApplicationIntegrationTest {
         return menuGroupService.create(new MenuGroup(name));
     }
 
-    protected Menu createMenu(final String name, final BigDecimal price) {
+    protected Menu createMenu(final String name, final Money price) {
         final MenuGroup menuGroup = createMenuGroup("치킨");
         final Product product1 = createProduct("후라이드", BigDecimal.valueOf(16000));
         final Product product2 = createProduct("양념치킨", BigDecimal.valueOf(16000));
@@ -59,7 +60,7 @@ public abstract class ApplicationIntegrationTest {
     }
 
     protected Order createOrder(final Long orderTableId) {
-        final Menu menu = createMenu("후라이드", BigDecimal.valueOf(16000));
+        final Menu menu = createMenu("후라이드", Money.valueOf(16000));
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
         final List<OrderLineItem> orderLineItems = List.of(orderLineItem);
         return orderService.create(new Order(orderTableId, orderLineItems));

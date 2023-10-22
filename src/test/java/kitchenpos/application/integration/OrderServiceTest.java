@@ -1,6 +1,7 @@
 package kitchenpos.application.integration;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +26,7 @@ class OrderServiceTest extends ApplicationIntegrationTest {
     void setUp() {
         emptyOrderTable = tableService.create(new OrderTable(0, true));
         noneEmptyOrderTable = tableService.create(new OrderTable(0, false));
-        final Menu menu = createMenu("후라이드", BigDecimal.valueOf(16000));
+        final Menu menu = createMenu("후라이드", Money.valueOf(16000));
         orderLineItem = new OrderLineItem(menu.getId(), 1);
     }
 
