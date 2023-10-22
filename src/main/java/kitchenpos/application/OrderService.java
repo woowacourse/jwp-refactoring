@@ -69,7 +69,7 @@ public class OrderService {
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException("이미 완료된 주문입니다.");
         }
-        final OrderStatus orderStatus = OrderStatus.valueOf(status);
+        final OrderStatus orderStatus = OrderStatus.from(status);
         savedOrder.changeOrderStatus(orderStatus.name());
     }
 }
