@@ -16,6 +16,7 @@ public class Menu {
     private Price price;
     
     @ManyToOne
+    @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
     
     @OneToMany(mappedBy = "menu")

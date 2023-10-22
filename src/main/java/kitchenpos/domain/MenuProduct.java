@@ -10,12 +10,13 @@ public class MenuProduct {
     private Long seq;
     
     @ManyToOne
+    @JoinColumn(name = "menu_id")
     private Menu menu;
     
     @ManyToOne
+    @JoinColumn(name = "product_id")
     private Product product;
     
-    @Embedded
     private long quantity;
     
     public MenuProduct(final Menu menu,
