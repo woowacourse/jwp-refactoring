@@ -6,11 +6,9 @@ import kitchenpos.order.OrderStatus;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
-import kitchenpos.orderlineitem.OrderLineItem;
-import kitchenpos.orderlineitem.OrderLineQuantity;
-import kitchenpos.orderlineitem.application.OrderLineItemRepository;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +20,19 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class OrderService {
-    private final MenuRepository menuRepository;
+    private final ApplicationEventPublisher publisher;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
+    private final MenuRepository menuRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
+            final ApplicationEventPublisher publisher,
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository) {
+        this.publisher = publisher;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -43,7 +41,7 @@ public class OrderService {
         validateExistenceOfOrderLineItem(orderLineItemsDtos);
         final OrderTable orderTable = findOrderTable(request);
         final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
-        saveOrderLineItems(orderLineItemsDtos, savedOrder);
+        publisher.publishEvent(new SaveOrderLineItemsEvent(orderLineItemsDtos, savedOrder));
 
         return savedOrder;
     }
@@ -65,17 +63,6 @@ public class OrderService {
 
         if (orderLineItemsDtos.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴가 포함되었습니다.");
-        }
-    }
-
-    private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItemsDtos, final Order savedOrder) {
-        for (final OrderLineItemDto orderLineItemDto : orderLineItemsDtos) {
-            final OrderLineItem orderLineItem = new OrderLineItem(
-                    savedOrder.getId(),
-                    orderLineItemDto.getMenuId(),
-                    new OrderLineQuantity(orderLineItemDto.getQuantity())
-            );
-            orderLineItemRepository.save(orderLineItem);
         }
     }
 

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -33,15 +34,17 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
+    @Mock
+    private ApplicationEventPublisher publisher;
     @Mock
     private MenuRepository menuRepository;
     @Mock
@@ -126,17 +129,7 @@ class OrderServiceTest {
             given(menuRepository.countByIdIn(any())).willReturn(3L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderRepository.save(any())).willReturn(order);
-
-            final List<OrderLineItem> savedOrderLineItems = List.of(
-                    new OrderLineItem(1L, 1L, new OrderLineQuantity(2L)),
-                    new OrderLineItem(2L, 1L, new OrderLineQuantity(3L)),
-                    new OrderLineItem(3L, 1L, new OrderLineQuantity(4L))
-            );
-            when(orderLineItemRepository.save(any()))
-                    .thenReturn(savedOrderLineItems.get(0))
-                    .thenReturn(savedOrderLineItems.get(1))
-                    .thenReturn(savedOrderLineItems.get(2));
-
+            doNothing().when(publisher).publishEvent(any(SaveOrderLineItemsEvent.class));
 
             // when
             final Order result = orderService.create(request);
@@ -144,7 +137,6 @@ class OrderServiceTest {
             // then
             assertSoftly(softly -> {
                 verify(orderRepository, times(1)).save(any());
-                verify(orderLineItemRepository, times(3)).save(any());
                 assertThat(result).usingRecursiveComparison()
                         .ignoringFields("orderedTime")
                         .isEqualTo(order);
