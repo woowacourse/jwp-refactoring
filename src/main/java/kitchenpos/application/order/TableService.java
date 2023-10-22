@@ -1,5 +1,6 @@
 package kitchenpos.application.order;
 
+import kitchenpos.application.order.request.OrderTableCreateRequest;
 import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.order.OrderStatus;
@@ -22,11 +23,14 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTable create(OrderTableCreateRequest request) {
+        OrderTable orderTable = mapTOrderTable(request);
 
         return orderTableRepository.save(orderTable);
+    }
+
+    private OrderTable mapTOrderTable(OrderTableCreateRequest request) {
+        return OrderTable.of(request.getNumberOfGuests(), request.isEmpty());
     }
 
     public List<OrderTable> list() {

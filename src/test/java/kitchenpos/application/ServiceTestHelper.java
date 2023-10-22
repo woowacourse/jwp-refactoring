@@ -4,6 +4,7 @@ import kitchenpos.application.menu.MenuGroupService;
 import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
+import kitchenpos.application.order.request.OrderTableCreateRequest;
 import kitchenpos.application.product.ProductService;
 import kitchenpos.application.product.request.ProductCreateRequest;
 import kitchenpos.application.tablegroup.TableGroupService;
@@ -135,13 +136,13 @@ public abstract class ServiceTestHelper {
     }
 
     public OrderTable 테이블_등록() {
-        OrderTable orderTable = OrderTable.of(0, true);
-        return tableService.create(orderTable);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(0, true);
+        return tableService.create(request);
     }
 
     public OrderTable 손님_채운_테이블_생성(int numberOfGuests) {
-        OrderTable orderTable = OrderTable.of(numberOfGuests, false);
-        return tableService.create(orderTable);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(numberOfGuests, false);
+        return tableService.create(request);
     }
 
     public List<OrderTable> 테이블_목록_조회() {
