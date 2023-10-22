@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.application.entity.OrderTableEntity;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -33,7 +33,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
   }
 
   @Override
-  public OrderTable save(final OrderTable entity) {
+  public OrderTableEntity save(final OrderTableEntity entity) {
     if (Objects.isNull(entity.getId())) {
       final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
       final Number key = jdbcInsert.executeAndReturnKey(parameters);
@@ -44,7 +44,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
   }
 
   @Override
-  public Optional<OrderTable> findById(final Long id) {
+  public Optional<OrderTableEntity> findById(final Long id) {
     try {
       return Optional.of(select(id));
     } catch (final EmptyResultDataAccessException e) {
@@ -53,13 +53,13 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
   }
 
   @Override
-  public List<OrderTable> findAll() {
+  public List<OrderTableEntity> findAll() {
     final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
     return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
   @Override
-  public List<OrderTable> findAllByIdIn(final List<Long> ids) {
+  public List<OrderTableEntity> findAllByIdIn(final List<Long> ids) {
     final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("ids", ids);
@@ -67,7 +67,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
   }
 
   @Override
-  public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
+  public List<OrderTableEntity> findAllByTableGroupId(final Long tableGroupId) {
     final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
         " FROM order_table WHERE table_group_id = (:tableGroupId)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -75,7 +75,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private OrderTable select(final Long id) {
+  private OrderTableEntity select(final Long id) {
     final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("id", id);
@@ -83,7 +83,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private void update(final OrderTable entity) {
+  private void update(final OrderTableEntity entity) {
     final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
         " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -94,11 +94,11 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     jdbcTemplate.update(sql, parameters);
   }
 
-  private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
+  private OrderTableEntity toEntity(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(KEY_COLUMN_NAME);
     final Long tableGroupId = resultSet.getObject("table_group_id", Long.class);
     final int numberOfGuests = resultSet.getInt("number_of_guests");
     final boolean empty = resultSet.getBoolean("empty");
-    return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    return new OrderTableEntity(id, tableGroupId, numberOfGuests, empty);
   }
 }

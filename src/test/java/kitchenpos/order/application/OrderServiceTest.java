@@ -12,7 +12,7 @@ import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderQueryResponse;
 import kitchenpos.order.application.dto.OrderStatusModifyRequest;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.application.entity.OrderTableEntity;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Assertions;
@@ -36,9 +36,10 @@ class OrderServiceTest extends ServiceIntegrateTest {
   void init() {
     notEmptyOrderTableId = 1L;
     emptyOrderTableId = 2L;
-    final OrderTable orderTable = orderTableDao.findById(notEmptyOrderTableId).get();
-    orderTableDao.save(new OrderTable(orderTable.getId(), orderTable.getTableGroupId(),
-        orderTable.getNumberOfGuests(), false));
+    final OrderTableEntity orderTableEntity = orderTableDao.findById(notEmptyOrderTableId).get();
+    orderTableDao.save(
+        new OrderTableEntity(orderTableEntity.getId(), orderTableEntity.getTableGroupId(),
+            orderTableEntity.getNumberOfGuests(), false));
   }
 
   @Test

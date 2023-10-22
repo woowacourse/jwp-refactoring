@@ -10,7 +10,7 @@ import kitchenpos.order.application.entity.OrderEntity;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.persistence.OrderDao;
 import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.application.entity.OrderTableEntity;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.dto.OrderTableCreateRequest;
 import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
@@ -32,9 +32,9 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   @Autowired
   private TableGroupService tableGroupService;
 
-  private OrderTable table1;
-  private OrderTable table2;
-  private OrderTable table3;
+  private OrderTableEntity table1;
+  private OrderTableEntity table2;
+  private OrderTableEntity table3;
 
   @BeforeEach
   void init() {
@@ -107,7 +107,7 @@ class TableGroupServiceTest extends ServiceIntegrateTest {
   void create_fail_not_empty_table() {
     //given
     orderTableDao.save(
-        new OrderTable(table1.getId(), null, 0, false));
+        new OrderTableEntity(table1.getId(), null, 0, false));
 
     final TableGroupCreateRequest request = new TableGroupCreateRequest(
         List.of(

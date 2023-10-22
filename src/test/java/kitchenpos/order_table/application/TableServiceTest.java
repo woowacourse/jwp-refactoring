@@ -11,7 +11,7 @@ import kitchenpos.order_table.application.dto.OrderTableCreateRequest;
 import kitchenpos.order_table.application.dto.OrderTableEmptyModifyRequest;
 import kitchenpos.order_table.application.dto.OrderTableNumberOfGuestModifyRequest;
 import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
-import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.application.entity.OrderTableEntity;
 import kitchenpos.order_table.persistence.OrderTableDao;
 import kitchenpos.table_group.application.TableGroupService;
 import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
@@ -32,8 +32,8 @@ class TableServiceTest extends ServiceIntegrateTest {
   @Autowired
   private TableService tableService;
 
-  private OrderTable table1;
-  private OrderTable table2;
+  private OrderTableEntity table1;
+  private OrderTableEntity table2;
 
   @BeforeEach
   void init() {
@@ -118,7 +118,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   @DisplayName("테이블이 비었는지 여부를 변경할 때 대상 테이블의 주문 중 계산이 완료되지 않은 주문이 있으면 예외를 반환한다.")
   void changeEmpty_fail_not_COMPLETION_order() {
     //given
-    orderTableDao.save(new OrderTable(1L, null, 4, false));
+    orderTableDao.save(new OrderTableEntity(1L, null, 4, false));
 
     orderService.create(getOrderRequest(table1.getId()));
     final OrderTableEmptyModifyRequest request = new OrderTableEmptyModifyRequest(true);
@@ -135,7 +135,7 @@ class TableServiceTest extends ServiceIntegrateTest {
   void changeNumberOfGuests_success() {
     //given
     final int expected = 4;
-    orderTableDao.save(new OrderTable(table1.getId(), null, expected, false));
+    orderTableDao.save(new OrderTableEntity(table1.getId(), null, expected, false));
     final OrderTableNumberOfGuestModifyRequest request =
         new OrderTableNumberOfGuestModifyRequest(expected);
 

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import kitchenpos.order.application.entity.OrderEntity;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
 
@@ -63,13 +64,19 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   @Override
   public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,
-      final List<String> orderStatuses) {
-    return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+      final List<OrderStatus> orderStatuses) {
+    final List<String> mappedOrderStatuses = orderStatuses.stream()
+        .map(OrderStatus::name)
+        .collect(Collectors.toList());
+    return orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, mappedOrderStatuses);
   }
 
   @Override
   public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-      final List<String> orderStatuses) {
-    return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
+      final List<OrderStatus> orderStatuses) {
+    final List<String> mappedOrderStatuses = orderStatuses.stream()
+        .map(OrderStatus::name)
+        .collect(Collectors.toList());
+    return orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, mappedOrderStatuses);
   }
 }

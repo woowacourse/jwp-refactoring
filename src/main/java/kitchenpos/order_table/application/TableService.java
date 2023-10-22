@@ -1,28 +1,28 @@
 package kitchenpos.order_table.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.persistence.OrderDao;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order_table.application.dto.OrderTableCreateRequest;
 import kitchenpos.order_table.application.dto.OrderTableEmptyModifyRequest;
 import kitchenpos.order_table.application.dto.OrderTableNumberOfGuestModifyRequest;
 import kitchenpos.order_table.application.dto.OrderTableQueryResponse;
 import kitchenpos.order_table.domain.OrderTable;
-import kitchenpos.order_table.persistence.OrderTableDao;
+import kitchenpos.order_table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-  private final OrderDao orderDao;
-  private final OrderTableDao orderTableDao;
+  private static final int MIN_NUMBER_OF_GUESTS = 0;
+  private final OrderRepository orderRepository;
+  private final OrderTableRepository orderTableDao;
 
-  public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-    this.orderDao = orderDao;
+  public TableService(final OrderRepository orderRepository,
+      final OrderTableRepository orderTableDao) {
+    this.orderRepository = orderRepository;
     this.orderTableDao = orderTableDao;
   }
 
@@ -42,41 +42,53 @@ public class TableService {
 
   @Transactional
   public OrderTableQueryResponse changeEmpty(final Long orderTableId,
-      final OrderTableEmptyModifyRequest orderTable) {
+      final OrderTableEmptyModifyRequest request) {
     final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
         .orElseThrow(IllegalArgumentException::new);
+    validateHasNotTableGroup(savedOrderTable);
+    validateAllOrdersCompletion(orderTableId);
 
-    if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+    savedOrderTable.updateEmpty(request.isEmpty());
+
+    return OrderTableQueryResponse.from(orderTableDao.save(savedOrderTable));
+  }
+
+  private void validateHasNotTableGroup(final OrderTable savedOrderTable) {
+    if (savedOrderTable.hasTableGroup()) {
       throw new IllegalArgumentException();
     }
+  }
 
-    if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-        orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+  private void validateAllOrdersCompletion(final Long orderTableId) {
+    if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+        OrderStatus.NOT_COMPLETION_STATUSES)) {
       throw new IllegalArgumentException();
     }
-
-    return OrderTableQueryResponse.from(orderTableDao.save(new OrderTable(savedOrderTable.getId(),
-        savedOrderTable.getTableGroupId(), savedOrderTable.getNumberOfGuests(),
-        orderTable.isEmpty())));
   }
 
   @Transactional
   public OrderTableQueryResponse changeNumberOfGuests(final Long orderTableId,
-      final OrderTableNumberOfGuestModifyRequest orderTable) {
-    final int numberOfGuests = orderTable.getNumberOfGuests();
-
-    if (numberOfGuests < 0) {
-      throw new IllegalArgumentException();
-    }
-
+      final OrderTableNumberOfGuestModifyRequest request) {
+    final int numberOfGuests = request.getNumberOfGuests();
     final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
         .orElseThrow(IllegalArgumentException::new);
+    validateNumberOfGuests(numberOfGuests);
+    validateNotEmpty(savedOrderTable);
 
+    savedOrderTable.updateNumberOfGuests(numberOfGuests);
+
+    return OrderTableQueryResponse.from(orderTableDao.save(savedOrderTable));
+  }
+
+  private static void validateNotEmpty(final OrderTable savedOrderTable) {
     if (savedOrderTable.isEmpty()) {
       throw new IllegalArgumentException();
     }
+  }
 
-    return OrderTableQueryResponse.from(orderTableDao.save(new OrderTable(savedOrderTable.getId(),
-        savedOrderTable.getTableGroupId(), numberOfGuests, savedOrderTable.isEmpty())));
+  private void validateNumberOfGuests(final int numberOfGuests) {
+    if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+      throw new IllegalArgumentException();
+    }
   }
 }

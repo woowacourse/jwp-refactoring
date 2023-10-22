@@ -1,11 +1,13 @@
 package kitchenpos.order_table.domain;
 
+import java.util.Objects;
+
 public class OrderTable {
 
   private final Long id;
   private final Long tableGroupId;
-  private final int numberOfGuests;
-  private final boolean empty;
+  private int numberOfGuests;
+  private boolean empty;
 
   public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
       final boolean empty) {
@@ -37,5 +39,17 @@ public class OrderTable {
 
   public boolean isEmpty() {
     return empty;
+  }
+
+  public boolean hasTableGroup() {
+    return Objects.nonNull(tableGroupId);
+  }
+
+  public void updateNumberOfGuests(final int numberOfGuests) {
+    this.numberOfGuests = numberOfGuests;
+  }
+
+  public void updateEmpty(final boolean empty) {
+    this.empty = empty;
   }
 }

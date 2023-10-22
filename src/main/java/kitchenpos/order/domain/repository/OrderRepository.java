@@ -3,6 +3,7 @@ package kitchenpos.order.domain.repository;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 
 public interface OrderRepository {
 
@@ -13,8 +14,8 @@ public interface OrderRepository {
   List<Order> findAll();
 
   boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,
-      final List<String> orderStatuses);
+      final List<OrderStatus> orderStatuses);
 
   boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-      final List<String> orderStatuses);
+      final List<OrderStatus> orderStatuses);
 }

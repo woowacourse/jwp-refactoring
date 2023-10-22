@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.menu.persistence.MenuRepositoryImpl;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderQueryResponse;
@@ -13,9 +12,8 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.persistence.OrderRepositoryImpl;
 import kitchenpos.order_table.domain.OrderTable;
-import kitchenpos.order_table.persistence.OrderTableDao;
+import kitchenpos.order_table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -25,23 +23,23 @@ public class OrderService {
 
   private final MenuRepository menuRepository;
   private final OrderRepository orderRepository;
-  private final OrderTableDao orderTableDao;
+  private final OrderTableRepository orderTableRepository;
 
   public OrderService(
-      final MenuRepositoryImpl menuRepository,
-      final OrderRepositoryImpl orderRepository,
-      final OrderTableDao orderTableDao
+      final MenuRepository menuRepository,
+      final OrderRepository orderRepository,
+      final OrderTableRepository orderTableRepository
   ) {
     this.menuRepository = menuRepository;
     this.orderRepository = orderRepository;
-    this.orderTableDao = orderTableDao;
+    this.orderTableRepository = orderTableRepository;
   }
 
   @Transactional
   public OrderQueryResponse create(final OrderCreateRequest request) {
     final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
 
-    final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
+    final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
         .orElseThrow(IllegalArgumentException::new);
 
     final List<Long> menuIds = orderLineItemRequests.stream()
