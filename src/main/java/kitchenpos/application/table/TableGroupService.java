@@ -8,10 +8,8 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
 import kitchenpos.application.dto.result.TableGroupResult;
-import kitchenpos.dao.order.OrderRepository;
 import kitchenpos.dao.table.OrderTableRepository;
 import kitchenpos.dao.table.TableGroupRepository;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Service;
@@ -25,16 +23,16 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final OrderRepository orderRepository;
+    private final TableGroupingService tableGroupingService;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository,
-            final OrderRepository orderRepository
+            final TableGroupingService tableGroupingService
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.orderRepository = orderRepository;
+        this.tableGroupingService = tableGroupingService;
     }
 
     @Transactional
@@ -102,14 +100,7 @@ public class TableGroupService {
 
     private void validateTableGroupIsAbleToUngroup(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            validateTableIsAbleToUngroup(orderTable);
-        }
-    }
-
-    private void validateTableIsAbleToUngroup(final OrderTable orderTable) {
-        final List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
-        if (!orders.stream().allMatch(Order::isCompleted)) {
-            throw new IllegalArgumentException("Cannot ungroup non-completed table.");
+            tableGroupingService.isAbleToUngroup(orderTable.getId());
         }
     }
 }
