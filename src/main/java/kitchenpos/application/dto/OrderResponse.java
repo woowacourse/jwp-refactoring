@@ -1,8 +1,8 @@
 package kitchenpos.application.dto;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +30,7 @@ public class OrderResponse {
                 .map(OrderLineItemResponse::from)
                 .collect(Collectors.toList());
 
-        return new OrderResponse(order.getId(), order.getOrderTable().getId(), order.getOrderStatus(),
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
                 order.getOrderedTime(), orderLineItemResponses);
     }
 
@@ -57,28 +57,22 @@ public class OrderResponse {
     public static class OrderLineItemResponse {
 
         private final Long seq;
-        private final Long order;
         private final Long menuId;
         private final Long quantity;
 
-        private OrderLineItemResponse(Long seq, Long order, Long menuId, Long quantity) {
+        private OrderLineItemResponse(Long seq, Long menuId, Long quantity) {
             this.seq = seq;
-            this.order = order;
             this.menuId = menuId;
             this.quantity = quantity;
         }
 
         public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
-            return new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrder().getId(),
-                    orderLineItem.getMenu().getId(), orderLineItem.getQuantity());
+            return new OrderLineItemResponse(orderLineItem.getSeq(),
+                    orderLineItem.getMenuId(), orderLineItem.getQuantity());
         }
 
         public Long getSeq() {
             return seq;
-        }
-
-        public Long getOrder() {
-            return order;
         }
 
         public Long getMenuId() {

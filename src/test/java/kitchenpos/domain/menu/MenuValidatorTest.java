@@ -1,5 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

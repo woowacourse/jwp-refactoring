@@ -65,10 +65,6 @@ create table table_group
     primary key (id)
 );
 
-alter table menu
-    add constraint fk_menu_to_menu_group
-        foreign key (menu_group_id)
-            references menu_group (id);
 
 alter table menu_product
     add constraint fk_menu_product_to_menu
@@ -80,20 +76,12 @@ alter table menu_product
         foreign key (product_id)
             references product (id);
 
-alter table order_line_item
-    add constraint fk_order_line_item_to_menu
-        foreign key (menu_id)
-            references menu (id);
 
 alter table order_line_item
     add constraint fk_order_line_item_to_orders
         foreign key (order_id)
             references orders (id);
 
-alter table orders
-    add constraint fk_orders_to_order_table
-        foreign key (order_table_id)
-            references order_table (id);
 
 alter table order_table
     add constraint fk_order_table_to_table_group

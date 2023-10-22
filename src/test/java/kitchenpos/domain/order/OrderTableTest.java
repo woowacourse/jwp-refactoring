@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

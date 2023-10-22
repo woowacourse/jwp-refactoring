@@ -1,8 +1,8 @@
 package kitchenpos.fixture;
 
 import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

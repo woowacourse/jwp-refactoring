@@ -4,13 +4,13 @@ import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableRequest;
@@ -91,7 +92,7 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경할_때_주문_상태가_완료가_아니면_예외가_발생한다(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order = order(orderTable, orderStatus, List.of());
+        Order order = order(orderTable.getId(), orderStatus, List.of(orderLineItem(1L, 10)));
         orderRepository.save(order);
 
         // expect

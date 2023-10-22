@@ -5,13 +5,13 @@ import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -26,6 +26,7 @@ import java.util.List;
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.fixture.OrderFixture.order;
+import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.TableGroupFixture.tableGroup;
 import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
@@ -158,7 +159,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupRepository.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
-        orderRepository.save(order(orderTable, orderStatus, List.of()));
+        orderRepository.save(order(orderTable.getId(), orderStatus, List.of(orderLineItem(1L, 10))));
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

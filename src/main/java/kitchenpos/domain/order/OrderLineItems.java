@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -12,7 +12,7 @@ import java.util.List;
 public class OrderLineItems {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
     protected OrderLineItems() {
