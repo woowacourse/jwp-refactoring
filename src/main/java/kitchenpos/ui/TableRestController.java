@@ -20,14 +20,14 @@ import java.util.List;
 public class TableRestController {
     private final TableService tableService;
 
-    public TableRestController(final TableService tableService) {
+    public TableRestController(TableService tableService) {
         this.tableService = tableService;
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTableResponse> create(@RequestBody final CreateOrderTableRequest createOrderTableRequest) {
-        final OrderTableResponse created = tableService.create(createOrderTableRequest);
-        final URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<OrderTableResponse> create(@RequestBody CreateOrderTableRequest createOrderTableRequest) {
+        OrderTableResponse created = tableService.create(createOrderTableRequest);
+        URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
@@ -42,8 +42,8 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponse> changeEmpty(
-            @PathVariable final Long orderTableId,
-            @RequestBody final UpdateOrderTableEmptyRequest updateOrderTableEmptyRequest
+            @PathVariable Long orderTableId,
+            @RequestBody UpdateOrderTableEmptyRequest updateOrderTableEmptyRequest
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, updateOrderTableEmptyRequest))
@@ -52,8 +52,8 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
-            @PathVariable final Long orderTableId,
-            @RequestBody final UpdateOrderTableGuests updateOrderTableGuests
+            @PathVariable Long orderTableId,
+            @RequestBody UpdateOrderTableGuests updateOrderTableGuests
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, updateOrderTableGuests))

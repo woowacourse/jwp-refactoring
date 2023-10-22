@@ -27,10 +27,10 @@ public class MenuService {
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository
+            MenuRepository menuRepository,
+            MenuGroupRepository menuGroupRepository,
+            MenuProductRepository menuProductRepository,
+            ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -39,13 +39,13 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuRequest menuRequest) {
+    public MenuResponse create(MenuRequest menuRequest) {
         MenuGroup menuGroup = findMenuGroup(menuRequest);
-        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
+        List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
         List<MenuProduct> menuProducts = createMenuProducts(menuProductRequests);
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
 
-        final Menu savedMenu = menuRepository.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
     }
 
@@ -65,10 +65,10 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuRepository.findAll();
+        List<Menu> menus = menuRepository.findAll();
         List<MenuResponse> menuResponse = new ArrayList<>();
 
-        for (final Menu menu : menus) {
+        for (Menu menu : menus) {
             List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
             List<MenuProductResponse> menuProductResponses = menuProducts.stream()
                     .map(MenuProductResponse::toDto)

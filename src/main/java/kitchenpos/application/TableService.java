@@ -20,13 +20,13 @@ public class TableService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public OrderTableResponse create(final CreateOrderTableRequest createOrderTableRequest) {
+    public OrderTableResponse create(CreateOrderTableRequest createOrderTableRequest) {
         OrderTable orderTable = new OrderTable(createOrderTableRequest.getNumberOfGuests(), createOrderTableRequest.isEmpty());
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return OrderTableResponse.from(savedOrderTable);
@@ -42,7 +42,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest updateOrderTableEmptyRequest) {
+    public OrderTableResponse changeEmpty(Long orderTableId, UpdateOrderTableEmptyRequest updateOrderTableEmptyRequest) {
         OrderTable orderTable = findOrderTable(orderTableId);
         validateIsOrderNotCompleted(orderTableId);
         orderTable.changeEmpty(updateOrderTableEmptyRequest.isEmpty());

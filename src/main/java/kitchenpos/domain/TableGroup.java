@@ -36,7 +36,7 @@ public class TableGroup {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : orderTables) {
+        for (OrderTable savedOrderTable : orderTables) {
             savedOrderTable.changeEmpty(false);
             savedOrderTable.changeTableGroup(this);
         }

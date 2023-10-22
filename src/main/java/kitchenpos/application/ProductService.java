@@ -12,12 +12,12 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public ProductService(final ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(final ProductRequest productRequest) {
+    public Product create(ProductRequest productRequest) {
         Product product = new Product(productRequest.getName(), productRequest.getPrice());
 
         return productRepository.save(product);

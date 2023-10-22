@@ -22,14 +22,14 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
-    public CreateTableGroupResponse create(final CreateTableGroupRequest createTableGroupRequest) {
+    public CreateTableGroupResponse create(CreateTableGroupRequest createTableGroupRequest) {
         List<OrderTable> orderTables = findOrderTables(createTableGroupRequest.getOrderTables());
         validateOrderTables(createTableGroupRequest, orderTables);
 
@@ -45,7 +45,7 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
+        for (OrderTable orderTable : orderTables) {
             if (!orderTable.isEmpty() || orderTable.existsTableGroup()) {
                 throw new IllegalArgumentException();
             }
@@ -53,7 +53,7 @@ public class TableGroupService {
     }
 
     private List<OrderTable> findOrderTables(List<TableInfo> tableGroupOrderTablesRequest) {
-        final List<Long> orderTableIds = tableGroupOrderTablesRequest.stream()
+        List<Long> orderTableIds = tableGroupOrderTablesRequest.stream()
                 .map(TableInfo::getId)
                 .collect(Collectors.toList());
 
@@ -61,7 +61,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
+    public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
         validateOrder(orderTables);

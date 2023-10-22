@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
 
-    boolean existsById(final Long id);
+    boolean existsById(Long id);
 }

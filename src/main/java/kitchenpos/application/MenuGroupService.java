@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 public class MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
-    public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
+    public MenuGroupResponse create(MenuGroupRequest menuGroupRequest) {
         MenuGroup menuGroup = new MenuGroup(menuGroupRequest.getName());
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
         return new MenuGroupResponse(savedMenuGroup.getId(), savedMenuGroup.getName());

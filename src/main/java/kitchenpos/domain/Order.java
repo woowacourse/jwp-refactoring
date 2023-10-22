@@ -73,7 +73,7 @@ public class Order {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

@@ -16,21 +16,21 @@ import java.net.URI;
 public class TableGroupRestController {
     private final TableGroupService tableGroupService;
 
-    public TableGroupRestController(final TableGroupService tableGroupService) {
+    public TableGroupRestController(TableGroupService tableGroupService) {
         this.tableGroupService = tableGroupService;
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<CreateTableGroupResponse> create(@RequestBody final CreateTableGroupRequest createTableGroupRequest) {
-        final CreateTableGroupResponse created = tableGroupService.create(createTableGroupRequest);
-        final URI uri = URI.create("/api/table-groups/" + created.getId());
+    public ResponseEntity<CreateTableGroupResponse> create(@RequestBody CreateTableGroupRequest createTableGroupRequest) {
+        CreateTableGroupResponse created = tableGroupService.create(createTableGroupRequest);
+        URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
     }
 
     @DeleteMapping("/api/table-groups/{tableGroupId}")
-    public ResponseEntity<Void> ungroup(@PathVariable final Long tableGroupId) {
+    public ResponseEntity<Void> ungroup(@PathVariable Long tableGroupId) {
         tableGroupService.ungroup(tableGroupId);
         return ResponseEntity.noContent()
                 .build()
