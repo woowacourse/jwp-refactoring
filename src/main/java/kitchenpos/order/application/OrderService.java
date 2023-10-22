@@ -96,7 +96,7 @@ public class OrderService {
   }
 
   private void validateNotCompletion(final OrderStatus orderStatus) {
-    if (OrderStatus.COMPLETION.isEqual(orderStatus)) {
+    if (OrderStatus.COMPLETION.equals(orderStatus)) {
       throw new IllegalArgumentException();
     }
   }

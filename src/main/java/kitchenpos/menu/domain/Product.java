@@ -7,6 +7,7 @@ public class Product {
   private final Price price;
 
   public Product(final Long id, final String name, final Price price) {
+    validatePrice(price);
     this.id = id;
     this.name = name;
     this.price = price;
@@ -29,7 +30,7 @@ public class Product {
     return price;
   }
 
-  public void validatePrice() {
+  private void validatePrice(final Price price) {
     if (price.isNull() || price.isLessThan(Price.ZERO)) {
       throw new IllegalArgumentException();
     }
