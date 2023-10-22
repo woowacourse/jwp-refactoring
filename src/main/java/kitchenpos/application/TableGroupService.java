@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -30,7 +31,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroupResponse create(final TableGroupRequest request) {
         final List<OrderTableIdRequest> orderTableRequests = request.getOrderTables();
 
         final List<Long> orderTableIds = orderTableRequests.stream()
@@ -45,7 +46,7 @@ public class TableGroupService {
 
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
         tableGroup.changeOrderTables(savedOrderTables);
-        return tableGroup;
+        return TableGroupResponse.from(tableGroup);
     }
 
     @Transactional

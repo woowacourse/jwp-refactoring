@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,36 +21,38 @@ public class Menu {
     private Long id;
     private String name;
     private Money price;
-    private Long menuGroupId;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
     @Embedded
     private MenuProducts menuProducts;
 
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+        this(id, name, price, menuGroup, new ArrayList<>());
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(name, price, menuGroupId, new ArrayList<>());
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this(name, price, menuGroup, new ArrayList<>());
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = new Money(price);
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = new MenuProducts(menuProducts);
-        validatePrice(price);
     }
 
-    private void validatePrice(BigDecimal price) {
-        if (price.compareTo(menuProducts.menuProductsPrice()) > 0) {
+    public void changeMenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts = new MenuProducts(menuProducts);
+        if (price.getValue().compareTo(this.menuProducts.menuProductsPrice()) > 0) {
             throw new IllegalArgumentException("가격의 합이 맞지 않습니다");
         }
     }
@@ -65,8 +69,8 @@ public class Menu {
         return price.getValue();
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public MenuProducts getMenuProducts() {

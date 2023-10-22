@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
@@ -10,10 +11,10 @@ import kitchenpos.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static kitchenpos.application.dto.MenuRequest.MenuProductRequest;
 
 @Service
 public class MenuService {
@@ -32,25 +33,22 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException("메뉴 그룹이 존재 해야합니다");
-        }
-        Menu menu = getMenu(request);
+    public Menu create(MenuRequest request) {
+        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재 해야합니다"));
+        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        setupMenuProducts(request, menu);
         return menuRepository.save(menu);
     }
 
-    private Menu getMenu(MenuRequest request) {
-        List<MenuProduct> menuProducts = toMenuProducts(request);
-        return new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
-    }
-
-    private List<MenuProduct> toMenuProducts(MenuRequest request) {
-        Map<Long, Product> products = productRepository.findAllByIdIn(request.getMenuProductIds()).stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
-        return request.getMenuProductRequests().stream()
-                .map(it -> new MenuProduct(products.get(it.getProductId()), it.getQuantity()))
-                .collect(Collectors.toList());
+    private void setupMenuProducts(MenuRequest request, Menu menu) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
+            Product product = productRepository.findById(menuProductRequest.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            menuProducts.add(new MenuProduct(menu, product, menuProductRequest.getQuantity()));
+        }
+        menu.changeMenuProducts(menuProducts);
     }
 
     public List<Menu> list() {

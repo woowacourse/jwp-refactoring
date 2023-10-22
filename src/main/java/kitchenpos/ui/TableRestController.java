@@ -4,7 +4,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +25,8 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableRequest request) {
-        final OrderTable created = tableService.create(request);
+    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableRequest request) {
+        final OrderTableResponse created = tableService.create(request);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
@@ -34,14 +34,14 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<OrderTableResponse>> list() {
         return ResponseEntity.ok()
                 .body(tableService.list())
                 ;
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTableEmptyRequest request
     ) {
@@ -51,7 +51,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTableNumberOfGuestRequest request
     ) {

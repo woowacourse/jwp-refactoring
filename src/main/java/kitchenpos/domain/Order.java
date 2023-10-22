@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -60,6 +62,17 @@ public class Order {
             throw new IllegalArgumentException("완료 상태의 주문은 변경할 수 없습니다");
         }
         this.orderStatus = orderStatus;
+    }
+
+    public void changeOrderLineItems(List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
+    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목은 하나 이상이여야 합니다");
+        }
     }
 
     public Long getId() {

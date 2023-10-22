@@ -17,7 +17,7 @@ class MenuTest {
         BigDecimal price = BigDecimal.valueOf(-1);
 
         // expect
-        assertThatThrownBy(() -> new Menu("menu", price, 1L))
+        assertThatThrownBy(() -> new Menu("menu", price, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격은 0원 이상이여야합니다");
         ;
@@ -27,10 +27,11 @@ class MenuTest {
     void 메뉴의_가격이_메뉴_상품들의_합과_다르면_예외가_발생한다() {
         // given
         Product product = product("product", 1000L);
-        MenuProduct menuProduct = menuProduct(product, 1L);
+        MenuProduct menuProduct = menuProduct(product, 1L, null);
+        Menu menu = new Menu("product", BigDecimal.valueOf(1001), null);
 
         // expect
-        assertThatThrownBy(() -> new Menu("product", BigDecimal.valueOf(1001), 1L, List.of(menuProduct)))
+        assertThatThrownBy(() -> menu.changeMenuProducts(List.of(menuProduct)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("가격의 합이 맞지 않습니다");
     }

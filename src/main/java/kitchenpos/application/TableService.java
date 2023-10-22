@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -24,16 +26,18 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest request) {
-        return orderTableRepository.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
+    public OrderTableResponse create(final OrderTableRequest request) {
+        return OrderTableResponse.from(orderTableRepository.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty())));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyRequest request) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
@@ -43,7 +47,7 @@ public class TableService {
 
         savedOrderTable.changeEmpty(request.isEmpty());
 
-        return orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     private OrderTable getOrderTable(Long orderTableId) {
@@ -52,12 +56,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableNumberOfGuestRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableNumberOfGuestRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        return savedOrderTable;
+        return OrderTableResponse.from(savedOrderTable);
     }
 }

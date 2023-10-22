@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderChangeStatusRequest;
 import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -11,6 +13,7 @@ import kitchenpos.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,38 +36,36 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest request) {
-        final List<OrderLineItemRequest> orderLineItems = request.getOrderLineItems();
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 주문 항목이 있습니다");
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+    public OrderResponse create(final OrderRequest request) {
+        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다"));
-        return orderRepository.save(getOrder(orderTable, request));
+        Order order = new Order(orderTable, new ArrayList<>());
+        setupOrderLineItems(request, order);
+        orderRepository.save(order);
+        return OrderResponse.from(order);
     }
 
-    private Order getOrder(OrderTable orderTable, OrderRequest request) {
-        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+    private void setupOrderLineItems(OrderRequest request, Order order) {
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (OrderLineItemRequest orderLineItemRequest : request.getOrderLineItems()) {
+            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 항목이 있습니다"));
+            orderLineItems.add(new OrderLineItem(menu, order, orderLineItemRequest.getQuantity()));
+        }
+        order.changeOrderLineItems(orderLineItems);
+    }
+
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
-        return new Order(orderTable, orderLineItems);
-    }
-
-    public List<Order> list() {
-        return orderRepository.findAll();
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다"));
         order.changeOrderStatus(request.getOrderStatus());
-        return order;
+        return OrderResponse.from(order);
     }
 }

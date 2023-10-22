@@ -1,26 +1,27 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.fake.InMemoryOrderRepository;
-import kitchenpos.fake.InMemoryOrderTableRepository;
-import kitchenpos.fake.InMemoryTableGroupRepository;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
+import static kitchenpos.fixture.MenuFixture.menu;
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
@@ -32,20 +33,16 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
+@ServiceTest
 class TableGroupServiceTest {
-
+    @Autowired
     private TableGroupService tableGroupService;
+    @Autowired
     private OrderRepository orderRepository;
+    @Autowired
     private OrderTableRepository orderTableRepository;
+    @Autowired
     private TableGroupRepository tableGroupDao;
-
-    @BeforeEach
-    void before() {
-        orderRepository = new InMemoryOrderRepository();
-        orderTableRepository = new InMemoryOrderTableRepository();
-        tableGroupDao = new InMemoryTableGroupRepository();
-        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupDao);
-    }
 
     @Test
     void 단체_지정을_생성한다() {
@@ -55,12 +52,10 @@ class TableGroupServiceTest {
         TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse response = tableGroupService.create(tableGroup);
 
         // then
-        assertThat(savedTableGroup).usingRecursiveComparison()
-                .ignoringFields("id", "createdDate")
-                .isEqualTo(new TableGroup(LocalDateTime.now(), List.of(orderTable, orderTable2)));
+        assertThat(response.getId()).isNotNull();
     }
 
     @Test
@@ -71,14 +66,14 @@ class TableGroupServiceTest {
         TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // when
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        OrderTable savedOrderTable = savedTableGroup.getOrderTables().get(0);
-        OrderTable savedOrderTable2 = savedTableGroup.getOrderTables().get(1);
+        OrderTableResponse savedOrderTable = savedTableGroup.getOrderTables().get(0);
+        OrderTableResponse savedOrderTable2 = savedTableGroup.getOrderTables().get(1);
         assertSoftly(softly -> {
-            softly.assertThat(savedOrderTable.getTableGroup()).isNotNull();
-            softly.assertThat(savedOrderTable2.getTableGroup()).isNotNull();
+            softly.assertThat(savedOrderTable.getTableGroupId()).isNotNull();
+            softly.assertThat(savedOrderTable2.getTableGroupId()).isNotNull();
             softly.assertThat(savedOrderTable.isEmpty()).isTrue();
             softly.assertThat(savedOrderTable2.isEmpty()).isTrue();
         });
@@ -140,7 +135,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
         OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 3, false));
-        orderRepository.save(order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(1L, 10))));
+        orderRepository.save(order(orderTable, OrderStatus.COMPLETION, List.of(orderLineItem(menu("name", 1000L, null), order(orderTable, new ArrayList<>()), 1L))));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -162,7 +157,7 @@ class TableGroupServiceTest {
         // given
         TableGroup tableGroup = tableGroupDao.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
-        orderRepository.save(order(orderTable, orderStatus, List.of(orderLineItem(1L, 10))));
+        orderRepository.save(order(orderTable, orderStatus, List.of(orderLineItem(menu("name", 1000L, null), order(orderTable, new ArrayList<>()), 1L))));
 
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

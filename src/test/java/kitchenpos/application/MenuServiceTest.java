@@ -8,13 +8,11 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
-import kitchenpos.fake.InMemoryMenuGroupRepository;
-import kitchenpos.fake.InMemoryMenuRepository;
-import kitchenpos.fake.InMemoryProductRepository;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,27 +27,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
+@ServiceTest
 class MenuServiceTest {
-
+    @Autowired
     private MenuGroupRepository menuGroupRepository;
+    @Autowired
     private MenuRepository menuRepository;
+    @Autowired
     private ProductRepository productRepository;
+    @Autowired
     private MenuService menuService;
-
-    @BeforeEach
-    void before() {
-        menuGroupRepository = new InMemoryMenuGroupRepository();
-        menuRepository = new InMemoryMenuRepository();
-        productRepository = new InMemoryProductRepository();
-        menuService = new MenuService(menuRepository, menuGroupRepository, productRepository);
-    }
 
     @Test
     void 메뉴를_생성한다() {
         // Given
         Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(menuProduct(product, 10L)));
+        MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(menuProduct(product, 10, null)));
 
         // When
         Menu createdMenu = menuService.create(request);
@@ -75,7 +69,7 @@ class MenuServiceTest {
         // given
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("pizza"));
         Product product = productRepository.save(product("cheese pizza", 10000L));
-        MenuProduct menuProduct = menuProduct(product, 1L);
+        MenuProduct menuProduct = menuProduct(product, 1L, null);
         MenuRequest request = menuRequest("cheese pizza", 10001L, menuGroup.getId(), List.of(menuProduct));
 
         // expect
@@ -101,8 +95,8 @@ class MenuServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("chicken"));
         Product product = productRepository.save(product("fried chicken", 10000L));
 
-        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of(menuProduct(product, 1L))));
-        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of(menuProduct(product, 2L))));
+        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup, List.of()));
+        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup, List.of()));
 
         // when
         List<Menu> result = menuService.list();
@@ -110,6 +104,7 @@ class MenuServiceTest {
         // then
         assertThat(result)
                 .usingRecursiveComparison()
+                .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .isEqualTo(List.of(menu1, menu2));
     }
 }

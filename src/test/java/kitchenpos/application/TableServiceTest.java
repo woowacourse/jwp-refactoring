@@ -3,26 +3,26 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fake.InMemoryOrderRepository;
-import kitchenpos.fake.InMemoryOrderTableRepository;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 import static kitchenpos.fixture.OrderFixture.order;
-import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTableRequest;
@@ -33,18 +33,16 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
+@ServiceTest
 class TableServiceTest {
-
+    @Autowired
     private TableService tableService;
+    @Autowired
     private OrderRepository orderRepository;
+    @Autowired
     private OrderTableRepository orderTableRepository;
-
-    @BeforeEach
-    void before() {
-        orderRepository = new InMemoryOrderRepository();
-        orderTableRepository = new InMemoryOrderTableRepository();
-        tableService = new TableService(orderRepository, orderTableRepository);
-    }
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     void 주문_테이블을_생성한다() {
@@ -52,7 +50,7 @@ class TableServiceTest {
         OrderTableRequest request = orderTableRequest(10, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(request);
+        OrderTableResponse savedOrderTable = tableService.create(request);
 
         // then
         assertSoftly(softly -> {
@@ -60,7 +58,7 @@ class TableServiceTest {
                     .ignoringFields("id", "tableGroupId")
                     .isEqualTo(orderTable(10, false));
             softly.assertThat(savedOrderTable.getId()).isNotNull();
-            softly.assertThat(savedOrderTable.getTableGroup()).isNull();
+            softly.assertThat(savedOrderTable.getTableGroupId()).isNull();
         });
     }
 
@@ -70,7 +68,7 @@ class TableServiceTest {
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
 
         // when
-        OrderTable emptyTable = tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true));
+        OrderTableResponse emptyTable = tableService.changeEmpty(orderTable.getId(), new OrderTableEmptyRequest(true));
 
         // then
         assertThat(emptyTable.isEmpty()).isTrue();
@@ -79,7 +77,7 @@ class TableServiceTest {
     @Test
     void 주문_테이블을_빈_테이블로_변경할_때_단체_지정이_있으면_예외가_발생한다() {
         // given
-        TableGroup tableGroup = tableGroup(List.of(orderTable(10, true), orderTable(11, true)));
+        TableGroup tableGroup = tableGroupRepository.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
 
         // expect
@@ -93,7 +91,7 @@ class TableServiceTest {
     void 주문_테이블을_빈_테이블로_변경할_때_주문_상태가_완료가_아니면_예외가_발생한다(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
-        Order order = order(orderTable, orderStatus, List.of(orderLineItem(1L, 10)));
+        Order order = order(orderTable, orderStatus, List.of());
         orderRepository.save(order);
 
         // expect
@@ -146,7 +144,7 @@ class TableServiceTest {
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
 
         // when
-        OrderTable updatedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), request);
+        OrderTableResponse updatedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
         // then
         assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(11);

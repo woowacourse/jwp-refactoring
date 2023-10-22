@@ -3,11 +3,11 @@ package kitchenpos.application;
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.fake.InMemoryMenuGroupRepository;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -18,16 +18,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
+@ServiceTest
 class MenuGroupServiceTest {
 
+    @Autowired
     private MenuGroupService menuGroupService;
+    @Autowired
     private MenuGroupRepository menuGroupRepository;
-
-    @BeforeEach
-    void before() {
-        menuGroupRepository = new InMemoryMenuGroupRepository();
-        menuGroupService = new MenuGroupService(menuGroupRepository);
-    }
 
     @Test
     void 주문_그룹을_생성한다() {

@@ -3,12 +3,12 @@ package kitchenpos.application;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
-import kitchenpos.fake.InMemoryProductRepository;
 import kitchenpos.fixture.ProductFixture;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static kitchenpos.fixture.ProductFixture.product;
 import static kitchenpos.fixture.ProductFixture.productRequest;
@@ -17,16 +17,12 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
+@ServiceTest
 class ProductServiceTest {
-
+    @Autowired
     private ProductService productService;
+    @Autowired
     private ProductRepository productRepository;
-
-    @BeforeEach
-    void before() {
-        productRepository = new InMemoryProductRepository();
-        productService = new ProductService(productRepository);
-    }
 
     @Test
     void 상품을_생성한다() {

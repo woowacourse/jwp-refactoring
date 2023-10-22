@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.util.List;
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts;
 

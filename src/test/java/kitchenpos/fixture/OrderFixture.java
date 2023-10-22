@@ -24,7 +24,7 @@ public class OrderFixture {
 
     public static OrderRequest orderRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {
         List<OrderLineItemRequest> orderLineItemRequests = orderLineItems.stream()
-                .map(it -> new OrderLineItemRequest(it.getMenuId(), it.getQuantity()))
+                .map(it -> new OrderLineItemRequest(it.getMenu().getId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new OrderRequest(orderTableId, orderLineItemRequests);
     }
