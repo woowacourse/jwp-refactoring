@@ -2,8 +2,8 @@ package kitchenpos.application.menugroup;
 
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.vo.Name;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,15 +23,15 @@ class MenuGroupServiceTest extends ApplicationTestConfig {
     @Test
     void success_create() {
         // given
-        final MenuGroup expected = new MenuGroup(new Name("테스트 메뉴 그룹"));
+        final MenuGroupCreateRequest request = new MenuGroupCreateRequest("테스트 메뉴 그룹");
 
         // when
-        final MenuGroup actual = menuGroupService.create(expected);
+        final MenuGroupResponse actual = menuGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isPositive();
-            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
+            softly.assertThat(actual.getName()).isEqualTo(request.getName());
         });
     }
 }
