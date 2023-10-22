@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductRepository;
@@ -42,7 +43,10 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -60,19 +64,15 @@ class OrderServiceTest {
         Product product = new Product("치킨", BigDecimal.valueOf(10000L));
         savedProduct = productRepository.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2);
-        menuProduct.setProductId(savedProduct.getId());
-
         MenuGroup menuGroup = new MenuGroup("즐겨찾는 음식");
         savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        Menu menu = new Menu();
-        menu.setName("두마리치킨");
-        menu.setPrice(BigDecimal.valueOf(20000));
-        menu.setMenuProducts(List.of(savedMenuProduct));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(menu);
+        Menu menu = new Menu("두마리치킨", BigDecimal.valueOf(20000), savedMenuGroup.getId());
+        savedMenu = menuRepository.save(menu);
+
+        MenuProduct menuProduct = new MenuProduct(savedMenu, savedProduct, 2l);
+        savedMenuProduct = menuProductRepository.save(menuProduct);
+
     }
 
     @Test
@@ -115,8 +115,7 @@ class OrderServiceTest {
         order.setOrderTableId(savedOrderTable.getId());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -138,8 +137,7 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -157,8 +155,7 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -179,8 +176,7 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -244,8 +240,7 @@ class OrderServiceTest {
         newOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), newOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), newOrder)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -273,7 +268,6 @@ class OrderServiceTest {
         newOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         // then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), newOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), newOrder)).isInstanceOf(IllegalArgumentException.class);
     }
 }
