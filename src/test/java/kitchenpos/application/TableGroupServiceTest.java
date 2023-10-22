@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.application.dto.request.CreateTableGroupRequest.TableInfo;
 import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
@@ -130,7 +131,7 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of(OrderStatus.COOKING, OrderStatus.MEAL))))
                 .willReturn(true);
 
         // when, then
@@ -147,7 +148,7 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of("COOKING", "MEAL"))))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of(OrderStatus.COOKING, OrderStatus.MEAL))))
                 .willReturn(false);
 
         // when, then

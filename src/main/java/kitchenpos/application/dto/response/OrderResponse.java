@@ -42,7 +42,7 @@ public class OrderResponse {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderTable().getId(),
-                order.getOrderStatus(),
+                order.getOrderStatus().name(),
                 order.getOrderedTime(),
                 orderLineItemResponses
         );

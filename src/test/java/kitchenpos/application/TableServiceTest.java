@@ -4,6 +4,7 @@ import kitchenpos.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableGuests;
 import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
@@ -58,9 +59,9 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(1, false);
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), eq(List.of("COOKING", "MEAL"))))
-                .willReturn(false);
 
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), eq(List.of(OrderStatus.COOKING, OrderStatus.MEAL))))
+                .willReturn(false);
         // when, then
         tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false));
     }
@@ -92,7 +93,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(3, false);
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of("COOKING", "MEAL")))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING, OrderStatus.MEAL)))
                 .willReturn(true);
 
         // when, then

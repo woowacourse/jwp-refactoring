@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +43,7 @@ public class OrderService {
     public OrderResponse create(CreateOrderRequest createOrderRequest) {
         OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         List<OrderLineItemDto> orderLineItemDtos = createOrderRequest.getOrderLineItems();
         addOrderLineItems(orderLineItemDtos, order);
@@ -85,12 +84,12 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
+        if (order.isCompleted()) {
             throw new IllegalArgumentException();
         }
 
         OrderStatus orderStatus = OrderStatus.valueOf(updateOrderStatusRequest.getOrderStatus());
-        order.setOrderStatus(orderStatus.name());
+        order.changeOrderStatus(orderStatus);
 
         return OrderResponse.from(order);
     }

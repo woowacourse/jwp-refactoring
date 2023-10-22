@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -24,7 +26,9 @@ public class Order {
 
     @ManyToOne(fetch = LAZY)
     private OrderTable orderTable;
-    private String orderStatus;
+
+    @Enumerated(STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order", cascade = PERSIST)
@@ -33,7 +37,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         validate(orderTable);
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -51,19 +55,25 @@ public class Order {
         orderLineItem.changeOrder(this);
     }
 
+    public void checkEqualMenuCount(long orderMenuSize) {
+        if (orderMenuSize != orderLineItems.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public boolean isCompleted() {
+        return orderStatus == OrderStatus.COMPLETION;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -71,29 +81,11 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
-    public void checkEqualMenuCount(long orderMenuSize) {
-        if (orderMenuSize != orderLineItems.size()) {
-            throw new IllegalArgumentException();
-        }
     }
 }

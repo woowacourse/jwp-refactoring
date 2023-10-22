@@ -11,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItemRepository;
 import kitchenpos.domain.OrderRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Product;
@@ -152,7 +153,7 @@ class OrderServiceTest {
     void 상태를_변경하려는_주문이_이미_완료_상태면_예외발생() {
         // given
         Order order = new Order();
-        order.setOrderStatus("COMPLETION");
+        order.changeOrderStatus(OrderStatus.COMPLETION);
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
 
@@ -166,7 +167,7 @@ class OrderServiceTest {
     void 주문_상태를_변경한다() {
         // given
         OrderTable orderTable = new OrderTable(1L, 3, false);
-        Order order = new Order(orderTable, "MEAL", LocalDateTime.now());
+        Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
         order.addOrderLineItem(new OrderLineItem(chicken, 3));
 
         given(orderRepository.findById(anyLong()))
