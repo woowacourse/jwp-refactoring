@@ -2,7 +2,7 @@ package kitchenpos.dao;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import org.springframework.data.repository.Repository;
 
 public interface OrderDao extends Repository<Order, Long> {

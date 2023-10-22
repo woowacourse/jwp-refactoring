@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 
 public class InMemoryOrderDao implements OrderDao {
 

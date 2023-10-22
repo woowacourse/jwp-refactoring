@@ -9,8 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
 import kitchenpos.exception.CannotChangeEmptyException;
 import kitchenpos.exception.InvalidUnGroupException;
 

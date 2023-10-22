@@ -28,11 +28,4 @@ public class InMemoryMenuDao implements MenuDao {
     public List<Menu> findAll() {
         return menus;
     }
-
-    @Override
-    public long countByIdIn(final List<Long> ids) {
-        return menus.stream()
-                    .filter(menu -> ids.contains(menu.getId()))
-                    .count();
-    }
 }
