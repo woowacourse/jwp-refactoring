@@ -13,13 +13,15 @@ class ProductNameTest {
     @ValueSource(strings = {"", " ", "   "})
     void validateProductNameBlank(String value) {
         assertThatThrownBy(() -> new ProductName(value))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품 이름은 공백이 될 수 없습니다.");
     }
 
     @Test
     @DisplayName("상품 이름이 null이면 예외가 발생한다.")
     void validateProductNameNull() {
         assertThatThrownBy(() -> new ProductName(null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품 이름은 공백이 될 수 없습니다.");
     }
 }

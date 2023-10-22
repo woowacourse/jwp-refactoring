@@ -18,8 +18,12 @@ class ProductPriceTest {
 
         // when, then
         assertSoftly(softly -> {
-            assertThatThrownBy(() -> new ProductPrice(price1)).isInstanceOf(IllegalArgumentException.class);
-            assertThatThrownBy(() -> new ProductPrice(price2)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> new ProductPrice(price1))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("상품 가격은 0보다 작을 수 없습니다.");
+            assertThatThrownBy(() -> new ProductPrice(price2))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("상품 가격은 0보다 작을 수 없습니다.");
         });
     }
 }

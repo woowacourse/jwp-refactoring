@@ -81,8 +81,8 @@ class MenuServiceTest {
         }
 
         @Test
-        @DisplayName("menuProduct가 존재하지 않으면 예외가 발생한다.")
-        void menuProductNotExist() {
+        @DisplayName("menuGroup이 존재하지 않으면 예외가 발생한다.")
+        void menuGroupNotExist() {
             // given
             final MenuRequest request = mock(MenuRequest.class);
             given(request.getPrice()).willReturn(BigDecimal.valueOf(10000));
@@ -90,7 +90,9 @@ class MenuServiceTest {
             given(menuGroupRepository.existsById(anyLong())).willReturn(false);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("메뉴 그룹이 존재하지 않습니다.");
         }
 
         @Test

@@ -12,6 +12,7 @@ class NumberOfGuestsTest {
     @ValueSource(ints = {-10, -1})
     void validateNumberOfGuests(int value) {
         assertThatThrownBy(() -> new NumberOfGuests(value))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("손님 수는 0보다 작을 수 없습니다.");
     }
 }

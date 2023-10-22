@@ -17,7 +17,7 @@ public class ProductName {
 
     private void validate(final String name) {
         if (Objects.isNull(name) || name.isBlank()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품 이름은 공백이 될 수 없습니다.");
         }
     }
 

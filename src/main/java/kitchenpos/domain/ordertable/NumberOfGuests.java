@@ -17,7 +17,7 @@ public class NumberOfGuests {
 
     private void validate(final int value) {
         if (value < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("손님 수는 0보다 작을 수 없습니다.");
         }
     }
 

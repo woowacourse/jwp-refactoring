@@ -13,13 +13,15 @@ class MenuNameTest {
     @ValueSource(strings = {"", " ", "   "})
     void validateMenuNameBlank(String value) {
         assertThatThrownBy(() -> new MenuName(value))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 이름은 공백이 될 수 없습니다.");
     }
 
     @Test
     @DisplayName("메뉴 이름이 null이면 예외가 발생한다.")
     void validateMenuNameNull() {
         assertThatThrownBy(() -> new MenuName(null))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 이름은 공백이 될 수 없습니다.");
     }
 }
