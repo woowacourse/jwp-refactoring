@@ -5,11 +5,11 @@ import java.util.List;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.dto.tablegroup.OrderTableIdRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class TableGroupServiceTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -73,7 +73,8 @@ class TableGroupServiceTest {
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야 합니다");
         }
 
         @Test
@@ -84,40 +85,10 @@ class TableGroupServiceTest {
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야합니다");
         }
 
-        @Test
-        void 주문_테이블이_저장되지_않은_경우_예외가_발생한다() {
-            // given
-            final Long firstUnsavedOrderTableId = 999L;
-            final Long secondUnsavedOrderTableId = 9999L;
-            final List<OrderTableIdRequest> orderTableIdRequests = List.of(
-                    new OrderTableIdRequest(firstUnsavedOrderTableId),
-                    new OrderTableIdRequest(secondUnsavedOrderTableId)
-            );
-
-            // expect
-            assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 저장된_단체_지정_크기가_실제_사이즈와_다르면_예외가_발생한다() {
-            // given
-            final OrderTable firstOrderTable = new OrderTable(null, 3, true);
-            final OrderTable secondOrderTable = new OrderTable(null, 3, true);
-            orderTableDao.save(firstOrderTable);
-
-            final List<OrderTableIdRequest> orderTableIdRequests = List.of(
-                    new OrderTableIdRequest(firstOrderTable.getId()),
-                    new OrderTableIdRequest(secondOrderTable.getId())
-            );
-
-            // expect
-            assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
 
         @Test
         void 주문_테이블이_빈_상태가_아니라면_예외가_발생한다() {
@@ -143,8 +114,8 @@ class TableGroupServiceTest {
         final OrderTable firstOrderTable = orderTableDao.save(new OrderTable(null, 3, false));
         final OrderTable secondOrderTable = orderTableDao.save(new OrderTable(null, 3, false));
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(firstOrderTable, secondOrderTable));
-        final TableGroup expected = tableGroupDao.save(tableGroup);
+        final TableGroup tableGroup = new TableGroup(List.of(firstOrderTable, secondOrderTable));
+        final TableGroup expected = tableGroupRepository.save(tableGroup);
 
         // expect
         assertDoesNotThrow(() -> tableGroupService.ungroup(expected.getId()));
@@ -155,7 +126,7 @@ class TableGroupServiceTest {
         // given
         final OrderTable firstOrderTable = orderTableDao.save(new OrderTable(null, 1, true));
         final OrderTable secondOrderTable = orderTableDao.save(new OrderTable(null, 2, true));
-        final Order order = new Order(firstOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), null);
+        final Order order = new Order(firstOrderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
         orderDao.save(order);
 
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(
@@ -167,7 +138,8 @@ class TableGroupServiceTest {
 
         // expect
         assertThatThrownBy(() -> tableGroupService.ungroup(expected.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("완료되지 않은 주문입니다");
     }
 
 }
