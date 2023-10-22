@@ -59,7 +59,7 @@ class OrderServiceTest {
         final Order order = createOrder(1L, ORDER_TABLE.getId());
         final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
-        order.setOrderLineItems(List.of(orderLineItem));
+        order.addOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(1L);
@@ -85,7 +85,7 @@ class OrderServiceTest {
         final Order order = createOrder(1L, ORDER_TABLE.getId());
         final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
-        order.setOrderLineItems(List.of(orderLineItem));
+        order.addOrderLineItems(List.of(orderLineItem));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(order))
@@ -98,7 +98,7 @@ class OrderServiceTest {
         // given
         final Order order = createOrder(1L, ORDER_TABLE.getId());
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
-        order.setOrderLineItems(List.of(orderLineItem));
+        order.addOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(0L);
@@ -114,7 +114,7 @@ class OrderServiceTest {
         // given
         final Order order = createOrder(1L, 0L);
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
-        order.setOrderLineItems(List.of(orderLineItem));
+        order.addOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(1L);
@@ -135,7 +135,7 @@ class OrderServiceTest {
 
         final Order order = createOrder(1L, orderTable.getId());
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
-        order.setOrderLineItems(List.of(orderLineItem));
+        order.addOrderLineItems(List.of(orderLineItem));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(1L);
@@ -154,10 +154,10 @@ class OrderServiceTest {
         final Order order1 = createOrder(1L, ORDER_TABLE.getId());
         final Menu menu = createMenu(1L, "menuGroup", 1000L, MENU_GROUP.getId());
         final OrderLineItem orderLineItem1 = createOrderLineItem(order1.getId(), menu.getId(), 3);
-        order1.setOrderLineItems(List.of(orderLineItem1));
+        order1.addOrderLineItems(List.of(orderLineItem1));
         final Order order2 = createOrder(2L, ORDER_TABLE.getId());
         final OrderLineItem orderLineItem2 = createOrderLineItem(order2.getId(), menu.getId(), 3);
-        order2.setOrderLineItems(List.of(orderLineItem2));
+        order2.addOrderLineItems(List.of(orderLineItem2));
 
 
         given(orderDao.findAll())
@@ -177,7 +177,7 @@ class OrderServiceTest {
         // given
         final Order prevOrder = createOrder(1L, ORDER_TABLE.getId());
         final Order changeOrder = createOrder(1L, ORDER_TABLE.getId());
-        changeOrder.setOrderStatus(OrderStatus.MEAL.name());
+        changeOrder.changeOrderStatus(OrderStatus.MEAL);
 
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.of(prevOrder));
@@ -208,10 +208,10 @@ class OrderServiceTest {
     void changeOrderStatus_wrongStatus_fail() {
         // given
         final Order order = createOrder(1L, ORDER_TABLE.getId());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        order.changeOrderStatus(OrderStatus.COMPLETION);
 
         final Order changeOrder = createOrder(1L, ORDER_TABLE.getId());
-        changeOrder.setOrderStatus(OrderStatus.MEAL.name());
+        changeOrder.changeOrderStatus(OrderStatus.MEAL);
 
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.of(order));

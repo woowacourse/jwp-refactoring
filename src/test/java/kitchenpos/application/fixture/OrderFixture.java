@@ -6,20 +6,14 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import org.aspectj.weaver.ast.Or;
 
 public class OrderFixture {
 
     public static Order createOrder(final Long id,
                                     final Long orderTableId,
                                    final List<OrderLineItem> lineItems) {
-        final Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(lineItems);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-
-        return order;
+        return new Order(id, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now(), lineItems);
     }
 
     public static Order createOrder(final Long id, final Long orderTableId) {
