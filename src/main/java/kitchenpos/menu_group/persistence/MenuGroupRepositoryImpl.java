@@ -1,6 +1,8 @@
 package kitchenpos.menu_group.persistence;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.menu_group.application.entity.MenuGroupEntity;
 import kitchenpos.menu_group.domain.MenuGroup;
 import kitchenpos.menu_group.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Repository;
@@ -16,7 +18,7 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepository {
 
   @Override
   public MenuGroup save(final MenuGroup entity) {
-    return menuGroupDao.save(entity);
+    return menuGroupDao.save(MenuGroupEntity.from(entity)).toMenuGroup();
   }
 
   @Override
@@ -26,6 +28,9 @@ public class MenuGroupRepositoryImpl implements MenuGroupRepository {
 
   @Override
   public List<MenuGroup> findAll() {
-    return menuGroupDao.findAll();
+    return menuGroupDao.findAll()
+        .stream()
+        .map(MenuGroupEntity::toMenuGroup)
+        .collect(Collectors.toList());
   }
 }
