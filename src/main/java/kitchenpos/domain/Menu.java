@@ -70,7 +70,7 @@ public class Menu {
         return price == null || price.getValue().compareTo(BigDecimal.ZERO) < 0;
     }
 
-    public static Menu ofEmptyMenuProducts(final Name name, final Price price, final MenuGroup menuGroup) {
+    public static Menu withEmptyMenuProducts(final Name name, final Price price, final MenuGroup menuGroup) {
         return new Menu(name, price, menuGroup, MenuProducts.empty());
     }
 

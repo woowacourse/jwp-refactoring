@@ -38,7 +38,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         final MenuGroup findMenuGroup = menuGroupRepository.findMenuGroupById(request.getMenuGroupId());
-        final Menu newMenu = Menu.ofEmptyMenuProducts(
+        final Menu newMenu = Menu.withEmptyMenuProducts(
                 new Name(request.getName()),
                 new Price(request.getPrice()),
                 findMenuGroup
@@ -54,7 +54,7 @@ public class MenuService {
                 .stream()
                 .map(menuProductCreateRequest -> {
                     final Product findProduct = productRepository.findProductById(menuProductCreateRequest.getProductId());
-                    return MenuProduct.ofWithoutMenu(findProduct, new Quantity(menuProductCreateRequest.getQuantity()));
+                    return MenuProduct.withoutMenu(findProduct, new Quantity(menuProductCreateRequest.getQuantity()));
                 }).collect(Collectors.toList());
     }
 

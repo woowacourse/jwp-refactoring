@@ -126,7 +126,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     private Menu createMenu() {
         final Product savedProduct = persistProduct(new Product(new Name("테스트용 상품명"), new Price("10000")));
         final MenuGroup savedMenuGroup = persistMenuGroup(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu savedMenu = persistMenu(Menu.ofEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, savedMenuGroup));
+        final Menu savedMenu = persistMenu(Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, savedMenuGroup));
         savedMenu.addMenuProducts(List.of(
                 new MenuProduct(savedMenu, savedProduct, new Quantity(1))
         ));

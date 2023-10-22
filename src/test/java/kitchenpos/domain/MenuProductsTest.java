@@ -28,7 +28,7 @@ class MenuProductsTest {
     @Test
     void success_add() {
         // given
-        final Menu menu = Menu.ofEmptyMenuProducts(
+        final Menu menu = Menu.withEmptyMenuProducts(
                 new Name("테스트용 메뉴명"),
                 Price.ZERO,
                 new MenuGroup(new Name("테스트용 메뉴 그룹명"))
@@ -38,7 +38,7 @@ class MenuProductsTest {
         final Quantity quantity = new Quantity(10);
 
         // when
-        final List<MenuProduct> menuProductItems = List.of(MenuProduct.ofWithoutMenu(product, quantity));
+        final List<MenuProduct> menuProductItems = List.of(MenuProduct.withoutMenu(product, quantity));
         final MenuProducts actual = MenuProducts.empty();
         actual.add(new MenuProducts(menuProductItems));
 
@@ -58,9 +58,9 @@ class MenuProductsTest {
     void success_getTotalPrice() {
         // given
         final List<MenuProduct> menuProductItems = List.of(
-                MenuProduct.ofWithoutMenu(new Product(new Name("테스트용 상품명"), new Price("10000")), new Quantity(1)),
-                MenuProduct.ofWithoutMenu(new Product(new Name("테스트용 상품명"), new Price("5000")), new Quantity(2)),
-                MenuProduct.ofWithoutMenu(new Product(new Name("테스트용 상품명"), new Price("2000")), new Quantity(5))
+                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), new Price("10000")), new Quantity(1)),
+                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), new Price("5000")), new Quantity(2)),
+                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), new Price("2000")), new Quantity(5))
         );
         final MenuProducts menuProducts = new MenuProducts(menuProductItems);
 

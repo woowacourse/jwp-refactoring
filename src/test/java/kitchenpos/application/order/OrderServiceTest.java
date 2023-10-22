@@ -118,7 +118,7 @@ class OrderServiceTest extends ApplicationTestConfig {
     private Menu createMenu() {
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
         return menuRepository.save(
-                Menu.ofEmptyMenuProducts(
+                Menu.withEmptyMenuProducts(
                         new Name("테스트용 메뉴명"),
                         new Price("0"),
                         savedMenuGroup

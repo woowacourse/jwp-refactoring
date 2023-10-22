@@ -33,7 +33,7 @@ class MenuProductTest {
         final Quantity quantity = new Quantity(10);
 
         // when
-        final MenuProduct actual = MenuProduct.ofWithoutMenu(product, quantity);
+        final MenuProduct actual = MenuProduct.withoutMenu(product, quantity);
 
         // then
         assertSoftly(softly -> {
@@ -51,7 +51,7 @@ class MenuProductTest {
         final Quantity quantity = new Quantity(10);
 
         // when
-        final MenuProduct menuProduct = MenuProduct.ofWithoutMenu(product, quantity);
+        final MenuProduct menuProduct = MenuProduct.withoutMenu(product, quantity);
         final Price actual = menuProduct.getTotalPrice();
 
         // then

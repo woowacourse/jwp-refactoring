@@ -15,7 +15,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class MenuProduct {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @JoinColumn(name = "menu_id")
@@ -40,9 +41,9 @@ public class MenuProduct {
     }
 
     protected MenuProduct(final Long seq,
-                       final Menu menu,
-                       final Product product,
-                       final Quantity quantity
+                          final Menu menu,
+                          final Product product,
+                          final Quantity quantity
     ) {
         this.seq = seq;
         this.menu = menu;
@@ -50,7 +51,7 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct ofWithoutMenu(final Product product, final Quantity quantity) {
+    public static MenuProduct withoutMenu(final Product product, final Quantity quantity) {
         return new MenuProduct(null, product, quantity);
     }
 

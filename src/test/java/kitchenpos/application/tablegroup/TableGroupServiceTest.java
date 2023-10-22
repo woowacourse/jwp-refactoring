@@ -225,13 +225,13 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         private Menu createMenu(final Product savedProduct) {
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
             final Menu savedMenu = menuRepository.save(
-                    Menu.ofEmptyMenuProducts(
+                    Menu.withEmptyMenuProducts(
                             new Name("테스트용 메뉴명"),
                             Price.ZERO,
                             savedMenuGroup
                     )
             );
-            final MenuProduct menuProduct = MenuProduct.ofWithoutMenu(savedProduct, new Quantity(10));
+            final MenuProduct menuProduct = MenuProduct.withoutMenu(savedProduct, new Quantity(10));
             savedMenu.addMenuProducts(List.of(menuProduct));
 
             return savedMenu;

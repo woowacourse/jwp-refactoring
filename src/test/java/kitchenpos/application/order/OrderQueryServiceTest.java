@@ -35,7 +35,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
     void success_findAll() {
         // given
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
-        final Menu menu = Menu.ofEmptyMenuProducts(
+        final Menu menu = Menu.withEmptyMenuProducts(
                 new Name("테스트용 메뉴명"),
                 new Price("0"),
                 savedMenuGroup
@@ -43,8 +43,8 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
 
         final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
         menu.addMenuProducts(List.of(
-                MenuProduct.ofWithoutMenu(savedProduct, new Quantity(10)),
-                MenuProduct.ofWithoutMenu(savedProduct, new Quantity(10))
+                MenuProduct.withoutMenu(savedProduct, new Quantity(10)),
+                MenuProduct.withoutMenu(savedProduct, new Quantity(10))
         ));
         final Menu savedMenu = menuRepository.save(menu);
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));

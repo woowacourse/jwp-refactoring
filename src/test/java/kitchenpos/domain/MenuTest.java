@@ -23,7 +23,7 @@ class MenuTest {
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
 
         // when
-        final Menu actual = Menu.ofEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
+        final Menu actual = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
 
         // then
         assertSoftly(softly -> {
@@ -60,7 +60,7 @@ class MenuTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
         // when
-        menu.addMenuProducts(List.of(MenuProduct.ofWithoutMenu(product, new Quantity(10))));
+        menu.addMenuProducts(List.of(MenuProduct.withoutMenu(product, new Quantity(10))));
 
         // then
         final List<MenuProduct> actual = menu.getMenuProducts().getMenuProductItems();
