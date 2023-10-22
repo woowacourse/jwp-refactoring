@@ -10,7 +10,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupRequest.OrderTableDto;
 import kitchenpos.dto.TableGroupResponse;
-import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.InvalidRequestParameterException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.TableGroupNotFoundException;
 import kitchenpos.exception.UnCompletedOrderExistsException;
@@ -41,7 +41,7 @@ public class TableGroupService {
         // 오더테이블 리스트가 비었거나 사이즈가 2 미만이면 예외
         List<OrderTableDto> orderTableDtos = request.getOrderTables();
         if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
-            throw new InvalidRequestFormatException();
+            throw new InvalidRequestParameterException();
         }
 
         // 요청으로 들어온 오더테이블이 실제 존재하는지 확인

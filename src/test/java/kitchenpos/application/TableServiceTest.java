@@ -14,7 +14,7 @@ import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
-import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.InvalidRequestParameterException;
 import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
@@ -148,7 +148,7 @@ class TableServiceTest {
                     -1);
 
             // when, then
-            assertThrows(InvalidRequestFormatException.class,
+            assertThrows(InvalidRequestParameterException.class,
                     () -> tableService.changeNumberOfGuests(1L, request));
         }
 

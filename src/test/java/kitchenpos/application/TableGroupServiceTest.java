@@ -15,7 +15,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupRequest.OrderTableDto;
 import kitchenpos.dto.TableGroupResponse;
-import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.InvalidRequestParameterException;
 import kitchenpos.exception.OrderTableCannotBeGroupedException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.TableGroupNotFoundException;
@@ -74,7 +74,7 @@ class TableGroupServiceTest {
             TableGroupRequest request = new TableGroupRequest(Collections.emptyList());
 
             // when, then
-            assertThrows(InvalidRequestFormatException.class,
+            assertThrows(InvalidRequestParameterException.class,
                     () -> tableGroupService.create(request));
         }
 
@@ -84,7 +84,7 @@ class TableGroupServiceTest {
             TableGroupRequest request = new TableGroupRequest(List.of(new OrderTableDto(1L)));
 
             // when, then
-            assertThrows(InvalidRequestFormatException.class,
+            assertThrows(InvalidRequestParameterException.class,
                     () -> tableGroupService.create(request));
         }
 

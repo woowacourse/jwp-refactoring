@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.InvalidRequestParameterException;
 
 @Entity
 public class Product {
@@ -24,7 +24,7 @@ public class Product {
 
     public static Product of(String name, BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidRequestFormatException();
+            throw new InvalidRequestParameterException();
         }
         return new Product(name, price);
     }

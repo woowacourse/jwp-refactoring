@@ -11,7 +11,7 @@ import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.CannotChangeGroupedTableEmptyException;
-import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.InvalidRequestParameterException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.repository.OrderRepository;
@@ -69,7 +69,7 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
             OrderTableChangeNumberOfGuestsRequest request) {
         if (request.getNumberOfGuests() < 0) {
-            throw new InvalidRequestFormatException();
+            throw new InvalidRequestParameterException();
         }
 
         OrderTable orderTable = orderTableRepository.findById(orderTableId)

@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
-import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.InvalidRequestParameterException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -60,7 +60,7 @@ class ProductServiceTest {
             ProductRequest request = new ProductRequest("name", null);
 
             // when, then
-            assertThrows(InvalidRequestFormatException.class, () -> productService.create(request));
+            assertThrows(InvalidRequestParameterException.class, () -> productService.create(request));
         }
 
         @Test
@@ -69,7 +69,7 @@ class ProductServiceTest {
             ProductRequest request = new ProductRequest("name", new BigDecimal(-1));
 
             // when, then
-            assertThrows(InvalidRequestFormatException.class, () -> productService.create(request));
+            assertThrows(InvalidRequestParameterException.class, () -> productService.create(request));
         }
     }
 
