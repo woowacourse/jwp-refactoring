@@ -4,13 +4,16 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupRequest.OrderTableDto;
 import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableGroupNotFoundException;
+import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -35,29 +38,20 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(TableGroupRequest request) {
-
         // 오더테이블 리스트가 비었거나 사이즈가 2 미만이면 예외
         List<OrderTableDto> orderTableDtos = request.getOrderTables();
         if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidRequestFormatException();
         }
 
         // 요청으로 들어온 오더테이블이 실제 존재하는지 확인
         List<OrderTable> orderTables = request.getOrderTables().stream()
                 .map(orderTable -> orderTableRepository.findById(orderTable.getId())
-                        .orElseThrow(IllegalArgumentException::new))
+                        .orElseThrow(OrderTableNotFoundException::new))
                 .collect(toList());
 
-        // 요청으로 들어온 오더테이블이 empty거나 이미 그룹이 존재하면 예외
-        boolean isTableEmptyOrAlreadyGrouped = orderTables.stream()
-                .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(
-                        orderTable.getTableGroup()));
-        if (isTableEmptyOrAlreadyGrouped) {
-            throw new IllegalArgumentException();
-        }
-
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-        tableGroupRepository.save(tableGroup);
+        TableGroup tableGroup = tableGroupRepository.save(
+                TableGroup.of(LocalDateTime.now(), orderTables));
 
         return TableGroupResponse.from(tableGroup);
     }
@@ -65,7 +59,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(TableGroupNotFoundException::new);
         List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         // 테이블 그룹에 해당하는 주문 테이블을 가져온다
@@ -75,7 +69,7 @@ public class TableGroupService {
         boolean isUncompletedOrderExists = orders.stream()
                 .anyMatch(Orders::isOrderUnCompleted);
         if (isUncompletedOrderExists) {
-            throw new IllegalArgumentException();
+            throw new UnCompletedOrderExistsException();
         }
         tableGroupRepository.delete(tableGroup);
     }

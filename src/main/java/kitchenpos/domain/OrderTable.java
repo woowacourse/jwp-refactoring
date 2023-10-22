@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.OrderTableCannotBeGroupedException;
 
 @Entity
 public class OrderTable {
@@ -42,6 +44,17 @@ public class OrderTable {
 
     public TableGroup getTableGroup() {
         return tableGroup;
+    }
+
+    public void addToTableGroup(TableGroup tableGroup) {
+        validateCanBeAddedToNewTableGroup();
+        this.tableGroup = tableGroup;
+    }
+
+    private void validateCanBeAddedToNewTableGroup() {
+        if (isEmpty() || Objects.nonNull(this.tableGroup)) {
+            throw new OrderTableCannotBeGroupedException();
+        }
     }
 
     public int getNumberOfGuests() {

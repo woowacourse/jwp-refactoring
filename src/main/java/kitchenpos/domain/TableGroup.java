@@ -23,9 +23,17 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public static TableGroup of(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup(createdDate, orderTables);
+        for (OrderTable orderTable : orderTables) {
+            orderTable.addToTableGroup(tableGroup);
+        }
+        return tableGroup;
     }
 
     protected TableGroup() {

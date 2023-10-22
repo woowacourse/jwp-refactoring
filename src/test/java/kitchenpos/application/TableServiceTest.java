@@ -14,8 +14,8 @@ import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
-import kitchenpos.exception.InvalidNumberOfGuestsException;
-import kitchenpos.exception.OrderStatusNotChangeableException;
+import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Disabled;
@@ -111,7 +111,7 @@ class TableServiceTest {
             OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
             // when, then
-            assertThrows(OrderStatusNotChangeableException.class,
+            assertThrows(UnCompletedOrderExistsException.class,
                     () -> tableService.changeEmpty(orderTable.getId(), request));
         }
     }
@@ -148,7 +148,7 @@ class TableServiceTest {
                     -1);
 
             // when, then
-            assertThrows(InvalidNumberOfGuestsException.class,
+            assertThrows(InvalidRequestFormatException.class,
                     () -> tableService.changeNumberOfGuests(1L, request));
         }
 

@@ -12,8 +12,8 @@ import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
 import kitchenpos.exception.CannotChangeGroupedTableEmptyException;
-import kitchenpos.exception.InvalidNumberOfGuestsException;
-import kitchenpos.exception.OrderStatusNotChangeableException;
+import kitchenpos.exception.InvalidRequestFormatException;
+import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -59,7 +59,7 @@ public class TableService {
         boolean isStatusNotChangeable = orders.stream()
                 .anyMatch(Orders::isOrderUnCompleted);
         if (isStatusNotChangeable) {
-            throw new OrderStatusNotChangeableException();
+            throw new UnCompletedOrderExistsException();
         }
 
         orderTable.setEmpty(request.getEmpty());
@@ -70,7 +70,7 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
             OrderTableChangeNumberOfGuestsRequest request) {
         if (request.getNumberOfGuests() < 0) {
-            throw new InvalidNumberOfGuestsException();
+            throw new InvalidRequestFormatException();
         }
 
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
