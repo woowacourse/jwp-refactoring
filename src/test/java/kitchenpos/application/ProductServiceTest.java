@@ -1,10 +1,16 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.ProductFixture.상품;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static kitchenpos.fixture.ProductFixture.상품_등록_요청;
+import static kitchenpos.fixture.ProductFixture.상품_등록_응답;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import java.util.List;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.repositroy.ProductRepository;
+import kitchenpos.domain.product.Product;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,40 +19,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest implements ServiceTest {
 
     @Autowired
+    private ProductRepository productRepository;
+    @Autowired
     private ProductService productService;
 
     @Test
-    void 상품_생성_시_상품의_가격이_없으면_예외가_발생한다() {
+    void 상품_등록_후_등록된_상품_정보를_반환한다() {
         // given
-        final Product product = 상품("후라이드치킨", null);
-
-        // expected
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 상품의_가격은_0원_보다_작다면_예외가_발생한다() {
-        // given
-        final Product product = 상품("후라이드치킨", BigDecimal.valueOf(-1));
-
-        // expected
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 이름과_가격을_가진_상품은_생성_후_ID를_가진다() {
-        // given
-        final Product product = 상품("후라이드치킨", BigDecimal.valueOf(1000));
+        final ProductCreateRequest request = 상품_등록_요청("후라이드치킨", BigDecimal.valueOf(1000));
 
         // when
-        final Product savedProduct = productService.create(product);
+        final ProductResponse savedProduct = productService.create(request);
 
         // then
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(product.getId()).isNull();
+        SoftAssertions.assertSoftly(softly-> {
             softly.assertThat(savedProduct.getId()).isNotNull();
+            softly.assertThat(savedProduct.getProductName()).isEqualTo("후라이드치킨");
+            softly.assertThat(savedProduct.getProductPrice()).isEqualTo(BigDecimal.valueOf(1000).setScale(2));
         });
+    }
+
+
+    @Test
+    void 등록된_상품을_전체_조회한다() {
+        // given
+        Product product1 = productRepository.save(상품("후라이드치킨", BigDecimal.valueOf(1000L)));
+        Product product2 = productRepository.save(상품("양념치킨", BigDecimal.valueOf(1200L)));
+
+        // when
+        final List<ProductResponse> result = productService.list();
+
+        // then
+        assertThat(result)
+                .hasSize(2)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(
+                        상품_등록_응답(product1),
+                        상품_등록_응답(product2)
+                ));
+    }
+
+    @Test
+    void 등록된_상품이_없다면_빈_리스트를_반환한다() {
+        final List<ProductResponse> result = productService.list();
+
+        assertThat(result).isEmpty();
     }
 }

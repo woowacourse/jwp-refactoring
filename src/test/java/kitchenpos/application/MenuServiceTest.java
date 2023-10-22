@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
-import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -40,10 +39,17 @@ class MenuServiceTest implements ServiceTest {
     private MenuService menuService;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         final Product product = productDao.save(상품("100%뼈치킨", BigDecimal.valueOf(18_000)));
         this.menuProduct = 메뉴_상품(null, product.getId(), 1L);
         this.menuGroup = menuGroupDao.save(메뉴_그룹("치킨"));
+    }
+
+    private Product 상품(final String name, final BigDecimal price) {
+        final Product product = new Product();
+        product.setName(name);
+        product.setPrice(price);
+        return product;
     }
 
     @Test
