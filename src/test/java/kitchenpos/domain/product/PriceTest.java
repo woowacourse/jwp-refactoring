@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.exception.ProductException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-class ProductPriceTest {
+class PriceTest {
 
     @Test
     void 상품_가격은_null일_수_없다() {
@@ -21,7 +22,7 @@ class ProductPriceTest {
         final BigDecimal price = null;
 
         // expected
-        assertThatThrownBy(() -> new ProductPrice(price))
+        assertThatThrownBy(() -> new Price(price))
                 .isInstanceOf(ProductException.NoPriceException.class);
     }
 
@@ -31,7 +32,7 @@ class ProductPriceTest {
         final BigDecimal price = BigDecimal.valueOf(-1L);
 
         // expected
-        assertThatThrownBy(() -> new ProductPrice(price))
+        assertThatThrownBy(() -> new Price(price))
                 .isInstanceOf(ProductException.NegativePriceException.class);
     }
 
@@ -41,7 +42,7 @@ class ProductPriceTest {
         final BigDecimal price = BigDecimal.valueOf(0L);
 
         // expected
-        assertDoesNotThrow(() -> new ProductPrice(price));
+        assertDoesNotThrow(() -> new Price(price));
     }
 
     @Test
@@ -50,7 +51,7 @@ class ProductPriceTest {
         final BigDecimal price = BigDecimal.valueOf(10L);
 
         // expected
-        assertDoesNotThrow(() -> new ProductPrice(price));
+        assertDoesNotThrow(() -> new Price(price));
     }
 
     @Test
@@ -59,7 +60,7 @@ class ProductPriceTest {
         final BigDecimal price = BigDecimal.valueOf(1000.001);
 
         // when
-        final ProductPrice productPrice = new ProductPrice(price);
+        final Price productPrice = new Price(price);
 
         // then
         SoftAssertions.assertSoftly(softly -> {
@@ -74,7 +75,7 @@ class ProductPriceTest {
         final BigDecimal price = BigDecimal.valueOf(1000.005);
 
         // when
-        final ProductPrice productPrice = new ProductPrice(price);
+        final Price productPrice = new Price(price);
 
         // then
         assertThat(productPrice.getPrice()).isEqualTo(BigDecimal.valueOf(1000.01));

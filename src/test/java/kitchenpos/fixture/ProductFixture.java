@@ -5,7 +5,7 @@ import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
-import kitchenpos.domain.product.ProductPrice;
+import kitchenpos.domain.vo.Price;
 
 public class ProductFixture {
 
@@ -14,7 +14,7 @@ public class ProductFixture {
             final BigDecimal price
     ) {
         final ProductName productName = new ProductName(name);
-        final ProductPrice productPrice = new ProductPrice(price);
+        final Price productPrice = new Price(price);
         return new Product(productName, productPrice);
     }
 
