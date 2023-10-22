@@ -22,18 +22,18 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final TableGroupingService tableGroupingService;
+    private final TableValidationService tableValidationService;
     private final OrderTablesValidator orderTablesValidator;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository,
-            final TableGroupingService tableGroupingService,
+            final TableValidationService tableValidationService,
             final OrderTablesValidator orderTablesValidator
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableGroupingService = tableGroupingService;
+        this.tableValidationService = tableValidationService;
         this.orderTablesValidator = orderTablesValidator;
     }
 
@@ -81,7 +81,7 @@ public class TableGroupService {
 
     private void validateTableGroupIsAbleToUngroup(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            tableGroupingService.isAbleToUngroup(orderTable.getId());
+            tableValidationService.validateUngroupAvailable(orderTable.getId());
         }
     }
 }

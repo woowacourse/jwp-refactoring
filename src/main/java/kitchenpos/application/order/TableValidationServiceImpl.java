@@ -1,22 +1,22 @@
 package kitchenpos.application.order;
 
 import java.util.List;
-import kitchenpos.application.table.TableGroupingService;
+import kitchenpos.application.table.TableValidationService;
 import kitchenpos.dao.order.OrderRepository;
 import kitchenpos.domain.order.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TableGroupingServiceImpl implements TableGroupingService {
+public class TableValidationServiceImpl implements TableValidationService {
 
     private final OrderRepository orderRepository;
 
-    public TableGroupingServiceImpl(final OrderRepository orderRepository) {
+    public TableValidationServiceImpl(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     @Override
-    public void isAbleToGroup(final Long orderTableId) {
+    public void validateChangeEmptyAvailable(final Long orderTableId) {
         final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
         validateOrdersStatus(orders);
     }
@@ -29,7 +29,7 @@ public class TableGroupingServiceImpl implements TableGroupingService {
     }
 
     @Override
-    public void isAbleToUngroup(final Long orderTableId) {
+    public void validateUngroupAvailable(final Long orderTableId) {
         final List<Order> orders = orderRepository.findAllByOrderTableId(orderTableId);
         if (!orders.stream().allMatch(Order::isCompleted)) {
             throw new IllegalArgumentException("Cannot ungroup non-completed table.");

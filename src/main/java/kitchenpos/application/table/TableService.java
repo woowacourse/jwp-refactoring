@@ -16,16 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupingService tableGroupingService;
+    private final TableValidationService tableValidationService;
     private final TableValidator tableValidator;
 
     public TableService(
             final OrderTableRepository orderTableRepository,
-            final TableGroupingService tableGroupingService,
+            final TableValidationService tableValidationService,
             final TableValidator tableValidator
     ) {
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupingService = tableGroupingService;
+        this.tableValidationService = tableValidationService;
         this.tableValidator = tableValidator;
     }
 
@@ -46,7 +46,7 @@ public class TableService {
     public OrderTableResult changeEmpty(final Long orderTableId, final OrderTableEmptyStatusChangeRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-        tableGroupingService.isAbleToGroup(orderTableId);
+        tableValidationService.validateChangeEmptyAvailable(orderTableId);
         orderTable.changeEmpty(request.getEmpty());
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
