@@ -4,6 +4,9 @@ public class UpdateOrderStatusRequest {
 
     private String orderStatus;
 
+    protected UpdateOrderStatusRequest() {
+    }
+
     public UpdateOrderStatusRequest(String orderStatus) {
         this.orderStatus = orderStatus;
     }
