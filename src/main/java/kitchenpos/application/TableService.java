@@ -45,7 +45,7 @@ public class TableService {
         savedOrderTable.validateOrderTableHasTableGroupId();
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-            List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeEmptyStatus();

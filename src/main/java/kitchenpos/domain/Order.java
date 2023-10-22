@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,8 +24,8 @@ public class Order {
     @Column
     private Long orderTableId;
 
-    @Column
-    private String orderStatus;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column
     private LocalDateTime orderedTime = LocalDateTime.now();
@@ -34,14 +36,14 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus) {
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
     }
 
     public Order(final Long orderTableId) {
-        this(null, orderTableId, OrderStatus.COOKING.name());
+        this(null, orderTableId, OrderStatus.COOKING);
     }
 
     public void addOrderLineItems(final OrderLineItem orderLineItem) {
@@ -50,10 +52,10 @@ public class Order {
     }
 
     public void changeStatus(final String changingStatus) {
-        if (orderStatus.equals(OrderStatus.COMPLETION.name())) {
+        if (orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = changingStatus;
+        this.orderStatus = OrderStatus.valueOf(changingStatus);
     }
 
     public Long getId() {
@@ -65,7 +67,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {

@@ -34,7 +34,6 @@ class MenuGroupServiceTest {
         dataCleaner.clear();
     }
 
-
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void create_menuGroup() {
@@ -55,7 +54,8 @@ class MenuGroupServiceTest {
     @Test
     void find_all_menuGroup() {
         // given
-        menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
 
         // when
         final List<MenuGroupResponse> result = menuGroupService.list();

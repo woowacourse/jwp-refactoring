@@ -27,7 +27,7 @@ class OrderTest {
     @Test
     void change_status_fail() {
         // given
-        final Order completionOrder = new Order(1L, 1L, OrderStatus.COMPLETION.name());
+        final Order completionOrder = new Order(1L, 1L, OrderStatus.COMPLETION);
         String changingStatus = OrderStatus.COOKING.name();
 
         // when
