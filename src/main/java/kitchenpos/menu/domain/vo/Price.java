@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @Embeddable
-public final class Price {
+public final class Price implements Comparable {
 
     @Column(nullable = false, name = "price")
     private final BigDecimal value;
@@ -27,5 +27,16 @@ public final class Price {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            throw new IllegalArgumentException();
+        }
+
+        final Price otherPrice = (Price) o;
+
+        return this.value.compareTo(otherPrice.getValue());
     }
 }
