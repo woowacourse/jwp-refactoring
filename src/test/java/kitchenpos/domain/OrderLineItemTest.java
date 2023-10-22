@@ -37,7 +37,7 @@ class OrderLineItemTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
         // expect
-        assertThatCode(() -> OrderLineItem.ofWithoutOrder(menu, new Quantity(10)))
+        assertThatCode(() -> OrderLineItem.withoutOrder(menu, new Quantity(10)))
                 .doesNotThrowAnyException();
     }
 
@@ -49,7 +49,7 @@ class OrderLineItemTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
         // when
-        final OrderLineItem orderLineItem = OrderLineItem.ofWithoutOrder(menu, new Quantity(10));
+        final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(10));
         final Order order = Order.ofEmptyOrderLineItems(new OrderTable(null, 10, false));
         orderLineItem.assignOrder(order);
 

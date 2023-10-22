@@ -142,7 +142,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = createOrderTable(5, false);
 
             final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
-            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10))));
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
             final Order savedOrder = orderRepository.save(order);
             final OrderResponse expected = OrderResponse.from(savedOrder);
@@ -180,7 +180,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = createOrderTable(5, false);
 
             final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
-            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10))));
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
             final Order savedOrder = orderRepository.save(order);
 

@@ -214,7 +214,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
         private OrderTable createOrder(final OrderStatus orderStatus, final Menu menu, final int numberOfGuests) {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, numberOfGuests, true));
-            final OrderLineItem orderLineItem = OrderLineItem.ofWithoutOrder(menu, new Quantity(1));
+            final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(1));
             final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(List.of(orderLineItem));
             savedOrder.changeOrderStatus(orderStatus);

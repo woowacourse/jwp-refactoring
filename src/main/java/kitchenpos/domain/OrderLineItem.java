@@ -43,7 +43,7 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public static OrderLineItem ofWithoutOrder(final Menu menu, final Quantity quantity) {
+    public static OrderLineItem withoutOrder(final Menu menu, final Quantity quantity) {
         return new OrderLineItem(null, menu, quantity);
     }
 

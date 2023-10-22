@@ -139,7 +139,7 @@ class TableServiceTest extends ApplicationTestConfig {
                             savedMenuGroup
                     )
             );
-            final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10)));
+            final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10)));
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
             final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(orderLineItems);

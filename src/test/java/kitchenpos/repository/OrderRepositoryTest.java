@@ -104,7 +104,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
 
         final Order order = Order.ofEmptyOrderLineItems(orderTableTwo);
         order.addOrderLineItems(List.of(
-                OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1))
+                OrderLineItem.withoutOrder(savedMenu, new Quantity(1))
         ));
         persistOrder(order);
 
@@ -142,7 +142,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, false));
         final Order savedOrder = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
         savedOrder.addOrderLineItems(List.of(
-                OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1))
+                OrderLineItem.withoutOrder(savedMenu, new Quantity(1))
         ));
 
         em.flush();

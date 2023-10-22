@@ -63,7 +63,7 @@ public class OrderService {
                 .stream()
                 .map(orderLineItemRequest -> {
                     final Menu findMenu = menuRepository.findMenuById(orderLineItemRequest.getMenuId());
-                    return OrderLineItem.ofWithoutOrder(findMenu, new Quantity(orderLineItemRequest.getQuantity()));
+                    return OrderLineItem.withoutOrder(findMenu, new Quantity(orderLineItemRequest.getQuantity()));
                 }).collect(Collectors.toList());
     }
 
