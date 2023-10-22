@@ -75,11 +75,7 @@ public class MenuService {
 
         final List<MenuResponse> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {
-            final List<Long> menuProductId = menu.getMenuProducts()
-                    .stream()
-                    .map(MenuProduct::getSeq)
-                    .collect(Collectors.toList());
-            menuResponses.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductId));
+            menuResponses.add(MenuResponse.from(menu));
         }
 
         return menuResponses;
