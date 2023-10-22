@@ -3,8 +3,6 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,14 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.MenuName;
 import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Menu {
-
-    private static final int MENU_PRODUCT_SIZE_MINIMUM = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,8 +26,8 @@ public class Menu {
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts = new MenuProducts();
 
     protected Menu() {
     }
@@ -44,26 +39,15 @@ public class Menu {
         this.name = MenuName.from(name);
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
-        validateMenuProducts(menuProducts);
-        this.menuProducts = new ArrayList<>(menuProducts);
         menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
+        this.menuProducts = new MenuProducts(menuProducts);
+        validateTotalPrice();
     }
 
-
-    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
-        if (price.isBiggerThan(sumOfMenuProducts(menuProducts))) {
+    private void validateTotalPrice() {
+        if (price.isBiggerThan(menuProducts.totalPrice())) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴에 포함된 상품 가격의 총합보다 클 수 없습니다.");
         }
-        if (menuProducts.size() < MENU_PRODUCT_SIZE_MINIMUM) {
-            throw new IllegalArgumentException("메뉴 상품의 최소 개수는 " + MENU_PRODUCT_SIZE_MINIMUM + "개입니다.");
-        }
-    }
-
-    private Price sumOfMenuProducts(final List<MenuProduct> menuProducts) {
-        final List<Price> prices = menuProducts.stream()
-                .map(MenuProduct::totalPrice)
-                .collect(Collectors.toList());
-        return Price.sum(prices);
     }
 
     public Long getId() {
@@ -75,6 +59,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return new ArrayList<>(menuProducts);
+        return new ArrayList<>(menuProducts.getMenuProducts());
     }
 }

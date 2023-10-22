@@ -4,7 +4,6 @@ import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,19 +71,8 @@ class MenuTest {
     }
 
     @Test
-    @DisplayName("메뉴는 1 종류 이상의 메뉴 상품으로 구성된다.")
-    void 메뉴_생성_실패_메뉴_상품_개수() {
-        assertThatThrownBy(() -> new Menu(
-                "순두부 정식",
-                BigDecimal.ZERO,
-                new MenuGroup("이벤트 메뉴"),
-                Collections.emptyList()
-        )).isInstanceOf(Exception.class);
-    }
-
-    @Test
-    @DisplayName("메뉴 등록 시 가격은 상품 총액보다 클 수 없다.")
-    void 메뉴_등록_실패_상품_총액보다_큰_가격() {
+    @DisplayName("메뉴 가격은 메뉴에 포함된 상품 총액보다 클 수 없다.")
+    void 메뉴_생성_실패_상품_총액보다_큰_가격() {
         // given
         final BigDecimal productPrice1 = BigDecimal.valueOf(14000);
         final BigDecimal productPrice2 = BigDecimal.valueOf(8000);
