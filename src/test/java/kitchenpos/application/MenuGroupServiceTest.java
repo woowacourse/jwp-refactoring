@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.MenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,16 +28,15 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void createMenuGroup() {
             //given
-            final MenuGroup expected = new MenuGroup();
-            expected.setName("name");
+            final MenuGroupCreateRequest request = new MenuGroupCreateRequest("menu group");
 
             //when
-            final MenuGroup actual = menuGroupService.create(expected);
+            final MenuGroup actual = menuGroupService.create(request);
 
             //then
             assertSoftly(softly -> {
                 assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(expected.getName());
+                assertThat(actual.getName()).isEqualTo(request.getName());
             });
         }
     }
@@ -47,16 +49,14 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void findAllMenuGroup() {
             //given
-            final MenuGroup menuGroup1 = new MenuGroup();
-            menuGroup1.setName("name1");
+            final MenuGroup menuGroup1 = new MenuGroup("name1");
             final MenuGroup expected1 = testFixtureBuilder.buildMenuGroup(menuGroup1);
 
-            final MenuGroup menuGroup2 = new MenuGroup();
-            menuGroup2.setName("name2");
+            final MenuGroup menuGroup2 = new MenuGroup("name2");
             final MenuGroup expected2 = testFixtureBuilder.buildMenuGroup(menuGroup2);
 
             //when
-            final List<MenuGroup> actual = menuGroupService.list();
+            final List<MenuGroupResponse> actual = menuGroupService.list();
 
             //then
             assertSoftly(softly -> {

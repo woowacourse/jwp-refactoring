@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Product;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,18 +29,14 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreate() {
             //given
-            final Product product = new Product();
-            product.setPrice(new BigDecimal(1000));
-            product.setName("product");
+            final ProductCreateRequest request = new ProductCreateRequest("product", new BigDecimal(1000));
 
             //when
-            final Product actual = productService.create(product);
+            final Long id = productService.create(request);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isNotNull();
-                softly.assertThat(actual.getPrice()).isEqualByComparingTo(product.getPrice());
-                softly.assertThat(actual.getName()).isEqualTo(product.getName());
+                softly.assertThat(id).isNotNull();
             });
         }
 
@@ -45,11 +44,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreateFailWhenPriceIsNull() {
             //given
-            final Product product = new Product();
-            product.setPrice(null);
+            final ProductCreateRequest request = new ProductCreateRequest("product", null);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -57,11 +55,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productCreateFailWhenPriceLessThenZero() {
             //given
-            final Product product = new Product();
-            product.setPrice(new BigDecimal(-1));
+            final ProductCreateRequest request = new ProductCreateRequest("product", new BigDecimal(-1));
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -74,19 +71,17 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void productFindAll() {
             //given
-            Product product = new Product();
-            product.setPrice(new BigDecimal(1000));
-            product.setName("product");
+            final Product product = new Product("product", new BigDecimal(1000));
             final Product expected = testFixtureBuilder.buildProduct(product);
 
             //when
-            final List<Product> actual = productService.list();
+            final List<ProductResponse> actual = productService.list();
 
             //then
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
                 softly.assertThat(actual.get(0).getId()).isEqualTo(expected.getId());
-                softly.assertThat(actual.get(0).getPrice()).isEqualTo(expected.getPrice());
+                softly.assertThat(actual.get(0).getPrice()).isEqualByComparingTo(expected.getPrice());
                 softly.assertThat(actual.get(0).getName()).isEqualTo(expected.getName());
             });
         }

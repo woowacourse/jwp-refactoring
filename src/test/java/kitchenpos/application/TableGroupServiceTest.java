@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -30,16 +33,10 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        orderTable1.setNumberOfGuests(3);
-        orderTable1.setTableGroupId(null);
+        OrderTable orderTable1 = new OrderTable(null, 3, true);
         orderTable1 = testFixtureBuilder.buildOrderTable(orderTable1);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        orderTable2.setNumberOfGuests(5);
-        orderTable2.setTableGroupId(null);
+        OrderTable orderTable2 = new OrderTable(null, 5, true);
         orderTable2 = testFixtureBuilder.buildOrderTable(orderTable2);
 
         orderTables = new ArrayList<>();
@@ -55,15 +52,14 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreate() {
             //given
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables.stream().map(OrderTable::getId).collect(Collectors.toList()));
 
             //when
-            final TableGroup actual = tableGroupService.create(tableGroup);
+            final Long id = tableGroupService.create(request);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isNotNull();
+                softly.assertThat(id).isNotNull();
             });
         }
 
@@ -71,11 +67,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenOrderTablesIsEmpty() {
             //given
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(Collections.emptyList());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -83,11 +78,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenOrderTablesSizeLessThenTwo() {
             //given
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(orderTables.get(0)));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTables.get(0).getId()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -95,18 +89,10 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenNotExistOrderTable() {
             //given
-            final OrderTable notExistOrderTable = new OrderTable();
-            notExistOrderTable.setId(-1L);
-            notExistOrderTable.setEmpty(true);
-            notExistOrderTable.setTableGroupId(null);
-            notExistOrderTable.setNumberOfGuests(3);
-            orderTables.add(notExistOrderTable);
-
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(-1L));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,18 +100,14 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenOrderTableIsNotEmpty() {
             //given
-            OrderTable notEmptyOrderTable = new OrderTable();
-            notEmptyOrderTable.setEmpty(false);
-            notEmptyOrderTable.setTableGroupId(null);
-            notEmptyOrderTable.setNumberOfGuests(3);
+            OrderTable notEmptyOrderTable = new OrderTable(null, 3, false);
             notEmptyOrderTable = testFixtureBuilder.buildOrderTable(notEmptyOrderTable);
             orderTables.add(notEmptyOrderTable);
 
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables.stream().map(OrderTable::getId).collect(Collectors.toList()));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -133,22 +115,17 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupCreateFailWhenOrderTableIsNotNullTableGroupId() {
             //given
-            TableGroup beforeTableGroup = new TableGroup();
-            beforeTableGroup.setCreatedDate(LocalDateTime.now());
-            beforeTableGroup.setOrderTables(orderTables);
+            TableGroup beforeTableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             beforeTableGroup = testFixtureBuilder.buildTableGroup(beforeTableGroup);
 
-            OrderTable tableGroupIdNotNullOrderTable = new OrderTable();
-            tableGroupIdNotNullOrderTable.setEmpty(true);
-            tableGroupIdNotNullOrderTable.setTableGroupId(beforeTableGroup.getId());
-            tableGroupIdNotNullOrderTable.setNumberOfGuests(3);
+            OrderTable tableGroupIdNotNullOrderTable = new OrderTable(beforeTableGroup, 3, true);
             tableGroupIdNotNullOrderTable = testFixtureBuilder.buildOrderTable(tableGroupIdNotNullOrderTable);
 
-            final TableGroup tableGroup = new TableGroup();
             orderTables.add(tableGroupIdNotNullOrderTable);
-            tableGroup.setOrderTables(orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables.stream().map(OrderTable::getId).collect(Collectors.toList()));
+
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -161,9 +138,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void tableGroupUpGroup() {
             //given
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setCreatedDate(LocalDateTime.now());
-            tableGroup.setOrderTables(orderTables);
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             tableGroup = testFixtureBuilder.buildTableGroup(tableGroup);
 
             //when
@@ -176,21 +151,13 @@ class TableGroupServiceTest extends ServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void tableGroupUpGroupFailWhenOrderStatusInCookingOrMeal(final String orderStatus) {
             //given
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(orderTables);
-            tableGroup.setCreatedDate(LocalDateTime.now());
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             tableGroup = testFixtureBuilder.buildTableGroup(tableGroup);
 
-            OrderTable notCompletionOrdertable = new OrderTable();
-            notCompletionOrdertable.setEmpty(false);
-            notCompletionOrdertable.setTableGroupId(tableGroup.getId());
-            notCompletionOrdertable.setNumberOfGuests(3);
+            OrderTable notCompletionOrdertable = new OrderTable(tableGroup, 3, false);
             notCompletionOrdertable = testFixtureBuilder.buildOrderTable(notCompletionOrdertable);
 
-            final Order notCompletionOrder = new Order();
-            notCompletionOrder.setOrderStatus(orderStatus);
-            notCompletionOrder.setOrderedTime(LocalDateTime.now());
-            notCompletionOrder.setOrderTableId(notCompletionOrdertable.getId());
+            final Order notCompletionOrder = new Order(notCompletionOrdertable, orderStatus, LocalDateTime.now(), Collections.emptyList());
             testFixtureBuilder.buildOrder(notCompletionOrder);
 
             // when & then
