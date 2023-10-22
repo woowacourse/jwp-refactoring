@@ -18,7 +18,7 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
-    public MenuGroup() {
+    protected MenuGroup() {
 
     }
 
@@ -29,10 +29,6 @@ public class MenuGroup {
 
     public static MenuGroup forSave(final String name) {
         return new MenuGroup(null, name);
-    }
-
-    public static MenuGroup saved(final Long id, final String name) {
-        return new MenuGroup(id, name);
     }
 
     public Long getId() {

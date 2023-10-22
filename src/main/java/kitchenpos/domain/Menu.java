@@ -30,7 +30,7 @@ public class Menu {
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu() {
+    protected Menu() {
     }
 
     private Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
@@ -44,11 +44,6 @@ public class Menu {
         return new Menu(null, name, Price.from(price), menuGroupId);
     }
 
-    public static Menu saved(final Long id, final String name, final Integer price, final Long menuGroupId) {
-        return new Menu(id, name, Price.from(price), menuGroupId);
-    }
-
-
     public void validateOverPrice(final BigDecimal productSumPrice) {
         if (price.isBigger(productSumPrice)) {
             throw new IllegalArgumentException();
@@ -60,26 +55,21 @@ public class Menu {
         menuProducts.add(menuProduct);
     }
 
-
     public Long getId() {
         return id;
     }
-
 
     public String getName() {
         return name;
     }
 
-
     public BigDecimal getPrice() {
         return price.getValue();
     }
 
-
     public Long getMenuGroupId() {
         return menuGroupId;
     }
-
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;

@@ -25,7 +25,7 @@ public class TableGroup {
     @OneToMany
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(final Long id) {
@@ -53,23 +53,11 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

@@ -23,6 +23,10 @@ public class Product {
     @Embedded
     private Price price;
 
+    protected Product() {
+
+    }
+
     private Product(final Long id, final String name, final Integer price) {
         this.id = id;
         this.name = name;
@@ -35,10 +39,6 @@ public class Product {
 
     public static Product saved(final Long id, final String name, final Integer price) {
         return new Product(id, name, price);
-    }
-
-    public Product() {
-
     }
 
     public Long getId() {

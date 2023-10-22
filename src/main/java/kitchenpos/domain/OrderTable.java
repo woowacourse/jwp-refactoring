@@ -27,7 +27,7 @@ public class OrderTable {
     @Column
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
@@ -52,11 +52,11 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
-        validateNumbeerOfGuests(numberOfGuests);
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validateNumbeerOfGuests(final int numberOfGuests) {
+    private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -78,19 +78,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public void setTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

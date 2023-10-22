@@ -27,7 +27,7 @@ public class MenuProduct {
     @Column(nullable = false)
     private long quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     private MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
