@@ -82,11 +82,10 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final String orderStatus) {
         final Order savedOrder = orderRepository.findOrderById(orderId);
         final OrderStatus findOrderStatus = OrderStatus.valueOf(orderStatus);
-        savedOrder.changeOrderStatus(findOrderStatus);
 
-        orderRepository.save(savedOrder);
+        final Order findOrder = orderRepository.findOrderById(orderId);
+        findOrder.changeOrderStatus(findOrderStatus);
 
-        savedOrder.addOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-        return savedOrder;
+        return findOrder;
     }
 }
