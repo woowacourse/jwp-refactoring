@@ -25,8 +25,8 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public static MenuProduct of(Long menuId, Long productId, long quantity) {
-        return new MenuProduct(menuId, productId, Quantity.valueOf(quantity));
+    public static MenuProduct of(Long productId, long quantity) {
+        return new MenuProduct(productId, Quantity.valueOf(quantity));
     }
 
     public Long getSeq() {

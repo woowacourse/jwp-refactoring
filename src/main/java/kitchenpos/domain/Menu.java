@@ -27,15 +27,16 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-    }
-
-    public static Menu of(String name, BigDecimal price, Long menuGroupId) {
+    public static Menu of(
+            String name,
+            BigDecimal price,
+            Long menuGroupId,
+            List<MenuProduct> menuProducts,
+            BigDecimal menuProductTotalPrice
+    ) {
         validatePrice(price);
-        return new Menu(name, price, menuGroupId);
+        validateMenuProductTotalPrice(price, menuProductTotalPrice);
+        return new Menu(name, price, menuGroupId, menuProducts);
     }
 
     private static void validatePrice(BigDecimal price) {
@@ -44,8 +45,8 @@ public class Menu {
         }
     }
 
-    public void validateMenuProductTotalPrice(BigDecimal MenuProductTotalPrice) {
-        if (price.compareTo(MenuProductTotalPrice) > 0) {
+    private static void validateMenuProductTotalPrice(BigDecimal price, BigDecimal menuProductTotalPrice) {
+        if (price.compareTo(menuProductTotalPrice) > 0) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 총액을 초과할 수 없습니다.");
         }
     }
