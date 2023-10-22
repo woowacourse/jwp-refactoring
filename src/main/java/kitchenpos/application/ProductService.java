@@ -1,34 +1,35 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class ProductService {
-    private final ProductDao productDao;
-
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
-    }
+    private final ProductRepository productRepository;
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductResponse create(final ProductRequest productRequest) {
+        final Product product = productRequest.convert();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        product.validatePrice();
 
-        return productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
+        return ProductResponse.from(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        final List<Product> allProducts = productRepository.findAll();
+        return allProducts.stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
     }
 }

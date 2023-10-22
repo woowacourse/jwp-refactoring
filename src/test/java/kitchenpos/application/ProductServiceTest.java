@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import fixture.ProductBuilder;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,32 +19,31 @@ class ProductServiceTest extends ServiceTest {
     ProductService productService;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Test
     void 제품을_저장한다() {
-        Product product = ProductBuilder.init()
-                .build();
+        final ProductRequest request = new ProductRequest(null, "abc", BigDecimal.valueOf(1000));
 
-        Product createdProduct = productService.create(product);
+        final ProductResponse productResponse = productService.create(request);
 
-        assertThat(createdProduct.getId()).isNotNull();
+        assertThat(productResponse.getId()).isNotNull();
     }
 
     @Test
     void 제품_가격이_음수면_예외를_발생한다() {
-        Product product = ProductBuilder.init()
-                .price(-100L)
-                .build();
+        final ProductRequest request = new ProductRequest(null, "abc", BigDecimal.valueOf(-200));
 
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 모든_제품을_조회한다() {
-        List<Product> expected = productDao.findAll();
+        final List<ProductResponse> expected = productRepository.findAll().stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
 
-        List<Product> actual = productService.list();
+        final List<ProductResponse> actual = productService.list();
 
         assertThat(actual)
                 .usingRecursiveComparison()
