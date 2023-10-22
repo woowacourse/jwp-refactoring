@@ -102,8 +102,4 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
 }

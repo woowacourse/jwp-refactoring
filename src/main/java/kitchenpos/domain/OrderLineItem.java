@@ -67,8 +67,4 @@ public class OrderLineItem {
     public Quantity getQuantity() {
         return quantity;
     }
-
-    public void setOrderId(final Long orderId) {
-        this.order.setId(orderId);
-    }
 }

@@ -119,16 +119,4 @@ public class Order {
     public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
 }
