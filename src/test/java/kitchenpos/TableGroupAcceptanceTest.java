@@ -29,7 +29,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         @Test
         void 테이블_그룹을_생성한다() {
             final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(
+            tableGroup.changeOrderTables(
                     List.of(
                             테이블_생성_요청하고_테이블_반환(EMPTY_테이블()),
                             테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
@@ -52,7 +52,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         void 테이블_그룹으로_묶이는_테이블은_다른_그룹으로_이미_묶인_테이블이_아니다() {
             final TableGroup tableGroup1 = new TableGroup();
             final OrderTable orderTable1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
-            tableGroup1.setOrderTables(
+            tableGroup1.changeOrderTables(
                     List.of(
                             orderTable1,
                             테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
@@ -62,7 +62,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             테이블_그룹_생성_요청(tableGroup1);
 
             final TableGroup tableGroup2 = new TableGroup();
-            tableGroup2.setOrderTables(
+            tableGroup2.changeOrderTables(
                     List.of(
                             orderTable1,
                             테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
@@ -77,7 +77,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         @Test
         void 테이블_그룹으로_묶이는_테이블은_모두_비어있는_상태여야한다() {
             final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(
+            tableGroup.changeOrderTables(
                     List.of(
                             테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블()),
                             테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
@@ -98,7 +98,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             final TableGroup tableGroup = new TableGroup();
             final OrderTable orderTable1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
             final OrderTable orderTable2 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
-            tableGroup.setOrderTables(
+            tableGroup.changeOrderTables(
                     List.of(
                             orderTable1,
                             orderTable2

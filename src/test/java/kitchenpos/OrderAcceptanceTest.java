@@ -27,7 +27,6 @@ import static kitchenpos.step.OrderStep.주문_생성_요청하고_주문_반환
 import static kitchenpos.step.OrderStep.주문_조회_요청;
 import static kitchenpos.step.ProductStep.toRequest;
 import static kitchenpos.step.ProductStep.상품_생성_요청하고_상품_반환;
-import static kitchenpos.step.ProductStep.상품_생성_요청하고_아이디_반환;
 import static kitchenpos.step.TableStep.테이블_생성_요청하고_테이블_반환;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -53,17 +52,16 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
+            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
 
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());
@@ -76,7 +74,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId()),
                     () -> assertThat(response.jsonPath().getList("orderLineItems", OrderLineItem.class))
                             .usingRecursiveComparison()
-                            .comparingOnlyFields("menuId", "quantity")
+                            .comparingOnlyFields("menuId")
                             .isEqualTo(order.getOrderLineItems())
             );
         }
@@ -122,21 +120,17 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
-            final OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setQuantity(1L);
-            orderLineItem1.setMenuId(menuId);
-
-            final OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setQuantity(1L);
-            orderLineItem2.setMenuId(menuId);
+            final OrderLineItem orderLineItem1 = new OrderLineItem(menuId, 1L);
+            final OrderLineItem orderLineItem2 = new OrderLineItem(menuId, 1L);
 
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());
@@ -157,20 +151,19 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final Menu menu = new Menu(
+                    "스키야키",
+                    BigDecimal.valueOf(11_900),
+                    menuGroupId,
+                    List.of(menuProduct)
+            );
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
-            final OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setQuantity(1L);
-            orderLineItem1.setMenuId(menuId);
+            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 1L);
 
             final Order order = new Order();
-            order.setOrderLineItems(List.of(orderLineItem1));
+            order.setOrderLineItems(List.of(orderLineItem));
 
             final ExtractableResponse<Response> response = 주문_생성_요청(order);
 
@@ -202,9 +195,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
+            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
 
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());
@@ -249,9 +240,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
+            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
 
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());
@@ -292,9 +281,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
+            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
 
             final Order order = new Order();
             order.setOrderTableId(savedOrderTable.getId());

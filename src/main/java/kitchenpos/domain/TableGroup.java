@@ -20,6 +20,19 @@ public class TableGroup {
     @Transient
     private List<OrderTable> orderTables;
 
+    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
+    }
+
+    public TableGroup() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,7 +53,7 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void changeOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 }

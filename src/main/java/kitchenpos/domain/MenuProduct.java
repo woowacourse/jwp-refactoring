@@ -30,10 +30,6 @@ public class MenuProduct extends BaseDate {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public void setMenu(final Menu menu) {
         this.menu = menu;
     }
