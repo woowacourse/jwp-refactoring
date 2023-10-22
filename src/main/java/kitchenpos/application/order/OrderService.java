@@ -11,7 +11,7 @@ import kitchenpos.dao.order.OrderRepository;
 import kitchenpos.domain.menu.MenuExistValidationEvent;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.table.TableValidationEvent;
+import kitchenpos.domain.table.TableExistValidationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,7 @@ public class OrderService {
     public OrderResult create(final OrderCreationRequest request) {
         final List<OrderItemsWithQuantityRequest> orderLineItemRequests = request.getOrderLineItems();
         final Long orderTableId = request.getOrderTableId();
-        eventPublisher.publishEvent(new TableValidationEvent(orderTableId));
+        eventPublisher.publishEvent(new TableExistValidationEvent(orderTableId));
         final Order order = orderRepository.save(new Order(orderTableId));
         final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
         orderLineItemRepository.saveAll(orderLineItems);

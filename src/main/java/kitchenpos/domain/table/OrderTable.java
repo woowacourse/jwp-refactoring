@@ -77,22 +77,10 @@ public class OrderTable {
         throw new IllegalArgumentException("Cannot change empty status of table in group");
     }
 
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        validateNumberOfGuests(numberOfGuests);
-        validateTableIsEmpty();
+    public void changeNumberOfGuests(final int numberOfGuests, final TableValidator tableValidator) {
+        tableValidator.validateNumberOfGuests(numberOfGuests);
+        tableValidator.validateTableIsEmpty(this);
         this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("Number of guests must be greater than 0");
-        }
-    }
-
-    private void validateTableIsEmpty() {
-        if (this.empty) {
-            throw new IllegalArgumentException("Cannot change number of guests of empty table");
-        }
     }
 
     public Long getId() {

@@ -14,7 +14,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    public void handle(final TableValidationEvent event) {
+    public void handle(final TableExistValidationEvent event) {
         final Long tableId = event.getTableId();
         final OrderTable orderTable = orderTableRepository.findById(tableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));

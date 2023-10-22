@@ -8,6 +8,7 @@ import kitchenpos.application.dto.OrderTableGuestAmountChangeRequest;
 import kitchenpos.application.dto.result.OrderTableResult;
 import kitchenpos.dao.table.OrderTableRepository;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +17,16 @@ public class TableService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupingService tableGroupingService;
+    private final TableValidator tableValidator;
 
     public TableService(
             final OrderTableRepository orderTableRepository,
-            final TableGroupingService tableGroupingService
+            final TableGroupingService tableGroupingService,
+            final TableValidator tableValidator
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupingService = tableGroupingService;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -54,7 +58,7 @@ public class TableService {
     ) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests(), tableValidator);
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 }

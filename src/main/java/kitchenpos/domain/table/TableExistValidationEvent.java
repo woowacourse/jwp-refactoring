@@ -1,10 +1,10 @@
 package kitchenpos.domain.table;
 
-public class TableValidationEvent {
+public class TableExistValidationEvent {
 
     private final Long tableId;
 
-    public TableValidationEvent(final Long tableId) {
+    public TableExistValidationEvent(final Long tableId) {
         this.tableId = tableId;
     }
 
