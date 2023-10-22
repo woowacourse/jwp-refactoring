@@ -7,7 +7,7 @@ import kitchenpos.exception.InvalidQuantityException;
 @Embeddable
 public class MenuProductQuantity {
 
-    private static final int MINIMUM_QUANTITY = 0;
+    private static final int MINIMUM_QUANTITY = 1;
 
     @Column(name = "quantity", nullable = false)
     private Long value;
@@ -15,18 +15,18 @@ public class MenuProductQuantity {
     protected MenuProductQuantity() {
     }
 
-    public MenuProductQuantity(final long value) {
+    public MenuProductQuantity(final Long value) {
         validate(value);
         this.value = value;
     }
 
-    private void validate(final long value) {
+    private void validate(final Long value) {
         validatePositive(value);
     }
 
-    private static void validatePositive(final long value) {
+    private static void validatePositive(final Long value) {
         if (value < MINIMUM_QUANTITY) {
-            throw new InvalidQuantityException("메뉴 상품 수량은 0개 이상이어야 합니다.");
+            throw new InvalidQuantityException("메뉴 상품 수량은 1개 이상이어야 합니다.");
         }
     }
 
