@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
     private Long id;
@@ -26,8 +27,15 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void changeStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void changeStatus(OrderStatus orderStatus) {
+        validateStatus(orderStatus);
+        this.orderStatus = orderStatus.name();
+    }
+
+    private void validateStatus(OrderStatus orderStatus) {
+        if (Objects.equals(orderStatus.name(), OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
