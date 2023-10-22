@@ -37,11 +37,11 @@ public final class OrderTableFixture {
     }
 
     public OrderTable build() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(
+            id,
+            tableGroupId,
+            numberOfGuests,
+            empty
+        );
     }
 }
