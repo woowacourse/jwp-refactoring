@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.CreateOrderLineItemRequest;
 import kitchenpos.ui.dto.CreateOrderRequest;
 import org.assertj.core.api.SoftAssertions;
@@ -96,10 +97,10 @@ class OrderServiceTest {
         final OrderTable 주문_테이블 = orderTableDao.save(orderTable(3, false));
         final List<CreateOrderLineItemRequest> 빈_주문_항목 = Collections.emptyList();
 
-        final CreateOrderRequest invlaidOrder = new CreateOrderRequest(주문_테이블.getId(), 빈_주문_항목);
+        final CreateOrderRequest invalidOrder = new CreateOrderRequest(주문_테이블.getId(), 빈_주문_항목);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invlaidOrder))
+        assertThatThrownBy(() -> orderService.create(invalidOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -179,10 +180,10 @@ class OrderServiceTest {
         final Order 주문 = orderDao.save(order(주문_테이블.getId(), OrderStatus.COOKING, List.of(주문항목)));
 
         final OrderStatus expect = OrderStatus.MEAL;
-        final Order orderStatusChange = order(주문_테이블.getId(), expect);
+        final ChangeOrderStatusRequest order = new ChangeOrderStatusRequest(expect.name());
 
         // when
-        final Order actual = orderService.changeOrderStatus(주문.getId(), orderStatusChange);
+        final Order actual = orderService.changeOrderStatus(주문.getId(), order);
 
         // then
         assertThat(OrderStatus.valueOf(actual.getOrderStatus())).isEqualTo(expect);
@@ -197,10 +198,10 @@ class OrderServiceTest {
         final Order 완료된_주문 = orderDao.save(order(주문_테이블.getId(), OrderStatus.COMPLETION, List.of(주문항목)));
 
         final OrderStatus newOrderStatus = OrderStatus.MEAL;
-        final Order orderStatusChange = order(주문_테이블.getId(), newOrderStatus);
+        final ChangeOrderStatusRequest order = new ChangeOrderStatusRequest(newOrderStatus.name());
 
         // when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(완료된_주문.getId(), orderStatusChange))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(완료된_주문.getId(), order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
