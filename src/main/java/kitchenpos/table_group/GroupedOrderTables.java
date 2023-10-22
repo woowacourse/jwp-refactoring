@@ -22,7 +22,7 @@ public class GroupedOrderTables {
     }
 
     public void group(TableGroup tableGroup) {
-        values.forEach(it -> it.group(tableGroup));
+        values.forEach(it -> it.group(tableGroup.getId()));
     }
 
     public void ungroup() {

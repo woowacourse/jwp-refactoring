@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
-class TableServiceTest {
+class OrderTableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -42,7 +42,7 @@ class TableServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private TableService tableService;
+    private OrderTableService orderTableService;
 
     @Test
     void 주문테이블을_저장() {
@@ -50,7 +50,7 @@ class TableServiceTest {
         var request = new OrderTableCreateRequest(4, true);
 
         // when
-        OrderTable actual = tableService.create(request);
+        OrderTable actual = orderTableService.create(request);
 
         // then
         assertAll(
@@ -69,7 +69,7 @@ class TableServiceTest {
         expected.add(orderTableRepository.save(new OrderTable(2, true)));
 
         // when
-        List<OrderTable> actual = tableService.list();
+        List<OrderTable> actual = orderTableService.list();
 
         // then
         assertThat(actual).usingRecursiveComparison()
@@ -85,7 +85,7 @@ class TableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when
-            OrderTable actual = tableService.changeEmpty(givenId, true);
+            OrderTable actual = orderTableService.changeEmpty(givenId, true);
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -97,7 +97,7 @@ class TableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
 
             // when
-            OrderTable actual = tableService.changeEmpty(givenId, false);
+            OrderTable actual = orderTableService.changeEmpty(givenId, false);
 
             // then
             assertThat(actual.isEmpty()).isFalse();
@@ -106,7 +106,7 @@ class TableServiceTest {
         @Test
         void 없는_주문테이블이면_예외() {
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, true))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, true))
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -118,7 +118,7 @@ class TableServiceTest {
             OrderTable orderTableB = orderTableRepository.save(new OrderTable(null, tableGroupId, 2, true));
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableA.getId(), false))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTableA.getId(), false))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블그룹에 속한 테이블의 상태를 변경할 수 없습니다.");
 
@@ -133,7 +133,7 @@ class TableServiceTest {
             orderRepository.save(order);
 
             // when && then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("주문이 완료된 테이블만 상태를 변경할 수 있습니다.");
         }
@@ -149,7 +149,7 @@ class TableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when
-            OrderTable actual = tableService.changeNumberOfGuests(givenId, changedNumberOfGuests);
+            OrderTable actual = orderTableService.changeNumberOfGuests(givenId, changedNumberOfGuests);
 
             // then
             assertThat(actual.getNumberOfGuests()).isEqualTo(changedNumberOfGuests);
@@ -162,7 +162,7 @@ class TableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, false)).getId();
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(givenId, wrongValue))
+            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(givenId, wrongValue))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("테이블 인원은 양수여야합니다.");
         }
@@ -170,7 +170,7 @@ class TableServiceTest {
         @Test
         void 해당하는_주문테이블이_없으면_예외() {
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, 1))
+            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(1L, 1))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("존재하지 않는 주문테이블입니다.");
         }
@@ -181,7 +181,7 @@ class TableServiceTest {
             Long givenId = orderTableRepository.save(new OrderTable(5, true)).getId();
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(givenId, 4))
+            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(givenId, 4))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블의 인원을 변경할 수 없습니다.");
         }

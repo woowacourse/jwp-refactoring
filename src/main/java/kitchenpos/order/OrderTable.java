@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.table_group.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -52,16 +51,16 @@ public class OrderTable {
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
-    public void group(TableGroup tableGroup) {
+    public void group(Long tableGroupId) {
         if (!empty) {
             throw new IllegalArgumentException("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
 
-        if (Objects.nonNull(tableGroupId)) {
+        if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException("그룹에 속하지 않은 테이블만 주문그룹이 될 수 있습니다.");
         }
         this.empty = false;
-        this.tableGroupId = tableGroup.getId();
+        this.tableGroupId = tableGroupId;
     }
 
     public void unGroup() {

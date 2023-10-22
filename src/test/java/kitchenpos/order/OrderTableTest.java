@@ -94,7 +94,7 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(5, true);
 
             // when
-            orderTable.group(tableGroup);
+            orderTable.group(tableGroup.getId());
 
             // then
             assertAll(
@@ -110,7 +110,7 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(5, false);
 
             // when && then
-            assertThatThrownBy(() -> orderTable.group(tableGroup))
+            assertThatThrownBy(() -> orderTable.group(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("비어있는 테이블만 주문그룹이 될 수 있습니다.");
         }
@@ -122,7 +122,7 @@ class OrderTableTest {
             OrderTable orderTable = new OrderTable(1L, 2L,5, true);
 
             // when && then
-            assertThatThrownBy(() -> orderTable.group(tableGroup))
+            assertThatThrownBy(() -> orderTable.group(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("그룹에 속하지 않은 테이블만 주문그룹이 될 수 있습니다.");
         }
