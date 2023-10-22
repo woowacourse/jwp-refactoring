@@ -4,7 +4,7 @@ public class EmptyChangeRequest {
 
     private boolean isEmpty;
 
-    public EmptyChangeRequest() {
+    private EmptyChangeRequest() {
     }
 
     public EmptyChangeRequest(boolean isEmpty) {

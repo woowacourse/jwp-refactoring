@@ -8,7 +8,7 @@ public class TableGroupCreateRequest {
 
     private List<Long> tableIds;
 
-    public TableGroupCreateRequest() {
+    private TableGroupCreateRequest() {
     }
 
     public TableGroupCreateRequest(List<Long> tableIds) {

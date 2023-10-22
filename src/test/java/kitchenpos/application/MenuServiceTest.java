@@ -68,7 +68,6 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void Menu를_조회할_수_있다() {
         //given
-        final Product product = productRepository.save(new Product("디노 탕후루", new BigDecimal(4000)));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
         final Menu menu = new Menu("디노 세트", new BigDecimal(8000), menuGroup.getId());
         menuRepository.save(menu);

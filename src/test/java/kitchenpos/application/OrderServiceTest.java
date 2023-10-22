@@ -122,6 +122,6 @@ class OrderServiceTest extends ServiceTest {
         //when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), OrderStatus.COOKING.name()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(("이미 완료된 주문입니다."));
+                .hasMessage("이미 완료된 주문입니다.");
     }
 }

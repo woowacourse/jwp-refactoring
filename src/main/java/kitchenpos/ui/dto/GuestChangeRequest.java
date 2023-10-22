@@ -7,7 +7,7 @@ public class GuestChangeRequest {
     @PositiveOrZero
     private Integer numberOfGuests;
 
-    public GuestChangeRequest() {
+    private GuestChangeRequest() {
     }
 
     public GuestChangeRequest(Integer numberOfGuests) {

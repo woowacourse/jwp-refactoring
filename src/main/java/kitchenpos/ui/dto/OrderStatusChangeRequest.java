@@ -4,7 +4,7 @@ public class OrderStatusChangeRequest {
 
     private String orderStatus;
 
-    public OrderStatusChangeRequest() {
+    private OrderStatusChangeRequest() {
     }
 
     public OrderStatusChangeRequest(String orderStatus) {
