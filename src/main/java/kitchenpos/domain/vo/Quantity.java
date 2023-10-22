@@ -7,7 +7,7 @@ import java.util.Objects;
 @Embeddable
 public class Quantity {
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private long value;
 
     protected Quantity() {

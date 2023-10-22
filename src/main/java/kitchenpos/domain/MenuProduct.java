@@ -6,6 +6,7 @@ import kitchenpos.domain.vo.Quantity;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,11 +20,11 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false, foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false, foreignKey = @ForeignKey(name = "fk_menu_product_to_product"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 

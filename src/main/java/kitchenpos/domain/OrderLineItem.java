@@ -5,6 +5,7 @@ import kitchenpos.domain.vo.Quantity;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,11 +19,11 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false, foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false, foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 

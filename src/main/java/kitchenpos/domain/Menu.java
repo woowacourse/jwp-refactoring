@@ -6,6 +6,7 @@ import kitchenpos.domain.vo.Price;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @JoinColumn(name = "menu_group_id")
+    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
 

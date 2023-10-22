@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,14 +17,14 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "table_group_id")
+    @JoinColumn(name = "table_group_id", nullable = true, foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
     @ManyToOne(fetch = FetchType.LAZY)
     private TableGroup tableGroup;
 
-    @Column(name = "number_of_guests")
+    @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
 
-    @Column(name = "empty")
+    @Column(name = "empty", nullable = false)
     private boolean empty;
 
     protected OrderTable() {
