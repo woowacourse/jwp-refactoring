@@ -2,6 +2,7 @@ package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -23,7 +24,9 @@ class OrderTableRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        TableGroup tableGroupEntity = TableGroup.builder().build();
+        TableGroup tableGroupEntity = TableGroup.builder()
+                .orderTables(Collections.emptyList())
+                .build();
         tableGroup = tableGroupRepository.save(tableGroupEntity);
     }
 

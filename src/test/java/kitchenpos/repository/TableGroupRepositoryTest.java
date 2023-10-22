@@ -2,6 +2,7 @@ package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,8 @@ class TableGroupRepositoryTest {
     }
 
     private TableGroup createTableGroupEntity() {
-        return TableGroup.builder().build();
+        return TableGroup.builder()
+                .orderTables(Collections.emptyList())
+                .build();
     }
 }
