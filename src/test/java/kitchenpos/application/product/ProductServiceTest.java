@@ -31,7 +31,7 @@ class ProductServiceTest extends ApplicationTestConfig {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(actual.getProductId()).isPositive();
+            softly.assertThat(actual.getId()).isPositive();
             softly.assertThat(actual.getName()).isEqualTo(expected.getName());
             softly.assertThat(actual.getPrice()).isEqualTo(expected.getPrice());
         });

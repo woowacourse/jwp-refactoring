@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 public class ProductResponse {
 
-    private long productId;
+    private long id;
     private String name;
     private String price;
 
-    public ProductResponse(final long productId, final String name, final String price) {
-        this.productId = productId;
+    public ProductResponse(final long id, final String name, final String price) {
+        this.id = id;
         this.name = name;
         this.price = price;
     }
@@ -31,8 +31,8 @@ public class ProductResponse {
                 .collect(Collectors.toList());
     }
 
-    public long getProductId() {
-        return productId;
+    public long getId() {
+        return id;
     }
 
     public String getName() {
