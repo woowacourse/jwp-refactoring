@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MenuRestController {
+
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {
@@ -24,13 +25,14 @@ public class MenuRestController {
     public ResponseEntity<Menu> create(
             @Valid @RequestBody final MenuCreateRequest request
     ) {
-        final Menu created = menuService.create(request);
-        final URI uri = URI.create("/api/menus/" + created.getId());
-        return ResponseEntity.created(uri).body(created);
+        final var response = menuService.create(request);
+        final var uri = URI.create("/api/menus/" + response.getId());
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<Menu>> list() {
-        return ResponseEntity.ok().body(menuService.list());
+        final var response = menuService.list();
+        return ResponseEntity.ok(response);
     }
 }

@@ -25,13 +25,13 @@ public class ProductRestController {
     public ResponseEntity<Product> create(
             @Valid @RequestBody final ProductCreateRequest request
     ) {
-        final Product response = productService.create(request);
-        return ResponseEntity.created(URI.create("/api/products/" + response.getId()))
-                             .body(response);
+        final var response = productService.create(request);
+        return ResponseEntity.created(URI.create("/api/products/" + response.getId())).body(response);
     }
 
     @GetMapping("/api/products")
     public ResponseEntity<List<Product>> list() {
-        return ResponseEntity.ok().body(productService.list());
+        final var response = productService.list();
+        return ResponseEntity.ok(response);
     }
 }

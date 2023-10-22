@@ -5,7 +5,6 @@ import java.util.Optional;
 import kitchenpos.domain.menuproduct.MenuProduct;
 import org.springframework.data.repository.Repository;
 
-@org.springframework.stereotype.Repository
 public interface MenuProductDao extends Repository<MenuProduct, Long> {
 
     MenuProduct save(MenuProduct entity);

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MenuGroupRestController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {
@@ -31,7 +32,7 @@ public class MenuGroupRestController {
 
     @GetMapping("/api/menu-groups")
     public ResponseEntity<List<MenuGroup>> list() {
-        final var menuGroups = menuGroupService.list();
-        return ResponseEntity.ok().body(menuGroups);
+        final var response = menuGroupService.list();
+        return ResponseEntity.ok(response);
     }
 }

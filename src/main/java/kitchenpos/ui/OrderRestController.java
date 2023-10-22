@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.order.Order;
+import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderStatusChangeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

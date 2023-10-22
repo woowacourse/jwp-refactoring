@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TableGroupRestController {
+
     private final TableGroupService tableGroupService;
 
     public TableGroupRestController(final TableGroupService tableGroupService) {
@@ -23,8 +24,8 @@ public class TableGroupRestController {
     @PostMapping("/api/table-groups")
     public ResponseEntity<TableGroup> create(
             @Valid @RequestBody final TableGroupCreateRequest request) {
-        final TableGroup response = tableGroupService.create(request);
-        final URI uri = URI.create("/api/table-groups/" + response.getId());
+        final var response = tableGroupService.create(request);
+        final var uri = URI.create("/api/table-groups/" + response.getId());
         return ResponseEntity.created(uri).body(response);
     }
 

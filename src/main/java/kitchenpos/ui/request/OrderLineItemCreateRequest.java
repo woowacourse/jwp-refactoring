@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.ui.request;
 
 import javax.validation.constraints.NotNull;
 
