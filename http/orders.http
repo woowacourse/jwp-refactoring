@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/orders
+POST {{host}}/api/order
 Content-Type: application/json
 
 {
@@ -13,10 +13,10 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/orders
+GET {{host}}/api/order
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT {{host}}/api/order/1/order-status
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT {{host}}/api/order/1/order-status
 Content-Type: application/json
 
 {

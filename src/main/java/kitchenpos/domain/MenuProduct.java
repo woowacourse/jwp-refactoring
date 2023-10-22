@@ -1,40 +1,52 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    protected MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public MenuProduct(Long id, Menu menu, Product product, long quantity) {
+        this.id = id;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Long getId() {
+        return id;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
