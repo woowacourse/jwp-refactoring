@@ -19,12 +19,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-
     private LocalDateTime orderedTime;
-
     private OrderLineItems orderLineItems;
 
     protected Order() {
@@ -53,7 +50,7 @@ public class Order {
         }
         this.orderStatus = orderStatus;
     }
-    
+
     private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 항목은 하나 이상이여야 합니다");

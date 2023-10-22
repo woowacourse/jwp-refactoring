@@ -1,25 +1,22 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import kitchenpos.domain.vo.NumberOfGuest;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
-public class OrderTable {
+public class OrderTable extends AbstractAggregateRoot<OrderTable> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
     private NumberOfGuest numberOfGuests;
     private boolean empty;
 
@@ -30,37 +27,38 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = new NumberOfGuest(numberOfGuests);
         this.empty = empty;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty, TableValidator tableValidator) {
+        tableValidator.validate(this);
         validateGroup();
         this.empty = empty;
     }
 
     private void validateGroup() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("단체 지정된 테이블은 변경할 수 없습니다");
         }
     }
 
-    public void changeTableGroup(TableGroup tableGroup) {
-        if (!empty || Objects.nonNull(this.tableGroup)) {
+    public void changeTableGroup(Long tableGroupId) {
+        if (!empty || Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException("단체 지정은 빈 테이블만 가능합니다");
         }
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -78,8 +76,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

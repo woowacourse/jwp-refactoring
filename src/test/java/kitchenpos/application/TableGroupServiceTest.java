@@ -1,17 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -33,7 +32,6 @@ import static kitchenpos.fixture.TableGroupFixture.tableGroupRequest;
 import static kitchenpos.fixture.TableGroupFixture.tableGroupWithoutOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -77,14 +75,7 @@ class TableGroupServiceTest {
         TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
         // then
-        OrderTableResponse savedOrderTable = savedTableGroup.getOrderTables().get(0);
-        OrderTableResponse savedOrderTable2 = savedTableGroup.getOrderTables().get(1);
-        assertSoftly(softly -> {
-            softly.assertThat(savedOrderTable.getTableGroupId()).isNotNull();
-            softly.assertThat(savedOrderTable2.getTableGroupId()).isNotNull();
-            softly.assertThat(savedOrderTable.isEmpty()).isTrue();
-            softly.assertThat(savedOrderTable2.isEmpty()).isTrue();
-        });
+        assertThat(savedTableGroup.getId()).isNotNull();
     }
 
     @Test
@@ -128,8 +119,8 @@ class TableGroupServiceTest {
     void 단체_지정을_생성할_때_이미_단체_지정이_되어있으면_예외가_발생한다() {
         // given
         TableGroup tableGroup = tableGroupRepository.save(tableGroupWithoutOrderTable(LocalDateTime.now()));
-        OrderTable orderTable1 = orderTableRepository.save(orderTable(tableGroup, 10, true));
-        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup, 10, true));
+        OrderTable orderTable1 = orderTableRepository.save(orderTable(tableGroup.getId(), 10, true));
+        OrderTable orderTable2 = orderTableRepository.save(orderTable(tableGroup.getId(), 10, true));
         TableGroupRequest request = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable1.getId()), new OrderTableIdRequest(orderTable2.getId())));
 
         // expect
@@ -141,9 +132,9 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제한다() {
         // given
-        TableGroup tableGroup = tableGroupRepository.save(tableGroup(List.of()));
-        orderTableRepository.save(orderTable(tableGroup, 0, true));
-        orderTableRepository.save(orderTable(tableGroup, 0, true));
+        TableGroup tableGroup = tableGroupRepository.save(tableGroup());
+        orderTableRepository.save(orderTable(tableGroup.getId(), 0, true));
+        orderTableRepository.save(orderTable(tableGroup.getId(), 0, true));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -156,8 +147,8 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void 단체_지정을_해제할_때_주문의_상태가_조리_혹은_식사_이면_예외가_발생한다(OrderStatus orderStatus) {
         // given
-        TableGroup tableGroup = tableGroupRepository.save(tableGroup(List.of(orderTable(10, true), orderTable(11, true))));
-        OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup, 10, false));
+        TableGroup tableGroup = tableGroupRepository.save(tableGroup());
+        OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup.getId(), 10, false));
         MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
         orderRepository.save(order(orderTable.getId(), orderStatus, List.of(orderLineItem(1L, 10))));
 

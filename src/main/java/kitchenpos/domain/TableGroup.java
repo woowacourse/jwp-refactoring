@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Entity;
@@ -16,27 +17,23 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    private OrderTables orderTables;
-
     protected TableGroup() {
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
+    public TableGroup(LocalDateTime createdDate) {
+        this(null, createdDate);
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = new OrderTables(orderTables);
     }
 
     public void changeOrderTables(List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup(this);
+            orderTable.changeTableGroup(this.id);
         }
-        this.orderTables = new OrderTables(orderTables);
     }
 
     private void validateOrderTables(List<OrderTable> orderTables) {
@@ -51,9 +48,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables.getOrderTables();
     }
 }

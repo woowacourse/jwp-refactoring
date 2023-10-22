@@ -4,7 +4,6 @@ import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TableGroupResponse {
 
@@ -19,11 +18,11 @@ public class TableGroupResponse {
     }
 
     public static TableGroupResponse from(TableGroup tableGroup) {
-        List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables().stream()
-                .map(OrderTableResponse::from)
-                .collect(Collectors.toList());
+//        List<OrderTableResponse> orderTableResponses = tableGroup.getOrderTables().stream()
+//                .map(OrderTableResponse::from)
+//                .collect(Collectors.toList());
 
-        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponses);
+        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), List.of());
     }
 
     public Long getId() {

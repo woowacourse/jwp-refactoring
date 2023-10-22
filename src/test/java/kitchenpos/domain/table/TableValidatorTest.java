@@ -1,7 +1,7 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.table;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -10,29 +10,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
-import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
-class OrderValidatorTest {
+class TableValidatorTest {
+
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderValidator orderValidator;
+    private OrderRepository orderRepository;
+    @Autowired
+    private TableValidator tableValidator;
 
     @Test
-    void 주문은_주문_테이블이_빈_테이블이면_예외가_발생한다() {
+    void 주문_상태가_완료가_아니면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTable(10, true);
-        orderTableRepository.save(orderTable);
-        Order order = new Order(orderTable.getId(), List.of(orderLineItem(1L, 10)));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1L, 10, false));
+        orderRepository.save(order(orderTable.getId(), OrderStatus.COOKING, List.of(orderLineItem(1L, 10))));
 
         // expect
-        assertThatThrownBy(() -> order.validate(orderValidator))
+        assertThatThrownBy(() -> tableValidator.validate(orderTable))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블이 빈 테이블입니다");
+                .hasMessage("주문 상태가 완료가 아닙니다");
     }
+
 }

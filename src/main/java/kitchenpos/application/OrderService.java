@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderChangeStatusRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderValidator;
@@ -15,15 +14,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
 
     public OrderService(
-            final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             OrderValidator orderValidator) {
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
     }

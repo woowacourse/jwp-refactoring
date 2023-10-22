@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -15,6 +15,6 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
-    @Query("select o from OrderTable o where o.tableGroup.id = :tableGroupId")
+    @Query("select o from OrderTable o where o.tableGroupId = :tableGroupId")
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

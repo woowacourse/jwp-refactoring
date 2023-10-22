@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ class TableGroupTest {
     void 단체_지정은_주문_테이블이_2개보다_작으면_예외가_발생한다() {
         // given
         List<OrderTable> orderTables = List.of(orderTable(10, true));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         // expect
         assertThatThrownBy(() -> tableGroup.changeOrderTables(orderTables))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -25,7 +26,7 @@ class TableGroupTest {
     void 단체_지정은_빈_테이블이_아니면_예외가_발생한다() {
         // given
         List<OrderTable> orderTables = List.of(orderTable(10, true), orderTable(5, true));
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         List<OrderTable> changeOrderTable = List.of(orderTable(1, false), orderTable(10, true));
 
         // expect

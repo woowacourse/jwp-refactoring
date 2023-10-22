@@ -1,6 +1,5 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
@@ -21,8 +20,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ServiceTest
 class MenuValidatorTest {
 
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired

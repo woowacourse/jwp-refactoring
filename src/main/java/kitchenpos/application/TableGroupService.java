@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +44,7 @@ public class TableGroupService {
             throw new IllegalArgumentException("주문 테이블의 개수와 맞지 않습니다");
         }
 
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         tableGroup.changeOrderTables(savedOrderTables);
         return TableGroupResponse.from(tableGroup);
     }
