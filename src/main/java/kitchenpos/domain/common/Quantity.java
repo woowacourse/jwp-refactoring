@@ -8,16 +8,16 @@ import kitchenpos.domain.exception.InvalidQuantityException;
 public class Quantity {
 
     @Column
-    private final long quantity;
+    private final long value;
 
     protected Quantity() {
-        quantity = 0L;
+        value = 0L;
     }
 
-    public Quantity(final long quantity) {
-        validateQuantity(quantity);
+    public Quantity(final long value) {
+        validateQuantity(value);
 
-        this.quantity = quantity;
+        this.value = value;
     }
 
     private void validateQuantity(final long quantity) {
@@ -26,7 +26,7 @@ public class Quantity {
         }
     }
 
-    public long getQuantity() {
-        return quantity;
+    public long getValue() {
+        return value;
     }
 }

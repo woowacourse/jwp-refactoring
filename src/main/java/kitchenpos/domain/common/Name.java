@@ -11,15 +11,15 @@ public class Name {
     private static final int MAXIMUM_NAME_LENGTH = 255;
 
     @Column
-    private String name;
+    private String value;
 
     protected Name() {
     }
 
-    public Name(final String name) {
-        validateName(name);
+    public Name(final String value) {
+        validateName(value);
 
-        this.name = name;
+        this.value = value;
     }
 
     private void validateName(final String name) {
@@ -28,7 +28,7 @@ public class Name {
         }
     }
 
-    public String getName() {
-        return name;
+    public String getValue() {
+        return value;
     }
 }

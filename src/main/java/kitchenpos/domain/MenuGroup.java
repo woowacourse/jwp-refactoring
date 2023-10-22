@@ -29,6 +29,6 @@ public class MenuGroup {
     }
 
     public String getName() {
-        return name.getName();
+        return name.getValue();
     }
 }

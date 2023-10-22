@@ -40,7 +40,7 @@ class PriceTest {
         final Price actual = targetPrice.plus(otherPrice);
 
         // then
-        assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(20L));
+        assertThat(actual.getValue()).isEqualTo(BigDecimal.valueOf(20L));
     }
 
     @Test
@@ -52,6 +52,6 @@ class PriceTest {
         final Price actual = targetPrice.times(3);
 
         // then
-        assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(30L));
+        assertThat(actual.getValue()).isEqualTo(BigDecimal.valueOf(30L));
     }
 }

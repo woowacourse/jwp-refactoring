@@ -68,11 +68,11 @@ public class Menu {
     }
 
     public String getName() {
-        return name.getName();
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price.getValue();
     }
 
     public MenuGroup getMenuGroup() {

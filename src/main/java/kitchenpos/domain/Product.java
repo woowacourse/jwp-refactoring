@@ -35,11 +35,11 @@ public class Product {
     }
 
     public String getName() {
-        return name.getName();
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price.getValue();
     }
 
     public Price price() {

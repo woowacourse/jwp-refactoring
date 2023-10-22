@@ -60,7 +60,7 @@ public class MenuProduct {
     }
 
     public long getQuantity() {
-        return quantity.getQuantity();
+        return quantity.getValue();
     }
 
     @Override

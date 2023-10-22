@@ -11,16 +11,16 @@ public class Price implements Comparable<Price> {
     public static final Price ZERO = new Price();
 
     @Column
-    private final BigDecimal price;
+    private final BigDecimal value;
 
     protected Price() {
-        price = BigDecimal.ZERO;
+        value = BigDecimal.ZERO;
     }
 
-    public Price(final BigDecimal price) {
-        validatePrice(price);
+    public Price(final BigDecimal value) {
+        validatePrice(value);
 
-        this.price = price;
+        this.value = value;
     }
 
     private void validatePrice(final BigDecimal price) {
@@ -30,19 +30,19 @@ public class Price implements Comparable<Price> {
     }
 
     public Price plus(final Price other) {
-        return new Price(this.price.add(other.price));
+        return new Price(this.value.add(other.value));
     }
 
     public Price times(final long target) {
-        return new Price(this.price.multiply(BigDecimal.valueOf(target)));
+        return new Price(this.value.multiply(BigDecimal.valueOf(target)));
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getValue() {
+        return value;
     }
 
     @Override
     public int compareTo(final Price other) {
-        return this.price.compareTo(other.price);
+        return this.value.compareTo(other.value);
     }
 }
