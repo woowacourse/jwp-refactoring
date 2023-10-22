@@ -139,8 +139,10 @@ class MenuServiceTest {
 
         public static List<MenuProductCreateRequest> 메뉴_상품_생성_요청(List<MenuProduct> menuProducts) {
             return menuProducts.stream()
-                    .map(menuProduct -> new MenuProductCreateRequest(menuProduct.getProductId(),
-                            menuProduct.getQuantity()))
+                    .map(menuProduct -> new MenuProductCreateRequest(
+                            menuProduct.getProductId(),
+                            menuProduct.getQuantityValue()
+                    ))
                     .collect(Collectors.toList());
         }
     }

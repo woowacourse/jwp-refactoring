@@ -21,7 +21,7 @@ public class MenuProductResponse {
                 menuProduct.getSeq(),
                 menuProduct.getMenuId(),
                 menuProduct.getProductId(),
-                menuProduct.getQuantity()
+                menuProduct.getQuantityValue()
         );
     }
 

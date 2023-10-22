@@ -4,24 +4,28 @@ public class OrderLineItem {
     private Long seq;
     private Long orderId;
     private Long menuId;
-    private long quantity;
+    private Quantity quantity;
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Long orderId, Long menuId, Quantity quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
+    public OrderLineItem(Long menuId, Quantity quantity) {
         this(null, null, menuId, quantity);
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long orderId, Long menuId, Quantity quantity) {
         this(null, orderId, menuId, quantity);
     }
 
     public OrderLineItem() {
+    }
+
+    public static OrderLineItem of(Long menuId, long quantity) {
+        return new OrderLineItem(menuId, Quantity.valueOf(quantity));
     }
 
     public Long getSeq() {
@@ -48,11 +52,11 @@ public class OrderLineItem {
         this.menuId = menuId;
     }
 
-    public long getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public long getQuantityValue() {
+        return quantity.getValue();
     }
 }

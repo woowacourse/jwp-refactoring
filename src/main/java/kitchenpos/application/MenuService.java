@@ -42,8 +42,11 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        Menu menu = Menu.of(menuCreateRequest.getName(), menuCreateRequest.getPrice(),
-                menuCreateRequest.getMenuGroupId());
+        Menu menu = Menu.of(
+                menuCreateRequest.getName(),
+                menuCreateRequest.getPrice(),
+                menuCreateRequest.getMenuGroupId()
+        );
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductCreateRequest menuProduct : menuCreateRequest.getMenuProducts()) {
@@ -51,6 +54,7 @@ public class MenuService {
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
+
         menu.validateMenuProductTotalPrice(sum);
 
         final Menu savedMenu = menuDao.save(menu);
@@ -58,7 +62,7 @@ public class MenuService {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProductCreateRequest menuPro : menuCreateRequest.getMenuProducts()) {
-            MenuProduct menuProduct = new MenuProduct(menuId, menuPro.getProductId(), menuPro.getQuantity());
+            MenuProduct menuProduct = MenuProduct.of(menuId, menuPro.getProductId(), menuPro.getQuantity());
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);

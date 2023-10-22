@@ -144,7 +144,7 @@ class OrderServiceTest {
         }
 
         public static OrderLineItemCreateRequest 주문_항목_생성_요청(OrderLineItem orderLineItem) {
-            return new OrderLineItemCreateRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity());
+            return new OrderLineItemCreateRequest(orderLineItem.getMenuId(), orderLineItem.getQuantityValue());
         }
     }
 }

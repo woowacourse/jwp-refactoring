@@ -24,6 +24,6 @@ public class OrderLineItemCreateRequest {
     }
 
     public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(menuId, quantity);
+        return OrderLineItem.of(menuId, quantity);
     }
 }
