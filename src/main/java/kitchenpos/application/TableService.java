@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableEmptyUpdateRequest;
+import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -58,8 +59,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableNumberOfGuestsUpdateRequest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         final OrderTable findOrderTable = orderTableRepository.findOrderTableById(orderTableId);
         findOrderTable.changeNumberOfGuests(numberOfGuests);

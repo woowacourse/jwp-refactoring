@@ -13,6 +13,7 @@ import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 import kitchenpos.dto.OrderTableEmptyUpdateRequest;
+import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -158,13 +159,13 @@ class TableServiceTest extends ApplicationTestConfig {
         @DisplayName("[EXCEPTION] 손님 수를 0 미만으로 수정할 경우 예외가 발생한다.")
         @ParameterizedTest
         @ValueSource(ints = {-1, -2, -10, -100})
-        void throwException_when_changeNumberOfGuests_orderTable_numberOfGuests_isLessThanZero(final int zeroOrNegativeValue) {
+        void throwException_when_changeNumberOfGuests_orderTable_numberOfGuests_isLessThanZero(final int negativeValue) {
             // given
-            final OrderTable orderTable = new OrderTable(null, zeroOrNegativeValue, false);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
+            final TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(negativeValue);
 
             // expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -172,11 +173,11 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_changeNumberOfGuests_orderTableIsEmpty() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 10, true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
+            final TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(10);
 
             // expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
