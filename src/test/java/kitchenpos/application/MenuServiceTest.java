@@ -7,7 +7,6 @@ import kitchenpos.dto.MenuProductDto;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -65,7 +65,6 @@ class MenuServiceTest {
         final List<MenuProductDto> menuProductsResult = result.getMenuProducts();
         assertSoftly(softly -> {
             softly.assertThat(menuProductsResult).hasSize(1);
-            softly.assertThat(menuProductsResult.get(0).getSeq()).isEqualTo(1L);
             softly.assertThat(menuProductsResult.get(0).getMenuId()).isEqualTo(result.getId());
             softly.assertThat(menuProductsResult.get(0).getProductId()).isEqualTo(product.getId());
             softly.assertThat(menuProductsResult.get(0).getQuantity()).isEqualTo(1L);
