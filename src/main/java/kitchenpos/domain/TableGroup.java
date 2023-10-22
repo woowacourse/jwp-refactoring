@@ -19,10 +19,10 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
 
-    @OneToMany
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {

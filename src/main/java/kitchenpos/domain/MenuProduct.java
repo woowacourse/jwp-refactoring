@@ -7,9 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
-@Table(name = "menu_product")
 @Entity
 public class MenuProduct {
 
@@ -18,13 +16,13 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @Column(nullable = false)
+    @Column(name = "product_id")
     private Long productId;
 
-    @Column(nullable = false)
+    @Column(name = "quantity")
     private long quantity;
 
     protected MenuProduct() {

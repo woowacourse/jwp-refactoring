@@ -21,13 +21,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "order_table_id")
     private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(name = "order_status")
     private OrderStatus orderStatus;
 
-    @Column
+    @Column(name = "orderd_time")
     private LocalDateTime orderedTime = LocalDateTime.now();
 
     @OneToMany(mappedBy = "order")

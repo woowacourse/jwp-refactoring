@@ -18,13 +18,13 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Embedded
     private Price price;
 
-    @Column(nullable = false)
+    @Column(name = "menu_group_id")
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")

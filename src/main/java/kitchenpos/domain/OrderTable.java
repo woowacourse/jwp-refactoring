@@ -21,10 +21,10 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     private TableGroup tableGroup;
 
-    @Column
+    @Column(name = "number_of_guests")
     private int numberOfGuests;
 
-    @Column
+    @Column(name = "empty")
     private boolean empty;
 
     protected OrderTable() {
