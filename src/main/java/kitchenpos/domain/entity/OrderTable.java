@@ -29,7 +29,7 @@ public class OrderTable {
     @Column(nullable = false)
     private Boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     private OrderTable(Builder builder) {
