@@ -19,8 +19,8 @@ public class OrderLineItemCreateResponse {
     public static OrderLineItemCreateResponse of(final OrderLineItem orderLineItem) {
         return new OrderLineItemCreateResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getOrderId(),
-                orderLineItem.getMenuId(),
+                orderLineItem.getOrder().getId(),
+                orderLineItem.getMenu().getId(),
                 orderLineItem.getQuantity()
         );
     }

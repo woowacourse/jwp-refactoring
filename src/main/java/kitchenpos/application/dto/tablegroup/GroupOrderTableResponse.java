@@ -20,7 +20,7 @@ public class GroupOrderTableResponse {
     public static GroupOrderTableResponse of(final OrderTable orderTable) {
         return new GroupOrderTableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroupId(),
+                orderTable.getTableGroup().getId(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );

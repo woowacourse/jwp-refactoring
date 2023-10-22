@@ -33,7 +33,7 @@ public class MenuCreateResponse {
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
-                menu.getMenuGroupId(),
+                menu.getMenuGroup().getId(),
                 menuProductCreateResponses
         );
     }

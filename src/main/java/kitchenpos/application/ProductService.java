@@ -8,8 +8,8 @@ import java.util.Objects;
 import kitchenpos.application.dto.product.ProductCreateRequest;
 import kitchenpos.application.dto.product.ProductCreateResponse;
 import kitchenpos.application.dto.product.ProductResponse;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     public ProductCreateResponse create(final ProductCreateRequest request) {
@@ -31,14 +31,14 @@ public class ProductService {
         }
 
         final Product product = new Product(request.getName(), request.getPrice());
-        final Product savedProduct = productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
 
         return ProductCreateResponse.of(savedProduct);
     }
 
     @Transactional(readOnly = true)
     public List<ProductResponse> list() {
-        final List<Product> products = productDao.findAll();
+        final List<Product> products = productRepository.findAll();
         return products.stream()
                 .map(ProductResponse::of)
                 .collect(toList());
