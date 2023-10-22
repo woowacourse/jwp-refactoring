@@ -7,15 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-class TableServiceTest {
+class OrderTableServiceTest {
 
-    private TableService tableService;
+    private OrderTableService orderTableService;
     @Autowired
     private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderTableRepository);
+        orderTableService = new OrderTableService(orderTableRepository);
     }
 
     @Test

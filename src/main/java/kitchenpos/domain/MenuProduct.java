@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class MenuProduct {
@@ -19,7 +20,7 @@ public class MenuProduct {
     @ManyToOne(optional = false)
     @JoinColumn(name = "fk_menu_product_to_menu")
     private Menu menu;
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "fk_menu_product_to_product")
     private Product product;
     @Column(nullable = false)

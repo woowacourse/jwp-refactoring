@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,11 +30,9 @@ public class OrderTable {
     @OneToMany(mappedBy = "orderTable")
     private List<Order> orders = new ArrayList<>();
 
-    public OrderTable(final Long id, final TableGroup tableGroup) {
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = 0;
-        this.empty = true;
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public Long getId() {
@@ -53,9 +52,16 @@ public class OrderTable {
     }
 
     public void setEmpty(final boolean empty) {
+        validateTableGroupIsNull();
         validateOrderCompletion();
 
         this.empty = empty;
+    }
+
+    private void validateTableGroupIsNull() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("테이블 그룹이 존재하는 경우 테이블 상태를 수정할 수 없습니다.");
+        }
     }
 
     public void attachTableGroup(final TableGroup tableGroup) {

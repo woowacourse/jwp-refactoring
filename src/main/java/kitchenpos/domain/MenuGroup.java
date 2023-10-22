@@ -29,21 +29,4 @@ public class MenuGroup {
 
     protected MenuGroup() {
     }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof MenuGroup)) {
-            return false;
-        }
-        MenuGroup menuGroup = (MenuGroup) o;
-        return Objects.equals(id, menuGroup.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
