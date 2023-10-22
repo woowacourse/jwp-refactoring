@@ -64,8 +64,8 @@ class OrderServiceTest {
         final Product product = PRODUCT("짜장면", 8000L);
         chineseNoodle = productDao.save(product);
         
-        chineseNoodleMenuProduct = MENU_PRODUCT(chineseNoodle.getId());
-        final Menu menu = MENU(chineseNoodle.getName(), 8000L, chineseMenuGroup.getId(), List.of(chineseNoodleMenuProduct));
+        chineseNoodleMenuProduct = MENU_PRODUCT(chineseNoodle);
+        final Menu menu = MENU(chineseNoodle.getName(), 8000L, chineseMenuGroup, List.of(chineseNoodleMenuProduct));
         chineseNoodleMenu = menuDao.save(menu);
     }
     
@@ -88,7 +88,7 @@ class OrderServiceTest {
         // given
         OrderTable orderTable = ORDER_TABLE(false, 3);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        Menu notExistMenu = new Menu();
+        Menu notExistMenu = new Menu(null, null, null, null);
         OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 3L);
         OrderLineItem orderLineItemWithNotExistMenu = ORDER_LINE_ITEM(notExistMenu.getId(), 1L);
         

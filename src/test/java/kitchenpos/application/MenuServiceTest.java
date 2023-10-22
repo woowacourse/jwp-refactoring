@@ -62,8 +62,8 @@ class MenuServiceTest {
         final Product product2 = PRODUCT("딤섬", 8000L);
         chineseDimsum = productDao.save(product2);
         
-        chineseNoodleMenuProduct = MENU_PRODUCT(chineseNoodle.getId());
-        chineseDimsumMenuProduct = MENU_PRODUCT(chineseDimsum.getId());
+        chineseNoodleMenuProduct = MENU_PRODUCT(chineseNoodle);
+        chineseDimsumMenuProduct = MENU_PRODUCT(chineseDimsum);
     }
     
     @Test
@@ -72,7 +72,7 @@ class MenuServiceTest {
         final long priceUnderZero = -1L;
         Menu menu = MENU("식사류",
                 priceUnderZero,
-                chineseMenuGroup.getId(),
+                chineseMenuGroup,
                 List.of(chineseNoodleMenuProduct));
         
         //when&then
@@ -87,7 +87,7 @@ class MenuServiceTest {
         final long notExistGroupId = 2L;
         final Menu menu = MENU("식사류",
                 15000L,
-                notExistGroupId,
+                null,
                 List.of(chineseDimsumMenuProduct, chineseDimsumMenuProduct));
         
         //when&then
@@ -102,7 +102,7 @@ class MenuServiceTest {
         final long priceOverSumOfMenuProductPrice = 17000L;
         final Menu menu = MENU("식사류",
                 priceOverSumOfMenuProductPrice,
-                chineseMenuGroup.getId(),
+                chineseMenuGroup,
                 List.of(chineseDimsumMenuProduct, chineseDimsumMenuProduct));
         
         //when&then
@@ -117,8 +117,8 @@ class MenuServiceTest {
         //given
         MenuGroup savedMenuGroup = menuGroupDao.save(chineseMenuGroup);
         Product savedProduct = productDao.save(chineseNoodle);
-        MenuProduct menuProduct = MENU_PRODUCT(savedProduct.getId());
-        Menu menu = MENU("식사류", 8000L, savedMenuGroup.getId(), List.of(menuProduct));
+        MenuProduct menuProduct = MENU_PRODUCT(savedProduct);
+        Menu menu = MENU("식사류", 8000L, savedMenuGroup, List.of(menuProduct));
         
         //when
         Menu actual = menuService.create(menu);
@@ -138,13 +138,13 @@ class MenuServiceTest {
         //given1
         Menu menu1 = MENU("짜장면",
                 8000L,
-                chineseMenuGroup.getId(),
+                chineseMenuGroup,
                 List.of(chineseNoodleMenuProduct));
         Menu savedMenu1 = menuService.create(menu1);
         
         Menu menu2 = MENU("딤섬",
                 8000L,
-                chineseMenuGroup.getId(),
+                chineseMenuGroup,
                 List.of(chineseDimsumMenuProduct));
         Menu savedMenu2 = menuService.create(menu2);
         
