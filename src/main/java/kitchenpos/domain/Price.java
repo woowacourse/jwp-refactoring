@@ -13,7 +13,7 @@ public class Price {
     private Price(final BigDecimal price) {
         validatePriceNotNull(price);
         validatePositivePrice(price);
-        this.price = price;
+        this.price = price.setScale(2);
     }
 
     private void validatePositivePrice(final BigDecimal price) {

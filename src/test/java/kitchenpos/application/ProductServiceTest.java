@@ -1,39 +1,47 @@
 package kitchenpos.application;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
+import java.util.List;
+import javax.persistence.EntityManager;
 import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Product;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
 class ProductServiceTest {
 
-    @Mock
-    private ProductRepository productRepository;
-    @InjectMocks
     private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
+
+    @BeforeEach
+    void setUp() {
+        productService = new ProductService(productRepository);
+    }
 
     @Test
     void 상품_생성할_수_있다() {
-        ProductCreateRequest request = new ProductCreateRequest("로제떡볶이", 1000);
+        ProductCreateRequest request = new ProductCreateRequest("로제떡볶이", BigDecimal.valueOf(1000,2));
 
-        productService.create(request);
+        ProductResponse productResponse = productService.create(request);
 
-        verify(productRepository).save(any(Product.class));
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(request.getName()).isEqualTo(productResponse.getName());
+            softAssertions.assertThat(request.getPrice()).isEqualTo(productResponse.getPrice());
+        });
     }
 
     @Test
     void 전체_상품_조회할_수_있다() {
-        productService.list();
-
-        verify(productRepository).findAll();
+        List<ProductResponse> responses = productService.list();
+        Assertions.assertThat(responses.size()).isGreaterThan(0);
     }
 }

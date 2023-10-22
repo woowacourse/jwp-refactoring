@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
@@ -17,11 +19,16 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductCreateRequest product) {
-        return productRepository.save(new Product(product.getName(), Price.of(product.getPrice())));
+    public ProductResponse create(final ProductCreateRequest product) {
+        return ProductResponse.of(productRepository.save(
+                new Product(product.getName(), Price.of(product.getPrice()))
+        ));
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public List<ProductResponse> list() {
+        return productRepository.findAll()
+                .stream()
+                .map(ProductResponse::of)
+                .collect(Collectors.toList());
     }
 }
