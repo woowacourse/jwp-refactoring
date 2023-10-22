@@ -18,6 +18,16 @@ public class OrderTable extends BaseDate {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable(final Long id, final Long tableGroupId, final Integer numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public OrderTable() {
+    }
+
     public Long getId() {
         return id;
     }
