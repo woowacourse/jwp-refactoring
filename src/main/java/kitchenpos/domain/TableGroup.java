@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Entity
 public class TableGroup {
+    public static final int MIN_SIZE_OF_ORDER_TABLES = 2;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +28,20 @@ public class TableGroup {
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        validate(orderTables);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validate(List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_SIZE_OF_ORDER_TABLES) {
+            throw new IllegalArgumentException();
+        }
+
+        if (orderTables.stream()
+                .anyMatch(orderTable -> !orderTable.isEmpty() || orderTable.hasTableGroup())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.vo.tablegroup.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,29 +37,29 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private OrderTable savedOrderTableA;
     private OrderTable savedOrderTableB;
 
     @BeforeEach
     void setup() {
-        OrderTable orderTableA = new OrderTable();
-        orderTableA.setEmpty(true);
+
+        OrderTable orderTableA = new OrderTable(0, true);
         savedOrderTableA = orderTableRepository.save(orderTableA);
 
-        OrderTable orderTableB = new OrderTable();
-        orderTableB.setEmpty(true);
+        OrderTable orderTableB = new OrderTable(0, true);
         savedOrderTableB = orderTableRepository.save(orderTableB);
     }
 
     @Test
     @DisplayName("테이블 그룹 생성에 성공한다.")
     void succeedInRegisteringTableGroup() {
-        // given & when
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTableA, savedOrderTableB));
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        // given
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId(), savedOrderTableB.getId()));
+
+        //when
+        TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
         // then
         assertSoftly(softly -> {
@@ -71,11 +72,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 시 주문테이블이 2개 미만일 경우 예외가 발생한다.")
     void failToRegisterTableGroupWithWrongNumberOfOrderTable() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTableA));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId()));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -83,14 +83,12 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 시 주문 테이블이 등록되지 않았을 경우 예외가 발생한다.")
     void failToRegisterTableGroupWithNonExistOrderTable() {
         // given
-        OrderTable orderTableA = new OrderTable();
-        OrderTable orderTableB = new OrderTable();
+        Long unsavedTableIdA = 1000L;
+        Long unsavedTableIdB = 1001L;
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(unsavedTableIdA, unsavedTableIdB));
 
         // when & then
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,25 +96,21 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 시 주문 테이블의 그룹이 지정되어 있으면 예외가 발생한다.")
     void failToRegisterTableGroupWithGroupedTable() {
         // given
-        TableGroup wrongTableGroup = new TableGroup();
-        wrongTableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup wrongTableGroup = new TableGroup(LocalDateTime.now(), List.of(savedOrderTableA, savedOrderTableB));
         TableGroup savedWrongTableGroup = tableGroupRepository.save(wrongTableGroup);
 
-        OrderTable orderTableA = new OrderTable();
-        orderTableA.setEmpty(true);
+        OrderTable orderTableA = new OrderTable(0, true);
         orderTableA.setTableGroup(savedWrongTableGroup);
         OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
 
-        OrderTable orderTableB = new OrderTable();
-        orderTableB.setEmpty(true);
-        orderTableB.setTableGroup(savedWrongTableGroup);
+        OrderTable orderTableB = new OrderTable(0, true);
+        orderTableA.setTableGroup(savedWrongTableGroup);
         OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
         // when & then
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTableA, savedOrderTableB));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId(), savedOrderTableB.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -124,19 +118,16 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 시 주문 테이블이 비어있지 않으면 예외가 발생한다.")
     void failToRegisterTableGroupWithNonEmptyTable() {
         // given
-        OrderTable orderTableA = new OrderTable();
-        orderTableA.setEmpty(false);
+        OrderTable orderTableA = new OrderTable(0, false);
         OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
 
-        OrderTable orderTableB = new OrderTable();
-        orderTableB.setEmpty(false);
+        OrderTable orderTableB = new OrderTable(0, false);
         OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
         // when & then
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTableA, savedOrderTableB));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId(), savedOrderTableB.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -144,9 +135,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 해제에 성공한다.")
     void succeedInUngroupTable() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTableA, savedOrderTableB));
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId(), savedOrderTableB.getId()));
+        TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
@@ -163,19 +153,16 @@ class TableGroupServiceTest {
     @DisplayName("주문 상태가 조리 중이거나 식사 중인 테이블의 테이블 그룹을 해제할 경우 예외가 발생한다.")
     void failToUngroupTableWithCookingOrMealStatus(OrderStatus orderStatus) {
         // given
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedOrderTableA.getId());
-        orderDao.save(order);
+        Order order = new Order(savedOrderTableA, orderStatus.name(), LocalDateTime.now());
+        orderRepository.save(order);
 
         // when
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(savedOrderTableA, savedOrderTableB));
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(savedOrderTableA.getId(), savedOrderTableB.getId()));
+        TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
         // then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리 중이거나 식사 중인 주문 그룹을 해제할 수 없습니다.");
     }
 }

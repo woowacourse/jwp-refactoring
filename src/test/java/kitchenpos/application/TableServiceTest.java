@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -39,7 +39,7 @@ class TableServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     private OrderTable savedEmptyOrderTable;
 
@@ -139,18 +139,16 @@ class TableServiceTest {
     @DisplayName("주문 상태가 조리 중이거나 식사 중인 테이블의 상태를 변경할 경우 예외가 발생한다.")
     void failToChangeTableStatusWithOrderStatus(OrderStatus orderStatus) {
         // given
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(savedFullOrderTable.getId());
-        orderDao.save(order);
+        Order order = new Order(savedFullOrderTable, orderStatus.name(), LocalDateTime.now());
+        orderRepository.save(order);
 
         // when
         ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(true);
 
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(savedFullOrderTable.getId(), changeEmptyRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리 중이거나 식사 중인 주문의 상태를 변경할 수 없습니다.");
     }
 
     @Test
