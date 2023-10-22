@@ -12,7 +12,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableEmptyUpdateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,17 +46,16 @@ class TableServiceTest extends ApplicationTestConfig {
     @Test
     void success_create() {
         // given
-        final OrderTable expected = new OrderTable(null, 5, false);
+        final OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
 
         // when
-        final OrderTable actual = tableService.create(expected);
+        final OrderTableResponse actual = tableService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isPositive();
-            softly.assertThat(actual.getTableGroup()).isNull();
-            softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
-            softly.assertThat(actual.isEmpty()).isEqualTo(expected.isEmpty());
+            softly.assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+            softly.assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
         });
     }
 
@@ -73,13 +74,15 @@ class TableServiceTest extends ApplicationTestConfig {
             savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when
-            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
+            final OrderTableResponse actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
 
             // then
+            final OrderTableResponse expected = OrderTableResponse.from(savedOrderTable);
+
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup());
-                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+                softly.assertThat(actual.getId()).isEqualTo(expected.getId());
+                softly.assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
                 softly.assertThat(actual.isEmpty()).isTrue();
             });
         }
@@ -92,13 +95,15 @@ class TableServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
 
             // when
-            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
+            final OrderTableResponse actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
 
             // then
+            final OrderTableResponse expected = OrderTableResponse.from(savedOrderTable);
+
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup());
-                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+                softly.assertThat(actual.getId()).isEqualTo(expected.getId());
+                softly.assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
                 softly.assertThat(actual.isEmpty()).isTrue();
             });
         }

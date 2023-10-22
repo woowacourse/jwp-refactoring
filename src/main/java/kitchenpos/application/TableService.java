@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableEmptyUpdateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -24,19 +26,19 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.assignTableGroup(null);
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
+        final OrderTable newOrderTable = new OrderTable(null, request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable savedOrderTable = orderTableRepository.save(newOrderTable);
 
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.from(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
         final Optional<Order> maybeOrder = orderRepository.findByOrderTableId(orderTableId);
         if (maybeOrder.isPresent()) {
             return changeEmptyByOrder(maybeOrder.get(), request.isEmpty());
@@ -45,26 +47,26 @@ public class TableService {
         return changeEmptyByOrderTable(orderTableId, request.isEmpty());
     }
 
-    private OrderTable changeEmptyByOrder(final Order findOrder, final boolean isEmpty) {
+    private OrderTableResponse changeEmptyByOrder(final Order findOrder, final boolean isEmpty) {
         findOrder.changeOrderTableEmpty(isEmpty);
 
-        return findOrder.getOrderTable();
+        return OrderTableResponse.from(findOrder.getOrderTable());
     }
 
-    private OrderTable changeEmptyByOrderTable(final Long orderTableId, final boolean isEmpty) {
+    private OrderTableResponse changeEmptyByOrderTable(final Long orderTableId, final boolean isEmpty) {
         final OrderTable findOrderTable = orderTableRepository.findOrderTableById(orderTableId);
         findOrderTable.changeOrderTableEmpty(isEmpty);
 
-        return findOrderTable;
+        return OrderTableResponse.from(findOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableNumberOfGuestsUpdateRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final TableNumberOfGuestsUpdateRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
         final OrderTable findOrderTable = orderTableRepository.findOrderTableById(orderTableId);
         findOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return findOrderTable;
+        return OrderTableResponse.from(findOrderTable);
     }
 }
