@@ -43,7 +43,16 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
+        for (final MenuProduct menuProduct : menuProducts) {
+            addMenuProduct(menuProduct);
+        }
+    }
+
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        this.menuProducts.add(menuProduct);
+        if (menuProduct.getMenu() != this) {
+            menuProduct.setMenu(this);
+        }
     }
 
     public Long getId() {

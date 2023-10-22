@@ -1,7 +1,12 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -20,7 +25,24 @@ public abstract class ServiceTest {
     @Autowired
     protected ProductRepository productRepository;
 
+    @Autowired
+    protected MenuRepository menuRepository;
+
+    @Autowired
+    protected MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    protected MenuProductRepository menuProductRepository;
+
     protected void 복수_상품_저장(final Product... products) {
         productRepository.saveAll(List.of(products));
+    }
+
+    protected MenuGroup 단일_메뉴그룹_저장(final MenuGroup menuGroup) {
+        return menuGroupRepository.save(menuGroup);
+    }
+
+    protected Menu 단일_메뉴_저장(final Menu menu) {
+        return menuRepository.save(menu);
     }
 }

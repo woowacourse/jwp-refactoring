@@ -2,46 +2,24 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
-import java.util.Optional;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
-    @Mock
-    private MenuRepository menuRepository;
-
-    @Mock
-    private MenuGroupRepository menuGroupRepository;
-
-    @Mock
-    private ProductRepository productRepository;
-
-    @Mock
-    private MenuProductRepository menuProductRepository;
-
-    @InjectMocks
+    @Autowired
     private MenuService menuService;
 
     @Nested
@@ -50,81 +28,94 @@ class MenuServiceTest {
         @Test
         void 메뉴를_등록할_수_있다() {
             // given
-            final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuRepository.save(any()))
-                    .willReturn(menu);
-            given(menuGroupRepository.existsById(anyLong()))
-                    .willReturn(true);
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
 
             final var product1 = ProductFixture.상품_망고_1000원();
             final var product2 = ProductFixture.상품_치킨_15000원();
-            given(productRepository.findById(product1.getId()))
-                    .willReturn(Optional.of(product1));
-            given(productRepository.findById(product2.getId()))
-                    .willReturn(Optional.of(product2));
+            복수_상품_저장(product1, product2);
 
-            final var menuProduct1 = MenuProductFixture.메뉴상품_망고_2개();
-            final var menuProduct2 = MenuProductFixture.메뉴상품_치킨_1개();
-            given(menuProductRepository.save(any()))
-                    .willReturn(menuProduct1, menuProduct2);
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct1, menuProduct2);
+            final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when
-            final var actual = menuService.create(menu);
+            final var actual = menuService.create(request);
 
             // then
+            final var expected = MenuResponse.toResponse(menu);
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(menu);
+                    .comparingOnlyFields("name", "price")
+                    .isEqualTo(expected);
+            assertThat(actual.getMenuProducts()).usingRecursiveComparison()
+                    .comparingOnlyFields("quantity")
+                    .isEqualTo(expected.getMenuProducts());
         }
 
         @Test
         void 메뉴의_가격이_0보다_작으면_예외가_발생한다() {
             // given
             final var menu = MenuFixture.메뉴_망고치킨_N원_신메뉴(-1);
+            final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴의_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuGroupRepository.existsById(anyLong()))
-                    .willReturn(false);
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
+
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+
+            final var invalidMenuGroup = MenuGroupFixture.메뉴그룹_존재X();
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(invalidMenuGroup, menuProduct1, menuProduct2);
+            final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴의_상품이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuGroupRepository.existsById(anyLong()))
-                    .willReturn(true);
-            given(productRepository.findById(anyLong()))
-                    .willReturn(Optional.empty());
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
+
+            final var invalidProduct = ProductFixture.상품_존재X();
+            final var menuProduct = MenuProductFixture.메뉴상품_생성(invalidProduct, 2L);
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct);
+            final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴_가격과_메뉴_상품의_총_가격이_다르면_예외가_발생한다() {
             // given
-            final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuGroupRepository.existsById(anyLong()))
-                    .willReturn(true);
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
 
             final var invalidProduct = ProductFixture.상품_망고_N원(0);
-            given(productRepository.findById(anyLong()))
-                    .willReturn(Optional.of(invalidProduct));
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(invalidProduct, product2);
+
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(invalidProduct, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct1, menuProduct2);
+            final var request = MenuFixture.메뉴요청_생성(menu);
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -135,16 +126,25 @@ class MenuServiceTest {
         @Test
         void 메뉴_목록을_조회할_수_있다() {
             // given
-            final var menus = Collections.singletonList(MenuFixture.메뉴_망고치킨_17000원_신메뉴());
-            given(menuRepository.findAll())
-                    .willReturn(menus);
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
+
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
+
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct1, menuProduct2);
+            단일_메뉴_저장(menu);
 
             // when
             final var actual = menuService.list();
 
             // then
+            final var expected = Collections.singletonList(MenuResponse.toResponse(menu));
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(menus);
+                    .isEqualTo(expected);
         }
     }
 }

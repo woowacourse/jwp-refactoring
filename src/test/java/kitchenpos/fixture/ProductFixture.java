@@ -19,6 +19,10 @@ public class ProductFixture {
         return new Product("치킨", BigDecimal.valueOf(15000));
     }
 
+    public static Product 상품_존재X() {
+        return new Product(999999L, "INVALID", BigDecimal.valueOf(999999));
+    }
+
     public static ProductCreateRequest 상품요청_망고_1000원() {
         return new ProductCreateRequest("망고", BigDecimal.valueOf(1000));
     }

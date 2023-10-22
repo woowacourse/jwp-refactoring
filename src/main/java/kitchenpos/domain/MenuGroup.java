@@ -21,6 +21,11 @@ public class MenuGroup {
         this.name = name;
     }
 
+    public MenuGroup(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
