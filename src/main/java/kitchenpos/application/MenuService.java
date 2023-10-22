@@ -8,6 +8,7 @@ import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -35,7 +36,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         final MenuGroup findMenuGroup = menuGroupRepository.findMenuGroupById(request.getMenuGroupId());
         final Menu newMenu = Menu.ofEmptyMenuProducts(
                 new Name(request.getName()),
@@ -43,8 +44,9 @@ public class MenuService {
                 findMenuGroup
         );
         newMenu.addMenuProducts(createMenuProducts(request));
+        final Menu savedMenu = menuRepository.save(newMenu);
 
-        return menuRepository.save(newMenu);
+        return MenuResponse.from(savedMenu);
     }
 
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest request) {
@@ -56,7 +58,10 @@ public class MenuService {
                 }).collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
-        return menuRepository.joinMenuGroupAll();
+    public List<MenuResponse> list() {
+        return menuRepository.joinMenuGroupAll()
+                .stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

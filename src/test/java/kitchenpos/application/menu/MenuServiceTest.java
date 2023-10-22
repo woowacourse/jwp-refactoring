@@ -4,12 +4,12 @@ import kitchenpos.application.MenuService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -55,17 +55,17 @@ class MenuServiceTest extends ApplicationTestConfig {
             );
 
             // when
-            final Menu actual = menuService.create(request);
+            final MenuResponse actual = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getName().getValue()).isEqualTo(request.getName());
-                softly.assertThat(actual.getPrice().getValue()).isEqualByComparingTo(request.getPrice());
+                softly.assertThat(actual.getName()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
                 softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
                 softly.assertThat(actual.getMenuProducts())
                         .usingRecursiveComparison()
-                        .isEqualTo(MenuProducts.empty());
+                        .isEqualTo(Collections.emptyList());
             });
         }
 
@@ -137,19 +137,14 @@ class MenuServiceTest extends ApplicationTestConfig {
             );
 
             // when
-            final Menu actual = menuService.create(request);
+            final MenuResponse actual = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getName().getValue()).isEqualTo(request.getName());
-                softly.assertThat(actual.getPrice().getValue()).isEqualByComparingTo(request.getPrice());
+                softly.assertThat(actual.getName()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
                 softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
-
-                final List<MenuProductCreateRequest> actualMenuProductCreateRequests = convertToMenuProductCreateRequest(actual);
-                softly.assertThat(actualMenuProductCreateRequests)
-                        .usingRecursiveComparison()
-                        .isEqualTo(request.getMenuProducts());
             });
         }
 

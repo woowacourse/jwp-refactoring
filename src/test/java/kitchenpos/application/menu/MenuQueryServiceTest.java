@@ -9,6 +9,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,19 +54,24 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
         menu.addMenuProducts(unsavedMenuProducts);
 
         // when
-        final Menu expected = menuRepository.save(menu);
-        final List<Menu> actual = menuService.list();
+        final Menu savedMenu = menuRepository.save(menu);
+        final MenuResponse expected = MenuResponse.from(savedMenu);
+        final List<MenuResponse> actual = menuService.list();
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
-            final Menu actualMenu = actual.get(0);
+            final MenuResponse actualMenu = actual.get(0);
 
             softly.assertThat(actualMenu.getId()).isEqualTo(expected.getId());
             softly.assertThat(actualMenu.getName()).isEqualTo(expected.getName());
             softly.assertThat(actualMenu.getPrice()).isEqualTo(expected.getPrice());
-            softly.assertThat(actualMenu.getMenuGroup()).isEqualTo(expected.getMenuGroup());
-            softly.assertThat(actualMenu.getMenuProducts()).isEqualTo(expected.getMenuProducts());
+            softly.assertThat(actualMenu.getMenuGroup())
+                    .usingRecursiveComparison()
+                    .isEqualTo(expected.getMenuGroup());
+            softly.assertThat(actualMenu.getMenuProducts())
+                    .usingRecursiveComparison()
+                    .isEqualTo(expected.getMenuProducts());
         });
     }
 }
