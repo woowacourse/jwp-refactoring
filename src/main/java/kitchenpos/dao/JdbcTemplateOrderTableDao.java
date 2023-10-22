@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
+
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
     private static final RowMapper<OrderTable> ORDER_TABLE_ROW_MAPPER = (resultSet, rowNumber) -> new OrderTable(
@@ -32,8 +33,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -87,8 +87,9 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     private void update(final OrderTable entity) {
-        final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
-                " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
+        final String sql = "UPDATE order_table "
+                + "SET table_group_id = (:tableGroupId), number_of_guests = (:numberOfGuests), empty = (:empty) "
+                + "WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableGroupId", entity.getTableGroupId())
                 .addValue("numberOfGuests", entity.getNumberOfGuests())

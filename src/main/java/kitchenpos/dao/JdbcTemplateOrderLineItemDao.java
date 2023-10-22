@@ -11,14 +11,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
-    private static final String TABLE_NAME = "order_line_item";
+
     private static final String KEY_COLUMN_NAME = "seq";
     private static final RowMapper<OrderLineItem> ORDER_LINE_ITEM_ROW_MAPPER = (resultSet, rowNumber) -> new OrderLineItem(
             resultSet.getLong(KEY_COLUMN_NAME),
@@ -28,13 +27,9 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     );
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert jdbcInsert;
 
     public JdbcTemplateOrderLineItemDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName(TABLE_NAME)
-                .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
