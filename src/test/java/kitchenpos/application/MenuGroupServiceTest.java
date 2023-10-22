@@ -1,36 +1,46 @@
 package kitchenpos.application;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuGroupCreateRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.domain.MenuGroup;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
 class MenuGroupServiceTest {
 
-    @Mock
+    private MenuGroupService menuGroupService;
+    @Autowired
     private MenuGroupRepository menuGroupRepository;
 
-    @InjectMocks
-    private MenuGroupService menuGroupService;
+    @BeforeEach
+    void setUp() {
+        menuGroupService = new MenuGroupService(menuGroupRepository);
+    }
 
     @Test
     void 메뉴_그룹_생성할_수_있다() {
-        MenuGroupCreateRequest 분식메뉴그룹_요청 = MenuGroupFixtures.분식메뉴그룹_요청();
-        menuGroupService.create(분식메뉴그룹_요청);
-        verify(menuGroupRepository).save(any(MenuGroup.class));
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("분식");
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(request);
+
+        Assertions.assertThat(menuGroupRepository.findById(menuGroupResponse.getId())).isPresent();
     }
 
     @Test
     void 전체_메뉴_그룹_조회할_수_있다() {
-        menuGroupService.list();
-        verify(menuGroupRepository).findAll();
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("분식");
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(request);
+        List<MenuGroupResponse> responses = menuGroupService.list();
+
+        Assertions.assertThat(responses.stream()
+                        .filter(response -> Objects.equals(response.getName(), menuGroupResponse.getName()))
+                        .collect(Collectors.toList()))
+                .hasSize(1);
     }
 }
