@@ -38,14 +38,17 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         final Order order = new Order(findOrderTableById(request.getOrderTableId()), LocalDateTime.now());
-        final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                .map(each -> new OrderLineItem(findMenuById(each.getMenuId()), each.getQuantity()))
-                .collect(Collectors.toList());
-        order.addOrderLineItem(orderLineItems);
+        order.addOrderLineItem(extractOrderLineItems(request));
 
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(orderLineItems);
+        orderLineItemRepository.saveAll(order.getOrderLineItems());
         return OrderResponse.from(order);
+    }
+
+    private List<OrderLineItem> extractOrderLineItems(final OrderRequest request) {
+        return request.getOrderLineItems().stream()
+                .map(each -> new OrderLineItem(findMenuById(each.getMenuId()), each.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     private OrderTable findOrderTableById(final long id) {
