@@ -23,7 +23,7 @@ class OrderTableTest {
         @ValueSource(booleans = {true, false})
         void success_changeOrderTableFull(final boolean expected) {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, true);
+            final OrderTable orderTable = new OrderTable(null, 5, false);
 
             // when
             orderTable.changeOrderTableEmpty(expected);
@@ -36,13 +36,16 @@ class OrderTableTest {
         @Test
         void throwException_changeOrderTableEmpty_when_tableGroupIsNotNull() {
             // given
-            final OrderTable orderTable = new OrderTable(
-                    TableGroup.emptyOrderTables(),
-                    5,
-                    false
-            );
+            final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
+                    new OrderTable(null, 10, true),
+                    new OrderTable(null, 10, true)
+            ));
 
-            // expect
+            // when
+            final OrderTable orderTable = new OrderTable(null, 10, true);
+            orderTable.assignTableGroup(tableGroup);
+
+            // then
             assertThatThrownBy(() -> orderTable.changeOrderTableEmpty(true))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -55,7 +58,8 @@ class OrderTableTest {
         @Test
         void success_isGrouped_isFalse() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 10, true);
+            final OrderTable orderTable = new OrderTable(null, 10, false);
+            ;
 
             // when
             final boolean actual = orderTable.isGrouped();
@@ -68,12 +72,16 @@ class OrderTableTest {
         @Test
         void success_isGrouped_isTrue() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 10, true);
-            final TableGroup tableGroup = TableGroup.emptyOrderTables();
-            tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
+            final OrderTable orderTableOne = new OrderTable(null, 10, true);
+            final OrderTable orderTableTwo = new OrderTable(null, 10, true);
+            ;
+            TableGroup.withOrderTables(List.of(
+                    orderTableOne,
+                    orderTableTwo
+            ));
 
             // when
-            final boolean actual = orderTable.isGrouped();
+            final boolean actual = orderTableOne.isGrouped();
 
             // then
             assertThat(actual).isTrue();
@@ -88,16 +96,20 @@ class OrderTableTest {
         @Test
         void success_assignTableGroup() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, true);
-            final TableGroup tableGroup = TableGroup.emptyOrderTables();
+            final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
+                    new OrderTable(null, 5, true),
+                    new OrderTable(null, 5, true)
+            ));
+
+            final OrderTable orderTableOne = new OrderTable(null, 5, true);
 
             // when
-            orderTable.assignTableGroup(tableGroup);
+            orderTableOne.assignTableGroup(tableGroup);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderTable.isGrouped()).isTrue();
-                softly.assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup);
+                softly.assertThat(orderTableOne.isGrouped()).isTrue();
+                softly.assertThat(orderTableOne.getTableGroup()).isEqualTo(tableGroup);
             });
         }
 
@@ -105,15 +117,21 @@ class OrderTableTest {
         @Test
         void throwException_assignTableGroup_when_tableGroup_isAlreadyAssigned() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, true);
-            final TableGroup tableGroup = TableGroup.emptyOrderTables();
+            final OrderTable orderTableOne = new OrderTable(null, 5, true);
+            final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+            final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
+                    orderTableOne,
+                    orderTableTwo
+            ));
 
-            // when
-            orderTable.assignTableGroup(tableGroup);
+            // expect
+            assertSoftly(softly -> {
+                softly.assertThatThrownBy(() -> orderTableOne.assignTableGroup(tableGroup))
+                        .isInstanceOf(IllegalArgumentException.class);
 
-            // then
-            assertThatThrownBy(() -> orderTable.assignTableGroup(tableGroup))
-                    .isInstanceOf(IllegalArgumentException.class);
+                softly.assertThatThrownBy(() -> orderTableTwo.assignTableGroup(tableGroup))
+                        .isInstanceOf(IllegalArgumentException.class);
+            });
         }
     }
 
@@ -125,17 +143,23 @@ class OrderTableTest {
         @Test
         void success_ungroupTableGroup() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, true);
-            final TableGroup tableGroup = TableGroup.emptyOrderTables();
-            tableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(List.of(orderTable)));
+            final OrderTable orderTableOne = new OrderTable(null, 5, true);
+            final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+            TableGroup.withOrderTables(List.of(
+                    orderTableOne,
+                    orderTableTwo
+            ));
 
             // when
-            orderTable.deassignTableGroup();
+            orderTableOne.deassignTableGroup();
+            orderTableTwo.deassignTableGroup();
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderTable.isGrouped()).isFalse();
-                softly.assertThat(orderTable.getTableGroup()).isNull();
+                softly.assertThat(orderTableOne.isGrouped()).isFalse();
+                softly.assertThat(orderTableOne.getTableGroup()).isNull();
+                softly.assertThat(orderTableTwo.isGrouped()).isFalse();
+                softly.assertThat(orderTableTwo.getTableGroup()).isNull();
             });
         }
     }

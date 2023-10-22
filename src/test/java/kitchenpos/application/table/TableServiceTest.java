@@ -90,14 +90,11 @@ class TableServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTableWithFiveGuests = orderTableRepository.save(new OrderTable(null, 5, true));
             final List<OrderTable> savedOrderTables = List.of(
                     savedOrderTableWithFiveGuests,
-                    orderTableRepository.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(new OrderTable(null, 10, false))
             );
-            final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.emptyOrderTables());
-            for (final OrderTable savedOrderTable : savedOrderTables) {
-                savedOrderTable.assignTableGroup(savedTableGroup);
-                orderTableRepository.save(savedOrderTable);
-                orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
-            }
+            tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
+
+            savedOrderTables.forEach(orderTable -> orderRepository.save(Order.ofEmptyOrderLineItems(orderTable)));
 
             // expect
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), new OrderTableEmptyUpdateRequest(true)))

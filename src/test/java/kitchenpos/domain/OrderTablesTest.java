@@ -9,7 +9,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderTablesTest {
 
@@ -36,16 +35,21 @@ class OrderTablesTest {
     @Nested
     class AddOrderTablesNestedClass {
 
-        @DisplayName("[EXCEPTION] 주문 테이블 목록에 추가된 주문 테이블 중 하나라도 단체 지정되어 있을 경우 예외가 발생한다.")
+        @DisplayName("[SUCCESS] 주문 테이블을 추가한다.")
         @Test
-        void throwException_when_orderTables_anyMatch_tableGroupIsExists() {
+        void success_addOrderTables() {
             // given
-            final OrderTable orderTable = new OrderTable(TableGroup.emptyOrderTables(), 5, false);
-            final OrderTables orderTables = new OrderTables(List.of(orderTable));
+            final OrderTables actual = OrderTables.empty();
 
-            // expect
-            assertThatThrownBy(() -> OrderTables.empty().addOrderTables(orderTables))
-                    .isInstanceOf(IllegalArgumentException.class);
+            final OrderTable orderTable = new OrderTable(null, 5, false);
+
+            // when
+            actual.addOrderTables(new OrderTables(List.of(orderTable)));
+
+            // then
+            final List<OrderTable> expected = actual.getOrderTableItems();
+
+            assertThat(actual.getOrderTableItems()).isEqualTo(expected);
         }
     }
 
@@ -53,27 +57,26 @@ class OrderTablesTest {
     @Nested
     class AssignTableGroupNestedClass {
 
-        @DisplayName("[SUCCESS] 비어있는 주문 테이블 목록 객체를 생성한다.")
+        @DisplayName("[SUCCESS] 주문 테이블 목록 객체를 단체로 지정한다.")
         @Test
         void success_assignTableGroup() {
             // given
-            final List<OrderTable> orderTableItems = List.of(
+            final TableGroup tableGroup = TableGroup.withOrderTables(List.of(
                     new OrderTable(null, 5, true),
                     new OrderTable(null, 5, true)
-            );
-
-            final OrderTables actual = new OrderTables(orderTableItems);
+            ));
 
             // when
-            final TableGroup expected = TableGroup.emptyOrderTables();
-            actual.assignTableGroup(expected);
+            final OrderTables actual = new OrderTables(List.of(
+                    new OrderTable(null, 5, true)
+            ));
+            actual.assignTableGroup(tableGroup);
 
             // then
             assertThat(actual)
                     .usingRecursiveComparison()
                     .isEqualTo(new OrderTables(List.of(
-                            new OrderTable(expected, 5, true),
-                            new OrderTable(expected, 5, true)
+                            new OrderTable(tableGroup, 5, true)
                     )));
         }
     }
