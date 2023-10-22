@@ -64,8 +64,9 @@ public class MenuService {
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            // TODO: 2023-10-23 request 받아오게 리팩터링하면서 Menu가지는 MenuProduct 만들기
+            final MenuProduct menuProductToSave = new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity());
+            savedMenuProducts.add(menuProductDao.save(menuProductToSave));
         }
         savedMenu.addMenuProducts(savedMenuProducts);
 
