@@ -33,17 +33,6 @@ public class Menu {
     @Embedded
     private MenuProducts menuProducts;
 
-    public static Menu of(
-            final String name,
-            final BigDecimal price,
-            final List<MenuProduct> menuProducts,
-            final MenuGroup menuGroup
-    ) {
-        final Price menuPrice = new Price(price);
-
-        return new Menu(name, menuPrice, menuGroup, menuProducts);
-    }
-
     protected Menu() {
     }
 
@@ -57,6 +46,17 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = MenuProducts.of(this, menuProducts);
+    }
+
+    public static Menu of(
+            final String name,
+            final BigDecimal price,
+            final List<MenuProduct> menuProducts,
+            final MenuGroup menuGroup
+    ) {
+        final Price menuPrice = new Price(price);
+
+        return new Menu(name, menuPrice, menuGroup, menuProducts);
     }
 
     public Price price() {
