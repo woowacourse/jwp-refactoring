@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
@@ -12,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.exception.InvalidPriceException;
 
 @Entity
 public class Menu {
@@ -31,7 +33,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
     }
@@ -45,8 +47,21 @@ public class Menu {
         this.name = new MenuName(name);
         this.menuProducts = menuProducts;
         menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
-        this.price = new MenuPrice(price, getMenuProductTotalPrice());
+        this.price = new MenuPrice(price);
         this.menuGroup = menuGroup;
+        validateValueLessThanProductTotalPrice(price, calculateMenuProductTotalPrice());
+    }
+
+    private void validateValueLessThanProductTotalPrice(final BigDecimal value, final BigDecimal productTotalPrice) {
+        if (value.compareTo(productTotalPrice) > 0) {
+            throw new InvalidPriceException("메뉴의 가격은 메뉴 상품의 가격 합보다 작거나 같아야 합니다.");
+        }
+    }
+
+    private BigDecimal calculateMenuProductTotalPrice() {
+        return menuProducts.stream()
+                           .map(MenuProduct::getPrice)
+                           .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public Long getId() {
@@ -71,12 +86,7 @@ public class Menu {
     }
 
     public void setPrice(final BigDecimal price) {
+        validateValueLessThanProductTotalPrice(price, calculateMenuProductTotalPrice());
         this.price = new MenuPrice(price);
-    }
-
-    public BigDecimal getMenuProductTotalPrice() {
-        return menuProducts.stream()
-                           .map(MenuProduct::getPrice)
-                           .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
