@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.response.OrderResponse;
@@ -22,7 +22,7 @@ import static kitchenpos.domain.fixture.OrderTableFixture.주문_테이블_생�
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class OrdersServiceIntegrateTest extends ServiceIntegrateTest {
+class OrderServiceIntegrateTest extends ServiceIntegrateTest {
 
     @Autowired
     private OrderService orderService;
@@ -73,11 +73,11 @@ class OrdersServiceIntegrateTest extends ServiceIntegrateTest {
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
             Long savedOrderId = orderService.create(orderTable.getId());
-            Orders orders = orderRepository.findById(savedOrderId)
+            Order order = orderRepository.findById(savedOrderId)
                     .orElseThrow(IllegalArgumentException::new);
 
             // then
-            assertThat(orders.getOrderStatus()).isEqualTo(COOKING);
+            assertThat(order.getOrderStatus()).isEqualTo(COOKING);
         }
 
         @Test
@@ -86,11 +86,11 @@ class OrdersServiceIntegrateTest extends ServiceIntegrateTest {
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
             Long savedOrderId = orderService.create(orderTable.getId());
-            Orders orders = orderRepository.findById(savedOrderId)
+            Order order = orderRepository.findById(savedOrderId)
                     .orElseThrow(IllegalArgumentException::new);
 
             // then
-            assertThat(orders.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
+            assertThat(order.getOrderedTime()).isBeforeOrEqualTo(LocalDateTime.now());
         }
 
         @Test
@@ -99,11 +99,11 @@ class OrdersServiceIntegrateTest extends ServiceIntegrateTest {
             orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
             Long savedOrderId = orderService.create(orderTable.getId());
-            Orders orders = orderRepository.findById(savedOrderId)
+            Order order = orderRepository.findById(savedOrderId)
                     .orElseThrow(IllegalArgumentException::new);
 
             // then
-            assertThat(orders).isNotNull();
+            assertThat(order).isNotNull();
         }
 
     }
@@ -135,23 +135,23 @@ class OrdersServiceIntegrateTest extends ServiceIntegrateTest {
     @Nested
     class 주문_상태를_변경한다 {
 
-        private Orders orders;
+        private Order order;
 
         @BeforeEach
         void setUp() {
             OrderTable orderTable = 주문_테이블_생성();
             orderTableRepository.save(orderTable);
-            orders = orderRepository.save(주문_생성(orderTable));
+            order = orderRepository.save(주문_생성(orderTable));
         }
 
         @Test
         void 주문_상태를_변경한다() {
             // when
-            OrderResponse response = orderService.changeOrderStatus(orders.getId(), COMPLETION);
+            OrderResponse response = orderService.changeOrderStatus(order.getId(), COMPLETION);
 
             // then
             assertAll(
-                    () -> assertThat(response.getId()).isEqualTo(orders.getId()),
+                    () -> assertThat(response.getId()).isEqualTo(order.getId()),
                     () -> assertThat(response.getOrderStatus()).isEqualTo(COMPLETION)
             );
         }
@@ -160,18 +160,18 @@ class OrdersServiceIntegrateTest extends ServiceIntegrateTest {
         void 입력받은_orderId가_존재하지_않는다면_예외가_발생한다() {
             // when, then
             assertThrows(IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(orders.getId() + 1L, COMPLETION));
+                    () -> orderService.changeOrderStatus(order.getId() + 1L, COMPLETION));
         }
 
         @Test
         void 저장된_주문이_이미_완료되었다면_예외가_발생한다() {
             // given
-            orders.updateOrderStatus(COMPLETION);
-            orderRepository.save(orders);
+            order.updateOrderStatus(COMPLETION);
+            orderRepository.save(order);
 
             // when
             assertThrows(IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(orders.getId(), COMPLETION));
+                    () -> orderService.changeOrderStatus(order.getId(), COMPLETION));
         }
 
     }

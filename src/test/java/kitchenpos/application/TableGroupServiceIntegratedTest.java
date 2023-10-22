@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -137,10 +137,10 @@ class TableGroupServiceIntegratedTest extends ServiceIntegrateTest {
         void 통합_계산_주문들_중_하나라도_COOKING_또는_MEAL이면_예외가_발생한다() {
             // given
             TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-            Orders orders1 = 주문_생성(tableGroup.getOrderTables().getValues().get(0));
-            Orders orders2 = 주문_생성(tableGroup.getOrderTables().getValues().get(1));
-            orderRepository.save(orders1);
-            orderRepository.save(orders2);
+            Order order1 = 주문_생성(tableGroup.getOrderTables().getValues().get(0));
+            Order order2 = 주문_생성(tableGroup.getOrderTables().getValues().get(1));
+            orderRepository.save(order1);
+            orderRepository.save(order2);
 
             // when, then
             assertThrows(IllegalArgumentException.class, () -> tableGroupService.ungroup(tableGroupId));

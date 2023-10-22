@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.test.ServiceIntegrateTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.Orders;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -135,8 +135,8 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
         @Test
         void 주문_상태가_COOKING_또는_MEAL이라면_예외가_발생한다() {
             // given
-            Orders orders = orderRepository.save(주문_생성(orderTable));
-            orders.updateOrderStatus(COOKING);
+            Order order = orderRepository.save(주문_생성(orderTable));
+            order.updateOrderStatus(COOKING);
 
             // when
             assertThrows(IllegalArgumentException.class, () -> orderTableService.changeIsEmpty(orderTable.getId(), true));

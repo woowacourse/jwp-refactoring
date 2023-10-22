@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.hibernate.annotations.Tables;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +12,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 
 @Entity
-public class Orders {
+@Table(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -21,19 +24,19 @@ public class Orders {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
     private List<OrderLineItem> orderLineItems;
 
-    protected Orders() {
+    protected Order() {
     }
 
-    public Orders(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Orders(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;

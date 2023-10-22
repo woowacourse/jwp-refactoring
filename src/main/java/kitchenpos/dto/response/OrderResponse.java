@@ -1,7 +1,7 @@
 package kitchenpos.dto.response;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Orders;
 
 import java.time.LocalDateTime;
 
@@ -17,11 +17,11 @@ public class OrderResponse {
         this.orderedTime = orderedTime;
     }
 
-    public static OrderResponse from(final Orders orders) {
+    public static OrderResponse from(final Order order) {
         return new OrderResponse(
-                orders.getId(),
-                orders.getOrderStatus(),
-                orders.getOrderedTime()
+                order.getId(),
+                order.getOrderStatus(),
+                order.getOrderedTime()
         );
     }
 
