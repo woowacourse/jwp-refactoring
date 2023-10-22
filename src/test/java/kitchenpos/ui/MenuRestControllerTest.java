@@ -7,8 +7,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
+import kitchenpos.application.dto.menu.CreateMenuResponse;
+import kitchenpos.application.dto.menu.SearchMenuResponse;
+import kitchenpos.ui.dto.CreateMenuRequest;
+import kitchenpos.ui.dto.MenuProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -17,11 +21,17 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_생성() throws Exception {
         // given
-        Menu menu = 메뉴();
-        String request = objectMapper.writeValueAsString(menu);
-        menu.setId(1L);
-        given(menuService.create(any())).willReturn(menu);
-        String response = objectMapper.writeValueAsString(menu);
+        CreateMenuRequest createMenuRequest = new CreateMenuRequest(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                1L,
+                List.of(new MenuProductRequest(1L, 2))
+        );
+        String request = objectMapper.writeValueAsString(createMenuRequest);
+
+        CreateMenuResponse createMenuResponse = 메뉴_응답();
+        given(menuService.create(any())).willReturn(createMenuResponse);
+        String response = objectMapper.writeValueAsString(createMenuResponse);
 
         // when & then
         mockMvc.perform(post("/api/menus")
@@ -34,13 +44,11 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_조회() throws Exception {
         // given
-        Menu 메뉴1 = 메뉴();
-        메뉴1.setId(1L);
-        Menu 메뉴2 = 메뉴();
-        메뉴2.setId(2L);
-        List<Menu> menus = List.of(메뉴1, 메뉴2);
-        given(menuService.list()).willReturn(menus);
-        String response = objectMapper.writeValueAsString(menus);
+        SearchMenuResponse searchMenuResponse1 = 메뉴_조회_응답();
+        SearchMenuResponse searchMenuResponse2 = 메뉴_조회_응답();
+        List<SearchMenuResponse> searchMenuResponses = List.of(searchMenuResponse1, searchMenuResponse2);
+        given(menuService.list()).willReturn(searchMenuResponses);
+        String response = objectMapper.writeValueAsString(searchMenuResponses);
 
         // when & then
         mockMvc.perform(get("/api/menus"))

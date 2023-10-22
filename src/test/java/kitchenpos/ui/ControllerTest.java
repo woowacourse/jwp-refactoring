@@ -9,12 +9,16 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.menu.CreateMenuResponse;
+import kitchenpos.application.dto.menu.SearchMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,64 +53,61 @@ public class ControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected MenuGroup 메뉴_그룹(String name) {
-        return 메뉴_그룹(null, name);
+    protected Menu 메뉴(Long id) {
+        MenuProduct menuProduct = new MenuProduct(
+                new Product(1L, "상품", new Price(BigDecimal.ONE)),
+                2
+        );
+
+        return new Menu(
+                id,
+                "후라이드+후라이드",
+                new Price(BigDecimal.valueOf(1)),
+                new MenuGroup(1L, "추천메뉴"),
+                List.of(menuProduct)
+        );
     }
 
-    protected MenuGroup 메뉴_그룹(Long id, String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+    protected CreateMenuResponse 메뉴_응답() {
+        MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
+        Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
+        MenuProduct menuProduct = new MenuProduct(1L, product, 3);
+        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup, List.of(menuProduct));
+        return CreateMenuResponse.from(menu);
     }
 
-    protected Menu 메뉴() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
-
-        return menu;
+    protected SearchMenuResponse 메뉴_조회_응답() {
+        MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
+        Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
+        MenuProduct menuProduct = new MenuProduct(1L, product, 3);
+        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup, List.of(menuProduct));
+        return SearchMenuResponse.from(menu);
     }
 
-    protected Order 주문() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(List.of(orderLineItem));
-
-        return order;
-    }
-
-    protected Product 상품() {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
-        return product;
+    protected Order 식사중인_주문(Long id) {
+        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
+        return new Order(
+                id,
+                new OrderTable(1L, 테이블_그룹(), 0, false),
+                OrderStatus.MEAL,
+                null,
+                List.of(orderLineItem)
+        );
     }
 
     protected TableGroup 테이블_그룹() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-        return tableGroup;
+        OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
+        return new TableGroup(List.of(orderTable1, orderTable2));
     }
 
-    protected OrderTable 주문_테이블() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-        return orderTable;
+    protected TableGroup 테이블_그룹(Long id) {
+        OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
+        return new TableGroup(id, null, List.of(orderTable1, orderTable2));
+    }
+
+    protected OrderTable 주문_테이블(Long id) {
+        return new OrderTable(id, null, 0, true);
     }
 }

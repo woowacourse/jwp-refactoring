@@ -1,51 +1,57 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.exception.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL;
+import static kitchenpos.exception.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
+import static kitchenpos.exception.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
+import static kitchenpos.exception.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
+import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableEmptyResponse;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsCommand;
+import kitchenpos.application.dto.ordertable.ChangeOrderTableNumberOfGuestsResponse;
+import kitchenpos.application.dto.ordertable.CreateOrderTableCommand;
+import kitchenpos.application.dto.ordertable.CreateOrderTableResponse;
+import kitchenpos.application.dto.ordertable.SearchOrderTableResponse;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.exception.BaseException;
+import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class TableServiceTest extends IntegrationTest {
 
-    private OrderTable orderTable1;
-    private OrderTable orderTable2;
-
-    @BeforeEach
-    void setUp() {
-        orderTable1 = new OrderTable();
-        orderTable2 = new OrderTable();
-    }
-
     @Test
     void 주문_테이블을_저장한다() {
+        // given
+        CreateOrderTableCommand command = new CreateOrderTableCommand(0, false);
+
         // when
-        OrderTable result = tableService.create(orderTable1);
+        CreateOrderTableResponse result = tableService.create(command);
 
         // then
-        assertThat(result.getId()).isPositive();
+        assertThat(result.id()).isPositive();
     }
 
     @Test
     void 주문_테이블들을_조회한다() {
         // given
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        OrderTable orderTable1 = 주문테이블저장(주문테이블(0, false));
+        OrderTable orderTable2 = 주문테이블저장(주문테이블(0, false));
 
         // when
-        List<OrderTable> result = tableService.list();
+        List<SearchOrderTableResponse> result = tableService.list();
 
         // then
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(result).hasSize(2),
-                () -> assertThat(result.get(0).getId()).isEqualTo(savedOrderTable1.getId()),
-                () -> assertThat(result.get(1).getId()).isEqualTo(savedOrderTable2.getId())
+                () -> assertThat(result.get(0).id()).isEqualTo(orderTable1.id()),
+                () -> assertThat(result.get(1).id()).isEqualTo(orderTable2.id())
         );
     }
 
@@ -54,54 +60,61 @@ class TableServiceTest extends IntegrationTest {
 
         @Test
         void 존재하지_않는_주문_테이블을_변경하면_예외가_발생한다() {
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable1))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // given
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(1L, false);
+
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeEmpty(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(ORDER_TABLE_NOT_FOUND);
         }
 
         @Test
         void 지정된_단체가_있는_테이블을_변경하면_예외가_발생한다() {
             // given
-            orderTable1.setEmpty(true);
-            orderTable2.setEmpty(true);
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-            OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+            OrderTable 주문테이블 = 주문테이블(0, true);
+            테이블그룹저장(테이블그룹(주문테이블, 주문테이블(0, true)));
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), true);
 
-            TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
-            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeEmpty(command)
+            ).exceptionType();
 
-            orderTable1.setTableGroupId(savedTableGroup.getId());
-            Long id = orderTableDao.save(orderTable1).getId();
-
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(id, orderTable2))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE);
         }
 
         @Test
         void 조리중이거나_식사중인_테이블을_변경하면_예외가_발생한다() {
             // given
-            orderTable1.setEmpty(true);
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-            주문(savedOrderTable1, OrderStatus.COOKING, 맛있는_메뉴());
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, false));
+            주문저장(주문(주문테이블, COOKING, 주문항목(맛있는_메뉴_저장(), 0)));
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), true);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), orderTable2))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeEmpty(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_EMPTY_COOKING_OR_MEAL);
         }
 
         @Test
         void 주문_테이블_상태를_변경한다() {
             // given
-            orderTable1.setEmpty(true);
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, true));
+            ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), false);
 
             // when
-            OrderTable result = tableService.changeEmpty(savedOrderTable1.getId(), orderTable2);
+            ChangeOrderTableEmptyResponse result = tableService.changeEmpty(command);
 
             // then
-            assertThat(result.isEmpty()).isFalse();
+            assertThat(result.empty()).isFalse();
         }
     }
 
@@ -111,47 +124,60 @@ class TableServiceTest extends IntegrationTest {
         @Test
         void 손님_숫자가_0보다_작으면_예외가_발생한다() {
             // given
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-            orderTable2.setNumberOfGuests(-1);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, false));
+            ChangeOrderTableNumberOfGuestsCommand command = new ChangeOrderTableNumberOfGuestsCommand(주문테이블.id(), -1);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.getId(), orderTable2))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeNumberOfGuests(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE);
         }
 
         @Test
         void 존재하지_않는_테이블을_변경하면_예외가_발생한다() {
             // given
-            orderTable1.setNumberOfGuests(2);
+            Long noExistOrderTableId = -1L;
+            ChangeOrderTableNumberOfGuestsCommand command =
+                    new ChangeOrderTableNumberOfGuestsCommand(noExistOrderTableId, 2);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable1))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeNumberOfGuests(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(ORDER_TABLE_NOT_FOUND);
         }
 
         @Test
         void 비어있는_테이블을_변경하면_예외가_발생한다() {
             // given
-            orderTable1.setEmpty(true);
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-            orderTable2.setNumberOfGuests(2);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, true));
+            ChangeOrderTableNumberOfGuestsCommand command = new ChangeOrderTableNumberOfGuestsCommand(주문테이블.id(), 2);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable1.getId(), orderTable2))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // when
+            BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                    tableService.changeNumberOfGuests(command)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE);
         }
 
         @Test
         void 손님_숫자를_변경한다() {
             // given
-            OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-            orderTable2.setNumberOfGuests(2);
+            OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, false));
+            ChangeOrderTableNumberOfGuestsCommand command = new ChangeOrderTableNumberOfGuestsCommand(주문테이블.id(), 2);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(savedOrderTable1.getId(), orderTable2);
+            ChangeOrderTableNumberOfGuestsResponse result = tableService.changeNumberOfGuests(command);
 
             // then
-            assertThat(result.getNumberOfGuests()).isEqualTo(2);
+            assertThat(result.numberOfGuests()).isEqualTo(2);
         }
     }
 }

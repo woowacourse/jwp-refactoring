@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,7 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
+import kitchenpos.application.dto.order.CreateOrderResponse;
+import kitchenpos.application.dto.order.SearchOrderResponse;
+import kitchenpos.ui.dto.ChangeOrderStatusRequest;
+import kitchenpos.ui.dto.CreateOrderRequest;
+import kitchenpos.ui.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -19,11 +23,14 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_생성() throws Exception {
         // given
-        Order order = 주문();
-        String request = objectMapper.writeValueAsString(order);
-        order.setId(1L);
-        given(orderService.create(any())).willReturn(order);
-        String response = objectMapper.writeValueAsString(order);
+        CreateOrderRequest createOrderRequest = new CreateOrderRequest(1L, List.of(
+                new OrderLineItemRequest(1L, 2)
+        ));
+        String request = objectMapper.writeValueAsString(createOrderRequest);
+
+        CreateOrderResponse createOrderResponse = CreateOrderResponse.from(식사중인_주문(1L));
+        given(orderService.create(any())).willReturn(createOrderResponse);
+        String response = objectMapper.writeValueAsString(createOrderResponse);
 
         // when & then
         mockMvc.perform(post("/api/orders")
@@ -36,13 +43,12 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_조회() throws Exception {
         // given
-        Order order1 = 주문();
-        order1.setId(1L);
-        Order order2 = 주문();
-        order2.setId(2L);
-        List<Order> orders = List.of(order1, order2);
-        given(orderService.list()).willReturn(orders);
-        String response = objectMapper.writeValueAsString(orders);
+        List<SearchOrderResponse> searchOrderResponses = List.of(
+                SearchOrderResponse.from(식사중인_주문(1L)),
+                SearchOrderResponse.from(식사중인_주문(2L))
+        );
+        given(orderService.list()).willReturn(searchOrderResponses);
+        String response = objectMapper.writeValueAsString(searchOrderResponses);
 
         // when & then
         mockMvc.perform(get("/api/orders"))
@@ -53,11 +59,12 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     void 주문_상태_변경() throws Exception {
         // given
-        Order order = 주문();
-        String request = objectMapper.writeValueAsString(order);
-        order.setId(1L);
-        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
-        String response = objectMapper.writeValueAsString(order);
+        ChangeOrderStatusRequest changeOrderStatusRequest = new ChangeOrderStatusRequest("COMPLETION");
+        String request = objectMapper.writeValueAsString(changeOrderStatusRequest);
+
+        ChangeOrderStatusResponse changeOrderStatusResponse = ChangeOrderStatusResponse.from(식사중인_주문(1L));
+        given(orderService.changeOrderStatus(any())).willReturn(changeOrderStatusResponse);
+        String response = objectMapper.writeValueAsString(changeOrderStatusResponse);
 
         // when & then
         mockMvc.perform(put("/api/orders/1/order-status")

@@ -1,25 +1,23 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,110 +48,86 @@ public class IntegrationTest {
     protected TableService tableService;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuRepository menuRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected TableGroupRepository tableGroupRepository;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected ProductRepository productRepository;
 
-    protected Order 맛있는_메뉴_주문() {
-        OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, OrderStatus.COOKING, 맛있는_메뉴());
+    protected Price 가격(long 가격) {
+        return new Price(BigDecimal.valueOf(가격));
     }
 
-    protected Order 식사중인_주문() {
-        OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, OrderStatus.MEAL, 맛있는_메뉴());
+    protected Product 상품(String 이름, Price 가격) {
+        return new Product(이름, 가격);
     }
 
-    protected Order 완료된_주문() {
-        OrderTable 주문_테이블 = 주문_테이블(false);
-        return 주문(주문_테이블, OrderStatus.COMPLETION, 맛있는_메뉴());
+    protected OrderTable 주문테이블(int 손님숫자, boolean 비어있는지) {
+        return new OrderTable(손님숫자, 비어있는지);
     }
 
-    protected TableGroup 빈_테이블들을_그룹으로_지정한다() {
-        OrderTable orderTable1 = 주문_테이블(true);
-        OrderTable orderTable2 = 주문_테이블(true);
-        return 테이블_그룹(orderTable1, orderTable2);
+    protected MenuGroup 메뉴그룹(String 이름) {
+        return new MenuGroup(이름);
     }
 
-    protected TableGroup 테이블_그룹(OrderTable... 주문_테이블들) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(주문_테이블들));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroupDao.save(tableGroup);
+    protected MenuProduct 메뉴상품(Product 상품, long 수량) {
+        return new MenuProduct(상품, 수량);
     }
 
-    protected Order 주문(OrderTable orderTable, OrderStatus orderStatus, Menu... 메뉴들) {
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(orderTable.getId());
-        List<OrderLineItem> orderLineItems = Arrays.stream(메뉴들)
-                .map(this::toOrderLineItem)
-                .collect(Collectors.toList());
-        order.setOrderLineItems(orderLineItems);
-        return orderDao.save(order);
+    protected Menu 메뉴(String 메뉴이름, Price 가격, MenuGroup 메뉴그룹, MenuProduct... 메뉴상품) {
+        return new Menu(메뉴이름, 가격, 메뉴그룹, Arrays.asList(메뉴상품));
     }
 
-    private OrderLineItem toOrderLineItem(Menu 메뉴) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(메뉴.getId());
-        return orderLineItem;
+    protected Order 주문(OrderTable 주문테이블, OrderStatus 주문상태, OrderLineItem... 주문항목) {
+        return new Order(주문테이블, 주문상태, Arrays.asList(주문항목));
     }
 
-    protected OrderTable 주문_테이블(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        return orderTableDao.save(orderTable);
+    protected OrderLineItem 주문항목(Menu 메뉴, long 수량) {
+        return new OrderLineItem(메뉴, 수량);
     }
 
-    protected Menu 맛있는_메뉴() {
-        return 메뉴(메뉴_그룹(),
-                BigDecimal.valueOf(5),
-                "맛있는 메뉴",
-                메뉴_상품(상품("상품1", BigDecimal.valueOf(1)), 3),
-                메뉴_상품(상품("상품2", BigDecimal.valueOf(2)), 2)
-        );
+    protected TableGroup 테이블그룹(OrderTable... 주문테이블) {
+        return new TableGroup(Arrays.asList(주문테이블));
     }
 
-    protected Menu 메뉴(MenuGroup 메뉴_그룹, BigDecimal 가격, String 이름, MenuProduct... 메뉴_상품들) {
-        Menu menu = new Menu();
-        menu.setPrice(가격);
-        menu.setMenuGroupId(메뉴_그룹.getId());
-        menu.setName(이름);
-        menu.setMenuProducts(Arrays.asList(메뉴_상품들));
-        return menuDao.save(menu);
+    protected Product 상품저장(Product 상품) {
+        return productRepository.save(상품);
     }
 
-    protected MenuGroup 메뉴_그룹() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        return menuGroupDao.save(menuGroup);
+    protected OrderTable 주문테이블저장(OrderTable 주문테이블) {
+        return orderTableRepository.save(주문테이블);
     }
 
-    protected Product 상품(String 이름, BigDecimal 가격) {
-        Product product = new Product();
-        product.setName(이름);
-        product.setPrice(가격);
-        return productDao.save(product);
+    protected MenuGroup 메뉴그룹저장(MenuGroup 메뉴그룹) {
+        return menuGroupRepository.save(메뉴그룹);
     }
 
-    protected MenuProduct 메뉴_상품(Product 상품, long 수량) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(상품.getId());
-        menuProduct.setQuantity(수량);
-        return menuProduct;
+    protected Menu 메뉴저장(Menu 메뉴) {
+        return menuRepository.save(메뉴);
+    }
+
+    protected Order 주문저장(Order 주문) {
+        return orderRepository.save(주문);
+    }
+
+    protected TableGroup 테이블그룹저장(TableGroup 테이블그룹) {
+        return tableGroupRepository.save(테이블그룹);
+    }
+
+    protected Menu 맛있는_메뉴_저장() {
+        MenuGroup 메뉴그룹 = 메뉴그룹저장(메뉴그룹("추천메뉴"));
+        Product 상품 = 상품저장(상품("상품1", 가격(1)));
+        return 메뉴저장(메뉴("메뉴", 가격(3), 메뉴그룹, 메뉴상품(상품, 3)));
     }
 }

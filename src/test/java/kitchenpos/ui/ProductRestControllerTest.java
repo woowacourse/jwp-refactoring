@@ -7,8 +7,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.product.CreateProductResponse;
+import kitchenpos.application.dto.product.SearchProductResponse;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.CreateProductRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
@@ -17,11 +22,14 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void 상품_생성() throws Exception {
         // given
-        Product product = 상품();
-        String request = objectMapper.writeValueAsString(product);
-        product.setId(1L);
-        given(productService.create(any())).willReturn(product);
-        String response = objectMapper.writeValueAsString(product);
+        CreateProductRequest createProductRequest = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
+        String request = objectMapper.writeValueAsString(createProductRequest);
+
+        Product product = new Product(1L, "강정치킨", new Price(BigDecimal.valueOf(17000)));
+        CreateProductResponse createProductResponse = CreateProductResponse.from(product);
+
+        given(productService.create(any())).willReturn(createProductResponse);
+        String response = objectMapper.writeValueAsString(createProductResponse);
 
         // when & then
         mockMvc.perform(post("/api/products")
@@ -34,13 +42,13 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void 상품_조회() throws Exception {
         // given
-        Product 상품1 = 상품();
-        상품1.setId(1L);
-        Product 상품2 = 상품();
-        상품2.setId(2L);
-        List<Product> products = List.of(상품1, 상품2);
-        given(productService.list()).willReturn(products);
-        String response = objectMapper.writeValueAsString(products);
+        List<SearchProductResponse> productResponses = List.of(
+                SearchProductResponse.from(new Product(1L, "강정치킨", new Price(BigDecimal.valueOf(17000)))),
+                SearchProductResponse.from(new Product(2L, "강정치킨", new Price(BigDecimal.valueOf(17000))))
+        );
+
+        given(productService.list()).willReturn(productResponses);
+        String response = objectMapper.writeValueAsString(productResponses);
 
         // when & then
         mockMvc.perform(get("/api/products"))

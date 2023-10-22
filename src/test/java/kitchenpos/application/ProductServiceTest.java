@@ -1,84 +1,87 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.PriceExceptionType.PRICE_CAN_NOT_NEGATIVE;
+import static kitchenpos.exception.PriceExceptionType.PRICE_CAN_NOT_NULL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.product.CreateProductCommand;
+import kitchenpos.application.dto.product.CreateProductResponse;
+import kitchenpos.application.dto.product.SearchProductResponse;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.exception.BaseException;
+import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;
 
 class ProductServiceTest extends IntegrationTest {
 
-    private Product product1;
-    private Product product2;
-
-    @BeforeEach
-    void setUp() {
-        product1 = new Product();
-        product2 = new Product();
-    }
-
     @Test
     void 상품을_저장한다() {
         // given
-        product1.setName("상품");
-        product1.setPrice(BigDecimal.ONE);
+        CreateProductCommand command = new CreateProductCommand("상품", BigDecimal.ONE);
 
         // when
-        Product savedProduct = productService.create(product1);
-        Optional<Product> result = productDao.findById(savedProduct.getId());
+        CreateProductResponse response = productService.create(command);
+        Optional<Product> result = productRepository.findById(response.id());
 
         // then
         assertAll(
                 () -> assertThat(result).isPresent(),
-                () -> assertThat(result.get().getId()).isPositive(),
-                () -> assertThat(result.get().getPrice()).isEqualByComparingTo(BigDecimal.ONE)
+                () -> assertThat(result.get().id()).isPositive(),
+                () -> assertThat(result.get().price()).isEqualByComparingTo(BigDecimal.ONE)
         );
     }
 
     @Test
     void 상품의_가격이_null이면_예외가_발생한다() {
-        // when & then
-        assertThatThrownBy(() -> productService.create(product1))
-                .isInstanceOf(IllegalArgumentException.class);
+        // given
+        CreateProductCommand command = new CreateProductCommand("상품", null);
+
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                productService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(PRICE_CAN_NOT_NULL);
     }
 
     @Test
     void 상품의_가격이_0보다_작으면_에외가_발생한다() {
         // given
-        product1.setPrice(BigDecimal.valueOf(-1));
+        CreateProductCommand command = new CreateProductCommand("상품", BigDecimal.valueOf(-1));
 
-        // when & then
-        assertThatThrownBy(() -> productService.create(product1))
-                .isInstanceOf(IllegalArgumentException.class);
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                productService.create(command)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(PRICE_CAN_NOT_NEGATIVE);
     }
 
     @Test
     void 상품들을_조회한다() {
         // given
-        product1.setName("상품1");
-        product1.setPrice(BigDecimal.ONE);
-        productDao.save(product1);
-        product2.setName("상품2");
-        product2.setPrice(BigDecimal.TEN);
-        productDao.save(product2);
+        상품저장(상품("상품1", 가격(1)));
+        상품저장(상품("상품2", 가격(10)));
 
         // when
-        List<Product> result = productService.list();
+        List<SearchProductResponse> result = productService.list();
 
         // then
         assertAll(
                 () -> assertThat(result).hasSize(2),
-                () -> assertThat(result.get(0).getId()).isPositive(),
-                () -> assertThat(result.get(0).getName()).isEqualTo("상품1"),
-                () -> assertThat(result.get(0).getPrice()).isEqualByComparingTo(BigDecimal.ONE),
-                () -> assertThat(result.get(1).getId()).isPositive(),
-                () -> assertThat(result.get(1).getName()).isEqualTo("상품2"),
-                () -> assertThat(result.get(1).getPrice()).isEqualByComparingTo(BigDecimal.TEN)
+                () -> assertThat(result.get(0).id()).isPositive(),
+                () -> assertThat(result.get(0).name()).isEqualTo("상품1"),
+                () -> assertThat(result.get(0).price()).isEqualByComparingTo(BigDecimal.ONE),
+                () -> assertThat(result.get(1).id()).isPositive(),
+                () -> assertThat(result.get(1).name()).isEqualTo("상품2"),
+                () -> assertThat(result.get(1).price()).isEqualByComparingTo(BigDecimal.TEN)
         );
     }
 }
