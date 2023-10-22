@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class MenuService {
 
@@ -33,7 +34,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public Menu create(final MenuCreateRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("요청한 menuGroupId에 해당하는 MenuGroup이 존재하지 않습니다."));
@@ -57,6 +57,7 @@ public class MenuService {
         return menu;
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
     }

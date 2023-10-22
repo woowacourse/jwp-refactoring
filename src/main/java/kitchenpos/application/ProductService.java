@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+@Transactional
 @Service
 public class ProductService {
 
@@ -18,13 +19,13 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public Product create(final ProductCreateRequest request) {
         final BigDecimal price = BigDecimal.valueOf(request.getPrice());
         final Product product = Product.create(request.getName(), price);
         return productRepository.save(product);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }

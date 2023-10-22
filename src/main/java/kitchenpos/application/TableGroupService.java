@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 
+@Transactional
 @Service
 public class TableGroupService {
 
@@ -29,7 +30,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<Long> orderTablesIds = request.getOrderTablesIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTablesIds);
@@ -43,7 +43,6 @@ public class TableGroupService {
         return tableGroup;
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         final List<Long> orderTableIds = orderTables.stream()
