@@ -1,6 +1,5 @@
-package kitchenpos.menu.application;
+package kitchenpos.menu;
 
-import kitchenpos.menu.Menu;
 import kitchenpos.menuproduct.application.request.MenuProductRequest;
 
 import java.util.List;

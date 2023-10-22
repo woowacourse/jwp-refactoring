@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import kitchenpos.menu.application.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.SaveOrderLineItemsEvent;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
@@ -25,14 +26,13 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(
-            final ApplicationEventPublisher publisher,
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository) {
+    public OrderService(final ApplicationEventPublisher publisher,
+                        final OrderRepository orderRepository,
+                        final MenuRepository menuRepository,
+                        final OrderTableRepository orderTableRepository) {
         this.publisher = publisher;
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -74,7 +74,6 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order findOrder = findOrder(orderId);
         findOrder.updateOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        orderRepository.save(findOrder);
 
         return findOrder;
     }

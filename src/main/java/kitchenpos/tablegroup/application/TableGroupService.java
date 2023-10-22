@@ -20,16 +20,16 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class TableGroupService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(final TableGroupRepository tableGroupRepository,
                              final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+                             final OrderRepository orderRepository) {
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     public TableGroup create(final TableGroupRequest request) {
@@ -77,7 +77,6 @@ public class TableGroupService {
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateTableGroupId(null);
             orderTable.updateEmpty(Empty.NOT_EMPTY);
-            orderTableRepository.save(orderTable);
         }
     }
 

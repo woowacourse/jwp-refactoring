@@ -1,6 +1,5 @@
-package kitchenpos.order.application;
+package kitchenpos.order;
 
-import kitchenpos.order.Order;
 import kitchenpos.order.application.request.OrderLineItemDto;
 
 import java.util.List;

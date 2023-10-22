@@ -31,8 +31,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -176,7 +174,6 @@ class TableGroupServiceTest {
 
             // then
             assertSoftly(softly -> {
-                verify(orderTableRepository, times(2)).save(any());
                 assertThat(orderTables).extracting("tableGroupId")
                         .allSatisfy(orderTable -> assertThat(orderTable).isNull());
                 assertThat(orderTables).extracting("empty")

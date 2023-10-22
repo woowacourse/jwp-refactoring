@@ -1,6 +1,6 @@
 package kitchenpos.menuproduct.application;
 
-import kitchenpos.menu.application.SaveMenuProductsEvent;
+import kitchenpos.menu.SaveMenuProductsEvent;
 import kitchenpos.menuproduct.MenuProduct;
 import kitchenpos.menuproduct.MenuQuantity;
 import kitchenpos.menuproduct.application.request.MenuProductRequest;

@@ -1,10 +1,10 @@
-package kitchenpos.order.application;
+package kitchenpos.ordertable.application;
 
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.application.OrderRepository;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.application.OrderTableRepository;
 import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
 import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;
 import kitchenpos.ordertable.application.request.OrderTableRequest;
@@ -17,11 +17,11 @@ import java.util.Objects;
 
 @Service
 @Transactional
-public class TableService {
+public class OrderTableService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+    public OrderTableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }

@@ -1,6 +1,6 @@
 package kitchenpos.orderlineitem.application;
 
-import kitchenpos.order.application.SaveOrderLineItemsEvent;
+import kitchenpos.order.SaveOrderLineItemsEvent;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.orderlineitem.OrderLineItem;
 import kitchenpos.orderlineitem.OrderLineQuantity;
@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class OrderLineService {
+public class OrderLineItemService {
     private final OrderLineItemRepository orderLineItemRepository;
 
-    public OrderLineService(final OrderLineItemRepository orderLineItemRepository) {
+    public OrderLineItemService(final OrderLineItemRepository orderLineItemRepository) {
         this.orderLineItemRepository = orderLineItemRepository;
     }
 

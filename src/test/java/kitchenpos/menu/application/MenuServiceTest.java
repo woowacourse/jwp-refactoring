@@ -3,6 +3,7 @@ package kitchenpos.menu.application;
 import kitchenpos.menu.Menu;
 import kitchenpos.menu.MenuName;
 import kitchenpos.menu.MenuPrice;
+import kitchenpos.menu.SaveMenuProductsEvent;
 import kitchenpos.menu.application.request.MenuRequest;
 import kitchenpos.menugroup.application.MenuGroupRepository;
 import kitchenpos.menuproduct.application.MenuProductRepository;

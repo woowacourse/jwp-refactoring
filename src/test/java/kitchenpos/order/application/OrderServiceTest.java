@@ -3,6 +3,7 @@ package kitchenpos.order.application;
 import kitchenpos.menu.application.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.SaveOrderLineItemsEvent;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
@@ -201,7 +202,6 @@ class OrderServiceTest {
 
             // then
             assertSoftly(softly -> {
-                verify(orderRepository, times(1)).save(any());
                 assertThat(result).usingRecursiveComparison()
                         .ignoringFields("orderStatus", "orderedTime")
                         .isEqualTo(order);

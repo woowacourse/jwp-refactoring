@@ -4,6 +4,7 @@ import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.OrderTableRepository;
+import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
 import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;
 import kitchenpos.ordertable.application.request.OrderTableRequest;
@@ -31,9 +32,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TableServiceTest {
+class OrderTableServiceTest {
     @InjectMocks
-    private TableService tableService;
+    private OrderTableService orderTableService;
     @Mock
     private OrderRepository orderRepository;
     @Mock
@@ -48,7 +49,7 @@ class TableServiceTest {
         given(orderTableRepository.save(any())).willReturn(orderTable);
 
         // when
-        final OrderTable result = tableService.create(request);
+        final OrderTable result = orderTableService.create(request);
 
         // then
         assertSoftly(softly -> {
@@ -68,7 +69,7 @@ class TableServiceTest {
         given(orderTableRepository.findAll()).willReturn(orderTables);
 
         // when
-        final List<OrderTable> result = tableService.list();
+        final List<OrderTable> result = orderTableService.list();
 
         // then
         assertSoftly(softly -> {
@@ -86,7 +87,7 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -99,7 +100,7 @@ class TableServiceTest {
             given(orderTable.getTableGroupId()).willReturn(3L);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -113,7 +114,7 @@ class TableServiceTest {
             given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
+            assertThatThrownBy(() -> orderTableService.changeEmpty(1L, null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -127,7 +128,7 @@ class TableServiceTest {
             given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
 
             // when
-            tableService.changeEmpty(anyLong(), new ChangeEmptyRequest(true));
+            orderTableService.changeEmpty(anyLong(), new ChangeEmptyRequest(true));
 
             // then
             assertSoftly(softly -> {
@@ -147,7 +148,7 @@ class TableServiceTest {
             final NumberOfGuestsRequest request = new NumberOfGuestsRequest(value);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
+            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -160,7 +161,7 @@ class TableServiceTest {
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
+            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
@@ -176,7 +177,7 @@ class TableServiceTest {
             given(orderTable.isEmpty()).willReturn(true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
+            assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -191,7 +192,7 @@ class TableServiceTest {
             given(orderTableRepository.save(any())).willReturn(savedOrderTable);
 
             // when
-            final OrderTable result = tableService.changeNumberOfGuests(1L, request);
+            final OrderTable result = orderTableService.changeNumberOfGuests(1L, request);
 
             // then
             assertSoftly(softly -> {
