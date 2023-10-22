@@ -15,13 +15,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.TableDto;
 import org.junit.jupiter.api.Nested;
@@ -29,34 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    private TableService tableService;
 
     @Nested
     class 테이블_등록 {
@@ -106,7 +74,7 @@ class TableServiceTest extends ServiceTest {
         @EnumSource(mode = Mode.INCLUDE, names = {"COOKING", "MEAL"})
         void 주문상태가_COOKING이거나_MEAL이면_변경할_수_없다(OrderStatus orderStatus) {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 

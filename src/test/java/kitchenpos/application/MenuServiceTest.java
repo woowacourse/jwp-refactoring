@@ -11,36 +11,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dto.MenuDto;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
 
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private MenuService menuService;
-
     @Test
     void 메뉴를_생성할_수_있다() {
         // given
-        final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+        final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
         final var 후라이드 = productDao.save(후라이드_16000);
         final var 양념치킨 = productDao.save(양념치킨_16000);
@@ -60,7 +40,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_가격이_0원_미만일_경우_생성할_수_없다() {
         // given
-        final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+        final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
         final var 후라이드 = productDao.save(후라이드_16000);
         final var 양념치킨 = productDao.save(양념치킨_16000);
@@ -96,7 +76,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 존재하지_않는_상품일_경우_생성할_수_없다() {
         // given
-        final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+        final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
         final var wrongProductId1 = 998L;
         final var wrongProductId2 = 999L;
@@ -114,7 +94,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_가격이_상품가격과_수량의_곱의_합보다_클_경우_생성할_수_없다() {
         // given
-        final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+        final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
         final var 후라이드 = productDao.save(후라이드_16000);
         final var 양념치킨 = productDao.save(양념치킨_16000);
@@ -132,7 +112,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴의_목록을_조회할_수_있다() {
         // given
-        final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+        final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
         final var 후라이드 = productDao.save(후라이드_16000);
         final var 양념치킨 = productDao.save(양념치킨_16000);

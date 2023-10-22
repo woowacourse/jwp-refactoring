@@ -15,45 +15,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderDto;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    private OrderService orderService;
 
     @Nested
     class 주문하기 {
@@ -61,7 +29,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문을_할_수_있다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -86,7 +54,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문상품이_없으면_주문할_수_없다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -106,7 +74,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문상품속_메뉴가_중복되면_주문할_수_없다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -128,7 +96,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 테이블이_존재하지_않으면_주문할_수_없다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -149,7 +117,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 테이블이_비어있으면_주문할_수_없다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -174,7 +142,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_상태를_변경할_수_있다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -199,7 +167,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_존재하지_않을_경우_변경할_수_없다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -218,7 +186,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 해당_주문이_이미_완료_상태일_경우_변경할_수_없다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
@@ -245,7 +213,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_목록을_조회할_수_있다() {
             // given
-            final var 두마리메뉴 = menuGroupDao.save(메뉴그룹_두마리메뉴);
+            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
             final var 후라이드 = productDao.save(후라이드_16000);
 
