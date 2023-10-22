@@ -1,10 +1,10 @@
-package kitchenpos.order;
+package kitchenpos.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import kitchenpos.table_group.TableGroup;
+import kitchenpos.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;

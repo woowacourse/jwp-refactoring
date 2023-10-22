@@ -1,4 +1,4 @@
-package kitchenpos.table_group;
+package kitchenpos.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.order.OrderTable;
+import kitchenpos.ordertable.OrderTable;
 
 @Entity
 public class TableGroup {

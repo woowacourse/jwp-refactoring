@@ -8,10 +8,10 @@ import kitchenpos.menu.persistence.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.OrderTable;
 import kitchenpos.order.persistence.OrderRepository;
-import kitchenpos.order.persistence.OrderTableRepository;
 import kitchenpos.order.request.OrderCreateRequest;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

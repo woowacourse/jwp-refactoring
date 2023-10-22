@@ -1,4 +1,4 @@
-package kitchenpos.order.request;
+package kitchenpos.tablegroup.request;
 
 public class OrderTableDto {
 

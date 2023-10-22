@@ -1,4 +1,4 @@
-package kitchenpos.table_group.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,16 +16,16 @@ import kitchenpos.menu.persistence.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.OrderTable;
 import kitchenpos.order.persistence.OrderRepository;
-import kitchenpos.order.persistence.OrderTableRepository;
-import kitchenpos.order.request.OrderTableDto;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.persistence.OrderTableRepository;
 import kitchenpos.product.Product;
 import kitchenpos.product.persistence.ProductRepository;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.table_group.TableGroup;
-import kitchenpos.table_group.persistence.TableGroupRepository;
-import kitchenpos.table_group.request.TableGroupCreateRequest;
+import kitchenpos.tablegroup.TableGroup;
+import kitchenpos.tablegroup.persistence.TableGroupRepository;
+import kitchenpos.tablegroup.request.OrderTableDto;
+import kitchenpos.tablegroup.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

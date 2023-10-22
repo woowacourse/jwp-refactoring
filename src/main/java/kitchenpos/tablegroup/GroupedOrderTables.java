@@ -1,9 +1,9 @@
-package kitchenpos.table_group;
+package kitchenpos.tablegroup;
 
 import java.util.List;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.order.OrderTable;
+import kitchenpos.ordertable.OrderTable;
 
 public class GroupedOrderTables {
 
