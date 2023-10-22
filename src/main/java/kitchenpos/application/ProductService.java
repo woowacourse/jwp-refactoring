@@ -14,7 +14,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(final ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

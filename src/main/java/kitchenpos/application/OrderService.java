@@ -24,10 +24,10 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            MenuRepository menuRepository,
-            OrderRepository orderRepository,
-            OrderLineItemRepository orderLineItemRepository,
-            OrderTableRepository orderTableRepository
+            final MenuRepository menuRepository,
+            final OrderRepository orderRepository,
+            final OrderLineItemRepository orderLineItemRepository,
+            final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -49,7 +49,7 @@ public class OrderService {
         return order.getId();
     }
 
-    private void saveOrderLineItems(List<Long> menuIds, List<Integer> quantities, Order order) {
+    private void saveOrderLineItems(final List<Long> menuIds, final List<Integer> quantities, final Order order) {
         for (int index = 0; index < menuIds.size(); index++) {
             final Long menuId = menuIds.get(index);
             final Integer quantity = quantities.get(index);

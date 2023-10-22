@@ -25,10 +25,10 @@ public class MenuService {
     private final MenuProductRepository menuProductRepository;
 
     public MenuService(
-            MenuRepository menuRepository,
-            MenuGroupRepository menuGroupRepository,
-            ProductRepository productRepository,
-            MenuProductRepository menuProductRepository
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final ProductRepository productRepository,
+            final MenuProductRepository menuProductRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -56,14 +56,14 @@ public class MenuService {
         return menu.getId();
     }
 
-    private void saveMenuProduct(List<Integer> counts, List<Product> findProducts, Menu menu) {
+    private void saveMenuProduct(final List<Integer> counts, final List<Product> findProducts, Menu menu) {
         for (int index = 0; index < findProducts.size(); index++) {
             final MenuProduct menuProduct = new MenuProduct(menu.getId(), findProducts.get(index).getId(), counts.get(index));
             menuProductRepository.save(menuProduct);
         }
     }
 
-    private List<Product> findProducts(List<Long> productIds) {
+    private List<Product> findProducts(final List<Long> productIds) {
         return productIds.stream()
                 .map(productRepository::getById)
                 .collect(Collectors.toList());
