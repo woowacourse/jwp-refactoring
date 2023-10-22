@@ -39,22 +39,25 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, null, null, orderLineItems);
-    }
-
     public Order() {
     }
 
     public static Order of(Long orderTableId, List<OrderLineItem> orderLineItems, long menuCount) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-        if (orderLineItems.size() != menuCount) {
-            throw new IllegalArgumentException();
-        }
-
+        validateOrderLineItemsIsEmpty(orderLineItems);
+        validateOrderLineItemsSizeWithMenuCount(orderLineItems, menuCount);
         return new Order(orderTableId, COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    private static void validateOrderLineItemsIsEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 항목이 입력되지 않았습니다.");
+        }
+    }
+
+    private static void validateOrderLineItemsSizeWithMenuCount(List<OrderLineItem> orderLineItems, long menuCount) {
+        if (orderLineItems.size() != menuCount) {
+            throw new IllegalArgumentException("메뉴에 없는 항목을 주문할 수 없습니다.");
+        }
     }
 
     public void changeOrderStatus(String orderStatus) {
