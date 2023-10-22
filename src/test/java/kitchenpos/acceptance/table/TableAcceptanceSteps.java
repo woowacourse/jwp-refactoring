@@ -5,7 +5,9 @@ import static kitchenpos.acceptance.AcceptanceSteps.생성된_ID를_추출한다
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.table.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.table.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.table.application.dto.OrderTableCreateRequest;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableAcceptanceSteps {
@@ -18,11 +20,9 @@ public class TableAcceptanceSteps {
     }
 
     public static ExtractableResponse<Response> 테이블_등록_요청을_보낸다(int 손님_수, boolean 비어있음_여부) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(비어있음_여부);
-        orderTable.setNumberOfGuests(손님_수);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(손님_수, 비어있음_여부);
         return given()
-                .body(orderTable)
+                .body(request)
                 .post("/api/tables")
                 .then()
                 .log().all()
@@ -30,20 +30,18 @@ public class TableAcceptanceSteps {
     }
 
     public static ExtractableResponse<Response> 테이블의_비어있음_상태_변경_요청을_보낸다(Long 테이블_ID, boolean 비어있음_여부) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(비어있음_여부);
+        OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(비어있음_여부);
         return given()
-                .body(orderTable)
+                .body(request)
                 .put("/api/tables/{tableId}/empty", 테이블_ID)
                 .then().log().all()
                 .extract();
     }
 
     public static ExtractableResponse<Response> 테이블_손님_수_변경_요청을_보낸다(Long 테이블_ID, int 손님_수) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(손님_수);
+        OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(손님_수);
         return given()
-                .body(orderTable)
+                .body(request)
                 .put("/api/tables/{orderTableId}/number-of-guests", 테이블_ID)
                 .then()
                 .log().all()

@@ -7,7 +7,6 @@ import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴_등록후_�
 import static kitchenpos.acceptance.menu.MenuAcceptanceSteps.메뉴에_속한_상품;
 import static kitchenpos.acceptance.menu.MenuGroupAcceptanceSteps.메뉴_그릅_등록후_생성된_ID를_가져온다;
 import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_생성_요청을_보낸다;
-import static kitchenpos.acceptance.oreder.OrderAcceptanceSteps.주문_항목;
 import static kitchenpos.acceptance.product.ProductAcceptanceSteps.상품_등록후_생성된_ID를_가져온다;
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.비어있음;
 import static kitchenpos.acceptance.table.TableAcceptanceSteps.비어있지_않음;
@@ -18,6 +17,7 @@ import static kitchenpos.acceptance.table.TableGroupAcceptanceSteps.테이블_�
 import static kitchenpos.acceptance.table.TableGroupAcceptanceSteps.테이블_그룹_제거_요청을_보낸다;
 
 import kitchenpos.acceptance.AcceptanceTest;
+import kitchenpos.acceptance.oreder.OrderAcceptanceSteps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -142,6 +142,7 @@ public class TableGroupAcceptanceTest {
                             + "    }\n"
                             + "]"
             );
+
         }
 
         @Test
@@ -155,7 +156,7 @@ public class TableGroupAcceptanceTest {
             var 테이블_ID_1 = 테이블_등록후_생성된_ID를_가져온다(0, 비어있음);
             var 테이블_ID_2 = 테이블_등록후_생성된_ID를_가져온다(2, 비어있음);
             var 테이블_그룹_ID = 테이블_그룹_등록후_생성된_ID를_가져온다(테이블_ID_1, 테이블_ID_2);
-            주문_생성_요청을_보낸다(테이블_ID_1, 주문_항목(말랑_메뉴_ID, 2));
+            주문_생성_요청을_보낸다(테이블_ID_1, OrderAcceptanceSteps.주문_항목_요청(말랑_메뉴_ID, 2));
 
             // when
             var 응답 = 테이블_그룹_제거_요청을_보낸다(테이블_그룹_ID);
