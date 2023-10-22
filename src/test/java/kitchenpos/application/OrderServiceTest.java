@@ -131,7 +131,7 @@ class OrderServiceTest {
     void create_emptyTable_fail() {
         // given
         final OrderTable orderTable = createOrderTable(1L, 3);
-        orderTable.setEmpty(true);
+        orderTable.updateEmpty(true);
 
         final Order order = createOrder(1L, orderTable.getId());
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);

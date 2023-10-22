@@ -80,7 +80,7 @@ class TableServiceTest {
             .willReturn(false);
 
         final OrderTable expectedOrderTable = createOrderTable(1L, 3);
-        expectedOrderTable.setEmpty(true);
+        expectedOrderTable.updateEmpty(true);
 
         given(orderTableDao.save(any(OrderTable.class)))
             .willReturn(expectedOrderTable);
@@ -112,9 +112,8 @@ class TableServiceTest {
     @Test
     void changeEmpty_tableInGroup_fail() {
         // given
-        final OrderTable savedOrderTable = createOrderTable(1L, 3);
+        final OrderTable savedOrderTable = createOrderTable(1L, 1L, 3);
         final Long tableId = savedOrderTable.getId();
-        savedOrderTable.setTableGroupId(1L);
 
         final OrderTable orderTableToChange = createOrderTable(2L, 3);
 
@@ -156,10 +155,8 @@ class TableServiceTest {
         given(orderTableDao.findById(anyLong()))
             .willReturn(Optional.of(prevOrderTable));
 
-        final OrderTable expected = new OrderTable();
-        expected.setId(1L);
-        expected.setNumberOfGuests(2);
-        expected.setEmpty(false);
+        final OrderTable expected = createOrderTable(1L, 2);
+        expected.updateEmpty(false);
 
         given(orderTableDao.save(prevOrderTable))
             .willReturn(expected);
@@ -202,7 +199,7 @@ class TableServiceTest {
     void changeNumberOfGuests_empty_fail() {
         // given
         final OrderTable prevOrderTable = createOrderTable(1L, 3);
-        prevOrderTable.setEmpty(true);
+        prevOrderTable.updateEmpty(true);
         final Long orderTableId = prevOrderTable.getId();
 
         final OrderTable orderTableToChange = createOrderTable(2L, 2);

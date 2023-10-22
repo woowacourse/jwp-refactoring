@@ -5,11 +5,10 @@ import kitchenpos.domain.OrderTable;
 public class OrderTableFixture {
 
     public static OrderTable createOrderTable(final Long id, final int guests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(guests);
+        return new OrderTable(id, guests, false);
+    }
 
-        return orderTable;
+    public static OrderTable createOrderTable(final Long id, final Long tableGroupId, final int guests) {
+        return new OrderTable(id, tableGroupId, guests, false);
     }
 }
