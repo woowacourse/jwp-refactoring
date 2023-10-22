@@ -1,21 +1,18 @@
 package kitchenpos.application.order;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.result.OrderResult;
-import kitchenpos.dao.menu.MenuRepository;
 import kitchenpos.dao.order.OrderLineItemRepository;
 import kitchenpos.dao.order.OrderRepository;
-import kitchenpos.dao.table.OrderTableRepository;
-import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuExistValidationEvent;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableValidationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,38 +20,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
-    private final MenuRepository menuRepository;
     private final OrderLineItemRepository orderLineItemRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository,
-            final MenuRepository menuRepository,
-            final OrderLineItemRepository orderLineItemRepository
+            final OrderLineItemRepository orderLineItemRepository,
+            final ApplicationEventPublisher eventPublisher
+
     ) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
-        this.menuRepository = menuRepository;
         this.orderLineItemRepository = orderLineItemRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
     public OrderResult create(final OrderCreationRequest request) {
         final List<OrderItemsWithQuantityRequest> orderLineItemRequests = request.getOrderLineItems();
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-        validateOrderTableIsNotEmpty(orderTable);
-        final Order order = orderRepository.save(new Order(orderTable.getId()));
+        final Long orderTableId = request.getOrderTableId();
+        eventPublisher.publishEvent(new TableValidationEvent(orderTableId));
+        final Order order = orderRepository.save(new Order(orderTableId));
         final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
         orderLineItemRepository.saveAll(orderLineItems);
         return OrderResult.from(order);
-    }
-
-    private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("Order from empty table is not allowed");
-        }
     }
 
     private List<OrderLineItem> getOrderLineItemsByRequest(
@@ -62,21 +50,10 @@ public class OrderService {
             final List<OrderItemsWithQuantityRequest> orderLineItemRequests
     ) {
         final List<Long> menuIds = extractMenuIds(orderLineItemRequests);
-        final Map<Long, Menu> menusById = menuRepository.findAllByIdIn(menuIds).stream()
-                .collect(Collectors.toMap(Menu::getId, Function.identity()));
-        return orderLineItemRequests.stream().map(orderItemRequest -> {
-            final Menu menu = getMenuByRequestId(orderItemRequest, menusById);
-            return new OrderLineItem(order, menu.getId(), orderItemRequest.getQuantity());
-        }).collect(Collectors.toList());
-    }
-
-    private Menu getMenuByRequestId(
-            final OrderItemsWithQuantityRequest orderItemRequest,
-            final Map<Long, Menu> menusById
-    ) {
-        return menusById.computeIfAbsent(orderItemRequest.getMenuId(), id -> {
-            throw new IllegalArgumentException("Menu does not exist.");
-        });
+        eventPublisher.publishEvent(new MenuExistValidationEvent(menuIds));
+        return orderLineItemRequests.stream().map(orderItemRequest ->
+                new OrderLineItem(order, orderItemRequest.getMenuId(), orderItemRequest.getQuantity())
+        ).collect(Collectors.toList());
     }
 
     private List<Long> extractMenuIds(final List<OrderItemsWithQuantityRequest> orderLineItemRequests) {

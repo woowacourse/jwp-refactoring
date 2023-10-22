@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findAlLByIdIn(List<Long> ids);
+    List<Product> findAllByIdIn(List<Long> ids);
 }

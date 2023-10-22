@@ -56,7 +56,7 @@ public class MenuService {
             final List<MenuProductWithQuantityRequest> menuProductRequests
     ) {
         final List<Long> productIds = extractProductIds(menuProductRequests);
-        final Map<Long, Product> productsById = productRepository.findAlLByIdIn(productIds)
+        final Map<Long, Product> productsById = productRepository.findAllByIdIn(productIds)
                 .stream().collect(Collectors.toMap(Product::getId, Function.identity()));
         return menuProductRequests.stream().map(menuProductRequest -> {
             final Product product = getProductByRequestId(menuProductRequest, productsById);
