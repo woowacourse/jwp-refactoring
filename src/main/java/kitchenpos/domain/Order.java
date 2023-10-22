@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.vo.OrderStatus.COOKING;
+import static kitchenpos.domain.vo.OrderStatus.MEAL;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.domain.vo.OrderStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 

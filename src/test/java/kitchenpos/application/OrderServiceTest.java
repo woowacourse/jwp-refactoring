@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.vo.OrderStatus.MEAL;
 import static kitchenpos.fixture.OrderTableFixture.존재하지_않는_주문_테이블_생성;
 import static kitchenpos.fixture.ProductFixture.치킨_8000원;
 import static kitchenpos.fixture.ProductFixture.피자_8000원;

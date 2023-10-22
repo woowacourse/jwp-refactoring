@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.vo.OrderStatus.COMPLETION;
+import static kitchenpos.domain.vo.OrderStatus.COOKING;
+import static kitchenpos.domain.vo.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.세트_메뉴_1개씩;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩;
 import static kitchenpos.fixture.OrderFixture.주문_생성_메뉴_당_1개씩_상태_설정;
