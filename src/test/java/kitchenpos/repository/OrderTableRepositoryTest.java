@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.support.RepositoryTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class OrderTableRepositoryTest extends RepositoryTest{
+class OrderTableRepositoryTest extends RepositoryTest {
 
     @Autowired
     OrderTableRepository orderTableRepository;

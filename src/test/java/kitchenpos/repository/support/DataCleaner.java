@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.repository.support;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,6 +2,7 @@ package kitchenpos.repository;
 
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.repository.support.RepositoryTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

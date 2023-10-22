@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.repository.support;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,13 +14,21 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.TestExecutionListeners;
 
 @DataJpaTest
 @TestExecutionListeners(value = {DataCleaner.class,}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class RepositoryTest {
+public abstract class RepositoryTest {
 
     @Autowired
     private MenuRepository menuRepository;
