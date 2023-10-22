@@ -34,8 +34,8 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public static OrderLineItem forSave(final Long menuId, final long quantity) {
-        return new OrderLineItem(null, null, menuId, quantity);
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, null, menuId, quantity);
     }
 
     public Long getSeq() {

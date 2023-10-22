@@ -27,18 +27,14 @@ public class Product {
 
     }
 
-    private Product(final Long id, final String name, final Integer price) {
+    public Product(final Long id, final String name, final Integer price) {
         this.id = id;
         this.name = name;
         this.price = Price.from(price);
     }
 
-    public static Product forSave(final String name, final Integer price) {
-        return new Product(null, name, price);
-    }
-
-    public static Product saved(final Long id, final String name, final Integer price) {
-        return new Product(id, name, price);
+    public Product (final String name, final Integer price) {
+        this(null, name, price);
     }
 
     public Long getId() {

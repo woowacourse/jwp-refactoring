@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductDto;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,6 +34,9 @@ class MenuServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
     private MenuService menuService;
 
     @BeforeEach
@@ -44,8 +48,8 @@ class MenuServiceTest {
     @Test
     void create_newMenu() {
         // given
-        final Product product = productRepository.save(Product.forSave("상품", 10000));
-        final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("메뉴 그룹"));
+        final Product product = productRepository.save(new Product("상품", 10000));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final MenuRequest request = new MenuRequest("메뉴",
             8000,
             menuGroup.getId(),
@@ -76,7 +80,7 @@ class MenuServiceTest {
     void create_fail_menu_not_contained_menuGroup() {
         // given
         final Long invalidMenuGroupId = 0L;
-        final Product product = productRepository.save(Product.forSave("상품", 10000));
+        final Product product = productRepository.save(new Product("상품", 10000));
         final MenuRequest request = new MenuRequest("메뉴",
             8000,
             invalidMenuGroupId,
@@ -93,7 +97,7 @@ class MenuServiceTest {
     void create_fail_menu_contain_notExistProduct() {
         // given
         final Long invalidProductId = 0L;
-        final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("메뉴 그룹"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final MenuRequest request = new MenuRequest("메뉴",
             8000,
             menuGroup.getId(),
@@ -109,8 +113,8 @@ class MenuServiceTest {
     @Test
     void create_fail_menuPrice_expensive_than_all_product_price() {
         // given
-        final Product product = productRepository.save(Product.forSave("상품", 10000));
-        final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("메뉴 그룹"));
+        final Product product = productRepository.save(new Product("상품", 10000));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final MenuRequest request = new MenuRequest("메뉴",
             20000,
             menuGroup.getId(),
@@ -126,22 +130,12 @@ class MenuServiceTest {
     @Test
     void find_all_menus() {
         // given
-        final Product product1 = productRepository.save(Product.forSave("상품1", 10000));
-        final MenuGroup menuGroup1 = menuGroupRepository.save(MenuGroup.forSave("메뉴 그룹1"));
-        final MenuRequest request1 = new MenuRequest("메뉴1",
-            8000,
-            menuGroup1.getId(),
-            List.of(new MenuProductDto(null, null, product1.getId(), 1L)));
+        final MenuGroup menuGroup1 = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        final Menu menu1 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup1.getId()));
 
-        final Product product2 = productRepository.save(Product.forSave("상품2", 10000));
-        final MenuGroup menuGroup2 = menuGroupRepository.save(MenuGroup.forSave("메뉴 그룹2"));
-        final MenuRequest request2 = new MenuRequest("메뉴2",
-            8000,
-            menuGroup2.getId(),
-            List.of(new MenuProductDto(null, null, product2.getId(), 1L)));
+        final MenuGroup menuGroup2 = menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
+        final Menu menu2 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup2.getId()));
 
-        final MenuResponse menuResponse1 = menuService.create(request1);
-        final MenuResponse menuResponse2 = menuService.create(request2);
 
         // when
         final List<MenuResponse> result = menuService.list();

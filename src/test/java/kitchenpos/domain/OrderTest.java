@@ -13,7 +13,7 @@ class OrderTest {
     @Test
     void change_order_Status() {
         // given
-        final Order order = Order.forSave(1L);
+        final Order order = new Order(1L);
         String changingStatus = OrderStatus.COMPLETION.name();
 
         // when

@@ -55,9 +55,9 @@ class TableGroupServiceTest {
     @Test
     void create_tableGroup() {
         // given
-        final OrderTable orderTable1 = OrderTable.forSave(5);
+        final OrderTable orderTable1 = new OrderTable(5);
         orderTable1.changeEmptyStatus();
-        final OrderTable orderTable2 = OrderTable.forSave(4);
+        final OrderTable orderTable2 = new OrderTable(4);
         orderTable2.changeEmptyStatus();
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
@@ -101,7 +101,7 @@ class TableGroupServiceTest {
     @Test
     void create_tableGroup_fail_with_different_count_of_orderTable() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(5));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(5));
         final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(orderTable.getId(), orderTable.getId()));
 
         // when
@@ -114,8 +114,8 @@ class TableGroupServiceTest {
     @Test
     void create_tableGroup_fail_with_not_empty_table() {
         // given
-        final OrderTable orderTable1 = orderTableRepository.save(OrderTable.forSave(5));
-        final OrderTable orderTable2 = orderTableRepository.save(OrderTable.forSave(4));
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
         final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
 
         // when
@@ -129,8 +129,8 @@ class TableGroupServiceTest {
     void create_tableGroup_fail_with_already_grouped_table() {
         // given
         final TableGroup otherTableGroup = tableGroupRepository.save(TableGroup.forSave());
-        final OrderTable orderTable1 = orderTableRepository.save(OrderTable.forSave(5));
-        final OrderTable orderTable2 = orderTableRepository.save(OrderTable.forSave(4));
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
         otherTableGroup.addOrderTable(orderTable1);
 
         final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
@@ -148,15 +148,15 @@ class TableGroupServiceTest {
         // given
         final TableGroup tableGroup = TableGroup.forSave();
         tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable1 = OrderTable.forSave(5);
-        final OrderTable orderTable2 = OrderTable.forSave(4);
+        final OrderTable orderTable1 = new OrderTable(5);
+        final OrderTable orderTable2 = new OrderTable(4);
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
 
-        final Order order1 = Order.forSave(orderTable1.getId());
-        final Order order2 = Order.forSave(orderTable2.getId());
+        final Order order1 = new Order(orderTable1.getId());
+        final Order order2 = new Order(orderTable2.getId());
         order1.changeStatus(OrderStatus.COMPLETION.name());
         order2.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order1);
@@ -180,10 +180,10 @@ class TableGroupServiceTest {
     void ungroup_fail_with_table_order_status_COOKING_and_MEAL() {
         // given
         final TableGroup tableGroup = TableGroup.forSave();
-        final OrderTable orderTable1 = orderTableRepository.save(OrderTable.forSave(5));
-        final OrderTable orderTable2 = orderTableRepository.save(OrderTable.forSave(4));
-        orderRepository.save(Order.forSave(orderTable1.getId()));
-        orderRepository.save(Order.forSave(orderTable2.getId()));
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
+        orderRepository.save(new Order(orderTable1.getId()));
+        orderRepository.save(new Order(orderTable2.getId()));
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
         tableGroupRepository.save(tableGroup);

@@ -16,8 +16,6 @@ import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -70,8 +68,8 @@ class TableServiceTest {
     @Test
     void find_all_orderTable() {
         // given
-        orderTableRepository.save(OrderTable.forSave(4));
-        orderTableRepository.save(OrderTable.forSave(5));
+        orderTableRepository.save(new OrderTable(4));
+        orderTableRepository.save(new OrderTable(5));
 
         // when
         final List<OrderTableResponse> result = tableService.list();
@@ -84,9 +82,9 @@ class TableServiceTest {
     @Test
     void change_orderTable_empty() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
-        final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.forSave(1L, 2));
-        final Order order = Order.forSave(savedOrderTable.getId());
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+        final Order order = new Order(savedOrderTable.getId());
         order.changeStatus(OrderStatus.COMPLETION.name());
         order.addOrderLineItems(orderLineItems.get(0));
         orderRepository.save(order);
@@ -132,8 +130,8 @@ class TableServiceTest {
     @Test
     void change_orderTable_empty_fail_with_invalid_orderStatus() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
-        orderRepository.save(Order.forSave(savedOrderTable.getId()));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
+        orderRepository.save(new Order(savedOrderTable.getId()));
 
         // when
         // then
@@ -145,7 +143,7 @@ class TableServiceTest {
     @Test
     void change_number_of_guests() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
         final OrderTableChangeGuestRequest request = new OrderTableChangeGuestRequest(3);
 
         // when
@@ -162,7 +160,7 @@ class TableServiceTest {
     @Test
     void change_number_of_guests_fail_with_number_of_guests_is_negative() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
         final OrderTableChangeGuestRequest wrongRequest = new OrderTableChangeGuestRequest(-1);
 
         // when

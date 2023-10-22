@@ -14,7 +14,7 @@ class MenuTest {
         // given
         final BigDecimal productsPrice = new BigDecimal(20000);
 
-        final Menu menu = Menu.forSave("메뉴", 30000, 1L);
+        final Menu menu = new Menu("메뉴", 30000, 1L);
 
         // when
         // then

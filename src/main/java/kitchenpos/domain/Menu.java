@@ -33,15 +33,15 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu forSave(final String name, final Integer price, final Long menuGroupId) {
-        return new Menu(null, name, Price.from(price), menuGroupId);
+    public Menu (final String name, final Integer price, final Long menuGroupId) {
+        this (null, name, Price.from(price), menuGroupId);
     }
 
     public void validateOverPrice(final BigDecimal productSumPrice) {

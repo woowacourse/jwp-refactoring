@@ -1,8 +1,12 @@
 package kitchenpos.application;
 
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +22,9 @@ class MenuGroupServiceTest {
 
     @Autowired
     private DataCleaner dataCleaner;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -48,10 +55,7 @@ class MenuGroupServiceTest {
     @Test
     void find_all_menuGroup() {
         // given
-        final MenuGroupRequest request1 = new MenuGroupRequest("메뉴 그룹1");
-        final MenuGroupRequest request2 = new MenuGroupRequest("메뉴 그룹2");
-        menuGroupService.create(request1);
-        menuGroupService.create(request2);
+        menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
 
         // when
         final List<MenuGroupResponse> result = menuGroupService.list();

@@ -57,7 +57,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order order = Order.forSave(orderTable.getId());
+        final Order order = new Order(orderTable.getId());
         orderRepository.save(order);
         addOrderLineItems(orderLineItems, order);
         return OrderResponse.from(order);
@@ -65,7 +65,7 @@ public class OrderService {
 
     private List<OrderLineItem> getForSaveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
-            .map(orderLineItemRequest -> OrderLineItem.forSave(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
+            .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
             .collect(Collectors.toUnmodifiableList());
     }
 

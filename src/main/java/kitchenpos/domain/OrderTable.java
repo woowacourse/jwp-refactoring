@@ -37,8 +37,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public static OrderTable forSave(final int numberOfGuests) {
-        return new OrderTable(null, null, numberOfGuests, false);
+    public OrderTable(final int numberOfGuests) {
+        this(null, null, numberOfGuests, false);
     }
 
     public void validateOrderTableHasTableGroupId() {

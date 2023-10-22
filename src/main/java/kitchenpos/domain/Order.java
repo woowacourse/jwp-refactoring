@@ -40,8 +40,8 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public static Order forSave(final Long orderTableId) {
-        return new Order(null, orderTableId, OrderStatus.COOKING.name());
+    public Order(final Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING.name());
     }
 
     public void addOrderLineItems(final OrderLineItem orderLineItem) {

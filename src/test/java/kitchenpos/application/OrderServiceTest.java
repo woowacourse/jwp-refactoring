@@ -51,8 +51,8 @@ class OrderServiceTest {
     @Test
     void create_order() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(5));
-        final Menu savedMenu = menuRepository.save(Menu.forSave("메뉴", 10000, 1L));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, 1L));
 
         final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(),
             List.of(new OrderLineItemRequest(savedMenu.getId(), 3)));
@@ -78,7 +78,7 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_orderLineItem_empty() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(5));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
         final List<OrderLineItemRequest> emptyOrderLineItemRequest = List.of();
         final OrderRequest wrongOrderRequest = new OrderRequest(savedOrderTable.getId(),
             emptyOrderLineItemRequest);
@@ -93,8 +93,8 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_wrong_orderLineItem_count() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(5));
-        final Menu savedMenu = menuRepository.save(Menu.forSave("메뉴", 10000, 1L));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, 1L));
         final List<OrderLineItemRequest> duplicatedContainMenu = List.of(
             new OrderLineItemRequest(savedMenu.getId(), 3),
             new OrderLineItemRequest(savedMenu.getId(), 3));
@@ -112,7 +112,7 @@ class OrderServiceTest {
     void create_order_fail_with_not_found_orderTable() {
         // given
         final Long wrongOrderTableId = 0L;
-        final Menu savedMenu = menuRepository.save(Menu.forSave("메뉴", 10000, 1L));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, 1L));
 
         final OrderRequest wrongOrderRequest = new OrderRequest(wrongOrderTableId,
             List.of(new OrderLineItemRequest(savedMenu.getId(), 3)));
@@ -127,7 +127,7 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_empty_orderTable() {
         // given
-        final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(5));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
         savedOrderTable.changeEmptyStatus();
         final List<OrderLineItemRequest> emptyOrderLineItemRequest = List.of();
         final OrderRequest wrongOrderRequest = new OrderRequest(savedOrderTable.getId(),
@@ -143,8 +143,8 @@ class OrderServiceTest {
     @Test
     void find_all_order() {
         // given
-        orderRepository.save(Order.forSave(1L));
-        orderRepository.save(Order.forSave(2L));
+        orderRepository.save(new Order(1L));
+        orderRepository.save(new Order(2L));
 
         // when
         final List<OrderResponse> result = orderService.list();
@@ -157,7 +157,7 @@ class OrderServiceTest {
     @Test
     void change_order_status() {
         // given
-        final Order order = Order.forSave(1L);
+        final Order order = new Order(1L);
         orderRepository.save(order);
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
 
@@ -188,7 +188,7 @@ class OrderServiceTest {
     @Test
     void change_order_fail_with_completion_order() {
         // given
-        final Order order = Order.forSave(1L);
+        final Order order = new Order(1L);
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 

@@ -25,7 +25,6 @@ public class MenuService {
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
-
     public MenuService(final MenuRepository menuRepository,
                        final MenuGroupRepository menuGroupRepository,
                        final MenuProductRepository menuProductRepository,
@@ -41,14 +40,15 @@ public class MenuService {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        final Menu menu = Menu.forSave(request.getName(), request.getPrice(), request.getMenuGroupId());
-        validateMenuPrice(menu, request.getMenuProducts());
-        final Menu savedMenu = menuRepository.save(menu);
-        addMenuProduct(savedMenu, request.getMenuProducts());
-        return MenuResponse.from(savedMenu);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
+        final BigDecimal productsPrice = getProductsPrice(menu, request.getMenuProducts());
+        menu.validateOverPrice(productsPrice);
+        menuRepository.save(menu);
+        addMenuProduct(menu, request.getMenuProducts());
+        return MenuResponse.from(menu);
     }
 
-    private void validateMenuPrice(final Menu menu, final List<MenuProductDto> menuProducts) {
+    private BigDecimal getProductsPrice(final Menu menu, final List<MenuProductDto> menuProducts) {
         final List<Long> productIds = menuProducts.stream()
             .map(MenuProductDto::getProductId)
             .collect(Collectors.toUnmodifiableList());
@@ -59,12 +59,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        BigDecimal sum = products.stream()
+        return products.stream()
             .map(Product::getPrice)
             .reduce(BigDecimal::multiply)
             .get();
-
-        menu.validateOverPrice(sum);
     }
 
     private void addMenuProduct(final Menu menu, final List<MenuProductDto> menuProductDtos) {
