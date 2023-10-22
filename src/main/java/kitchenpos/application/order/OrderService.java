@@ -9,6 +9,7 @@ import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.result.OrderResult;
 import kitchenpos.dao.menu.MenuRepository;
+import kitchenpos.dao.order.OrderLineItemRepository;
 import kitchenpos.dao.order.OrderRepository;
 import kitchenpos.dao.table.OrderTableRepository;
 import kitchenpos.domain.menu.Menu;
@@ -24,15 +25,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final MenuRepository menuRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
 
     public OrderService(
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
-            final MenuRepository menuRepository
+            final MenuRepository menuRepository,
+            final OrderLineItemRepository orderLineItemRepository
     ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.menuRepository = menuRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Transactional
@@ -41,10 +45,10 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
         validateOrderTableIsNotEmpty(orderTable);
-        final Order order = new Order(orderTable.getId());
+        final Order order = orderRepository.save(new Order(orderTable.getId()));
         final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
-        order.applyOrderLineItems(orderLineItems);
-        return OrderResult.from(orderRepository.save(order));
+        orderLineItemRepository.saveAll(orderLineItems);
+        return OrderResult.from(order);
     }
 
     private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {

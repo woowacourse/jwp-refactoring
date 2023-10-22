@@ -1,7 +1,5 @@
 package kitchenpos.application.dto.result;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 
 public class MenuResult {
@@ -10,20 +8,17 @@ public class MenuResult {
     private final String name;
     private final Long price;
     private final MenuGroupResult menuGroupResult;
-    private final List<ProductInMenuResult> productInMenuResults;
 
     public MenuResult(
             final Long id,
             final String name,
             final Long price,
-            final MenuGroupResult menuGroupResult,
-            final List<ProductInMenuResult> productInMenuResults
+            final MenuGroupResult menuGroupResult
     ) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupResult = menuGroupResult;
-        this.productInMenuResults = productInMenuResults;
     }
 
     public static MenuResult from(final Menu menu) {
@@ -31,10 +26,7 @@ public class MenuResult {
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice().getValue().longValue(),
-                MenuGroupResult.from(menu.getMenuGroup()),
-                menu.getMenuProducts().stream()
-                        .map(ProductInMenuResult::from)
-                        .collect(Collectors.toList())
+                MenuGroupResult.from(menu.getMenuGroup())
         );
     }
 
@@ -52,9 +44,5 @@ public class MenuResult {
 
     public MenuGroupResult getMenuGroupResult() {
         return menuGroupResult;
-    }
-
-    public List<ProductInMenuResult> getMenuProductResults() {
-        return productInMenuResults;
     }
 }

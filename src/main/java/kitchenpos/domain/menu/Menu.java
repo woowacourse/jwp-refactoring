@@ -1,8 +1,6 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.Price;
 
 @Entity
@@ -26,8 +23,6 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
-    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
@@ -36,14 +31,12 @@ public class Menu {
             final Long id,
             final String name,
             final Price price,
-            final MenuGroup menuGroup,
-            final List<MenuProduct> menuProducts
+            final MenuGroup menuGroup
     ) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
     }
 
     public Menu(
@@ -51,18 +44,7 @@ public class Menu {
             final BigDecimal price,
             final MenuGroup menuGroup
     ) {
-        this(null, name, Price.from(price), menuGroup, new ArrayList<>());
-    }
-
-    public void applyMenuProducts(final List<MenuProduct> menuProducts, final Price totalPrice) {
-        validateMenuProductsPrice(totalPrice);
-        this.menuProducts = menuProducts;
-    }
-
-    private void validateMenuProductsPrice(final Price totalPrice) {
-        if (this.price.isGreaterThan(totalPrice)) {
-            throw new IllegalArgumentException("Sum of menu products price must be greater than menu price.");
-        }
+        this(null, name, Price.from(price), menuGroup);
     }
 
     public Long getId() {
@@ -79,9 +61,5 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 }

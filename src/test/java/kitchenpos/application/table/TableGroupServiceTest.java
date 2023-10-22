@@ -2,13 +2,11 @@ package kitchenpos.application.table;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.application.IntegrationTest;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
-import kitchenpos.application.dto.result.OrderTableResult;
 import kitchenpos.application.dto.result.TableGroupResult;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -36,12 +34,7 @@ class TableGroupServiceTest extends IntegrationTest {
         final TableGroupResult savedTableGroup = tableGroupService.create(request);
 
         // then
-        assertSoftly(softly -> {
-            softly.assertThat(savedTableGroup.getId()).isNotNull();
-            softly.assertThat(savedTableGroup.getOrderTableResults())
-                    .extracting(OrderTableResult::isEmpty)
-                    .containsOnly(false);
-        });
+        assertThat(savedTableGroup.getId()).isNotNull();
     }
 
     @Nested
@@ -107,9 +100,11 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void any_order_table_is_already_in_other_table_group() {
             // given
+            final TableGroup tableGroup = generateTableGroup();
             final OrderTable orderTableA = generateOrderTable(1, true);
             final OrderTable orderTableB = generateOrderTable(3, true);
-            generateTableGroup(List.of(orderTableA, orderTableB));
+            orderTableA.groupByTableGroup(tableGroup);
+            orderTableB.groupByTableGroup(tableGroup);
             final TableGroupingRequest request = new TableGroupingRequest(List.of(
                     new GroupOrderTableRequest(orderTableA.getId()),
                     new GroupOrderTableRequest(orderTableB.getId())
@@ -127,7 +122,9 @@ class TableGroupServiceTest extends IntegrationTest {
         // given
         final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
         final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
-        final TableGroup tableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
+        final TableGroup tableGroup = generateTableGroup();
+        orderTableA.groupByTableGroup(tableGroup);
+        orderTableB.groupByTableGroup(tableGroup);
         generateOrder(OrderStatus.COMPLETION, orderTableA);
         generateOrder(OrderStatus.COMPLETION, orderTableB);
 
@@ -151,7 +148,9 @@ class TableGroupServiceTest extends IntegrationTest {
             final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
             generateOrder(OrderStatus.COOKING, orderTableA);
             generateOrder(OrderStatus.COMPLETION, orderTableB);
-            final TableGroup tableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
+            final TableGroup tableGroup = generateTableGroup();
+            orderTableA.groupByTableGroup(tableGroup);
+            orderTableB.groupByTableGroup(tableGroup);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

@@ -12,12 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
 import kitchenpos.application.dto.result.MenuResult;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.application.menu.MenuService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +38,7 @@ class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuResult result = new MenuResult(1L, "chicken-set", 28000L, null, null);
+        final MenuResult result = new MenuResult(1L, "chicken-set", 28000L, null);
         given(menuService.create(any())).willReturn(result);
 
         final MenuCreationRequest request = new MenuCreationRequest(
@@ -62,8 +60,8 @@ class MenuRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final MenuResult resultA = new MenuResult(1L, "chicken-set", 28000L, null, null);
-        final MenuResult resultB = new MenuResult(2L, "chicken-set", 26000L, null, null);
+        final MenuResult resultA = new MenuResult(1L, "chicken-set", 28000L, null);
+        final MenuResult resultB = new MenuResult(2L, "chicken-set", 26000L, null);
         given(menuService.list()).willReturn(List.of(resultA, resultB));
 
         // when
@@ -71,9 +69,5 @@ class MenuRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(List.of(resultA, resultB))));
-    }
-
-    private Menu menuFixtureWithId(final Long id, final String name, final long price) {
-        return new Menu(id, name, Price.from(price), null, null);
     }
 }

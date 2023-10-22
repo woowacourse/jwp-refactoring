@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.IntegrationTest;
 import kitchenpos.application.dto.OrderCreationRequest;
@@ -46,7 +45,6 @@ class OrderServiceTest extends IntegrationTest {
         assertSoftly(softly -> {
             softly.assertThat(savedOrder.getId()).isNotNull();
             softly.assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-            softly.assertThat(savedOrder.getMenuResults()).hasSize(2);
         });
     }
 
@@ -113,9 +111,7 @@ class OrderServiceTest extends IntegrationTest {
     void list() {
         // given
         final Order order = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
-        order.applyOrderLineItems(List.of(
-                orderLineItemRepository.save(new OrderLineItem(order, generateMenu("chicken", 20000L).getId(), 1L))
-        ));
+        orderLineItemRepository.save(new OrderLineItem(order, generateMenu("chicken", 20000L).getId(), 1L));
 
         // when
         final List<OrderResult> list = orderService.list();
@@ -134,9 +130,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
         final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
-        existOrder.applyOrderLineItems(new ArrayList<>(List.of(
-                orderLineItemRepository.save(new OrderLineItem(existOrder, generateMenu("chicken", 20000L).getId(), 1L))
-        )));
+        orderLineItemRepository.save(new OrderLineItem(existOrder, generateMenu("chicken", 20000L).getId(), 1L));
 
         // when
         final OrderResult changedOrder = orderService.changeOrderStatus(existOrder.getId(), request);

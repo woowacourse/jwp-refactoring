@@ -12,11 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.order.OrderService;
 import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.result.OrderResult;
+import kitchenpos.application.order.OrderService;
 import kitchenpos.domain.order.OrderStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class OrderRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final OrderResult result = new OrderResult(1L, "COOKING", null, List.of());
+        final OrderResult result = new OrderResult(1L, "COOKING", null);
         given(orderService.create(any())).willReturn(result);
 
         final OrderCreationRequest request = new OrderCreationRequest(1L, List.of(
@@ -60,8 +60,8 @@ class OrderRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final OrderResult resultA = new OrderResult(1L, "COOKING", null, List.of());
-        final OrderResult resultB = new OrderResult(2L, "COOKING", null, List.of());
+        final OrderResult resultA = new OrderResult(1L, "COOKING", null);
+        final OrderResult resultB = new OrderResult(2L, "COOKING", null);
         given(orderService.list()).willReturn(List.of(resultA, resultB));
 
         // when
@@ -74,7 +74,7 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         // given
-        final OrderResult result = new OrderResult(1L, "COOKING", null, List.of());
+        final OrderResult result = new OrderResult(1L, "COOKING", null);
         given(orderService.changeOrderStatus(any(), any())).willReturn(result);
 
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);

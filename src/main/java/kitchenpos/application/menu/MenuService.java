@@ -8,6 +8,7 @@ import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
 import kitchenpos.application.dto.result.MenuResult;
 import kitchenpos.dao.menu.MenuGroupRepository;
+import kitchenpos.dao.menu.MenuProductRepository;
 import kitchenpos.dao.menu.MenuRepository;
 import kitchenpos.dao.product.ProductRepository;
 import kitchenpos.domain.menu.Menu;
@@ -24,26 +25,30 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
+    private final MenuProductRepository menuProductRepository;
 
     public MenuService(
             final MenuGroupRepository menuGroupRepository,
             final ProductRepository productRepository,
-            final MenuRepository menuRepository
+            final MenuRepository menuRepository,
+            final MenuProductRepository menuProductRepository
     ) {
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
         this.menuRepository = menuRepository;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
     public MenuResult create(final MenuCreationRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("MenuGroup does not exist."));
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        final Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup));
         final List<MenuProduct> menuProducts = getMenuProductsByRequest(menu, request.getMenuProducts());
         final Price totalPrice = calculateTotalPrice(menuProducts);
-        menu.applyMenuProducts(menuProducts, totalPrice);
-        return MenuResult.from(menuRepository.save(menu));
+        validateMenuProductsPrice(menu, totalPrice);
+        menuProductRepository.saveAll(menuProducts);
+        return MenuResult.from(menu);
     }
 
     private List<MenuProduct> getMenuProductsByRequest(
@@ -83,6 +88,12 @@ public class MenuService {
     private Price calculateMenuProductPrice(final MenuProduct menuProduct) {
         final Product product = productRepository.getReferenceById(menuProduct.getProductId());
         return product.getPrice().multiply(menuProduct.getQuantity());
+    }
+
+    public void validateMenuProductsPrice(final Menu menu, final Price totalPrice) {
+        if (menu.getPrice().isGreaterThan(totalPrice)) {
+            throw new IllegalArgumentException("Sum of menu products price must be greater than menu price.");
+        }
     }
 
     @Transactional(readOnly = true)

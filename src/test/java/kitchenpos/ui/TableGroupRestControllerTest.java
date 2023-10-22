@@ -12,10 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.application.table.TableGroupService;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
 import kitchenpos.application.dto.result.TableGroupResult;
+import kitchenpos.application.table.TableGroupService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,7 +38,7 @@ class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final TableGroupResult result = new TableGroupResult(1L, LocalDateTime.now(), null);
+        final TableGroupResult result = new TableGroupResult(1L, LocalDateTime.now());
         given(tableGroupService.create(any())).willReturn(result);
 
         final TableGroupingRequest request = new TableGroupingRequest(

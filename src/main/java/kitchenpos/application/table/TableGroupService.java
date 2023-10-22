@@ -16,9 +16,12 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
+    private static final int MINIMUM_TABLE_SIZE = 2;
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -37,7 +40,9 @@ public class TableGroupService {
     @Transactional
     public TableGroupResult create(final TableGroupingRequest request) {
         final List<OrderTable> orderTables = getOrderTablesByRequest(request);
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        groupingOrderTables(orderTables, tableGroup);
+        orderTableRepository.saveAll(orderTables);
         return TableGroupResult.from(tableGroupRepository.save(tableGroup));
     }
 
@@ -62,6 +67,28 @@ public class TableGroupService {
         return request.getOrderTables().stream()
                 .map(GroupOrderTableRequest::getId)
                 .collect(Collectors.toList());
+    }
+
+    private void groupingOrderTables(final List<OrderTable> orderTables, final TableGroup tableGroup) {
+        validateSize(orderTables);
+        validateGroupOrderTableIsAvailable(orderTables);
+        orderTables.forEach(orderTable -> orderTable.groupByTableGroup(tableGroup));
+    }
+
+    private void validateGroupOrderTableIsAvailable(final List<OrderTable> orderTables) {
+        if (!isOrderTablesAbleToGroup(orderTables)) {
+            throw new IllegalArgumentException("Cannot group non-empty table or already grouped table.");
+        }
+    }
+
+    private boolean isOrderTablesAbleToGroup(final List<OrderTable> orderTables) {
+        return orderTables.stream().allMatch(OrderTable::isAbleToGroup);
+    }
+
+    private void validateSize(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_TABLE_SIZE) {
+            throw new IllegalArgumentException("Table group must have at least two tables.");
+        }
     }
 
     @Transactional

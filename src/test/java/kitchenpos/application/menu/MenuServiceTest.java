@@ -44,7 +44,6 @@ class MenuServiceTest extends IntegrationTest {
 
         // then
         assertThat(createdMenu.getId()).isNotNull();
-        assertThat(createdMenu.getMenuProductResults()).hasSize(2);
     }
 
     @Nested
@@ -149,21 +148,19 @@ class MenuServiceTest extends IntegrationTest {
         final MenuGroup menuGroup = generateMenuGroup("chicken-group");
         final Product chicken = generateProduct("chicken", 20000L);
         final Product cheeseBall = generateProduct("cheese-ball", 5000L);
-        final Menu menuA = new Menu("chicken-set-A", BigDecimal.valueOf(28000L), menuGroup);
+        final Menu menuA = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(28000L), menuGroup));
         final List<MenuProduct> menuProductsA = List.of(
                 new MenuProduct(menuA, chicken.getId(), 1L),
                 new MenuProduct(menuA, cheeseBall.getId(), 2L)
         );
+        menuProductRepository.saveAll(menuProductsA);
 
-        final Menu menuB = new Menu("chicken-set-A", BigDecimal.valueOf(24000L), menuGroup);
+        final Menu menuB = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(24000L), menuGroup));
         final List<MenuProduct> menuProductsB = List.of(
                 new MenuProduct(menuB, chicken.getId(), 1L),
                 new MenuProduct(menuB, cheeseBall.getId(), 1L)
         );
-        menuA.applyMenuProducts(menuProductsA, menuA.getPrice());
-        menuB.applyMenuProducts(menuProductsB, menuB.getPrice());
-        menuRepository.save(menuA);
-        menuRepository.save(menuB);
+        menuProductRepository.saveAll(menuProductsB);
 
         // when
         final List<MenuResult> list = menuService.list();
