@@ -143,7 +143,6 @@ class LegacyMenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
         }
 
-        // TODO 해당 케이스를 예외로 고려할 것
         @Test
         void 총합_가격이_메뉴_가격보다_크면_예외를_던지지_않는다() {
             // given

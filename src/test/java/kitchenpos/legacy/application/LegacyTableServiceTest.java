@@ -74,8 +74,6 @@ class LegacyTableServiceTest {
         }
     }
 
-    // TODO 비즈니스 로직이 SQL에 있는 것을 수정
-    // TODO 파라미터로 넘어온 empty가 false면 예외
     @Nested
     class changeEmpty {
 

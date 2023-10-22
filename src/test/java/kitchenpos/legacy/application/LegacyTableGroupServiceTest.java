@@ -153,8 +153,6 @@ class LegacyTableGroupServiceTest {
         }
     }
 
-    // TODO 조회한 주문 테이블이 empty 이면 예외 발생
-    // TODO 비즈니스 로직이 SQL에 있는 것을 수정
     @Nested
     class ungroup {
 
