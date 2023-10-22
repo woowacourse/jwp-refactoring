@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.ui.dto.ProductRequest;
-import kitchenpos.ui.dto.ProductResponse;
+import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
