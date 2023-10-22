@@ -1,9 +1,14 @@
 package kitchenpos.domain.menugroup;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class MenuGroupName {
-    private final String value;
+    private String value;
+
+    protected MenuGroupName() {
+    }
 
     public MenuGroupName(final String value) {
         validate(value);

@@ -3,11 +3,16 @@ package kitchenpos.domain.tablegroup;
 import kitchenpos.domain.ordertable.Empty;
 import kitchenpos.domain.ordertable.OrderTable;
 
+import javax.persistence.Embeddable;
 import java.util.List;
 import java.util.Objects;
 
+@Embeddable
 public class OrderTables {
-    private final List<OrderTable> orderTables;
+    private List<OrderTable> orderTables;
+
+    protected OrderTables() {
+    }
 
     public OrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;

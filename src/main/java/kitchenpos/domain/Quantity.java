@@ -1,9 +1,14 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Quantity {
-    private final long value;
+    private long value;
+
+    protected Quantity() {
+    }
 
     public Quantity(final long value) {
         validate(value);

@@ -1,17 +1,26 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.domain.menuproduct.MenuProduct;
-
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Menu {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Embedded
     private MenuName name;
+    @Embedded
     private MenuPrice price;
     private Long menuGroupId;
-    private MenuProducts menuProducts;
+
+    protected Menu() {
+    }
 
     public Menu(final MenuName name,
                 final MenuPrice price,
@@ -34,23 +43,15 @@ public class Menu {
     }
 
     public String getName() {
-        return name.getValue();
+        return name.getName();
     }
 
     public BigDecimal getPrice() {
-        return price.getValue();
+        return price.getPrice();
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts.getMenuProducts();
-    }
-
-    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     @Override

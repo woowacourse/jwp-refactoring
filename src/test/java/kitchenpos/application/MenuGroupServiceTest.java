@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menugroup.MenuGroupName;
 import kitchenpos.ui.dto.MenuGroupRequest;
@@ -22,7 +22,7 @@ class MenuGroupServiceTest {
     @InjectMocks
     private MenuGroupService menuGroupService;
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 생성한다.")
@@ -31,7 +31,7 @@ class MenuGroupServiceTest {
         final MenuGroupRequest request = new MenuGroupRequest("menuGroup");
         final MenuGroupName menuGroupName = new MenuGroupName("menuGroup");
         final MenuGroup menuGroup = new MenuGroup(menuGroupName);
-        given(menuGroupDao.save(any())).willReturn(menuGroup);
+        given(menuGroupRepository.save(any())).willReturn(menuGroup);
 
         // when
         final MenuGroup result = menuGroupService.create(request);
@@ -47,7 +47,7 @@ class MenuGroupServiceTest {
         final MenuGroupName menuGroupName1 = new MenuGroupName("group1");
         final MenuGroupName menuGroupName2 = new MenuGroupName("group2");
         final List<MenuGroup> menuGroups = List.of(new MenuGroup(menuGroupName1), new MenuGroup(menuGroupName2));
-        given(menuGroupDao.findAll()).willReturn(menuGroups);
+        given(menuGroupRepository.findAll()).willReturn(menuGroups);
 
         // when
         final List<MenuGroup> result = menuGroupService.list();

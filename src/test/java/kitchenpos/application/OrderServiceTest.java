@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Quantity;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
@@ -42,13 +42,13 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Nested
     class CreateTest {
@@ -81,7 +81,7 @@ class OrderServiceTest {
         void differentSizeOfOrderLineItemAndMenu() {
             // given
             given(request.getOrderLineItems()).willReturn(orderLineItemDtos);
-            given(menuDao.countByIdIn(any())).willReturn(2L);
+            given(menuRepository.countByIdIn(any())).willReturn(2L);
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -92,8 +92,8 @@ class OrderServiceTest {
         void cannotFindOrderTableDao() {
             // given
             given(request.getOrderLineItems()).willReturn(orderLineItemDtos);
-            given(menuDao.countByIdIn(any())).willReturn(3L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+            given(menuRepository.countByIdIn(any())).willReturn(3L);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -105,8 +105,8 @@ class OrderServiceTest {
             // given
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final OrderTable orderTable = mock(OrderTable.class);
-            given(menuDao.countByIdIn(any())).willReturn(3L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(menuRepository.countByIdIn(any())).willReturn(3L);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTable.isEmpty()).willReturn(true);
 
             // when, then
@@ -120,16 +120,16 @@ class OrderServiceTest {
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final OrderTable orderTable = mock(OrderTable.class);
             final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
-            given(menuDao.countByIdIn(any())).willReturn(3L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderDao.save(any())).willReturn(order);
+            given(menuRepository.countByIdIn(any())).willReturn(3L);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderRepository.save(any())).willReturn(order);
 
             final List<OrderLineItem> savedOrderLineItems = List.of(
                     new OrderLineItem(1L, 1L, 1L, new Quantity(2L)),
                     new OrderLineItem(2L, 1L, 2L, new Quantity(3L)),
                     new OrderLineItem(3L, 1L, 3L, new Quantity(4L))
             );
-            when(orderLineItemDao.save(any()))
+            when(orderLineItemRepository.save(any()))
                     .thenReturn(savedOrderLineItems.get(0))
                     .thenReturn(savedOrderLineItems.get(1))
                     .thenReturn(savedOrderLineItems.get(2));
@@ -140,14 +140,11 @@ class OrderServiceTest {
 
             // then
             assertSoftly(softly -> {
-                verify(orderDao, times(1)).save(any());
-                verify(orderLineItemDao, times(3)).save(any());
+                verify(orderRepository, times(1)).save(any());
+                verify(orderLineItemRepository, times(3)).save(any());
                 assertThat(result).usingRecursiveComparison()
                         .ignoringFields("orderedTime")
                         .isEqualTo(order);
-                assertThat(result).extracting("orderLineItems")
-                        .usingRecursiveComparison()
-                        .isEqualTo(savedOrderLineItems);
             });
         }
     }
@@ -162,8 +159,8 @@ class OrderServiceTest {
                 new OrderLineItem(3L, 1L, 3L, new Quantity(4))
         );
         final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
-        order.updateOrderLineItems(orderLineItems);
-        given(orderDao.findAll()).willReturn(List.of(order));
+//        order.updateOrderLineItems(orderLineItems);
+        given(orderRepository.findAll()).willReturn(List.of(order));
 
         // when
         final List<Order> result = orderService.list();
@@ -178,7 +175,7 @@ class OrderServiceTest {
         @DisplayName("요청한 주문을 찾을 수 없으면 예외가 발생한다.")
         void cannotFindOrder() {
             // given
-            given(orderDao.findById(anyLong())).willReturn(Optional.empty());
+            given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(1L, null))
@@ -190,7 +187,7 @@ class OrderServiceTest {
         void alreadyOrderStatusIsCompletion() {
             // given
             final Order order = mock(Order.class);
-            given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
+            given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
             given(order.getOrderStatus()).willReturn(OrderStatus.COMPLETION);
 
             // when, then
@@ -203,15 +200,14 @@ class OrderServiceTest {
         void changeOrderStatus() {
             // given
             final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
-            given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
+            given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
 
             // when
             final Order result = orderService.changeOrderStatus(1L, new OrderStatusRequest("COMPLETION"));
 
             // then
             assertSoftly(softly -> {
-                verify(orderDao, times(1)).save(any());
-                verify(orderLineItemDao, times(1)).findAllByOrderId(anyLong());
+                verify(orderRepository, times(1)).save(any());
                 assertThat(result).usingRecursiveComparison()
                         .ignoringFields("orderStatus", "orderedTime")
                         .isEqualTo(order);

@@ -1,13 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.Empty;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.tablegroup.OrderTables;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.ui.dto.OrderTableIdDto;
 import kitchenpos.ui.dto.TableGroupRequest;
@@ -41,11 +40,11 @@ class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Nested
     class CreateTest {
@@ -83,7 +82,7 @@ class TableGroupServiceTest {
                 given(request.getOrderTables()).willReturn(dtos);
 
                 final List<OrderTable> orderTables = List.of(mock(OrderTable.class));
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                given(orderTableRepository.findAllByIdIn(any())).willReturn(orderTables);
 
                 // when, then
                 assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -97,7 +96,7 @@ class TableGroupServiceTest {
 
                 final OrderTable orderTable = mock(OrderTable.class);
                 final List<OrderTable> orderTables = List.of(orderTable, mock(OrderTable.class));
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                given(orderTableRepository.findAllByIdIn(any())).willReturn(orderTables);
                 given(orderTable.isEmpty()).willReturn(false);
 
                 // when. then
@@ -112,7 +111,7 @@ class TableGroupServiceTest {
 
                 final OrderTable orderTable = mock(OrderTable.class);
                 final List<OrderTable> orderTables = List.of(orderTable, mock(OrderTable.class));
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
+                given(orderTableRepository.findAllByIdIn(any())).willReturn(orderTables);
                 given(orderTable.isEmpty()).willReturn(true);
                 given(orderTable.getTableGroupId()).willReturn(10L);
 
@@ -131,18 +130,14 @@ class TableGroupServiceTest {
                         new OrderTable(new NumberOfGuests(3), Empty.EMPTY)
                 );
                 final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-                given(orderTableDao.findAllByIdIn(any())).willReturn(orderTables);
-                given(tableGroupDao.save(any())).willReturn(tableGroup);
+                given(orderTableRepository.findAllByIdIn(any())).willReturn(orderTables);
+                given(tableGroupRepository.save(any())).willReturn(tableGroup);
 
                 // when
                 final TableGroup result = tableGroupService.create(request);
 
                 // then
-                assertSoftly(softly -> {
-                    assertThat(result).usingRecursiveComparison().isEqualTo(tableGroup);
-                    assertThat(result).extracting("orderTables")
-                            .usingRecursiveComparison().isEqualTo(new OrderTables(orderTables));
-                });
+                assertThat(result).usingRecursiveComparison().isEqualTo(tableGroup);
             }
         }
     }
@@ -157,8 +152,8 @@ class TableGroupServiceTest {
                     new OrderTable(1L, 1L, new NumberOfGuests(2), Empty.NOT_EMPTY),
                     new OrderTable(2L, 1L, new NumberOfGuests(3), Empty.NOT_EMPTY)
             );
-            given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)))
+            given(orderTableRepository.findAllByTableGroupId(any())).willReturn(orderTables);
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)))
                     .willReturn(true);
 
             // when, then
@@ -173,8 +168,8 @@ class TableGroupServiceTest {
                     new OrderTable(1L, 1L, new NumberOfGuests(2), Empty.EMPTY),
                     new OrderTable(2L, 1L, new NumberOfGuests(3), Empty.EMPTY)
             );
-            given(orderTableDao.findAllByTableGroupId(any())).willReturn(orderTables);
-            given(orderDao.existsByOrderTableIdsAndOrderStatuses(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)))
+            given(orderTableRepository.findAllByTableGroupId(any())).willReturn(orderTables);
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(1L, 2L), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL)))
                     .willReturn(false);
 
             // when
@@ -182,7 +177,7 @@ class TableGroupServiceTest {
 
             // then
             assertSoftly(softly -> {
-                verify(orderTableDao, times(2)).save(any());
+                verify(orderTableRepository, times(2)).save(any());
                 assertThat(orderTables).extracting("tableGroupId")
                         .allSatisfy(orderTable -> assertThat(orderTable).isNull());
                 assertThat(orderTables).extracting("empty")

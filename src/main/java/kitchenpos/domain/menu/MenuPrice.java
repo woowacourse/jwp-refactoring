@@ -1,14 +1,19 @@
 package kitchenpos.domain.menu;
 
+import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+@Embeddable
 public class MenuPrice {
-    private final BigDecimal value;
-    
-    public MenuPrice(final BigDecimal value) {
-        validate(value);
-        this.value = value;
+    private BigDecimal price;
+
+    protected MenuPrice() {
+    }
+
+    public MenuPrice(final BigDecimal price) {
+        validate(price);
+        this.price = price;
     }
 
     private void validate(final BigDecimal price) {
@@ -17,8 +22,8 @@ public class MenuPrice {
         }
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     @Override
@@ -30,11 +35,11 @@ public class MenuPrice {
             return false;
         }
         final MenuPrice menuPrice = (MenuPrice) o;
-        return Objects.equals(value, menuPrice.value);
+        return Objects.equals(price, menuPrice.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(price);
     }
 }

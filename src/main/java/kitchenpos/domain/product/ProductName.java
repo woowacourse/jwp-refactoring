@@ -1,13 +1,18 @@
 package kitchenpos.domain.product;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class ProductName {
-    private final String value;
+    private String productName;
 
-    public ProductName(final String value) {
-        validate(value);
-        this.value = value;
+    protected ProductName() {
+    }
+
+    public ProductName(final String productName) {
+        validate(productName);
+        this.productName = productName;
     }
 
     private void validate(final String name) {
@@ -16,8 +21,8 @@ public class ProductName {
         }
     }
 
-    public String getValue() {
-        return value;
+    public String getProductName() {
+        return productName;
     }
 
     @Override
@@ -29,11 +34,11 @@ public class ProductName {
             return false;
         }
         final ProductName that = (ProductName) o;
-        return Objects.equals(value, that.value);
+        return Objects.equals(productName, that.productName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(productName);
     }
 }

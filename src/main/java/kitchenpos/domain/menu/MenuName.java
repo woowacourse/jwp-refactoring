@@ -1,13 +1,18 @@
 package kitchenpos.domain.menu;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class MenuName {
-    private final String value;
+    private String name;
 
-    public MenuName(final String value) {
-        validate(value);
-        this.value = value;
+    public MenuName(final String name) {
+        validate(name);
+        this.name = name;
+    }
+
+    protected MenuName() {
     }
 
     private void validate(final String name) {
@@ -16,8 +21,8 @@ public class MenuName {
         }
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -29,11 +34,11 @@ public class MenuName {
             return false;
         }
         final MenuName menuName = (MenuName) o;
-        return Objects.equals(value, menuName.value);
+        return Objects.equals(name, menuName.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(name);
     }
 }

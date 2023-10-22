@@ -1,13 +1,18 @@
 package kitchenpos.domain.ordertable;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class NumberOfGuests {
-    private final int value;
+    private int numberOfGuests;
 
-    public NumberOfGuests(final int value) {
-        validate(value);
-        this.value = value;
+    protected NumberOfGuests() {
+    }
+
+    public NumberOfGuests(final int numberOfGuests) {
+        validate(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
     }
 
     private void validate(final int value) {
@@ -16,8 +21,8 @@ public class NumberOfGuests {
         }
     }
 
-    public int getValue() {
-        return value;
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 
     @Override
@@ -29,11 +34,11 @@ public class NumberOfGuests {
             return false;
         }
         final NumberOfGuests that = (NumberOfGuests) o;
-        return value == that.value;
+        return numberOfGuests == that.numberOfGuests;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(numberOfGuests);
     }
 }

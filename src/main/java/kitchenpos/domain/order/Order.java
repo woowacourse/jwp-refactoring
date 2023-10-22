@@ -1,17 +1,26 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.domain.orderlineitem.OrderLineItem;
-
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private OrderLineItems orderLineItems;
+
+    protected Order() {
+    }
 
     public Order(final Long orderTableId,
                  final OrderStatus orderStatus,
@@ -45,16 +54,8 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.getOrderLineItems();
-    }
-
     public void updateOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.ordertable.Empty;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import kitchenpos.domain.ordertable.OrderTable;
@@ -36,9 +36,9 @@ class TableServiceTest {
     @InjectMocks
     private TableService tableService;
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
     @DisplayName("테이블에 대한 주문을 생성한다.")
@@ -46,14 +46,14 @@ class TableServiceTest {
         // given
         final OrderTableRequest request = new OrderTableRequest(3, false);
         final OrderTable orderTable = new OrderTable(new NumberOfGuests(request.getNumberOfGuests()), Empty.from(request.isEmpty()));
-        given(orderTableDao.save(any())).willReturn(orderTable);
+        given(orderTableRepository.save(any())).willReturn(orderTable);
 
         // when
         final OrderTable result = tableService.create(request);
 
         // then
         assertSoftly(softly -> {
-            verify(orderTableDao, times(1)).save(any());
+            verify(orderTableRepository, times(1)).save(any());
             assertThat(result).usingRecursiveComparison().isEqualTo(orderTable);
         });
     }
@@ -66,14 +66,14 @@ class TableServiceTest {
                 new OrderTable(new NumberOfGuests(2), Empty.NOT_EMPTY),
                 new OrderTable(new NumberOfGuests(3), Empty.NOT_EMPTY)
         );
-        given(orderTableDao.findAll()).willReturn(orderTables);
+        given(orderTableRepository.findAll()).willReturn(orderTables);
 
         // when
         final List<OrderTable> result = tableService.list();
 
         // then
         assertSoftly(softly -> {
-            verify(orderTableDao, times(1)).findAll();
+            verify(orderTableRepository, times(1)).findAll();
             assertThat(result).usingRecursiveComparison().isEqualTo(orderTables);
         });
     }
@@ -84,7 +84,7 @@ class TableServiceTest {
         @DisplayName("요청한 주문 테이블을 찾지 못하면 예외가 발생한다.")
         void cannotFindOrderTable() {
             // given
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
@@ -96,7 +96,7 @@ class TableServiceTest {
         void emptyTableGroupId() {
             // given
             final OrderTable orderTable = mock(OrderTable.class);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTable.getTableGroupId()).willReturn(3L);
 
             // when, then
@@ -109,9 +109,9 @@ class TableServiceTest {
         void existsByOrderTableIdAndOrderStatusIn() {
             // given
             final OrderTable orderTable = mock(OrderTable.class);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTable.getTableGroupId()).willReturn(null);
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
 
             // when, then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, null))
@@ -124,15 +124,15 @@ class TableServiceTest {
             // given
             final OrderTable orderTable = new OrderTable(new NumberOfGuests(3), Empty.NOT_EMPTY);
 
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
 
             // when
             tableService.changeEmpty(anyLong(), new ChangeEmptyRequest(true));
 
             // then
             assertSoftly(softly -> {
-                verify(orderTableDao, times(1)).save(any());
+                verify(orderTableRepository, times(1)).save(any());
                 assertThat(orderTable.isEmpty()).isTrue();
             });
         }
@@ -158,7 +158,7 @@ class TableServiceTest {
             // given
             final NumberOfGuestsRequest request = mock(NumberOfGuestsRequest.class);
             given(request.getNumberOfGuests()).willReturn(3);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when, then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
@@ -173,7 +173,7 @@ class TableServiceTest {
             final NumberOfGuestsRequest request = mock(NumberOfGuestsRequest.class);
             final OrderTable orderTable = mock(OrderTable.class);
             given(request.getNumberOfGuests()).willReturn(3);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTable.isEmpty()).willReturn(true);
 
             // when, then
@@ -188,15 +188,15 @@ class TableServiceTest {
             final NumberOfGuestsRequest request = new NumberOfGuestsRequest(10);
             final OrderTable orderTable = new OrderTable(new NumberOfGuests(5), Empty.NOT_EMPTY);
             final OrderTable savedOrderTable = new OrderTable(new NumberOfGuests(10), Empty.NOT_EMPTY);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any())).willReturn(savedOrderTable);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(orderTableRepository.save(any())).willReturn(savedOrderTable);
 
             // when
             final OrderTable result = tableService.changeNumberOfGuests(1L, request);
 
             // then
             assertSoftly(softly -> {
-                verify(orderTableDao, times(1)).save(any());
+                verify(orderTableRepository, times(1)).save(any());
                 assertThat(result.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
             });
         }

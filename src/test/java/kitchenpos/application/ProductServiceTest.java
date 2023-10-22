@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
@@ -27,7 +27,7 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class CreateTest {
@@ -61,7 +61,7 @@ class ProductServiceTest {
 
             given(request.getPrice()).willReturn(product.getPrice());
             given(request.getName()).willReturn("productName");
-            given(productDao.save(any())).willReturn(product);
+            given(productRepository.save(any())).willReturn(product);
 
             // when
             final Product result = productService.create(request);
@@ -80,7 +80,7 @@ class ProductServiceTest {
                 new Product(new ProductName("product2"), new ProductPrice(BigDecimal.valueOf(20_000))),
                 new Product(new ProductName("product3"), new ProductPrice(BigDecimal.valueOf(30_000)))
         );
-        given(productDao.findAll()).willReturn(products);
+        given(productRepository.findAll()).willReturn(products);
 
         // when
         final List<Product> result = productService.list();

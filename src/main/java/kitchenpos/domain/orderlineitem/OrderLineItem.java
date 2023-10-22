@@ -2,13 +2,25 @@ package kitchenpos.domain.orderlineitem;
 
 import kitchenpos.domain.Quantity;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class OrderLineItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     private Long orderId;
     private Long menuId;
+    @Embedded
     private Quantity quantity;
+
+    protected OrderLineItem() {
+    }
 
     public OrderLineItem(final Long orderId,
                          final Long menuId,

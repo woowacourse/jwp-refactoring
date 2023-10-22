@@ -1,15 +1,20 @@
 package kitchenpos.domain.ordertable;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class Empty {
     public static final Empty EMPTY = new Empty(true);
     public static final Empty NOT_EMPTY = new Empty(false);
 
-    private final boolean value;
+    private boolean empty;
 
-    private Empty(final boolean isEmpty) {
-        this.value = isEmpty;
+    protected Empty() {
+    }
+
+    private Empty(final boolean empty) {
+        this.empty = empty;
     }
 
     public static Empty from(final boolean empty) {
@@ -19,8 +24,8 @@ public class Empty {
         return NOT_EMPTY;
     }
 
-    public boolean getValue() {
-        return value;
+    public boolean getEmpty() {
+        return empty;
     }
 
     @Override
@@ -32,11 +37,11 @@ public class Empty {
             return false;
         }
         final Empty empty = (Empty) o;
-        return value == empty.value;
+        return this.empty == empty.empty;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(empty);
     }
 }

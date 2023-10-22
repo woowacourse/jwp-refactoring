@@ -2,11 +2,17 @@ package kitchenpos.domain.order;
 
 import kitchenpos.domain.orderlineitem.OrderLineItem;
 
+import javax.persistence.Embeddable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Embeddable
 public class OrderLineItems {
-    private final List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    protected OrderLineItems() {
+    }
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;

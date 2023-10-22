@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Quantity;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuName;
 import kitchenpos.domain.menu.MenuPrice;
-import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
@@ -37,20 +35,19 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
     @InjectMocks
     MenuService menuService;
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     class CreateTest {
@@ -90,7 +87,7 @@ class MenuServiceTest {
             final MenuRequest request = mock(MenuRequest.class);
             given(request.getPrice()).willReturn(BigDecimal.valueOf(10000));
             given(request.getMenuGroupId()).willReturn(1L);
-            given(menuGroupDao.existsById(anyLong())).willReturn(false);
+            given(menuGroupRepository.existsById(anyLong())).willReturn(false);
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -103,10 +100,10 @@ class MenuServiceTest {
             final MenuRequest request = mock(MenuRequest.class);
             given(request.getPrice()).willReturn(BigDecimal.valueOf(700));
             given(request.getMenuProducts()).willReturn(menuProductRequests);
-            given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(1L)).willReturn(Optional.of(product1));
-            given(productDao.findById(2L)).willReturn(Optional.of(product2));
-            given(productDao.findById(3L)).willReturn(Optional.of(product3));
+            given(menuGroupRepository.existsById(anyLong())).willReturn(true);
+            given(productRepository.findById(1L)).willReturn(Optional.of(product1));
+            given(productRepository.findById(2L)).willReturn(Optional.of(product2));
+            given(productRepository.findById(3L)).willReturn(Optional.of(product3));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -120,31 +117,20 @@ class MenuServiceTest {
 
             final Menu menu = new Menu(1L, new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId());
 
-            given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(1L)).willReturn(Optional.of(product1));
-            given(productDao.findById(2L)).willReturn(Optional.of(product2));
-            given(productDao.findById(3L)).willReturn(Optional.of(product3));
-            given(menuDao.save(any())).willReturn(menu);
-
-            final MenuProduct menuProduct1 = new MenuProduct(1L, 1L, new Quantity(1));
-            final MenuProduct menuProduct2 = new MenuProduct(1L, 2L, new Quantity(1));
-            final MenuProduct menuProduct3 = new MenuProduct(1L, 3L, new Quantity(1));
-            when(menuProductDao.save(any()))
-                    .thenReturn(menuProduct1)
-                    .thenReturn(menuProduct2)
-                    .thenReturn(menuProduct3);
+            given(menuGroupRepository.existsById(anyLong())).willReturn(true);
+            given(productRepository.findById(1L)).willReturn(Optional.of(product1));
+            given(productRepository.findById(2L)).willReturn(Optional.of(product2));
+            given(productRepository.findById(3L)).willReturn(Optional.of(product3));
+            given(menuRepository.save(any())).willReturn(menu);
 
             // when
             final Menu savedMenu = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
-                verify(menuDao, times(1)).save(any());
-                verify(menuProductDao, times(3)).save(any());
+                verify(menuRepository, times(1)).save(any());
+                verify(menuProductRepository, times(3)).save(any());
                 assertThat(savedMenu).usingRecursiveComparison().isEqualTo(menu);
-                assertThat(savedMenu).extracting("menuProducts")
-                        .usingRecursiveComparison()
-                        .isEqualTo(List.of(menuProduct1, menuProduct2, menuProduct3));
             });
         }
     }
@@ -154,9 +140,7 @@ class MenuServiceTest {
     void list() {
         // given
         final Menu menu = new Menu(1L, new MenuName("productName"), new MenuPrice(BigDecimal.valueOf(35_000)), 1L);
-        final MenuProduct menuProduct = new MenuProduct(1L, 3L, new Quantity(1L));
-        given(menuDao.findAll()).willReturn(List.of(menu));
-        given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(menuProduct));
+        given(menuRepository.findAll()).willReturn(List.of(menu));
 
         // when
         final List<Menu> menus = menuService.list();
@@ -165,8 +149,6 @@ class MenuServiceTest {
         assertSoftly(softly -> {
             assertThat(menus).hasSize(1);
             assertThat(menus.get(0)).usingRecursiveComparison().isEqualTo(menu);
-            assertThat(menus.get(0)).extracting("menuProducts")
-                    .usingRecursiveComparison().isEqualTo(List.of(menuProduct));
         });
     }
 }
