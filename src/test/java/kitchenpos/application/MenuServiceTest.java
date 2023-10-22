@@ -53,7 +53,7 @@ class MenuServiceTest {
         final Product product = createProduct(1L, "product", 1000L);
         final Menu menu = createMenu(1L, "menu", 500L, menuGroup.getId());
         final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.addMenuProducts(List.of(menuProduct));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -104,7 +104,7 @@ class MenuServiceTest {
         final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
         final Menu menu = createMenu(1L, "menu", 1000L, menuGroup.getId());
         final MenuProduct menuProduct = createMenuProduct(0L, 2, menu.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.addMenuProducts(List.of(menuProduct));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -124,7 +124,7 @@ class MenuServiceTest {
         final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
         final Menu menu = createMenu(1L, "menu", 3000L, menuGroup.getId());
         final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
-        menu.setMenuProducts(List.of(menuProduct));
+        menu.addMenuProducts(List.of(menuProduct));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -144,11 +144,11 @@ class MenuServiceTest {
         final Product product = createProduct(1L, "product", 1000L);
         final Menu menu1 = createMenu(1L, "menu", 500L, menuGroup.getId());
         final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu1.getId());
-        menu1.setMenuProducts(List.of(menuProduct));
+        menu1.addMenuProducts(List.of(menuProduct));
 
         final Menu menu2 = createMenu(2L, "menu2", 1000L, menuGroup.getId());
         final MenuProduct menuProduct2 = createMenuProduct(product.getId(), 3, menu2.getId());
-        menu2.setMenuProducts(List.of(menuProduct2));
+        menu2.addMenuProducts(List.of(menuProduct2));
 
         given(menuDao.findAll())
             .willReturn(List.of(menu1, menu2));
