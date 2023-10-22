@@ -47,7 +47,7 @@ public class Order {
 
     public Order(final OrderTable orderTable) {
         this.orderTable = orderTable;
-        orderTable.addOrder(this);
+        orderTable.placeOrder(this);
         this.orderStatus = COOKING;
     }
 
@@ -68,10 +68,6 @@ public class Order {
 
     public Long getId() {
         return id;
-    }
-
-    public OrderTable getOrderTable() {
-        return orderTable;
     }
 
     public OrderStatus getOrderStatus() {

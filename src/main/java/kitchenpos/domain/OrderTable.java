@@ -49,7 +49,7 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void addOrder(final Order order) {
+    public void placeOrder(final Order order) {
         orders.add(order);
     }
 
