@@ -64,7 +64,7 @@ public class TableGroup {
     }
 
     private void checkMinOrderTable(List<OrderTable> orderTables) {
-        if (orderTables.size() < MIN_ORDER_TABLE_SIZE) {
+        if (this.orderTables.isEmpty() && orderTables.size() < MIN_ORDER_TABLE_SIZE) {
             throw new IllegalArgumentException(String.format("주문 테이블은 최소 %d개 이상입니다.", MIN_ORDER_TABLE_SIZE));
         }
     }

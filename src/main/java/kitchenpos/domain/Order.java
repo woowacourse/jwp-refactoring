@@ -48,7 +48,13 @@ public class Order {
         return new ArrayList<>(orderLineItems);
     }
 
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
+    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            addOrderLineItem(orderLineItem);
+        }
+    }
+
+    private void addOrderLineItem(OrderLineItem orderLineItem) {
         validate(orderLineItem);
         this.orderLineItems.add(orderLineItem);
     }
@@ -71,12 +77,6 @@ public class Order {
             .ifPresent(ignore -> {
                 throw new IllegalArgumentException("주문에 이미 해당 메뉴가 포함되어 있습니다");
             });
-    }
-
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            addOrderLineItem(orderLineItem);
-        }
     }
 
     public void tabling(OrderTable orderTable) {

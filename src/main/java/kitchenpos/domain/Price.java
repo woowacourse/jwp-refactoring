@@ -22,7 +22,6 @@ public class Price implements Comparable<Price> {
     private void validate(BigDecimal price) {
         if (price == null) {
             throw new IllegalArgumentException("가격은 null일 수 없습니다.");
-
         }
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("가격은 음수일 수 없습니다.");
