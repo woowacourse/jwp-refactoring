@@ -13,8 +13,10 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -52,7 +54,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(result.getId()).isNotNull();
-            softly.assertThat(result.getTableGroupId()).isNull();
+            softly.assertThat(result.getTableGroup()).isNull();
         });
     }
 
@@ -99,10 +101,10 @@ class TableServiceTest extends ServiceIntegrationTest {
     void changeEmpty_tableGroupException() {
         // given
         final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_EMPTY);
-        saved.setTableGroupId(ANY_VALID_ID);
+        saved.joinTableGroup(new TableGroup());
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), ORDER_TABLE_STATUS_NOT_EMPTY))
+        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroup().getId(), ORDER_TABLE_STATUS_NOT_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,21 +114,21 @@ class TableServiceTest extends ServiceIntegrationTest {
         // given
         final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final Order order = orderService.create(generateBasicOrderBy(saved));
-        orderService.changeOrderStatus(order.getId(), new Order(status));
+        orderService.changeOrderStatus(order.getId(), new Order(OrderStatus.get(status)));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroupId(), ORDER_TABLE_STATUS_EMPTY))
+        assertThatThrownBy(() -> tableService.changeEmpty(saved.getTableGroup().getId(), ORDER_TABLE_STATUS_EMPTY))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     private Order generateBasicOrderBy(final OrderTable orderTable) {
         final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
         final Product product = productService.create(Fixture.PRODUCT);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
+        final MenuProduct menuProduct = new MenuProduct(product, 2);
         final Menu menu = menuService.create(
-                new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        return new Order(orderTable.getId(), List.of(orderLineItem));
+                new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup, List.of(menuProduct)));
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+        return new Order(orderTable, List.of(orderLineItem));
     }
 
     @Test
@@ -152,7 +154,8 @@ class TableServiceTest extends ServiceIntegrationTest {
         final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), ORDER_TABLE_GUEST_NEGATIVE))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(saved.getTableGroup().getId(), ORDER_TABLE_GUEST_NEGATIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -169,7 +172,8 @@ class TableServiceTest extends ServiceIntegrationTest {
         final OrderTable saved = tableService.create(Fixture.ORDER_TABLE_EMPTY);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(saved.getTableGroupId(), ORDER_TABLE_GUEST_POSITIVE))
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(saved.getTableGroup().getId(), ORDER_TABLE_GUEST_POSITIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

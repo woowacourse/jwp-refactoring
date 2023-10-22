@@ -34,13 +34,13 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void setUp() {
         menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
         final Product product = productService.create(Fixture.PRODUCT);
-        menuProduct = new MenuProduct(product.getId(), 2);
+        menuProduct = new MenuProduct(product, 2);
     }
 
     @Test
     void create() {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct));
+        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, List.of(menuProduct));
 
         // when
         final Menu result = menuService.create(menu);
@@ -51,9 +51,9 @@ class MenuServiceTest extends ServiceIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 99999})
-    void create_priceException(int price) {
+    void create_priceException(final int price) {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(price), menuGroup.getId(), List.of(menuProduct));
+        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(price), menuGroup, List.of(menuProduct));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -63,7 +63,7 @@ class MenuServiceTest extends ServiceIntegrationTest {
     @Test
     void create_menuGroupException() {
         // given
-        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(1000), -1L, List.of(menuProduct));
+        final Menu menu = new Menu("후라이드+후라이드", BigDecimal.valueOf(1000), new MenuGroup(), List.of(menuProduct));
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -74,9 +74,9 @@ class MenuServiceTest extends ServiceIntegrationTest {
     void list() {
         // given
         final Menu menu1 = menuService.create(
-                new Menu("Menu1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct)));
+                new Menu("Menu1", BigDecimal.valueOf(1000), menuGroup, List.of(menuProduct)));
         final Menu menu2 = menuService.create(
-                new Menu("Menu2", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct)));
+                new Menu("Menu2", BigDecimal.valueOf(2000), menuGroup, List.of(menuProduct)));
 
         // when
         final List<Menu> result = menuService.list();

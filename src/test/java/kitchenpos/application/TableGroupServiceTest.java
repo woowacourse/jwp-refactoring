@@ -12,6 +12,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -136,10 +137,10 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         assertSoftly(softly -> {
             softly.assertThat(orderTables).isEmpty();
             final OrderTable savedOrderTable1 = orderTableDao.findById(orderTable1.getId()).get();
-            softly.assertThat(savedOrderTable1.getTableGroupId()).isNull();
+            softly.assertThat(savedOrderTable1.getTableGroup()).isNull();
             softly.assertThat(savedOrderTable1.isEmpty()).isFalse();
             final OrderTable savedOrderTable2 = orderTableDao.findById(orderTable2.getId()).get();
-            softly.assertThat(savedOrderTable2.getTableGroupId()).isNull();
+            softly.assertThat(savedOrderTable2.getTableGroup()).isNull();
             softly.assertThat(savedOrderTable2.isEmpty()).isFalse();
         });
     }
@@ -153,7 +154,7 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
         final TableGroup tableGroup = tableGroupService.create(new TableGroup(List.of(orderTable1, orderTable2)));
 
         final Order order = orderService.create(generateBasicOrderBy(orderTable1));
-        orderService.changeOrderStatus(order.getId(), new Order(status));
+        orderService.changeOrderStatus(order.getId(), new Order(OrderStatus.get(status)));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
@@ -163,10 +164,10 @@ class TableGroupServiceTest extends ServiceIntegrationTest {
     private Order generateBasicOrderBy(final OrderTable orderTable) {
         final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
         final Product product = productService.create(Fixture.PRODUCT);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
+        final MenuProduct menuProduct = new MenuProduct(product, 2);
         final Menu menu = menuService.create(
-                new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup.getId(), List.of(menuProduct)));
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        return new Order(orderTable.getId(), List.of(orderLineItem));
+                new Menu("Menu1", BigDecimal.valueOf(19000), menuGroup, List.of(menuProduct)));
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+        return new Order(orderTable, List.of(orderLineItem));
     }
 }

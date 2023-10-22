@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceIntegrationTest {
-    private static final Order ORDER_STATUS_COOKING = new Order("COOKING");
+    private static final Order ORDER_STATUS_COOKING = new Order(OrderStatus.COOKING);
 
     @Autowired
     private OrderService orderService;
@@ -46,26 +46,26 @@ class OrderServiceTest extends ServiceIntegrationTest {
     void setUp() {
         final MenuGroup menuGroup = menuGroupService.create(Fixture.MENU_GROUP);
         final Product product = productService.create(Fixture.PRODUCT);
-        final MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
+        final MenuProduct menuProduct = new MenuProduct(product, 2);
         menu = menuService.create(new Menu("후라이드+후라이드",
                 BigDecimal.valueOf(19000),
-                menuGroup.getId(),
+                menuGroup,
                 List.of(menuProduct)));
     }
 
     @Test
     void create() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
         final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
-        final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order order = new Order(orderTable, List.of(orderLineItem));
 
         // when
         final Order result = orderService.create(order);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isNotNull();
+            softly.assertThat(result).isNotNull();
             softly.assertThat(result.getOrderedTime()).isNotNull();
             softly.assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         });
@@ -74,10 +74,10 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void create_duplicatedMenuException() {
         // given
-        final OrderLineItem orderLineItem1 = new OrderLineItem(menu.getId(), 1);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(menu.getId(), 2);
+        final OrderLineItem orderLineItem1 = new OrderLineItem(menu, 1);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(menu, 2);
         final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
-        final Order order = new Order(orderTable.getId(), List.of(orderLineItem1, orderLineItem2));
+        final Order order = new Order(orderTable, List.of(orderLineItem1, orderLineItem2));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -87,8 +87,8 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void create_tableNullException() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
-        final Order order = new Order(INVALID_ID, List.of(orderLineItem));
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+        final Order order = new Order(new OrderTable(), List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -98,9 +98,9 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void create_tableEmptyException() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
         final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_EMPTY);
-        final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
+        final Order order = new Order(orderTable, List.of(orderLineItem));
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -110,12 +110,12 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
         final OrderTable orderTable1 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
         final OrderTable orderTable2 = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
 
-        final Order order1 = orderService.create(new Order(orderTable1.getId(), List.of(orderLineItem)));
-        final Order order2 = orderService.create(new Order(orderTable2.getId(), List.of(orderLineItem)));
+        final Order order1 = orderService.create(new Order(orderTable1, List.of(orderLineItem)));
+        final Order order2 = orderService.create(new Order(orderTable2, List.of(orderLineItem)));
 
         // when
         final List<Order> result = orderService.list();
@@ -130,12 +130,12 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus(final String status) {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
         final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
-        final Order saved = orderService.create(new Order(orderTable.getId(), List.of(orderLineItem)));
+        final Order saved = orderService.create(new Order(orderTable, List.of(orderLineItem)));
 
         // when
-        final Order changed = new Order(status);
+        final Order changed = new Order(OrderStatus.get(status));
         final Order result = orderService.changeOrderStatus(saved.getId(), changed);
 
         // then
@@ -157,10 +157,10 @@ class OrderServiceTest extends ServiceIntegrationTest {
     @Test
     void changeOrderStatus_orderCompletedException() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
         final OrderTable orderTable = tableService.create(Fixture.ORDER_TABLE_NOT_EMPTY);
-        final Order saved = orderService.create(new Order(orderTable.getId(), List.of(orderLineItem)));
-        orderService.changeOrderStatus(saved.getId(), new Order(OrderStatus.COMPLETION.name()));
+        final Order saved = orderService.create(new Order(orderTable, List.of(orderLineItem)));
+        orderService.changeOrderStatus(saved.getId(), new Order(OrderStatus.COMPLETION));
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(saved.getId(), ORDER_STATUS_COOKING))
