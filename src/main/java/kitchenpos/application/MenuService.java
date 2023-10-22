@@ -63,7 +63,8 @@ public class MenuService {
         for (final MenuProductCreateRequest menuProduct : request.getMenuProducts()) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            totalPrice = totalPrice.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            totalPrice = totalPrice.add(
+                    product.getPriceValue().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
         return totalPrice;
     }

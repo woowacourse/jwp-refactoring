@@ -31,6 +31,6 @@ class ProductTest {
         // expect
         assertThatThrownBy(() -> Product.of(productName, invalidPrice))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("상품 가격은 0 미만일 수 없습니다.");
+                .hasMessage("가격은 0 미만일 수 없습니다.");
     }
 }

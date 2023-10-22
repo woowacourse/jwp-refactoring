@@ -51,7 +51,7 @@ class MenuTest {
                     BigDecimal.ONE)
             )
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("메뉴 가격은 0 미만일 수 없습니다.");
+                    .hasMessage("가격은 0 미만일 수 없습니다.");
         }
 
         @Test

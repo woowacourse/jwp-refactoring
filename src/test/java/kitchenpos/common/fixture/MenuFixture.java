@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Money;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
@@ -13,7 +14,7 @@ public class MenuFixture {
         return new Menu(
                 menuId,
                 "menuName",
-                BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP),
+                Money.valueOf(BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP)),
                 menuGroupId,
                 null
         );
@@ -22,7 +23,7 @@ public class MenuFixture {
     public static Menu 메뉴(Long menuGroupId) {
         return new Menu(
                 "menuName",
-                BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP),
+                Money.valueOf(BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP)),
                 menuGroupId,
                 null
         );
@@ -31,7 +32,7 @@ public class MenuFixture {
     public static Menu 메뉴(Long menuGroupId, List<MenuProduct> menuProducts) {
         return new Menu(
                 "menuName",
-                BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP),
+                Money.valueOf(BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP)),
                 menuGroupId,
                 menuProducts
         );
@@ -40,7 +41,7 @@ public class MenuFixture {
     public static Menu 메뉴(Long menuGroupId, BigDecimal price, List<MenuProduct> menuProducts) {
         return new Menu(
                 "menuName",
-                price,
+                Money.valueOf(price),
                 menuGroupId,
                 menuProducts
         );
@@ -50,7 +51,7 @@ public class MenuFixture {
         return new Menu(
                 menuId,
                 "menuName",
-                price,
+                Money.valueOf(price),
                 menuGroupId,
                 menuProducts
         );
