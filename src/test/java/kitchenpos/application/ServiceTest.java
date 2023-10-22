@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
 import javax.transaction.Transactional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,13 @@ public class ServiceTest {
     protected OrderTableDao orderTableDao;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
+    protected MenuProductRepository menuProductRepository;
 
     @Autowired
     protected OrderDao orderDao;
@@ -47,6 +47,9 @@ public class ServiceTest {
 
     @Autowired
     protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected ProductService productService;
 
     @Autowired
     protected MenuService menuService;

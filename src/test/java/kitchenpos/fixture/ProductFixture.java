@@ -17,4 +17,8 @@ public class ProductFixture {
     public static Product 상품(String name, Long price) {
         return new Product(name, BigDecimal.valueOf(price));
     }
+
+    public static Product 상품(Long id, String name, Long price) {
+        return new Product(id, name, BigDecimal.valueOf(price));
+    }
 }

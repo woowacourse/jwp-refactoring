@@ -7,10 +7,10 @@ import kitchenpos.domain.Menu;
 
 public class MenuDto {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
     private final List<MenuProductDto> menuProducts;
 
     public MenuDto(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
@@ -26,7 +26,7 @@ public class MenuDto {
         final List<MenuProductDto> menuProductDtos = menu.getMenuProducts()
                 .stream().map(MenuProductDto::toDto)
                 .collect(Collectors.toList());
-        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductDtos);
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menuProductDtos);
     }
 
     public Long getId() {

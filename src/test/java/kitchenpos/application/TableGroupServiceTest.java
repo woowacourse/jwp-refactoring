@@ -130,11 +130,11 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블1 = orderTableDao.save(빈테이블());
             final var 테이블2 = orderTableDao.save(빈테이블());

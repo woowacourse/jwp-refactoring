@@ -31,11 +31,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableDao.save(비지않은_테이블());
             final var 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
@@ -56,11 +56,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableDao.save(비지않은_테이블());
 
@@ -76,11 +76,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableDao.save(비지않은_테이블());
             final var 주문상품1 = 주문상품(후라이드메뉴.getId(), 3);
@@ -98,11 +98,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var wrongTableId = 999L;
             final var 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
@@ -119,11 +119,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 빈테이블 = orderTableDao.save(빈테이블());
             final var 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
@@ -144,11 +144,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableDao.save(비지않은_테이블());
 
@@ -169,11 +169,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var wrongOrderId = 999L;
             final var request = 주문상태_변경_요청(OrderStatus.MEAL);
@@ -188,11 +188,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableDao.save(비지않은_테이블());
 
@@ -215,11 +215,11 @@ class OrderServiceTest extends ServiceTest {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
 
-            final var 후라이드 = productDao.save(후라이드_16000);
+            final var 후라이드 = productRepository.save(후라이드_16000);
 
-            final var 후라이드메뉴 = menuDao.save(메뉴("싼후라이드", 10000, 두마리메뉴.getId()));
-            final var 싼후라이드상품 = menuProductDao.save(메뉴상품(후라이드메뉴.getId(), 후라이드.getId(), 1));
-            후라이드메뉴.setMenuProducts(List.of(싼후라이드상품));
+            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
+            후라이드메뉴.addMenuProduct(메뉴상품(후라이드, 1));
+            menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableDao.save(비지않은_테이블());
 
