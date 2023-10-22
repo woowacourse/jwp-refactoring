@@ -50,10 +50,17 @@ public class TableGroupService {
 //        }
 //
 //        return savedTableGroup;
-        TableGroup tableGroup = tableGroupRepository.save(TableGroup.createDefault());
 
+        // 1. 주문 테이블이 2개보다 적으면 예외
+        validateTableSize(req.getOrderTables());
+
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup.createDefault());
         List<Long> orderTableIds = req.getOrderTables();
+
         List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+
+        // 2. 테이블을 찾을 수 없다면 예외 발생
+        validateTableNotFound(req.getOrderTables(), findOrderTables);
 
         findOrderTables.forEach(it ->
                 it.updateTableGroupStatus(tableGroup.getId())

@@ -45,7 +45,7 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
         OrderTable otherTable = orderTableRepository.save(new OrderTable(20, true));
-        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(otherTable.getId(), orderTable.getTableGroupId()));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId(), otherTable.getId()));
 
         // when
         TableGroupResponse result = tableGroupService.create(request);
@@ -54,9 +54,9 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         assertSoftly(softly -> {
             softly.assertThat(result.getOrderTableResponses()).hasSize(2);
             softly.assertThat(result.getOrderTableResponses().get(0).getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
-            softly.assertThat(result.getOrderTableResponses().get(0).isEmpty()).isEqualTo(false);
+            softly.assertThat(result.getOrderTableResponses().get(0).isEmpty()).isEqualTo(true);
             softly.assertThat(result.getOrderTableResponses().get(1).getNumberOfGuests()).isEqualTo(otherTable.getNumberOfGuests());
-            softly.assertThat(result.getOrderTableResponses().get(1).isEmpty()).isEqualTo(false);
+            softly.assertThat(result.getOrderTableResponses().get(1).isEmpty()).isEqualTo(true);
         });
     }
 
@@ -73,9 +73,11 @@ class TableGroupServiceTest extends IntegrationTestHelper {
 
     @Test
     void 다른_주문_테이블이_들어오면_예외를_발생시킨다() {
-        OrderTable orderTable = orderTableRepository.save(주문_테이블_생성(10, true));
-        OrderTable otherTable = 주문_테이블_생성(20, true);
-        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(orderTable.getId(), otherTable.getId()));
+        OrderTable orderTablePreset = 주문_테이블_생성(10, true);
+        orderTablePreset.updateTableGroupStatus(1L);
+        OrderTable orderTable = orderTableRepository.save(orderTablePreset);
+
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(orderTable.getId(), -1L));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
