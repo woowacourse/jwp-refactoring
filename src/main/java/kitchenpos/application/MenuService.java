@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.MenuCreateRequest;
-import kitchenpos.application.request.ProductQuantityDto;
+import kitchenpos.application.dto.ProductQuantityDto;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;

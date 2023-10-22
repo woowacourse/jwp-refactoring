@@ -1,6 +1,7 @@
 package kitchenpos.application.request;
 
 import java.util.List;
+import kitchenpos.application.dto.ProductQuantityDto;
 
 public class MenuCreateRequest {
 

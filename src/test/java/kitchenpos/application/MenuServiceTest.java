@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.application.request.MenuCreateRequest;
-import kitchenpos.application.request.ProductQuantityDto;
+import kitchenpos.application.dto.ProductQuantityDto;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
