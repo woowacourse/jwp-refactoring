@@ -28,7 +28,7 @@ public class ProductService {
 
         final List<ProductResponse> productResponses = new ArrayList<>();
         for (final Product product : products) {
-            productResponses.add(new ProductResponse(product.getId(), product.getName(), product.getPrice()));
+            productResponses.add(ProductResponse.from(product));
         }
 
         return productResponses;
