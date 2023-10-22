@@ -13,10 +13,6 @@ public class ProductCreateDto {
         this.price = price;
     }
 
-    public Product toDomain() {
-        return new Product(name, price);
-    }
-
     public String getName() {
         return name;
     }

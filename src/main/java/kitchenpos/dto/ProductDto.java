@@ -16,7 +16,7 @@ public class ProductDto {
     }
 
     public static ProductDto toDto(final Product product) {
-        return new ProductDto(product.getId(), product.getName(), product.getPrice());
+        return new ProductDto(product.getId(), product.getName(), product.getPrice().getValue());
     }
 
     public Long getId() {

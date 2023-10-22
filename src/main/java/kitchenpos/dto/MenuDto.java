@@ -26,7 +26,7 @@ public class MenuDto {
         final List<MenuProductDto> menuProductDtos = menu.getMenuProducts()
                 .stream().map(MenuProductDto::toDto)
                 .collect(Collectors.toList());
-        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menuProductDtos);
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(), menuProductDtos);
     }
 
     public Long getId() {

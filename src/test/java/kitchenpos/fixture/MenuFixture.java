@@ -8,6 +8,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.MenuCreateDto;
 import kitchenpos.dto.MenuProductCreateDto;
+import kitchenpos.domain.Price;
 
 public class MenuFixture {
 
@@ -20,6 +21,6 @@ public class MenuFixture {
     }
 
     public static Menu 메뉴(String name, int price, MenuGroup menuGroup) {
-        return new Menu(name, BigDecimal.valueOf(price), menuGroup);
+        return new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroup);
     }
 }

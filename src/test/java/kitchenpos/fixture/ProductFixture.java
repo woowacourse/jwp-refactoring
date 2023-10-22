@@ -3,6 +3,7 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateDto;
+import kitchenpos.domain.Price;
 
 public class ProductFixture {
 
@@ -15,10 +16,10 @@ public class ProductFixture {
     }
 
     public static Product 상품(String name, Long price) {
-        return new Product(name, BigDecimal.valueOf(price));
+        return new Product(name, new Price(BigDecimal.valueOf(price)));
     }
 
     public static Product 상품(Long id, String name, Long price) {
-        return new Product(id, name, BigDecimal.valueOf(price));
+        return new Product(id, name, new Price(BigDecimal.valueOf(price)));
     }
 }
