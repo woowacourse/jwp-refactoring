@@ -1,6 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+import java.util.Collections;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -11,19 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class MenuGroupServiceTest {
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
@@ -35,7 +34,7 @@ class MenuGroupServiceTest {
         void 메뉴_그룹을_등록할_수_있다() {
             // given
             final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
-            given(menuGroupDao.save(any()))
+            given(menuGroupRepository.save(any()))
                     .willReturn(menuGroup);
 
             // when
@@ -54,7 +53,7 @@ class MenuGroupServiceTest {
         void 메뉴_그룹을_조회할_수_있다() {
             // given
             final var menuGroups = Collections.singletonList(MenuGroupFixture.메뉴그룹_신메뉴());
-            given(menuGroupDao.findAll())
+            given(menuGroupRepository.findAll())
                     .willReturn(menuGroups);
 
             // when

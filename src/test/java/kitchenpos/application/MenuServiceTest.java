@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
@@ -33,7 +33,7 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
     private ProductRepository productRepository;
@@ -53,7 +53,7 @@ class MenuServiceTest {
             final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
             given(menuRepository.save(any()))
                     .willReturn(menu);
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                     .willReturn(true);
 
             final var product1 = ProductFixture.상품_망고_1000원();
@@ -90,7 +90,7 @@ class MenuServiceTest {
         void 메뉴의_메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
             // given
             final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                     .willReturn(false);
 
             // when & then
@@ -102,7 +102,7 @@ class MenuServiceTest {
         void 메뉴의_상품이_존재하지_않으면_예외가_발생한다() {
             // given
             final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                     .willReturn(true);
             given(productRepository.findById(anyLong()))
                     .willReturn(Optional.empty());
@@ -116,7 +116,7 @@ class MenuServiceTest {
         void 메뉴_가격과_메뉴_상품의_총_가격이_다르면_예외가_발생한다() {
             // given
             final var menu = MenuFixture.메뉴_망고치킨_17000원_신메뉴();
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                     .willReturn(true);
 
             final var invalidProduct = ProductFixture.상품_망고_N원(0);
