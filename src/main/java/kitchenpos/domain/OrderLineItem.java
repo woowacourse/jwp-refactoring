@@ -1,29 +1,40 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+
+@Entity
 public class OrderLineItem {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    private OrderLineItem(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    private OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
         validateQuantity(quantity);
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.order = order;
+        this.menu = menu;
         this.quantity = quantity;
     }
 
-    private OrderLineItem(final Long menuId, final long quantity) {
-        this(null, null, menuId, quantity);
+    private OrderLineItem(final Menu menu, final long quantity) {
+        this(null, null, menu, quantity);
     }
 
-    public static OrderLineItem create(final Long menuId, final long quantity) {
-        return new OrderLineItem(menuId, quantity);
+    public static OrderLineItem create(final Menu menu, final long quantity) {
+        return new OrderLineItem(menu, quantity);
     }
 
     private void validateQuantity(final long quantity) {
@@ -42,19 +53,19 @@ public class OrderLineItem {
     }
 
     public Long getOrderId() {
-        return orderId;
+        return order.getId();
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(final Order order) {
+        this.order = order;
     }
 
     public Long getMenuId() {
-        return menuId;
+        return menu.getId();
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setMenuId(final Menu menu) {
+        this.menu = menu;
     }
 
     public long getQuantity() {

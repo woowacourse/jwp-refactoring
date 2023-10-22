@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class MenuProductTest {
 
     private final Product product = Product.create("후라이드", BigDecimal.valueOf(16000));
-    private final MenuGroup meneGroup = MenuGroup.create("두마리메뉴");
-    Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), meneGroup);
+    private final MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
+    private final Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
 
     @DisplayName("메뉴 상품 생성 시, 수량이 0개 이하면 예외가 발생한다.")
     @ParameterizedTest

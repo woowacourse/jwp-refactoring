@@ -1,20 +1,21 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.*;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.request.TableEmptyStatusUpdateRequest;
 import kitchenpos.dto.request.TableNumberOfGuestsUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,24 +25,21 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
 @Import({
-        TableService.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderTableDao.class,
-        JdbcTemplateTableGroupDao.class
+        TableService.class
 })
 class TableServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableService tableService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @DisplayName("테이블을 정상적으로 등록할 수 있다.")
     @Test
@@ -54,7 +52,7 @@ class TableServiceTest extends ServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTableDao.findById(actual.getId())).isPresent();
+            softly.assertThat(orderTableRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
             softly.assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
         });
@@ -121,10 +119,10 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable2 = OrderTable.create(0, true);
 
         TableGroup tableGroup = TableGroup.groupOrderTables(List.of(orderTable1, orderTable2));
-        TableGroup 테이블그룹 = tableGroupDao.save(tableGroup);
+        TableGroup 테이블그룹 = tableGroupRepository.save(tableGroup);
 
-        orderTable1.setTableGroupId(테이블그룹.getId());
-        OrderTable 주문테이블 = orderTableDao.save(orderTable1);
+        orderTable1.setTableGroup(테이블그룹);
+        OrderTable 주문테이블 = orderTableRepository.save(orderTable1);
 
         TableEmptyStatusUpdateRequest request = new TableEmptyStatusUpdateRequest(false);
 
@@ -135,18 +133,21 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("테이블 empty 상태 변경 시, 주문의 상태가 COOKING 또는 MEAL인 경우 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void changeEmpty_FailWithInvalidOrderStatus(String invalidOrderStatus) {
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+    void changeEmpty_FailWithInvalidOrderStatus(OrderStatus invalidOrderStatus) {
         // given
-        OrderTable orderTable = orderTableDao.save(OrderTable.create(0, true));
+        OrderTable orderTable = orderTableRepository.save(OrderTable.create(0, true));
 
-        Order order = Order.create(1L, List.of(OrderLineItem.create(1L, 1)));
+        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
+        Menu menu = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), menuGroup);
+
+        Order order = Order.create(orderTable, List.of(OrderLineItem.create(menu, 1)));
         order.changeOrderStatus(invalidOrderStatus);
-        order.setOrderTableId(orderTable.getId());
+        order.setOrderTable(orderTable);
         order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        orderRepository.save(order);
 
-        OrderTable 주문테이블 = orderTableDao.save(orderTable);
+        OrderTable 주문테이블 = orderTableRepository.save(orderTable);
 
         TableEmptyStatusUpdateRequest request = new TableEmptyStatusUpdateRequest(false);
 
@@ -160,7 +161,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         // given
         OrderTable orderTable = OrderTable.create(0, false);
-        OrderTable 주문테이블 = orderTableDao.save(orderTable);
+        OrderTable 주문테이블 = orderTableRepository.save(orderTable);
 
         TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(1);
 
@@ -177,7 +178,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests_FailWithInvalidNumberOfGuests(int invalidNumberOfGuests) {
         // given
         OrderTable orderTable = OrderTable.create(0, false);
-        OrderTable 주문테이블 = orderTableDao.save(orderTable);
+        OrderTable 주문테이블 = orderTableRepository.save(orderTable);
 
         TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(invalidNumberOfGuests);
 
@@ -204,7 +205,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests_FailWithEmptyIsTrue() {
         // given
         OrderTable orderTable = OrderTable.create(0, true);
-        OrderTable 주문테이블 = orderTableDao.save(orderTable);
+        OrderTable 주문테이블 = orderTableRepository.save(orderTable);
 
         TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(1);
 

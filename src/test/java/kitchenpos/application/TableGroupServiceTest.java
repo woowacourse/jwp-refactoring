@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.*;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableRequest;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
@@ -24,10 +25,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
 @Import({
-        TableGroupService.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderTableDao.class,
-        JdbcTemplateTableGroupDao.class
+        TableGroupService.class
 })
 class TableGroupServiceTest extends ServiceTest {
 
@@ -43,26 +41,28 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    private OrderTableRequest 주문테이블1;
-    private OrderTableRequest 주문테이블2;
+    private OrderTableRequest 주문테이블1_요청;
+    private OrderTableRequest 주문테이블2_요청;
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = OrderTable.create(0, true);
-        OrderTable orderTable2 = OrderTable.create(0, true);
+        orderTable1 = OrderTable.create(0, true);
+        orderTable2 = OrderTable.create(0, true);
 
         orderTable1 = orderTableDao.save(orderTable1);
         orderTable2 = orderTableDao.save(orderTable2);
 
-        주문테이블1 = new OrderTableRequest(orderTable1.getId());
-        주문테이블2 = new OrderTableRequest(orderTable2.getId());
+        주문테이블1_요청 = new OrderTableRequest(orderTable1.getId());
+        주문테이블2_요청 = new OrderTableRequest(orderTable2.getId());
     }
 
     @DisplayName("테이블 그룹을 정상적으로 등록할 수 있다.")
     @Test
     void create() {
         // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청));
 
         // when
         TableGroup actual = tableGroupService.create(request);
@@ -71,9 +71,9 @@ class TableGroupServiceTest extends ServiceTest {
         assertSoftly(softly -> {
             softly.assertThat(tableGroupDao.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getOrderTables()).extracting("empty")
-                            .containsExactly(false, false);
+                    .containsExactly(false, false);
             softly.assertThat(actual.getOrderTables()).extracting("tableGroupId")
-                            .containsExactly(actual.getId(), actual.getId());
+                    .containsExactly(actual.getId(), actual.getId());
         });
     }
 
@@ -92,7 +92,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithInvalidSizeOfOrderLineItems() {
         // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -103,7 +103,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithDuplicatedOrderTable() {
         // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청, 주문테이블2_요청));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -118,7 +118,7 @@ class TableGroupServiceTest extends ServiceTest {
         orderTable3 = orderTableDao.save(orderTable3);
 
         OrderTableRequest 비어있지_않은_주문테이블 = new OrderTableRequest(orderTable3.getId());
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2, 비어있지_않은_주문테이블));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청, 비어있지_않은_주문테이블));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -129,10 +129,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithOrderTableAlreadyHasTableGroup() {
         // given
-        tableGroupService.create(new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2)));
-        OrderTableRequest 이미_테이블그룹에_속한_주문테이블 = new OrderTableRequest(주문테이블1.getId());
+        tableGroupService.create(new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청)));
+        OrderTableRequest 이미_테이블그룹에_속한_주문테이블 = new OrderTableRequest(주문테이블1_요청.getId());
 
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(이미_테이블그룹에_속한_주문테이블, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(이미_테이블그룹에_속한_주문테이블, 주문테이블2_요청));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(request))
@@ -143,7 +143,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청));
 
         TableGroup 테이블그룹 = tableGroupService.create(request);
 
@@ -165,16 +165,16 @@ class TableGroupServiceTest extends ServiceTest {
 
     @DisplayName("테이블 그룹 해제 시, 주문 테이블의 주문 상태가 COOKING, MEAL인 경우 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void ungroup_FailWithInvalidOrderStatus(String invalidOrderStatus) {
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+    void ungroup_FailWithInvalidOrderStatus(OrderStatus invalidOrderStatus) {
         // given
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1_요청, 주문테이블2_요청));
 
         TableGroup 테이블그룹 = tableGroupService.create(request);
 
         Order order = new Order();
         order.changeOrderStatus(invalidOrderStatus);
-        order.setOrderTableId(주문테이블1.getId());
+        order.setOrderTable(orderTable1);
         order.setOrderedTime(LocalDateTime.now());
         orderDao.save(order);
 

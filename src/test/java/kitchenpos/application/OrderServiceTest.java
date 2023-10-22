@@ -1,10 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
 import kitchenpos.domain.*;
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.*;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemsCreateRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
@@ -18,15 +15,13 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
 @Import({
-        OrderService.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderLineItemDao.class,
-        JdbcTemplateOrderTableDao.class,
+        OrderService.class
 })
 class OrderServiceTest extends ServiceTest {
 
@@ -34,13 +29,13 @@ class OrderServiceTest extends ServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderService orderService;
@@ -87,7 +82,7 @@ class OrderServiceTest extends ServiceTest {
         menu2.updateMenuProducts(List.of(간1양1_간장치킨_한마리, 간1양1_양념치킨_한마리));
 
         OrderTable orderTable = OrderTable.create(0, false);
-        주문테이블 = orderTableDao.save(orderTable);
+        주문테이블 = orderTableRepository.save(orderTable);
 
         후1양1_수량1 = new OrderLineItemsCreateRequest(후1양1_메뉴.getId(), 1L);
         간1양1_수량1 = new OrderLineItemsCreateRequest(간1양1_메뉴.getId(), 1L);
@@ -104,7 +99,7 @@ class OrderServiceTest extends ServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderDao.findById(actual.getId())).isPresent();
+            softly.assertThat(orderRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getOrderLineItems()).hasSize(2);
             softly.assertThat(actual.getOrderLineItems()).extracting("orderId")
                     .containsExactly(actual.getId(), actual.getId());
@@ -153,7 +148,7 @@ class OrderServiceTest extends ServiceTest {
     void create_FailWithEmptyOrderTable() {
         // given
         주문테이블.changeEmpty(true);
-        OrderTable 비어있는_주문테이블 = orderTableDao.save(주문테이블);
+        OrderTable 비어있는_주문테이블 = orderTableRepository.save(주문테이블);
 
         OrderCreateRequest request = new OrderCreateRequest(비어있는_주문테이블.getId(), List.of(후1양1_수량1, 간1양1_수량1));
 
@@ -225,8 +220,8 @@ class OrderServiceTest extends ServiceTest {
         OrderStatus 유효하지_않은_주문_상태 = OrderStatus.COMPLETION;
         OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(유효하지_않은_주문_상태.name());
 
-        order.changeOrderStatus(유효하지_않은_주문_상태.name());
-        Order 주문 = orderDao.save(order);
+        order.changeOrderStatus(유효하지_않은_주문_상태);
+        Order 주문 = orderRepository.save(order);
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(주문.getId(), request))

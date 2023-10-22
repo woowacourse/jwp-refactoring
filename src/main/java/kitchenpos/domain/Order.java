@@ -1,38 +1,53 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 
+@Table(name = "orders")
+@Entity
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Enumerated(value = EnumType.STRING)
+    @NotNull
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
     }
 
-    private Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         // TODO: orderLineItems의 orderId 변경하기
         // TODO: orderLineItems의 menuId 변경하기
         validateOrderLineItemsSize(orderLineItems.size());
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    private Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, COOKING.name(), LocalDateTime.now(), orderLineItems);
+    private Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public static Order create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTableId, orderLineItems);
+    public static Order create(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable, orderLineItems);
     }
 
     private void validateOrderLineItemsSize(final int orderLineItemsSize) {
@@ -50,20 +65,20 @@ public class Order {
     }
 
     public Long getOrderTableId() {
-        return orderTableId;
+        return orderTable.getId();
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTable(final OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         // TODO: meal -> cooking의 상태를 가능하게 할 것인가?
-        if (COMPLETION.name().equals(this.orderStatus)) {
+        if (COMPLETION.equals(this.orderStatus)) {
             throw new IllegalArgumentException("이미 완료된 주문은 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus;
