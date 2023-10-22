@@ -3,6 +3,8 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
+import kitchenpos.support.DataCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,14 @@ class ProductServiceTest {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private DataCleaner dataCleaner;
+
+    @BeforeEach
+    void clean() {
+        dataCleaner.clear();
+    }
+
     @DisplayName("새로운 상품을 생성한다.")
     @Test
     void create_new_product() {
@@ -28,6 +38,7 @@ class ProductServiceTest {
 
         // then
         assertSoftly(softly -> {
+            softly.assertThat(result.getId()).isEqualTo(1L);
             softly.assertThat(result.getName()).isEqualTo(request.getName());
             softly.assertThat(result.getPrice()).isEqualTo(request.getPrice());
         });

@@ -3,18 +3,30 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.support.DataCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest
 class MenuGroupServiceTest {
 
     @Autowired
+    private DataCleaner dataCleaner;
+
+    @Autowired
     private MenuGroupService menuGroupService;
+
+    @BeforeEach
+    void setUp() {
+        dataCleaner.clear();
+    }
+
 
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
@@ -26,7 +38,10 @@ class MenuGroupServiceTest {
         final MenuGroupResponse result = menuGroupService.create(request);
 
         // then
-        assertThat(result.getName()).isEqualTo(request.getName());
+        assertSoftly(softly -> {
+            softly.assertThat(result.getId()).isEqualTo(1L);
+            assertThat(result.getName()).isEqualTo(request.getName());
+        });
     }
 
     @DisplayName("전체 메뉴 그룹을 가져온다.")
