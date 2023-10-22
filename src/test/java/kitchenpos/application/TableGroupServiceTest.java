@@ -4,6 +4,8 @@ import kitchenpos.dao.*;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,33 +43,29 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    private OrderTable 주문테이블1;
-    private OrderTable 주문테이블2;
+    private OrderTableRequest 주문테이블1;
+    private OrderTableRequest 주문테이블2;
 
     @BeforeEach
     void setUp() {
-        // TODO: empty가 true인 상태에서 방문자 수 변경해서 발생한 문제 -> 생성자로 변경 필요
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.changeEmpty(true);
-        orderTable1.changeNumberOfGuests(0);
+        OrderTable orderTable1 = OrderTable.create(0, true);
+        OrderTable orderTable2 = OrderTable.create(0, true);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.changeEmpty(true);
-        orderTable2.changeNumberOfGuests(0);
+        orderTable1 = orderTableDao.save(orderTable1);
+        orderTable2 = orderTableDao.save(orderTable2);
 
-        주문테이블1 = orderTableDao.save(orderTable1);
-        주문테이블2 = orderTableDao.save(orderTable2);
+        주문테이블1 = new OrderTableRequest(orderTable1.getId());
+        주문테이블2 = new OrderTableRequest(orderTable2.getId());
     }
 
     @DisplayName("테이블 그룹을 정상적으로 등록할 수 있다.")
     @Test
     void create() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2));
 
         // when
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroup actual = tableGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
@@ -83,11 +81,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithEmptyOrderLineItems() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        TableGroupCreateRequest request = new TableGroupCreateRequest(Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -95,11 +92,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithInvalidSizeOfOrderLineItems() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -107,11 +103,10 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithDuplicatedOrderTable() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2, 주문테이블2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -119,17 +114,14 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithNotEmptyOrderTable() {
         // given
-        OrderTable orderTable3 = new OrderTable();
-        orderTable3.changeEmpty(false);
-        orderTable3.changeNumberOfGuests(0);
+        OrderTable orderTable3 = OrderTable.create(0, false);
+        orderTable3 = orderTableDao.save(orderTable3);
 
-        OrderTable 비어있지_않은_주문테이블 = orderTableDao.save(orderTable3);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2, 비어있지_않은_주문테이블));
+        OrderTableRequest 비어있지_않은_주문테이블 = new OrderTableRequest(orderTable3.getId());
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2, 비어있지_않은_주문테이블));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,21 +129,13 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_FailWithOrderTableAlreadyHasTableGroup() {
         // given
-        TableGroup existingTableGroup = new TableGroup();
-        existingTableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2));
+        tableGroupService.create(new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2)));
+        OrderTableRequest 이미_테이블그룹에_속한_주문테이블 = new OrderTableRequest(주문테이블1.getId());
 
-        OrderTable orderTable3 = new OrderTable();
-        orderTable3.changeEmpty(false);
-        orderTable3.changeNumberOfGuests(0);
-        orderTable3.setTableGroupId(tableGroupService.create(existingTableGroup).getId());
-
-        OrderTable 이미_테이블그룹에_속한_주문테이블 = orderTableDao.save(orderTable3);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2, 이미_테이블그룹에_속한_주문테이블));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(이미_테이블그룹에_속한_주문테이블, 주문테이블2));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -159,10 +143,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2));
 
-        TableGroup 테이블그룹 = tableGroupService.create(tableGroup);
+        TableGroup 테이블그룹 = tableGroupService.create(request);
 
         // when & then
         assertSoftly(softly -> {
@@ -185,10 +168,9 @@ class TableGroupServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroup_FailWithInvalidOrderStatus(String invalidOrderStatus) {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(주문테이블1, 주문테이블2));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(주문테이블1, 주문테이블2));
 
-        TableGroup 테이블그룹 = tableGroupService.create(tableGroup);
+        TableGroup 테이블그룹 = tableGroupService.create(request);
 
         Order order = new Order();
         order.changeOrderStatus(invalidOrderStatus);

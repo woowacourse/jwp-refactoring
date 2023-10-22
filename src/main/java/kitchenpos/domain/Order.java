@@ -36,8 +36,8 @@ public class Order {
     }
 
     private void validateOrderLineItemsSize(final int orderLineItemsSize) {
-        if (orderLineItemsSize < 0) {
-            throw new IllegalArgumentException("주문 항목은 0개 이상이어야 합니다.");
+        if (orderLineItemsSize < 1) {
+            throw new IllegalArgumentException("주문 항목은 1개 이상이어야 합니다.");
         }
     }
 
@@ -63,7 +63,7 @@ public class Order {
 
     public void changeOrderStatus(final String orderStatus) {
         // TODO: meal -> cooking의 상태를 가능하게 할 것인가?
-        if (this.orderStatus.equals(COMPLETION.name())) {
+        if (COMPLETION.name().equals(this.orderStatus)) {
             throw new IllegalArgumentException("이미 완료된 주문은 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus;

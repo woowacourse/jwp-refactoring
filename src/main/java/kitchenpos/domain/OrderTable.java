@@ -9,11 +9,7 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
-    }
-
-    private OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        validateNumberOfGuests(numberOfGuests);
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
@@ -21,7 +17,9 @@ public class OrderTable {
     }
 
     private OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty);
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public static OrderTable create(final int numberOfGuests, final boolean empty) {

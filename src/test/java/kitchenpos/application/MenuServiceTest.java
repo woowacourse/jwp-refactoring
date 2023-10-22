@@ -6,8 +6,9 @@ import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,9 +49,9 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     private MenuGroup 두마리메뉴;
-    private MenuProduct 후라이드_한마리;
-    private MenuProduct 양념치킨_한마리;
-    private MenuProduct 간장치킨_한마리;
+    private MenuProductCreateRequest 후라이드_한마리;
+    private MenuProductCreateRequest 양념치킨_한마리;
+    private MenuProductCreateRequest 간장치킨_한마리;
 
     @BeforeEach
     void setUp() {
@@ -73,42 +74,32 @@ class MenuServiceTest extends ServiceTest {
         product3.setPrice(BigDecimal.valueOf(16000));
         Product 간장치킨 = productDao.save(product3);
 
-        후라이드_한마리 = new MenuProduct();
-        후라이드_한마리.setProductId(후라이드.getId());
-        후라이드_한마리.setQuantity(1);
-
-        양념치킨_한마리 = new MenuProduct();
-        양념치킨_한마리.setProductId(양념치킨.getId());
-        양념치킨_한마리.setQuantity(1);
-
-        간장치킨_한마리 = new MenuProduct();
-        간장치킨_한마리.setProductId(간장치킨.getId());
-        간장치킨_한마리.setQuantity(1);
+        후라이드_한마리 = new MenuProductCreateRequest(후라이드.getId(), 1);
+        양념치킨_한마리 = new MenuProductCreateRequest(양념치킨.getId(), 1);
+        간장치킨_한마리 = new MenuProductCreateRequest(간장치킨.getId(), 1);
     }
 
     @DisplayName("메뉴를 정상적으로 등록할 수 있다.")
     @Test
     void create() {
         // given
-        Menu expected = new Menu();
-        expected.setName("후라이드1+양념1");
-        expected.setPrice(BigDecimal.valueOf(32000L));
-        expected.setMenuGroupId(두마리메뉴.getId());
-        expected.setMenuProducts(List.of(후라이드_한마리, 양념치킨_한마리));
+        MenuCreateRequest request = new MenuCreateRequest(
+                "후라이드1+양념1",
+                32000L,
+                두마리메뉴.getId(),
+                List.of(후라이드_한마리, 양념치킨_한마리)
+        );
 
         // when
-        Menu actual = menuService.create(expected);
+        Menu actual = menuService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(menuDao.findById(actual.getId())).isPresent();
-            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-            softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
-            softly.assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
-            softly.assertThat(actual.getMenuProducts()).
-                    usingRecursiveComparison()
-                    .comparingOnlyFields("productId", "quantity")
-                    .isEqualTo(expected.getMenuProducts());
+            softly.assertThat(actual.getName()).isEqualTo(request.getName());
+            softly.assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(request.getPrice()));
+            softly.assertThat(actual.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
+            softly.assertThat(actual.getMenuProducts().size()).isEqualTo(request.getMenuProducts().size());
         });
     }
 
@@ -117,14 +108,15 @@ class MenuServiceTest extends ServiceTest {
     @ValueSource(longs = {-1L, -100L})
     void create_FailWithNegativeMenuPrice(long invalidMenuPrice) {
         // given
-        Menu invalidMenu = new Menu();
-        invalidMenu.setName("후라이드1+양념1");
-        invalidMenu.setPrice(BigDecimal.valueOf(invalidMenuPrice));
-        invalidMenu.setMenuGroupId(두마리메뉴.getId());
-        invalidMenu.setMenuProducts(List.of(후라이드_한마리, 양념치킨_한마리));
+        MenuCreateRequest request = new MenuCreateRequest(
+                "후라이드1+양념1",
+                invalidMenuPrice,
+                두마리메뉴.getId(),
+                List.of(후라이드_한마리, 양념치킨_한마리)
+        );
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -133,14 +125,15 @@ class MenuServiceTest extends ServiceTest {
     @ValueSource(longs = {33000L, Long.MAX_VALUE})
     void create_FailWithInvalidMenuPrice(long invalidMenuPrice) {
         // given
-        Menu invalidMenu = new Menu();
-        invalidMenu.setName("후라이드1+양념1");
-        invalidMenu.setPrice(BigDecimal.valueOf(invalidMenuPrice));
-        invalidMenu.setMenuGroupId(두마리메뉴.getId());
-        invalidMenu.setMenuProducts(List.of(후라이드_한마리, 양념치킨_한마리));
+        MenuCreateRequest request = new MenuCreateRequest(
+                "후라이드1+양념1",
+                invalidMenuPrice,
+                두마리메뉴.getId(),
+                List.of(후라이드_한마리, 양념치킨_한마리)
+        );
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -150,13 +143,15 @@ class MenuServiceTest extends ServiceTest {
         // given
         long invalidMenuGroupId = 1000L;
 
-        Menu invalidMenu = new Menu();
-        invalidMenu.setName("후라이드1+양념1");
-        invalidMenu.setPrice(BigDecimal.valueOf(32000L));
-        invalidMenu.setMenuGroupId(invalidMenuGroupId);
+        MenuCreateRequest request = new MenuCreateRequest(
+                "후라이드1+양념1",
+                32000L,
+                invalidMenuGroupId,
+                List.of(후라이드_한마리, 양념치킨_한마리)
+        );
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(invalidMenu))
+        assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -164,20 +159,22 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        Menu menu1 = new Menu();
-        menu1.setName("후라이드1+양념1");
-        menu1.setPrice(BigDecimal.valueOf(32000L));
-        menu1.setMenuGroupId(두마리메뉴.getId());
-        menu1.setMenuProducts(List.of(후라이드_한마리, 양념치킨_한마리));
+        MenuCreateRequest request1 = new MenuCreateRequest(
+                "후라이드1+양념1",
+                32000L,
+                두마리메뉴.getId(),
+                List.of(후라이드_한마리, 양념치킨_한마리)
+        );
 
-        Menu menu2 = new Menu();
-        menu2.setName("간장1+양념1");
-        menu2.setPrice(BigDecimal.valueOf(32000L));
-        menu2.setMenuGroupId(두마리메뉴.getId());
-        menu2.setMenuProducts(List.of(간장치킨_한마리, 양념치킨_한마리));
+        MenuCreateRequest request2 = new MenuCreateRequest(
+                "간장1+양념1",
+                32000L,
+                두마리메뉴.getId(),
+                List.of(간장치킨_한마리, 양념치킨_한마리)
+        );
 
-        Menu 후1양1_메뉴 = menuService.create(menu1);
-        Menu 간1양1_메뉴 = menuService.create(menu2);
+        Menu 후1양1_메뉴 = menuService.create(request1);
+        Menu 간1양1_메뉴 = menuService.create(request2);
 
         // when
         List<Menu> list = menuService.list();

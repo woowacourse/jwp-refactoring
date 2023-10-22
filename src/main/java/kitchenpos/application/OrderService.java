@@ -59,19 +59,19 @@ public class OrderService {
         for (final OrderLineItemsCreateRequest orderLineItem : orderLineItemsRequest) {
             final Long menuId = orderLineItem.getMenuId();
             final Long quantity = orderLineItem.getQuantity();
-            // Todo: SaveAll
-            OrderLineItem orderLineItem1 = OrderLineItem.create(menuId, quantity);
-            orderLineItemDao.save(orderLineItem1);
-            orderLineItems.add(orderLineItem1);
+            orderLineItems.add(OrderLineItem.create(menuId, quantity));
         }
 
         Order order = Order.create(orderTable.getId(), orderLineItems);
 
         final Order savedOrder = orderDao.save(order);
         final Long orderId = savedOrder.getId();
+        // TODO: saveAll
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.setOrderId(orderId);
+            orderLineItemDao.save(orderLineItem);
         }
+        savedOrder.setOrderLineItems(orderLineItems);
         return savedOrder;
     }
 

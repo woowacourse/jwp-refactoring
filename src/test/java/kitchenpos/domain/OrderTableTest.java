@@ -16,7 +16,7 @@ class OrderTableTest {
     @ValueSource(ints = {-1, -100})
     void orderTable_FailWithInvalidNumberOfGuests(int invalidNumberOfGuests) {
         // when & then
-        assertThatThrownBy(() -> new OrderTable(invalidNumberOfGuests, true))
+        assertThatThrownBy(() -> OrderTable.create(invalidNumberOfGuests, true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("방문한 손님 수는 0명 이상이어야 합니다.");
     }
@@ -25,14 +25,14 @@ class OrderTableTest {
     @Test
     void orderTable() {
         // then
-        assertDoesNotThrow(() -> new OrderTable(1, true));
+        assertDoesNotThrow(() -> OrderTable.create(1, true));
     }
 
     @DisplayName("주문 테이블의 방문한 손님 수 변경 시, 빈 테이블이면 예외가 발생한다.")
     @Test
     void changeNumberOfGuests_FailWithInvalidEmptyStatus() {
         // given
-        OrderTable orderTable = new OrderTable(1, true);
+        OrderTable orderTable = OrderTable.create(1, true);
 
         // when & then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(2))
@@ -45,7 +45,7 @@ class OrderTableTest {
     @ValueSource(ints = {-1, -100})
     void changeNumberOfGuests_FailWithInvalidNumberOfGuests(int invalidNumberOfGuests) {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
+        OrderTable orderTable = OrderTable.create(1, false);
 
         // when & then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(invalidNumberOfGuests))
@@ -58,7 +58,7 @@ class OrderTableTest {
     @ValueSource(ints = {2, 100})
     void changeNumberOfGuests(int numberOfGuests) {
         // given
-        OrderTable orderTable = new OrderTable(1, false);
+        OrderTable orderTable = OrderTable.create(1, false);
 
         // when
         orderTable.changeNumberOfGuests(numberOfGuests);
