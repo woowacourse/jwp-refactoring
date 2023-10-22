@@ -40,7 +40,7 @@ public class Product {
     }
 
     public String getName() {
-        return name.getProductName();
+        return name.getName();
     }
 
     @Override

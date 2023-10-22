@@ -18,12 +18,7 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    public MenuGroup(final MenuGroupName name) {
-        this(null, name);
-    }
-
-    public MenuGroup(final Long id, final MenuGroupName name) {
-        this.id = id;
+    public MenuGroup( final MenuGroupName name) {
         this.name = name;
     }
 
@@ -32,7 +27,7 @@ public class MenuGroup {
     }
 
     public String getName() {
-        return name.getValue();
+        return name.getName();
     }
 
     @Override

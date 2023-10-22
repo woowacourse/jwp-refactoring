@@ -25,14 +25,6 @@ public class Menu {
     public Menu(final MenuName name,
                 final MenuPrice price,
                 final Long menuGroupId) {
-        this(null, name, price, menuGroupId);
-    }
-
-    public Menu(final Long id,
-                final MenuName name,
-                final MenuPrice price,
-                final Long menuGroupId) {
-        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

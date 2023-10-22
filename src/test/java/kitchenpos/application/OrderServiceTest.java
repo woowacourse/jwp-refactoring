@@ -8,6 +8,8 @@ import kitchenpos.domain.Quantity;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
+import kitchenpos.domain.ordertable.Empty;
+import kitchenpos.domain.ordertable.NumberOfGuests;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.ui.dto.OrderLineItemDto;
 import kitchenpos.ui.dto.OrderRequest;
@@ -100,14 +102,14 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("요청에 해당하는 orderTable이 비어있으면 예외가 발생한다.")
+        @DisplayName("요청에 해당하는 orderTable이 비어있지 않으면 예외가 발생한다.")
         void emptyOrderTable() {
             // given
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final OrderTable orderTable = mock(OrderTable.class);
             given(menuRepository.countByIdIn(any())).willReturn(3L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderTable.isEmpty()).willReturn(true);
+            given(orderTable.isEmpty()).willReturn(false);
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
@@ -117,17 +119,17 @@ class OrderServiceTest {
         @DisplayName("주문을 생성한다.")
         void createOrder() {
             // given
+            final OrderTable orderTable = new OrderTable(new NumberOfGuests(0), Empty.EMPTY);
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
-            final OrderTable orderTable = mock(OrderTable.class);
             final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
             given(menuRepository.countByIdIn(any())).willReturn(3L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderRepository.save(any())).willReturn(order);
 
             final List<OrderLineItem> savedOrderLineItems = List.of(
-                    new OrderLineItem(1L, 1L, 1L, new Quantity(2L)),
-                    new OrderLineItem(2L, 1L, 2L, new Quantity(3L)),
-                    new OrderLineItem(3L, 1L, 3L, new Quantity(4L))
+                    new OrderLineItem(1L, 1L, new Quantity(2L)),
+                    new OrderLineItem(2L, 1L, new Quantity(3L)),
+                    new OrderLineItem(3L, 1L, new Quantity(4L))
             );
             when(orderLineItemRepository.save(any()))
                     .thenReturn(savedOrderLineItems.get(0))
@@ -154,12 +156,11 @@ class OrderServiceTest {
     void list() {
         // given
         final List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 1L, 1L, new Quantity(2)),
-                new OrderLineItem(2L, 1L, 2L, new Quantity(3)),
-                new OrderLineItem(3L, 1L, 3L, new Quantity(4))
+                new OrderLineItem(1L, 1L, new Quantity(2)),
+                new OrderLineItem(2L, 1L, new Quantity(3)),
+                new OrderLineItem(3L, 1L, new Quantity(4))
         );
         final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
-//        order.updateOrderLineItems(orderLineItems);
         given(orderRepository.findAll()).willReturn(List.of(order));
 
         // when

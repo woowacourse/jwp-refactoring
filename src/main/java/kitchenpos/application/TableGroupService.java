@@ -48,7 +48,6 @@ public class TableGroupService {
     private void saveOrderTable(final OrderTables orderTables, final TableGroup savedTableGroup) {
         orderTables.updateAll(savedTableGroup.getId(), Empty.NOT_EMPTY);
         orderTables.getOrderTables().forEach(orderTableRepository::save);
-//        savedTableGroup.updateOrderTables(orderTables);
     }
 
     private void validateOrderTable(final OrderTable savedOrderTable) {

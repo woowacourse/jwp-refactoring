@@ -5,14 +5,14 @@ import java.util.Objects;
 
 @Embeddable
 public class Quantity {
-    private long value;
+    private long quantity;
 
     protected Quantity() {
     }
 
-    public Quantity(final long value) {
-        validate(value);
-        this.value = value;
+    public Quantity(final long quantity) {
+        validate(quantity);
+        this.quantity = quantity;
     }
 
     private void validate(final long value) {
@@ -21,8 +21,8 @@ public class Quantity {
         }
     }
 
-    public long getValue() {
-        return value;
+    public long getQuantity() {
+        return quantity;
     }
 
     @Override
@@ -34,11 +34,11 @@ public class Quantity {
             return false;
         }
         final Quantity quantity = (Quantity) o;
-        return value == quantity.value;
+        return this.quantity == quantity.quantity;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(quantity);
     }
 }

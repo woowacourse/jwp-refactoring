@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,8 +52,8 @@ public class OrderService {
     private OrderTable findOrderTable(final OrderRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+        if (!orderTable.isEmpty()) {
+            throw new IllegalArgumentException("테이블이 이미 차있습니다.");
         }
 
         return orderTable;
@@ -71,16 +70,14 @@ public class OrderService {
     }
 
     private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItemsDtos, final Order savedOrder) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemDto orderLineItemDto : orderLineItemsDtos) {
             final OrderLineItem orderLineItem = new OrderLineItem(
                     savedOrder.getId(),
                     orderLineItemDto.getMenuId(),
                     new Quantity(orderLineItemDto.getQuantity())
             );
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            orderLineItemRepository.save(orderLineItem);
         }
-//        savedOrder.updateOrderLineItems(savedOrderLineItems);
     }
 
     @Transactional(readOnly = true)

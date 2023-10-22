@@ -5,14 +5,14 @@ import java.util.Objects;
 
 @Embeddable
 public class ProductName {
-    private String productName;
+    private String name;
 
     protected ProductName() {
     }
 
-    public ProductName(final String productName) {
-        validate(productName);
-        this.productName = productName;
+    public ProductName(final String name) {
+        validate(name);
+        this.name = name;
     }
 
     private void validate(final String name) {
@@ -21,8 +21,8 @@ public class ProductName {
         }
     }
 
-    public String getProductName() {
-        return productName;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -34,11 +34,11 @@ public class ProductName {
             return false;
         }
         final ProductName that = (ProductName) o;
-        return Objects.equals(productName, that.productName);
+        return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productName);
+        return Objects.hash(name);
     }
 }

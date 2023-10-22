@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,7 +39,9 @@ public class MenuService {
 
     public Menu create(final MenuRequest request) {
         final BigDecimal price = request.getPrice();
-        validateExistenceOfMenuGroup(request);
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
+        }
         final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
         final Menu savedMenu = saveMenu(request, price, menuProductRequests);
         saveMenuProducts(menuProductRequests, savedMenu);
@@ -48,10 +49,12 @@ public class MenuService {
         return savedMenu;
     }
 
-    private void validateExistenceOfMenuGroup(final MenuRequest request) {
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+    private Menu saveMenu(final MenuRequest request, final BigDecimal price, final List<MenuProductRequest> requests) {
+        final BigDecimal sum = getSumOfMenuProductRequests(requests);
+        validatePriceAndSum(price, sum);
+        return menuRepository.save(
+                new Menu(new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId())
+        );
     }
 
     private BigDecimal getSumOfMenuProductRequests(final List<MenuProductRequest> menuProductRequests) {
@@ -70,22 +73,12 @@ public class MenuService {
         }
     }
 
-    private Menu saveMenu(final MenuRequest request, final BigDecimal price, final List<MenuProductRequest> requests) {
-        final BigDecimal sum = getSumOfMenuProductRequests(requests);
-        validatePriceAndSum(price, sum);
-        return menuRepository.save(
-                new Menu(new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId())
-        );
-    }
-
-    private void saveMenuProducts(final List<MenuProductRequest> requests, final Menu savedMenu) {
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+    private void saveMenuProducts(final List<MenuProductRequest> requests, final Menu menu) {
         for (final MenuProductRequest request : requests) {
-            final MenuProduct menuProduct = new MenuProduct(menuId, request.getProductId(), new Quantity(request.getQuantity()));
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+            menuProductRepository.save(
+                    new MenuProduct(menu.getId(), request.getProductId(), new Quantity(request.getQuantity()))
+            );
         }
-//        savedMenu.updateMenuProducts(savedMenuProducts);
     }
 
     @Transactional(readOnly = true)

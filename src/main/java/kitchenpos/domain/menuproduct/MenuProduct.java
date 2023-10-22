@@ -25,14 +25,6 @@ public class MenuProduct {
     public MenuProduct(final Long menuId,
                        final Long productId,
                        final Quantity quantity) {
-        this(null, menuId, productId, quantity);
-    }
-
-    public MenuProduct(final Long seq,
-                       final Long menuId,
-                       final Long productId,
-                       final Quantity quantity) {
-        this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
@@ -51,7 +43,7 @@ public class MenuProduct {
     }
 
     public long getQuantity() {
-        return quantity.getValue();
+        return quantity.getQuantity();
     }
 
     @Override

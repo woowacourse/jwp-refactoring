@@ -6,10 +6,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,14 +27,6 @@ public class Order {
     public Order(final Long orderTableId,
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime);
-    }
-
-    public Order(final Long id,
-                 final Long orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
-        this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;

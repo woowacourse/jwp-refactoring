@@ -25,14 +25,6 @@ public class OrderLineItem {
     public OrderLineItem(final Long orderId,
                          final Long menuId,
                          final Quantity quantity) {
-        this(null, orderId, menuId, quantity);
-    }
-
-    public OrderLineItem(final Long seq,
-                         final Long orderId,
-                         final Long menuId,
-                         final Quantity quantity) {
-        this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
@@ -51,7 +43,7 @@ public class OrderLineItem {
     }
 
     public long getQuantity() {
-        return quantity.getValue();
+        return quantity.getQuantity();
     }
 
     @Override

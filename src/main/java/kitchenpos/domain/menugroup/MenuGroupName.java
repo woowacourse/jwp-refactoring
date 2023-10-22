@@ -5,14 +5,14 @@ import java.util.Objects;
 
 @Embeddable
 public class MenuGroupName {
-    private String value;
+    private String name;
 
     protected MenuGroupName() {
     }
 
-    public MenuGroupName(final String value) {
-        validate(value);
-        this.value = value;
+    public MenuGroupName(final String name) {
+        validate(name);
+        this.name = name;
     }
 
     private void validate(final String name) {
@@ -21,8 +21,8 @@ public class MenuGroupName {
         }
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -34,11 +34,11 @@ public class MenuGroupName {
             return false;
         }
         final MenuGroupName that = (MenuGroupName) o;
-        return Objects.equals(value, that.value);
+        return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(name);
     }
 }

@@ -21,6 +21,10 @@ public class OrderTable {
     protected OrderTable() {
     }
 
+    public OrderTable(final Long tableGroupId, final NumberOfGuests numberOfGuests, final Empty empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
+    }
+
     public OrderTable(final NumberOfGuests numberOfGuests, final Empty empty) {
         this(null, null, numberOfGuests, empty);
     }

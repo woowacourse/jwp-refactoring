@@ -115,7 +115,7 @@ class MenuServiceTest {
             // given
             final MenuRequest request = new MenuRequest("productName", BigDecimal.valueOf(600), 1L, menuProductRequests);
 
-            final Menu menu = new Menu(1L, new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId());
+            final Menu menu = new Menu(new MenuName(request.getName()), new MenuPrice(request.getPrice()), request.getMenuGroupId());
 
             given(menuGroupRepository.existsById(anyLong())).willReturn(true);
             given(productRepository.findById(1L)).willReturn(Optional.of(product1));
@@ -139,7 +139,7 @@ class MenuServiceTest {
     @DisplayName("전체 메뉴를 조회한다.")
     void list() {
         // given
-        final Menu menu = new Menu(1L, new MenuName("productName"), new MenuPrice(BigDecimal.valueOf(35_000)), 1L);
+        final Menu menu = new Menu(new MenuName("productName"), new MenuPrice(BigDecimal.valueOf(35_000)), 1L);
         given(menuRepository.findAll()).willReturn(List.of(menu));
 
         // when
