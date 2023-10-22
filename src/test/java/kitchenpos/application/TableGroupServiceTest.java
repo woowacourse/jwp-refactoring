@@ -2,11 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -23,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
-import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static kitchenpos.fixture.OrderTableFixtrue.orderTable;
@@ -45,10 +41,6 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
     @Autowired
     private TableGroupRepository tableGroupRepository;
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Test
     void 단체_지정을_생성한다() {
@@ -149,7 +141,6 @@ class TableGroupServiceTest {
         // given
         TableGroup tableGroup = tableGroupRepository.save(tableGroup());
         OrderTable orderTable = orderTableRepository.save(orderTable(tableGroup.getId(), 10, false));
-        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
         orderRepository.save(order(orderTable.getId(), orderStatus, List.of(orderLineItem(1L, 10))));
 
         // when

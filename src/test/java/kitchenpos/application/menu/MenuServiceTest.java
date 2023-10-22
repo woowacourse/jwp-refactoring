@@ -2,13 +2,13 @@ package kitchenpos.application.menu;
 
 import kitchenpos.application.MenuService;
 import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -30,20 +30,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
 class MenuServiceTest {
+
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired
     private MenuRepository menuRepository;
-    @Autowired
-    private ProductRepository productRepository;
     @Autowired
     private MenuService menuService;
 
     @Test
     void 메뉴를_생성한다() {
         // Given
-        Product product = productRepository.save(new Product("chicken", BigDecimal.valueOf(1_000)));
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        Product product = productRepository.save(product("chicken", 1000));
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
         MenuRequest request = menuRequest("메뉴", 10_000L, menuGroup.getId(), List.of(menuProduct(product.getId(), 10)));
 
         // When
@@ -56,8 +57,7 @@ class MenuServiceTest {
     @Test
     void 메뉴_가격이_0보다_작으면_예외를_던진다() {
         // given
-        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup("메뉴 그룹"));
-        MenuRequest request = menuRequest("메뉴 이름", -1L, savedMenuGroup.getId(), List.of());
+        MenuRequest request = menuRequest("메뉴 이름", -1L, 1L, List.of());
 
         // expect
         assertThatThrownBy(() -> menuService.create(request))
@@ -68,8 +68,8 @@ class MenuServiceTest {
     @Test
     void 메뉴의_가격이_메뉴_상품들의_금액의_합보다_큰_경우_예외를_던진다() {
         // given
-        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("pizza"));
-        Product product = productRepository.save(product("cheese pizza", 10000L));
+        Product product = productRepository.save(product("chicken", 1000));
+        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
         MenuProduct menuProduct = menuProduct(product.getId(), 1L);
         MenuRequest request = menuRequest("cheese pizza", 10001L, menuGroup.getId(), List.of(menuProduct));
 
@@ -93,10 +93,8 @@ class MenuServiceTest {
     @Test
     void 전체_메뉴를_조회할_수_있다() {
         // given
-        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("chicken"));
-
-        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, menuGroup.getId(), List.of()));
-        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, menuGroup.getId(), List.of()));
+        Menu menu1 = menuRepository.save(menu("fried chicken", 10000L, 1L, List.of()));
+        Menu menu2 = menuRepository.save(menu("spicy chicken", 20000L, 1L, List.of()));
 
         // when
         List<Menu> result = menuService.list();
