@@ -15,7 +15,7 @@ public class MenuStep {
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
-                menu.getMenuGroupId(),
+                menu.getMenuGroup().getId(),
                 menu.getMenuProducts()
         );
     }

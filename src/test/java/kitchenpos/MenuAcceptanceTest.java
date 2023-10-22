@@ -6,16 +6,16 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.일식;
 import static kitchenpos.fixture.ProductFixture.스키야키;
-import static kitchenpos.step.MenuGroupStep.toRequest;
-import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
+import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
+import static kitchenpos.step.MenuGroupStep.일식;
 import static kitchenpos.step.MenuStep.toMenuRequest;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_메뉴_반환;
@@ -35,8 +35,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 메뉴를_생성한다() {
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
+
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -46,7 +46,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -69,7 +69,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     product.getName(),
                     product.getPrice(),
-                    null,
+                    MenuGroupFixture.일식(),
                     List.of(menuProduct)
             );
 
@@ -80,8 +80,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 메뉴의_가격은_메뉴에_속하는_상품_곱하기_수량의_합_이하여야_한다() {
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
 
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
@@ -92,7 +91,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     product.getName(),
                     product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -104,8 +103,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴를_조회한다() {
-        final MenuGroup menuGroup = 일식();
-        final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+        final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
         final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
         final MenuProduct menuProduct = new MenuProduct();
@@ -115,7 +113,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         final Menu menu = new Menu(
                 "스키야키",
                 BigDecimal.valueOf(11_900),
-                menuGroupId,
+                menuGroup,
                 List.of(menuProduct)
         );
 

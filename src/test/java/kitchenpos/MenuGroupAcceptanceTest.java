@@ -4,15 +4,16 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.step.MenuGroupStep;
+import kitchenpos.ui.request.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static kitchenpos.fixture.MenuGroupFixture.일식;
 import static kitchenpos.fixture.MenuGroupFixture.한식;
-import static kitchenpos.step.MenuGroupStep.toRequest;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_조회_요청;
+import static kitchenpos.step.MenuGroupStep.일식;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -22,12 +23,11 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_생성한다() {
-        final MenuGroup menuGroup = 일식();
-
-        ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(toRequest(menuGroup));
+        final MenuGroupRequest request = 일식;
+        ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(request);
 
         assertThat(response.statusCode()).isEqualTo(CREATED.value());
-        assertThat(response.jsonPath().getString("name")).isEqualTo(menuGroup.getName());
+        assertThat(response.jsonPath().getString("name")).isEqualTo(request.getName());
     }
 
     @Test

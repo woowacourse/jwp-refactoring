@@ -16,11 +16,10 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.일식;
 import static kitchenpos.fixture.OrderTableFixture.NOT_EMPTY_테이블;
 import static kitchenpos.fixture.ProductFixture.스키야키;
-import static kitchenpos.step.MenuGroupStep.toRequest;
-import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
+import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
+import static kitchenpos.step.MenuGroupStep.일식;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_아이디_반환;
 import static kitchenpos.step.OrderStep.주문_상태_변경_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청;
@@ -45,8 +44,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -56,7 +54,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -85,8 +83,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -96,7 +93,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -114,8 +111,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -125,7 +121,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -145,8 +141,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_생성하려면_주문하는_테이블이_존재해야_한다() {
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -156,7 +151,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -181,8 +176,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -192,7 +186,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -227,8 +221,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -238,7 +231,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
@@ -269,8 +262,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(toRequest(menuGroup));
+            final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(일식);
             final Product product = 상품_생성_요청하고_상품_반환(toRequest(스키야키()));
 
             final MenuProduct menuProduct = new MenuProduct();
@@ -280,7 +272,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Menu menu = new Menu(
                     "스키야키",
                     BigDecimal.valueOf(11_900),
-                    menuGroupId,
+                    menuGroup,
                     List.of(menuProduct)
             );
 
