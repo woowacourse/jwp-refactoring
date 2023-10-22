@@ -1,4 +1,4 @@
-create table if not exists  menu
+create table menu
 (
     id            bigint         not null auto_increment,
     name          varchar(255)   not null,
@@ -7,14 +7,14 @@ create table if not exists  menu
     primary key (id)
 );
 
-create table if not exists  menu_group
+create table menu_group
 (
     id   bigint       not null auto_increment,
     name varchar(255) not null,
     primary key (id)
 );
 
-create table if not exists  menu_product
+create table menu_product
 (
     seq        bigint not null auto_increment,
     quantity   bigint not null,
@@ -23,7 +23,7 @@ create table if not exists  menu_product
     primary key (seq)
 );
 
-create table if not exists  order_line_item
+create table order_line_item
 (
     seq      bigint not null auto_increment,
     quantity bigint not null,
@@ -32,7 +32,7 @@ create table if not exists  order_line_item
     primary key (seq)
 );
 
-create table if not exists orders
+create table orders
 (
     id             bigint       not null auto_increment,
     order_status   varchar(255) not null,
@@ -41,7 +41,7 @@ create table if not exists orders
     primary key (id)
 );
 
-create table if not exists order_table
+create table order_table
 (
     id               bigint  not null auto_increment,
     empty            bit     not null,
@@ -50,7 +50,7 @@ create table if not exists order_table
     primary key (id)
 );
 
-create table if not exists product
+create table product
 (
     id    bigint         not null auto_increment,
     name  varchar(255)   not null,
@@ -58,7 +58,7 @@ create table if not exists product
     primary key (id)
 );
 
-create table if not exists table_group
+create table table_group
 (
     id           bigint   not null auto_increment,
     created_date datetime not null,
