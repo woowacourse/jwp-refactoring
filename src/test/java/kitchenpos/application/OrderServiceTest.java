@@ -38,7 +38,7 @@ class OrderServiceTest {
     MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    ProductRepository productDao;
+    ProductRepository productRepository;
 
     @Autowired
     OrderTableRepository orderTableRepository;
@@ -56,7 +56,7 @@ class OrderServiceTest {
     void create_메서드는_order를_전달하면_order를_저장하고_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu persistMenu = menuRepository.save(Menu.of(
                 "메뉴",
@@ -105,7 +105,7 @@ class OrderServiceTest {
     void create_메서드는_order의_orderTable이_없다면_예외가_발생한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu persistMenu = Menu.of("메뉴", BigDecimal.TEN, List.of(persistMenuProduct), persistMenuGroup);
         final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(persistMenu.getId(), 1L);
@@ -120,7 +120,7 @@ class OrderServiceTest {
     void list_메서드는_등록한_모든_order를_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu persistMenu = menuRepository.save(Menu.of(
                 "메뉴",
@@ -149,7 +149,7 @@ class OrderServiceTest {
     void changeOrderStatus_메서드는_전달한_orderId의_상태가_COMPLETION이_아닌_order라면_전달한_상태로_변경한다(final String orderStatus) {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu persistMenu = menuRepository.save(Menu.of(
                 "메뉴",
@@ -176,7 +176,7 @@ class OrderServiceTest {
     void changeOrderStatus_메서드는_전달한_orderId의_상태가_COMPLETION이라면_예외가_발생한다(final String orderStatus) {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu persistMenu = menuRepository.save(Menu.of(
                 "메뉴",

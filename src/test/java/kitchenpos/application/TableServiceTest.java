@@ -47,7 +47,7 @@ class TableServiceTest {
     MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    ProductRepository productDao;
+    ProductRepository productRepository;
 
     @Autowired
     MenuRepository menuRepository;
@@ -110,7 +110,7 @@ class TableServiceTest {
     void changeEmpty_메서드는_변경할_orderTableId의_orderStatu가_COMPLETION이_아니면_예외가_발생한다(final String invalidOrderStatus) {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
         final Menu menu = Menu.of(
                 "메뉴",

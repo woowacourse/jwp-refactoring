@@ -21,16 +21,16 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productDao
+            final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class MenuService {
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (final CreateMenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
-            final Product product = productDao.findById(menuProductRequest.getProductId())
+            final Product product = productRepository.findById(menuProductRequest.getProductId())
                                               .orElseThrow(ProductNotFoundException::new);
 
             menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));

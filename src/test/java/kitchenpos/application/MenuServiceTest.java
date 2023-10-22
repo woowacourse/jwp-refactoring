@@ -29,7 +29,7 @@ class MenuServiceTest {
     MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    ProductRepository productDao;
+    ProductRepository productRepository;
 
     @Autowired
     MenuRepository menuRepository;
@@ -41,7 +41,7 @@ class MenuServiceTest {
     void create_메서드는_menu를_전달하면_menu를_저장하고_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final CreateMenuRequest request = new CreateMenuRequest(
                 "메뉴",
                 BigDecimal.TEN,
@@ -62,7 +62,7 @@ class MenuServiceTest {
     void create_메서드는_menu의_price가_음수라면_예외가_발생한다(final String invalidPrice) {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final CreateMenuRequest invalidRequest = new CreateMenuRequest(
                 "메뉴",
                 new BigDecimal(invalidPrice),
@@ -78,7 +78,7 @@ class MenuServiceTest {
     void create_메서드는_menu의_price가_null이라면_예외가_발생한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final CreateMenuRequest invalidRequest = new CreateMenuRequest(
                 "메뉴",
                 null,
@@ -93,7 +93,7 @@ class MenuServiceTest {
     @Test
     void create_메서드는_menu의_menuGroupId가_존재하지_않는다면_예외가_발생한다() {
         // given
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final CreateMenuRequest invalidRequest = new CreateMenuRequest(
                 "메뉴",
                 BigDecimal.TEN,
@@ -109,7 +109,7 @@ class MenuServiceTest {
     void list_메서드는_등록한_모든_menu를_반환한다() {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product persistProduct = productDao.save(new Product("상품", BigDecimal.TEN));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
         final MenuProduct menuProduct = new MenuProduct(persistProduct, 1);
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), persistMenuGroup);
         final Menu expected = menuRepository.save(menu);

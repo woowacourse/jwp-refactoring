@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest {
 
     @Autowired
-    ProductRepository productDao;
+    ProductRepository productRepository;
 
     @Autowired
     ProductService productService;
@@ -62,7 +62,7 @@ class ProductServiceTest {
     void list_메서드는_등록한_모든_product를_반환한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final Product expected = productDao.save(product);
+        final Product expected = productRepository.save(product);
 
         // when
         final List<Product> actual = productService.list();
