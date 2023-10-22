@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -73,6 +74,12 @@ public class Order {
     }
 
     public void addOrderLineItem(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문 품목이 없어 주문할 수 없습니다.");
+        }
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.updateOrder(this);
+        }
         this.orderLineItems.addAll(orderLineItems);
     }
 

@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.application.dto.request.OrderLineItemRequest;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.response.OrderResponse;
@@ -18,7 +17,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -39,27 +37,25 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException("주문 품목이 없어 주문할 수 없습니다.");
-        }
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-
-        final Order order = new Order(orderTable, LocalDateTime.now());
-
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다."));
-            final OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemRequest.getQuantity());
-            savedOrderLineItems.add(orderLineItem);
-        }
-        order.addOrderLineItem(savedOrderLineItems);
+        final Order order = new Order(findOrderTableById(request.getOrderTableId()), LocalDateTime.now());
+        final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+                .map(each -> new OrderLineItem(findMenuById(each.getMenuId()), each.getQuantity()))
+                .collect(Collectors.toList());
+        order.addOrderLineItem(orderLineItems);
 
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(savedOrderLineItems);
+        orderLineItemRepository.saveAll(orderLineItems);
         return OrderResponse.from(order);
+    }
+
+    private OrderTable findOrderTableById(final long id) {
+        return orderTableRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
+    }
+
+    private Menu findMenuById(final long id) {
+        return menuRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴가 포함되어 있습니다."));
     }
 
     @Transactional(readOnly = true)

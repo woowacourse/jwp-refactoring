@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static java.util.Objects.nonNull;
+
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,8 +30,7 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this.order = order;
+    public OrderLineItem(final Menu menu, final long quantity) {
         this.menu = menu;
         this.quantity = quantity;
     }
@@ -48,6 +49,13 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void updateOrder(final Order order) {
+        if(nonNull(this.order)) {
+            throw new IllegalStateException("이미 주문이 등록되어 변경이 불가합니다.");
+        }
+        this.order = order;
     }
 
     @Override

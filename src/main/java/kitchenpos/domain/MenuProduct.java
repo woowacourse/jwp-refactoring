@@ -58,7 +58,7 @@ public class MenuProduct {
 
     public void updateMenu(final Menu menu) {
         if(nonNull(this.menu)){
-            throw new IllegalArgumentException("이미 메뉴가 지정되어 있어 변경할 수 없습니다.");
+            throw new IllegalStateException("이미 메뉴가 지정되어 있어 변경할 수 없습니다.");
         }
         this.menu = menu;
     }
