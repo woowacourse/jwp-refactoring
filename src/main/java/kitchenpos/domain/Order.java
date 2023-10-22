@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -18,7 +18,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.domain.vo.OrderStatus;
 import org.springframework.data.annotation.CreatedDate;
@@ -40,8 +39,8 @@ public class Order {
     private OrderStatus orderStatus;
     @CreatedDate
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems = new OrderLineItems();
 
     protected Order() {
     }
@@ -51,15 +50,8 @@ public class Order {
         this.orderTable = orderTable;
         orderTable.placeOrder(this);
         this.orderStatus = COOKING;
-        validateOrderLineItems(orderLineItems);
-        this.orderLineItems = new ArrayList<>(orderLineItems);
         orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
-    }
-
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문할 항목은 최소 1개 이상이어야 합니다.");
-        }
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
@@ -82,6 +74,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return new ArrayList<>(orderLineItems.getOrderLineItems());
     }
 }
