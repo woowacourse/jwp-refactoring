@@ -4,6 +4,7 @@ import org.hibernate.annotations.Tables;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +26,7 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE)
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
