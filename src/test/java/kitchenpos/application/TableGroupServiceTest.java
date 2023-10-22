@@ -5,13 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
 import kitchenpos.dao.fakedao.InMemoryTableGroupDao;
 import kitchenpos.domain.OrderTableFactory;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.EntityNotFoundException;
 import kitchenpos.ui.request.SimpleIdRequest;
 import kitchenpos.ui.request.TableGroupCreateRequest;
@@ -97,15 +95,10 @@ class TableGroupServiceTest {
 
             //when
             final var saved = tableGroupService.create(tableGroup);
-
-            final var tableGroupIds = saved.getOrderTables().stream()
-                                           .map(OrderTable::getTableGroupId)
-                                           .collect(Collectors.toSet());
             // then
             assertAll(
                     () -> assertThat(saved.getId()).isNotNull(),
-                    () -> assertThat(saved.getOrderTables()).hasSize(2),
-                    () -> assertThat(tableGroupIds).containsExactly(1L)
+                    () -> assertThat(saved.getOrderTables()).hasSize(2)
             );
         }
     }

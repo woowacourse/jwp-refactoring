@@ -42,11 +42,7 @@ public class OrderLineItem {
         this.quantity = new OrderLineItemQuantity(quantity);
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public void setOrder(final Order order) {
+        this.order = order;
     }
 }

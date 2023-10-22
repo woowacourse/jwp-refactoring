@@ -38,7 +38,7 @@ class OrderTest {
             final var orderLineItems = List.of(new OrderLineItem(menu, 1L));
 
             // when
-            final ThrowingCallable action = () -> new Order(orderTable, orderLineItems);
+            final ThrowingCallable action = () -> new Order(orderTable, orderLineItems, LocalDateTime.now());
 
             // then
             assertThatThrownBy(action).isInstanceOf(InvalidOrderException.class);
@@ -51,7 +51,7 @@ class OrderTest {
             final List<OrderLineItem> orderLineItems = Collections.emptyList();
 
             // when
-            final ThrowingCallable action = () -> new Order(orderTable, orderLineItems);
+            final ThrowingCallable action = () -> new Order(orderTable, orderLineItems, LocalDateTime.now());
 
             // then
             assertThatThrownBy(action).isInstanceOf(InvalidOrderException.class);
@@ -67,7 +67,7 @@ class OrderTest {
             final var orderLineItems = List.of(new OrderLineItem(menu, 1L));
 
             // when
-            final var order = new Order(orderTable, orderLineItems);
+            final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
 
             // then
             assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);

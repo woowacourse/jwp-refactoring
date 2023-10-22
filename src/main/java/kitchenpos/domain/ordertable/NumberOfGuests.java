@@ -8,27 +8,27 @@ import kitchenpos.exception.InvalidGuestNumberException;
 public class NumberOfGuests {
 
     @Column(name = "number_of_guests")
-    private int value;
+    private Integer value;
 
     public NumberOfGuests() {
     }
 
-    public NumberOfGuests(final int value) {
+    public NumberOfGuests(final Integer value) {
         validate(value);
         this.value = value;
     }
 
-    private void validate(final int value) {
+    private void validate(final Integer value) {
         if (value < 0) {
             throw new InvalidGuestNumberException("손님 수는 0명 이상이어야 합니다.");
         }
     }
 
-    public int getValue() {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(final int value) {
+    public void setValue(final Integer value) {
         validate(value);
         this.value = value;
     }

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -48,7 +49,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
                                                    .orElseThrow(EntityNotFoundException::new);
 
-        final var order = new Order(orderTable, orderLineItems);
+        final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
         return orderDao.save(order);
     }
 
@@ -65,7 +66,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = orderDao.findById(orderId)
-                                         .orElseThrow(EntityNotFoundException::new);
+                                    .orElseThrow(EntityNotFoundException::new);
         final var orderStatus = OrderStatus.valueOf(request.getOrderStatus());
 
         order.changeStatusTo(orderStatus);

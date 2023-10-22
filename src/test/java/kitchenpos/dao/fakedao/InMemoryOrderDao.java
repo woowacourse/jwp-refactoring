@@ -12,7 +12,6 @@ public class InMemoryOrderDao implements OrderDao {
 
     @Override
     public Order save(final Order entity) {
-        entity.setId((long) (orders.size() + 1));
         orders.add(entity);
         return entity;
     }

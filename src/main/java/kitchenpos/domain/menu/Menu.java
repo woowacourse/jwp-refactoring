@@ -86,7 +86,6 @@ public class Menu {
     }
 
     public void setPrice(final BigDecimal price) {
-        validateValueLessThanProductTotalPrice(price, calculateMenuProductTotalPrice());
         this.price = new MenuPrice(price);
     }
 }

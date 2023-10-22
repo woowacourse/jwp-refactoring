@@ -5,23 +5,29 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.InvalidOrderException;
 import kitchenpos.exception.InvalidOrderStatusException;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.springframework.data.annotation.CreatedDate;
 
+@Table(name = "orders")
 @Entity
 public class Order {
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
@@ -31,14 +37,14 @@ public class Order {
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
 
-    @CreatedDate
+    @JoinColumn(name = "ordered_time")
     private LocalDateTime orderedTime;
 
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, orderLineItems, null);
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
+        this(null, orderTable, OrderStatus.COOKING, orderLineItems, orderedTime);
     }
 
     public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
@@ -46,6 +52,7 @@ public class Order {
         this.id = id;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
+        getOrderLineItems().forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.orderedTime = orderedTime;
         this.orderTable = orderTable;
         orderTable.addOrder(this);
@@ -68,22 +75,6 @@ public class Order {
         }
     }
 
-    public boolean isCookingOrMeal() {
-        return OrderStatus.COOKING == orderStatus || OrderStatus.MEAL == orderStatus;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
     public void changeStatusTo(final OrderStatus orderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new InvalidOrderStatusException("이미 완료된 주문입니다.");
@@ -97,23 +88,23 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
+    public boolean isCookingOrMeal() {
+        return OrderStatus.COOKING == orderStatus || OrderStatus.MEAL == orderStatus;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
+    public Long getId() {
+        return id;
+    }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
-    public Long getOrderTableId() {
-        return orderTable.getId();
     }
 }
