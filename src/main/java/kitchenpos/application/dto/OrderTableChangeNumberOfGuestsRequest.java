@@ -1,7 +1,5 @@
 package kitchenpos.application.dto;
 
-import javax.persistence.criteria.CriteriaBuilder.In;
-
 public class OrderTableChangeNumberOfGuestsRequest {
 
     private Integer numberOfGuests;
