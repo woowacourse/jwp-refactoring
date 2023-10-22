@@ -5,7 +5,7 @@ import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -40,7 +40,7 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -82,7 +82,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(2);
@@ -109,7 +109,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Order order = new Order();
         order.setOrderTableId(savedOrderTable.getId());
@@ -125,7 +125,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Menu menu = new Menu();
         OrderLineItem orderLineItem = new OrderLineItem();
@@ -137,7 +137,8 @@ class OrderServiceTest {
         order.setOrderLineItems(List.of(orderLineItem));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -165,7 +166,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(2);
@@ -186,7 +187,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(2);
@@ -208,7 +209,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(2);
@@ -250,7 +251,7 @@ class OrderServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(4);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setQuantity(2);

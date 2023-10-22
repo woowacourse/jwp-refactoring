@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -30,10 +30,10 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -45,11 +45,11 @@ class TableGroupServiceTest {
     void setup() {
         OrderTable orderTableA = new OrderTable();
         orderTableA.setEmpty(true);
-        savedOrderTableA = orderTableDao.save(orderTableA);
+        savedOrderTableA = orderTableRepository.save(orderTableA);
 
         OrderTable orderTableB = new OrderTable();
         orderTableB.setEmpty(true);
-        savedOrderTableB = orderTableDao.save(orderTableB);
+        savedOrderTableB = orderTableRepository.save(orderTableB);
     }
 
     @Test
@@ -100,17 +100,17 @@ class TableGroupServiceTest {
         // given
         TableGroup wrongTableGroup = new TableGroup();
         wrongTableGroup.setCreatedDate(LocalDateTime.now());
-        TableGroup savedWrongTableGroup = tableGroupDao.save(wrongTableGroup);
+        TableGroup savedWrongTableGroup = tableGroupRepository.save(wrongTableGroup);
 
         OrderTable orderTableA = new OrderTable();
         orderTableA.setEmpty(true);
-        orderTableA.setTableGroupId(savedWrongTableGroup.getId());
-        OrderTable savedOrderTableA = orderTableDao.save(orderTableA);
+        orderTableA.setTableGroup(savedWrongTableGroup);
+        OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
 
         OrderTable orderTableB = new OrderTable();
         orderTableB.setEmpty(true);
-        orderTableB.setTableGroupId(savedWrongTableGroup.getId());
-        OrderTable savedOrderTableB = orderTableDao.save(orderTableB);
+        orderTableB.setTableGroup(savedWrongTableGroup);
+        OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
         // when & then
         TableGroup tableGroup = new TableGroup();
@@ -126,11 +126,11 @@ class TableGroupServiceTest {
         // given
         OrderTable orderTableA = new OrderTable();
         orderTableA.setEmpty(false);
-        OrderTable savedOrderTableA = orderTableDao.save(orderTableA);
+        OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
 
         OrderTable orderTableB = new OrderTable();
         orderTableB.setEmpty(false);
-        OrderTable savedOrderTableB = orderTableDao.save(orderTableB);
+        OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
         // when & then
         TableGroup tableGroup = new TableGroup();
@@ -153,8 +153,8 @@ class TableGroupServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(orderTableDao.findById(savedOrderTableA.getId()).get().getTableGroupId()).isNull();
-            softly.assertThat(orderTableDao.findById(savedOrderTableB.getId()).get().getTableGroupId()).isNull();
+            softly.assertThat(orderTableRepository.findById(savedOrderTableA.getId()).get().getTableGroup()).isNull();
+            softly.assertThat(orderTableRepository.findById(savedOrderTableB.getId()).get().getTableGroup()).isNull();
         });
     }
 
