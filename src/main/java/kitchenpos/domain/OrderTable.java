@@ -1,19 +1,56 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
+    public OrderTable(
+            final TableGroup tableGroup,
+            final int numberOfGuests,
+            final boolean empty
+    ) {
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final OrderTable that = (OrderTable) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Long getId() {
@@ -24,12 +61,12 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {

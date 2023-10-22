@@ -1,20 +1,44 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import org.springframework.data.annotation.CreatedDate;
 
+@Entity
 public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
+    private List<OrderTable> orderTables = new ArrayList<>();
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    protected TableGroup() {
     }
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+    public static TableGroup from(final List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup();
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(tableGroup);
+            tableGroup.orderTables.add(orderTable);
+        }
+        return tableGroup;
+    }
+
+    public void addOrderTable(final OrderTable orderTable) {
+        orderTable.setTableGroup(this);
+        this.orderTables.add(orderTable);
     }
 
     public Long getId() {
