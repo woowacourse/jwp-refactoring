@@ -72,6 +72,12 @@ public class OrderTable {
         this.isEmpty = false;
     }
 
+    public void validateTableCanTakeOrder() {
+        if (isEmpty) {
+            throw new IllegalArgumentException("빈 주문 테이블은 주문을 받을 수 없습니다");
+        }
+    }
+
     public Long getId() {
         return id;
     }

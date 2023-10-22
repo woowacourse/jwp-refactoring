@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -129,7 +130,7 @@ class OrderTableTest {
         // then
         assertThat(orderTable.isGrouped()).isTrue();
     }
-    
+
     @Test
     void 주문_테이블을_단체_지정_해제한다() {
         // given
@@ -142,5 +143,31 @@ class OrderTableTest {
 
         // then
         assertThat(orderTable.isGrouped()).isFalse();
+    }
+
+    @Nested
+    class 주문_테이블이_주문을_받을_수_있는지_검증할_때 {
+
+        @Test
+        void 빈_주문_테이블이면_예외를_던진다() {
+            // given
+            boolean isEmpty = true;
+            OrderTable emptyOrderTable = new OrderTable(0, isEmpty);
+
+            // expect
+            assertThatThrownBy(emptyOrderTable::validateTableCanTakeOrder)
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("빈 주문 테이블은 주문을 받을 수 없습니다");
+        }
+        
+        @Test
+        void 채워진_주문_테이블은_예외를_던지지_않는다() {
+            // given
+            boolean isEmpty = false;
+            OrderTable filledOrderTable = new OrderTable(0, isEmpty);
+
+            // expect
+            assertThatNoException().isThrownBy(filledOrderTable::validateTableCanTakeOrder);
+        }
     }
 }
