@@ -14,7 +14,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,19 +65,16 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             // when
             final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
-            final TableGroup actual = tableGroupService.create(request);
+            final TableGroupResponse actual = tableGroupService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
                 softly.assertThat(actual.getCreatedDate()).isBefore(LocalDateTime.now());
-                softly.assertThat(actual.getOrderTables().getOrderTableItems())
+                softly.assertThat(actual.getOrderTables())
                         .usingRecursiveComparison()
                         .ignoringExpectedNullFields()
-                        .isEqualTo(List.of(
-                                new OrderTable(actual, 5, false),
-                                new OrderTable(actual, 10, false)
-                        ));
+                        .isEqualTo(OrderTableResponse.from(savedOrderTables));
             });
         }
 
@@ -172,7 +171,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
             final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
-            final TableGroup savedTableGroup = tableGroupService.create(request);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             // when
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -200,7 +199,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
 
             final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableWithTenGuests, savedOrderTableWithFiveGuests));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
-            final TableGroup savedTableGroup = tableGroupService.create(request);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
