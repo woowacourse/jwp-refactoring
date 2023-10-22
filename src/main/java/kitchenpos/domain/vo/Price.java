@@ -5,6 +5,7 @@ import static java.math.BigDecimal.ZERO;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -15,14 +16,14 @@ public class Price {
     private static final BigDecimal PRICE_MINIMUM = ZERO;
     private static final int PRICE_PRECISION_MAX = 19;
 
-    @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal price;
+    @Column(name = "price", nullable = false, precision = 19, scale = 2)
+    private BigDecimal value;
 
     protected Price() {
     }
 
-    private Price(BigDecimal price) {
-        this.price = price;
+    private Price(BigDecimal value) {
+        this.value = value;
     }
 
     public static Price from(final BigDecimal value) {
@@ -45,20 +46,37 @@ public class Price {
 
     public static Price sum(final List<Price> values) {
         final BigDecimal sum = values.stream()
-                .map(value -> value.price)
+                .map(value -> value.value)
                 .reduce(ZERO, BigDecimal::add);
         return Price.from(sum);
     }
 
     public boolean isBiggerThan(final Price other) {
-        return price.compareTo(other.price) > 0;
+        return value.compareTo(other.value) > 0;
     }
 
     public Price multiply(final long times) {
-        return Price.from(price.multiply(BigDecimal.valueOf(times)));
+        return Price.from(value.multiply(BigDecimal.valueOf(times)));
     }
 
     public BigDecimal value() {
-        return price;
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Price price1 = (Price) o;
+        return Objects.equals(value, price1.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }
