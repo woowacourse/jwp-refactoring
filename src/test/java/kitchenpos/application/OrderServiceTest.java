@@ -8,12 +8,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.exception.MenuNotFoundException;
+import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,6 +19,13 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidOrderLineItemException;
+import kitchenpos.domain.exception.InvalidOrderStatusException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.ui.dto.request.CreateOrderRequest;
 import kitchenpos.ui.dto.request.UpdateOrderStatusRequest;
@@ -86,7 +90,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderLineItemException.class);
     }
 
     @Test
@@ -98,7 +102,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuNotFoundException.class);
     }
 
     @Test
@@ -113,7 +117,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
@@ -193,6 +197,6 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(persistOrder.getId(), invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderStatusException.class);
     }
 }

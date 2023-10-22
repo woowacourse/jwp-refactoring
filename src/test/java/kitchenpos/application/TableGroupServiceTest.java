@@ -18,6 +18,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
+import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
@@ -81,7 +83,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderTableSizeException.class);
     }
 
     @Test
@@ -95,7 +97,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderTableSizeException.class);
     }
 
     @Test
@@ -199,6 +201,6 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(persistTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderStatusCompletionException.class);
     }
 }

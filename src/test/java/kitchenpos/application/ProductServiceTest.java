@@ -7,8 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidPriceException;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.CreateProductRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +45,7 @@ class ProductServiceTest {
 
         // when & then
         assertThatThrownBy(() -> productService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @ParameterizedTest(name = "price가 {0}원이면 예외가 발생한다.")
@@ -55,7 +56,7 @@ class ProductServiceTest {
 
         // when & then
         assertThatThrownBy(() -> productService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @Test

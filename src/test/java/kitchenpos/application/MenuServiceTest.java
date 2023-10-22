@@ -6,14 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.exception.MenuGroupNotFoundException;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidPriceException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.request.CreateMenuProductRequest;
 import kitchenpos.ui.dto.request.CreateMenuRequest;
 import org.junit.jupiter.api.Test;
@@ -71,7 +73,7 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @Test
@@ -87,7 +89,7 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @Test
@@ -102,7 +104,7 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @Test

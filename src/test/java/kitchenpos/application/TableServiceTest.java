@@ -7,13 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,6 +17,14 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
+import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableNumberOfGuestsRequest;
@@ -102,7 +105,7 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(-999L, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @ParameterizedTest(name = "orderStatus가 {0}이면 예외가 발생한다.")
@@ -133,7 +136,7 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(persistOrderTable.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderStatusCompletionException.class);
     }
 
     @Test
@@ -159,7 +162,7 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(persistOrderTable.getId(), invalidRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
     @Test
@@ -169,6 +172,6 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(-999L, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 }
