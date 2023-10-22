@@ -16,18 +16,18 @@ public class MenuProduct {
     private Product product;
     
     @Embedded
-    private Quantity quantity;
+    private long quantity;
     
     public MenuProduct(final Menu menu,
                        final Product product,
-                       final Quantity quantity) {
+                       final long quantity) {
         this(null, menu, product, quantity);
     }
     
     public MenuProduct(final Long seq,
                        final Menu menu,
                        final Product product,
-                       final Quantity quantity) {
+                       final long quantity) {
         this.seq = seq;
         this.menu = menu;
         this.product = product;
@@ -46,7 +46,7 @@ public class MenuProduct {
         return product;
     }
     
-    public Quantity getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 }
