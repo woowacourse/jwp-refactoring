@@ -8,8 +8,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.Quantity;
 import kitchenpos.dto.OrderCreateOrderLineItemRequest;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -23,29 +23,28 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
-                        final OrderLineItemRepository orderLineItemRepository,
                         final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         validateOrderLineItemsOrderable(request);
 
         final OrderTable findOrderTable = orderTableRepository.findOrderTableById(request.getOrderTableId());
         final Order newOrder = Order.ofEmptyOrderLineItems(findOrderTable);
         newOrder.addOrderLineItems(createOrderLineItems(request));
 
-        return orderRepository.save(newOrder);
+        final Order savedOrder = orderRepository.save(newOrder);
+
+        return OrderResponse.from(savedOrder);
     }
 
     private void validateOrderLineItemsOrderable(final OrderCreateRequest request) {
@@ -68,24 +67,17 @@ public class OrderService {
                 }).collect(Collectors.toList());
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.addOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+    public List<OrderResponse> list() {
+        return OrderResponse.from(orderRepository.findAll());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final String orderStatus) {
-        final Order savedOrder = orderRepository.findOrderById(orderId);
+    public OrderResponse changeOrderStatus(final Long orderId, final String orderStatus) {
         final OrderStatus findOrderStatus = OrderStatus.valueOf(orderStatus);
 
         final Order findOrder = orderRepository.findOrderById(orderId);
         findOrder.changeOrderStatus(findOrderStatus);
 
-        return findOrder;
+        return OrderResponse.from(findOrder);
     }
 }

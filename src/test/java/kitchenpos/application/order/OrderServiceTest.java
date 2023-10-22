@@ -13,6 +13,7 @@ import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 import kitchenpos.dto.OrderCreateOrderLineItemRequest;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +33,7 @@ class OrderServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 주문 등록")
@@ -50,7 +51,7 @@ class OrderServiceTest extends ApplicationTestConfig {
             ));
 
             // when
-            final Order actual = orderService.create(expected);
+            final OrderResponse actual = orderService.create(expected);
 
             // then
             assertSoftly(softly -> {
@@ -58,7 +59,7 @@ class OrderServiceTest extends ApplicationTestConfig {
                 softly.assertThat(actual.getOrderTable().getId()).isEqualTo(expected.getOrderTableId());
                 softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
                 softly.assertThat(actual.getOrderedTime()).isBefore(LocalDateTime.now());
-                softly.assertThat(actual.getOrderLineItems().getOrderLineItems()).hasSize(expected.getOrderLineItems().size());
+                softly.assertThat(actual.getOrderLineItems()).hasSize(expected.getOrderLineItems().size());
             });
         }
 
@@ -143,18 +144,23 @@ class OrderServiceTest extends ApplicationTestConfig {
             final Order order = Order.ofEmptyOrderLineItems(savedOrderTable);
             final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10))));
             order.addOrderLineItems(orderLineItems);
-            final Order expected = orderRepository.save(order);
+            final Order savedOrder = orderRepository.save(order);
+            final OrderResponse expected = OrderResponse.from(savedOrder);
 
             // when
-            final Order actual = orderService.changeOrderStatus(expected.getId(), OrderStatus.MEAL.name());
+            final OrderResponse actual = orderService.changeOrderStatus(expected.getId(), OrderStatus.MEAL.name());
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getOrderTable()).isEqualTo(expected.getOrderTable());
+                softly.assertThat(actual.getOrderTable())
+                        .usingRecursiveComparison()
+                        .isEqualTo(expected.getOrderTable());
                 softly.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
                 softly.assertThat(actual.getOrderedTime()).isEqualTo(expected.getOrderedTime());
-                softly.assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems());
+                softly.assertThat(actual.getOrderLineItems())
+                        .usingRecursiveComparison()
+                        .isEqualTo(expected.getOrderLineItems());
             });
         }
 

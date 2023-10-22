@@ -12,6 +12,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository);
     }
 
     @DisplayName("[SUCCESS] 전체 주문 목록을 조회한다.")
@@ -52,23 +53,25 @@ class OrderQueryServiceTest extends ApplicationTestConfig {
         final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(10)));
         order.addOrderLineItems(orderLineItems);
 
-        final Order expected = orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(order);
+        final OrderResponse expected = OrderResponse.from(savedOrder);
 
         // when
-        final List<Order> actual = orderService.list();
+        final List<OrderResponse> actual = orderService.list();
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
-            final Order actualOrder = actual.get(0);
+            final OrderResponse actualOrder = actual.get(0);
 
             softly.assertThat(actualOrder.getId()).isEqualTo(expected.getId());
-            softly.assertThat(actualOrder.getOrderTable()).isEqualTo(expected.getOrderTable());
+            softly.assertThat(actualOrder.getOrderTable())
+                    .usingRecursiveComparison()
+                    .isEqualTo(expected.getOrderTable());
             softly.assertThat(actualOrder.getOrderStatus()).isEqualTo(expected.getOrderStatus());
             softly.assertThat(actualOrder.getOrderedTime()).isEqualTo(expected.getOrderedTime());
             softly.assertThat(actualOrder.getOrderLineItems())
                     .usingRecursiveComparison()
-                    .ignoringExpectedNullFields()
                     .isEqualTo(expected.getOrderLineItems());
         });
     }
