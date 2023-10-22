@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
-import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.table_group.application.entity.TableGroupEntity;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -33,14 +33,14 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
   }
 
   @Override
-  public TableGroup save(final TableGroup entity) {
+  public TableGroupEntity save(final TableGroupEntity entity) {
     final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
     final Number key = jdbcInsert.executeAndReturnKey(parameters);
     return select(key.longValue());
   }
 
   @Override
-  public Optional<TableGroup> findById(final Long id) {
+  public Optional<TableGroupEntity> findById(final Long id) {
     try {
       return Optional.of(select(id));
     } catch (final EmptyResultDataAccessException e) {
@@ -49,12 +49,12 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
   }
 
   @Override
-  public List<TableGroup> findAll() {
+  public List<TableGroupEntity> findAll() {
     final String sql = "SELECT id, created_date FROM table_group";
     return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private TableGroup select(final Long id) {
+  private TableGroupEntity select(final Long id) {
     final String sql = "SELECT id, created_date FROM table_group WHERE id = (:id)";
     final SqlParameterSource parameters = new MapSqlParameterSource()
         .addValue("id", id);
@@ -62,9 +62,9 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         (resultSet, rowNumber) -> toEntity(resultSet));
   }
 
-  private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
+  private TableGroupEntity toEntity(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(KEY_COLUMN_NAME);
     final LocalDateTime createdDate = resultSet.getObject("created_date", LocalDateTime.class);
-    return new TableGroup(id, createdDate);
+    return new TableGroupEntity(id, createdDate);
   }
 }

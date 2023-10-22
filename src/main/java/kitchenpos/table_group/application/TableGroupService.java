@@ -1,6 +1,5 @@
 package kitchenpos.table_group.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -13,7 +12,7 @@ import kitchenpos.table_group.application.dto.OrderTableCreateRequest;
 import kitchenpos.table_group.application.dto.TableGroupCreateRequest;
 import kitchenpos.table_group.application.dto.TableGroupQueryResponse;
 import kitchenpos.table_group.domain.TableGroup;
-import kitchenpos.table_group.persistence.TableGroupDao;
+import kitchenpos.table_group.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -21,25 +20,22 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
+  private static final int MIN_TABLE_GROUP_SIZE = 2;
   private final OrderRepository orderRepository;
   private final OrderTableRepository orderTableRepository;
-  private final TableGroupDao tableGroupDao;
+  private final TableGroupRepository tableGroupRepository;
 
   public TableGroupService(final OrderRepository orderRepository,
       final OrderTableRepository orderTableRepository,
-      final TableGroupDao tableGroupDao) {
+      final TableGroupRepository tableGroupRepository) {
     this.orderRepository = orderRepository;
     this.orderTableRepository = orderTableRepository;
-    this.tableGroupDao = tableGroupDao;
+    this.tableGroupRepository = tableGroupRepository;
   }
 
   @Transactional
-  public TableGroupQueryResponse create(final TableGroupCreateRequest tableGroup) {
-    final List<OrderTableCreateRequest> orderTables = tableGroup.getOrderTables();
-
-    if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-      throw new IllegalArgumentException();
-    }
+  public TableGroupQueryResponse create(final TableGroupCreateRequest request) {
+    final List<OrderTableCreateRequest> orderTables = request.getOrderTables();
 
     final List<Long> orderTableIds = orderTables.stream()
         .map(OrderTableCreateRequest::getId)
@@ -47,34 +43,25 @@ public class TableGroupService {
 
     final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
+    if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_TABLE_GROUP_SIZE) {
+      throw new IllegalArgumentException();
+    }
     if (orderTables.size() != savedOrderTables.size()) {
       throw new IllegalArgumentException();
     }
-
     for (final OrderTable savedOrderTable : savedOrderTables) {
       if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
         throw new IllegalArgumentException();
       }
     }
 
-    final TableGroup savedTableGroup = tableGroupDao.save(
-        new TableGroup(LocalDateTime.now()));
-    final Long tableGroupId = savedTableGroup.getId();
+    final TableGroup tableGroup = request.toTableGroup(savedOrderTables);
 
-    final List<OrderTable> orderTables2 = savedOrderTables.stream()
-        .map(savedOrderTable -> new OrderTable(
-            savedOrderTable.getId(),
-            tableGroupId,
-            savedOrderTable.getNumberOfGuests(),
-            false
-        ))
-        .collect(Collectors.toList());
+    final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-    for (final OrderTable savedOrderTable : orderTables2) {
-      orderTableRepository.save(savedOrderTable);
-    }
     final List<OrderTableQueryResponse> orderTableQueryResponses =
-        orderTables2.stream()
+        savedTableGroup.getOrderTables()
+            .stream()
             .map(OrderTableQueryResponse::from)
             .collect(Collectors.toList());
     return new TableGroupQueryResponse(savedTableGroup.getId(), savedTableGroup.getCreatedDate(),
