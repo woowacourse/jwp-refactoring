@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 public class Menu {
@@ -74,20 +73,15 @@ public class Menu {
         return new Menu(name, price, menuGroup, MenuProducts.empty());
     }
 
-    public void addMenuProducts(final List<MenuProduct> otherMenuProducts) {
-        final MenuProducts requestMenuProducts = new MenuProducts(mappingMenuProductsByMenu(otherMenuProducts));
-        final Price requestTotalSum = menuProducts.getTotalPrice().sum(requestMenuProducts.getTotalPrice());
+    public void addMenuProducts(final List<MenuProduct> requestMenuProducts) {
+        requestMenuProducts.forEach(menuProduct -> menuProduct.assignMenu(this));
+        final MenuProducts newMenuProducts = new MenuProducts(requestMenuProducts);
+        final Price requestTotalSum = menuProducts.getTotalPrice().sum(newMenuProducts.getTotalPrice());
         if (price.isGreaterThan(requestTotalSum)) {
             throw new IllegalArgumentException("메뉴의 가격은 모든 메뉴 상품의 가격 합보다 클 수 없습니다.");
         }
 
-        this.menuProducts.add(requestMenuProducts);
-    }
-
-    private List<MenuProduct> mappingMenuProductsByMenu(final List<MenuProduct> otherMenuProducts) {
-        return otherMenuProducts.stream()
-                .map(menuProduct -> new MenuProduct(this, menuProduct.getProduct(), menuProduct.getQuantity()))
-                .collect(Collectors.toList());
+        this.menuProducts.addAll(newMenuProducts);
     }
 
     public Long getId() {

@@ -33,9 +33,9 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Menu menu,
-                       final Product product,
-                       final Quantity quantity
+    protected MenuProduct(final Menu menu,
+                          final Product product,
+                          final Quantity quantity
     ) {
         this(null, menu, product, quantity);
     }
@@ -53,6 +53,10 @@ public class MenuProduct {
 
     public static MenuProduct withoutMenu(final Product product, final Quantity quantity) {
         return new MenuProduct(null, product, quantity);
+    }
+
+    public void assignMenu(final Menu requestMenu) {
+        menu = requestMenu;
     }
 
     public Price getTotalPrice() {

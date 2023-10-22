@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -56,5 +57,31 @@ class MenuProductTest {
 
         // then
         assertThat(actual.getValue()).isEqualByComparingTo(new BigDecimal("100000"));
+    }
+
+    @DisplayName("[SUCCESS] 메뉴 상품에 해당하는 메뉴를 주입한다.")
+    @Test
+    void success_assignMenu() {
+        // given
+        final Menu menu = Menu.withEmptyMenuProducts(
+                new Name("테스트용 메뉴명"),
+                new Price("10000"),
+                new MenuGroup(new Name("테스트용 메뉴 그룹명"))
+        );
+
+        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Quantity quantity = new Quantity(10);
+        final MenuProduct menuProduct = MenuProduct.withoutMenu(product, quantity);
+        menu.addMenuProducts(List.of(menuProduct));
+
+        // when
+        menuProduct.assignMenu(menu);
+
+        // then
+        assertSoftly(softly -> {
+            softly.assertThat(menuProduct.getMenu()).isEqualTo(menu);
+            softly.assertThat(menuProduct.getProduct()).isEqualTo(product);
+            softly.assertThat(menuProduct.getQuantity()).isEqualTo(quantity);
+        });
     }
 }

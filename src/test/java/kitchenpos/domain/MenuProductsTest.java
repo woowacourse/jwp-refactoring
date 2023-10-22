@@ -40,7 +40,7 @@ class MenuProductsTest {
         // when
         final List<MenuProduct> menuProductItems = List.of(MenuProduct.withoutMenu(product, quantity));
         final MenuProducts actual = MenuProducts.empty();
-        actual.add(new MenuProducts(menuProductItems));
+        actual.addAll(new MenuProducts(menuProductItems));
 
         // then
         assertSoftly(softly -> {

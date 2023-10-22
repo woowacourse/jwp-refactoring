@@ -17,14 +17,14 @@ public class MenuGroup {
     @Embedded
     private Name name;
 
-    public MenuGroup() {
+    protected MenuGroup() {
     }
 
     public MenuGroup(final Name name) {
         this(null, name);
     }
 
-    public MenuGroup(final Long id, final Name name) {
+    protected MenuGroup(final Long id, final Name name) {
         this.id = id;
         this.name = name;
     }
