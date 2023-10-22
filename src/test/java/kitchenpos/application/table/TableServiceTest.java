@@ -118,6 +118,7 @@ class TableServiceTest extends ApplicationTestConfig {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 5, false));
             final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrder.addOrderLineItems(orderLineItems);
+            savedOrder.changeOrderStatus(orderStatus);
 
             // expect
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true)))

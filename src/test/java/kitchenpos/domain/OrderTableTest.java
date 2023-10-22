@@ -59,7 +59,6 @@ class OrderTableTest {
         void success_isGrouped_isFalse() {
             // given
             final OrderTable orderTable = new OrderTable(null, 10, false);
-            ;
 
             // when
             final boolean actual = orderTable.isGrouped();
@@ -74,7 +73,6 @@ class OrderTableTest {
             // given
             final OrderTable orderTableOne = new OrderTable(null, 10, true);
             final OrderTable orderTableTwo = new OrderTable(null, 10, true);
-            ;
             TableGroup.withOrderTables(List.of(
                     orderTableOne,
                     orderTableTwo

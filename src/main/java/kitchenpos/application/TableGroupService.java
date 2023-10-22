@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.repository.OrderRepository;
@@ -10,10 +9,8 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableGroupService {
@@ -34,26 +31,12 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<Long> requestOrderTableIds = request.getOrderTableIds();
-        if (CollectionUtils.isEmpty(requestOrderTableIds) || requestOrderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
         final List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(requestOrderTableIds);
-
         if (requestOrderTableIds.size() != findOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("단체 지정을 위해 요청하신 주문 테이블 목록이 정확하지 않습니다. 선택한 주문 테이블 목록을 다시 확인해주세요.");
         }
 
-        for (final OrderTable savedOrderTable : findOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        final TableGroup newTableGroup = TableGroup.emptyOrderTables();
-        newTableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(findOrderTables));
-
-        return tableGroupRepository.save(newTableGroup);
+        return tableGroupRepository.save(TableGroup.withOrderTables(findOrderTables));
     }
 
     @Transactional

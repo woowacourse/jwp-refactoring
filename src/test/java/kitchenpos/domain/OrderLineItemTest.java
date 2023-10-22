@@ -21,7 +21,7 @@ class OrderLineItemTest {
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
-        final OrderTable orderTable = new OrderTable(null, 10, true);
+        final OrderTable orderTable = new OrderTable(null, 10, false);;
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new OrderLineItems(new ArrayList<>()));
 
         // expect
@@ -50,7 +50,7 @@ class OrderLineItemTest {
 
         // when
         final OrderLineItem orderLineItem = OrderLineItem.ofWithoutOrder(menu, new Quantity(10));
-        final Order order = Order.ofEmptyOrderLineItems(new OrderTable(null, 10, true));
+        final Order order = Order.ofEmptyOrderLineItems(new OrderTable(null, 10, false));
         orderLineItem.assignOrder(order);
 
         // then

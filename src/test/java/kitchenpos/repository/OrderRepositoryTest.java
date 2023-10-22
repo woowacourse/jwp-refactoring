@@ -8,7 +8,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
@@ -95,10 +94,15 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     void success_findOrdersByTableGroupId() {
         // given
         final Menu savedMenu = createMenu();
-        final OrderTable orderTable = new OrderTable(null, 5, true);
-        final TableGroup savedTableGroup = createTableGroup(orderTable);
+        final OrderTable orderTableOne = new OrderTable(null, 5, true);
+        final OrderTable orderTableTwo = new OrderTable(null, 5, true);
+        final TableGroup savedTableGroup = TableGroup.withOrderTables(List.of(
+                orderTableOne,
+                orderTableTwo
+        ));
+        persistTableGroup(savedTableGroup);
 
-        final Order order = Order.ofEmptyOrderLineItems(orderTable);
+        final Order order = Order.ofEmptyOrderLineItems(orderTableTwo);
         order.addOrderLineItems(List.of(
                 OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1))
         ));
@@ -130,23 +134,12 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         return savedMenu;
     }
 
-    private TableGroup createTableGroup(final OrderTable orderTable) {
-        final TableGroup tableGroup = TableGroup.emptyOrderTables();
-        final OrderTables orderTables = OrderTables.empty();
-        orderTables.addOrderTables(new OrderTables(List.of(
-                orderTable
-        )));
-        tableGroup.addOrderTablesAndChangeEmptyFull(orderTables);
-
-        return persistTableGroup(tableGroup);
-    }
-
     @DisplayName("[SUCCESS] 주문 테이블 식별자값과 주문 상태 목록 조건에 해당하는 주문이 존재하는지 확인한다.")
     @Test
     void success_existsByOrderTableIdAndOrderStatusIn() {
         // given
         final Menu savedMenu = createMenu();
-        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, true));
+        final OrderTable savedOrderTable = persistOrderTable(new OrderTable(null, 10, false));
         final Order savedOrder = persistOrder(Order.ofEmptyOrderLineItems(savedOrderTable));
         savedOrder.addOrderLineItems(List.of(
                 OrderLineItem.ofWithoutOrder(savedMenu, new Quantity(1))

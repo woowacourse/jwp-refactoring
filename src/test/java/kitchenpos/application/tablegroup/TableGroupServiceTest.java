@@ -9,7 +9,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
@@ -109,8 +108,8 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_orderTablesSize_isNotEqualTo_findOrderTablesSize() {
             // given
-            final OrderTable unsavedOrderTable = new OrderTable(null, 5, true);
-            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, true));
+            final OrderTable unsavedOrderTable = new OrderTable(null, 5, false);
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 10, false));
 
             final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(unsavedOrderTable, savedOrderTable));
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
@@ -124,7 +123,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_orderTable_isNotEmpty() {
             // given
-            final OrderTable savedOrderTableEmpty = orderTableRepository.save(new OrderTable(null, 10, true));
+            final OrderTable savedOrderTableEmpty = orderTableRepository.save(new OrderTable(null, 10, false));
 
             // when
             final OrderTable savedOrderTableNotEmpty = orderTableRepository.save(new OrderTable(null, 5, false));
@@ -145,16 +144,12 @@ class TableGroupServiceTest extends ApplicationTestConfig {
                     orderTableRepository.save(new OrderTable(null, 5, true)),
                     orderTableRepository.save(new OrderTable(null, 10, true))
             );
+            tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
 
-            final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.emptyOrderTables());
-            savedTableGroup.addOrderTablesAndChangeEmptyFull(new OrderTables(savedOrderTables));
-
-            // when
+            // expect
             final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
-
             final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
-            // then
             assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }

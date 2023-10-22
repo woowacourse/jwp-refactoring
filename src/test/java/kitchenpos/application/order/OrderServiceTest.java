@@ -8,7 +8,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
@@ -127,8 +126,7 @@ class OrderServiceTest extends ApplicationTestConfig {
     }
 
     private OrderTable createOrderTable(final int numberOfGuests, final boolean empty) {
-        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.emptyOrderTables());
-        return orderTableRepository.save(new OrderTable(savedTableGroup, numberOfGuests, empty));
+        return orderTableRepository.save(new OrderTable(null, numberOfGuests, empty));
     }
 
     @DisplayName("주문 상태 변경")

@@ -40,7 +40,6 @@ class OrderTest {
     void success_ofEmptyOrderLineItems() {
         // given
         final OrderTable orderTable = new OrderTable(null, 10, false);
-        ;
         final Order actual = Order.ofEmptyOrderLineItems(orderTable);
 
         // expect
@@ -61,7 +60,6 @@ class OrderTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
         final OrderTable orderTable = new OrderTable(null, 10, false);
-        ;
         final Order order = Order.ofEmptyOrderLineItems(orderTable);
 
         // when
