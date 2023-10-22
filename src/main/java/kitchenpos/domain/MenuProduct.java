@@ -43,21 +43,4 @@ public class MenuProduct {
 
     protected MenuProduct() {
     }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof MenuProduct)) {
-            return false;
-        }
-        MenuProduct that = (MenuProduct) o;
-        return Objects.equals(seq, that.seq);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq);
-    }
 }

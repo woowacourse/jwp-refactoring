@@ -4,15 +4,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderCreateRequest.OrderLineRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableRequest;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,16 +26,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupServiceTest {
 
     private TableGroupService tableGroupService;
+    private OrderService orderService;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
     private TableGroupRepository tableGroupRepository;
+    @Autowired
+    private MenuRepository menuRepository;
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableRepository, tableGroupRepository);
+        orderService = new OrderService(
+                menuRepository, orderRepository, orderLineItemRepository, orderTableRepository
+        );
+        tableGroupService = new TableGroupService(orderTableRepository, tableGroupRepository);
     }
 
     @Test
@@ -96,8 +107,21 @@ public class TableGroupServiceTest {
     }
 
     @Test
-    @Disabled
     void COOKING_MEAL_상태일때는_삭제할_수_없다() {
+        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(
+                new OrderTableRequest(1L),
+                new OrderTableRequest(2L)
+        ));
+
+        TableGroup tableGroup = tableGroupService.create(request);
+        orderService.create(new OrderCreateRequest(
+                tableGroup.getId(),
+                List.of(new OrderLineRequest(1L, 1))
+        ));
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 완료 상태일때만 테이블 분리가 가능합니다.");
     }
 
     @Test

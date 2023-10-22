@@ -1,10 +1,15 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class OrderTable {
@@ -16,6 +21,8 @@ public class OrderTable {
     private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders = new ArrayList<>();
 
     public OrderTable(final Long id, final TableGroup tableGroup) {
         this.id = id;
@@ -41,6 +48,8 @@ public class OrderTable {
     }
 
     public void setEmpty(final boolean empty) {
+        validateOrderCompletion();
+
         this.empty = empty;
     }
 
@@ -50,12 +59,29 @@ public class OrderTable {
         tableGroup.getOrderTables().add(this);
     }
 
+    /*
+    테이블을 분리한다.
+    아직 결제를 한것이 아니기때문에 empty는 false 상태
+     */
     public void detachTableGroup() {
+        validateOrderCompletion();
+
         this.tableGroup = null;
-        this.empty = false;
+    }
+
+    private void validateOrderCompletion() {
+        for (Order order : orders) {
+            if (order.getOrderStatus() != OrderStatus.COMPLETION){
+                throw new IllegalArgumentException("주문 완료 상태일때만 테이블 분리가 가능합니다.");
+            }
+        }
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("주문을 등록할 수 없는 상태에서는 방문한 손님 수를 변경할 수 없습니다.");
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 

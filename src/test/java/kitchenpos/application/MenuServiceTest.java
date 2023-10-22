@@ -19,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
-@Transactional
 class MenuServiceTest {
 
     private MenuService menuService;
@@ -98,6 +97,6 @@ class MenuServiceTest {
         manager.flush();
         manager.clear();
         Menu saveMenu = menuRepository.findById(menu.getId()).orElseThrow();
-        Assertions.assertThat(menu).isEqualTo(saveMenu);
+        Assertions.assertThat(menu.getId()).isEqualTo(saveMenu.getId());
     }
 }

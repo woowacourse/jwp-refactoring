@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,22 +51,5 @@ public class Menu {
     }
 
     protected Menu() {
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Menu)) {
-            return false;
-        }
-        Menu menu = (Menu) o;
-        return Objects.equals(id, menu.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

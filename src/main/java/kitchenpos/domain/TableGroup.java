@@ -27,7 +27,6 @@ public class TableGroup {
         return createdDate;
     }
 
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
