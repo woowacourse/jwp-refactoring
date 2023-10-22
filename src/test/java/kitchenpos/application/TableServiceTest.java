@@ -8,6 +8,7 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,10 +52,10 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("특정 테이블을 빈 테이블로 변경하면 해당하는 id의 정보를 업데이트한다.")
     void 주문_테이블_비우기_성공_빈_테이블_여부() {
         // given
-        final OrderTable table = tableService.create(new OrderTableCreateRequest(0, true));
+        final OrderTable table = tableService.create(new OrderTableCreateRequest(0, false));
 
         // when
-        tableService.changeEmpty(table.getId(), table);
+        tableService.changeEmpty(table.getId(), new OrderTableUpdateEmptyRequest(true));
 
         // then
         assertThat(table.isEmpty()).isTrue();
@@ -67,7 +68,7 @@ class TableServiceTest extends IntegrationTest {
     @Test
     @DisplayName("존재하지 않는 테이블을 비울 수 없다.")
     void 주문_테이블_비우기_실패_존재하지_않는_테이블() {
-        assertThatThrownBy(() -> tableService.changeEmpty(-1L, 빈_테이블_생성()))
+        assertThatThrownBy(() -> tableService.changeEmpty(-1L, new OrderTableUpdateEmptyRequest(true)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
