@@ -29,7 +29,7 @@ public class MenuGroupService {
 
         final List<MenuGroupResponse> menuGroupResponses = new ArrayList<>();
         for (final MenuGroup menuGroup : menuGroups) {
-            menuGroupResponses.add(new MenuGroupResponse(menuGroup.getId(), menuGroup.getName()));
+            menuGroupResponses.add(MenuGroupResponse.from(menuGroup));
         }
 
         return menuGroupResponses;
