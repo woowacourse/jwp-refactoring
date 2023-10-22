@@ -2,8 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.application.TableGroupServiceTest.TableGroupRequestFixture.단체_지정_생성_요청;
 import static kitchenpos.common.fixture.OrderFixture.주문;
-import static kitchenpos.common.fixture.OrderTableFixture.빈_주문_테이블;
-import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +11,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
+import kitchenpos.common.fixture.OrderTableFixture;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -54,11 +53,13 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTableIds = List.of(orderTableDao.save(빈_주문_테이블()).getId(), orderTableDao.save(빈_주문_테이블()).getId());
-            emptyOrderTable = orderTableDao.save(빈_주문_테이블());
-            filledOrderTable = orderTableDao.save(주문_테이블());
+            orderTableIds = List.of(orderTableDao.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블()).getId(),
+                    orderTableDao.save(
+                            OrderTableFixture.단체_지정_없는_빈_주문_테이블()).getId());
+            emptyOrderTable = orderTableDao.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블());
+            filledOrderTable = orderTableDao.save(OrderTableFixture.단체_지정_없는_주문_테이블());
 
-            OrderTable orderTable = 주문_테이블();
+            OrderTable orderTable = OrderTableFixture.단체_지정_없는_주문_테이블();
             tableGroupDao.save(단체_지정(List.of(orderTable)));
             groupedOrderTable = orderTableDao.save(orderTable);
         }
@@ -77,7 +78,8 @@ class TableGroupServiceTest {
                 softly.assertThat(createdTableGroup).usingRecursiveComparison()
                         .ignoringFields("id", "orderTables.id", "orderTables.tableGroupId")
                         .ignoringFieldsOfTypes(LocalDateTime.class)
-                        .isEqualTo(TableGroupResponse.from(단체_지정(List.of(주문_테이블(), 주문_테이블()))));
+                        .isEqualTo(TableGroupResponse.from(단체_지정(List.of(OrderTableFixture.단체_지정_없는_주문_테이블(),
+                                OrderTableFixture.단체_지정_없는_주문_테이블()))));
             });
         }
 
@@ -143,8 +145,8 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            emptyOrderTable_A = orderTableDao.save(빈_주문_테이블());
-            emptyOrderTable_B = orderTableDao.save(빈_주문_테이블());
+            emptyOrderTable_A = orderTableDao.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블());
+            emptyOrderTable_B = orderTableDao.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블());
         }
 
         @Test
@@ -163,7 +165,7 @@ class TableGroupServiceTest {
             // then
             assertThat(tableGroup.getOrderTables()).usingRecursiveComparison()
                     .ignoringFields("id", "tableGroupId")
-                    .isEqualTo(List.of(주문_테이블(), 주문_테이블()));
+                    .isEqualTo(List.of(OrderTableFixture.단체_지정_없는_주문_테이블(), OrderTableFixture.단체_지정_없는_주문_테이블()));
         }
 
         private Order saveOrder(Long orderTableId, OrderStatus orderStatus) {

@@ -39,9 +39,6 @@ public class Order {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order() {
-    }
-
     public static Order of(Long orderTableId, List<OrderLineItem> orderLineItems, long menuCount) {
         validateOrderLineItemsIsEmpty(orderLineItems);
         validateOrderLineItemsSizeWithMenuCount(orderLineItems, menuCount);

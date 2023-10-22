@@ -14,6 +14,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.common.ServiceTest;
+import kitchenpos.common.fixture.OrderTableFixture;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -59,14 +60,14 @@ class TableServiceTest {
             softly.assertThat(orderTable.getId()).isNotNull();
             softly.assertThat(orderTable).usingRecursiveComparison()
                     .ignoringFields("id")
-                    .isEqualTo(OrderTableResponse.from(빈_주문_테이블()));
+                    .isEqualTo(OrderTableResponse.from(OrderTableFixture.단체_지정_없는_빈_주문_테이블()));
         });
     }
 
     @Test
     void 전체_주문을_조회한다() {
         // given
-        Long orderTableId = orderTableDao.save(주문_테이블()).getId();
+        Long orderTableId = orderTableDao.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
 
         // when
         List<OrderTableResponse> orderTables = tableService.list();

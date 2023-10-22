@@ -16,7 +16,7 @@ public class MenuFixture {
                 "menuName",
                 Money.valueOf(BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP)),
                 menuGroupId,
-                null
+                List.of()
         );
     }
 
@@ -25,7 +25,7 @@ public class MenuFixture {
                 "menuName",
                 Money.valueOf(BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP)),
                 menuGroupId,
-                null
+                List.of()
         );
     }
 

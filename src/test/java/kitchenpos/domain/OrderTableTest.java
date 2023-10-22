@@ -22,8 +22,8 @@ class OrderTableTest {
         @Test
         void 단체_지정된_주문_테이블이라면_예외를_던진다() {
             // given
+            OrderTable groupedOrderTable = new OrderTable(null, 0, true);
             Long tableGroupId = 1L;
-            OrderTable groupedOrderTable = new OrderTable(0, true);
             groupedOrderTable.group(tableGroupId);
 
             boolean hasCookingOrMealOrder = false;
@@ -38,7 +38,7 @@ class OrderTableTest {
         @Test
         void 조리_혹은_식사_중인_주문이_존재하는_주문_테이블이라면_예외를_던진다() {
             // given
-            OrderTable orderTable = new OrderTable(0, false);
+            OrderTable orderTable = new OrderTable(null, 0, false);
 
             boolean hasCookingOrMealOrder = true;
             boolean isEmpty = false;
@@ -72,7 +72,7 @@ class OrderTableTest {
         void 손님_수가_0_미만이면_예외를_던진다() {
             // given
             int invalidNumberOfGuests = -1;
-            OrderTable orderTable = new OrderTable(1, false);
+            OrderTable orderTable = new OrderTable(null, 1, false);
 
             // expect
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(invalidNumberOfGuests))
@@ -83,7 +83,7 @@ class OrderTableTest {
         @Test
         void 빈_주문_테이블이라면_예외를_던진다() {
             // given
-            OrderTable orderTable = new OrderTable(0, true);
+            OrderTable orderTable = new OrderTable(null, 0, true);
 
             // expect
             assertThatThrownBy(() -> orderTable.changeNumberOfGuests(1))
@@ -96,7 +96,7 @@ class OrderTableTest {
     @CsvSource({"true, false", "false, true"})
     void 주문_테이블이_찼는지_확인한다(boolean isEmpty, boolean expected) {
         // given
-        OrderTable orderTable = new OrderTable(0, isEmpty);
+        OrderTable orderTable = new OrderTable(null, 0, isEmpty);
 
         // when
         boolean actual = orderTable.isFilled();
@@ -121,7 +121,7 @@ class OrderTableTest {
     @Test
     void 주문_테이블을_단체_지정한다() {
         // given
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable orderTable = new OrderTable(null, 0, true);
         Long tableGroupId = 1L;
 
         // when
@@ -134,7 +134,7 @@ class OrderTableTest {
     @Test
     void 주문_테이블을_단체_지정_해제한다() {
         // given
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable orderTable = new OrderTable(null, 0, true);
         Long tableGroupId = 1L;
         orderTable.group(tableGroupId);
 
@@ -152,19 +152,19 @@ class OrderTableTest {
         void 빈_주문_테이블이면_예외를_던진다() {
             // given
             boolean isEmpty = true;
-            OrderTable emptyOrderTable = new OrderTable(0, isEmpty);
+            OrderTable emptyOrderTable = new OrderTable(null, 0, isEmpty);
 
             // expect
             assertThatThrownBy(emptyOrderTable::validateTableCanTakeOrder)
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("빈 주문 테이블은 주문을 받을 수 없습니다");
         }
-        
+
         @Test
         void 채워진_주문_테이블은_예외를_던지지_않는다() {
             // given
             boolean isEmpty = false;
-            OrderTable filledOrderTable = new OrderTable(0, isEmpty);
+            OrderTable filledOrderTable = new OrderTable(null, 0, isEmpty);
 
             // expect
             assertThatNoException().isThrownBy(filledOrderTable::validateTableCanTakeOrder);

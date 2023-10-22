@@ -1,10 +1,10 @@
 package kitchenpos.domain;
 
-import static kitchenpos.common.fixture.OrderTableFixture.빈_주문_테이블;
 import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.common.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +21,7 @@ class TableGroupTest {
         void 주문_테이블_ID_목록과_저장된_주문_테이블_목록의_사이즈가_다를_경우_예외를_던진다() {
             // given
             List<Long> invalidOrderTableIds = List.of(Long.MIN_VALUE, Long.MAX_VALUE);
-            List<OrderTable> savedOrderTables = List.of(빈_주문_테이블());
+            List<OrderTable> savedOrderTables = List.of(OrderTableFixture.단체_지정_없는_빈_주문_테이블());
 
             // expect
             assertThatThrownBy(() -> TableGroup.of(invalidOrderTableIds, savedOrderTables))
@@ -45,7 +45,7 @@ class TableGroupTest {
         void 주문_테이블의_개수가_2개_미만이면_예외를_던진다() {
             // given
             List<Long> orderTableIds = List.of(1L);
-            List<OrderTable> invalidOrderTables = List.of(빈_주문_테이블());
+            List<OrderTable> invalidOrderTables = List.of(OrderTableFixture.단체_지정_없는_빈_주문_테이블());
 
             // expect
             assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
@@ -57,7 +57,8 @@ class TableGroupTest {
         void 주문_테이블_중_채워진_테이블이_있는_경우_예외를_던진다() {
             // given
             List<Long> orderTableIds = List.of(1L, 2L);
-            List<OrderTable> invalidOrderTables = List.of(빈_주문_테이블(), 주문_테이블());
+            List<OrderTable> invalidOrderTables = List.of(OrderTableFixture.단체_지정_없는_빈_주문_테이블(),
+                    OrderTableFixture.단체_지정_없는_주문_테이블());
 
             // expect
             assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
@@ -70,7 +71,7 @@ class TableGroupTest {
             // given
             Long tableGroupId = 1L;
             List<Long> orderTableIds = List.of(1L, 2L);
-            List<OrderTable> invalidOrderTables = List.of(빈_주문_테이블(), 주문_테이블(tableGroupId));
+            List<OrderTable> invalidOrderTables = List.of(OrderTableFixture.단체_지정_없는_빈_주문_테이블(), 주문_테이블(tableGroupId));
 
             // expect
             assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))

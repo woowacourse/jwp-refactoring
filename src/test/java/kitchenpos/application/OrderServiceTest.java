@@ -6,8 +6,6 @@ import static kitchenpos.common.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.common.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.common.fixture.OrderFixture.주문;
 import static kitchenpos.common.fixture.OrderLineItemFixture.주문_항목;
-import static kitchenpos.common.fixture.OrderTableFixture.빈_주문_테이블;
-import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.ServiceTest;
+import kitchenpos.common.fixture.OrderTableFixture;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -71,8 +70,8 @@ class OrderServiceTest {
         menuProduct.setMenuId(menuId);
         menuProductDao.save(menuProduct);
 
-        orderTableId = orderTableDao.save(주문_테이블()).getId();
-        emptyOrderTableId = orderTableDao.save(빈_주문_테이블()).getId();
+        orderTableId = orderTableDao.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
+        emptyOrderTableId = orderTableDao.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블()).getId();
         orderLineItem = 주문_항목(menuId);
     }
 

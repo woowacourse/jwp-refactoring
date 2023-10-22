@@ -18,9 +18,6 @@ public class Product {
         this(null, name, price);
     }
 
-    public Product() {
-    }
-
     public static Product of(String name, BigDecimal price) {
         return new Product(name, Money.valueOf(price));
     }

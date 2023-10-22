@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Menu {
+
     private Long id;
     private String name;
     private Money price;
@@ -16,10 +17,6 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu(Long id, String name, Money price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, null);
     }
 
     public Menu(String name, Money price, Long menuGroupId, List<MenuProduct> menuProducts) {

@@ -22,9 +22,6 @@ public class MenuProduct {
         this(null, null, productId, quantity);
     }
 
-    public MenuProduct() {
-    }
-
     public static MenuProduct of(Long productId, long quantity) {
         return new MenuProduct(productId, Quantity.valueOf(quantity));
     }

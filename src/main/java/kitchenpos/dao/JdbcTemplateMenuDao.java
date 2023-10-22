@@ -24,7 +24,8 @@ public class JdbcTemplateMenuDao implements MenuDao {
             resultSet.getLong("id"),
             resultSet.getString("name"),
             Money.valueOf(resultSet.getBigDecimal("price")),
-            resultSet.getLong("menu_group_id")
+            resultSet.getLong("menu_group_id"),
+            List.of()
     );
 
     private final NamedParameterJdbcTemplate jdbcTemplate;

@@ -21,7 +21,8 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     private static final String KEY_COLUMN_NAME = "id";
     private static final RowMapper<TableGroup> TABLE_GROUP_ROW_MAPPER = (resultSet, rowNumber) -> new TableGroup(
             resultSet.getLong(KEY_COLUMN_NAME),
-            resultSet.getObject("created_date", LocalDateTime.class)
+            resultSet.getObject("created_date", LocalDateTime.class),
+            List.of()
     );
     private static final RowMapper<OrderTable> ORDER_TABLE_ROW_MAPPER = (resultSet, rowNumber) -> new OrderTable(
             resultSet.getLong(KEY_COLUMN_NAME),

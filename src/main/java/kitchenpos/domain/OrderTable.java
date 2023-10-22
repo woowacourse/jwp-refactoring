@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -15,15 +16,8 @@ public class OrderTable {
         this.isEmpty = isEmpty;
     }
 
-    public OrderTable(int numberOfGuests, boolean isEmpty) {
-        this(null, null, numberOfGuests, isEmpty);
-    }
-
     public OrderTable(Long tableGroupId, int numberOfGuests, boolean isEmpty) {
         this(null, tableGroupId, numberOfGuests, isEmpty);
-    }
-
-    public OrderTable() {
     }
 
     public void changeIsEmpty(boolean hasCookingOrMealOrder, boolean isEmpty) {

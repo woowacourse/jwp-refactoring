@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
+
     private static final int MINIMUM_SIZE = 2;
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
@@ -19,14 +21,6 @@ public class TableGroup {
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
-    }
-
-    public TableGroup() {
     }
 
     public static TableGroup of(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
