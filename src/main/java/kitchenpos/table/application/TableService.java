@@ -36,7 +36,7 @@ public class TableService {
 
         final List<OrderTableResponse> orderTableResponses = new ArrayList<>();
         for (final OrderTable orderTable : orderTables) {
-            orderTableResponses.add(new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()));
+            orderTableResponses.add(OrderTableResponse.from(orderTable));
         }
 
         return orderTableResponses;
