@@ -51,6 +51,12 @@ class OrderServiceTest implements ServiceTest {
         this.menu = menuDao.save(메뉴(menuGroup.getId(), "메뉴", BigDecimal.valueOf(18_000L)));
     }
 
+    public static MenuGroup 메뉴_그룹(final String name) {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(name);
+        return menuGroup;
+    }
+
     @Test
     void 주문은_최소_한_개_이상의_주문_상품을_가져야한다() {
         // given

@@ -45,6 +45,12 @@ class MenuServiceTest implements ServiceTest {
         this.menuGroup = menuGroupDao.save(메뉴_그룹("치킨"));
     }
 
+    public static MenuGroup 메뉴_그룹(final String name) {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(name);
+        return menuGroup;
+    }
+
     private Product 상품(final String name, final BigDecimal price) {
         final Product product = new Product();
         product.setName(name);
