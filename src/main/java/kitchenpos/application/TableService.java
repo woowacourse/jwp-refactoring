@@ -44,8 +44,8 @@ public class TableService {
             .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateOrderTableHasTableGroupId();
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatus(orderTableId, OrderStatus.COOKING.name())
-        || orderRepository.existsByOrderTableIdAndOrderStatus(orderTableId, OrderStatus.MEAL.name())) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+            List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeEmptyStatus();
@@ -54,7 +54,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-                                           final OrderTableChangeGuestRequest orderTableChangeGuestRequest
+                                                   final OrderTableChangeGuestRequest orderTableChangeGuestRequest
     ) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);

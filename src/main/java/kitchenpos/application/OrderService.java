@@ -38,29 +38,32 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final List<OrderLineItem> orderLineItems = getForSaveOrderLineItems(orderRequest.getOrderLineItems());
-        // TODO : 일급 컬랙션으로 검증하기
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        final List<Long> menuIds = orderLineItems.stream()
-            .map(OrderLineItem::getMenuId)
-            .collect(Collectors.toList());
-        final List<Menu> menus = menuRepository.findAllById(menuIds);
-        if (orderLineItems.size() != menus.size()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderLineItem(orderRequest);
+        final OrderTable orderTable = validateOrderTableIsEmpty(orderRequest);
+        final Order order = new Order(orderTable.getId());
+        orderRepository.save(order);
+        addOrderLineItems(getForSaveOrderLineItems(orderRequest.getOrderLineItems()), order);
+        return OrderResponse.from(order);
+    }
 
+    private void validateOrderLineItem(final OrderRequest orderRequest) {
+        final List<Long> menuIds = orderRequest.getMenuId();
+        if (menuIds.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
+        if (menuIds.size() != menus.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private OrderTable validateOrderTableIsEmpty(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        final Order order = new Order(orderTable.getId());
-        orderRepository.save(order);
-        addOrderLineItems(orderLineItems, order);
-        return OrderResponse.from(order);
+        return orderTable;
     }
 
     private List<OrderLineItem> getForSaveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
@@ -88,9 +91,6 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
-
-        //TODO : 요청온 status가 현재 존재하는 status인지 검증
-
         order.changeStatus(request.getStatus());
 
         return OrderResponse.from(order);

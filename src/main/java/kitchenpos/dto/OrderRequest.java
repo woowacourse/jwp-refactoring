@@ -1,6 +1,7 @@
 package kitchenpos.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderRequest {
 
@@ -19,5 +20,11 @@ public class OrderRequest {
 
     public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public List<Long> getMenuId() {
+        return orderLineItems.stream()
+            .map(OrderLineItemRequest::getMenuId)
+            .collect(Collectors.toUnmodifiableList());
     }
 }

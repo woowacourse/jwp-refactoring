@@ -23,7 +23,8 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableGroupService(final OrderRepository orderRepository,
+                             final OrderTableRepository orderTableRepository,
                              final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -66,6 +67,11 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
             .orElseThrow(IllegalArgumentException::new);
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        validateOrderTableIsCompletion(orderTables);
+        tableGroup.ungroup();
+    }
+
+    private void validateOrderTableIsCompletion(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
             .map(OrderTable::getId)
             .collect(Collectors.toList());
@@ -73,6 +79,5 @@ public class TableGroupService {
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-        tableGroup.ungroup();
     }
 }
