@@ -26,10 +26,6 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
-    }
-
     public Menu(String name, BigDecimal price, Long menuGroup) {
         this(name, price, menuGroup, new ArrayList<>());
     }
