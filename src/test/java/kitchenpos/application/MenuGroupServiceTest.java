@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,11 @@ import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({MenuGroupService.class, JdbcTemplateMenuGroupDao.class})
+@Import(MenuGroupService.class)
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private MenuGroupService menuGroupService;
 
@@ -33,7 +32,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(menuGroupDao.findById(actual.getId())).isPresent();
+            softly.assertThat(menuGroupRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getName()).isEqualTo(request.getName());
         });
     }

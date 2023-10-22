@@ -1,8 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,11 +14,11 @@ import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({ProductService.class, JdbcTemplateProductDao.class})
+@Import(ProductService.class)
 class ProductServiceTest extends ServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -35,7 +34,7 @@ class ProductServiceTest extends ServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(productDao.findById(actual.getId())).isPresent();
+            softly.assertThat(productRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getName()).isEqualTo(request.getName());
             softly.assertThat(actual.getPrice())
                     .isEqualByComparingTo(BigDecimal.valueOf(request.getPrice()));

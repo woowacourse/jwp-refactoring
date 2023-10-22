@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,26 +24,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({
-        MenuService.class,
-        JdbcTemplateMenuDao.class,
-        JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class,
-        JdbcTemplateProductDao.class
-})
+@Import(MenuService.class)
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private JdbcTemplateMenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private JdbcTemplateMenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private JdbcTemplateProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
@@ -55,24 +49,15 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("두마리메뉴");
-        두마리메뉴 = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
+        두마리메뉴 = menuGroupRepository.save(menuGroup);
 
-        Product product1 = new Product();
-        product1.setName("후라이드");
-        product1.setPrice(BigDecimal.valueOf(16000));
-        Product 후라이드 = productDao.save(product1);
-
-        Product product2 = new Product();
-        product2.setName("양념치킨");
-        product2.setPrice(BigDecimal.valueOf(16000));
-        Product 양념치킨 = productDao.save(product2);
-
-        Product product3 = new Product();
-        product3.setName("간장치킨");
-        product3.setPrice(BigDecimal.valueOf(16000));
-        Product 간장치킨 = productDao.save(product3);
+        Product product1 = Product.create("후라이드", BigDecimal.valueOf(16000));
+        Product product2 = Product.create("양념치킨", BigDecimal.valueOf(16000));
+        Product product3 = Product.create("간장치킨", BigDecimal.valueOf(16000));
+        Product 후라이드 = productRepository.save(product1);
+        Product 양념치킨 = productRepository.save(product2);
+        Product 간장치킨 = productRepository.save(product3);
 
         후라이드_한마리 = new MenuProductCreateRequest(후라이드.getId(), 1);
         양념치킨_한마리 = new MenuProductCreateRequest(양념치킨.getId(), 1);
@@ -95,10 +80,10 @@ class MenuServiceTest extends ServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(menuDao.findById(actual.getId())).isPresent();
+            softly.assertThat(menuRepository.findById(actual.getId())).isPresent();
             softly.assertThat(actual.getName()).isEqualTo(request.getName());
             softly.assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(request.getPrice()));
-            softly.assertThat(actual.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
+            softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
             softly.assertThat(actual.getMenuProducts().size()).isEqualTo(request.getMenuProducts().size());
         });
     }

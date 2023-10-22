@@ -1,36 +1,55 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Menu {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull
     private String name;
+
+    @NotNull
+    @Column(precision = 19, scale = 2)
     private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu() {
     }
 
-    private Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    private Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
         validate(name, price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuGroup = menuGroup;
+        this.menuProducts = MenuProducts.create(menuProducts);
     }
 
-    private Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId, new ArrayList<>());
+    private Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
-    public static Menu create(final String name, final BigDecimal price, final Long menuGroupId) {
-        return new Menu(name, price, menuGroupId);
+    public static Menu createWithMenuProducts(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+        return new Menu(name, price, menuGroup, menuProducts);
+    }
+
+    public static Menu create(final String name, final BigDecimal price, final MenuGroup menuGroup) {
+        return new Menu(name, price, menuGroup, new ArrayList<>());
     }
 
     private void validate(final String name, final BigDecimal price) {
@@ -58,39 +77,27 @@ public class Menu {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
+        final MenuProducts menuProducts1 = MenuProducts.create(menuProducts);
+        if (!menuProducts1.isValidPrice(price)) {
+            throw new IllegalArgumentException("메뉴 금액의 합계는 각 상품들의 금액 합계보다 클 수 없습니다.");
+        }
+        this.menuProducts = menuProducts1;
     }
 }

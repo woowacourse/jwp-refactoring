@@ -1,15 +1,22 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
+@Entity
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private BigDecimal price;
 
-    public Product() {
-    }
+    @NotNull
+    private String name;
+
+    @NotNull
+    @Column(precision = 19, scale = 2)
+    private BigDecimal price;
 
     private Product(final Long id, final String name, final BigDecimal price) {
         validate(name, price);
@@ -20,6 +27,10 @@ public class Product {
 
     private Product(final String name, final BigDecimal price) {
         this(null, name, price);
+    }
+
+    protected Product() {
+
     }
 
     public static Product create(final String name, final BigDecimal price) {

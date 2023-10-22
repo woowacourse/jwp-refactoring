@@ -2,6 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.dao.*;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemsCreateRequest;
 import kitchenpos.dto.request.OrderStatusUpdateRequest;
@@ -21,18 +24,14 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @SuppressWarnings("NonAsciiCharacters")
 @Import({
         OrderService.class,
-        JdbcTemplateMenuDao.class,
         JdbcTemplateOrderDao.class,
         JdbcTemplateOrderLineItemDao.class,
         JdbcTemplateOrderTableDao.class,
-        JdbcTemplateProductDao.class,
-        JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class
 })
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -47,10 +46,10 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private Menu 후1양1_메뉴;
     private Menu 간1양1_메뉴;
@@ -60,51 +59,32 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("두마리메뉴");
-        MenuGroup 두마리메뉴 = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
+        MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup);
 
-        Product product1 = new Product();
-        product1.setName("후라이드");
-        product1.setPrice(BigDecimal.valueOf(16000));
-        Product 후라이드 = productDao.save(product1);
+        Product product1 = Product.create("후라이드", BigDecimal.valueOf(16000));
+        Product 후라이드 = productRepository.save(product1);
 
-        Product product2 = new Product();
-        product2.setName("양념치킨");
-        product2.setPrice(BigDecimal.valueOf(16000));
-        Product 양념치킨 = productDao.save(product2);
+        Product product2 = Product.create("양념치킨", BigDecimal.valueOf(16000));
+        Product 양념치킨 = productRepository.save(product2);
 
-        Product product3 = new Product();
-        product3.setName("간장치킨");
-        product3.setPrice(BigDecimal.valueOf(16000));
-        Product 간장치킨 = productDao.save(product3);
+        Product product3 = Product.create("간장치킨", BigDecimal.valueOf(16000));
+        Product 간장치킨 = productRepository.save(product3);
 
-        MenuProduct 후라이드_한마리 = new MenuProduct();
-        후라이드_한마리.setProductId(후라이드.getId());
-        후라이드_한마리.setQuantity(1);
+        Menu menu1 = Menu.create("두마리메뉴 - 후1양1", BigDecimal.valueOf(32000L), 두마리메뉴);
+        Menu menu2 = Menu.create("두마리메뉴 - 간1양1", BigDecimal.valueOf(32000L), 두마리메뉴);
 
-        MenuProduct 양념치킨_한마리 = new MenuProduct();
-        양념치킨_한마리.setProductId(양념치킨.getId());
-        양념치킨_한마리.setQuantity(1);
+        후1양1_메뉴 = menuRepository.save(menu1);
+        간1양1_메뉴 = menuRepository.save(menu2);
 
-        MenuProduct 간장치킨_한마리 = new MenuProduct();
-        간장치킨_한마리.setProductId(간장치킨.getId());
-        간장치킨_한마리.setQuantity(1);
+        MenuProduct 후1양1_후라이드_한마리 = MenuProduct.create(후1양1_메뉴, 후라이드, 1);
+        MenuProduct 후1양1_양념치킨_한마리 = MenuProduct.create(후1양1_메뉴, 양념치킨, 1);
 
-        Menu menu1 = new Menu();
-        menu1.setName("두마리메뉴 - 후1양1");
-        menu1.setPrice(BigDecimal.valueOf(32000L));
-        menu1.setMenuGroupId(두마리메뉴.getId());
-        menu1.setMenuProducts(List.of(후라이드_한마리, 양념치킨_한마리));
+        MenuProduct 간1양1_간장치킨_한마리 = MenuProduct.create(간1양1_메뉴, 간장치킨, 1);
+        MenuProduct 간1양1_양념치킨_한마리 = MenuProduct.create(간1양1_메뉴, 양념치킨, 1);
 
-        Menu menu2 = new Menu();
-        menu2.setName("두마리메뉴 - 간1양1");
-        menu2.setPrice(BigDecimal.valueOf(32000L));
-        menu2.setMenuGroupId(두마리메뉴.getId());
-        menu2.setMenuProducts(List.of(간장치킨_한마리, 양념치킨_한마리));
-
-        후1양1_메뉴 = menuDao.save(menu1);
-        간1양1_메뉴 = menuDao.save(menu2);
+        menu1.updateMenuProducts(List.of(후1양1_후라이드_한마리, 후1양1_양념치킨_한마리));
+        menu2.updateMenuProducts(List.of(간1양1_간장치킨_한마리, 간1양1_양념치킨_한마리));
 
         OrderTable orderTable = OrderTable.create(0, false);
         주문테이블 = orderTableDao.save(orderTable);
