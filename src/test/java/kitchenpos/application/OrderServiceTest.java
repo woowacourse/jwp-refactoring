@@ -10,10 +10,10 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -35,7 +35,7 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
     private MenuRepository menuRepository;
@@ -57,8 +57,8 @@ class OrderServiceTest {
                     .willReturn(order);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(OrderTableFixture.주문테이블_2명_id_1()));
+            given(orderTableRepository.findById(any()))
+                    .willReturn(Optional.of(OrderTableFixture.주문테이블_N명(2)));
 
             // when
             final var actual = orderService.create(order);
@@ -96,7 +96,7 @@ class OrderServiceTest {
             final var order = OrderFixture.주문_망고치킨_2개(COOKING);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -110,7 +110,7 @@ class OrderServiceTest {
             final var order = OrderFixture.주문_망고치킨_2개(COOKING);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(OrderTableFixture.빈테이블_1명()));
 
             // when & then
@@ -126,8 +126,8 @@ class OrderServiceTest {
                     .willReturn(order);
             given(menuRepository.countByIdIn(any()))
                     .willReturn(1L);
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(OrderTableFixture.주문테이블_2명_id_1()));
+            given(orderTableRepository.findById(any()))
+                    .willReturn(Optional.of(OrderTableFixture.주문테이블_N명(2)));
 
             // when
             final var actual = orderService.create(order);

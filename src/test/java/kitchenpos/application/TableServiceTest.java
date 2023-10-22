@@ -7,8 +7,8 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -28,7 +28,7 @@ class TableServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -39,8 +39,8 @@ class TableServiceTest {
         @Test
         void 테이블을_등록할_수_있다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.save(any()))
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            given(orderTableRepository.save(any()))
                     .willReturn(orderTable);
 
             // when
@@ -58,8 +58,8 @@ class TableServiceTest {
         @Test
         void 테이블_목록을_조회할_수_있다() {
             // given
-            final var orderTable = Collections.singletonList(OrderTableFixture.주문테이블_1명());
-            given(orderTableDao.findAll())
+            final var orderTable = Collections.singletonList(OrderTableFixture.주문테이블_N명(1));
+            given(orderTableRepository.findAll())
                     .willReturn(orderTable);
 
             // when
@@ -77,14 +77,14 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_빈_테이블로_변경할_수_있다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
             given(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any()))
                     .willReturn(false);
 
             final var expected = OrderTableFixture.빈테이블_1명();
-            given(orderTableDao.save(any()))
+            given(orderTableRepository.save(any()))
                     .willReturn(expected);
 
             // when
@@ -97,8 +97,8 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -110,9 +110,8 @@ class TableServiceTest {
         @Test
         void 단체_지정되어_있는_테이블이면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            orderTable.setTableGroupId(1L);
-            given(orderTableDao.findById(any()))
+            final var orderTable = OrderTableFixture.빈테이블_1명_단체지정();
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then
@@ -124,8 +123,8 @@ class TableServiceTest {
         @Test
         void 주문_상태가_조리_또는_식사면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
             given(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any()))
                     .willReturn(true);
@@ -143,12 +142,12 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_방문한_손님_수를_변경할_수_있다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
-            final var expected = OrderTableFixture.주문테이블_5명();
-            given(orderTableDao.save(any()))
+            final var expected = OrderTableFixture.주문테이블_N명(5);
+            given(orderTableRepository.save(any()))
                     .willReturn(expected);
 
             // when
@@ -162,8 +161,7 @@ class TableServiceTest {
         @Test
         void 방문한_손님_수가_0보다_작으면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            orderTable.setNumberOfGuests(-1);
+            final var orderTable = OrderTableFixture.주문테이블_N명(-1);
 
             // when & then
             final var id = orderTable.getId();
@@ -174,8 +172,8 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -188,7 +186,7 @@ class TableServiceTest {
         void 빈_테이블이면_예외가_발생한다() {
             // given
             final var orderTable = OrderTableFixture.빈테이블_1명();
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then

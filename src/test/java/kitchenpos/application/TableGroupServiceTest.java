@@ -8,9 +8,9 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -28,13 +28,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableGroupServiceTest {
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Mock
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -46,9 +46,9 @@ class TableGroupServiceTest {
         void 테이블들을_단체_지정할_수_있다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(tableGroup.getOrderTables());
-            given(tableGroupDao.save(any()))
+            given(tableGroupRepository.save(any()))
                     .willReturn(tableGroup);
 
             // when
@@ -73,7 +73,7 @@ class TableGroupServiceTest {
         void 단체_지정하려는_주문_테이블_중_실제_주문_테이블에_존재하지_않는_테이블이_있으면_예외가_발생한다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(Collections.emptyList());
 
             // when & then
@@ -85,7 +85,7 @@ class TableGroupServiceTest {
         void 빈_테이블이_아니면_예외가_발생한다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(tableGroup.getOrderTables());
 
             // when & then
@@ -97,7 +97,7 @@ class TableGroupServiceTest {
         void 이미_단체_지정된_테이블이면_예외가_발생한다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(List.of(OrderTableFixture.빈테이블_1명_단체지정(), OrderTableFixture.빈테이블_1명_단체지정()));
 
             // when & then
@@ -109,9 +109,9 @@ class TableGroupServiceTest {
         void 테이블들을_빈_테이블에서_주문_테이블로_설정한다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_빈테이블_2개();
-            given(orderTableDao.findAllByIdIn(any()))
+            given(orderTableRepository.findAllByIdIn(any()))
                     .willReturn(tableGroup.getOrderTables());
-            given(tableGroupDao.save(any()))
+            given(tableGroupRepository.save(any()))
                     .willReturn(tableGroup);
 
             // when
@@ -132,7 +132,7 @@ class TableGroupServiceTest {
         void 단체_지정을_해제할_수_있다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
-            given(orderTableDao.findAllByTableGroupId(any()))
+            given(orderTableRepository.findAllByTableGroupId(any()))
                     .willReturn(tableGroup.getOrderTables());
             given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .willReturn(false);
@@ -145,7 +145,7 @@ class TableGroupServiceTest {
         void 테이블들의_주문_상태가_조리_또는_식사면_예외가_발생한다() {
             // given
             final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
-            given(orderTableDao.findAllByTableGroupId(any()))
+            given(orderTableRepository.findAllByTableGroupId(any()))
                     .willReturn(tableGroup.getOrderTables());
             given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .willReturn(true);

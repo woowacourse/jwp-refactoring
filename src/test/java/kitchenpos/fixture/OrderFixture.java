@@ -11,11 +11,11 @@ import kitchenpos.domain.OrderStatus;
 public class OrderFixture {
 
     public static Order 주문_망고치킨_2개(final OrderStatus orderStatus) {
-        return new Order(OrderTableFixture.주문테이블_2명_id_1().getId(), COOKING.name(), LocalDateTime.now(),
+        return new Order(OrderTableFixture.주문테이블_N명(2), COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(OrderLineItemFixture.주문항목_망고치킨_2개()));
     }
 
     public static Order 주문_망고치킨_2개_빈주문항목(final OrderStatus orderStatus) {
-        return new Order(OrderTableFixture.주문테이블_2명_id_1().getId(), COOKING.name(), LocalDateTime.now());
+        return new Order(OrderTableFixture.주문테이블_N명(2), COOKING.name(), LocalDateTime.now());
     }
 }
