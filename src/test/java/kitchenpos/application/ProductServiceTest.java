@@ -9,19 +9,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dto.ProductDto;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private ProductService productService;
 
     @Test
     void 상품을_생성할_수_있다() {
@@ -32,7 +24,7 @@ class ProductServiceTest extends ServiceTest {
         final var response = productService.create(request);
 
         // then
-        assertThat(productDao.findById(response.getId())).isPresent();
+        assertThat(productRepository.findById(response.getId())).isPresent();
     }
 
     @Test
@@ -48,9 +40,9 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품의_목록을_조회할_수_있다() {
         // given
-        final var 후라이드 = productDao.save(후라이드_16000);
-        final var 양념치킨 = productDao.save(양념치킨_16000);
-        final var 순살치킨 = productDao.save(순살치킨_16000);
+        final var 후라이드 = productRepository.save(후라이드_16000);
+        final var 양념치킨 = productRepository.save(양념치킨_16000);
+        final var 순살치킨 = productRepository.save(순살치킨_16000);
         final var 상품목록 = List.of(후라이드, 양념치킨, 순살치킨);
 
         final var expected = 상품목록.stream()
