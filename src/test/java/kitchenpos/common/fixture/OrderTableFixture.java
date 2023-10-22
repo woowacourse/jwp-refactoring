@@ -17,16 +17,8 @@ public class OrderTableFixture {
         return new OrderTable(tableGroupId, 0, true);
     }
 
-    public static OrderTable 단체_지정_없는_빈_주문_테이블(int numberOfGuests) {
-        return new OrderTable(null, numberOfGuests, true);
-    }
-
     public static OrderTable 주문_테이블(Long tableGroupId) {
         return new OrderTable(tableGroupId, 0, false);
-    }
-
-    public static OrderTable 단체_지정_없는_주문_테이블(int numberOfGuests) {
-        return new OrderTable(null, numberOfGuests, false);
     }
 
     public static OrderTable 주문_테이블(Long orderTableId, Long tableGroupId) {

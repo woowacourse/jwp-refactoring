@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -43,22 +42,28 @@ public class OrderService {
         orderTable.validateTableCanTakeOrder();
 
         long menuCount = menuDao.countByIdIn(request.getMenuIds());
-        Order order = request.toCookingOrder(menuCount);
+        Order order = request.toOrder(menuCount);
+
         final Order savedOrder = orderDao.save(order);
+        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(order.getOrderLineItems(),
+                savedOrder.getId());
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : order.getOrderLineItems()) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
         savedOrder.setOrderLineItems(savedOrderLineItems);
-
         return OrderResponse.from(savedOrder);
+    }
+
+    private List<OrderLineItem> saveOrderLineItems(List<OrderLineItem> orderLineItems, Long orderId) {
+        return orderLineItems.stream()
+                .map(orderLineItem -> {
+                    orderLineItem.setOrderId(orderId);
+                    return orderLineItemDao.save(orderLineItem);
+                })
+                .collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
+
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }

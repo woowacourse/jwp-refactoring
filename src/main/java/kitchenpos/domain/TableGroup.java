@@ -50,7 +50,12 @@ public class TableGroup {
         }
     }
 
-    public void validateGroupCanBeUngrouped(boolean hasCookingOrMealOrder) {
+    public void ungroup(boolean hasCookingOrMealOrder) {
+        validateGroupCanBeUngrouped(hasCookingOrMealOrder);
+        orderTables.forEach(OrderTable::ungroup);
+    }
+
+    private void validateGroupCanBeUngrouped(boolean hasCookingOrMealOrder) {
         if (hasCookingOrMealOrder) {
             throw new IllegalArgumentException("조리 혹은 식사 주문이 존재하는 단체 지정은 단체 지정을 취소할 수 없습니다.");
         }

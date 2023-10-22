@@ -18,12 +18,11 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public List<OrderLineItemCreateRequest> getOrderLineItems() {
-        return orderLineItems;
+    public Order toOrder(long menuCount) {
+        List<OrderLineItem> orderLineItems = this.orderLineItems.stream()
+                .map(OrderLineItemCreateRequest::toOrderLineItem)
+                .collect(Collectors.toList());
+        return Order.of(orderTableId, orderLineItems, menuCount);
     }
 
     public List<Long> getMenuIds() {
@@ -32,10 +31,11 @@ public class OrderCreateRequest {
                 .collect(Collectors.toList());
     }
 
-    public Order toCookingOrder(long menuCount) {
-        List<OrderLineItem> orderLineItems = this.orderLineItems.stream()
-                .map(OrderLineItemCreateRequest::toOrderLineItem)
-                .collect(Collectors.toList());
-        return Order.of(orderTableId, orderLineItems, menuCount);
+    public Long getOrderTableId() {
+        return orderTableId;
+    }
+
+    public List<OrderLineItemCreateRequest> getOrderLineItems() {
+        return orderLineItems;
     }
 }

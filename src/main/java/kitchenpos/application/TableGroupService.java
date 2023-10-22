@@ -29,21 +29,22 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.getOrderTables();
-
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
+        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(request.getOrderTables());
         TableGroup tableGroup = request.toTableGroup(savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.group(savedTableGroup.getId());
-            orderTableDao.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
+        groupAll(savedOrderTables, savedTableGroup.getId());
 
+        savedTableGroup.setOrderTables(savedOrderTables);
         return TableGroupResponse.from(savedTableGroup);
+    }
+
+    private void groupAll(List<OrderTable> orderTables, Long tableGroupId) {
+        orderTables.forEach(orderTable -> {
+            orderTable.group(tableGroupId);
+            orderTableDao.save(orderTable);
+        });
     }
 
     @Transactional
@@ -56,11 +57,7 @@ public class TableGroupService {
                 List.of(COOKING.name(), MEAL.name())
         );
 
-        tableGroup.validateGroupCanBeUngrouped(hasCookingOrMealOrder);
-
-        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
-            orderTable.ungroup();
-            orderTableDao.save(orderTable);
-        }
+        tableGroup.ungroup(hasCookingOrMealOrder);
+        tableGroup.getOrderTables().forEach(orderTableDao::save);
     }
 }

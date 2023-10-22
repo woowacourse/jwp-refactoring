@@ -39,10 +39,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeIsEmpty(
-            Long orderTableId,
-            OrderTableIsEmptyUpdateRequest orderTableUpdateRequest
-    ) {
+    public OrderTableResponse changeIsEmpty(Long orderTableId, OrderTableIsEmptyUpdateRequest request) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -51,23 +48,20 @@ public class TableService {
                 List.of(COOKING.name(), MEAL.name())
         );
 
-        orderTable.changeIsEmpty(hasCookingOrMealOrder, orderTableUpdateRequest.isEmpty());
-
+        orderTable.changeIsEmpty(hasCookingOrMealOrder, request.isEmpty());
         OrderTable changedOrderTable = orderTableDao.save(orderTable);
+
         return OrderTableResponse.from(changedOrderTable);
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(
-            Long orderTableId,
-            OrderTableNumberOfGuestsUpdateRequest orderTableUpdateRequest
-    ) {
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableNumberOfGuestsUpdateRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrderTable.changeNumberOfGuests(orderTableUpdateRequest.getNumberOfGuests());
-
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
+
         return OrderTableResponse.from(changedOrderTable);
     }
 }

@@ -1,8 +1,10 @@
 package kitchenpos.domain;
 
 import static kitchenpos.common.fixture.OrderTableFixture.주문_테이블;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -77,6 +79,32 @@ class TableGroupTest {
             assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정의 주문 테이블이 차 있거나 이미 단체 지정되었습니다.");
+        }
+    }
+
+    @Nested
+    class 단체_지정을_해제할_때 {
+
+        @Test
+        void 조리_혹은_식사_주문이_존재하는_경우_예외를_던진다() {
+            // given
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(주문_테이블(1L)));
+            boolean hasCookingOrMealOrder = true;
+
+            // expect
+            assertThatThrownBy(() -> tableGroup.ungroup(hasCookingOrMealOrder))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("조리 혹은 식사 주문이 존재하는 단체 지정은 단체 지정을 취소할 수 없습니다.");
+        }
+        
+        @Test
+        void 정상적으로_해제한다() {
+            // given
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(주문_테이블(1L)));
+            boolean hasCookingOrMealOrder = false;
+
+            // expect
+            assertThatNoException().isThrownBy(() -> tableGroup.ungroup(hasCookingOrMealOrder));
         }
     }
 }
