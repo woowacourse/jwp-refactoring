@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TableService {
@@ -35,10 +36,25 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyUpdateRequest request) {
-        final Order findOrder = orderRepository.findOrderByOrderTableId(orderTableId);
-        findOrder.changeOrderTableEmpty(request.isEmpty());
+        final Optional<Order> maybeOrder = orderRepository.findByOrderTableId(orderTableId);
+        if (maybeOrder.isPresent()) {
+            return changeEmptyByOrder(maybeOrder.get(), request.isEmpty());
+        }
+
+        return changeEmptyByOrderTable(orderTableId, request.isEmpty());
+    }
+
+    private OrderTable changeEmptyByOrder(final Order findOrder, final boolean isEmpty) {
+        findOrder.changeOrderTableEmpty(isEmpty);
 
         return findOrder.getOrderTable();
+    }
+
+    private OrderTable changeEmptyByOrderTable(final Long orderTableId, final boolean isEmpty) {
+        final OrderTable findOrderTable = orderTableRepository.findOrderTableById(orderTableId);
+        findOrderTable.changeOrderTableEmpty(isEmpty);
+
+        return findOrderTable;
     }
 
     @Transactional

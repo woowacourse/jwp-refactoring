@@ -58,18 +58,37 @@ class TableServiceTest extends ApplicationTestConfig {
     }
 
     @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("비어있는 상태로 변경")
+    @DisplayName("빈 상태 변경")
     @Nested
     class ChangeEmptyNestedTest {
 
-        @DisplayName("[SUCCESS] 주문 테이블이 완료되어 있는 상태일 경우 비어있는 상태로 변경할 수 있다.")
+        @DisplayName("[SUCCESS] 주문 상태를 고려하며 주문 테이블의 빈 상태를 변경한다.")
         @Test
-        void success_changeEmpty() {
+        void success_changeEmpty_when_order_isExists() {
             // given
             final TableGroup noTableGroup = null;
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
             final Order savedOrderStatus = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
             savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
+
+            // when
+            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
+                softly.assertThat(actual.getTableGroup()).isEqualTo(savedOrderTable.getTableGroup());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+                softly.assertThat(actual.isEmpty()).isTrue();
+            });
+        }
+
+        @DisplayName("[SUCCESS] 주문이 없는 주문 테이블의 빈 상태를 변경한다.")
+        @Test
+        void success_changeEmpty_when_order_isNotExists() {
+            // given
+            final TableGroup noTableGroup = null;
+            final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(noTableGroup, 10, false));
 
             // when
             final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
@@ -135,7 +154,6 @@ class TableServiceTest extends ApplicationTestConfig {
     @DisplayName("손님 수 수정")
     @Nested
     class ChangeNumberOfGuestsNestedTest {
-
 
         @DisplayName("[EXCEPTION] 손님 수를 0 미만으로 수정할 경우 예외가 발생한다.")
         @ParameterizedTest
