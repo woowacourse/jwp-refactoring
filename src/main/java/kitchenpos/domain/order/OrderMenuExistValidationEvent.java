@@ -1,12 +1,12 @@
-package kitchenpos.domain.menu;
+package kitchenpos.domain.order;
 
 import java.util.List;
 
-public class MenuExistValidationEvent {
+public class OrderMenuExistValidationEvent {
 
     private final List<Long> menuIds;
 
-    public MenuExistValidationEvent(final List<Long> menuIds) {
+    public OrderMenuExistValidationEvent(final List<Long> menuIds) {
         this.menuIds = menuIds;
     }
 

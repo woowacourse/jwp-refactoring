@@ -3,6 +3,7 @@ package kitchenpos.domain.menu;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.menu.MenuRepository;
+import kitchenpos.domain.order.OrderMenuExistValidationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ public class MenuEventHandler {
     }
 
     @EventListener
-    public void handle(final MenuExistValidationEvent event) {
+    public void handle(final OrderMenuExistValidationEvent event) {
         final List<Long> menuIds = event.getMenuIds();
         final List<Menu> menus = menuRepository.findAllByIdIn(menuIds);
         if (menus.isEmpty() || !Objects.equals(menus.size(), menuIds.size())) {

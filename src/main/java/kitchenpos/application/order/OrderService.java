@@ -8,10 +8,10 @@ import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.result.OrderResult;
 import kitchenpos.dao.order.OrderLineItemRepository;
 import kitchenpos.dao.order.OrderRepository;
-import kitchenpos.domain.menu.MenuExistValidationEvent;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.table.TableExistValidationEvent;
+import kitchenpos.domain.order.OrderMenuExistValidationEvent;
+import kitchenpos.domain.order.OrderTableExistValidationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,7 @@ public class OrderService {
     public OrderResult create(final OrderCreationRequest request) {
         final List<OrderItemsWithQuantityRequest> orderLineItemRequests = request.getOrderLineItems();
         final Long orderTableId = request.getOrderTableId();
-        eventPublisher.publishEvent(new TableExistValidationEvent(orderTableId));
+        eventPublisher.publishEvent(new OrderTableExistValidationEvent(orderTableId));
         final Order order = orderRepository.save(new Order(orderTableId));
         final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
         orderLineItemRepository.saveAll(orderLineItems);
@@ -50,7 +50,7 @@ public class OrderService {
             final List<OrderItemsWithQuantityRequest> orderLineItemRequests
     ) {
         final List<Long> menuIds = extractMenuIds(orderLineItemRequests);
-        eventPublisher.publishEvent(new MenuExistValidationEvent(menuIds));
+        eventPublisher.publishEvent(new OrderMenuExistValidationEvent(menuIds));
         return orderLineItemRequests.stream().map(orderItemRequest ->
                 new OrderLineItem(order, orderItemRequest.getMenuId(), orderItemRequest.getQuantity())
         ).collect(Collectors.toList());

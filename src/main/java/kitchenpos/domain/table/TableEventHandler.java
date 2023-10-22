@@ -1,6 +1,7 @@
 package kitchenpos.domain.table;
 
 import kitchenpos.dao.table.OrderTableRepository;
+import kitchenpos.domain.order.OrderTableExistValidationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ public class TableEventHandler {
     }
 
     @EventListener
-    public void handle(final TableExistValidationEvent event) {
+    public void handle(final OrderTableExistValidationEvent event) {
         final Long tableId = event.getTableId();
         final OrderTable orderTable = orderTableRepository.findById(tableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
