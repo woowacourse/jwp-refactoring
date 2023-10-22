@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import kitchenpos.application.dto.response.ProductResponse;
@@ -24,7 +25,8 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품을_등록할_수_있다() {
             // given
-            final var request = ProductFixture.상품요청_망고_1000원();
+            final var product = ProductFixture.상품_망고_1000원();
+            final var request = ProductFixture.상품요청_생성(product);
 
             // when
             final var actual = productService.create(request);
@@ -34,6 +36,16 @@ class ProductServiceTest extends ServiceTest {
             assertThat(actual).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(expected);
+        }
+
+        @Test
+        void 상품의_가격이_0보다_작으면_예외가_발생한다() {
+            // given
+            final var request = ProductFixture.상품요청_생성("INVALID", -1);
+
+            // when & then
+            assertThatThrownBy(() -> productService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 

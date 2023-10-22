@@ -23,7 +23,11 @@ public class ProductFixture {
         return new Product(999999L, "INVALID", BigDecimal.valueOf(999999));
     }
 
-    public static ProductCreateRequest 상품요청_망고_1000원() {
-        return new ProductCreateRequest("망고", BigDecimal.valueOf(1000));
+    public static ProductCreateRequest 상품요청_생성(final Product product) {
+        return new ProductCreateRequest(product.getName(), product.getPrice());
+    }
+
+    public static ProductCreateRequest 상품요청_생성(final String name, final int price) {
+        return new ProductCreateRequest(name, BigDecimal.valueOf(price));
     }
 }
