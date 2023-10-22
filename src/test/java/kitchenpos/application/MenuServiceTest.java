@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.kitchenposFixture.메뉴그룹만들기;
-import static kitchenpos.application.kitchenposFixture.메뉴상품만들기;
-import static kitchenpos.application.kitchenposFixture.상품만들기;
-import static kitchenpos.application.kitchenposFixture.저장할메뉴만들기;
+import static kitchenpos.application.KitchenposFixture.메뉴그룹만들기;
+import static kitchenpos.application.KitchenposFixture.메뉴상품만들기;
+import static kitchenpos.application.KitchenposFixture.상품만들기;
+import static kitchenpos.application.KitchenposFixture.저장할메뉴만들기;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

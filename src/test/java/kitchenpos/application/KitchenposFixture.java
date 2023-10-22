@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.response.MenuGroupResponse;
 import kitchenpos.application.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -15,8 +16,9 @@ import kitchenpos.domain.product.Name;
 import kitchenpos.domain.product.Price;
 import org.springframework.util.ReflectionUtils;
 
-public class kitchenposFixture {
-    public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId, final MenuProduct... menuProducts) {
+public class KitchenposFixture {
+    public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId,
+                                final MenuProduct... menuProducts) {
         final Menu menu = new Menu();
         menu.setId(9987L);
         menu.setName(name);
@@ -40,9 +42,8 @@ public class kitchenposFixture {
     }
 
     public static MenuGroup 메뉴그룹만들기(final MenuGroupService menuGroupService) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("코딱지메뉴그룹");
-        return menuGroupService.create(menuGroup);
+        final MenuGroupResponse response = menuGroupService.create("코딱지메뉴그룹");
+        return new MenuGroup(response.getId(), response.getName());
     }
 
     public static OrderTable 주문테이블만들기(final TableService tableService, final boolean isEmpty) {
