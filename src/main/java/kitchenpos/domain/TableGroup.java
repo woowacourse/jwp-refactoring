@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -25,9 +26,16 @@ public class TableGroup {
     }
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         group(orderTables);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables){
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException("테이블 개수 2개 이상부터 단체 지정 가능합니다.");
+        }
     }
 
     private void group(final List<OrderTable> orderTables) {

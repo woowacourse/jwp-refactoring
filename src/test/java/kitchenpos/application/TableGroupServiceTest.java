@@ -101,7 +101,20 @@ class TableGroupServiceTest {
             // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("존재하지 않는 테이블이 포함되어 있습니다.");
+                    .hasMessage("존재하지 않는 테이블 또는 중복 테이블이 포함되어 있습니다.");
+        }
+
+        @DisplayName("중복되는 주문 테이블이 들어있으면 예외처리 한다")
+        @Test
+        void throwExceptionWhenContainsDuplicatedOrderTable() {
+            // given
+            final TableResponse orderTable1 = tableService.create(OrderTableFixture.createEmpty());
+            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(orderTable1.getId(), orderTable1.getId()));
+
+            // then
+            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("존재하지 않는 테이블 또는 중복 테이블이 포함되어 있습니다.");
         }
 
         @DisplayName("비어있지 않은 테이블이 포함되어 있으면 예외처리 한다")

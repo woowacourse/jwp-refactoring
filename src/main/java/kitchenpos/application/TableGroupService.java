@@ -31,33 +31,16 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<Long> orderTableIds = request.getOrderTables();
-        validateOrderTableCounts(orderTableIds);
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateInvalidOrderTable(orderTableIds, savedOrderTables);
-        validateTableGroupingAvailable(savedOrderTables);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
-    private void validateTableGroupingAvailable(final List<OrderTable> savedOrderTables) {
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || !savedOrderTable.isTableGroupEmpty()) {
-                throw new IllegalArgumentException("단체 지정이 불가능한 테이블이 포함되어 있습니다.");
-            }
-        }
-    }
-
-    private void validateOrderTableCounts(final List<Long> orderTableIds) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException("테이블 개수 2개 이상부터 단체 지정 가능합니다.");
-        }
-    }
-
     private void validateInvalidOrderTable(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 테이블이 포함되어 있습니다.");
+            throw new IllegalArgumentException("존재하지 않는 테이블 또는 중복 테이블이 포함되어 있습니다.");
         }
     }
 

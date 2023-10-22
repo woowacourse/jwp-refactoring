@@ -108,8 +108,15 @@ public class OrderTable {
     }
 
     public void groupBy(final TableGroup tableGroup) {
+        validateGroupAvailable();
         this.empty = false;
         this.tableGroup = tableGroup;
+    }
+
+    private void validateGroupAvailable() {
+        if (!isEmpty() || !isTableGroupEmpty()) {
+            throw new IllegalArgumentException("단체 지정이 불가능한 테이블이 포함되어 있습니다.");
+        }
     }
 
     public void ungroupBy(final TableGroup tableGroup) {
