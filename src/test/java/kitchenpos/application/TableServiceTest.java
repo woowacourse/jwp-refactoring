@@ -5,11 +5,13 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableChangeGuestRequest;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +36,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private TableService tableService;
@@ -92,7 +97,7 @@ class TableServiceTest {
         // then
         assertSoftly(softly -> {
             softly.assertThat(result.getId()).isEqualTo(savedOrderTable.getId());
-            softly.assertThat(result.getTableGroupId()).isEqualTo(savedOrderTable.getTableGroupId());
+            softly.assertThat(result.getTableGroupId()).isNull();
             softly.assertThat(result.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
             softly.assertThat(result.isEmpty()).isTrue();
         });
@@ -114,7 +119,8 @@ class TableServiceTest {
     @Test
     void change_orderTable_empty_fail_with_not_null_group() {
         // given
-        final OrderTable alreadyContainedOrderTable = orderTableRepository.save(new OrderTable(null, 1L, 5, false));
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave());
+        final OrderTable alreadyContainedOrderTable = orderTableRepository.save(new OrderTable(null, tableGroup, 5, false));
 
         // when
         // then
@@ -123,9 +129,8 @@ class TableServiceTest {
     }
 
     @DisplayName("주문 테이블의 상태가 COOKING이거나 MEAL인 경우 주문 테이블의 상태를 변경할 수 없다.")
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    @ParameterizedTest
-    void change_orderTable_empty_fail_with_invalid_orderStatus(final String status) {
+    @Test
+    void change_orderTable_empty_fail_with_invalid_orderStatus() {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
         orderRepository.save(Order.forSave(savedOrderTable.getId()));
