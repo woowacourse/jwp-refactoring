@@ -11,10 +11,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -24,6 +20,10 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -49,16 +49,16 @@ class MenuServiceTest {
         .build();
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -103,7 +103,7 @@ class MenuServiceTest {
                         new MenuProductCreateRequest(2L, 3L))
                 );
 
-                given(productDao.findById(anyLong()))
+                given(productRepository.findById(anyLong()))
                     .willReturn(
                         Optional.of(PRODUCT_1000),
                         Optional.of(PRODUCT_500)
@@ -124,7 +124,7 @@ class MenuServiceTest {
                 1L,
                 List.of(new MenuProductCreateRequest(1L, 5L)));
 
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(false);
 
             // when && then
@@ -141,9 +141,9 @@ class MenuServiceTest {
                 1L,
                 List.of(new MenuProductCreateRequest(1L, 5L)));
 
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
@@ -167,16 +167,16 @@ class MenuServiceTest {
                     secondMenuProductRequest)
             );
 
-            given(menuGroupDao.existsById(anyLong()))
+            given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                 .willReturn(
                     Optional.of(PRODUCT_1000),
                     Optional.of(PRODUCT_500)
                 );
 
             Long menuId = 1L;
-            given(menuDao.save(any()))
+            given(menuRepository.save(any()))
                 .willReturn(new Menu(
                     menuId,
                     menuName,
@@ -185,7 +185,7 @@ class MenuServiceTest {
                     new ArrayList<>()
                 ));
 
-            given(menuProductDao.save(any()))
+            given(menuProductRepository.save(any()))
                 .willReturn(
                     toEntity(1L, menuId, firstMenuProductRequest),
                     toEntity(2L, menuId, secondMenuProductRequest));
@@ -225,9 +225,9 @@ class MenuServiceTest {
             .withMenuProducts(ofFirstMenu)
             .build();
 
-        given(menuDao.findAll())
+        given(menuRepository.findAll())
             .willReturn(List.of(menu));
-        given(menuProductDao.findAllByMenuId(anyLong()))
+        given(menuProductRepository.findAllByMenuId(anyLong()))
             .willReturn(ofFirstMenu);
 
         // when

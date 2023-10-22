@@ -11,10 +11,6 @@ import static org.mockito.BDDMockito.given;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -26,6 +22,10 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -43,16 +43,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Captor
     ArgumentCaptor<Order> orderArgumentCaptor;
@@ -90,7 +90,7 @@ class OrderServiceTest {
                     new OrderLineRequest(1L, 5L)
                 ));
 
-            given(menuDao.countByIdIn(anyList()))
+            given(menuRepository.countByIdIn(anyList()))
                 .willReturn(1L);
 
             // when && then
@@ -109,10 +109,10 @@ class OrderServiceTest {
                     new OrderLineRequest(1L, 5L)
                 ));
 
-            given(menuDao.countByIdIn(anyList()))
+            given(menuRepository.countByIdIn(anyList()))
                 .willReturn(2L);
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
@@ -132,10 +132,10 @@ class OrderServiceTest {
                 .withEmpty(true)
                 .build();
 
-            given(menuDao.countByIdIn(anyList()))
+            given(menuRepository.countByIdIn(anyList()))
                 .willReturn(1L);
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
             // when && then
@@ -162,14 +162,14 @@ class OrderServiceTest {
                     .withEmpty(false)
                     .build();
 
-                given(menuDao.countByIdIn(anyList()))
+                given(menuRepository.countByIdIn(anyList()))
                     .willReturn(2L);
 
-                given(orderTableDao.findById(anyLong()))
+                given(orderTableRepository.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
 
                 long orderId = 1L;
-                given(orderDao.save(any())).willReturn(
+                given(orderRepository.save(any())).willReturn(
                     OrderFixture.builder()
                         .withId(orderId)
                         .withOrderStatus(OrderStatus.COOKING.name())
@@ -177,7 +177,7 @@ class OrderServiceTest {
                         .build()
                 );
 
-                given(orderLineItemDao.save(any()))
+                given(orderLineItemRepository.save(any()))
                     .willReturn(toEntity(1L, orderId, firstOrderLineRequest),
                         toEntity(2L, orderId, secondOrderLineRequest));
 
@@ -206,7 +206,7 @@ class OrderServiceTest {
         Order order = OrderFixture.builder()
             .withId(orderId)
             .build();
-        given(orderDao.findAll())
+        given(orderRepository.findAll())
             .willReturn(List.of(
                 order
             ));
@@ -214,7 +214,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = OrderLineItemFixture.builder()
             .withOrderId(orderId)
             .build();
-        given(orderLineItemDao.findAllByOrderId(anyLong()))
+        given(orderLineItemRepository.findAllByOrderId(anyLong()))
             .willReturn(
                 List.of(orderLineItem)
             );
@@ -239,7 +239,7 @@ class OrderServiceTest {
             // given
             OrderStatusChangeRequest request = new OrderStatusChangeRequest(
                 OrderStatus.COMPLETION.name());
-            given(orderDao.findById(anyLong()))
+            given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
@@ -256,7 +256,7 @@ class OrderServiceTest {
                 .withOrderStatus(OrderStatus.COMPLETION.name())
                 .build();
 
-            given(orderDao.findById(anyLong()))
+            given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(savedOrder));
 
             // when && then
@@ -274,15 +274,15 @@ class OrderServiceTest {
                 .withOrderStatus(OrderStatus.COOKING.name())
                 .build();
 
-            given(orderDao.findById(anyLong()))
+            given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(savedOrder));
 
-            given(orderDao.save(any()))
+            given(orderRepository.save(any()))
                 .willReturn(OrderFixture.builder()
                     .withOrderStatus(completionStatus)
                     .build());
 
-            given(orderLineItemDao.findAllByOrderId(anyLong()))
+            given(orderLineItemRepository.findAllByOrderId(anyLong()))
                 .willReturn(List.of(OrderLineItemFixture.builder().build()));
 
             // when

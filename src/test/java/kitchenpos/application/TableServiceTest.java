@@ -11,13 +11,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.request.OrderTableEmptyChangeRequest;
 import kitchenpos.dto.request.OrderTableGuestChangeRequest;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -35,10 +35,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -51,7 +51,7 @@ class TableServiceTest {
         // given
         OrderTableCreateRequest request = new OrderTableCreateRequest(100, true);
 
-        given(orderTableDao.save(any()))
+        given(orderTableRepository.save(any()))
             .willReturn(
                 OrderTableFixture.builder()
                     .build());
@@ -61,11 +61,11 @@ class TableServiceTest {
 
         // then
         assertSoftly(softAssertions -> {
-            verify(orderTableDao, times(1)).save(orderTableArgumentCaptor.capture());
+            verify(orderTableRepository, times(1)).save(orderTableArgumentCaptor.capture());
             OrderTable savedOrderTabled = orderTableArgumentCaptor.getValue();
             assertThat(savedOrderTabled.getId()).isNull();
             assertThat(savedOrderTabled.getTableGroup()).isNull();
-            assertThat(savedOrderTabled.isEmpty()).isEqualTo(true);
+            assertThat(savedOrderTabled.isEmpty()).isTrue();
             assertThat(savedOrderTabled.getNumberOfGuests()).isEqualTo(100);
         });
     }
@@ -80,7 +80,7 @@ class TableServiceTest {
             // given
             OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(true);
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
@@ -96,7 +96,7 @@ class TableServiceTest {
             OrderTable reqeustOrderTable = OrderTableFixture.builder()
                 .withTableGroupId(1L)
                 .build();
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(reqeustOrderTable));
 
             // when && then
@@ -111,10 +111,10 @@ class TableServiceTest {
 
             OrderTable reqeustOrderTable = OrderTableFixture.builder()
                 .build();
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(reqeustOrderTable));
 
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(true);
 
             // when && then
@@ -128,15 +128,15 @@ class TableServiceTest {
             boolean changeEmpty = true;
             OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(changeEmpty);
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(OrderTableFixture.builder()
                     .withEmpty(!changeEmpty)
                     .build()));
 
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
                 .willReturn(false);
 
-            given(orderTableDao.save(any()))
+            given(orderTableRepository.save(any()))
                 .willReturn(OrderTableFixture.builder()
                     .withEmpty(changeEmpty)
                     .build());
@@ -146,7 +146,7 @@ class TableServiceTest {
 
             // then
             assertSoftly(softAssertions -> {
-                verify(orderTableDao, times(1)).save(orderTableArgumentCaptor.capture());
+                verify(orderTableRepository, times(1)).save(orderTableArgumentCaptor.capture());
                 OrderTable captorValue = orderTableArgumentCaptor.getValue();
                 assertThat(captorValue.isEmpty()).isEqualTo(changeEmpty);
             });
@@ -173,7 +173,7 @@ class TableServiceTest {
             // given
             OrderTableGuestChangeRequest request = new OrderTableGuestChangeRequest(1);
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
             // when && then
@@ -190,7 +190,7 @@ class TableServiceTest {
                 .withNumberOfGuests(1)
                 .build();
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(
                     OrderTableFixture.builder()
                         .withEmpty(true)
@@ -214,10 +214,10 @@ class TableServiceTest {
                 .withEmpty(false)
                 .build();
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
-            given(orderTableDao.save(any()))
+            given(orderTableRepository.save(any()))
                 .willReturn(orderTable);
 
             // when
@@ -225,7 +225,7 @@ class TableServiceTest {
 
             // then
             assertSoftly(softAssertions -> {
-                verify(orderTableDao, times(1)).save(orderTableArgumentCaptor.capture());
+                verify(orderTableRepository, times(1)).save(orderTableArgumentCaptor.capture());
                 OrderTable value = orderTableArgumentCaptor.getValue();
                 assertThat(value.getNumberOfGuests()).isEqualTo(1);
             });

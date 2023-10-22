@@ -12,14 +12,14 @@ import static org.mockito.Mockito.verify;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -41,13 +41,13 @@ class TableGroupServiceTest {
         .withId(1L)
         .build();
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -63,7 +63,7 @@ class TableGroupServiceTest {
             // given
             TableGroupCreateRequest request = new TableGroupCreateRequest(NOW, Collections.emptyList());
 
-            given(tableGroupDao.save(any()))
+            given(tableGroupRepository.save(any()))
                 .willReturn(TABLE_GROUP);
 
             // when && then
@@ -91,7 +91,7 @@ class TableGroupServiceTest {
                 .withId(1L)
                 .build();
 
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(existOrderTable));
 
             // when && then
@@ -113,10 +113,10 @@ class TableGroupServiceTest {
                 .withId(2L)
                 .build();
 
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(emptyOrderTable, nonEmptyOrderTable));
 
-            given(tableGroupDao.save(any()))
+            given(tableGroupRepository.save(any()))
                 .willReturn(TABLE_GROUP);
 
             // when && then
@@ -140,10 +140,10 @@ class TableGroupServiceTest {
                 .withId(2L)
                 .build();
 
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(groupedOrderTable, orderTable));
 
-            given(tableGroupDao.save(any()))
+            given(tableGroupRepository.save(any()))
                 .willReturn(TABLE_GROUP);
 
             // when && then
@@ -165,10 +165,10 @@ class TableGroupServiceTest {
                 .withId(2L)
                 .build();
 
-            given(orderTableDao.findAllByIdIn(anyList()))
+            given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
 
-            given(tableGroupDao.save(any()))
+            given(tableGroupRepository.save(any()))
                 .willReturn(TABLE_GROUP);
 
             // when
@@ -176,7 +176,7 @@ class TableGroupServiceTest {
 
             // then
             assertSoftly(softAssertions -> {
-                verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
+                verify(orderTableRepository, times(2)).save(orderTableArgumentCaptor.capture());
                 OrderTable value = orderTableArgumentCaptor.getValue();
                 assertThat(value.getTableGroup().getId()).isEqualTo(1L);
                 assertThat(value.isEmpty()).isFalse();
@@ -196,11 +196,11 @@ class TableGroupServiceTest {
             OrderTable secondOrderTable = OrderTableFixture.builder()
                 .withId(2L)
                 .build();
-            given(orderTableDao.findAllByTableGroupId(any()))
+            given(orderTableRepository.findAllByTableGroupId(any()))
                 .willReturn(List.of(
                     firstOrderTable,
                     secondOrderTable));
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(),anyList()))
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(true);
 
             // when && then
@@ -220,19 +220,19 @@ class TableGroupServiceTest {
                 .withId(2L)
                 .withTableGroupId(1L)
                 .build();
-            given(orderTableDao.findAllByTableGroupId(any()))
+            given(orderTableRepository.findAllByTableGroupId(any()))
                 .willReturn(List.of(
                     firstOrderTable,
                     secondOrderTable));
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(),anyList()))
+            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
                 .willReturn(false);
 
             // when
             tableGroupService.ungroup(1L);
 
             // then
-            assertSoftly(softAssertions ->{
-                verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
+            assertSoftly(softAssertions -> {
+                verify(orderTableRepository, times(2)).save(orderTableArgumentCaptor.capture());
                 assertThat(orderTableArgumentCaptor.getValue().getTableGroup()).isNull();
                 assertThat(orderTableArgumentCaptor.getValue().isEmpty()).isFalse();
             });

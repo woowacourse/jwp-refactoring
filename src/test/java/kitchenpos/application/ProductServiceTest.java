@@ -7,22 +7,19 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixture;
-import org.assertj.core.api.Assertions;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.Equality;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -31,7 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -71,7 +68,7 @@ class ProductServiceTest {
                 .withName(productName)
                 .withPrice(productPrice)
                 .build();
-            given(productDao.save(any()))
+            given(productRepository.save(any()))
                 .willReturn(product);
 
             // when
@@ -89,7 +86,7 @@ class ProductServiceTest {
     void 목록_조회() {
         // given
         List<Product> products = List.of(ProductFixture.builder().build());
-        given((productDao.findAll()))
+        given((productRepository.findAll()))
             .willReturn(products);
 
         // when
