@@ -44,7 +44,8 @@ class TableIntegrationTest extends IntegrationTest {
             tableGroupService.create(List.of(orderTable1.getId(), orderTable2.getId()));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), true))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("그룹된 테이블을 비울 수 없습니다.");
         }
 
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
@@ -57,7 +58,8 @@ class TableIntegrationTest extends IntegrationTest {
             order.changeOrderStatus(orderStatus);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("조리중 또는 식사중인 테이블은 비울 수 없습니다.");
         }
 
         @Test

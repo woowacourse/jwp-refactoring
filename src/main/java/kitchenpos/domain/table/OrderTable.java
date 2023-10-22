@@ -43,10 +43,10 @@ public class OrderTable {
 
     public void changeEmpty(boolean empty) {
         if (this.grouped) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("그룹된 테이블을 비울 수 없습니다.");
         }
         if (orders.inCookingOrMeal()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리중 또는 식사중인 테이블은 비울 수 없습니다.");
         }
 
         this.empty = empty;
