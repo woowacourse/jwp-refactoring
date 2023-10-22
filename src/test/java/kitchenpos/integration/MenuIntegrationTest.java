@@ -1,11 +1,14 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -28,21 +31,10 @@ class MenuIntegrationTest extends IntegrationTest {
         // 메뉴 그룹 생성
         final MenuGroup menuGroup = createMenuGroup("외식류");
 
-        // 메뉴 생성
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(chicken.getId());
-        menuProduct1.setQuantity(1);
-
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(pizza.getId());
-        menuProduct2.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName("치킨 + 피자");
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setPrice(BigDecimal.valueOf(1000));
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
-        final HttpEntity<Menu> request = new HttpEntity<>(menu);
+        // 메뉴 생성 요청
+        final MenuCreateRequest menu = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(1000), menuGroup.getId(),
+                List.of(new MenuProductRequest(chicken.getId(), 1L), new MenuProductRequest(pizza.getId(), 1L)));
+        final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menu);
 
         // when
         final ResponseEntity<Menu> response = testRestTemplate
@@ -66,27 +58,16 @@ class MenuIntegrationTest extends IntegrationTest {
         final Product pizza = createProduct("pizza", 500);
         final MenuGroup menuGroup = createMenuGroup("외식류");
 
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(chicken.getId());
-        menuProduct1.setQuantity(1);
-
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(pizza.getId());
-        menuProduct2.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName("치킨 + 피자");
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setPrice(BigDecimal.valueOf(1000));
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
-        final HttpEntity<Menu> request = new HttpEntity<>(menu);
+        final MenuCreateRequest menuRequest = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(1000), menuGroup.getId(),
+                List.of(new MenuProductRequest(chicken.getId(), 1L), new MenuProductRequest(pizza.getId(), 1L)));
+        final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuRequest);
 
         testRestTemplate.postForEntity("/api/menus", request, Menu.class);
 
         // when
-        final ResponseEntity<Menu[]> response = testRestTemplate
-                .getForEntity("/api/menus", Menu[].class);
-        final List<Menu> menus = Arrays.asList(response.getBody());
+        final ResponseEntity<List<Menu>> response = testRestTemplate
+                .exchange("/api/menus", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+        final List<Menu> menus = response.getBody();
 
         // then
         assertAll(

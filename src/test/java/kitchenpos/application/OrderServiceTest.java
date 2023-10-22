@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -8,6 +7,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.persistence.MenuRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private OrderDao orderDao;
@@ -58,7 +58,7 @@ class OrderServiceTest {
             final OrderLineItem savedOrderLineItem = new OrderLineItem();
             savedOrderLineItem.setOrderId(1L);
 
-            when(menuDao.countByIdIn(any()))
+            when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
             when(orderTableDao.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
@@ -101,7 +101,7 @@ class OrderServiceTest {
         @Test
         void 주문을_생성할_때_전달한_주문_항목이_DB에_존재하지_않으면_실패한다() {
             // given
-            when(menuDao.countByIdIn(any()))
+            when(menuRepository.countByIdIn(any()))
                     .thenReturn(1L);
 
             // when
@@ -122,7 +122,7 @@ class OrderServiceTest {
         @Test
         void 주문을_생성할_때_전달한_주문_테이블이_DB에_존재하지_않으면_실패한다() {
             // given
-            when(menuDao.countByIdIn(any()))
+            when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
             when(orderTableDao.findById(anyLong()))
                     .thenReturn(Optional.empty());
@@ -148,7 +148,7 @@ class OrderServiceTest {
             final OrderTable savedOrderTable = new OrderTable();
             savedOrderTable.setEmpty(true);
 
-            when(menuDao.countByIdIn(any()))
+            when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
             when(orderTableDao.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));

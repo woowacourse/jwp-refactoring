@@ -1,5 +1,7 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -117,20 +119,9 @@ class OrderIntegrationTest extends IntegrationTest {
         final Product pizza = createProduct("pizza", 500);
         final MenuGroup menuGroup = createMenuGroup("외식");
 
-        final MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(chicken.getId());
-        menuProduct1.setQuantity(1);
-
-        final MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(pizza.getId());
-        menuProduct2.setQuantity(1);
-
-        final Menu menu = new Menu();
-        menu.setName(name);
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2));
-        final HttpEntity<Menu> request = new HttpEntity<>(menu);
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, BigDecimal.valueOf(price), menuGroup.getId(),
+                List.of(new MenuProductRequest(chicken.getId(), 1L), new MenuProductRequest(pizza.getId(), 1L)));
+        final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuCreateRequest);
 
         return testRestTemplate
                 .postForEntity("/api/menus", request, Menu.class)
