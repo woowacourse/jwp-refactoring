@@ -7,7 +7,7 @@ import kitchenpos.domain.exception.InvalidQuantityException;
 @Embeddable
 public class Quantity {
 
-    @Column
+    @Column(name = "quantity")
     private final long value;
 
     protected Quantity() {

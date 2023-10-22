@@ -10,7 +10,7 @@ public class Name {
 
     private static final int MAXIMUM_NAME_LENGTH = 255;
 
-    @Column
+    @Column(name = "name")
     private String value;
 
     protected Name() {

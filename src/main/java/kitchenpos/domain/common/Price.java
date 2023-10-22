@@ -10,7 +10,7 @@ public class Price implements Comparable<Price> {
 
     public static final Price ZERO = new Price();
 
-    @Column
+    @Column(name = "price")
     private final BigDecimal value;
 
     protected Price() {
