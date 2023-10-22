@@ -10,7 +10,6 @@ import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
 import kitchenpos.application.dto.result.OrderTableResult;
 import kitchenpos.application.dto.result.TableGroupResult;
-import kitchenpos.application.table.TableGroupService;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
@@ -129,8 +128,8 @@ class TableGroupServiceTest extends IntegrationTest {
         final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
         final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
         final TableGroup tableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
-        orderTableA.addOrder(generateOrder(OrderStatus.COMPLETION, orderTableA));
-        orderTableB.addOrder(generateOrder(OrderStatus.COMPLETION, orderTableB));
+        generateOrder(OrderStatus.COMPLETION, orderTableA);
+        generateOrder(OrderStatus.COMPLETION, orderTableB);
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -150,9 +149,9 @@ class TableGroupServiceTest extends IntegrationTest {
             // given
             final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
             final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
+            generateOrder(OrderStatus.COOKING, orderTableA);
+            generateOrder(OrderStatus.COMPLETION, orderTableB);
             final TableGroup tableGroup = generateTableGroup(List.of(orderTableA, orderTableB));
-            orderTableA.addOrder(generateOrder(OrderStatus.COOKING, orderTableA));
-            orderTableB.addOrder(generateOrder(OrderStatus.COMPLETION, orderTableB));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

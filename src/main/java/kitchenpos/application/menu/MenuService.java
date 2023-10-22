@@ -14,6 +14,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.vo.Price;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,8 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException("MenuGroup does not exist."));
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
         final List<MenuProduct> menuProducts = getMenuProductsByRequest(menu, request.getMenuProducts());
-        menu.applyMenuProducts(menuProducts);
+        final Price totalPrice = calculateTotalPrice(menuProducts);
+        menu.applyMenuProducts(menuProducts, totalPrice);
         return MenuResult.from(menuRepository.save(menu));
     }
 
@@ -53,7 +55,7 @@ public class MenuService {
                 .stream().collect(Collectors.toMap(Product::getId, Function.identity()));
         return menuProductRequests.stream().map(menuProductRequest -> {
             final Product product = getProductByRequestId(menuProductRequest, productsById);
-            return new MenuProduct(menu, product, menuProductRequest.getQuantity());
+            return new MenuProduct(menu, product.getId(), menuProductRequest.getQuantity());
         }).collect(Collectors.toList());
     }
 
@@ -70,6 +72,17 @@ public class MenuService {
         return productsById.computeIfAbsent(productId.getProductId(), id -> {
             throw new IllegalArgumentException("Product does not exist.");
         });
+    }
+
+    private Price calculateTotalPrice(final List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+                .map(this::calculateMenuProductPrice)
+                .reduce(Price.getDefault(), Price::add);
+    }
+
+    private Price calculateMenuProductPrice(final MenuProduct menuProduct) {
+        final Product product = productRepository.getReferenceById(menuProduct.getProductId());
+        return product.getPrice().multiply(menuProduct.getQuantity());
     }
 
     @Transactional(readOnly = true)

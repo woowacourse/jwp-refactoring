@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -15,21 +13,10 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     @Test
-    void throw_when_order_table_status_is_empty() {
-        // given
-        final OrderTable emptyTable = new OrderTable(null, 0, true);
-
-        // when & then
-        assertThatThrownBy(() -> new Order(emptyTable))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Order from empty table is not allowed");
-    }
-
-    @Test
     void throw_when_try_to_change_completed_order_status() {
         // given
         final OrderTable orderTable = new OrderTable(null, 0, false);
-        final Order order = new Order(null, orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
+        final Order order = new Order(null, orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
 
         // when & then
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
@@ -41,7 +28,7 @@ class OrderTest {
     void change_order_status() {
         // given
         final OrderTable orderTable = new OrderTable(null, 0, false);
-        final Order order = new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
 
         // when
         order.changeOrderStatus(OrderStatus.MEAL);

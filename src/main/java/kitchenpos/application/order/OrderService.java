@@ -40,10 +40,17 @@ public class OrderService {
         final List<OrderItemsWithQuantityRequest> orderLineItemRequests = request.getOrderLineItems();
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-        final Order order = new Order(orderTable);
+        validateOrderTableIsNotEmpty(orderTable);
+        final Order order = new Order(orderTable.getId());
         final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
         order.applyOrderLineItems(orderLineItems);
         return OrderResult.from(orderRepository.save(order));
+    }
+
+    private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("Order from empty table is not allowed");
+        }
     }
 
     private List<OrderLineItem> getOrderLineItemsByRequest(
@@ -55,7 +62,7 @@ public class OrderService {
                 .collect(Collectors.toMap(Menu::getId, Function.identity()));
         return orderLineItemRequests.stream().map(orderItemRequest -> {
             final Menu menu = getMenuByRequestId(orderItemRequest, menusById);
-            return new OrderLineItem(order, menu, orderItemRequest.getQuantity());
+            return new OrderLineItem(order, menu.getId(), orderItemRequest.getQuantity());
         }).collect(Collectors.toList());
     }
 

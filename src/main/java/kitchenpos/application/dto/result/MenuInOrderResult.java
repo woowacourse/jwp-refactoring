@@ -5,19 +5,19 @@ import kitchenpos.domain.order.OrderLineItem;
 public class MenuInOrderResult {
 
     private final Long seq;
-    private final MenuResult menuResult;
+    private final Long menuIds;
     private final Long quantity;
 
-    public MenuInOrderResult(final Long seq, final MenuResult menuResult, final Long quantity) {
+    public MenuInOrderResult(final Long seq, final Long menuIds, final Long quantity) {
         this.seq = seq;
-        this.menuResult = menuResult;
+        this.menuIds = menuIds;
         this.quantity = quantity;
     }
 
     public static MenuInOrderResult from(final OrderLineItem orderLineItems) {
         return new MenuInOrderResult(
                 orderLineItems.getSeq(),
-                MenuResult.from(orderLineItems.getMenu()),
+                orderLineItems.getMenuId(),
                 orderLineItems.getQuantity()
         );
     }
@@ -26,8 +26,8 @@ public class MenuInOrderResult {
         return seq;
     }
 
-    public MenuResult getMenuResult() {
-        return menuResult;
+    public Long getMenuIds() {
+        return menuIds;
     }
 
     public Long getQuantity() {

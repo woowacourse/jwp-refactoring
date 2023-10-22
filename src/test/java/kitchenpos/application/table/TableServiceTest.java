@@ -9,7 +9,6 @@ import kitchenpos.application.dto.OrderTableCreationRequest;
 import kitchenpos.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.application.dto.OrderTableGuestAmountChangeRequest;
 import kitchenpos.application.dto.result.OrderTableResult;
-import kitchenpos.application.table.TableService;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
@@ -90,12 +89,13 @@ class TableServiceTest extends IntegrationTest {
                     .hasMessage("Cannot change empty status of table in group");
         }
 
+        //        @Disabled
         @Test
         void any_order_in_order_table_status_is_not_completion() {
             // given
             final OrderTable orderTable = generateOrderTableWithOutTableGroup(1, false);
-            orderTable.addOrder(generateOrder(OrderStatus.COOKING, orderTable));
-            orderTable.addOrder(generateOrder(OrderStatus.COMPLETION, orderTable));
+            generateOrder(OrderStatus.COOKING, orderTable);
+            generateOrder(OrderStatus.COMPLETION, orderTable);
             final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(false);
 
             // when & then

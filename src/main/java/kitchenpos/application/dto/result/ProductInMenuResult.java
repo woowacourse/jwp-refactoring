@@ -6,23 +6,23 @@ public class ProductInMenuResult {
 
     private final Long seq;
     private final Long quantity;
-    private final ProductResult productResult;
+    private final Long productId;
 
     public ProductInMenuResult(
             final Long seq,
             final Long quantity,
-            final ProductResult productResult
+            final Long productId
     ) {
         this.seq = seq;
         this.quantity = quantity;
-        this.productResult = productResult;
+        this.productId = productId;
     }
 
     public static ProductInMenuResult from(final MenuProduct menuProduct) {
         return new ProductInMenuResult(
                 menuProduct.getSeq(),
                 menuProduct.getQuantity(),
-                ProductResult.from(menuProduct.getProduct())
+                menuProduct.getProductId()
         );
     }
 
@@ -34,7 +34,7 @@ public class ProductInMenuResult {
         return quantity;
     }
 
-    public ProductResult getProductResult() {
-        return productResult;
+    public Long getProductId() {
+        return productId;
     }
 }

@@ -1,7 +1,5 @@
 package kitchenpos.domain.table;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
 
 @Entity
 public class OrderTable {
@@ -25,8 +20,6 @@ public class OrderTable {
     private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -67,25 +60,13 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public boolean isAbleToUnGroup() {
-        return orders.stream().allMatch(order -> order.getOrderStatus() == OrderStatus.COMPLETION);
-    }
-
     public void ungroup() {
         this.tableGroup = null;
         this.empty = false;
     }
 
-    public void addOrder(final Order order) {
-        if (!order.getOrderTable().getId().equals(this.id)) {
-            throw new IllegalArgumentException("Order from other table is not allowed");
-        }
-        orders.add(order);
-    }
-
     public void changeEmpty(final boolean empty) {
         validateGroupedTable();
-        validateOrdersStatus();
         this.empty = empty;
     }
 
@@ -94,13 +75,6 @@ public class OrderTable {
             return;
         }
         throw new IllegalArgumentException("Cannot change empty status of table in group");
-    }
-
-    private void validateOrdersStatus() {
-        if (orders.stream().allMatch(order -> order.getOrderStatus() == OrderStatus.COMPLETION)) {
-            return;
-        }
-        throw new IllegalArgumentException("Cannot change empty status of table with order status not completion");
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {

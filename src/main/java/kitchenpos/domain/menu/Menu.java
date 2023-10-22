@@ -54,15 +54,12 @@ public class Menu {
         this(null, name, Price.from(price), menuGroup, new ArrayList<>());
     }
 
-    public void applyMenuProducts(final List<MenuProduct> menuProducts) {
-        validateMenuProductsPrice(menuProducts);
+    public void applyMenuProducts(final List<MenuProduct> menuProducts, final Price totalPrice) {
+        validateMenuProductsPrice(totalPrice);
         this.menuProducts = menuProducts;
     }
 
-    private void validateMenuProductsPrice(final List<MenuProduct> menuProducts) {
-        final Price totalPrice = menuProducts.stream()
-                .map(MenuProduct::calculateProductsPrice)
-                .reduce(Price.getDefault(), Price::add);
+    private void validateMenuProductsPrice(final Price totalPrice) {
         if (this.price.isGreaterThan(totalPrice)) {
             throw new IllegalArgumentException("Sum of menu products price must be greater than menu price.");
         }

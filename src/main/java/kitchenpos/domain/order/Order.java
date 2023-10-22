@@ -5,15 +5,11 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.domain.table.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -22,9 +18,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
@@ -36,25 +30,18 @@ public class Order {
 
     public Order(
             final Long id,
-            final OrderTable orderTable,
+            final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime
     ) {
-        validate(orderTable);
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(final OrderTable orderTable) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
-    }
-
-    private void validate(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("Order from empty table is not allowed");
-        }
+    public Order(final Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void applyOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -68,12 +55,16 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isCompleted() {
+        return this.orderStatus == OrderStatus.COMPLETION;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

@@ -56,18 +56,6 @@ public class TableGroup {
         return orderTables.stream().allMatch(OrderTable::isAbleToGroup);
     }
 
-    public void ungroupOrderTables() {
-        if (isOrderTablesAbleToUngroup()) {
-            orderTables.forEach(OrderTable::ungroup);
-            return;
-        }
-        throw new IllegalArgumentException("Cannot ungroup non-completed table.");
-    }
-
-    private boolean isOrderTablesAbleToUngroup() {
-        return orderTables.stream().allMatch(OrderTable::isAbleToUnGroup);
-    }
-
     public Long getId() {
         return id;
     }

@@ -11,7 +11,6 @@ import kitchenpos.application.dto.OrderCreationRequest;
 import kitchenpos.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.result.OrderResult;
-import kitchenpos.application.order.OrderService;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
@@ -115,7 +114,7 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final Order order = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
         order.applyOrderLineItems(List.of(
-                orderLineItemRepository.save(new OrderLineItem(order, generateMenu("chicken", 20000L), 1L))
+                orderLineItemRepository.save(new OrderLineItem(order, generateMenu("chicken", 20000L).getId(), 1L))
         ));
 
         // when
@@ -136,7 +135,7 @@ class OrderServiceTest extends IntegrationTest {
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
         final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
         existOrder.applyOrderLineItems(new ArrayList<>(List.of(
-                orderLineItemRepository.save(new OrderLineItem(existOrder, generateMenu("chicken", 20000L), 1L))
+                orderLineItemRepository.save(new OrderLineItem(existOrder, generateMenu("chicken", 20000L).getId(), 1L))
         )));
 
         // when

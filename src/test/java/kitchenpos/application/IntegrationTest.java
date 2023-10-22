@@ -8,17 +8,17 @@ import kitchenpos.dao.menu.MenuProductRepository;
 import kitchenpos.dao.menu.MenuRepository;
 import kitchenpos.dao.order.OrderLineItemRepository;
 import kitchenpos.dao.order.OrderRepository;
-import kitchenpos.dao.table.OrderTableRepository;
 import kitchenpos.dao.product.ProductRepository;
+import kitchenpos.dao.table.OrderTableRepository;
 import kitchenpos.dao.table.TableGroupRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +68,7 @@ public abstract class IntegrationTest {
     protected Order generateOrder(final OrderStatus orderStatus, final OrderTable orderTable) {
         final Order order = new Order(
                 null,
-                orderTable,
+                orderTable.getId(),
                 orderStatus,
                 LocalDateTime.now()
         );

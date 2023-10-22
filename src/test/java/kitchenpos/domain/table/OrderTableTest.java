@@ -3,10 +3,6 @@ package kitchenpos.domain.table;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -64,19 +60,6 @@ class OrderTableTest {
     }
 
     @Test
-    void throw_when_add_other_order_tables_order() {
-        // given
-        final OrderTable orderTable = new OrderTable(1L, null, 1, false);
-        final OrderTable otherOrderTable = new OrderTable(112312L, null, 1, false);
-        final Order orderFromOtherOrderTable = new Order(otherOrderTable);
-
-        // when & then
-        assertThatThrownBy(() -> orderTable.addOrder(orderFromOtherOrderTable))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Order from other table is not allowed");
-    }
-
-    @Test
     void throw_when_try_to_change_empty_status_of_grouped_table() {
         // given
         final OrderTable orderTable = new OrderTable(1L, new TableGroup(), 1, false);
@@ -87,17 +70,17 @@ class OrderTableTest {
                 .hasMessage("Cannot change empty status of table in group");
     }
 
-    @Test
-    void throw_when_try_to_change_empty_status_not_completed_table() {
-        // given
-        final OrderTable orderTable = new OrderTable(1L, null, 1, false);
-        orderTable.addOrder(new Order(1L, orderTable, OrderStatus.COOKING, null));
-
-        // when & then
-        assertThatThrownBy(() -> orderTable.changeEmpty(true))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Cannot change empty status of table with order status not completion");
-    }
+//    @Test
+//    void throw_when_try_to_change_empty_status_not_completed_table() {
+//        // given
+//        final OrderTable orderTable = new OrderTable(1L, null, 1, false);
+//        orderTable.addOrder(new Order(1L, orderTable.getId(), OrderStatus.COOKING, null));
+//
+//        // when & then
+//        assertThatThrownBy(() -> orderTable.changeEmpty(true))
+//                .isInstanceOf(IllegalArgumentException.class)
+//                .hasMessage("Cannot change empty status of table with order status not completion");
+//    }
 
     @Test
     void throw_when_try_to_change_number_of_guest_to_under_zero() {
