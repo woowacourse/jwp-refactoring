@@ -9,6 +9,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.step.OrderStep;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +68,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
@@ -103,7 +104,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of());
 
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -137,7 +138,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
 
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -166,7 +167,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -203,7 +204,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(order);
+            final Order savedOrder = 주문_생성_요청하고_주문_반환(OrderStep.toRequest(order));
 
             final ExtractableResponse<Response> response = 주문_조회_요청();
             final List<Order> result = response.jsonPath().getList("", Order.class);
@@ -249,10 +250,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(order);
+            final Order savedOrder = 주문_생성_요청하고_주문_반환(OrderStep.toRequest(order));
             savedOrder.setOrderStatus("COOKING");
 
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder);
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(OrderStep.toRequest(savedOrder));
             final Order result = response.jsonPath().getObject("", Order.class);
 
             assertAll(
@@ -291,13 +292,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(order);
+            final Order savedOrder = 주문_생성_요청하고_주문_반환(OrderStep.toRequest(order));
             savedOrder.setOrderStatus("COMPLETION");
 
-            주문_상태_변경_요청(savedOrder);
+            주문_상태_변경_요청(OrderStep.toRequest(savedOrder));
 
             savedOrder.setOrderStatus("COOKING");
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder);
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(OrderStep.toRequest(savedOrder));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
