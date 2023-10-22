@@ -6,7 +6,10 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupCreateRequest {
 
-    private final List<Long> orderTables;
+    private List<Long> orderTables;
+
+    public TableGroupCreateRequest() {
+    }
 
     public TableGroupCreateRequest(List<Long> orderTables) {
         this.orderTables = orderTables;
