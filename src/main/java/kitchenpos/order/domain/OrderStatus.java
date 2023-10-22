@@ -3,6 +3,10 @@ package kitchenpos.order.domain;
 public enum OrderStatus {
     COOKING, MEAL, COMPLETION;
 
+    public boolean isComplete() {
+        return this == COMPLETION;
+    }
+
     public OrderStatus next() {
         if (this == COOKING) {
             return MEAL;

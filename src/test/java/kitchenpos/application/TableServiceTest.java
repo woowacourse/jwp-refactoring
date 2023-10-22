@@ -3,18 +3,32 @@ package kitchenpos.application;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
-
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.order.domain.Order;
+import java.util.stream.Collectors;
+import kitchenpos.menu.application.dto.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.order.application.dto.OrderLineItemRequest;
+import kitchenpos.order.application.dto.OrderRequest;
+import kitchenpos.order.application.dto.OrderResponse;
+import kitchenpos.order.application.dto.OrderStatusRequest;
+import kitchenpos.order.application.dto.TableEmptyRequest;
+import kitchenpos.order.application.dto.TableGuestRequest;
+import kitchenpos.order.application.dto.TableRequest;
+import kitchenpos.order.application.dto.TableResponse;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.tablegroup.application.dto.OrderTableResponse;
+import kitchenpos.tablegroup.application.dto.TableGroupRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,169 +38,201 @@ class TableServiceTest extends ServiceTest {
 
 
     @Autowired
-    private OrderRepository orderDao;
+    private OrderRepository orderRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-//
-//    @Test
-//    void 테이블_등록() {
-//        // given
-//        OrderTable orderTable = OrderTableFixture.create(true, 0);
-//
-//        // when
-//        OrderTable savedOrderTable = tableService.create(orderTable);
-//
-//        // then
-//        assertThat(orderTableDao.findById(savedOrderTable.getId())).isPresent();
-//    }
-//
-//    @Test
-//    void 테이블_목록_조회() {
-//        // given
-//        OrderTable orderTable1 = orderTableDao.save(OrderTableFixture.create(true, 0));
-//        OrderTable orderTable2 = orderTableDao.save(OrderTableFixture.create(true, 0));
-//
-//        // when
-//        List<OrderTable> result = tableService.list();
-//
-//        // then
-//        assertThat(result)
-//                .usingRecursiveComparison()
-//                .isEqualTo(List.of(orderTable1, orderTable2));
-//    }
-//
-//    @Nested
-//    class 주문_테이블을_빈_테이블로_변경할_때 {
-//
-//        @Test
-//        void success() {
-//            // given
-//            OrderTable savedOrderTable = orderTableDao.save(OrderTableFixture.create(true, 0));
-//            OrderTable updateOrderTable = OrderTableFixture.create(false, 0);
-//
-//            // when
-//            OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), updateOrderTable);
-//
-//            // then
-//            assertThat(actual.isEmpty()).isFalse();
-//        }
-//
-//        @Test
-//        void 단체_테이블에_소속되어_있으면_실패() {
-//            // given
-//            OrderTable orderTable = orderTableDao.save(OrderTableFixture.create(true, 0));
-//            List<OrderTable> orderTables = List.of(
-//                    orderTable,
-//                    orderTableDao.save(OrderTableFixture.create(true, 0)),
-//                    orderTableDao.save(OrderTableFixture.create(true, 0))
-//            );
-//            TableGroup tableGroup = tableGroupService.create(TableGroupFixture.create(orderTables));
-//
-//            orderTable.setTableGroupId(tableGroup.getId());
-//            OrderTable savedOrderTable = orderTableDao.save(orderTable);
-//            Long orderTableId = savedOrderTable.getId();
-//            OrderTable updateOrderTable = OrderTableFixture.create(false, 0);
-//
-//            // when
-//            // then
-//            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, updateOrderTable))
-//                    .isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @Test
-//        void 주문_상태가_조리중이거나_식사_중이면_실패() {
-//            // given
-//            OrderTable orderTable = orderTableDao.save(OrderTableFixture.create(false, 2));
-//            Long orderTableId = orderTable.getId();
-//
-//            Order order = new Order();
-//            order.setOrderStatus(OrderStatus.COOKING.name());
-//            order.setOrderTableId(orderTable.getId());
-//            order.setOrderedTime(LocalDateTime.now());
-//
-//            orderDao.save(order);
-//
-//            OrderTable updateOrderTable = new OrderTable();
-//            updateOrderTable.setEmpty(true);
-//
-//            // when
-//            // then
-//            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, updateOrderTable))
-//                    .isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//
-//    }
-//
-//    @Nested
-//    class 주문_테이블의_고객_수를_변경할_때 {
-//
-//
-//        @Test
-//        void success() {
-//            // given
-//            OrderTable orderTable = OrderTableFixture.create(false, 0);
-//            OrderTable savedTable = tableService.create(orderTable);
-//
-//            OrderTable updateTable = new OrderTable();
-//            updateTable.setNumberOfGuests(4);
-//
-//            // when
-//            OrderTable result = tableService.changeNumberOfGuests(savedTable.getId(), updateTable);
-//
-//            // then
-//            assertThat(result.getNumberOfGuests()).isEqualTo(4);
-//        }
-//
-//        @Test
-//        void 변경할_고객의_수가_0_미만이면_실패() {
-//            // given
-//            OrderTable orderTable = OrderTableFixture.create(false, 0);
-//            OrderTable savedTable = tableService.create(orderTable);
-//            Long orderTableId = savedTable.getId();
-//
-//            OrderTable updateTable = new OrderTable();
-//            updateTable.setNumberOfGuests(-1);
-//
-//            // when
-//            // then
-//            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, updateTable))
-//                    .isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @Test
-//        void 등록되지_않은_주문_테이블이면_실패() {
-//            // given
-//            OrderTable orderTable = OrderTableFixture.create(false, 0);
-//            Long orderTableId = orderTable.getId();
-//
-//            OrderTable updateTable = new OrderTable();
-//            updateTable.setNumberOfGuests(3);
-//
-//            // when
-//            // then
-//            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, updateTable))
-//                    .isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @Test
-//        void 주문_테이블이_빈_테이블이면_실패() {
-//            // given
-//            OrderTable orderTable = OrderTableFixture.create(true, 0);
-//            OrderTable savedTable = tableService.create(orderTable);
-//            Long orderTableId = savedTable.getId();
-//
-//            OrderTable updateTable = new OrderTable();
-//            updateTable.setNumberOfGuests(3);
-//
-//            // when
-//            // then
-//            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, updateTable))
-//                    .isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//    }
-//
+
+    @Test
+    void 테이블_등록() {
+        // given
+        TableRequest tableRequest = new TableRequest(0, true);
+
+        // when
+        TableResponse tableResponse = tableService.create(tableRequest);
+
+        // then
+        assertThat(orderTableRepository.findById(tableResponse.getId())).isPresent();
+    }
+
+    @Test
+    void 테이블_목록_조회() {
+        // given
+        TableRequest tableRequest = new TableRequest(0, true);
+        TableResponse tableResponse1 = tableService.create(tableRequest);
+        TableResponse tableResponse2 = tableService.create(tableRequest);
+
+        // when
+        List<TableResponse> tableResponses = tableService.list();
+
+        // then
+        assertThat(tableResponses)
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(tableResponse1, tableResponse2));
+    }
+
+    @Nested
+    class 주문_테이블을_빈_테이블로_변경할_때 {
+
+        @Test
+        void success() {
+            // given
+            TableRequest tableRequest = new TableRequest(0, false);
+            TableResponse tableResponse = tableService.create(tableRequest);
+
+            Product savedProduct = productRepository.save(new Product("후라이드", new Price(BigDecimal.valueOf(2000))));
+            MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+
+            // when
+            MenuResponse menuResponse = menuService.create(
+                    new MenuRequest(
+                            "후라이드 치킨",
+                            new BigDecimal("1000"),
+                            savedMenuGroup.getId(),
+                            List.of(new MenuProductRequest(savedProduct.getId(), 1L))
+                    )
+            );
+
+            OrderResponse orderResponse = orderService.create(new OrderRequest(tableResponse.getId(),
+                    List.of(new OrderLineItemRequest(menuResponse.getId(), 1L))));
+
+            orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(OrderStatus.MEAL));
+            orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(OrderStatus.COMPLETION));
+
+            TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(false);
+
+            // when
+            TableResponse actual = tableService.changeEmpty(tableResponse.getId(), tableEmptyRequest);
+
+            // then
+            assertThat(actual.isEmpty()).isFalse();
+        }
+
+        @Test
+        void 주문_상태가_조리중이거나_식사_중이면_실패() {
+            // given
+            TableRequest tableRequest = new TableRequest(0, false);
+            TableResponse tableResponse = tableService.create(tableRequest);
+
+            Product savedProduct = productRepository.save(new Product("후라이드", new Price(BigDecimal.valueOf(2000))));
+            MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+
+            // when
+            MenuResponse menuResponse = menuService.create(
+                    new MenuRequest(
+                            "후라이드 치킨",
+                            new BigDecimal("1000"),
+                            savedMenuGroup.getId(),
+                            List.of(new MenuProductRequest(savedProduct.getId(), 1L))
+                    )
+            );
+
+            OrderResponse orderResponse = orderService.create(new OrderRequest(tableResponse.getId(),
+                    List.of(new OrderLineItemRequest(menuResponse.getId(), 1L))));
+
+            orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(OrderStatus.MEAL));
+            TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(false);
+
+            // when
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(tableResponse.getId(), tableEmptyRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 단체_테이블에_소속되어_있으면_실패() {
+            // given
+            List<TableResponse> tableResponses = List.of(
+                    tableService.create(new TableRequest(0, true)),
+                    tableService.create(new TableRequest(0, true)),
+                    tableService.create(new TableRequest(0, true))
+            );
+
+            List<Long> tableIds = tableResponses.stream()
+                    .map(TableResponse::getId)
+                    .collect(Collectors.toList());
+
+            TableGroupResponse tableGroupResponse = tableGroupService.create(TableGroupRequest.from(tableIds));
+
+            OrderTableResponse orderTableResponse = tableGroupResponse.getOrderTables().get(0);
+            Long orderTableId = orderTableResponse.getId();
+
+            TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(false);
+
+            // when
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, tableEmptyRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+    }
+
+    @Nested
+    class 주문_테이블의_고객_수를_변경할_때 {
+
+
+        @Test
+        void success() {
+            // given
+            TableRequest tableRequest = new TableRequest(2, false);
+            TableResponse tableResponse = tableService.create(tableRequest);
+
+            TableGuestRequest tableGuestRequest = new TableGuestRequest(4);
+
+            // when
+            TableResponse result = tableService.changeNumberOfGuests(tableResponse.getId(), tableGuestRequest);
+
+            // then
+            assertThat(result.getNumberOfGuests()).isEqualTo(4);
+        }
+
+        @Test
+        void 변경할_고객의_수가_0_미만이면_실패() {
+            // given
+            TableRequest tableRequest = new TableRequest(2, false);
+            TableResponse tableResponse = tableService.create(tableRequest);
+            Long orderTableId = tableResponse.getId();
+
+            TableGuestRequest tableGuestRequest = new TableGuestRequest(-1);
+
+            // when
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, tableGuestRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 등록되지_않은_주문_테이블이면_실패() {
+            // given
+            Long invalidOrderTableId = 0L;
+            TableGuestRequest tableGuestRequest = new TableGuestRequest(3);
+
+            // when
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, tableGuestRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문_테이블이_빈_테이블이면_실패() {
+            // given
+            TableRequest tableRequest = new TableRequest(2, true);
+            TableResponse tableResponse = tableService.create(tableRequest);
+            Long orderTableId = tableResponse.getId();
+
+            TableGuestRequest tableGuestRequest = new TableGuestRequest(3);
+
+            // when
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, tableGuestRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+    }
+
 
 }

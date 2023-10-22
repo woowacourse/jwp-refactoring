@@ -36,6 +36,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public boolean isComplete() {
+        return orderStatus.isComplete();
+    }
+
     public void updateOrderStatus(OrderStatus desiredStatus) {
         if (desiredStatus != this.orderStatus.next()) {
             throw new IllegalArgumentException("주문 상태를 변경할 수 없습니다.");

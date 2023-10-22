@@ -1,11 +1,11 @@
 package kitchenpos.support;
 
-import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.menu.application.MenuService;
+import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.application.TableService;
 import kitchenpos.product.application.ProductService;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.application.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

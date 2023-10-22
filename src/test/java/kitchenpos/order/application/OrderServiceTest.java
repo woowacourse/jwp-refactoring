@@ -6,9 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
@@ -18,7 +15,11 @@ import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
+import kitchenpos.order.application.dto.TableRequest;
+import kitchenpos.order.application.dto.TableResponse;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -40,14 +41,16 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private OrderTable orderTable;
     private Menu menu;
 
     @BeforeEach
     void init() {
-        orderTable = orderTableDao.save(OrderTableFixture.create(false, 4));
+        TableResponse tableResponse = tableService.create(new TableRequest(4, false));
+
+        orderTable = orderTableRepository.findById(tableResponse.getId()).get();
         MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("Leo's Pick"));
         Price price = new Price(BigDecimal.valueOf(1000));
         Product product = productRepository.save(new Product("치킨", price));
@@ -115,8 +118,8 @@ class OrderServiceTest extends ServiceTest {
         void 주문_테이블이_비어있으면_실패() {
             // given
             OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
-            OrderTable emptyTable = orderTableDao.save(OrderTableFixture.create(true, 0));
-            OrderRequest orderRequest = new OrderRequest(emptyTable.getId(), List.of(orderLineItemRequest));
+            TableResponse tableResponse = tableService.create(new TableRequest(0, true));
+            OrderRequest orderRequest = new OrderRequest(tableResponse.getId(), List.of(orderLineItemRequest));
 
             // when
             // then
@@ -137,9 +140,12 @@ class OrderServiceTest extends ServiceTest {
         List<OrderResponse> actual = orderService.list();
 
         // then
-        assertThat(actual)
-                .usingRecursiveComparison()
-                .isEqualTo(List.of(savedOrder));
+        OrderResponse actualResponse = actual.get(0);
+        assertThat(actualResponse.getId()).isEqualTo(savedOrder.getId());
+        assertThat(actualResponse.getOrderdTime()).isEqualTo(savedOrder.getOrderdTime());
+        assertThat(actualResponse.getOrderTableId()).isEqualTo(savedOrder.getOrderTableId());
+        assertThat(actualResponse.getOrderStatus()).isEqualTo(savedOrder.getOrderStatus());
+
     }
 
     @Nested
