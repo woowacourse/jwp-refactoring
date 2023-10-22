@@ -9,10 +9,9 @@ import java.util.Objects;
 public final class Price {
 
     @Column(nullable = false, name = "price")
-    private final BigDecimal value;
+    private BigDecimal value;
 
     public Price() {
-        value = null;
     }
 
     public Price(final BigDecimal value) {
