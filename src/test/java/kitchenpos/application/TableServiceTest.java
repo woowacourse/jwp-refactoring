@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableChangeGuestRequest;
 import kitchenpos.dto.OrderTableRequest;
@@ -80,7 +81,10 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
         final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.forSave(1L, 2));
-        orderRepository.save(Order.forSave(savedOrderTable.getId(), orderLineItems));
+        final Order order = Order.forSave(savedOrderTable.getId());
+        order.changeStatus(OrderStatus.COMPLETION.name());
+        order.addOrderLineItems(orderLineItems.get(0));
+        orderRepository.save(order);
 
         // when
         final OrderTableResponse result = tableService.changeEmpty(savedOrderTable.getId());
@@ -124,7 +128,7 @@ class TableServiceTest {
     void change_orderTable_empty_fail_with_invalid_orderStatus(final String status) {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.forSave(4));
-        orderRepository.save(new Order(null, savedOrderTable.getId(), status, List.of()));
+        orderRepository.save(Order.forSave(savedOrderTable.getId()));
 
         // when
         // then

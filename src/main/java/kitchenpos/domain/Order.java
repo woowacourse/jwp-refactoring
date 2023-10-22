@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,22 +29,31 @@ public class Order {
     private LocalDateTime orderedTime = LocalDateTime.now();
 
     @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order() {
     }
 
-    public Order(final Long id, final Long orderTableId,
-                 final String orderStatus,
-                 final List<OrderLineItem> orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final String orderStatus) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
     }
 
-    public static Order forSave(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderTableId, null, orderLineItems);
+    public static Order forSave(final Long orderTableId) {
+        return new Order(null, orderTableId, OrderStatus.COOKING.name());
+    }
+
+    public void addOrderLineItems(final OrderLineItem orderLineItem) {
+        orderLineItem.setOrder(this);
+        orderLineItems.add(orderLineItem);
+    }
+
+    public void changeStatus(final String changingStatus) {
+        if (orderStatus.equals(OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = changingStatus;
     }
 
     public Long getId() {
