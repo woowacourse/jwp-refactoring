@@ -40,36 +40,37 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        Long orderTableId = request.getOrderTableId();
-        OrderTable orderTable = orderTableRepository.getById(orderTableId);
+        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        List<OrderLineItem> orderLineItems = createOrderLineItems(request);
 
+        Order order = orderRepository.save(new Order(orderTable, orderLineItems));
+        orderLineItemRepository.saveAll(orderLineItems);
+
+        return OrderResponse.from(order);
+    }
+
+    private List<OrderLineItem> createOrderLineItems(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItemCreateRequest orderLineItemCreateRequest : request.getOrderLineItems()) {
-            Menu menu = menuRepository.getById(orderLineItemCreateRequest.getMenuId());
-            long quantity = orderLineItemCreateRequest.getQuantity();
+        for (OrderLineItemCreateRequest request : orderCreateRequest.getOrderLineItems()) {
+            Menu menu = menuRepository.getById(request.getMenuId());
+            long quantity = request.getQuantity();
             OrderLineItem orderLineItem = new OrderLineItem(menu, quantity);
             orderLineItems.add(orderLineItem);
         }
-
-        Order order = new Order(orderTable, orderLineItems);
-        Order savedOrder = orderRepository.save(order);
-        orderLineItemRepository.saveAll(orderLineItems);
-
-        return OrderResponse.from(savedOrder);
+        return orderLineItems;
     }
 
     public List<OrderResponse> readAll() {
-        List<Order> orders = orderRepository.findAll();
-
-        return orders.stream()
+        return orderRepository.findAll()
+                .stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public OrderResponse updateOrderStatus(Long orderId, OrderUpdateRequest request) {
-        Order savedOrder = orderRepository.getById(orderId);
-        savedOrder.changeOrderStatus(request.getOrderStatus());
-        return OrderResponse.from(savedOrder);
+        Order order = orderRepository.getById(orderId);
+        order.changeOrderStatus(request.getOrderStatus());
+        return OrderResponse.from(order);
     }
 }

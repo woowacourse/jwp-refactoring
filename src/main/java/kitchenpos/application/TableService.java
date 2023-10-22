@@ -29,13 +29,13 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(OrderTableCreateRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        return OrderTableResponse.from(savedOrderTable);
+        orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     public List<OrderTableResponse> readAll() {
-        List<OrderTable> allOrderTables = orderTableRepository.findAll();
-        return allOrderTables.stream()
+        return orderTableRepository.findAll()
+                .stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
@@ -44,14 +44,14 @@ public class TableService {
     public OrderTableResponse updateIsEmpty(Long orderTableId, OrderTableUpdateEmptyRequest request) {
         OrderTable orderTable = orderTableRepository.getById(orderTableId);
 
-        validateTableStatusWhenUpdateToEmpty(request, orderTable);
+        validateStatusWhenUpdateEmptyToTrue(request, orderTable);
 
         orderTable.changeEmpty(request.isEmpty());
 
         return OrderTableResponse.from(orderTable);
     }
 
-    private void validateTableStatusWhenUpdateToEmpty(OrderTableUpdateEmptyRequest request, OrderTable orderTable) {
+    private void validateStatusWhenUpdateEmptyToTrue(OrderTableUpdateEmptyRequest request, OrderTable orderTable) {
         if (request.isEmpty()) {
             orderTable.validateTableGroupIsNull();
 

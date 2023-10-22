@@ -36,28 +36,25 @@ public class MenuService {
     public MenuResponse create(MenuCreateRequest request) {
         String name = request.getName();
         BigDecimal price = request.getPrice();
-
-        Long menuGroupId = request.getMenuGroupId();
-        MenuGroup menuGroup = menuGroupRepository.getById(menuGroupId);
-
-        List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProducts();
+        MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
 
         Menu menu = new Menu(name, price, menuGroup);
-        List<MenuProduct> menuProducts = createMenuProducts(menuProductCreateRequests, menu);
+
+        List<MenuProduct> menuProducts = createMenuProducts(request.getMenuProducts(), menu);
         menu.addMenuProducts(menuProducts);
 
-        Menu savedMenu = menuRepository.save(menu);
+        menuRepository.save(menu);
         menuProductRepository.saveAll(menuProducts);
 
-        return MenuResponse.from(savedMenu);
+        return MenuResponse.from(menu);
     }
 
-    private List<MenuProduct> createMenuProducts(List<MenuProductCreateRequest> menuProductCreateRequests, Menu menu) {
+    private List<MenuProduct> createMenuProducts(List<MenuProductCreateRequest> requests, Menu menu) {
         List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
-            Long productId = menuProductCreateRequest.getProductId();
-            Product product = productRepository.getById(productId);
-            long quantity = menuProductCreateRequest.getQuantity();
+        for (MenuProductCreateRequest request : requests) {
+            Product product = productRepository.getById(request.getProductId());
+            long quantity = request.getQuantity();
+
             menuProducts.add(new MenuProduct(menu, product, quantity));
         }
         return menuProducts;

@@ -21,13 +21,13 @@ public class ProductService {
     @Transactional
     public ProductResponse create(ProductCreateRequest request) {
         Product product = new Product(request.getName(), request.getPrice());
-        Product savedProduct = productRepository.save(product);
-        return ProductResponse.from(savedProduct);
+        productRepository.save(product);
+        return ProductResponse.from(product);
     }
 
     public List<ProductResponse> readAll() {
-        List<Product> allProducts = productRepository.findAll();
-        return allProducts.stream()
+        return productRepository.findAll()
+                .stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());
     }

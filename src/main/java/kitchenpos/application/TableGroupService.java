@@ -33,17 +33,18 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.getOrderTables().stream()
+        List<Long> orderTableIds = request.getOrderTables()
+                .stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
         List<OrderTable> orderTables = orderTableRepository.getAllByIdIn(orderTableIds);
 
         TableGroup tableGroup = new TableGroup(orderTables);
 
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        tableGroupRepository.save(tableGroup);
         orderTableRepository.saveAll(orderTables);
 
-        return TableGroupResponse.from(savedTableGroup);
+        return TableGroupResponse.from(tableGroup);
     }
 
     @Transactional
