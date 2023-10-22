@@ -3,7 +3,8 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,10 +16,10 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest("추천메뉴");
 
         // when
-        final MenuGroup result = menuGroupService.create(menuGroup);
+        final MenuGroupResponse result = menuGroupService.create(menuGroup);
 
         // then
         assertThat(result.getId()).isNotNull();
@@ -27,11 +28,11 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup1 = menuGroupService.create(new MenuGroup("Group1"));
-        final MenuGroup menuGroup2 = menuGroupService.create(new MenuGroup("Group2"));
+        final MenuGroupResponse menuGroup1 = menuGroupService.create(new MenuGroupCreateRequest("Group1"));
+        final MenuGroupResponse menuGroup2 = menuGroupService.create(new MenuGroupCreateRequest("Group2"));
 
         // when
-        final List<MenuGroup> result = menuGroupService.list();
+        final List<MenuGroupResponse> result = menuGroupService.list();
 
         // then
         assertThat(result).hasSize(2)
