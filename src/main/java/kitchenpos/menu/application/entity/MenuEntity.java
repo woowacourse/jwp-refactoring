@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Price;
+import kitchenpos.menu.domain.Price;
 
 public class MenuEntity {
 

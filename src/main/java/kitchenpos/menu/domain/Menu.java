@@ -2,7 +2,6 @@ package kitchenpos.menu.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.product.domain.Price;
 
 public class Menu {
 

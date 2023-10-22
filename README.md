@@ -78,14 +78,11 @@
     - [x] order
     - [x] table group
     - [x] table
-- [ ] Entity와 Domain 분리(Repository 생성)
-- [ ] 도메인 객체 캡슐화
+- [x] Entity와 Domain 분리(Repository 생성)
 - [x] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정
-- [ ] command 서비스 & query 서비스 분리
 - [ ] 도메인에 적절하게 책임 분배(일급컬렉션, 값객체, ...)
 - [ ] test 코드 분리 & 새 테스트 작성
-- [ ] 연관 테이블의 id 대신 도메인 객체를 가지도록 하기
-- [ ] 도메인을 menu, order, table로 나누기
+- [x] 도메인을 menu, order, table로 나누기
 - [x] 생성자 중복 초기화 구문을 this로 리팩토링
 
 ## 용어 사전
