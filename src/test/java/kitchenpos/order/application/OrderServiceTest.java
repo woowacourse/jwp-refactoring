@@ -1,8 +1,11 @@
 package kitchenpos.order.application;
 
 import kitchenpos.menu.application.MenuRepository;
+import kitchenpos.order.Empty;
+import kitchenpos.order.NumberOfGuests;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.OrderTable;
 import kitchenpos.order.SaveOrderLineItemsEvent;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
@@ -10,10 +13,6 @@ import kitchenpos.order.application.request.OrderStatusRequest;
 import kitchenpos.orderlineitem.OrderLineItem;
 import kitchenpos.orderlineitem.OrderLineQuantity;
 import kitchenpos.orderlineitem.application.OrderLineItemRepository;
-import kitchenpos.ordertable.Empty;
-import kitchenpos.ordertable.NumberOfGuests;
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.application.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

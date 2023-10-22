@@ -1,10 +1,10 @@
-package kitchenpos.ordertable.ui;
+package kitchenpos.order.ui;
 
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.application.OrderTableService;
-import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
-import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;
-import kitchenpos.ordertable.application.request.OrderTableRequest;
+import kitchenpos.order.OrderTable;
+import kitchenpos.order.application.OrderTableService;
+import kitchenpos.order.application.request.ChangeEmptyRequest;
+import kitchenpos.order.application.request.NumberOfGuestsRequest;
+import kitchenpos.order.application.request.OrderTableRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,10 +17,10 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-public class TableRestController {
+public class OrderTableRestController {
     private final OrderTableService orderTableService;
 
-    public TableRestController(final OrderTableService orderTableService) {
+    public OrderTableRestController(final OrderTableService orderTableService) {
         this.orderTableService = orderTableService;
     }
 

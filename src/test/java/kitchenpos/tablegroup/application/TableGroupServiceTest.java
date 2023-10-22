@@ -1,11 +1,11 @@
 package kitchenpos.tablegroup.application;
 
+import kitchenpos.order.Empty;
+import kitchenpos.order.NumberOfGuests;
 import kitchenpos.order.OrderStatus;
+import kitchenpos.order.OrderTable;
 import kitchenpos.order.application.OrderRepository;
-import kitchenpos.ordertable.Empty;
-import kitchenpos.ordertable.NumberOfGuests;
-import kitchenpos.ordertable.OrderTable;
-import kitchenpos.ordertable.application.OrderTableRepository;
+import kitchenpos.order.application.OrderTableRepository;
 import kitchenpos.tablegroup.TableGroup;
 import kitchenpos.tablegroup.application.request.OrderTableIdDto;
 import kitchenpos.tablegroup.application.request.TableGroupRequest;

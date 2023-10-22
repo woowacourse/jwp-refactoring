@@ -1,8 +1,8 @@
 package kitchenpos.menuproduct.application;
 
-import kitchenpos.menu.SaveMenuProductsEvent;
 import kitchenpos.menuproduct.MenuProduct;
 import kitchenpos.menuproduct.MenuQuantity;
+import kitchenpos.menuproduct.SaveMenuProductsEvent;
 import kitchenpos.menuproduct.application.request.MenuProductRequest;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.application.request;
+package kitchenpos.order.application.request;
 
 public class ChangeEmptyRequest {
     private boolean empty;
