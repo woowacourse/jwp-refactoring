@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 
 @Entity
 @Table(name = "orders")
@@ -59,8 +60,17 @@ public class Order {
         }
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void changeOrderStatus(final OrderStatus toChangeOrderStatus) {
+        if (COMPLETION == orderStatus) {
+            throw new IllegalArgumentException(
+                    String.format(
+                            "주문 상태가 완료인 상태에서 주문 상태를 변경할 수 없습니다. from = %s, to = %s",
+                            orderStatus,
+                            toChangeOrderStatus
+                    ));
+        }
+
+        this.orderStatus = toChangeOrderStatus;
     }
 
     public Long getId() {

@@ -14,10 +14,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
-import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 
 @Service
@@ -86,10 +84,6 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrder.changeOrderStatus(order.getOrderStatus());
         savedOrder.addAllOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
