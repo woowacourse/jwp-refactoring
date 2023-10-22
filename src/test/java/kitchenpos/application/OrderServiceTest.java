@@ -76,7 +76,7 @@ class OrderServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         
         // when & then
-        Order order = ORDER(savedOrderTable.getId(), Collections.EMPTY_LIST);
+        Order order = ORDER(savedOrderTable, Collections.EMPTY_LIST);
         
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -89,11 +89,11 @@ class OrderServiceTest {
         OrderTable orderTable = ORDER_TABLE(false, 3);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         Menu notExistMenu = new Menu(null, null, null, null);
-        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 3L);
-        OrderLineItem orderLineItemWithNotExistMenu = ORDER_LINE_ITEM(notExistMenu.getId(), 1L);
+        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu, 3L);
+        OrderLineItem orderLineItemWithNotExistMenu = ORDER_LINE_ITEM(notExistMenu, 1L);
         
         // when & then
-        Order order = ORDER(savedOrderTable.getId(), List.of(orderLineItem, orderLineItemWithNotExistMenu));
+        Order order = ORDER(savedOrderTable, List.of(orderLineItem, orderLineItemWithNotExistMenu));
         
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -105,10 +105,10 @@ class OrderServiceTest {
         // given
         OrderTable emptyOrderTable = ORDER_TABLE(true, 3);
         OrderTable savedOrderTable = orderTableDao.save(emptyOrderTable);
-        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 3L);
+        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu, 3L);
         
         // when & then
-        Order order = ORDER(savedOrderTable.getId(), List.of(orderLineItem));
+        Order order = ORDER(savedOrderTable, List.of(orderLineItem));
         
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -121,10 +121,10 @@ class OrderServiceTest {
         // given
         OrderTable orderTable = ORDER_TABLE(false, 3);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 3L);
+        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu, 3L);
         
         // when
-        Order order = ORDER(savedOrderTable.getId(), List.of(orderLineItem));
+        Order order = ORDER(savedOrderTable, List.of(orderLineItem));
         Order actual = orderService.create(order);
         
         // then : 주문에 속한 주문 항목들은 모두 주문id를 가지고 있다
@@ -145,11 +145,11 @@ class OrderServiceTest {
         // given
         OrderTable orderTable = orderTableDao.save(ORDER_TABLE(false, 1));
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 3L);
+        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu, 3L);
         
-        Order order1 = ORDER(savedOrderTable.getId(), List.of(orderLineItem), COOKING);
+        Order order1 = ORDER(savedOrderTable, List.of(orderLineItem), COOKING);
         Order savedOrder1 = orderDao.save(order1);
-        Order order2 = ORDER(savedOrderTable.getId(), List.of(orderLineItem), COOKING);
+        Order order2 = ORDER(savedOrderTable, List.of(orderLineItem), COOKING);
         Order savedOrder2 = orderDao.save(order2);
         
         // when
@@ -167,11 +167,11 @@ class OrderServiceTest {
     void 주문의_상태를_변경할_때_이미_주문이_종료된_상태이면_주문의_상태를_변경한다() {
         // given
         OrderTable orderTable = orderTableDao.save(ORDER_TABLE(false, 1));
-        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 1L);
-        Order order = orderDao.save(ORDER(orderTable.getId(), List.of(orderLineItem), COMPLETION));
+        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu, 1L);
+        Order order = orderDao.save(ORDER(orderTable, List.of(orderLineItem), COMPLETION));
         
         // when
-        Order orderWithNewStatus = ORDER(orderTable.getId(), List.of(orderLineItem), MEAL);
+        Order orderWithNewStatus = ORDER(orderTable, List.of(orderLineItem), MEAL);
         
         // then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderWithNewStatus))
@@ -183,11 +183,11 @@ class OrderServiceTest {
     void 주문의_상태를_변경할_때_모든_조건을_만족하면_주문의_상태를_변경한다() {
         // given
         OrderTable orderTable = orderTableDao.save(ORDER_TABLE(false, 1));
-        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu.getId(), 1L);
-        Order order = orderDao.save(ORDER(orderTable.getId(), List.of(orderLineItem), COOKING));
+        OrderLineItem orderLineItem = ORDER_LINE_ITEM(chineseNoodleMenu, 1L);
+        Order order = orderDao.save(ORDER(orderTable, List.of(orderLineItem), COOKING));
         
         // when
-        Order orderWithNewStatus = ORDER(orderTable.getId(), List.of(orderLineItem), MEAL);
+        Order orderWithNewStatus = ORDER(orderTable, List.of(orderLineItem), MEAL);
         Order changedOrder = orderService.changeOrderStatus(order.getId(), orderWithNewStatus);
         
         // then

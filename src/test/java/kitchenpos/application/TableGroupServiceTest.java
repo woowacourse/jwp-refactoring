@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -94,7 +93,7 @@ class TableGroupServiceTest {
         
         //when & then
         OrderTable orderTableInAnotherTableGroup = anotherTableGroup.getOrderTables().get(1);
-        orderTableInAnotherTableGroup.setEmpty(true);
+        orderTableInAnotherTableGroup.changeEmpty(true);
         TableGroup tableGroupWithTableInAnotherTableGroup = TABLE_GROUP(List.of(savedOrderTable1, orderTableInAnotherTableGroup));
         
         assertThatThrownBy(() -> tableGroupService.create(tableGroupWithTableInAnotherTableGroup))
@@ -139,7 +138,7 @@ class TableGroupServiceTest {
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         
         //when & then
-        Order order1 = ORDER(savedTableGroup.getId(), List.of(), OrderStatus.COOKING);
+        Order order1 = ORDER(savedOrderTable1, List.of(), OrderStatus.COOKING);
         orderDao.save(order1);
         
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -160,7 +159,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = TABLE_GROUP(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         
-        Order order1 = ORDER(savedTableGroup.getId(), List.of(), OrderStatus.COMPLETION);
+        Order order1 = ORDER(orderTable1, List.of(), OrderStatus.COMPLETION);
         orderDao.save(order1);
         
         //when : 저장된 테이블의 id로, 테이블의 현재 단체 테이블 id를 추적한다.
@@ -173,7 +172,7 @@ class TableGroupServiceTest {
         //then : 해제된 모든 개별테이블의 단체테이블id가 null이고, 빈 테이블이 아니다.
         assertSoftly(softly -> {
             for (OrderTable tableNotInTableGroup : orderTableDao.findAllByIdIn(orderTableIds)) {
-                softly.assertThat(tableNotInTableGroup.getTableGroupId()).isNull();
+                softly.assertThat(tableNotInTableGroup.getTableGroup()).isNull();
                 softly.assertThat(tableNotInTableGroup.isEmpty()).isFalse();
             }
         });
