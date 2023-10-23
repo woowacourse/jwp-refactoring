@@ -27,15 +27,12 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    public Long getId() {
-        return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
 
     protected OrderTable() {
+    }
+
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, numberOfGuests, empty);
     }
 
     public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
@@ -47,6 +44,18 @@ public class OrderTable {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {

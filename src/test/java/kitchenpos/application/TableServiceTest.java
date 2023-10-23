@@ -11,10 +11,15 @@ import static org.mockito.Mockito.times;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableEmptyUpdateRequest;
+import kitchenpos.dto.request.TableGuestUpdateRequest;
+import kitchenpos.dto.request.TableRequest;
+import kitchenpos.dto.response.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,12 +44,14 @@ class TableServiceTest {
     void create() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
+        final TableRequest tableRequest = new TableRequest(2, true);
+
         final OrderTable orderTable = new OrderTable(tableGroup, 2, true);
-        given(orderTableRepository.save(orderTable))
+        given(orderTableRepository.save(any()))
                 .willReturn(orderTable);
 
         // when & then
-        assertThat(tableService.create(orderTable)).isEqualTo(orderTable);
+        assertThat(tableService.create(tableRequest)).isEqualTo(orderTable.getId());
     }
 
     @DisplayName("테이블 목록을 조회할 수 있다.")
@@ -56,11 +63,15 @@ class TableServiceTest {
         final OrderTable orderTable2 = new OrderTable(tableGroup, 3, true);
         final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
+        final List<TableResponse> responses = orderTables.stream()
+                .map(TableResponse::from)
+                .collect(Collectors.toUnmodifiableList());
+
         given(orderTableRepository.findAll())
                 .willReturn(orderTables);
 
         // when & then
-        assertThat(tableService.list()).isEqualTo(orderTables);
+        assertThat(tableService.list()).usingRecursiveComparison().isEqualTo(responses);
     }
 
     @DisplayName("테이블의 상태를 변경할 수 있다.")
@@ -68,7 +79,10 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
+        final TableEmptyUpdateRequest updateRequest = new TableEmptyUpdateRequest(true);
         final OrderTable orderTable = new OrderTable(1L, null, 2, true);
+
+        final TableResponse tableResponse = TableResponse.from(orderTable);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
@@ -76,7 +90,7 @@ class TableServiceTest {
                 .willReturn(orderTable);
 
         // when & then
-        assertThat(tableService.changeEmpty(1L, orderTable)).isEqualTo(orderTable);
+        assertThat(tableService.changeEmpty(1L, updateRequest)).usingRecursiveComparison().isEqualTo(tableResponse);
         then(orderTableRepository).should(times(1)).findById(anyLong());
         then(orderTableRepository).should(times(1)).save(any());
     }
@@ -86,10 +100,11 @@ class TableServiceTest {
     void changeEmpty_FailWhenTableIsEmpty() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
+        final TableEmptyUpdateRequest updateRequest = new TableEmptyUpdateRequest(true);
         final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블이 존재하지 않습니다.");
     }
@@ -99,14 +114,14 @@ class TableServiceTest {
     void changeEmpty_FailWhenGroupAlreadyAssigned() {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
-
+        final TableEmptyUpdateRequest updateRequest = new TableEmptyUpdateRequest(true);
         final OrderTable orderTable = new OrderTable(1L, tableGroup, 2, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("할당된 그룹이 존재합니다.");
     }
@@ -115,6 +130,7 @@ class TableServiceTest {
     @Test
     void changeEmpty_FailWhenOrderStatusIsNotCompletion() {
         // given
+        final TableEmptyUpdateRequest updateRequest = new TableEmptyUpdateRequest(true);
         final OrderTable orderTable = new OrderTable(1L, null, 3, true);
 
         given(orderTableRepository.findById(1L))
@@ -124,7 +140,7 @@ class TableServiceTest {
                 .willReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문이 아직 완료상태가 아닙니다.");
     }
@@ -135,8 +151,11 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
 
+        final TableGuestUpdateRequest updateRequest = new TableGuestUpdateRequest(8);
         final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
         final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, false);
+
+        final TableResponse tableResponse = TableResponse.from(afterTable);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.of(beforeTable));
@@ -145,23 +164,9 @@ class TableServiceTest {
                 .willReturn(afterTable);
 
         // when & then
-        assertThat(tableService.changeNumberOfGuests(1L, afterTable)).isEqualTo(afterTable);
+        assertThat(tableService.changeNumberOfGuests(1L, updateRequest)).usingRecursiveComparison().isEqualTo(tableResponse);
         then(orderTableRepository).should(times(1)).findById(1L);
         then(orderTableRepository).should(times(1)).save(any());
-    }
-
-    @DisplayName("테이블에 할당된 손님의 수가 0 미만이면 조정할 수 없다.")
-    @Test
-    void changeNumberOfGuests_FailWhenChangeGuestNumUnderZero() {
-        // given
-        final TableGroup tableGroup = new TableGroup(10L);
-
-        final OrderTable orderTable = new OrderTable(1L, tableGroup, -1, false);
-
-        // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("조정하려는 손님의 수가 0 미만입니다.");
     }
 
     @DisplayName("존재하지 않는 주문 테이블이면 조정할 수 없다.")
@@ -170,13 +175,14 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
 
+        final TableGuestUpdateRequest updateRequest = new TableGuestUpdateRequest(8);
         final OrderTable orderTable = new OrderTable(1L, tableGroup, 5, true);
 
         given(orderTableRepository.findById(1L))
                 .willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
@@ -187,6 +193,7 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
 
+        final TableGuestUpdateRequest updateRequest = new TableGuestUpdateRequest(8);
         final OrderTable beforeTable = new OrderTable(1L, tableGroup, 1, false);
         final OrderTable afterTable = new OrderTable(1L, tableGroup, 8, true);
 
@@ -194,7 +201,7 @@ class TableServiceTest {
                 .willReturn(Optional.of(afterTable));
 
         // when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, beforeTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 상태가 비어 있습니다.");
     }
