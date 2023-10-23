@@ -11,7 +11,6 @@ import kitchenpos.application.request.OrderCreateRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixture.OrderTableFixture;
@@ -142,10 +141,12 @@ class OrderServiceTest {
                     List.of(orderLineItemDto));
             OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
-            orderService.changeOrderStatus(orderResponse.getId(), "COMPLETION");
+            OrderResponse updatedOrderResponse = orderService.changeOrderStatus(
+                    orderResponse.getId(),
+                    "COMPLETION"
+            );
 
-            Order updatedOrder = orderRepository.findById(orderResponse.getId()).get();
-            assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
+            assertThat(updatedOrderResponse.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
         }
 
         @Test

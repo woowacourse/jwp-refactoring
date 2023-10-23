@@ -86,7 +86,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void changeOrderStatus(Long orderId, String orderStatusRequest) {
+    public OrderResponse changeOrderStatus(Long orderId, String orderStatusRequest) {
         Order foundOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 주문을 찾을 수 없습니다."));
 
@@ -96,5 +96,6 @@ public class OrderService {
 
         OrderStatus orderStatus = OrderStatus.from(orderStatusRequest);
         foundOrder.updateStatus(orderStatus);
+        return OrderResponse.from(foundOrder);
     }
 }

@@ -38,11 +38,11 @@ public class OrderRestController {
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Void> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable Long orderId,
             @RequestParam String status
     ) {
-        orderService.changeOrderStatus(orderId, status);
-        return ResponseEntity.ok().build();
+        OrderResponse orderResponse = orderService.changeOrderStatus(orderId, status);
+        return ResponseEntity.ok().body(orderResponse);
     }
 }
