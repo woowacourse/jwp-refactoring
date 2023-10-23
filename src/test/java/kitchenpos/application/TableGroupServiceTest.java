@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -32,7 +33,7 @@ class TableGroupServiceTest {
     private OrderTableDao orderTableDao;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -47,52 +48,42 @@ class TableGroupServiceTest {
             savedOrderTable1.setEmpty(true);
             savedOrderTable2.setEmpty(true);
 
-            final TableGroup savedTabledGroup = new TableGroup();
-            savedTabledGroup.setId(1L);
+            final TableGroup savedTabledGroup = new TableGroup(1L, LocalDateTime.now());
 
             when(orderTableDao.findAllByIdIn(any()))
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
-            when(tableGroupDao.save(any(TableGroup.class)))
+            when(tableGroupRepository.save(any(TableGroup.class)))
                     .thenReturn(savedTabledGroup);
             when(orderTableDao.save(any(OrderTable.class)))
                     .thenReturn(null);
 
             // when
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable orderTable1 = new OrderTable();
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable1.setId(1L);
-            orderTable2.setId(2L);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
 
-            final TableGroup result = tableGroupService.create(tableGroup);
-            final List<OrderTable> orderTablesResult = result.getOrderTables();
+            final TableGroup result = tableGroupService.create(request);
 
             // then
-            assertAll(
-                    () -> assertThat(result.getId()).isEqualTo(1),
-                    () -> assertThat(orderTablesResult).hasSize(2),
-                    () -> assertThat(orderTablesResult.get(0).getTableGroupId()).isEqualTo(1),
-                    () -> assertThat(orderTablesResult.get(0).isEmpty()).isFalse()
-            );
+            assertThat(result.getId()).isEqualTo(1);
         }
 
         @Test
         void 테이블_그룹을_생성할_때_전달된_주문_테이블이_없으면_실패한다() {
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(new TableGroup()))
+            // given, when
+            final List<OrderTableDto> request = Collections.emptyList();
+
+            // then
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블_그룹을_생성할_때_전달된_주문_테이블의_개수가_2개보다_적으면_실패한다() {
-            // given
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable orderTable = new OrderTable();
-            tableGroup.setOrderTables(List.of(orderTable));
+            // given, when
+            final List<OrderTableDto> request = List.of(new OrderTableDto(1L));
 
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+
+            // then
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -103,16 +94,11 @@ class TableGroupServiceTest {
                     .thenReturn(Collections.emptyList());
 
             // when
-            final TableGroup tableGroup = new TableGroup();
+            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
 
-            final OrderTable orderTable1 = new OrderTable();
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable1.setId(1L);
-            orderTable2.setId(2L);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -128,15 +114,11 @@ class TableGroupServiceTest {
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
 
             // when
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable orderTable1 = new OrderTable();
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable1.setId(1L);
-            orderTable2.setId(2L);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
+
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -153,15 +135,11 @@ class TableGroupServiceTest {
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
 
             // when
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable orderTable1 = new OrderTable();
-            final OrderTable orderTable2 = new OrderTable();
-            orderTable1.setId(1L);
-            orderTable2.setId(2L);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            final List<OrderTableDto> request = List.of(new OrderTableDto(1L), new OrderTableDto(2L));
+
 
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

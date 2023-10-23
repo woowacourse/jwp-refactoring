@@ -1,7 +1,7 @@
 package kitchenpos.integration;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -33,7 +33,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // 메뉴 생성 요청
         final MenuCreateRequest menu = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(1000), menuGroup.getId(),
-                List.of(new MenuProductRequest(chicken.getId(), 1L), new MenuProductRequest(pizza.getId(), 1L)));
+                List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menu);
 
         // when
@@ -59,15 +59,15 @@ class MenuIntegrationTest extends IntegrationTest {
         final MenuGroup menuGroup = createMenuGroup("외식류");
 
         final MenuCreateRequest menuRequest = new MenuCreateRequest("치킨 + 피자", BigDecimal.valueOf(1000), menuGroup.getId(),
-                List.of(new MenuProductRequest(chicken.getId(), 1L), new MenuProductRequest(pizza.getId(), 1L)));
+                List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuRequest);
 
         testRestTemplate.postForEntity("/api/menus", request, Menu.class);
 
         // when
-        final ResponseEntity<List<Menu>> response = testRestTemplate
-                .exchange("/api/menus", HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
-        final List<Menu> menus = response.getBody();
+        final ResponseEntity<Menu[]> response = testRestTemplate
+                .exchange("/api/menus", HttpMethod.GET, null, Menu[].class);
+        final List<Menu> menus = Arrays.asList(response.getBody());
 
         // then
         assertAll(

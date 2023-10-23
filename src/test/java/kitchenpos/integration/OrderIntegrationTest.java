@@ -1,7 +1,7 @@
 package kitchenpos.integration;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
@@ -120,7 +120,7 @@ class OrderIntegrationTest extends IntegrationTest {
         final MenuGroup menuGroup = createMenuGroup("외식");
 
         final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(name, BigDecimal.valueOf(price), menuGroup.getId(),
-                List.of(new MenuProductRequest(chicken.getId(), 1L), new MenuProductRequest(pizza.getId(), 1L)));
+                List.of(new MenuProductDto(chicken.getId(), 1L), new MenuProductDto(pizza.getId(), 1L)));
         final HttpEntity<MenuCreateRequest> request = new HttpEntity<>(menuCreateRequest);
 
         return testRestTemplate

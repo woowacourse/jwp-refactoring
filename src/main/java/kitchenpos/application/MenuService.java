@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -51,10 +51,10 @@ public class MenuService {
         }
 
         final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (final MenuProductRequest menuProductRequest : request.getMenuProducts()) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
+        for (final MenuProductDto menuProductDto : request.getMenuProducts()) {
+            final Product product = productRepository.findById(menuProductDto.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            menuProducts.add(new MenuProduct(menu, product, menuProductRequest.getQuantity()));
+            menuProducts.add(new MenuProduct(menu, product, menuProductDto.getQuantity()));
         }
 
         BigDecimal sum = BigDecimal.ZERO;

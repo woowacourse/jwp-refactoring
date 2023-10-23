@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.MenuCreateRequest;
-import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -67,7 +67,7 @@ class MenuServiceTest {
 
             // when
             final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L)));
+                    List.of(new MenuProductDto(1L, 1L)));
 
             final Menu result = menuService.create(request);
             final Menu expect = new Menu(1L, "신메뉴", BigDecimal.valueOf(1000), new MenuGroup(1L, "한식"));
@@ -92,7 +92,7 @@ class MenuServiceTest {
         void 메뉴를_생성할_때_가격이_0보다_작으면_실패한다() {
             // given
             final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(-1000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L)));
+                    List.of(new MenuProductDto(1L, 1L)));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
@@ -103,7 +103,7 @@ class MenuServiceTest {
         void 메뉴를_생성할_때_존재하지_않는_메뉴_그룹_아이디를_전달하면_실패한다() {
             // given
             final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L)));
+                    List.of(new MenuProductDto(1L, 1L)));
 
             when(menuGroupRepository.findById(anyLong()))
                     .thenReturn(Optional.empty());
@@ -125,7 +125,7 @@ class MenuServiceTest {
 
             // when
             final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L)));
+                    List.of(new MenuProductDto(1L, 1L)));
 
             // then
             assertThatThrownBy(() -> menuService.create(request))
@@ -145,7 +145,7 @@ class MenuServiceTest {
 
             // when
             final MenuCreateRequest request = new MenuCreateRequest("신메뉴", BigDecimal.valueOf(1000), 1L,
-                    List.of(new MenuProductRequest(1L, 1L)));
+                    List.of(new MenuProductDto(1L, 1L)));
 
             // then
             assertThatThrownBy(() -> menuService.create(request))
