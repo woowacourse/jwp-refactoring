@@ -12,11 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.order.application.dto.OrderTableResult;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableCreationRequest;
 import kitchenpos.table.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.table.application.dto.OrderTableGuestAmountChangeRequest;
+import kitchenpos.table.application.dto.OrderTableResult;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

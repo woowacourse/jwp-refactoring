@@ -6,7 +6,7 @@ import kitchenpos.table.application.TableService;
 import kitchenpos.table.application.dto.OrderTableCreationRequest;
 import kitchenpos.table.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.table.application.dto.OrderTableGuestAmountChangeRequest;
-import kitchenpos.order.application.dto.OrderTableResult;
+import kitchenpos.table.application.dto.OrderTableResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

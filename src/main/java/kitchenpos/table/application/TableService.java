@@ -2,10 +2,10 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.dto.OrderTableResult;
 import kitchenpos.table.application.dto.OrderTableCreationRequest;
 import kitchenpos.table.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.table.application.dto.OrderTableGuestAmountChangeRequest;
+import kitchenpos.table.application.dto.OrderTableResult;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTableValidator;
