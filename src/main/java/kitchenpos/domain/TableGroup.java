@@ -22,6 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class TableGroup {
 
     private static final int MIN_ORDER_TABLE_SIZE = 2;
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
