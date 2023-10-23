@@ -1,6 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.common;
 
-import kitchenpos.domain.common.Money;
+import kitchenpos.domain.DomainTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
