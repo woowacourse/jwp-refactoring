@@ -27,13 +27,11 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public static TableGroup from(final List<OrderTable> orderTables) {
-        final TableGroup tableGroup = new TableGroup();
+    public TableGroup(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(tableGroup);
-            tableGroup.orderTables.add(orderTable);
+            orderTable.setEmpty(false);
+            addOrderTable(orderTable);
         }
-        return tableGroup;
     }
 
     public void addOrderTable(final OrderTable orderTable) {

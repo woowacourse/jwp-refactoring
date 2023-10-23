@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -29,7 +30,7 @@ public class Order {
     private OrderTable orderTable;
 
     @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -37,15 +38,20 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(
+            final List<OrderLineItem> orderLineItems,
             final OrderTable orderTable,
             final OrderStatus orderStatus
     ) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
+
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            addOrderLineItem(orderLineItem);
+        }
     }
 
     public void addOrderLineItem(final OrderLineItem orderLineItem) {

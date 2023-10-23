@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,13 +32,13 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("메뉴는 ")
@@ -48,11 +48,11 @@ class MenuServiceTest {
         @DisplayName("정상적으로 생성된다.")
         void create() {
             // given
-            final Product product = new Product(1L, "후라이드치킨", new BigDecimal("15000.00"));
-            productDao.save(product);
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 1L, 1L, 1));
-            menuGroupDao.save(new MenuGroup(1L, "치킨"));
-            final Menu menu = new Menu(1L, "후라이드치킨", new BigDecimal("15000.00"), 1L, menuProducts);
+            final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("15000.00"));
+            menu.addMenuProduct(new MenuProduct(menu, product, 1));
 
             // when
             final Menu savedMenu = menuService.create(menu);
@@ -61,8 +61,7 @@ class MenuServiceTest {
             assertAll(
                     () -> assertThat(savedMenu.getName()).isEqualTo("후라이드치킨"),
                     () -> assertThat(savedMenu.getPrice()).isEqualTo("15000.00"),
-                    () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(1L),
-                    () -> assertThat(savedMenu.getMenuProducts()).usingRecursiveComparison().isEqualTo(menuProducts)
+                    () -> assertThat(savedMenu.getMenuGroup().getId()).isEqualTo(1L)
             );
         }
 
@@ -70,11 +69,11 @@ class MenuServiceTest {
         @DisplayName("가격이 빈 값이면 예외가 발생한다.")
         void throwsExceptionWhenPriceIsNull() {
             // given
-            final Product product = new Product(1L, "후라이드치킨", new BigDecimal("15000.00"));
-            productDao.save(product);
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 1L, 1L, 1));
-            menuGroupDao.save(new MenuGroup(1L, "치킨"));
-            final Menu menu = new Menu(1L, "후라이드치킨", null, 1L, menuProducts);
+            final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", null);
+            menu.addMenuProduct(new MenuProduct(menu, product, 1));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -86,11 +85,10 @@ class MenuServiceTest {
         @DisplayName("가격이 0보다 작다면 예외가 발생한다.")
         void throwsExceptionWhenPriceIsUnderZero(int price) {
             // given
-            final Product product = new Product(1L, "후라이드치킨", new BigDecimal("15000.00"));
-            productDao.save(product);
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 1L, 1L, 1));
-            menuGroupDao.save(new MenuGroup(1L, "치킨"));
-            final Menu menu = new Menu(1L, "후라이드치킨", new BigDecimal(price), 1L, menuProducts);
+            final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal(price));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -101,9 +99,8 @@ class MenuServiceTest {
         @DisplayName("메뉴에 해당하는 상품이 존재하지 않는 경우에 예외가 발생한다.")
         void throwsExceptionWhenProductIdNonExist() {
             // given
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 1L, 1L, 2));
-            menuGroupDao.save(new MenuGroup(1L, "치킨"));
-            final Menu menu = new Menu(1L, "후라이드치킨", new BigDecimal("31000.00"), 1L, menuProducts);
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("31000.00"));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -114,11 +111,10 @@ class MenuServiceTest {
         @DisplayName("메뉴 가격이 상품의 금액(가격 * 수량)의 합보다 큰 경우 예외가 발생한다.")
         void throwsExceptionWhenPriceIsUnderZero() {
             // given
-            final Product product = new Product(1L, "후라이드치킨", new BigDecimal("15000.00"));
-            productDao.save(product);
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(1L, 1L, 1L, 2));
-            menuGroupDao.save(new MenuGroup(1L, "치킨"));
-            final Menu menu = new Menu(1L, "후라이드치킨", new BigDecimal("31000.00"), 1L, menuProducts);
+            final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
+            productRepository.save(product);
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("31000.00"));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(menu))
@@ -130,18 +126,16 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 정상적으로 조회한다.")
     void list() {
         // given
-        final Product productA = new Product(1L, "후라이드치킨", new BigDecimal("15000.00"));
-        productDao.save(productA);
-        final List<MenuProduct> menuAProducts = List.of(new MenuProduct(1L, 1L, 1L, 1));
-        menuGroupDao.save(new MenuGroup(1L, "치킨"));
-        final Menu menuA = new Menu(1L, "후라이드치킨", new BigDecimal("15000.00"), 1L, menuAProducts);
-        menuDao.save(menuA);
+        final Product productA = new Product("후라이드치킨", new BigDecimal("15000.00"));
+        productRepository.save(productA);
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+        final Menu menuA = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("15000.00"));
+        menuRepository.save(menuA);
 
-        final Product productB = new Product(2L, "양념치킨", new BigDecimal("17000.00"));
-        productDao.save(productB);
-        final List<MenuProduct> menuBProducts = List.of(new MenuProduct(2L, 2L, 2L, 1));
-        final Menu menuB = new Menu(2L, "양념치킨", new BigDecimal("17000.00"), 1L, menuBProducts);
-        menuDao.save(menuB);
+        final Product productB = new Product("양념치킨", new BigDecimal("17000.00"));
+        productRepository.save(productB);
+        final Menu menuB = new Menu(savedMenuGroup, "양념치킨", new BigDecimal("17000.00"));
+        menuRepository.save(menuB);
 
         // when
         final List<Menu> menus = menuService.list();
@@ -151,14 +145,12 @@ class MenuServiceTest {
         final Menu savedMenuB = menus.get(1);
         assertAll(
                 () -> assertThat(menus).hasSize(2),
-                () -> assertThat(savedMenuA.getId()).isEqualTo(1L),
                 () -> assertThat(savedMenuA.getName()).isEqualTo("후라이드치킨"),
                 () -> assertThat(savedMenuA.getPrice()).isEqualTo("15000.00"),
-                () -> assertThat(savedMenuA.getMenuGroupId()).isEqualTo(1L),
-                () -> assertThat(savedMenuB.getId()).isEqualTo(2L),
+                () -> assertThat(savedMenuA.getMenuGroup().getId()).isEqualTo(1L),
                 () -> assertThat(savedMenuB.getName()).isEqualTo("양념치킨"),
                 () -> assertThat(savedMenuB.getPrice()).isEqualTo("17000.00"),
-                () -> assertThat(savedMenuB.getMenuGroupId()).isEqualTo(1L)
+                () -> assertThat(savedMenuB.getMenuGroup().getId()).isEqualTo(1L)
         );
     }
 }

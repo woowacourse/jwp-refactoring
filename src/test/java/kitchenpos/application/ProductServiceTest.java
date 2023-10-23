@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Nested
     @DisplayName("상품은 ")
@@ -37,14 +37,13 @@ class ProductServiceTest {
         @DisplayName("정상적으로 생성된다.")
         void create() {
             // given
-            final Product product = new Product(1L, "떡볶이", new BigDecimal("4500.00"));
+            final Product product = new Product("떡볶이", new BigDecimal("4500.00"));
 
             // when
             final Product savedProduct = productService.create(product);
 
             // then
             assertAll(
-                    () -> assertThat(savedProduct.getId()).isEqualTo(1L),
                     () -> assertThat(savedProduct.getName()).isEqualTo("떡볶이"),
                     () -> assertThat(savedProduct.getPrice()).isEqualTo("4500.00")
             );
@@ -54,7 +53,7 @@ class ProductServiceTest {
         @DisplayName("가격이 비어있으면 예외가 발생한다.")
         void throwsExceptionWhenPriceIsNull() {
             // given
-            final Product product = new Product(1L, "떡볶이", null);
+            final Product product = new Product("떡볶이", null);
 
             // when, then
             assertThatThrownBy(() -> productService.create(product))
@@ -66,7 +65,7 @@ class ProductServiceTest {
         @DisplayName("가격이 0보다 작은 경우 예외가 발생한다.")
         void throwsExceptionWhenPriceIsUnderZero(int price) {
             // given
-            final Product product = new Product(1L, "떡볶이", new BigDecimal(price));
+            final Product product = new Product("떡볶이", new BigDecimal(price));
 
             // when, then
             assertThatThrownBy(() -> productService.create(product))
@@ -79,10 +78,10 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 정상적으로 조회한다.")
     void list() {
         // given
-        final Product productA = new Product(1L, "라면", new BigDecimal("4000.00"));
-        final Product productB = new Product(2L, "순대", new BigDecimal("4500.00"));
-        productDao.save(productA);
-        productDao.save(productB);
+        final Product productA = new Product("라면", new BigDecimal("4000.00"));
+        final Product productB = new Product("순대", new BigDecimal("4500.00"));
+        productRepository.save(productA);
+        productRepository.save(productB);
 
         // when
         final List<Product> products = productService.list();
@@ -92,10 +91,8 @@ class ProductServiceTest {
         final Product savedProductB = products.get(1);
         assertAll(
                 () -> assertThat(products).hasSize(2),
-                () -> assertThat(savedProductA.getId()).isEqualTo(1L),
                 () -> assertThat(savedProductA.getName()).isEqualTo("라면"),
                 () -> assertThat(savedProductA.getPrice()).isEqualTo("4000.00"),
-                () -> assertThat(savedProductB.getId()).isEqualTo(2L),
                 () -> assertThat(savedProductB.getName()).isEqualTo("순대"),
                 () -> assertThat(savedProductB.getPrice()).isEqualTo("4500.00")
         );
