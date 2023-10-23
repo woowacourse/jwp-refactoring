@@ -57,7 +57,7 @@ public class Order {
 
     public static Order createBy(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 생성시 주문 테이블은 테이블은 비어있을 수 없습니다");
+            throw new IllegalArgumentException("주문 생성시 주문 테이블은 비어있을 수 없습니다");
         }
         return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
@@ -77,6 +77,10 @@ public class Order {
 
     public Long getId() {
         return id;
+    }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public String getOrderStatus() {
