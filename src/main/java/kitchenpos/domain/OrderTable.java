@@ -24,7 +24,7 @@ public class OrderTable {
     @Column
     private int numberOfGuests;
 
-    @Column
+    @Column(name = "empty")
     private boolean isEmpty;
 
     public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {

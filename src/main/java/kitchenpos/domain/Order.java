@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -72,6 +73,17 @@ public class Order {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        validateOrderStatus();
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateOrderStatus() {
+        if (Objects.equals(this.orderStatus, OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public OrderStatus getOrderStatus() {

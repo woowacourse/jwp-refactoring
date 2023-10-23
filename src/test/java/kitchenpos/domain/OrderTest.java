@@ -1,9 +1,12 @@
 package kitchenpos.domain;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
@@ -29,4 +32,30 @@ class OrderTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Nested
+    class 주문_상태_변경 {
+        @Test
+        void 주문_상태를_변경한다() {
+            // given
+            OrderTable orderTable = new OrderTable(false);
+            Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+
+            // when
+            order.changeOrderStatus(OrderStatus.COMPLETION);
+
+            // then
+            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
+        }
+
+        @Test
+        void 계산완료_상태인_경우_예외가_발생한다() {
+            // given
+            OrderTable orderTable = new OrderTable(false);
+            Order order = new Order(orderTable, COMPLETION, LocalDateTime.now());
+
+            // when, then
+            assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }

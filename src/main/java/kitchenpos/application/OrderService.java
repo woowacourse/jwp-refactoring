@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.JpaMenuRepository;
 import kitchenpos.dao.JpaOrderLineItemRepository;
@@ -16,10 +15,10 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.OrderLineRequest;
 import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.ui.dto.request.OrderStatusRequest;
 import kitchenpos.ui.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -90,21 +89,14 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order savedOrder = jpaOrderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus().name())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = order.getOrderStatus();
-        savedOrder.setOrderStatus(orderStatus);
-
+        savedOrder.changeOrderStatus(request.getOrderStatus());
         jpaOrderRepository.save(savedOrder);
-
         savedOrder.setOrderLineItems(jpaOrderLineItemRepository.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return new OrderResponse(savedOrder);
     }
 }
