@@ -3,14 +3,12 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.exception.CannotChangeGroupedTableEmptyException;
 import kitchenpos.exception.InvalidRequestParameterException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.UnCompletedOrderExistsException;
@@ -50,20 +48,21 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            throw new CannotChangeGroupedTableEmptyException();
-        }
-
         List<Orders> orders = orderRepository.findAllByOrderTable(orderTable);
+
+        validateDoesEveryOrderCompleted(orders);
+
+        orderTable.changeEmpty(request.getEmpty());
+
+        return OrderTableResponse.from(orderTable);
+    }
+
+    private void validateDoesEveryOrderCompleted(List<Orders> orders) {
         boolean isStatusNotChangeable = orders.stream()
                 .anyMatch(Orders::isOrderUnCompleted);
         if (isStatusNotChangeable) {
             throw new UnCompletedOrderExistsException();
         }
-
-        orderTable.setEmpty(request.getEmpty());
-
-        return OrderTableResponse.from(orderTable);
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
