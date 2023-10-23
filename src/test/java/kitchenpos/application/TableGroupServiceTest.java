@@ -173,18 +173,19 @@ class TableGroupServiceTest {
         });
     }
 
+    @Transactional
     @DisplayName("주문 정보의 상태가 COOKING 혹은 MEAL이면 주문 테이블 그룹에서 주문 테이블을 분리할 수 없다.")
     @Test
     void ungroup_fail_with_table_order_status_COOKING_and_MEAL() {
         // given
         final TableGroup tableGroup = TableGroup.forSave();
+        tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
         orderRepository.save(new Order(orderTable1.getId()));
         orderRepository.save(new Order(orderTable2.getId()));
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
-        tableGroupRepository.save(tableGroup);
 
         // when
         // then
