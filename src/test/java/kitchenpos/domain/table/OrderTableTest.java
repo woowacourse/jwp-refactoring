@@ -3,8 +3,6 @@ package kitchenpos.domain.table;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
-import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,7 @@ class OrderTableTest {
     @Test
     void 테이블의_상태를_변경하는_경우_이미_단체지정이_되어있는_테이블이라면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(new TableGroup(LocalDateTime.now()), 0, true);
+        OrderTable orderTable = new OrderTable(1L, 0, true);
 
         // expect
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
@@ -49,22 +47,22 @@ class OrderTableTest {
     @Test
     void 단체지정을_해제한다() {
         // given
-        OrderTable orderTable = new OrderTable(new TableGroup(LocalDateTime.now()), 0, true);
+        OrderTable orderTable = new OrderTable(1L, 0, true);
 
         // when
         orderTable.clearTableGroup();
 
         // then
-        assertThat(orderTable.getTableGroup()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
     }
 
     @Test
     void 단체지정을_할_때_이미_단체지정이_되어있으면_예외를_던진다() {
         // given
-        OrderTable orderTable = new OrderTable(new TableGroup(LocalDateTime.now()), 0, true);
+        OrderTable orderTable = new OrderTable(1L, 0, true);
 
         // expect
-        assertThatThrownBy(() -> orderTable.changeTableGroup(new TableGroup(LocalDateTime.now())))
+        assertThatThrownBy(orderTable::changeTableGroup)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
     }
@@ -75,7 +73,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(null, 0, false);
 
         // expect
-        assertThatThrownBy(() -> orderTable.changeTableGroup(new TableGroup(LocalDateTime.now())))
+        assertThatThrownBy(orderTable::changeTableGroup)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
     }
@@ -86,7 +84,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(null, 0, true);
 
         // when
-        orderTable.changeTableGroup(new TableGroup(LocalDateTime.now()));
+        orderTable.changeTableGroup();
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();

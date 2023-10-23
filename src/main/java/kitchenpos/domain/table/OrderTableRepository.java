@@ -8,6 +8,6 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
-    @Query("select o from OrderTable o where o.tableGroup.id = :tableGroupId")
+    @Query("select o from OrderTable o where o.tableGroupId = :tableGroupId")
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

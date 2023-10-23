@@ -14,6 +14,6 @@ public class OrderTableFixture {
     }
 
     public static OrderTable 테이블(boolean empty, int numberOfGuests, TableGroup tableGroup) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+        return new OrderTable(tableGroup.getId(), numberOfGuests, empty);
     }
 }

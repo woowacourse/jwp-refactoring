@@ -30,9 +30,9 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(TableGroupRequest request) {
-        TableGroup tableGroup = TableGroup.create();
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup.create());
         tableGroup.changeOrderTables(orderTableRepository.findAllByIdIn(request.getOrderTableIds()));
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        return TableGroupResponse.from(tableGroup);
     }
 
     public void ungroup(Long tableGroupId) {
