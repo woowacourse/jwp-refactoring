@@ -26,7 +26,7 @@ public enum MenuFixtures {
         final Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(price);
-        menu.setMenuGroupId(groupId);
+        menu.setMenuGroup(groupId);
         menu.setMenuProducts(menuProducts);
         return menu;
     }

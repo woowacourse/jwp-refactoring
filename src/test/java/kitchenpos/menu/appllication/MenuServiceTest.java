@@ -36,9 +36,9 @@ class MenuServiceTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(saved.getName()).isEqualTo(menu.getName());
-                softly.assertThat(saved.getPrice().intValue()).isEqualTo(menu.getPrice().intValue());
-                softly.assertThat(saved.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(saved.name()).isEqualTo(menu.name());
+                softly.assertThat(saved.price().intValue()).isEqualTo(menu.price().intValue());
+                softly.assertThat(saved.menuGroupId()).isEqualTo(menu.menuGroupId());
             });
         }
 
@@ -72,7 +72,7 @@ class MenuServiceTest {
         void menuGroupNotExistException() {
             // given
             final Menu menu = MenuFixtures.BASIC.get();
-            menu.setMenuGroupId(-1L);
+            menu.setMenuGroup(-1L);
 
             // when, then
             assertThatIllegalArgumentException()
@@ -84,8 +84,8 @@ class MenuServiceTest {
         void menuProductsNotExistException() {
             // given
             final Menu menu = MenuFixtures.BASIC.get();
-            final List<MenuProduct> menuProducts = menu.getMenuProducts();
-            menuProducts.get(0).setProductId(-1L);
+            final List<MenuProduct> menuProducts = menu.menuProducts();
+            menuProducts.get(0).setProduct(-1L);
 
             // when, then
             assertThatIllegalArgumentException()

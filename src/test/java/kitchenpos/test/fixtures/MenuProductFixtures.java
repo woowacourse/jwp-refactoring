@@ -21,8 +21,8 @@ public enum MenuProductFixtures {
     public MenuProduct get() {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
+        menuProduct.setMenu(menuId);
+        menuProduct.setProduct(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
     }

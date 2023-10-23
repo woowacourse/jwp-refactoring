@@ -1,32 +1,31 @@
 package kitchenpos.order.apllication;
 
-import kitchenpos.menu.dao.MenuDao;
-import kitchenpos.order.dao.OrderDao;
-import kitchenpos.order.dao.OrderLineItemDao;
-import kitchenpos.ordertable.dao.OrderTableDao;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.vo.OrderLineItem;
-import kitchenpos.order.domain.vo.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.dao.OrderDao;
+import kitchenpos.order.dao.OrderLineItemDao;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.vo.OrderLineItem;
+import kitchenpos.order.domain.vo.OrderStatus;
+import kitchenpos.ordertable.dao.OrderTableDao;
+import kitchenpos.ordertable.domain.OrderTable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
+            final MenuRepository menuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
             final OrderTableDao orderTableDao
