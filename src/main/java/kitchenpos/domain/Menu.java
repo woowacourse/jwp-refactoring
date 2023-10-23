@@ -33,12 +33,6 @@ public class Menu {
 
     private Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
         final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
-    }
-
-    public Menu(final Long id, final String name, final BigDecimal price,
-        final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
-        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
@@ -52,13 +46,13 @@ public class Menu {
             menuProduct.setMenu(menu);
         }
 
-        if (menu.isOverPrice()) {
+        if (menu.checkPriceCondition()) {
             throw new MenuOverPriceException();
         }
         return menu;
     }
 
-    public boolean isOverPrice() {
+    private boolean checkPriceCondition() {
         final long sum = menuProducts.stream()
             .map(MenuProduct::calculateTotalPrice)
             .mapToLong(BigDecimal::longValue)

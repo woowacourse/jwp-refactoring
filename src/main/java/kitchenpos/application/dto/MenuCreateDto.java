@@ -8,14 +8,14 @@ public class MenuCreateDto {
     private final String name;
     private final Long menuGroupId;
     private final BigDecimal price;
-    private final List<MenuProductCreateDto> menuProductCreateDtos;
+    private final List<MenuProductCreateDto> menuProducts;
 
     public MenuCreateDto(final String name, final Long menuGroupId, final BigDecimal price,
-        final List<MenuProductCreateDto> menuProductCreateDtos) {
+        final List<MenuProductCreateDto> menuProducts) {
         this.name = name;
         this.menuGroupId = menuGroupId;
         this.price = price;
-        this.menuProductCreateDtos = menuProductCreateDtos;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -30,7 +30,7 @@ public class MenuCreateDto {
         return price;
     }
 
-    public List<MenuProductCreateDto> getMenuProductCreateDtos() {
-        return menuProductCreateDtos;
+    public List<MenuProductCreateDto> getMenuProducts() {
+        return menuProducts;
     }
 }

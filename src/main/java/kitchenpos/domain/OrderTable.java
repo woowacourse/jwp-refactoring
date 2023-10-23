@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.exception.OrderTableException.NotEnoughGuestsException;
+import kitchenpos.domain.exception.TableGroupException;
 
 @Entity
 public class OrderTable {
@@ -36,6 +39,9 @@ public class OrderTable {
     }
 
     public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new TableGroupException.GroupAlreadyExistsException();
+        }
         this.empty = empty;
     }
 
@@ -53,7 +59,7 @@ public class OrderTable {
 
     public void changeGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new NotEnoughGuestsException();
         }
 
         this.numberOfGuests = numberOfGuests;

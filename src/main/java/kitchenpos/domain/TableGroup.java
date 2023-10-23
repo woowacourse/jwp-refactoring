@@ -8,10 +8,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.exception.TableGroupException.GroupAlreadyExistsException;
+import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
+
+    private static final int MINIMUM_ORDER_TABLE_SIZE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +36,13 @@ public class TableGroup {
     public static TableGroup of(final List<OrderTable> orderTables) {
         final TableGroup tableGroup = new TableGroup(orderTables);
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MINIMUM_ORDER_TABLE_SIZE) {
+            throw new InvalidOrderTablesException();
         }
 
         for (final OrderTable orderTable : orderTables) {
             if (orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
+                throw new GroupAlreadyExistsException();
             }
         }
 

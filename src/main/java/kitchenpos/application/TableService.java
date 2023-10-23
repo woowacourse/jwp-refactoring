@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.dto.OrderTableCreateDto;
 import kitchenpos.application.dto.OrderTableUpdateGuestDto;
 import kitchenpos.domain.OrderRepository;
@@ -40,10 +39,6 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
 
         if (orderRepository.existsByOrderTableAndOrderStatusIn(savedOrderTable,
             Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {

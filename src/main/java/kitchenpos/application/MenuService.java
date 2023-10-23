@@ -36,7 +36,7 @@ public class MenuService {
             .orElseThrow(IllegalArgumentException::new);
 
         final List<MenuProduct> menuProducts = makeMenuProducts(
-            menuCreateDto.getMenuProductCreateDtos());
+            menuCreateDto.getMenuProducts());
 
         final Menu newMenu = Menu.of(menuCreateDto.getName(), menuCreateDto.getPrice(),
             findMenuGroup, menuProducts);

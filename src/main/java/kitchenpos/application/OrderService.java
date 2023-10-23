@@ -57,15 +57,15 @@ public class OrderService {
     }
 
     private List<OrderLineItem> makeOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos) {
-        return orderLineItemDtos.stream().map(
-                orderLineItemDto -> {
-                    final Menu findMenu = menuRepository.findById(orderLineItemDto.getMenuId())
-                        .orElseThrow(() -> new NotFoundMenuException(orderLineItemDto.getMenuId()));
+        return orderLineItemDtos.stream()
+            .map(orderLineItemDto -> {
+                final Menu findMenu = menuRepository.findById(orderLineItemDto.getMenuId())
+                    .orElseThrow(() -> new NotFoundMenuException(orderLineItemDto.getMenuId()));
 
-                    final long quantity = orderLineItemDto.getQuantity();
+                final long quantity = orderLineItemDto.getQuantity();
 
-                    return new OrderLineItem(findMenu, quantity);
-                })
+                return new OrderLineItem(findMenu, quantity);
+            })
             .collect(Collectors.toList());
     }
 

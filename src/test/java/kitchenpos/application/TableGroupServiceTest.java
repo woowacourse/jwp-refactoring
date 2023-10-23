@@ -3,18 +3,29 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupCreateDto;
 import kitchenpos.application.exception.TableGroupAppException.UngroupingNotPossibleException;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,6 +51,18 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     private OrderTable firstTable;
     private OrderTable secondTable;
@@ -85,7 +108,7 @@ class TableGroupServiceTest {
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateDto))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidOrderTablesException.class);
     }
 
     @Test
@@ -96,7 +119,7 @@ class TableGroupServiceTest {
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateDto))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidOrderTablesException.class);
     }
 
     @Test
@@ -113,7 +136,7 @@ class TableGroupServiceTest {
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(duplicatedTableGroupCreateDto))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidOrderTablesException.class);
     }
 
     @Test
@@ -143,13 +166,24 @@ class TableGroupServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 조리_또는_식사_중인_테이블_그룹을_해제할_때_예외가_발생한다(final OrderStatus orderStatus) {
         // given
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트메뉴그룹"));
+        final Product product = productRepository.save(
+            new Product("테스트상품", BigDecimal.valueOf(1000)));
+
+        final MenuProduct menuProduct = new MenuProduct(product, 1);
+
+        final Menu menu = menuRepository.save(Menu.of("테스트메뉴", BigDecimal.valueOf(500), menuGroup,
+            List.of(menuProduct)));
+
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+
         final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
             List.of(firstTable.getId(), secondTable.getId()));
 
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
         // when
-        final Order order = Order.of(firstTable, List.of());
+        final Order order = Order.of(firstTable, List.of(orderLineItem));
         order.changeOrderStatus(orderStatus);
         orderRepository.save(order);
 

@@ -13,7 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import kitchenpos.application.exception.OrderAppException.EmptyOrderTableException;
+import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
+import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
 
 @Entity(name = "orders")
 public class Order {
@@ -45,12 +46,18 @@ public class Order {
 
     public static Order of(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+
+        if (orderTable.isEmpty()) {
+            throw new EmptyOrderTableException();
+        }
+
+        if (orderLineItems.isEmpty()) {
+            throw new EmptyOrderLineItemsException();
+        }
+
         for (OrderLineItem orderLineItem : orderLineItems) {
             order.orderLineItems.add(orderLineItem);
             orderLineItem.setOrder(order);
-        }
-        if (orderTable.isEmpty()) {
-            throw new EmptyOrderTableException();
         }
         return order;
     }

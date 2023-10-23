@@ -59,7 +59,6 @@ public class TableGroupService {
 
         findTableGroup.ungroup();
 
-        System.out.println("--------------------------------");
         tableGroupRepository.save(findTableGroup);
     }
 
