@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -90,13 +91,14 @@ class ProductServiceTest {
 
     @Test
     void 상품의_목록을_조회한다() {
-        final List<Product> expected = productService.list();
+        final List<ProductResponse> expected = productService.list();
         for (int i = 0; i < 3; i++) {
             final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품" + i, BigDecimal.valueOf(1000));
-            expected.add(productService.create(productCreateRequest));
+            final Product product = productService.create(productCreateRequest);
+            expected.add(new ProductResponse(product.getId(), product.getName(), product.getPrice()));
         }
 
-        final List<Product> result = productService.list();
+        final List<ProductResponse> result = productService.list();
 
         assertSoftly(softly -> {
             softly.assertThat(result).hasSize(expected.size());
