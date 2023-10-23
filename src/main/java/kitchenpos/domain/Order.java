@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import org.hibernate.annotations.Tables;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -69,7 +67,7 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void validateStatusIsEqualTo() {
+    public void validateStatusIsEqualToCompletion() {
         if (Objects.equals(this.orderStatus, COMPLETION)) {
             throw new IllegalArgumentException("이미 완료된 주문의 상태는 변경할 수 없습니다!");
         }

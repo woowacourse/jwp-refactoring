@@ -10,7 +10,6 @@ import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -62,7 +61,7 @@ public class TableGroupService {
         final OrderTables orderTables = tableGroupRepository.getById(tableGroupId).getOrderTables();
         final List<Long> orderTableIds = orderTables.getValuesId();
         validateOrderTableStatus(orderTableIds);
-        orderTables.updateInfo();
+        orderTables.ungroupOrderTables();
     }
 
     private void validateOrderTableStatus(final List<Long> orderTableIds) {

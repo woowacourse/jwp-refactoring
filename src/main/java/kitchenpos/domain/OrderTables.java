@@ -46,7 +46,7 @@ public class OrderTables {
         }
     }
 
-    public void updateInfo() {
+    public void ungroupOrderTables() {
         for (final OrderTable orderTable : values) {
             orderTable.updateEmpty(false);
             orderTable.updateTableGroup(null);
