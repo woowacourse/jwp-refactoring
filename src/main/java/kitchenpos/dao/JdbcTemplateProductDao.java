@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateProductDao implements ProductDao {
+public class JdbcTemplateProductDao {
     private static final String TABLE_NAME = "product";
     private static final String KEY_COLUMN_NAME = "id";
 
@@ -31,14 +31,12 @@ public class JdbcTemplateProductDao implements ProductDao {
         ;
     }
 
-    @Override
     public Product save(final Product entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
-    @Override
     public Optional<Product> findById(final Long id) {
         try {
             return Optional.of(select(id));
@@ -47,7 +45,6 @@ public class JdbcTemplateProductDao implements ProductDao {
         }
     }
 
-    @Override
     public List<Product> findAll() {
         final String sql = "SELECT id, name, price FROM product";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));

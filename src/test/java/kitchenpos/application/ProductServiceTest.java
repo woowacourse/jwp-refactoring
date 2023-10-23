@@ -2,27 +2,18 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
-
-    @InjectMocks
-    private ProductService productService;
-
-    @Mock
-    private ProductDao productDao;
 
     @Nested
     class create_성공_테스트 {
@@ -30,16 +21,13 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품을_생성할_수_있다() {
             // given
-            final var product = new Product("상품_이름", BigDecimal.valueOf(1000));
-
-            given(productDao.save(product)).willReturn(product);
+            final var request = new ProductCreateRequest("상품_이름", BigDecimal.valueOf(1000));
 
             // when
-            final var actual = productService.create(product);
+            final var actual = productService.create(request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(product);
+            assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
         }
     }
 
@@ -49,23 +37,23 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품의_금액이_NULL이면_에러를_반환한다() {
             // given
-            final var product = new Product("상품_이름", null);
+            final var request = new ProductCreateRequest("상품_이름", null);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 상품의 가격이 없거나, 음수입니다.");
+                    .hasMessage("[ERROR] 금액이 없거나, 음수입니다.");
         }
 
         @Test
         void 상품의_금액이_음수이면_에러를_반환한다() {
             // given
-            final var product = new Product("상품_이름", BigDecimal.valueOf(-1000));
+            final var request = new ProductCreateRequest("상품_이름", BigDecimal.valueOf(-1000));
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 상품의 가격이 없거나, 음수입니다.");
+                    .hasMessage("[ERROR] 금액이 없거나, 음수입니다.");
         }
     }
 
@@ -74,10 +62,7 @@ class ProductServiceTest extends ServiceTest {
 
         @Test
         void 주문_목록이_존재하지_않으면_빈_값을_반환한다() {
-            // given
-            given(productService.list()).willReturn(Collections.emptyList());
-
-            // when
+            // given & when
             final var actual = productService.list();
 
             // then
@@ -87,11 +72,9 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
-            final var product = new Product("상품_이름", BigDecimal.valueOf(1000));
+            final var product = productDao.save(new Product("상품_이름", BigDecimal.valueOf(1000)));
 
-            given(productService.list()).willReturn(List.of(product));
-
-            final var expected = List.of(product);
+            final var expected = List.of(ProductResponse.toResponse(product));
 
             // when
             final var actual = productService.list();
