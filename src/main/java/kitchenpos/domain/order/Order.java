@@ -1,9 +1,11 @@
 package kitchenpos.domain.order;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -13,6 +15,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
 @Entity
 public class Order {
@@ -40,7 +43,6 @@ public class Order {
         this.orderTableId = null;
         this.orderLineItems = new OrderLineItems(orderLineItems);
         this.orderStatus = OrderStatus.COOKING;
-        this.orderedTime = LocalDateTime.now();
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
