@@ -6,6 +6,6 @@ import kitchenpos.domain.product.Product;
 public class MenuProductFixture {
 
     public static MenuProduct 메뉴_상품(Product product, Long quantity) {
-        return new MenuProduct(product, quantity);
+        return new MenuProduct(product.getId(), product.getName(), product.getPrice(), quantity);
     }
 }

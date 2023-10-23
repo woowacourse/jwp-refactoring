@@ -1,16 +1,11 @@
 package kitchenpos.application.menu;
 
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import java.util.List;
-import java.util.Map;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.menugroup.MenuGroupRepository;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -20,26 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
+    private final MenuMapper menuMapper;
+    private final MenuValidator menuValidator;
 
-    public MenuService(
-            MenuRepository menuRepository,
-            MenuGroupRepository menuGroupRepository,
-            ProductRepository productRepository
-    ) {
+    public MenuService(MenuRepository menuRepository, MenuMapper menuMapper, MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.menuMapper = menuMapper;
+        this.menuValidator = menuValidator;
     }
 
     public MenuResponse create(MenuRequest request) {
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴 그룹 아이디입니다.");
-        }
-        Map<Long, Product> products = productRepository.findAllByIdIn(request.getMenuProductIds()).stream()
-                .collect(toMap(Product::getId, identity()));
-        Menu menu = request.toMenu(products);
+        Menu menu = menuMapper.toMenu(request);
+        menu.register(menuValidator);
         return MenuResponse.from(menuRepository.save(menu));
     }
 

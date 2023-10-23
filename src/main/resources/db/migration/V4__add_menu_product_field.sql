@@ -1,0 +1,5 @@
+ALTER TABLE menu_product
+    ADD COLUMN price DECIMAL(19, 2) DEFAULT NULL;
+
+ALTER TABLE menu_product
+    ADD COLUMN name VARCHAR(255) DEFAULT NULL;

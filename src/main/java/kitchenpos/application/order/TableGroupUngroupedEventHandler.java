@@ -26,11 +26,14 @@ public class TableGroupUngroupedEventHandler {
     @Transactional
     @EventListener(TableGroupUngroupedEvent.class)
     public void handle(TableGroupUngroupedEvent event) {
-        List<Long> tableIds = orderTableRepository.findAllByTableGroupId(event.getTableGroupId()).stream()
-                .map(OrderTable::getId)
-                .collect(toList());
-
+        List<Long> tableIds = getTableIds(event.getTableGroupId());
         orderRepository.findAllByOrderTableIds(tableIds)
                 .forEach(Order::validateUngroupTableAllowed);
+    }
+
+    private List<Long> getTableIds(Long tableGroupId) {
+        return orderTableRepository.findAllByTableGroupId(tableGroupId).stream()
+                .map(OrderTable::getId)
+                .collect(toList());
     }
 }
