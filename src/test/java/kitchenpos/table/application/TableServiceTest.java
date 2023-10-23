@@ -51,8 +51,8 @@ class TableServiceTest extends IntegrationTest {
     void change_empty_success() {
         // given
         final OrderTable orderTable = generateOrderTableWithOutTableGroup(1, false);
-        generateOrder(OrderStatus.COMPLETION, orderTable);
-        generateOrder(OrderStatus.COMPLETION, orderTable);
+        generateOrder(OrderStatus.COMPLETION, orderTable, List.of());
+        generateOrder(OrderStatus.COMPLETION, orderTable, List.of());
         final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(false);
 
         // when
@@ -96,8 +96,8 @@ class TableServiceTest extends IntegrationTest {
         void any_order_in_order_table_status_is_not_completion() {
             // given
             final OrderTable orderTable = generateOrderTableWithOutTableGroup(1, false);
-            generateOrder(OrderStatus.COOKING, orderTable);
-            generateOrder(OrderStatus.COMPLETION, orderTable);
+            generateOrder(OrderStatus.COOKING, orderTable, List.of());
+            generateOrder(OrderStatus.COMPLETION, orderTable, List.of());
             final OrderTableEmptyStatusChangeRequest request = new OrderTableEmptyStatusChangeRequest(false);
 
             // when & then

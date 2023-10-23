@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -36,6 +37,7 @@ class OrderTest {
                 savedOrderTable.getId(),
                 OrderStatus.COMPLETION,
                 LocalDateTime.now(),
+                List.of(),
                 orderValidator
         );
 
@@ -55,6 +57,7 @@ class OrderTest {
                 savedOrderTable.getId(),
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
+                List.of(),
                 orderValidator
         );
 

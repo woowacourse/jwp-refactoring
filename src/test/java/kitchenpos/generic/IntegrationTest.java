@@ -2,12 +2,14 @@ package kitchenpos.generic;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
@@ -66,12 +68,17 @@ public abstract class IntegrationTest {
         return productRepository.save(product);
     }
 
-    protected Order generateOrder(final OrderStatus orderStatus, final OrderTable orderTable) {
+    protected Order generateOrder(
+            final OrderStatus orderStatus,
+            final OrderTable orderTable,
+            final List<OrderLineItem> orderLineItems
+    ) {
         final Order order = new Order(
                 null,
                 orderTable.getId(),
                 orderStatus,
                 LocalDateTime.now(),
+                orderLineItems,
                 orderValidator
         );
         return orderRepository.save(order);

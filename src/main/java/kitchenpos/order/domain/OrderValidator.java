@@ -1,19 +1,16 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
 
     private final OrderTableRepository orderTableRepository;
-    private final MenuRepository menuRepository;
 
-    public OrderValidator(final OrderTableRepository orderTableRepository, final MenuRepository menuRepository) {
+    public OrderValidator(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
-        this.menuRepository = menuRepository;
     }
 
     public void validateExistTable(final Long tableId) {

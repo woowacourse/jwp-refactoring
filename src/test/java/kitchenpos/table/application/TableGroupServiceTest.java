@@ -128,8 +128,8 @@ class TableGroupServiceTest extends IntegrationTest {
         final TableGroup tableGroup = generateTableGroup();
         orderTableA.groupByTableGroup(tableGroup);
         orderTableB.groupByTableGroup(tableGroup);
-        generateOrder(OrderStatus.COMPLETION, orderTableA);
-        generateOrder(OrderStatus.COMPLETION, orderTableB);
+        generateOrder(OrderStatus.COMPLETION, orderTableA, List.of());
+        generateOrder(OrderStatus.COMPLETION, orderTableB, List.of());
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -149,8 +149,8 @@ class TableGroupServiceTest extends IntegrationTest {
             // given
             final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, false);
             final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, false);
-            generateOrder(OrderStatus.COOKING, orderTableA);
-            generateOrder(OrderStatus.COMPLETION, orderTableB);
+            generateOrder(OrderStatus.COOKING, orderTableA, List.of());
+            generateOrder(OrderStatus.COMPLETION, orderTableB, List.of());
             final TableGroup tableGroup = generateTableGroup();
             orderTableA.groupByTableGroup(tableGroup);
             orderTableB.groupByTableGroup(tableGroup);

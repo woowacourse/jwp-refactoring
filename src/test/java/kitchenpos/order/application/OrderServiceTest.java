@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import kitchenpos.generic.IntegrationTest;
+import kitchenpos.generic.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.application.dto.OrderCreationRequest;
 import kitchenpos.order.application.dto.OrderItemsWithQuantityRequest;
@@ -110,9 +113,9 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        final Order order = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
         final Menu menu = generateMenu("chicken", 20000L);
-        orderLineItemRepository.save(new OrderLineItem(order, menu.getId(), menu.getName(), menu.getPrice(), 1L));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1L));
+        generateOrder(OrderStatus.COOKING, generateOrderTable(3), orderLineItems);
 
         // when
         final List<OrderResult> list = orderService.list();
@@ -126,13 +129,16 @@ class OrderServiceTest extends IntegrationTest {
         });
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Test
     void change_order_status_success() {
         // given
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
-        final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
         final Menu menu = generateMenu("chicken", 20000L);
-        orderLineItemRepository.save(new OrderLineItem(existOrder, menu.getId(), menu.getName(), menu.getPrice(), 1L));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1L));
+        final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3), orderLineItems);
 
         // when
         final OrderResult changedOrder = orderService.changeOrderStatus(existOrder.getId(), request);
@@ -161,7 +167,8 @@ class OrderServiceTest extends IntegrationTest {
         void order_status_is_completion() {
             // given
             final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
-            final Order existOrder = generateOrder(OrderStatus.COMPLETION, generateOrderTable(3));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem("menu", Price.from(1000L), 1L));
+            final Order existOrder = generateOrder(OrderStatus.COMPLETION, generateOrderTable(3), orderLineItems);
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(existOrder.getId(), request))

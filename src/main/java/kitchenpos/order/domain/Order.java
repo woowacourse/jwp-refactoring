@@ -1,12 +1,17 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Table(name = "orders")
@@ -21,6 +26,10 @@ public class Order {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false)
+    private List<OrderLineItem> orderLineItems;
+
     protected Order() {
     }
 
@@ -29,6 +38,7 @@ public class Order {
             final Long orderTableId,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
+            final List<OrderLineItem> orderLineItems,
             final OrderValidator orderValidator
     ) {
         orderValidator.validateExistTable(orderTableId);
@@ -36,10 +46,15 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
-    public Order(final Long orderTableId, final OrderValidator orderValidator) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderValidator);
+    public Order(
+            final Long orderTableId,
+            final List<OrderLineItem> orderLineItems,
+            final OrderValidator orderValidator
+    ) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems, orderValidator);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
@@ -67,5 +82,9 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }
