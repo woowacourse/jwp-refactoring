@@ -5,7 +5,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.ProductQuantityDto;
 import kitchenpos.test.fixture.MenuFixture;
 import kitchenpos.test.fixture.MenuGroupFixture;
 import kitchenpos.test.fixture.ProductFixture;
@@ -27,10 +26,10 @@ class MenuTest {
             MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹("중식");
             Menu menu = MenuFixture.메뉴("짜장면 세트", BigDecimal.valueOf(15000), menuGroup);
             Product product = ProductFixture.상품("짜장면", BigDecimal.valueOf(5000));
-            List<ProductQuantityDto> productQuantities = List.of(new ProductQuantityDto(product, quantity));
+            List<MenuProduct> menuProducts = List.of(new MenuProduct(menu, product, quantity));
 
             //when
-            menu.updateProducts(productQuantities);
+            menu.updateProducts(menuProducts);
 
             //then
             assertSoftly(softly -> {
@@ -49,10 +48,10 @@ class MenuTest {
             MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹("중식");
             Menu menu = MenuFixture.메뉴("짜장면 세트", BigDecimal.valueOf(15000), menuGroup);
             Product product = ProductFixture.상품("짜장면", BigDecimal.valueOf(5000));
-            List<ProductQuantityDto> productQuantities = List.of(new ProductQuantityDto(product, 2));
+            List<MenuProduct> menuProducts = List.of(new MenuProduct(menu, product, 2));
 
             //when, then
-            assertThatThrownBy(() -> menu.updateProducts(productQuantities))
+            assertThatThrownBy(() -> menu.updateProducts(menuProducts))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("메뉴 가격이 상품 가격의 합보다 클 수 없습니다.");
         }

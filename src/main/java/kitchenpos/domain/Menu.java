@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.application.dto.ProductQuantityDto;
 import kitchenpos.domain.vo.MenuName;
 import kitchenpos.domain.vo.MenuProducts;
 import kitchenpos.domain.vo.Price;
@@ -72,19 +70,11 @@ public class Menu {
         return menuProducts.getMenuProducts();
     }
 
-    public void updateProducts(List<ProductQuantityDto> productQuantities) {
-        MenuProducts menuProducts = new MenuProducts(getMenuProducts(productQuantities));
+    public void updateProducts(List<MenuProduct> products) {
+        MenuProducts menuProducts = new MenuProducts(products);
         if (menuProducts.isPriceLessThan(getPrice())) {
             throw new IllegalArgumentException("메뉴 가격이 상품 가격의 합보다 클 수 없습니다.");
         }
         this.menuProducts = menuProducts;
-    }
-
-    private List<MenuProduct> getMenuProducts(List<ProductQuantityDto> productQuantities) {
-        return productQuantities.stream()
-                .map(productQuantity ->
-                        new MenuProduct(this, productQuantity.getProduct(), productQuantity.getQuantity())
-                )
-                .collect(Collectors.toList());
     }
 }
