@@ -8,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderUpdateRequest;
 import kitchenpos.ui.request.TableCreateRequest;
@@ -56,7 +57,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
                             menuGroup.getId(),
-                            List.of(menuProduct)
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
                     )
             );
 
@@ -107,7 +108,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
                             menuGroup.getId(),
-                            List.of(menuProduct)
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
                     )
             );
 
@@ -136,7 +137,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
                             menuGroup.getId(),
-                            List.of(menuProduct)
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
                     )
             );
 
@@ -171,7 +172,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
                             menuGroup.getId(),
-                            List.of(menuProduct)
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
                     )
             );
 
@@ -215,7 +216,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
                             menuGroup.getId(),
-                            List.of(menuProduct)
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
                     )
             );
 
@@ -254,7 +255,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
                             menuGroup.getId(),
-                            List.of(menuProduct)
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
                     )
             );
 

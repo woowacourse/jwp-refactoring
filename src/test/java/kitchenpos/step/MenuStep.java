@@ -4,8 +4,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +14,7 @@ import static io.restassured.http.ContentType.JSON;
 
 public class MenuStep {
 
-    public static MenuCreateRequest MENU_CREATE_REQUEST_스키야키(BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public static MenuCreateRequest MENU_CREATE_REQUEST_스키야키(BigDecimal price, final Long menuGroupId, final List<MenuProductCreateRequest> menuProducts) {
         return new MenuCreateRequest(
                 "스키야키",
                 price,

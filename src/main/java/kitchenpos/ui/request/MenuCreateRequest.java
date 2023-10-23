@@ -1,7 +1,5 @@
 package kitchenpos.ui.request;
 
-import kitchenpos.domain.MenuProduct;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,9 +8,9 @@ public class MenuCreateRequest {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+    private final List<MenuProductCreateRequest> menuProducts;
 
-    public MenuCreateRequest(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public MenuCreateRequest(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProductCreateRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -31,7 +29,7 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProductCreateRequest> getMenuProducts() {
         return menuProducts;
     }
 }

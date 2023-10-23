@@ -26,6 +26,20 @@ public class MenuProduct extends BaseDate {
     private Product product;
     private long quantity;
 
+    public MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public MenuProduct(final Product product, final long quantity) {
+        this(null, null, product, quantity);
+    }
+
+    public MenuProduct() {
+    }
+
     public void setMenu(final Menu menu) {
         this.menu = menu;
     }
