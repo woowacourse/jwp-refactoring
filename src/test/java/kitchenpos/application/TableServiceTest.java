@@ -75,7 +75,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블에 매핑된 주문이 COOKING 상태이거나 MEAL 상태라면 예외가 발생한다.")
     void changeEmpty_fail_not_completion() {
         when(orderTableRepository.getById(1L)).thenReturn(orderTable);
-        when(orderRepository.existsByOrderTableAndOrderStatusIn(any(), any())).thenReturn(true);
+        when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any())).thenReturn(true);
         orderTable.setTableGroup(null);
 
         OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);

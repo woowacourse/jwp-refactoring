@@ -37,8 +37,8 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                Arrays.asList(savedOrderTable), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new ExistsNotCompletionOrderException(orderTableId);
         }
 
