@@ -1,40 +1,126 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import kitchenpos.domain.vo.NumberOfGuests;
+
+@Entity
+@Table(name = "order_table")
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
+    @Column(name = "empty")
     private boolean empty;
 
-    public Long getId() {
-        return id;
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders = new ArrayList<>();
+
+    protected OrderTable() {
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    private OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
+        this.empty = empty;
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public boolean isGrouped() {
+        return tableGroup != null;
+    }
+
+    public boolean isAllOfOrderCompleted() {
+        return orders.stream()
+                .allMatch(Order::isCompleted);
+    }
+
+    public void group(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
+    }
+
+    public void changeTableStatus(boolean empty) {
         this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = NumberOfGuests.from(numberOfGuests);
+    }
+
+    public void addOrder(Order order) {
+        if (!orders.contains(order)) {
+            orders.add(order);
+        }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests.getNumberOfGuests();
+    }
+
+    public static OrderTableBuilder builder() {
+        return new OrderTableBuilder();
+    }
+
+    public static class OrderTableBuilder {
+
+        private TableGroup tableGroup;
+        private int numberOfGuests;
+        private boolean empty;
+
+        public OrderTableBuilder tableGroup(TableGroup tableGroup) {
+            this.tableGroup = tableGroup;
+            return this;
+        }
+
+        public OrderTableBuilder numberOfGuests(int numberOfGuests) {
+            this.numberOfGuests = numberOfGuests;
+            return this;
+        }
+
+        public OrderTableBuilder empty(boolean empty) {
+            this.empty = empty;
+            return this;
+        }
+
+        public OrderTable build() {
+            return new OrderTable(tableGroup, numberOfGuests, empty);
+        }
     }
 }

@@ -2,122 +2,133 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.anyList;
-import static org.mockito.BDDMockito.anyLong;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.request.OrderCreateRequest;
+import kitchenpos.application.response.OrderResponse;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceMockTest
+@ServiceTest
 class OrderServiceTest {
 
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
 
-    @Mock
-    private MenuDao menuDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-    @Mock
-    private OrderLineItemDao orderLineItemDao;
+    @Autowired
+    private MenuRepository menuRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderRepository orderRepository;
+
+    private Menu menu;
+
+    private OrderTable orderTable;
+
+    @BeforeEach
+    void setUp() {
+        MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.builder().name("인형").build());
+        menu = menuRepository.save(Menu.builder().menuGroup(menuGroup).name("벨리곰").price(10_000).build());
+        orderTable = orderTableRepository.save(OrderTableFixture.createOrderTable(null, false, 5));
+    }
 
     @Nested
     class 주문을_생성할_때 {
 
         @Test
         void 정상적으로_생성한다() {
-            Order 주문_엔티티_A = OrderFixture.주문_엔티티_A;
-            OrderTable 주문_테이블_A = OrderTableFixture.주문_테이블_A;
-            OrderLineItem 주문_아이템_엔티티_A = OrderLineItemFixture.주문_아이템_엔티티_A;
-            given(menuDao.countByIdIn(any()))
-                    .willReturn(Long.valueOf(주문_엔티티_A.getOrderLineItems().size()));
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_테이블_A));
-            given(orderDao.save(any(Order.class)))
-                    .willReturn(주문_엔티티_A);
-            given(orderLineItemDao.save(any(OrderLineItem.class)))
-                    .willReturn(주문_아이템_엔티티_A);
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                    List.of(orderLineItemDto));
 
-            Order response = orderService.create(주문_엔티티_A);
+            OrderResponse response = orderService.create(orderCreateRequest);
 
-            assertThat(response).usingRecursiveComparison().isEqualTo(주문_엔티티_A);
+            assertAll(
+                    () -> assertThat(response.getId()).isPositive(),
+                    () -> assertThat(response.getOrderTableId()).isEqualTo(orderTable.getId()),
+                    () -> assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                    () -> assertThat(response.getOrderLineItemDtos().get(0).getMenuId()).isEqualTo(menu.getId()),
+                    () -> assertThat(response.getOrderLineItemDtos().get(0).getQuantity()).isEqualTo(1)
+            );
         }
 
         @Test
         void 주문_아이템이_없으면_예외가_발생한다() {
-            Order 주문_엔티티_B = OrderFixture.주문_엔티티_B_주문_아이템_없음;
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(), Collections.emptyList());
 
-            assertThatThrownBy(() -> orderService.create(주문_엔티티_B))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문의 메뉴가 존재하지 않습니다.");
         }
 
         @Test
-        void 주문_메뉴와_주문_아이템의_메뉴와_일치하지_않으면_예외가_발생한다() {
-            Order 주문_엔티티_A = OrderFixture.주문_엔티티_A;
-            given(menuDao.countByIdIn(anyList()))
-                    .willReturn(0L);
+        void 주문_메뉴를_찾을_수_없으면_예외가_발생한다() {
+            Long wrongMenuId = -1L;
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(wrongMenuId, 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                    List.of(orderLineItemDto));
 
-            assertThatThrownBy(() -> orderService.create(주문_엔티티_A))
+            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블을_찾을_수_없으면_예외가_발생한다() {
-            Order 주문_엔티티_A = OrderFixture.주문_엔티티_A;
-            given(menuDao.countByIdIn(any()))
-                    .willReturn(Long.valueOf(주문_엔티티_A.getOrderLineItems().size()));
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.empty());
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(-1L, List.of(orderLineItemDto));
 
-            assertThatThrownBy(() -> orderService.create(주문_엔티티_A))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블이 존재하지 않습니다.");
         }
 
         @Test
         void 주문_테이블이_EMPTY_상태이면_예외가_발생한다() {
-            Order 주문_엔티티_A = OrderFixture.주문_엔티티_A;
-            OrderTable 주문_테이블_B = OrderTableFixture.주문_테이블_B_EMPTY_상태;
-            given(menuDao.countByIdIn(any()))
-                    .willReturn(Long.valueOf(주문_엔티티_A.getOrderLineItems().size()));
-            given(orderTableDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_테이블_B));
+            OrderTable emptyOrderTable = orderTableRepository.save(OrderTableFixture.createOrderTable(null, true, 10));
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(),
+                    List.of(orderLineItemDto));
 
-            assertThatThrownBy(() -> orderService.create(주문_엔티티_A))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("EMPTY 상태인 테이블에 주문할 수 없습니다.");
         }
     }
 
     @Test
     void 모든_주문_엔티티를_조회한다() {
-        Order 주문_엔티티_A = OrderFixture.주문_엔티티_A;
-        given(orderDao.findAll())
-                .willReturn(List.of(주문_엔티티_A));
+        OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                List.of(orderLineItemDto));
+        orderService.create(orderCreateRequest);
 
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
-        assertThat(orders).contains(주문_엔티티_A);
+        assertThat(orders).hasSizeGreaterThanOrEqualTo(1);
     }
 
     @Nested
@@ -125,27 +136,53 @@ class OrderServiceTest {
 
         @Test
         void 정상적으로_변경한다() {
-            Order 주문_엔티티_A = OrderFixture.주문_엔티티_A;
-            Order 주문_엔티티_B_식사_완료 = OrderFixture.주문_엔티티_B_완료;
-            OrderLineItem 주문_아이템_엔티티_A = OrderLineItemFixture.주문_아이템_엔티티_A;
-            given(orderDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_엔티티_A));
-            given(orderLineItemDao.findAllByOrderId(anyLong()))
-                    .willReturn(List.of(주문_아이템_엔티티_A));
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                    List.of(orderLineItemDto));
+            OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
-            Order changedOrder = orderService.changeOrderStatus(주문_엔티티_A.getId(), 주문_엔티티_B_식사_완료);
+            OrderResponse updatedOrderResponse = orderService.changeOrderStatus(
+                    orderResponse.getId(),
+                    "COMPLETION"
+            );
 
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(주문_엔티티_B_식사_완료.getOrderStatus());
+            assertThat(updatedOrderResponse.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
         }
 
         @Test
         void 주문_상태가_완료인_주문의_상태를_변경하면_예외가_발생한다() {
-            Order 주문_엔티티_B_식사_완료 = OrderFixture.주문_엔티티_B_완료;
-            given(orderDao.findById(anyLong()))
-                    .willReturn(Optional.of(주문_엔티티_B_식사_완료));
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                    List.of(orderLineItemDto));
+            OrderResponse orderResponse = orderService.create(orderCreateRequest);
+            orderService.changeOrderStatus(orderResponse.getId(), "COMPLETION");
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(주문_엔티티_B_식사_완료.getId(), 주문_엔티티_B_식사_완료))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), "COMPLETION"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("완료된 주문의 상태를 변경할 수 없습니다.");
+        }
+
+        @Test
+        void 주문을_찾을_수_없으면_예외가_발생한다() {
+            Long wrongOrderId = -1L;
+
+            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, "COMPLETION"))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("일치하는 주문을 찾을 수 없습니다.");
+        }
+
+        @ParameterizedTest
+        @NullAndEmptySource
+        @ValueSource(strings = {"hello", "gray", "done"})
+        void 존재하는_주문_상태가_아니면_예외가_발생한다(String status) {
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto(menu.getId(), 1);
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                    List.of(orderLineItemDto));
+            OrderResponse orderResponse = orderService.create(orderCreateRequest);
+
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), status))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("일치하는 주문 상태를 찾을 수 없습니다.");
         }
     }
 }

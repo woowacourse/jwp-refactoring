@@ -3,89 +3,84 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.anyLong;
-import static org.mockito.BDDMockito.given;
 
-import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.application.request.TableGroupCreateRequest;
+import kitchenpos.application.response.TableGroupResponse;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
-@ServiceMockTest
+@ServiceTest
 class TableGroupServiceTest {
 
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
-    @Mock
-    private TableGroupDao tableGroupDao;
+    private OrderTable orderTableA;
+    private OrderTable orderTableB;
+
+    @BeforeEach
+    void setUp() {
+        orderTableA = orderTableRepository.save(OrderTableFixture.createOrderTable(null, true, 4));
+        orderTableB = orderTableRepository.save(OrderTableFixture.createOrderTable(null, true, 2));
+    }
 
     @Nested
     class 테이블을_그룹화_할_때 {
 
         @Test
         void 정상적으로_그룹화한다() {
-            TableGroup 테이블_그룹_엔티티_B = TableGroupFixture.테이블_그룹_엔티티_B_주문_테이블_2개;
-            OrderTable 주문_테이블_B_Empty_상태 = OrderTableFixture.주문_테이블_B_EMPTY_상태;
-            OrderTable 주문_테이블_C_Empty_상태 = OrderTableFixture.주문_테이블_C_EMPTY_상태;
-            given(orderTableDao.findAllByIdIn(anyList()))
-                    .willReturn(List.of(주문_테이블_B_Empty_상태, 주문_테이블_C_Empty_상태));
-            given(tableGroupDao.save(any(TableGroup.class)))
-                    .willReturn(테이블_그룹_엔티티_B);
-            given(orderTableDao.save(any(OrderTable.class)))
-                    .willReturn(주문_테이블_B_Empty_상태);
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
 
-            TableGroup response = tableGroupService.create(테이블_그룹_엔티티_B);
+            TableGroupResponse response = tableGroupService.create(tableGroupCreateRequest);
 
-            assertThat(response).usingRecursiveComparison().isEqualTo(테이블_그룹_엔티티_B);
+            assertThat(response.getId()).isPositive();
         }
 
         @Test
         void 주문_테이블_수가_2보다_작으면_예외가_발생한다() {
-            TableGroup 테이블_그룹_엔티티_C_주문_그룹_1개 = TableGroupFixture.테이블_그룹_엔티티_C_주문_테이블_1개;
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(orderTableA.getId()));
 
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_엔티티_C_주문_그룹_1개))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 그룹화를 위한 테이블이 2개 이상 필요합니다.");
         }
 
         @Test
         void 주문_테이블을_찾을_수_없으면_예외가_발생한다() {
-            TableGroup 테이블_그룹_엔티티_B = TableGroupFixture.테이블_그룹_엔티티_B_주문_테이블_2개;
-            given(orderTableDao.findAllByIdIn(anyList()))
-                    .willReturn(Collections.emptyList());
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(-1L, -2L));
 
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_엔티티_B))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 그룹화를 위한 테이블이 2개 이상 필요합니다.");
         }
 
         @Test
         void 주문_테이블_상태가_EMPTY가_아니면_예외가_발생한다() {
-            TableGroup 테이블_그룹_엔티티_B = TableGroupFixture.테이블_그룹_엔티티_B_주문_테이블_2개;
-            OrderTable 주문_테이블_D_NOT_EMPTY_상태 = OrderTableFixture.주문_테이블_D_NOT_EMPTY_상태;
-            OrderTable 주문_테이블_E_NOT_EMPTY_상태 = OrderTableFixture.주문_테이블_E_NOT_EMPTY_상태;
-            given(orderTableDao.findAllByIdIn(anyList()))
-                    .willReturn(List.of(주문_테이블_D_NOT_EMPTY_상태, 주문_테이블_E_NOT_EMPTY_상태));
+            OrderTable notEmptyOrderTableA = orderTableRepository.save(OrderTableFixture.createOrderTable(null, false, 4));
+            OrderTable notEmptyOrderTableB = orderTableRepository.save(OrderTableFixture.createOrderTable(null, false, 2));
+            TableGroupCreateRequest tableGroupCreateRequest =
+                    new TableGroupCreateRequest(List.of(notEmptyOrderTableA.getId(), notEmptyOrderTableB.getId()));
 
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_엔티티_B))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("비어있지 않은 테이블은 그룹화할 수 없습니다.");
         }
     }
 
@@ -94,27 +89,28 @@ class TableGroupServiceTest {
 
         @Test
         void 정상적으로_해지한다() {
-            TableGroup 테이블_그룹_엔티티_B_주문_테이블_2개 = TableGroupFixture.테이블_그룹_엔티티_B_주문_테이블_2개;
-            OrderTable 주문_테이블_A = OrderTableFixture.주문_테이블_A;
-            given(orderTableDao.findAllByTableGroupId(anyLong()))
-                    .willReturn(List.of(주문_테이블_A));
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                    .willReturn(false);
+            Order orderA = Order.builder().orderTable(orderTableA).orderStatus(OrderStatus.COMPLETION).build();
+            Order orderB = Order.builder().orderTable(orderTableB).orderStatus(OrderStatus.COMPLETION).build();
+            orderRepository.save(orderA);
+            orderRepository.save(orderB);
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupResponse response = tableGroupService.create(tableGroupCreateRequest);
 
-            assertDoesNotThrow(() -> tableGroupService.ungroup(테이블_그룹_엔티티_B_주문_테이블_2개.getId()));
+            assertDoesNotThrow(() -> tableGroupService.ungroup(response.getId()));
         }
 
         @Test
-        void 주문_테이블_상태가_COMPLETE가_아니면_예외가_발생한다() {
-            TableGroup 테이블_그룹_엔티티_B_주문_테이블_2개 = TableGroupFixture.테이블_그룹_엔티티_B_주문_테이블_2개;
-            OrderTable 주문_테이블_D_NOT_EMPTY_상태 = OrderTableFixture.주문_테이블_D_NOT_EMPTY_상태;
-            given(orderTableDao.findAllByTableGroupId(anyLong()))
-                    .willReturn(List.of(주문_테이블_D_NOT_EMPTY_상태));
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                    .willReturn(true);
+        void 주문_테이블_주문_상태가_COMPLETE가_아니면_예외가_발생한다() {
+            Order order = Order.builder().orderTable(orderTableA).orderStatus(OrderStatus.MEAL).build();
+            orderRepository.save(order);
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
-            assertThatThrownBy(() -> tableGroupService.ungroup(테이블_그룹_엔티티_B_주문_테이블_2개.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("요리중이거나 식사중인 테이블이 존재합니다.");
         }
     }
 }

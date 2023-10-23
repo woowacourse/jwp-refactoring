@@ -1,40 +1,95 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
+
+@Entity
+@Table(name = "menu_product")
 public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "seq")
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(name = "quantity")
+    private Quantity quantity;
+
+    protected MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    private MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
+        this.product = product;
+        this.quantity = new Quantity(quantity);
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Price calculatePrice() {
+        BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf(quantity.getValue()));
+        return Price.of(price.longValue());
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public static MenuProductBuilder builder() {
+        return new MenuProductBuilder();
     }
 
-    public Long getProductId() {
-        return productId;
+    public static class MenuProductBuilder {
+
+        private Menu menu;
+        private Product product;
+        private long quantity;
+
+        public MenuProductBuilder menu(Menu menu) {
+            this.menu = menu;
+            return this;
+        }
+
+        public MenuProductBuilder product(Product product) {
+            this.product = product;
+            return this;
+        }
+
+        public MenuProductBuilder quantity(long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public MenuProduct build() {
+            return new MenuProduct(menu, product, quantity);
+        }
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public Long getId() {
+        return id;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+        return quantity.getValue();
     }
 }

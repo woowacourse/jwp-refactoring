@@ -2,51 +2,115 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import kitchenpos.domain.vo.Price;
 
+@Entity
+@Table(name = "menu")
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "name")
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
+
+    @Embedded
+    private Price price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts;
+
+    protected Menu() {
+    }
+
+    private Menu(String name, Price price, MenuGroup menuGroup) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+    }
+
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        validateMenuProducts(menuProducts);
+        this.menuProducts = menuProducts;
+    }
+
+    private void validateMenuProducts(List<MenuProduct> menuProducts) {
+        long menuProductPriceSum = menuProducts.stream()
+                .map(MenuProduct::calculatePrice)
+                .mapToLong(price -> price.getValue().longValue())
+                .sum();
+
+        if (this.price.isBiggerThan(menuProductPriceSum)) {
+            throw new IllegalArgumentException("메뉴 금액이 상품 금액 합계보다 클 수 없습니다.");
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public static MenuBuilder builder() {
+        return new MenuBuilder();
+    }
+
+    public static class MenuBuilder {
+
+        private String name;
+        private Price price;
+        private MenuGroup menuGroup;
+        private List<MenuProduct> menuProducts;
+
+        public MenuBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MenuBuilder price(long price) {
+            this.price = Price.of(price);
+            return this;
+        }
+
+        public MenuBuilder menuGroup(MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
+            return this;
+        }
+
+        public Menu build() {
+            return new Menu(name, price, menuGroup);
+        }
     }
 }
