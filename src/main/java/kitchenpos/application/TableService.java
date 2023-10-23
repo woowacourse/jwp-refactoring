@@ -45,18 +45,11 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest emptyInput) {
         final OrderTable orderTable = orderTableRepository.findMandatoryById(orderTableId);
-        validateTableGroupNotNull(orderTable);
         if (!orderTable.isEmpty()) {
             validateOrderStatusCompletion(orderTable);
         }
         orderTable.changeEmpty(emptyInput.getEmpty());
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private void validateTableGroupNotNull(final OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateOrderStatusCompletion(final OrderTable orderTable) {
@@ -72,14 +65,7 @@ public class TableService {
     ) {
         final NumberOfGuests numberOfGuests = new NumberOfGuests(numberOfGuestsInput.getNumberOfGuests());
         final OrderTable orderTable = orderTableRepository.findMandatoryById(orderTableId);
-        validateOrderTableOccupied(orderTable);
         orderTable.changeNumberOfGuests(numberOfGuests);
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
-    }
-
-    private void validateOrderTableOccupied(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 }

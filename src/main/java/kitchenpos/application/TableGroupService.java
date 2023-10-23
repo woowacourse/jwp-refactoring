@@ -52,6 +52,7 @@ public class TableGroupService {
         }
     }
 
+    // TODO: 일급 컬렉션 만들자.
     private void validateOrderTablesStatus(final List<OrderTable> orderTables) {
         final long validatedCount = orderTables.stream()
                 .filter(OrderTable::isEmpty)
@@ -71,6 +72,7 @@ public class TableGroupService {
         orderTableRepository.saveAll(orderTables);
     }
 
+    // TODO: 일급 컬렉션 만들자.
     private void validateMealCompletion(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)

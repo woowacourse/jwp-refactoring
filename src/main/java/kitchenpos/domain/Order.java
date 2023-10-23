@@ -55,12 +55,19 @@ public class Order {
         this(null, orderStatus, LocalDateTime.now(), orderTable, new ArrayList<>());
     }
 
+    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems.addAll(orderLineItems);
+    }
+
     public void changeStatus(final OrderStatus orderStatus) {
+        validateNotCompletion();
         this.orderStatus = orderStatus;
     }
 
-    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
+    private void validateNotCompletion() {
+        if (orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

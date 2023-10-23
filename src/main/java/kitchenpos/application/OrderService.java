@@ -42,17 +42,11 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderInput) {
         final OrderTable orderTable = orderTableRepository.findMandatoryById(orderInput.getOrderTableId());
-        validateOrderTableOccupied(orderTable);
+        orderTable.validateOccupied();
         final Order order = new Order(OrderStatus.COOKING, orderTable);
         final List<OrderLineItem> orderLineItems = createOrderLineItems(orderInput.getOrderLineItems(), order);
         order.addOrderLineItems(orderLineItems);
         return OrderResponse.from(orderRepository.save(order));
-    }
-
-    private void validateOrderTableOccupied(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private List<OrderLineItem> createOrderLineItems(
@@ -100,14 +94,7 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest orderStatusInput) {
         final Order order = orderRepository.joinOrderLineItemsMandatoryById(orderId);
         final OrderStatus orderStatus = orderStatusInput.getOrderStatus();
-        validateOrderStatusNotCompletion(order.getOrderStatus());
         order.changeStatus(orderStatus);
         return OrderResponse.from(order);
-    }
-
-    private void validateOrderStatusNotCompletion(final OrderStatus orderStatus) {
-        if (orderStatus.isCompletion()) {
-            throw new IllegalArgumentException();
-        }
     }
 }
