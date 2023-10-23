@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.ordertable.OrderTable;
+import kitchenpos.order.OrderTable;
 
 @Entity
 public class TableGroup {

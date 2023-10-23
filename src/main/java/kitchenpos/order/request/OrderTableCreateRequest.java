@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.request;
+package kitchenpos.order.request;
 
 public class OrderTableCreateRequest {
 

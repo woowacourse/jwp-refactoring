@@ -6,7 +6,6 @@ import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.ordertable.OrderTable;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;

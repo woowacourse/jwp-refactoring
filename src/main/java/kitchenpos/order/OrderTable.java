@@ -1,4 +1,4 @@
-package kitchenpos.ordertable;
+package kitchenpos.order;
 
 import java.util.Objects;
 import javax.persistence.Column;
