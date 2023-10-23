@@ -62,9 +62,7 @@ public class MenuService {
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
 
-        Menu saved = new Menu(savedMenu.getId(), savedMenu.getName(), savedMenu.getPrice(), savedMenu.getMenuGroupId(), savedMenuProducts);
-
-        return MenuDto.from(saved);
+        return MenuDto.of(savedMenu, savedMenuProducts);
     }
 
     public List<MenuDto> list() {

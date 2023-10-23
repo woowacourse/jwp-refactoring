@@ -18,6 +18,10 @@ public class MenuDto {
         return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
     }
 
+    public static MenuDto of(Menu menu, List<MenuProduct> menuProducts) {
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+    }
+
     public MenuDto(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
