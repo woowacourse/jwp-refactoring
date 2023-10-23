@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
@@ -17,11 +16,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
     private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao, final ProductRepository productRepository) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
