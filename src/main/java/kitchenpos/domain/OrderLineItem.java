@@ -13,15 +13,18 @@ public class OrderLineItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long seq;
+    private Long seq;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private final Order order;
+    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private final Menu menu;
-    private final long quantity;
+    private Menu menu;
+    private long quantity;
+
+    OrderLineItem() {
+    }
 
     private OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
         this.seq = seq;

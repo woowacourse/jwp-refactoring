@@ -1,22 +1,25 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.dto.request.OrderChangeOrderStatusRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.response.OrderResponse;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -79,6 +82,7 @@ public class OrderService {
                     orderLineItem.getQuantity());
             savedOrderLineItems.add(orderLineItemRepository.save(saved));
         }
+        savedOrder.initOrderLineItems(savedOrderLineItems);
 
         return OrderResponse.of(savedOrder);
     }
@@ -87,7 +91,7 @@ public class OrderService {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
-//            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
+            order.initOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
         }
 
         return orders.stream()
@@ -100,7 +104,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
@@ -108,8 +112,6 @@ public class OrderService {
         savedOrder.changeStatus(orderStatus);
 
         orderRepository.save(savedOrder);
-
-//        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return OrderResponse.of(savedOrder);
     }

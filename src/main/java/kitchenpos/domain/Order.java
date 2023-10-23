@@ -10,22 +10,27 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private final Long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private final OrderTable orderTable;
-    private final LocalDateTime orderedTime;
+    private OrderTable orderTable;
+    private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order")
-    private final List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems;
     private OrderStatus orderStatus;
-    
+
+    Order() {
+    }
+
     private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
                   final LocalDateTime orderedTime,
                   final List<OrderLineItem> orderLineItems) {
@@ -42,6 +47,10 @@ public class Order {
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
         this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
+    public void initOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
