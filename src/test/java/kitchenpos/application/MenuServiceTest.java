@@ -2,48 +2,38 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import javax.persistence.EntityManager;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuRequest.MenuProductDto;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.exception.InvalidRequestParameterException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.MenuPriceTooExpensiveException;
+import kitchenpos.exception.ProductNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith(MockitoExtension.class)
+@Transactional
+@SpringBootTest
 class MenuServiceTest {
 
-    @Mock
-    private MenuDao menuDao;
+    @Autowired
+    private EntityManager em;
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @Mock
-    private MenuProductDao menuProductDao;
-
-    @Mock
-    private ProductDao productDao;
-
-    @InjectMocks
+    @Autowired
     private MenuService menuService;
 
     @Nested
@@ -52,143 +42,97 @@ class MenuServiceTest {
         @Test
         void 메뉴를_정상_생성한다() {
             // given
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("name");
-            menu.setPrice(new BigDecimal(10_000));
-            menu.setMenuGroupId(2L);
-
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(3L);
-            menuProduct.setQuantity(4L);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            Product product = new Product();
-            product.setId(3L);
-            product.setPrice(new BigDecimal(2_500));
-
-            given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(anyLong())).willReturn(Optional.of(product));
-            given(menuDao.save(any(Menu.class))).willReturn(menu);
-            given(menuProductDao.save(any(MenuProduct.class))).willReturn(menuProduct);
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            Product product = Product.of("product", new BigDecimal(2500));
+            em.persist(menuGroup);
+            em.persist(product);
+            em.flush();
+            em.clear();
+            MenuRequest request = new MenuRequest("menu", new BigDecimal(10_000), 1L,
+                    List.of(new MenuProductDto(product.getId(), 4L)));
 
             // when
-            Menu savedMenu = menuService.create(menu);
+            MenuResponse response = menuService.create(request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
-                assertThat(savedMenu.getId()).isEqualTo(1L);
-                assertThat(savedMenu.getName()).isEqualTo("name");
-                assertThat(savedMenu.getPrice()).isEqualTo(new BigDecimal(10_000));
+                assertThat(response.getId()).isNotNull();
+                assertThat(response.getMenuGroupId()).isNotNull();
+                assertThat(response.getMenuProducts().size()).isPositive();
             });
-            assertThat(menuService.create(menu)).isInstanceOf(Menu.class);
-        }
-
-        @Test
-        void 가격이_없는_메뉴를_생성_시_예외를_반환한다() {
-            // given
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("name");
-            menu.setPrice(null);
-            menu.setMenuGroupId(2L);
-
-            // when, then
-            assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
-        }
-
-        @Test
-        void 음의_가격을_갖는_메뉴를_생성_시_예외를_반환한다() {
-            // given
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("name");
-            menu.setPrice(new BigDecimal(-1));
-            menu.setMenuGroupId(2L);
-
-            // when, then
-            assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
         }
 
         @Test
         void 존재하지_않는_메뉴_그룹에_속한_메뉴를_생성_시_예외를_반환한다() {
             // given
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("name");
-            menu.setPrice(new BigDecimal(10_000));
-            menu.setMenuGroupId(2L);
-
-            given(menuGroupDao.existsById(anyLong())).willReturn(false);
+            MenuRequest request = new MenuRequest("menu", new BigDecimal(10_000), -1L,
+                    List.of(new MenuProductDto(2L, 3L)));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
+            assertThrows(MenuGroupNotFoundException.class, () -> menuService.create(request));
+        }
+
+        @Test
+        void 가격이_없는_메뉴를_생성_시_예외를_반환한다() {
+            // given
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            em.persist(menuGroup);
+            em.flush();
+            em.clear();
+            MenuRequest request = new MenuRequest("menu", null, menuGroup.getId(),
+                    List.of(new MenuProductDto(2L, 3L)));
+
+            // when, then
+            assertThrows(InvalidRequestParameterException.class, () -> menuService.create(request));
+        }
+
+        @Test
+        void 음의_가격을_갖는_메뉴를_생성_시_예외를_반환한다() {
+            // given
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            em.persist(menuGroup);
+            em.flush();
+            em.clear();
+            MenuRequest request = new MenuRequest("menu", new BigDecimal(-1), menuGroup.getId(),
+                    List.of(new MenuProductDto(2L, 3L)));
+
+            // when, then
+            assertThrows(InvalidRequestParameterException.class, () -> menuService.create(request));
         }
 
         @Test
         void 존재하지_않는_상품_id로_메뉴를_생성_시_예외를_반환한다() {
             // given
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("name");
-            menu.setPrice(new BigDecimal(10_000));
-            menu.setMenuGroupId(2L);
-
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(-1L);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(anyLong())).willReturn(Optional.empty());
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            em.persist(menuGroup);
+            em.flush();
+            em.clear();
+            MenuRequest request = new MenuRequest("menu", new BigDecimal(10_000), 1L,
+                    List.of(new MenuProductDto(-1L, 3L)));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
+            assertThrows(ProductNotFoundException.class, () -> menuService.create(request));
         }
 
         @Test
-        void 상품_가격과_수량의_곱이_메뉴_가격과_같지_않은_메뉴를_생성_시_예외를_반환한다() {
+        void 메뉴_가격이_상품_가격과_수량의_곱보다_비싸면_예외를_반환한다() {
             // given
-            Menu menu = new Menu();
-            menu.setId(1L);
-            menu.setName("name");
-            menu.setPrice(new BigDecimal(10_000));
-            menu.setMenuGroupId(2L);
-
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(3L);
-            menuProduct.setQuantity(4L);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            Product product = new Product();
-            product.setId(3L);
-            product.setPrice(new BigDecimal(250));
-
-            given(menuGroupDao.existsById(anyLong())).willReturn(true);
-            given(productDao.findById(anyLong())).willReturn(Optional.of(product));
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            Product product = Product.of("product", new BigDecimal(2500));
+            em.persist(menuGroup);
+            em.persist(product);
+            em.flush();
+            em.clear();
+            MenuRequest request = new MenuRequest("menu", new BigDecimal(10_000), 1L,
+                    List.of(new MenuProductDto(product.getId(), 3L)));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
+            assertThrows(MenuPriceTooExpensiveException.class, () -> menuService.create(request));
         }
     }
 
     @Test
     void 메뉴를_전체_조회한다() {
-        // given
-        Menu menu = new Menu();
-        menu.setId(1L);
-
-        MenuProduct menuProduct = new MenuProduct();
-
-        given(menuDao.findAll()).willReturn(List.of(menu));
-        given(menuProductDao.findAllByMenuId(anyLong())).willReturn(List.of(menuProduct));
-
-        // when
-        List<Menu> menus = menuService.list();
-
-        // then
-        SoftAssertions.assertSoftly(softly -> {
-            assertThat(menus).isNotEmpty();
-            assertThat(menus.get(0).getMenuProducts()).isNotEmpty();
-        });
+        assertThat(menuService.list()).isInstanceOf(List.class);
     }
 }

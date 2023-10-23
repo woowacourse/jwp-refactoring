@@ -3,32 +3,32 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import kitchenpos.dao.ProductDao;
+import javax.persistence.EntityManager;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
+import kitchenpos.exception.InvalidRequestParameterException;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith(MockitoExtension.class)
+@Transactional
+@SpringBootTest
 class ProductServiceTest {
 
-    @Mock
-    ProductDao productDao;
+    @Autowired
+    private EntityManager em;
 
-    @InjectMocks
+    @Autowired
     ProductService productService;
 
     @Nested
@@ -37,43 +37,45 @@ class ProductServiceTest {
         @Test
         void 상품을_정상_생성한다() {
             // given
-            Product product = new Product();
-            product.setPrice(new BigDecimal(10_000));
+            String productName = "name";
+            BigDecimal price = new BigDecimal(10_000);
+            Product product = Product.of(productName, price);
+            em.persist(product);
+            em.flush();
+            em.clear();
+            ProductRequest request = new ProductRequest(productName, price);
 
-            given(productDao.save(any(Product.class))).willReturn(new Product());
-
-            // when, then
-            assertDoesNotThrow(() -> productService.create(product));
+            // when
+            ProductResponse response = productService.create(request);
+            SoftAssertions.assertSoftly(softly -> {
+                assertThat(response.getId()).isNotNull();
+                assertThat(response.getName()).isEqualTo(productName);
+                assertThat(response.getPrice()).isEqualTo(price);
+            });
         }
 
         @Test
         void 가격이_없는_상품을_생성_시_예외를_반환한다() {
             // given
-            Product product = new Product();
-            product.setPrice(null);
+            ProductRequest request = new ProductRequest("name", null);
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> productService.create(product));
+            assertThrows(InvalidRequestParameterException.class, () -> productService.create(request));
         }
 
         @Test
         void 음의_가격을_갖는_상품을_생성_시_예외를_반환한다() {
             // given
-            Product product = new Product();
-            product.setPrice(new BigDecimal(-1));
+            ProductRequest request = new ProductRequest("name", new BigDecimal(-1));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> productService.create(product));
+            assertThrows(InvalidRequestParameterException.class, () -> productService.create(request));
         }
     }
 
 
     @Test
     void 상품을_전체_조회한다() {
-        // given
-        given(productDao.findAll()).willReturn(new ArrayList<>());
-
-        // when, then
-        assertThat(productService.list()).isInstanceOf(List.class);
+        assertDoesNotThrow(() -> productService.list());
     }
 }

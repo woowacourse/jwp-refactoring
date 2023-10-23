@@ -1,44 +1,60 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import javax.persistence.EntityManager;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
+import kitchenpos.exception.InvalidRequestParameterException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.UnCompletedOrderExistsException;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith(MockitoExtension.class)
+@Transactional
+@SpringBootTest
 class TableServiceTest {
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private EntityManager em;
 
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @InjectMocks
+    @Autowired
     private TableService tableService;
 
     @Test
     void 테이블을_정상_생성한다() {
-        assertDoesNotThrow(() -> tableService.create(new OrderTable()));
+        // given
+        int numberOfGuests = 1;
+        boolean empty = true;
+        OrderTableCreateRequest request = new OrderTableCreateRequest(numberOfGuests, empty);
+
+        // when
+        OrderTableResponse response = tableService.create(request);
+
+        // then
+        SoftAssertions.assertSoftly(softly -> {
+            assertThat(response.getId()).isNotNull();
+            assertThat(response.getTableGroupId()).isNull();
+            assertThat(response.getNumberOfGuests()).isEqualTo(numberOfGuests);
+            assertThat(response.getEmpty()).isEqualTo(empty);
+        });
     }
 
     @Test
@@ -50,44 +66,46 @@ class TableServiceTest {
     class 비었는지_여부_변경_기능_테스트 {
 
         @Test
-        void 테이블의_비었는지_여부를_정상_변경한다() {
+        void 테이블의_비었는지_여부를_변경한다() {
             // given
-            OrderTable givenOrderTable = new OrderTable();
-            givenOrderTable.setId(1L);
-            givenOrderTable.setEmpty(true);
+            OrderTable orderTable = new OrderTable(1, true);
+            em.persist(orderTable);
+            em.flush();
+            em.clear();
+            OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
-            OrderTable savedORderTable = new OrderTable();
-            savedORderTable.setTableGroupId(null);
+            // when
+            OrderTableResponse response = tableService.changeEmpty(orderTable.getId(), request);
 
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedORderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(
-                    false);
-            given(orderTableDao.save(any(OrderTable.class))).willReturn(savedORderTable);
-
-            // when, then
-            assertThat(tableService.changeEmpty(1L, givenOrderTable).isEmpty()).isTrue();
+            // then
+            assertThat(response.getEmpty()).isFalse();
         }
 
         @Test
         void 변경하려는_테이블_id가_존재하지_않으면_예외를_반환한다() {
             // given
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+            OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(1L, new OrderTable()));
+            assertThrows(OrderTableNotFoundException.class,
+                    () -> tableService.changeEmpty(-1L, request));
         }
 
         @Test
-        void 변경하려는_테이블이_단체_테이블에_속해있다면_예외를_반환한다() {
+        void 변경하려는_테이블의_주문_상태가_변경_불가하면_예외를_반환한다() {
             // given
-            OrderTable savedOrderTable = new OrderTable();
-            savedOrderTable.setTableGroupId(1L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrderTable));
+            OrderTable orderTable = new OrderTable(1, false);
+            Orders orders = new Orders(orderTable, OrderStatus.COOKING,
+                    LocalDateTime.now());
+            em.persist(orderTable);
+            em.persist(orders);
+            em.flush();
+            em.clear();
+            OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(1L, new OrderTable()));
+            assertThrows(UnCompletedOrderExistsException.class,
+                    () -> tableService.changeEmpty(orderTable.getId(), request));
         }
     }
 
@@ -95,50 +113,51 @@ class TableServiceTest {
     class 방문한_손님_수_변경_기능_테스트 {
 
         @Test
-        void 방문한_손님_수를_정상_변경한다() {
+        void 방문한_손님_수를_변경한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(1L);
-            orderTable.setNumberOfGuests(2);
-
-            OrderTable savedOrderTable = new OrderTable();
-            savedOrderTable.setEmpty(false);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrderTable));
-            given(orderTableDao.save(any(OrderTable.class))).willReturn(savedOrderTable);
+            int newNumberOfGuests = 4;
+            OrderTable orderTable = new OrderTable(1, false);
+            em.persist(orderTable);
+            em.flush();
+            em.clear();
+            OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(
+                    newNumberOfGuests);
 
             // when
-            OrderTable resultOrderTable = tableService.changeNumberOfGuests(1L, orderTable);
+            OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(),
+                    request);
 
             // then
-            assertThat(resultOrderTable.getNumberOfGuests()).isEqualTo(
-                    orderTable.getNumberOfGuests());
+            SoftAssertions.assertSoftly(softly -> {
+                assertThat(response.getId()).isEqualTo(orderTable.getId());
+                assertThat(response.getNumberOfGuests()).isEqualTo(newNumberOfGuests);
+            });
         }
 
         @Test
         void 손님_수가_음수인_경우_예외를_반환한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setNumberOfGuests(-1);
+            OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(
+                    -1);
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(1L, orderTable));
+            assertThrows(InvalidRequestParameterException.class,
+                    () -> tableService.changeNumberOfGuests(1L, request));
         }
 
         @Test
         void 손님_수를_변경하려는_테이블이_빈_테이블인_경우_예외를_반환한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(1L);
-            orderTable.setNumberOfGuests(2);
-
-            OrderTable savedOrderTable = new OrderTable();
-            savedOrderTable.setEmpty(true);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrderTable));
+            OrderTable orderTable = new OrderTable(0, true);
+            em.persist(orderTable);
+            em.flush();
+            em.clear();
+            OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(
+                    1);
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(1L, orderTable));
+            assertThrows(CannotChangeEmptyTableNumberOfGuestsException.class,
+                    () -> tableService.changeNumberOfGuests(orderTable.getId(), request));
         }
     }
 }

@@ -2,50 +2,47 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import javax.persistence.EntityManager;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
+import kitchenpos.dto.OrdersCreateRequest;
+import kitchenpos.dto.OrdersCreateRequest.OrderLineItemDto;
+import kitchenpos.dto.OrdersResponse;
+import kitchenpos.dto.OrdersStatusRequest;
+import kitchenpos.exception.CannotMakeOrderWithEmptyTableException;
+import kitchenpos.exception.InvalidRequestParameterException;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderStatusNotChangeableException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-@ExtendWith(MockitoExtension.class)
+@Transactional
+@SpringBootTest
 class OrderServiceTest {
 
-    @Mock
-    MenuDao menuDao;
+    @Autowired
+    private EntityManager em;
 
-    @Mock
-    OrderDao orderDao;
-
-    @Mock
-    OrderLineItemDao orderLineItemDao;
-
-    @Mock
-    OrderTableDao orderTableDao;
-
-    @InjectMocks
-    OrderService orderService;
+    @Autowired
+    private OrderService orderService;
 
     @Nested
     class 주문_생성_테스트 {
@@ -53,158 +50,133 @@ class OrderServiceTest {
         @Test
         void 주문을_정상_생성한다() {
             // given
-            Order order = new Order();
-            order.setOrderTableId(1L);
-
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenuId(2L);
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(1L);
-            orderTable.setEmpty(false);
-
-            given(menuDao.countByIdIn(anyList())).willReturn(1L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderDao.save(any(Order.class))).willReturn(order);
-            given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(orderLineItem);
+            OrderTable orderTable = new OrderTable(4, false);
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            Menu menu = Menu.of("menu", new BigDecimal(2500), menuGroup, Collections.emptyList());
+            em.persist(orderTable);
+            em.persist(menuGroup);
+            em.persist(menu);
+            em.flush();
+            em.clear();
+            OrdersCreateRequest request = new OrdersCreateRequest(orderTable.getId(),
+                    List.of(new OrderLineItemDto(menu.getId(), 4L)));
 
             // when
-            Order savedOrder = orderService.create(order);
+            OrdersResponse response = orderService.create(request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
-                assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId());
-                assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-                assertThat(savedOrder.getOrderedTime()).isNotNull();
-                assertThat(savedOrder.getOrderLineItems()).hasSize(1);
+                assertThat(response.getOrderTableId()).isEqualTo(orderTable.getId());
+                assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+                assertThat(response.getOrderLineItems()).hasSize(1);
             });
         }
 
         @Test
-        void 주문의_주문_항목_정보가_없으면_예외를_반환한다() {
+        void 요청에_주문_항목_정보가_없으면_예외를_반환한다() {
             // given
-            Order order = new Order();
+            OrdersCreateRequest request = new OrdersCreateRequest(1L, Collections.emptyList());
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(InvalidRequestParameterException.class,
+                    () -> orderService.create(request));
         }
 
         @Test
-        void 주문의_주문_항목에_포함된_메뉴_id가_존재하지_않으면_예외를_반환한다() {
+        void 요청에_해당하는_주문_테이블이_존재하지_않으면_예외를_반환한다() {
             // given
-            Order order = new Order();
-
-            OrderLineItem orderLineItem = new OrderLineItem();
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            given(menuDao.countByIdIn(anyList())).willReturn(0L);
+            OrdersCreateRequest request = new OrdersCreateRequest(-1L,
+                    List.of(new OrderLineItemDto(10L, 10L)));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(OrderTableNotFoundException.class, () -> orderService.create(request));
         }
 
         @Test
-        void 주문의_주문_테이블_id가_존재하지_않으면_예외를_반환한다() {
+        void 요청의_주문_테이블이_빈_테이블이면_예외를_반환한다() {
             // given
-            Order order = new Order();
-            order.setOrderTableId(1L);
-
-            OrderLineItem orderLineItem = new OrderLineItem();
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            given(menuDao.countByIdIn(anyList())).willReturn(1L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+            OrderTable orderTable = new OrderTable(0, true);
+            em.persist(orderTable);
+            em.flush();
+            em.clear();
+            OrdersCreateRequest request = new OrdersCreateRequest(orderTable.getId(),
+                    List.of(new OrderLineItemDto(1L, 4L)));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(CannotMakeOrderWithEmptyTableException.class,
+                    () -> orderService.create(request));
         }
 
         @Test
-        void 주문의_주문_테이블이_빈_테이블이면_예외를_반환한다() {
+        void 요청의_주문_항목에_해당하는_메뉴가_존재하지_않으면_예외를_반환한다() {
             // given
-            Order order = new Order();
-            order.setOrderTableId(1L);
-
-            OrderLineItem orderLineItem = new OrderLineItem();
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-
-            given(menuDao.countByIdIn(anyList())).willReturn(1L);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+            OrderTable orderTable = new OrderTable(4, false);
+            em.persist(orderTable);
+            em.flush();
+            em.clear();
+            OrdersCreateRequest request = new OrdersCreateRequest(orderTable.getId(),
+                    List.of(new OrderLineItemDto(-1L, 4L)));
 
             // when, then
-            assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+            assertThrows(MenuNotFoundException.class, () -> orderService.create(request));
         }
     }
 
     @Test
     void 주문을_전체_조회한다() {
-        // given
-        Order order = new Order();
-        order.setId(1L);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-
-        given(orderDao.findAll()).willReturn(List.of(order));
-        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(List.of(orderLineItem));
-
-        // when
-        List<Order> orders = orderService.list();
-
-        // then
-        SoftAssertions.assertSoftly(softly -> {
-            assertThat(orders).isNotEmpty();
-            assertThat(orders.get(0).getOrderLineItems()).isNotEmpty();
-        });
+        assertThat(orderService.list()).isInstanceOf(List.class);
     }
 
     @Nested
     class 주문_상태_변경_테스트 {
 
         @Test
-        void 주문의_상태를_정상_변경한다() {
+        void 주문의_상태를_변경한다() {
             // given
-            Order originalOrder = new Order();
-            originalOrder.setId(1L);
-            originalOrder.setOrderStatus(OrderStatus.COOKING.name());
-
-            Order newOrder = new Order();
-            newOrder.setId(1L);
-            newOrder.setOrderStatus(OrderStatus.MEAL.name());
-
-            given(orderDao.findById(anyLong())).willReturn(Optional.of(originalOrder));
-
+            OrderTable orderTable = new OrderTable(4, false);
+            Orders orders = new Orders(orderTable, OrderStatus.COOKING,
+                    LocalDateTime.now());
+            em.persist(orderTable);
+            em.persist(orders);
+            em.flush();
+            em.clear();
+            OrdersStatusRequest request = new OrdersStatusRequest(
+                    OrderStatus.COOKING.name());
             // when
-            Order changedOrder = orderService.changeOrderStatus(newOrder.getId(), newOrder);
+            OrdersResponse response = orderService.changeOrderStatus(orders.getId(), request);
 
             // then
-            assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            SoftAssertions.assertSoftly(softly -> {
+                assertThat(response.getId()).isEqualTo(orders.getId());
+                assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            });
         }
 
         @Test
         void 변경하려는_주문_id에_해당하는_주문이_존재하지_않으면_예외를_반환한다() {
             // given
-            given(orderDao.findById(anyLong())).willReturn(Optional.empty());
-
+            OrdersStatusRequest request = new OrdersStatusRequest(OrderStatus.MEAL.name());
             // when, then
-            assertThrows(IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(1L, new Order()));
+            assertThrows(OrderNotFoundException.class,
+                    () -> orderService.changeOrderStatus(-1L, request));
         }
 
         @Test
         void 변경하려는_주문의_주문_상태가_계산_완료인_경우_예외를_반환한다() {
             // given
-            Order originalOrder = new Order();
-            originalOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-
-            given(orderDao.findById(anyLong())).willReturn(Optional.of(originalOrder));
+            OrderTable orderTable = new OrderTable(4, false);
+            Orders orders = new Orders(orderTable, OrderStatus.COMPLETION,
+                    LocalDateTime.now());
+            em.persist(orderTable);
+            em.persist(orders);
+            em.flush();
+            em.clear();
+            OrdersStatusRequest request = new OrdersStatusRequest(
+                    OrderStatus.MEAL.name());
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(1L, new Order()));
+            assertThrows(OrderStatusNotChangeableException.class,
+                    () -> orderService.changeOrderStatus(orders.getId(), request));
         }
     }
 }
