@@ -15,13 +15,13 @@ import java.util.stream.IntStream;
 public class MenuProducts {
     @OneToMany
     @JoinColumn(name = "menu_id")
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> items;
 
     protected MenuProducts() {
     }
 
-    private MenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    private MenuProducts(final List<MenuProduct> items) {
+        this.items = items;
     }
 
     public static MenuProducts from(List<Product> products, List<Long> quantities) {
@@ -34,13 +34,13 @@ public class MenuProducts {
     }
 
     public Money calculateSum() {
-        return menuProducts.stream()
+        return items.stream()
                 .map(MenuProduct::getProduct)
                 .map(Product::getPrice)
                 .reduce(Money.ZERO, Money::add);
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return new ArrayList<>(menuProducts);
+    public List<MenuProduct> getItems() {
+        return new ArrayList<>(items);
     }
 }

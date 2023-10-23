@@ -22,8 +22,8 @@ class MenuProductsTest extends DomainTest {
         // then
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(menuProducts).isNotNull();
-            softly.assertThat(menuProducts.getMenuProducts()).isNotNull();
-            softly.assertThat(menuProducts.getMenuProducts()).hasSize(2);
+            softly.assertThat(menuProducts.getItems()).isNotNull();
+            softly.assertThat(menuProducts.getItems()).hasSize(2);
         });
     }
 

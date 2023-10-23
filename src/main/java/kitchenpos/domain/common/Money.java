@@ -47,6 +47,10 @@ public class Money implements Comparable<Money> {
         return new Money(amount.multiply(BigDecimal.valueOf(value)));
     }
 
+    public boolean isBiggerThan(final Money money) {
+        return amount.compareTo(money.amount) >= 0;
+    }
+
     @Override
     public int compareTo(final Money o) {
         return amount.compareTo(o.amount);
