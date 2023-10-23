@@ -1,12 +1,12 @@
 package kitchenpos.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class TableEmptyStatusUpdateRequest {
 
-    private boolean empty;
+    private final boolean empty;
 
-    public TableEmptyStatusUpdateRequest() {
-    }
-
+    @JsonCreator
     public TableEmptyStatusUpdateRequest(final boolean empty) {
         this.empty = empty;
     }

@@ -1,20 +1,25 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
+
 public class TableCreateRequest {
 
-    private final int numberOfGuests;
-    private final boolean empty;
+    @NotNull
+    private final Integer numberOfGuests;
 
-    public TableCreateRequest(final int numberOfGuests, final boolean empty) {
+    @NotNull
+    private final Boolean empty;
+
+    public TableCreateRequest(final Integer numberOfGuests, final Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public int getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public Boolean isEmpty() {
         return empty;
     }
 }

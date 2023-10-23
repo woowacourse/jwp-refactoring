@@ -1,12 +1,15 @@
 package kitchenpos.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.constraints.NotNull;
+
 public class TableNumberOfGuestsUpdateRequest {
 
-    private int numberOfGuests;
+    @NotNull
+    private final int numberOfGuests;
 
-    public TableNumberOfGuestsUpdateRequest() {
-    }
-
+    @JsonCreator
     public TableNumberOfGuestsUpdateRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
