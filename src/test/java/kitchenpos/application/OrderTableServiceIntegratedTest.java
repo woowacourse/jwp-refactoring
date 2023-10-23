@@ -124,6 +124,7 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
             // given
             OrderTables orderTables = new OrderTables(List.of(orderTable));
             TableGroup tableGroup = new TableGroup(orderTables, now());
+            tableGroupRepository.save(tableGroup);
             orderTable.updateTableGroup(tableGroup);
             orderTableRepository.save(orderTable);
 

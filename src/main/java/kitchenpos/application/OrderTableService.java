@@ -43,7 +43,6 @@ public class OrderTableService {
     @Transactional
     public void changeIsEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        savedOrderTable.validateTableGroupIsNotNull();
         validateOrderStatusIsCookingAndMeal(orderTableId);
         savedOrderTable.updateEmpty(isEmpty);
         orderTableRepository.save(savedOrderTable);

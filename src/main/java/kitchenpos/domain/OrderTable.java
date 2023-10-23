@@ -33,6 +33,7 @@ public class OrderTable {
     }
 
     public void updateEmpty(boolean isEmpty) {
+        validateTableGroupIsNotNull();
         this.empty = isEmpty;
     }
 
