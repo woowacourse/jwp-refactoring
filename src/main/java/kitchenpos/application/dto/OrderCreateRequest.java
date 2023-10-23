@@ -6,15 +6,16 @@ public class OrderCreateRequest {
 
     private Long orderTableId;
     private String orderStatus;
-    private List<Long> orderLineItemIds;
+    private List<OrderLineItemCreateRequest> orderLineItems;
 
     public OrderCreateRequest() {
     }
 
-    public OrderCreateRequest(final Long orderTableId, final String orderStatus, final List<Long> orderLineItemIds) {
+    public OrderCreateRequest(final Long orderTableId, final String orderStatus,
+                              final List<OrderLineItemCreateRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItemIds = orderLineItemIds;
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getOrderTableId() {
@@ -25,7 +26,7 @@ public class OrderCreateRequest {
         return orderStatus;
     }
 
-    public List<Long> getOrderLineItemIds() {
-        return orderLineItemIds;
+    public List<OrderLineItemCreateRequest> getOrderLineItems() {
+        return orderLineItems;
     }
 }

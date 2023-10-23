@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -47,25 +50,27 @@ class OrderServiceTest {
     @Test
     void create() {
         // given
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L),
-                                                           new OrderLineItem(2L, 2L));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 1L, null),
+                                                           new OrderLineItem(2L, 2L, null));
         final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems);
 
         given(menuRepository.existsById(any()))
             .willReturn(true)
             .willReturn(true);
-        given(orderLineItemRepository.findAllById(any()))
-            .willReturn(orderLineItems);
+        given(orderTableRepository.getById(any()))
+            .willReturn(new OrderTable(1L, 10, false, Collections.emptyList(), null));
         given(orderRepository.save(any()))
             .willReturn(new Order(1L, OrderStatus.COOKING, orderLineItems));
 
         // when
-        final Order created = orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(1L, 2L)));
+        final OrderResponse created = orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(
+            new OrderLineItemCreateRequest(1L, 1L),
+            new OrderLineItemCreateRequest(2L, 2L)
+        )));
 
         // then
         assertThat(created.getId()).isEqualTo(1L);
-        assertThat(created.getOrderStatus()).isEqualTo(order.getOrderStatus());
-        assertThat(created.getOrderedTime()).isNotNull();
+        assertThat(created.getOrderStatus()).isEqualTo(order.getOrderStatus().name());
     }
 
     @DisplayName("주문의 주문 항목이 없으면 예외가 발생한다.")
@@ -78,8 +83,7 @@ class OrderServiceTest {
         // then
         assertThatThrownBy(() -> {
             orderService.create(cooking);
-        })
-            .isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 개수가 저장된 메뉴의 개수와 다르면 예외가 발생한다.")
@@ -92,24 +96,29 @@ class OrderServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(
+            new OrderLineItemCreateRequest(1L, 1L),
+            new OrderLineItemCreateRequest(2L, 2L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 예외가 발생한다.")
     @Test
     void create_failNotExistOrderTable() {
         // given
+        final long notExistOrderTable = 0L;
         given(menuRepository.existsById(any()))
             .willReturn(true)
             .willReturn(true);
-        given(orderTableRepository.findById(0L))
-            .willReturn(Optional.empty());
+        given(orderTableRepository.getById(notExistOrderTable))
+            .willThrow(IllegalArgumentException.class);
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(0L, "COOKING", List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(notExistOrderTable, "COOKING", List.of(
+            new OrderLineItemCreateRequest(1L, 1L),
+            new OrderLineItemCreateRequest(2L, 2L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블이 비어 있으면 예외가 발생한다.")
@@ -119,13 +128,18 @@ class OrderServiceTest {
         given(menuRepository.existsById(any()))
             .willReturn(true)
             .willReturn(true);
-        given(orderTableRepository.findById(any()))
-            .willReturn(Optional.of(new OrderTable(1L, 10, true, Collections.emptyList(), null)));
+        given(orderTableRepository.getById(any()))
+            .willReturn(new OrderTable(1L, 10, true, Collections.emptyList(), null));
+        given(menuRepository.getById(any()))
+            .willReturn(new Menu(1L, "후라이드", Collections.emptyList()))
+            .willReturn(new Menu(2L, "양념", Collections.emptyList()));
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(
+            new OrderLineItemCreateRequest(1L, 1L),
+            new OrderLineItemCreateRequest(2L, 2L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블의 상태를 변경한다.")
@@ -133,15 +147,15 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final Order order = new Order(1L, OrderStatus.COOKING, List.of(
-            new OrderLineItem(1L, 1L),
-            new OrderLineItem(2L, 2L)
+            new OrderLineItem(1L, 1L, null),
+            new OrderLineItem(2L, 2L, null)
         ));
 
-        given(orderRepository.findById(any()))
-            .willReturn(Optional.of(order));
+        given(orderRepository.getById(any()))
+            .willReturn(order);
 
         // when
-        final Order changed = orderService.changeOrderStatus(order.getId(),
+        final OrderResponse changed = orderService.changeOrderStatus(order.getId(),
                                                              new OrderChangeOrderStatusRequest("COMPLETION"));
 
         // then
@@ -169,7 +183,7 @@ class OrderServiceTest {
         // given
         final Long orderTableId = 1L;
         final Order order = new Order(1L, OrderStatus.COMPLETION,
-                                      List.of(new OrderLineItem(1L, 1L)));
+                                      List.of(new OrderLineItem(1L, 1L, null)));
 
         given(orderRepository.findById(order.getId()))
             .willReturn(Optional.of(order));

@@ -47,12 +47,15 @@ class MenuServiceTest {
         final long menuGroupId = 1L;
         given(menuGroupRepository.existsById(menuGroupId))
             .willReturn(true);
+
         final MenuProduct menuProduct1 = new MenuProduct(1L, product1, 1L);
         final MenuProduct menuProduct2 = new MenuProduct(2L, product2, 2L);
         given(menuProductRepository.getAllById(List.of(1L, 2L)))
             .willReturn(List.of(menuProduct1, menuProduct2));
+
+        final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2));
         given(menuRepository.save(any(Menu.class)))
-            .willReturn(new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2)));
+            .willReturn(menu);
 
         // when
         final MenuCreateRequest request = new MenuCreateRequest("메뉴", menuGroupId, List.of(1L, 2L));
@@ -62,7 +65,7 @@ class MenuServiceTest {
         assertThat(created.getId()).isEqualTo(1L);
         assertThat(created.getName()).isEqualTo(request.getName());
         assertThat(created.getPrice()).isEqualTo(
-            new MenuProducts(List.of(menuProduct1, menuProduct2)).calculatePrice());
+            new MenuProducts(List.of(menuProduct1, menuProduct2), menu).calculatePrice());
     }
 
     @DisplayName("메뉴의 MemberGroupId 가 존재하지 않으면 예외가 발생한다.")
@@ -70,11 +73,12 @@ class MenuServiceTest {
     void create_failNotExistMemberGroupId() {
         // given
         final Long notExistedMemberGroupId = 0L;
+
         // when
         // then
         assertThatThrownBy(
-            () -> menuService.create(new MenuCreateRequest("메뉴", notExistedMemberGroupId, List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+            () -> menuService.create(new MenuCreateRequest("메뉴", notExistedMemberGroupId, List.of(1L, 2L)))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 Product 가 존재하지 않는 경우 예외가 발생한다.")
@@ -83,6 +87,9 @@ class MenuServiceTest {
         // given
         given(menuGroupRepository.existsById(any(Long.class)))
             .willReturn(true);
+
+        given(menuProductRepository.getAllById(any()))
+            .willThrow(IllegalArgumentException.class);
 
         // when
         // then

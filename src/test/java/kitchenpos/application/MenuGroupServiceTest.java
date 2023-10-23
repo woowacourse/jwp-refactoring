@@ -27,7 +27,7 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹", null);
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹");
         given(menuGroupRepository.save(any(MenuGroup.class)))
             .willReturn(menuGroup);
 
@@ -43,10 +43,10 @@ class MenuGroupServiceTest {
     void list() {
         // given
         final List<MenuGroup> expectedMenuGroups = List.of(
-            new MenuGroup(1L, "메뉴 그룹 1", null),
-            new MenuGroup(2L, "메뉴 그룹 2", null),
-            new MenuGroup(3L, "메뉴 그룹 3", null),
-            new MenuGroup(4L, "메뉴 그룹 4", null)
+            new MenuGroup(1L, "메뉴 그룹 1"),
+            new MenuGroup(2L, "메뉴 그룹 2"),
+            new MenuGroup(3L, "메뉴 그룹 3"),
+            new MenuGroup(4L, "메뉴 그룹 4")
         );
         given(menuGroupRepository.findAll())
             .willReturn(expectedMenuGroups);

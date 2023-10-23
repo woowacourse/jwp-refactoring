@@ -9,8 +9,8 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateRequest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -33,7 +33,7 @@ class ProductServiceTest {
         // given
         final Product product = new Product(1L, "상품", BigDecimal.TEN);
 
-        given(productDao.save(any()))
+        given(productRepository.save(any()))
             .willReturn(product);
 
         // when
@@ -69,7 +69,7 @@ class ProductServiceTest {
     @Test
     void list() {
         // given
-        given(productDao.findAll())
+        given(productRepository.findAll())
             .willReturn(List.of(
                 new Product(1L, "상품1", BigDecimal.TEN),
                 new Product(2L, "상품2", BigDecimal.valueOf(1000L))

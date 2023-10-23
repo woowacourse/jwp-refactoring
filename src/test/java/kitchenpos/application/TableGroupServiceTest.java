@@ -77,7 +77,7 @@ class TableGroupServiceTest {
     @Test
     void create_failOneTable() {
         // given
-        given(orderTableRepository.getAllById(List.of(1L)))
+        given(orderTableRepository.getAllById(any()))
             .willReturn(new OrderTables(List.of(
                 new OrderTable(1L, 2, true, Collections.emptyList(), null)
             )));
