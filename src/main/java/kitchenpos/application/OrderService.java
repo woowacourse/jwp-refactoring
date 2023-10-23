@@ -12,6 +12,11 @@ import kitchenpos.dto.OrdersCreateRequest;
 import kitchenpos.dto.OrdersCreateRequest.OrderLineItemDto;
 import kitchenpos.dto.OrdersResponse;
 import kitchenpos.dto.OrdersStatusRequest;
+import kitchenpos.exception.CannotMakeOrderWithEmptyTableException;
+import kitchenpos.exception.InvalidRequestParameterException;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -42,16 +47,16 @@ public class OrderService {
         // 요청의 orderLinItem 내용이 없는지 확인
         List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new IllegalArgumentException();
+            throw new InvalidRequestParameterException();
         }
 
         // orderTableId가 실제로 존재하는지 확인
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderTableNotFoundException::new);
 
         // orderTable이 isEmpty()상태라면 예외
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new CannotMakeOrderWithEmptyTableException();
         }
 
         // order entity를 생성
@@ -61,7 +66,7 @@ public class OrderService {
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             orderLineItemRepository.save(new OrderLineItem(orders,
                     menuRepository.findById(orderLineItemDto.getMenuId())
-                            .orElseThrow(IllegalArgumentException::new),
+                            .orElseThrow(MenuNotFoundException::new),
                     orderLineItemDto.getQuantity()));
         }
 
@@ -78,13 +83,9 @@ public class OrderService {
     @Transactional
     public OrdersResponse changeOrderStatus(Long orderId, OrdersStatusRequest request) {
         Orders orders = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(OrderNotFoundException::new);
 
-        if (orders.isStatusNotChangeable()) {
-            throw new IllegalArgumentException();
-        }
-
-        orders.setOrderStatus(request.getOrderStatus());
+        orders.changeOrderStatus(request.getOrderStatus());
 
         return OrdersResponse.from(orders);
     }

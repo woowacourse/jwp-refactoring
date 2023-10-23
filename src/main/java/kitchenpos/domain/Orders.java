@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.OrderStatusNotChangeableException;
 
 @Entity
 public class Orders {
@@ -42,8 +44,15 @@ public class Orders {
     protected Orders() {
     }
 
-    public boolean isStatusNotChangeable() {
-        return orderStatus.equals(OrderStatus.COMPLETION);
+    public void changeOrderStatus(String orderStatus) {
+        validateDoesStatusChangeable();
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateDoesStatusChangeable() {
+        if (Objects.equals(orderStatus, OrderStatus.COMPLETION.name())) {
+            throw new OrderStatusNotChangeableException();
+        }
     }
 
     public boolean isOrderUnCompleted() {
@@ -60,10 +69,6 @@ public class Orders {
 
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
