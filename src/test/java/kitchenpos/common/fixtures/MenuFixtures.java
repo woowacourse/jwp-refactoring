@@ -1,6 +1,8 @@
 package kitchenpos.common.fixtures;
 
 import static kitchenpos.common.fixtures.MenuGroupFixtures.MENU_GROUP1;
+import static kitchenpos.common.fixtures.MenuProductFixtures.MENU_PRODUCT1;
+import static kitchenpos.common.fixtures.MenuProductFixtures.MENU_PRODUCT2;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1_PRICE;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2_PRICE;
 
@@ -68,10 +70,10 @@ public class MenuFixtures {
      * ENTITY
      */
     public static Menu MENU1() {
-        return new Menu(MENU1_NAME, MENU1_PRICE, MENU_GROUP1());
+        return new Menu(MENU1_NAME, MENU1_PRICE, MENU_GROUP1(), List.of(MENU_PRODUCT1(), MENU_PRODUCT2()));
     }
 
     public static Menu MENU2() {
-        return new Menu(MENU2_NAME, MENU2_PRICE, MENU_GROUP1());
+        return new Menu(MENU2_NAME, MENU2_PRICE, MENU_GROUP1(), List.of(MENU_PRODUCT1(), MENU_PRODUCT2()));
     }
 }

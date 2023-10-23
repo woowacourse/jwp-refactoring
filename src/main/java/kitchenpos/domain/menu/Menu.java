@@ -1,7 +1,6 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -29,37 +28,35 @@ public class Menu {
     @JoinColumn(nullable = false)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private final List<MenuProduct> menuProducts = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {}
 
     public Menu(final String name, final BigDecimal price,
-                final MenuGroup menuGroup) {
+                final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
+        validateMenu(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
     }
 
-    public void verifyPrice() {
-        final BigDecimal totalMenuProductPrice = getTotalMenuProductPrice();
+    private void validateMenu(final BigDecimal price, final List<MenuProduct> menuProducts) {
+        final BigDecimal totalMenuProductPrice = getTotalMenuProductPrice(menuProducts);
         if (price.compareTo(totalMenuProductPrice) > 0) {
             throw new IllegalArgumentException("[ERROR] 메뉴의 가격이 메뉴 상품 가격의 합보다 클 수 없습니다.");
         }
     }
 
-    private BigDecimal getTotalMenuProductPrice() {
+    private BigDecimal getTotalMenuProductPrice(final List<MenuProduct> menuProducts) {
         final int menuProductPrice = menuProducts.stream()
                 .mapToInt(menuProduct -> {
                     final Product product = menuProduct.getProduct();
                     return product.calculateTotalPrice(menuProduct.getQuantity()).intValue();
                 }).reduce(0, Integer::sum);
         return BigDecimal.valueOf(menuProductPrice);
-    }
-
-    public void confirmMenuProduct(final Product product, final long quantity) {
-        final MenuProduct menuProduct = new MenuProduct(product, quantity);
-        menuProduct.confirmMenu(this);
     }
 
     public Long getId() {

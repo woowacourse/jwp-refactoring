@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
-import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menu.MenusResponse;
 import kitchenpos.exception.MenuGroupException.NotFoundMenuGroupException;
@@ -25,8 +26,7 @@ public class MenuService {
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
-    ) {
+            final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
@@ -36,20 +36,19 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(NotFoundMenuGroupException::new);
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+
+        List<MenuProduct> menuProducts = request.getMenuProducts().stream()
+                .map(menuProductRequest -> {
+                    final Product product = productRepository.findById(menuProductRequest.getProductId())
+                            .orElseThrow(NotFoundProductException::new);
+                    return new MenuProduct(product, menuProductRequest.getQuantity());
+                }).collect(Collectors.toUnmodifiableList());
+
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts
+        );
         final Menu savedMenu = menuRepository.save(menu);
 
-        associateMenuProduct(request.getMenuProducts(), savedMenu);
-        menu.verifyPrice();
         return MenuResponse.from(savedMenu);
-    }
-
-    private void associateMenuProduct(final List<MenuProductRequest> menuProductRequests, final Menu savedMenu) {
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(NotFoundProductException::new);
-            savedMenu.confirmMenuProduct(product, menuProductRequest.getQuantity());
-        }
     }
 
     public MenusResponse list() {
