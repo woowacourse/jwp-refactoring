@@ -1,0 +1,55 @@
+package kitchenpos.menu.application;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.menu.application.dto.MenuCreationRequest;
+import kitchenpos.menu.application.dto.MenuResult;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuValidator;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class MenuService {
+
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
+    private final MenuValidator menuValidator;
+
+    public MenuService(
+            final MenuGroupRepository menuGroupRepository,
+            final MenuRepository menuRepository,
+            final MenuValidator menuValidator
+    ) {
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuRepository = menuRepository;
+        this.menuValidator = menuValidator;
+    }
+
+    @Transactional
+    public MenuResult create(final MenuCreationRequest request) {
+        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException("MenuGroup does not exist."));
+        final Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup));
+        final List<MenuProduct> menuProducts = extractMenuProductFromRequest(request);
+        menu.addMenuProducts(menuProducts, menuValidator);
+        return MenuResult.from(menu);
+    }
+
+    private List<MenuProduct> extractMenuProductFromRequest(final MenuCreationRequest request) {
+        return request.getMenuProducts().stream()
+                .map(menuProduct -> new MenuProduct(menuProduct.getProductId(), menuProduct.getQuantity()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<MenuResult> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResult::from)
+                .collect(Collectors.toList());
+    }
+}
