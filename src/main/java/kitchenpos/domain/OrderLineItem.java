@@ -28,6 +28,22 @@ public class OrderLineItem {
     @Column(nullable = false)
     private long quantity;
 
+    public OrderLineItem() {
+    }
+
+    public OrderLineItem(Order order, Menu menu, long quantity) {
+        validateMenu(menu);
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    private void validateMenu(Menu menu) {
+        if (menu == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getSeq() {
         return seq;
     }

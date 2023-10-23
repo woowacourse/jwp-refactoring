@@ -25,7 +25,20 @@ public class OrderTable {
     private int numberOfGuests;
 
     @Column
-    private boolean empty;
+    private boolean isEmpty;
+
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.isEmpty = isEmpty;
+    }
+
+    public OrderTable() {
+    }
+
+    public OrderTable(boolean isEmpty) {
+        this(null, 0, isEmpty);
+    }
 
     public Long getId() {
         return id;
@@ -52,10 +65,10 @@ public class OrderTable {
     }
 
     public boolean isEmpty() {
-        return empty;
+        return isEmpty;
     }
 
     public void setEmpty(final boolean empty) {
-        this.empty = empty;
+        this.isEmpty = empty;
     }
 }

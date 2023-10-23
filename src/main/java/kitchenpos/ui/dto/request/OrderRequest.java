@@ -5,18 +5,18 @@ import java.util.List;
 public class OrderRequest {
 
     private final Long orderTableId;
-    private final List<OrderLineRequest> orderLineItemCreates;
+    private final List<OrderLineRequest> orderLineRequests;
 
-    public OrderRequest(final Long orderTableId, final List<OrderLineRequest> orderLineItemCreates) {
+    public OrderRequest(final Long orderTableId, final List<OrderLineRequest> orderLineRequests) {
         this.orderTableId = orderTableId;
-        this.orderLineItemCreates = orderLineItemCreates;
+        this.orderLineRequests = orderLineRequests;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderLineRequest> getOrderLineItemCreates() {
-        return orderLineItemCreates;
+    public List<OrderLineRequest> getOrderLineRequests() {
+        return orderLineRequests;
     }
 }

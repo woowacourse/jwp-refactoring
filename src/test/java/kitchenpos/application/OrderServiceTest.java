@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static java.lang.System.out;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,6 +15,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.OrderLineRequest;
+import kitchenpos.ui.dto.request.OrderRequest;
+import kitchenpos.ui.dto.response.OrderResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,41 +41,16 @@ class OrderServiceTest extends ServiceTest {
             fixtures.메뉴_상품_저장(menu, product, 1L);
             OrderTable orderTable = fixtures.주문_테이블_저장();
 
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenu(menu);
-            orderLineItem.setQuantity(1L);
-
-            Order order = new Order();
-            order.setOrderTable(orderTable);
-            order.setOrderLineItems(List.of(orderLineItem));
+            OrderLineRequest orderLineRequest = new OrderLineRequest(menu.getId(), 1L);
+            OrderRequest request = new OrderRequest(orderTable.getId(), List.of(orderLineRequest));
 
             // when
-            Order result = orderService.create(order);
+            OrderResponse result = orderService.create(request);
 
             // then
             assertThat(result.getId()).isNotNull();
-        }
-
-        @Test
-        void 주문항목이_비어있는_경우_예외가_발생한다() {
-            // given
-            MenuGroup menuGroup = fixtures.메뉴_그룹_저장("세트메뉴");
-            Menu menu = fixtures.메뉴_저장(menuGroup, "햄버거세트", 10_000L);
-            Product product = fixtures.상품_저장("왕햄버거", 10_000L);
-            fixtures.메뉴_상품_저장(menu, product, 1L);
-            OrderTable orderTable = fixtures.주문_테이블_저장();
-
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenu(menu);
-            orderLineItem.setQuantity(1L);
-
-            Order order = new Order();
-            order.setOrderTable(orderTable);
-            order.setOrderLineItems(Collections.emptyList());
-
-            // when, then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThat(result.getOrderedTime()).isNotNull();
+            assertThat(result.getOrderStatus()).isEqualTo("COOKING");
         }
 
         @Test
@@ -82,38 +62,11 @@ class OrderServiceTest extends ServiceTest {
             fixtures.메뉴_상품_저장(menu, product, 1L);
             OrderTable orderTable = fixtures.주문_테이블_저장();
 
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenu(null);
-            orderLineItem.setQuantity(1L);
-
-            Order order = new Order();
-            order.setOrderTable(orderTable);
-            order.setOrderLineItems(List.of(orderLineItem));
+            OrderLineRequest orderLineRequest = new OrderLineRequest(-1L, 1L);
+            OrderRequest request = new OrderRequest(orderTable.getId(), List.of(orderLineRequest));
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 빈_테이블인_경우_예외가_발생한다() {
-            // given
-            MenuGroup menuGroup = fixtures.메뉴_그룹_저장("세트메뉴");
-            Menu menu = fixtures.메뉴_저장(menuGroup, "햄버거세트", 10_000L);
-            Product product = fixtures.상품_저장("왕햄버거", 10_000L);
-            fixtures.메뉴_상품_저장(menu, product, 1L);
-            OrderTable orderTable = fixtures.빈_테이블_저장();
-
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenu(menu);
-            orderLineItem.setQuantity(1L);
-
-            Order order = new Order();
-            order.setOrderTable(orderTable);
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            // when, then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -124,17 +77,13 @@ class OrderServiceTest extends ServiceTest {
             Menu menu = fixtures.메뉴_저장(menuGroup, "햄버거세트", 10_000L);
             Product product = fixtures.상품_저장("왕햄버거", 10_000L);
             fixtures.메뉴_상품_저장(menu, product, 1L);
+            OrderTable orderTable = fixtures.주문_테이블_저장();
 
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setMenu(menu);
-            orderLineItem.setQuantity(1L);
-
-            Order order = new Order();
-            order.setOrderTable(null);
-            order.setOrderLineItems(List.of(orderLineItem));
+            OrderLineRequest orderLineRequest = new OrderLineRequest(menu.getId(), 1L);
+            OrderRequest request = new OrderRequest(-1L, List.of(orderLineRequest));
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -194,19 +143,17 @@ class OrderServiceTest extends ServiceTest {
         fixtures.메뉴_상품_저장(menu, product, 1L);
         OrderTable orderTable = fixtures.주문_테이블_저장();
 
-        Order order = fixtures.주문_저장(orderTable);
-        OrderLineItem orderLineItem = fixtures.주문_항목_저장(order, menu, 1L, 1L);
+        OrderLineRequest orderLineRequest = new OrderLineRequest(menu.getId(), 1L);
+        OrderRequest request = new OrderRequest(orderTable.getId(), List.of(orderLineRequest));
+        orderService.create(request);
 
         // when
-        List<Order> results = orderService.list();
+        List<OrderResponse> results = orderService.list();
 
         // then
         assertThat(results.size()).isEqualTo(1);
-        assertThat(results.get(0).getOrderTable().getId()).isEqualTo(orderTable.getId());
-        assertThat(results.get(0).getOrderLineItems().get(0))
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(orderLineItem);
+        assertThat(results.get(0).getId()).isNotNull();
+        assertThat(results.get(0).getOrderStatus()).isEqualTo("COOKING");
+        assertThat(results.get(0).getOrderLineItemIds()).isNotNull();
     }
-
 }

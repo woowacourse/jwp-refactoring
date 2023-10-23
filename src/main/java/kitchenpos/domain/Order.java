@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
 @Entity
@@ -36,6 +37,22 @@ public class Order {
 
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
+
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        validateOrderTable(orderTable);
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
+    public Order() {
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public Long getId() {
         return id;
@@ -74,6 +91,13 @@ public class Order {
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 }
