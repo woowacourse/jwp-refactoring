@@ -64,7 +64,7 @@ public class Menu {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        this.menuProducts.add(menuProduct);
     }
 }
