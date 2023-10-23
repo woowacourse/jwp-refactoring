@@ -5,7 +5,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -14,6 +13,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductName;
+import kitchenpos.domain.ProductPrice;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +47,7 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
     private OrderTable savedOrderTable;
@@ -53,7 +55,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, "메뉴 그룹"));
-        final Product savedProduct = productDao.save(new Product(null, "상품", BigDecimal.ONE));
+        final Product savedProduct = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
         final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, null, savedProduct.getId(), 2));
         final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
         orderLineItems.add(new OrderLineItem(null, null, savedMenu.getId(), 1));

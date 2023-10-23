@@ -2,11 +2,13 @@ package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductName;
+import kitchenpos.domain.ProductPrice;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,15 +31,15 @@ class MenuServiceTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private Long savedMenuGroupId;
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
-        final Product product = new Product(null, "상품", BigDecimal.ONE);
-        final Product savedProduct = productDao.save(product);
+        final Product product = new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE));
+        final Product savedProduct = productRepository.save(product);
         final MenuGroup menuGroup = new MenuGroup(null, "메뉴 그룹");
         final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
         savedMenuGroupId = savedMenuGroup.getId();
@@ -107,7 +109,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_가격이_1000조_이상이면_예외가_발생한다() {
-            final Product product = productDao.save(new Product(null, "상품", BigDecimal.valueOf(Math.pow(10, 16))));
+            final Product product = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.valueOf(Math.pow(10, 16)))));
             menuProducts.add(new MenuProduct(null, null, product.getId(), 10));
 
             final Menu menu = new Menu(null, "메뉴", BigDecimal.valueOf(Math.pow(10, 17)), savedMenuGroupId, menuProducts);
@@ -134,7 +136,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_상품이_존재하지_않으면_예외가_발생한다() {
-            final Product product = productDao.save(new Product(null, "상품", BigDecimal.ONE));
+            final Product product = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
             menuProducts.add(new MenuProduct(null, null, product.getId() + 1, 1));
 
             final Menu menu = new Menu(null, "메뉴", BigDecimal.ZERO, savedMenuGroupId, menuProducts);
