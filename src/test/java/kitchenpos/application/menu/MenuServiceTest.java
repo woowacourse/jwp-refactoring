@@ -12,6 +12,7 @@ import kitchenpos.application.dto.result.MenuResult;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,8 @@ class MenuServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private MenuValidator menuValidator;
 
     @Test
     void create_menu_success() {
@@ -148,18 +151,20 @@ class MenuServiceTest extends IntegrationTest {
         final MenuGroup menuGroup = generateMenuGroup("chicken-group");
         final Product chicken = generateProduct("chicken", 20000L);
         final Product cheeseBall = generateProduct("cheese-ball", 5000L);
-        final Menu menuA = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(28000L), menuGroup));
         final List<MenuProduct> menuProductsA = List.of(
-                new MenuProduct(menuA, chicken.getId(), 1L),
-                new MenuProduct(menuA, cheeseBall.getId(), 2L)
+                new MenuProduct(chicken.getId(), 1L),
+                new MenuProduct(cheeseBall.getId(), 2L)
         );
-        menuProductRepository.saveAll(menuProductsA);
+        final Menu menuA = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(28000L), menuGroup));
+        menuA.addMenuProducts(menuProductsA, menuValidator);
 
-        final Menu menuB = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(24000L), menuGroup));
         final List<MenuProduct> menuProductsB = List.of(
-                new MenuProduct(menuB, chicken.getId(), 1L),
-                new MenuProduct(menuB, cheeseBall.getId(), 1L)
+                new MenuProduct(chicken.getId(), 1L),
+                new MenuProduct(cheeseBall.getId(), 1L)
         );
+        final Menu menuB = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(24000L), menuGroup));
+        menuB.addMenuProducts(menuProductsB, menuValidator);
+        menuProductRepository.saveAll(menuProductsA);
         menuProductRepository.saveAll(menuProductsB);
 
         // when

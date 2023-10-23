@@ -1,6 +1,8 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.Price;
 
 @Entity
@@ -23,6 +26,10 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "menu_id", nullable = false)
+    private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
@@ -47,6 +54,11 @@ public class Menu {
         this(null, name, Price.from(price), menuGroup);
     }
 
+    public void addMenuProducts(final List<MenuProduct> menuProducts, final MenuValidator validator) {
+        validator.validateProducts(menuProducts, this.price);
+        this.menuProducts = menuProducts;
+    }
+
     public Long getId() {
         return id;
     }
@@ -61,5 +73,9 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }
