@@ -42,9 +42,10 @@ public class Menu {
         this.menuProducts = new MenuProducts(menuProducts);
     }
 
-    public void changeMenuProducts(List<MenuProduct> menuProducts, MenuValidator menuValidator) {
-        this.menuProducts = new MenuProducts(menuProducts);
-        menuValidator.validate(this);
+    public static Menu createWithoutId(String name, BigDecimal price, Long menuGroup, List<MenuProduct> menuProducts, MenuValidator menuValidator) {
+        Menu menu = new Menu(null, name, price, menuGroup, menuProducts);
+        menuValidator.validate(menu);
+        return menu;
     }
 
     public Long getId() {

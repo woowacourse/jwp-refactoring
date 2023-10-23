@@ -35,7 +35,8 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(1L, 10, false);
 
         // when
-        orderTable.ungroup();
+        orderTable.ungroup(ignore -> {
+        });
 
         // then
         assertThat(orderTable.getTableGroupId()).isNull();

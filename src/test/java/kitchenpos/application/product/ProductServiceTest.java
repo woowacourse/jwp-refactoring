@@ -1,6 +1,7 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
 import kitchenpos.application.dto.ProductRequest;
+import kitchenpos.application.product.ProductService;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.fixture.ProductFixture;

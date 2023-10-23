@@ -24,7 +24,7 @@ class TableValidatorTest {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private TableValidator tableValidator;
+    private TableStatusValidator tableValidator;
 
     @Test
     void 주문_상태가_완료가_아니면_예외가_발생한다() {

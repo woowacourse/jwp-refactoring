@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
 import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;

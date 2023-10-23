@@ -1,7 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.application.tablegroup;
 
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
+import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -146,6 +147,6 @@ class TableGroupServiceTest {
         // when
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("완료 상태가 아니면 단체 지정을 해제할 수 없습니다");
+                .hasMessage("주문 상태가 완료가 아닙니다");
     }
 }

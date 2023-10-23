@@ -57,7 +57,8 @@ public class OrderTable extends AbstractAggregateRoot<OrderTable> {
         this.tableGroupId = tableGroupId;
     }
 
-    public void ungroup() {
+    public void ungroup(TableValidator tableValidator) {
+        tableValidator.validate(this);
         this.tableGroupId = null;
     }
 
