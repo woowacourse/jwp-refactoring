@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderCreateRequest.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -25,6 +29,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+
+import static kitchenpos.fixture.MenuGroupFixtures.TEST_GROUP;
+import static kitchenpos.fixture.OrderTableFixtures.EMPTY_TABLE;
+import static kitchenpos.fixture.OrderTableFixtures.NOT_EMPTY_TABLE;
 
 @Transactional
 @SpringBootTest
@@ -52,14 +60,9 @@ class OrderServiceTest {
 
     @BeforeEach
     void setup() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
-        notEmptyTable = orderTableDao.save(orderTable);
+        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
 
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("테스트 메뉴 그룹");
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupDao.save(TEST_GROUP());
 
         final Menu menu = new Menu();
         menu.setPrice(BigDecimal.valueOf(10000));
@@ -76,10 +79,10 @@ class OrderServiceTest {
         @DisplayName("주문 생성에 성공한다.")
         void success() {
             // given
-            final Order request = getOrder(notEmptyTable.getId(), List.of(getOrderLineItem(testMenu.getId())));
+            final OrderCreateRequest request = new OrderCreateRequest(notEmptyTable.getId(), List.of(new OrderLineItemRequest(testMenu.getId(), 1L)));
 
             // when
-            final Order response = orderService.create(request);
+            final OrderResponse response = orderService.create(request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
@@ -92,7 +95,7 @@ class OrderServiceTest {
         @DisplayName("메뉴가 없이 주문을 하면 예외가 발생한다.")
         void throwExceptionWithEmptyMenuList() {
             // given
-            final Order request = getOrder(notEmptyTable.getId(), Collections.emptyList());
+            final OrderCreateRequest request = new OrderCreateRequest(notEmptyTable.getId(), Collections.emptyList());
 
             // when
             // then
@@ -104,7 +107,7 @@ class OrderServiceTest {
         @DisplayName("잘못된 메뉴로 주문을 하면 예외가 발생한다.")
         void throwExcpetionWithWorngMenuId() {
             // given
-            final Order request = getOrder(notEmptyTable.getId(), List.of(getOrderLineItem(WRONG_ID)));
+            final OrderCreateRequest request = new OrderCreateRequest(notEmptyTable.getId(), List.of(new OrderLineItemRequest(WRONG_ID, 1L)));
 
             // when
             // then
@@ -116,12 +119,9 @@ class OrderServiceTest {
         @DisplayName("비어있는 테이블에서 주문 생성시 예외가 발생한다.")
         void throwExceptionWithEmptyTable() {
             // given
-            final OrderTable orderTable = new OrderTable();
-            orderTable.setEmpty(true);
-            orderTable.setNumberOfGuests(0);
-            final OrderTable savedEmptyTable = orderTableDao.save(orderTable);
+            final OrderTable savedEmptyTable = orderTableDao.save(EMPTY_TABLE());
 
-            final Order request = getOrder(savedEmptyTable.getId(), List.of(getOrderLineItem(testMenu.getId())));
+            final OrderCreateRequest request = new OrderCreateRequest(savedEmptyTable.getId(), List.of(new OrderLineItemRequest(testMenu.getId(), 1L)));
 
             // when
             // then
@@ -139,16 +139,16 @@ class OrderServiceTest {
         @DisplayName("성공 테스트")
         void success(final String originalStatus, final String statusToChange) {
             // given
-            final Order original = getOrder(notEmptyTable.getId(), List.of(getOrderLineItem(testMenu.getId())));
+            final Order original = new Order();
             original.setOrderStatus(originalStatus);
             original.setOrderedTime(LocalDateTime.now());
+            original.setOrderTableId(notEmptyTable.getId());
             final Order savedOrder = orderDao.save(original);
 
-            final Order changeRequest = new Order();
-            changeRequest.setOrderStatus(statusToChange);
+            final OrderStatusChangeRequest changeRequest = new OrderStatusChangeRequest(statusToChange);
 
             // when
-            final Order response = orderService.changeOrderStatus(savedOrder.getId(), changeRequest);
+            final OrderResponse response = orderService.changeOrderStatus(savedOrder.getId(), changeRequest);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
@@ -162,13 +162,13 @@ class OrderServiceTest {
         @DisplayName("실패 테스트")
         void fail(final String originalStatus, final String statusToChange) {
             // given
-            final Order original = getOrder(notEmptyTable.getId(), List.of(getOrderLineItem(testMenu.getId())));
+            final Order original = new Order();
             original.setOrderStatus(originalStatus);
             original.setOrderedTime(LocalDateTime.now());
+            original.setOrderTableId(notEmptyTable.getId());
             final Order savedOrder = orderDao.save(original);
 
-            final Order changeRequest = new Order();
-            changeRequest.setOrderStatus(statusToChange);
+            final OrderStatusChangeRequest changeRequest = new OrderStatusChangeRequest(statusToChange);
 
             // when
             // then
@@ -188,13 +188,13 @@ class OrderServiceTest {
         final Order savedOrder = orderDao.save(order);
 
         // when
-        final List<Order> response = orderService.list();
+        final List<OrderResponse> response = orderService.list();
 
         // then
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(response).isNotEmpty();
-            final Order savedResult = response.get(response.size() - 1);
-            softly.assertThat(savedResult.getId()).isEqualTo(savedResult.getId());
+            final OrderResponse savedResult = response.get(response.size() - 1);
+            softly.assertThat(savedResult.getId()).isEqualTo(savedOrder.getId());
         });
     }
 
