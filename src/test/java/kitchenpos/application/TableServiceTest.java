@@ -19,11 +19,11 @@ import kitchenpos.domain.order.OrderLineItemRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTableChangeService;
-import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -165,7 +165,7 @@ class TableServiceTest {
 
     @Test
     void 조리_또는_식사_중인_테이블의_빈상태를_변경할_때_예외가_발생한다() {
-        // given
+        // given when
         final OrderTable savedOrderTable = createOrderTable(false, 2);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트 메뉴그룹"));
         final Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(2000)));
@@ -181,8 +181,6 @@ class TableServiceTest {
         orderRepository.save(order);
 
         orderLineItemRepository.save(orderLineItem);
-
-        // when
 
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId()))

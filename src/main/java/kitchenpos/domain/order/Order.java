@@ -32,7 +32,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 

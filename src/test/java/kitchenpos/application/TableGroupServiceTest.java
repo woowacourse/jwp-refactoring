@@ -20,11 +20,11 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTableChangeService;
-import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,6 +100,8 @@ class TableGroupServiceTest {
         final List<Long> updatedOrderTableIds = updatedOrderTables.stream().map(OrderTable::getId)
             .collect(Collectors.toList());
 
+        tableGroupRepository.flush();
+
         assertThat(updatedOrderTables).hasSize(2);
         assertThat(updatedOrderTableIds).containsExactly(firstTable.getId(), secondTable.getId());
     }
@@ -151,19 +153,17 @@ class TableGroupServiceTest {
 
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
+        tableGroupRepository.flush();
+
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        // then
-        final OrderTable ungroupedOrderTable = orderTableRepository.findAll().stream()
-            .filter(orderTable -> orderTable.getId().equals(firstTable.getId()))
-            .findFirst()
-            .get();
+        tableGroupRepository.flush();
 
+        // then
         final TableGroup result = tableGroupRepository.findAll().get(0);
 
         assertThat(result.getOrderTables()).isEmpty();
-        assertThat(ungroupedOrderTable.getTableGroup()).isNull();
     }
 
     @ParameterizedTest

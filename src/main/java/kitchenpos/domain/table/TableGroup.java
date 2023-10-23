@@ -1,12 +1,13 @@
 package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.exception.TableGroupException.GroupAlreadyExistsException;
 import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
@@ -21,7 +22,8 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -41,12 +43,11 @@ public class TableGroup {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            if (orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            if (orderTable.isEmpty()) {
                 throw new GroupAlreadyExistsException();
             }
         }
 
-        orderTables.forEach(orderTable -> orderTable.changeTableGroup(tableGroup));
         return tableGroup;
     }
 
@@ -62,8 +63,8 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void ungroup() {
-        orderTables.forEach(OrderTable::ungroup);
-        orderTables.removeAll(orderTables);
+    public void ungroup(final OrderStatusChecker orderStatusChecker) {
+        orderStatusChecker.validateOrderStatusChangeableByTableGroupId(id);
+        orderTables = new ArrayList<>();
     }
 }

@@ -3,9 +3,11 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateDto;
 import kitchenpos.application.dto.OrderTableUpdateGuestDto;
-import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.exception.TableGroupException.GroupAlreadyExistsException;
 import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +17,14 @@ public class TableService {
 
     private final OrderTableRepository orderTableRepository;
     private final OrderStatusChecker orderStatusChecker;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableService(final OrderTableRepository orderTableRepository,
-        final OrderStatusChecker orderStatusChecker) {
+        final OrderStatusChecker orderStatusChecker,
+        final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.orderStatusChecker = orderStatusChecker;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -38,9 +43,12 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        savedOrderTable.changeEmpty(orderStatusChecker, true);
+        if (notExistsByOrderTables(List.of(savedOrderTable))) {
+            savedOrderTable.changeEmpty(orderStatusChecker, true);
+            return orderTableRepository.save(savedOrderTable);
+        }
 
-        return orderTableRepository.save(savedOrderTable);
+        throw new GroupAlreadyExistsException();
     }
 
     @Transactional
@@ -56,5 +64,9 @@ public class TableService {
         savedOrderTable.changeGuests(orderTableUpdateGuestDto.getNumberOfGuests());
 
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    private boolean notExistsByOrderTables(final List<OrderTable> orderTables) {
+        return !tableGroupRepository.existsByOrderTablesIn(orderTables);
     }
 }
