@@ -11,18 +11,21 @@ import javax.persistence.ManyToOne;
 @Entity
 public class MenuProduct {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Menu menu;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Product product;
-    private long quantity;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    MenuProduct() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Menu menu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Product product;
+
+    private long quantity;
+
+    public MenuProduct() {
     }
 
     private MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
@@ -30,10 +33,6 @@ public class MenuProduct {
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
-    }
-
-    public MenuProduct(final Menu menu, final Product product, final long quantity) {
-        this(null, menu, product, quantity);
     }
 
     public MenuProduct(final Product product, final long quantity) {
@@ -46,6 +45,10 @@ public class MenuProduct {
 
     public Menu getMenu() {
         return menu;
+    }
+
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     public Product getProduct() {

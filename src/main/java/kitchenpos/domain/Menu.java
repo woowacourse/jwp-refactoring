@@ -4,6 +4,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,15 +21,17 @@ public class Menu {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    private String name;
+    @Embedded
+    private Name name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<MenuProduct> menuProducts;
 
     public Menu() {
@@ -38,14 +42,24 @@ public class Menu {
             final BigDecimal price,
             final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
+        this.name = new Name(name);
+        this.price = new Price(price);
         this.menuGroup = menuGroup;
+        validateMenuProducts(menuProducts);
+
+        menuProducts.forEach(it -> it.setMenu(this));
         this.menuProducts = menuProducts;
     }
 
-    public void initMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (this.price.getValue().compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -53,11 +67,11 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public MenuGroup getMenuGroup() {
