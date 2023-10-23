@@ -3,8 +3,8 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
 import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderUpdateStatusRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,33 +25,24 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-//    @PostMapping
-//    public ResponseEntity<Order> create(@RequestBody final Order order) {
-//        final Order created = orderService.create(order);
-//        final URI uri = URI.create("/api/orders/" + created.getId());
-//        return ResponseEntity.created(uri)
-//                .body(created)
-//                ;
-//    }
-
     @PostMapping
-    public ResponseEntity<Order> create(@RequestBody final OrderCreateRequest request) {
-        final Order created = orderService.create(request);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest request) {
+        final OrderResponse response = orderService.create(request);
+        final URI uri = URI.create("/api/orders/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(created)
+                .body(response)
                 ;
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> readAll() {
+    public ResponseEntity<List<OrderResponse>> readAll() {
         return ResponseEntity.ok()
                 .body(orderService.readAll())
                 ;
     }
 
     @PutMapping("/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final OrderUpdateStatusRequest request
     ) {

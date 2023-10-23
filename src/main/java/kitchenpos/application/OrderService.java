@@ -12,7 +12,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderUpdateStatusRequest;
+import kitchenpos.mapper.OrderMapper;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -34,14 +36,17 @@ public class OrderService {
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository) {
+            final OrderTableRepository orderTableRepository
+    ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(
+            final OrderCreateRequest request
+    ) {
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
         validateEmptyByOrderLineItems(orderLineItemRequests);
 
@@ -57,18 +62,24 @@ public class OrderService {
         validateEmptyByOrderTable(orderTable);
         final Order savedOrder = orderRepository.save(
                 Order.of(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now()));
+
         saveOrderLineItems(orderLineItemRequests, savedOrder);
 
-        return savedOrder;
+        return OrderMapper.toOrderResponse(savedOrder);
     }
 
-    private void validateEmptyByOrderTable(OrderTable orderTable) {
+    private void validateEmptyByOrderTable(
+            final OrderTable orderTable
+    ) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("order table은 비어있을 수 없습니다.");
         }
     }
 
-    private void saveOrderLineItems(List<OrderLineItemRequest> orderLineItems, Order savedOrder) {
+    private void saveOrderLineItems(
+            final List<OrderLineItemRequest> orderLineItems,
+            final Order savedOrder
+    ) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItem : orderLineItems) {
             Menu menu = menuRepository.findById(orderLineItem.getMenuId())
@@ -85,21 +96,29 @@ public class OrderService {
         }
     }
 
-    private void validateEmptyByOrderLineItems(List<OrderLineItemRequest> orderLineItems) {
+    private void validateEmptyByOrderLineItems(
+            final List<OrderLineItemRequest> orderLineItems
+    ) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("order line item 은 1개 이상이어야 합니다.");
         }
     }
 
     @Transactional(readOnly = true)
-    public List<Order> readAll() {
-        return orderRepository.findAll();
+    public List<OrderResponse> readAll() {
+        final List<Order> orders = orderRepository.findAll();
+
+        return OrderMapper.toOrderResponses(orders);
     }
 
-    public Order changeOrderStatus(final Long orderId, final OrderUpdateStatusRequest request) {
+    public OrderResponse changeOrderStatus(
+            final Long orderId,
+            final OrderUpdateStatusRequest request
+    ) {
         final Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 주문입니다."));
         order.updateOrderStatus(request.getOrderStatus());
-        return order;
+
+        return OrderMapper.toOrderResponse(order);
     }
 }

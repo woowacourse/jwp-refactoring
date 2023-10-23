@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,9 +27,9 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    private TableGroup(final Long id,
-                       final LocalDateTime createdDate,
-                       final List<OrderTable> orderTables) {
+    public TableGroup(final Long id,
+                      final LocalDateTime createdDate,
+                      final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;

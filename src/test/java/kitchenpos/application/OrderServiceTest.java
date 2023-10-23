@@ -16,12 +16,12 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderUpdateStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -61,14 +61,14 @@ class OrderServiceTest extends ServiceTest {
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
 
             // when
-            Order savedOrder = orderService.create(orderRequest);
+            OrderResponse orderResponse = orderService.create(orderRequest);
 
             // then
             assertSoftly(
                     softly -> {
-                        softly.assertThat(savedOrder.getId()).isNotNull();
-                        softly.assertThat(savedOrder.getOrderLineItems().get(0).getQuantity()).isPositive();
-                        softly.assertThat(savedOrder.getOrderLineItems().get(0).getQuantity())
+                        softly.assertThat(orderResponse.getId()).isNotNull();
+                        softly.assertThat(orderResponse.getOrderLineItems().get(0).getQuantity()).isPositive();
+                        softly.assertThat(orderResponse.getOrderLineItems().get(0).getQuantity())
                                 .isEqualTo(orderLineItemRequest.getQuantity());
                     }
             );
@@ -134,15 +134,15 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
-            Order savedOrder = orderService.create(orderRequest);
+            OrderResponse orderResponse = orderService.create(orderRequest);
 
             // when
-            List<Order> orders = orderService.readAll();
+            List<OrderResponse> orderResponses = orderService.readAll();
 
             // then
-            assertThat(orders)
-                    .extracting(Order::getId)
-                    .contains(savedOrder.getId());
+            assertThat(orderResponses)
+                    .extracting(OrderResponse::getId)
+                    .contains(orderResponse.getId());
         }
     }
 
@@ -154,14 +154,14 @@ class OrderServiceTest extends ServiceTest {
             // given
             OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
-            Order savedOrder = orderService.create(orderRequest);
+            OrderResponse orderResponse = orderService.create(orderRequest);
             OrderUpdateStatusRequest request = OrderUpdateStatusRequest.from(MEAL);
 
             // when
-            Order updatedOrder = orderService.changeOrderStatus(savedOrder.getId(), request);
+            OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), request);
 
             // then
-            assertThat(updatedOrder.getOrderStatus()).isEqualTo(request.getOrderStatus().name());
+            assertThat(response.getOrderStatus()).isEqualTo(request.getOrderStatus().name());
         }
 
         @Test
@@ -193,7 +193,7 @@ class OrderServiceTest extends ServiceTest {
 
     private OrderCreateRequest createOrderRequest(final Long orderTableId,
                                                   final OrderStatus status,
-                                                  final OrderLineItemRequest...orderLineItemRequests) {
+                                                  final OrderLineItemRequest... orderLineItemRequests) {
         return OrderCreateRequest.of(orderTableId, status, Arrays.asList(orderLineItemRequests));
     }
 }

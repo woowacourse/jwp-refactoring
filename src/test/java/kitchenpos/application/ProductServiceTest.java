@@ -6,8 +6,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.product.ProductCreateRequest;
+import kitchenpos.dto.product.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,13 +29,13 @@ class ProductServiceTest extends ServiceTest {
             ProductCreateRequest request = new ProductCreateRequest("피움 치킨", 18_000L);
 
             // when
-            Product savedProduct = productService.create(request);
+            ProductResponse productResponse = productService.create(request);
 
             // then
             assertSoftly(
                     softly -> {
-                        softly.assertThat(savedProduct.getPrice().longValue()).isEqualTo(request.getPrice());
-                        softly.assertThat(savedProduct.getName()).isEqualTo(request.getName());
+                        softly.assertThat(productResponse.getPrice().longValue()).isEqualTo(request.getPrice());
+                        softly.assertThat(productResponse.getName()).isEqualTo(request.getName());
                     }
             );
         }
@@ -71,15 +71,15 @@ class ProductServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             ProductCreateRequest request = new ProductCreateRequest("조이 치킨", 18_000L);
-            Product savedProduct = productService.create(request);
+            ProductResponse productResponse = productService.create(request);
 
             // when
-            List<Product> products = productService.readAll();
+            List<ProductResponse> productResponses = productService.readAll();
 
             // then
-            assertThat(products)
-                    .extracting(Product::getId)
-                    .contains(savedProduct.getId());
+            assertThat(productResponses)
+                    .extracting(ProductResponse::getId)
+                    .contains(productResponse.getId());
         }
     }
 }

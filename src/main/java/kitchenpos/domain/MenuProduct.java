@@ -40,13 +40,6 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct of(final Long seq,
-                                 final Menu menu,
-                                 final Product product,
-                                 final long quantity) {
-        return new MenuProduct(seq, menu, product, quantity);
-    }
-
     public static MenuProduct of(final Menu menu,
                                  final Product product,
                                  final long quantity) {

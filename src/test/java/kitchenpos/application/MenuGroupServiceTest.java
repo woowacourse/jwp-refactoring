@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.menu.MenuGroupCreateRequest;
 import kitchenpos.dto.menu.MenuGroupResponse;
 import org.junit.jupiter.api.Nested;
@@ -24,13 +23,13 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            MenuGroupCreateRequest request = new MenuGroupCreateRequest("한식");
+            final MenuGroupCreateRequest createRequest = new MenuGroupCreateRequest("한식");
 
             // when
-            MenuGroupResponse menuGroupResponse = menuGroupService.create(request);
+            final MenuGroupResponse createResponse = menuGroupService.create(createRequest);
 
             // then
-            assertThat(menuGroupResponse.getName()).isEqualTo(request.getName());
+            assertThat(createResponse.getName()).isEqualTo(createRequest.getName());
         }
     }
 
@@ -40,16 +39,16 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            MenuGroupCreateRequest request = new MenuGroupCreateRequest("중식");
-            MenuGroupResponse menuGroupResponse = menuGroupService.create(request);
+            final MenuGroupCreateRequest createRequest = new MenuGroupCreateRequest("중식");
+            final MenuGroupResponse createResponse = menuGroupService.create(createRequest);
 
             // when
-            List<MenuGroup> menuGroups = menuGroupService.readAll();
+            final List<MenuGroupResponse> findResponses = menuGroupService.readAll();
 
             // then
-            assertThat(menuGroups)
-                    .extracting(MenuGroup::getName)
-                    .contains(menuGroupResponse.getName());
+            assertThat(findResponses)
+                    .extracting(MenuGroupResponse::getName)
+                    .contains(createResponse.getName());
         }
     }
 }

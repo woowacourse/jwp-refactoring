@@ -6,11 +6,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.TableCreateRequest;
 import kitchenpos.dto.table.TableUpdateEmptyRequest;
 import kitchenpos.dto.table.TableUpdateNumberOfGuestsRequest;
@@ -35,14 +37,14 @@ class TableServiceTest extends ServiceTest {
             TableCreateRequest tableCreateRequest = TableCreateRequest.of(0, true);
 
             // when
-            OrderTable savedOrderTable = tableService.create(tableCreateRequest);
+            OrderTableResponse response = tableService.create(tableCreateRequest);
 
             // then
             assertSoftly(softly -> {
-                        softly.assertThat(savedOrderTable.getId()).isPositive();
-                        softly.assertThat(savedOrderTable.getNumberOfGuests())
+                        softly.assertThat(response.getId()).isPositive();
+                        softly.assertThat(response.getNumberOfGuests())
                                 .isEqualTo(tableCreateRequest.getNumberOfGuests());
-                        softly.assertThat(savedOrderTable.isEmpty())
+                        softly.assertThat(response.isEmpty())
                                 .isEqualTo(tableCreateRequest.isEmpty());
                     }
             );
@@ -56,15 +58,15 @@ class TableServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             TableCreateRequest tableCreateRequest = TableCreateRequest.of(0, true);
-            OrderTable savedOrderTable = tableService.create(tableCreateRequest);
+            OrderTableResponse response = tableService.create(tableCreateRequest);
 
             // when
-            List<OrderTable> orderTables = tableService.readAll();
+            List<OrderTableResponse> orderTableResponses = tableService.readAll();
 
             // then
-            assertThat(orderTables)
-                    .extracting(OrderTable::getId)
-                    .contains(savedOrderTable.getId());
+            assertThat(orderTableResponses)
+                    .extracting(OrderTableResponse::getId)
+                    .contains(response.getId());
         }
     }
 
@@ -79,10 +81,10 @@ class TableServiceTest extends ServiceTest {
             TableUpdateEmptyRequest request = TableUpdateEmptyRequest.from(false);
 
             // when
-            OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
+            OrderTableResponse response = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
-            assertThat(updatedOrderTable.isEmpty()).isFalse();
+            assertThat(response.isEmpty()).isFalse();
         }
 
         @Test
@@ -94,7 +96,7 @@ class TableServiceTest extends ServiceTest {
             // when, then
             assertThatThrownBy(
                     () -> tableService.changeEmpty(invalidOrderTableId, request)
-            ).isInstanceOf(IllegalArgumentException.class);
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test
@@ -145,13 +147,13 @@ class TableServiceTest extends ServiceTest {
             TableUpdateNumberOfGuestsRequest request = TableUpdateNumberOfGuestsRequest.from(10);
 
             // when
-            OrderTable updatedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
+            OrderTableResponse orderTableResponse = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
             // then
             assertSoftly(
                     softly -> {
-                        softly.assertThat(updatedOrderTable.getId()).isEqualTo(savedOrderTable.getId());
-                        softly.assertThat(updatedOrderTable.getNumberOfGuests())
+                        softly.assertThat(orderTableResponse.getId()).isEqualTo(savedOrderTable.getId());
+                        softly.assertThat(orderTableResponse.getNumberOfGuests())
                                 .isEqualTo(request.getNumberOfGuests());
                     }
             );
@@ -181,7 +183,7 @@ class TableServiceTest extends ServiceTest {
             // when, then
             assertThatThrownBy(
                     () -> tableService.changeNumberOfGuests(invalidOrderTableId, request)
-            ).isInstanceOf(IllegalArgumentException.class);
+            ).isInstanceOf(NoSuchElementException.class);
         }
 
         @Test

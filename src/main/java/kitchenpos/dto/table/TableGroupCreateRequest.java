@@ -1,6 +1,7 @@
 package kitchenpos.dto.table;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
 
@@ -16,5 +17,11 @@ public class TableGroupCreateRequest {
 
     public List<SingleOrderTableCreateRequest> getOrderTables() {
         return orderTables;
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+                .map(SingleOrderTableCreateRequest::getId)
+                .collect(Collectors.toList());
     }
 }

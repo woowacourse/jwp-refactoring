@@ -8,11 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuProductCreateRequest;
+import kitchenpos.dto.menu.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,17 +50,19 @@ class MenuServiceTest extends ServiceTest {
             MenuCreateRequest request = createMenuRequest("치킨 단품", 18_000L, menuGroup.getId(), menuProductRequest);
 
             // when
-            Menu savedMenu = menuService.create(request);
+            MenuResponse menuResponse = menuService.create(request);
 
             // then
             assertSoftly(
                     softly -> {
-                        softly.assertThat(savedMenu.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
-                        softly.assertThat(savedMenu.getName()).isEqualTo(request.getName());
-                        softly.assertThat(savedMenu.getPrice().longValue()).isEqualTo(request.getPrice());
-                        softly.assertThat(savedMenu.getMenuProducts().get(0).getSeq()).isPositive();
-                        softly.assertThat(savedMenu.getMenuProducts().get(0).getProductId())
+                        softly.assertThat(menuResponse.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
+                        softly.assertThat(menuResponse.getName()).isEqualTo(request.getName());
+                        softly.assertThat(menuResponse.getPrice().longValue()).isEqualTo(request.getPrice());
+                        softly.assertThat(menuResponse.getMenuProducts().get(0).getSeq()).isPositive();
+                        softly.assertThat(menuResponse.getMenuProducts().get(0).getProductId())
                                 .isEqualTo(menuProductRequest.getProductId());
+                        softly.assertThat(menuResponse.getMenuProducts().get(0).getQuantity())
+                                .isEqualTo(menuProductRequest.getQuantity());
                     }
             );
         }
@@ -126,15 +128,15 @@ class MenuServiceTest extends ServiceTest {
             // given
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 1L);
             MenuCreateRequest request = createMenuRequest("치킨 단품", 18_000L, menuGroup.getId(), menuProductRequest);
-            Menu savedMenu = menuService.create(request);
+            MenuResponse menuResponse = menuService.create(request);
 
             // when
-            List<Menu> menus = menuService.readAll();
+            List<MenuResponse> menuResponses = menuService.readAll();
 
             // then
-            assertThat(menus)
-                    .extracting(Menu::getId)
-                    .contains(savedMenu.getId());
+            assertThat(menuResponses)
+                    .extracting(MenuResponse::getId)
+                    .contains(menuResponse.getId());
         }
     }
 

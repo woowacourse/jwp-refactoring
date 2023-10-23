@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.TableCreateRequest;
 import kitchenpos.dto.table.TableUpdateEmptyRequest;
 import kitchenpos.dto.table.TableUpdateNumberOfGuestsRequest;
@@ -22,28 +22,32 @@ public class TableRestController {
 
     private final TableService tableService;
 
-    public TableRestController(final TableService tableService) {
+    public TableRestController(
+            final TableService tableService
+    ) {
         this.tableService = tableService;
     }
 
     @PostMapping
-    public ResponseEntity<OrderTable> create(@RequestBody final TableCreateRequest request) {
-        final OrderTable created = tableService.create(request);
-        final URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<OrderTableResponse> create(
+            @RequestBody final TableCreateRequest request
+    ) {
+        final OrderTableResponse response = tableService.create(request);
+        final URI uri = URI.create("/api/tables/" + response.getId());
         return ResponseEntity.created(uri)
-                .body(created)
+                .body(response)
                 ;
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderTable>> readAll() {
+    public ResponseEntity<List<OrderTableResponse>> readAll() {
         return ResponseEntity.ok()
                 .body(tableService.readAll())
                 ;
     }
 
     @PutMapping("/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
             @RequestBody final TableUpdateEmptyRequest request
     ) {
@@ -53,7 +57,7 @@ public class TableRestController {
     }
 
     @PutMapping("/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
             @RequestBody final TableUpdateNumberOfGuestsRequest request
     ) {

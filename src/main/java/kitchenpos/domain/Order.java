@@ -37,7 +37,7 @@ public class Order {
     protected Order() {
     }
 
-    private Order(final Long id,
+    public Order(final Long id,
                   final OrderTable orderTable,
                   final String orderStatus,
                   final LocalDateTime orderedTime,
@@ -62,6 +62,16 @@ public class Order {
         return new Order(null, orderTable, orderStatus, orderedTime, null);
     }
 
+    public void updateOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException("주문의 상태가 COMPLETION일 때는 상태 변경이 불가 합니다.");
+        }
+        this.orderStatus = orderStatus.name();
+    }
+
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
 
     public Long getId() {
         return id;
@@ -79,22 +89,11 @@ public class Order {
         return orderStatus;
     }
 
-    public void updateOrderStatus(final OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException("주문의 상태가 COMPLETION일 때는 상태 변경이 불가 합니다.");
-        }
-        this.orderStatus = orderStatus.name();
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

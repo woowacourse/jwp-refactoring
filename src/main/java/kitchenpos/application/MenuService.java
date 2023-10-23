@@ -11,6 +11,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuProductCreateRequest;
+import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.mapper.MenuMapper;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -31,30 +33,34 @@ public class MenuService {
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository) {
+            final ProductRepository productRepository
+    ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(
+            final MenuCreateRequest request
+    ) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu group 입니다."));
-        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup);
 
+        final Menu menu = MenuMapper.toMenu(request, menuGroup);
         final List<MenuProduct> menuProducts = convertToMenuProducts(request);
         final BigDecimal sum = calculateSumByMenuProducts(menuProducts);
-        validatePrice(menu, sum);
+        validateMenuPrice(menu, sum);
 
         final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu, menuProducts);
-        savedMenu.updateMenuProducts(savedMenuProducts);
-        return savedMenu;
+        return MenuMapper.toMenuResponse(savedMenu, savedMenuProducts);
     }
 
-    private List<MenuProduct> convertToMenuProducts(final MenuCreateRequest menuRequest) {
+    private List<MenuProduct> convertToMenuProducts(
+            final MenuCreateRequest menuRequest
+    ) {
         final List<MenuProductCreateRequest> requests = menuRequest.getMenuProducts();
         final ArrayList<MenuProduct> menuProducts = new ArrayList<>();
         for (final MenuProductCreateRequest request : requests) {
@@ -65,19 +71,27 @@ public class MenuService {
         return menuProducts;
     }
 
-    private BigDecimal calculateSumByMenuProducts(final List<MenuProduct> menuProducts) {
+    private BigDecimal calculateSumByMenuProducts(
+            final List<MenuProduct> menuProducts
+    ) {
         return menuProducts.stream()
                 .map(MenuProduct::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private void validatePrice(final Menu menu, final BigDecimal price) {
+    private void validateMenuPrice(
+            final Menu menu,
+            final BigDecimal price
+    ) {
         if (menu.isGreaterThan(price)) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");
         }
     }
 
-    private List<MenuProduct> saveMenuProducts(final Menu menu, final List<MenuProduct> menuProducts) {
+    private List<MenuProduct> saveMenuProducts(
+            final Menu menu,
+            final List<MenuProduct> menuProducts
+    ) {
         return menuProducts.stream()
                 .map(menuProduct -> menuProductRepository.save(
                         MenuProduct.of(menu, menuProduct.getProduct(), menuProduct.getQuantity())
@@ -86,7 +100,8 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> readAll() {
-        return menuRepository.findAll();
+    public List<MenuResponse> readAll() {
+        List<Menu> menus = menuRepository.findAll();
+        return MenuMapper.toMenuResponses(menus);
     }
 }

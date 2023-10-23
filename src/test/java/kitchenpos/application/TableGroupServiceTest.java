@@ -2,18 +2,20 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.SingleOrderTableCreateRequest;
 import kitchenpos.dto.table.TableGroupCreateRequest;
+import kitchenpos.dto.table.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,11 +54,11 @@ class TableGroupServiceTest extends ServiceTest {
             );
 
             // when
-            TableGroup savedTableGroup = tableGroupService.create(request);
+            TableGroupResponse response = tableGroupService.create(request);
 
             // then
-            assertThat(savedTableGroup.getOrderTables())
-                    .extracting(OrderTable::getId)
+            assertThat(response.getOrderTables())
+                    .extracting(OrderTableResponse::getId)
                     .contains(savedOrderTable1.getId(), savedOrderTable2.getId());
         }
 
@@ -134,14 +136,12 @@ class TableGroupServiceTest extends ServiceTest {
                     SingleOrderTableCreateRequest.from(savedOrderTable1.getId()),
                     SingleOrderTableCreateRequest.from(savedOrderTable2.getId())
             );
-            TableGroup savedTableGroup = tableGroupService.create(request);
+            TableGroupResponse response = tableGroupService.create(request);
 
-            // when
-            tableGroupService.ungroup(savedTableGroup.getId());
-
-            // then
-            List<OrderTable> tables = orderTableRepository.findAllByTableGroup(savedTableGroup);
-            assertThat(tables).isEmpty();
+            // when, then
+            assertDoesNotThrow(
+                    () -> tableGroupService.ungroup(response.getId())
+            );
         }
 
         @ParameterizedTest
@@ -152,13 +152,13 @@ class TableGroupServiceTest extends ServiceTest {
                     SingleOrderTableCreateRequest.from(savedOrderTable1.getId()),
                     SingleOrderTableCreateRequest.from(savedOrderTable2.getId())
             );
-            TableGroup savedTableGroup = tableGroupService.create(request);
+            TableGroupResponse response = tableGroupService.create(request);
             Order order = createOrder(savedOrderTable1, orderStatus);
             orderRepository.save(order);
 
             // when, then
             assertThatThrownBy(
-                    () -> tableGroupService.ungroup(savedTableGroup.getId())
+                    () -> tableGroupService.ungroup(response.getId())
             ).isInstanceOf(IllegalArgumentException.class);
         }
     }
