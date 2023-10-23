@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Table(name = "order_table")
 @Entity
@@ -116,11 +117,24 @@ public class OrderTable {
         return empty;
     }
 
-    public void setOrders(Orders orders) {
-        this.orders = orders;
-    }
-
     public boolean isGrouped() {
         return grouped;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OrderTable)) {
+            return false;
+        }
+        OrderTable orderTable = (OrderTable) o;
+        return id.equals(orderTable.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

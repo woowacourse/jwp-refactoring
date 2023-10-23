@@ -1,7 +1,7 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.config.JpaAuditingConfig;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@EntityListeners(JpaAuditingConfig.class)
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "table_group")
 @Entity
 public class TableGroup {
@@ -31,9 +31,8 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup(Long id, List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = LocalDateTime.now();
+    public TableGroup(List<OrderTable> orderTables) {
+        this.id = null;
         this.orderTables = new OrderTables(orderTables);
     }
 
@@ -45,23 +44,11 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables.getCollection();
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = new OrderTables(orderTables);
     }
 }

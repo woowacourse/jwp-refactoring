@@ -3,7 +3,6 @@ package kitchenpos.domain.table;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.Orders;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,7 +30,6 @@ class OrderTableTest {
         Order order = new Order(List.of(orderLineItem));
         orderTable.createdOrder(order);
         order.changeOrderStatus(orderStatus);
-        orderTable.setOrders(new Orders(List.of(order)));
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(IllegalArgumentException.class);

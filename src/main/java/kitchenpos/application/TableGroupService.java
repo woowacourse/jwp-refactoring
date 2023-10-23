@@ -35,25 +35,16 @@ public class TableGroupService {
         OrderTables orderTables = new OrderTables(savedOrderTables);
         TableGroup tableGroup = orderTables.group();
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return tableGroupDao.save(tableGroup);
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
+    public TableGroup ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
 
-        List<OrderTable> orderTables = tableGroup.getOrderTables();
+        tableGroup.unGroup();
 
-        OrderTables groupedOrderTables = new OrderTables(orderTables);
-        groupedOrderTables.unGroup();
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTableDao.save(orderTable);
-        }
+        return tableGroup;
     }
 }

@@ -3,7 +3,6 @@ package kitchenpos.domain.table;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.Orders;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -59,7 +58,6 @@ class OrderTablesTest {
         Order order = new Order(List.of(new OrderLineItem(1L, 1L)));
         order.changeOrderStatus(orderStatus);
         orderTable1.createdOrder(order);
-        orderTable1.setOrders(new Orders(List.of(order)));
 
         OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
