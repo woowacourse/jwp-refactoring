@@ -4,9 +4,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,17 +36,6 @@ class MenuAcceptanceTest extends AcceptanceTest {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
-
-            final Menu menu = new Menu(
-                    "스키야키",
-                    BigDecimal.valueOf(11_900),
-                    menuGroup,
-                    List.of(menuProduct)
-            );
-
             final ExtractableResponse<Response> response = 메뉴_생성_요청(
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
@@ -59,24 +46,13 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getString("name")).isEqualTo(menu.getName())
+                    () -> assertThat(response.jsonPath().getString("name")).isEqualTo("스키야키")
             );
         }
 
         @Test
         void 메뉴는_반드시_메뉴_그룹에_속해야_한다() {
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
-
-            final Menu menu = new Menu(
-                    product.getName(),
-                    product.getPrice(),
-                    MenuGroupFixture.일식(),
-                    List.of(menuProduct)
-            );
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(
                     MENU_CREATE_REQUEST_스키야키(
@@ -92,20 +68,16 @@ class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void 메뉴의_가격은_메뉴에_속하는_상품_곱하기_수량의_합_이하여야_한다() {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(2L);
-
-            final BigDecimal inappropriatePrice = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN);
+            final MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 2L);
+            final BigDecimal inappropriatePrice = product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())).add(BigDecimal.TEN);
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(
                     MENU_CREATE_REQUEST_스키야키(
                             inappropriatePrice,
                             menuGroup.getId(),
-                            List.of(new MenuProductCreateRequest(product.getId(), 2L))
+                            List.of(menuProductRequest)
                     )
             );
 
@@ -117,10 +89,6 @@ class MenuAcceptanceTest extends AcceptanceTest {
     void 메뉴를_조회한다() {
         final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
         final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProduct(product);
-        menuProduct.setQuantity(1L);
 
         final Menu savedMenu = 메뉴_생성_요청하고_메뉴_반환(
                 MENU_CREATE_REQUEST_스키야키(

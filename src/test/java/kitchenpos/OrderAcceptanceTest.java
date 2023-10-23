@@ -3,7 +3,6 @@ package kitchenpos;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -49,10 +48,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
-
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
@@ -79,10 +74,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
-            final Long orderTableId = savedOrderTable.getId();
             final ExtractableResponse<Response> response = 주문_생성_요청(
                     new OrderCreateRequest(
-                            orderTableId,
+                            savedOrderTable.getId(),
                             List.of()
                     )
             );
@@ -97,10 +91,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -127,10 +117,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
-
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
@@ -156,10 +142,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -199,10 +181,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
-
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
                             BigDecimal.valueOf(11_900),
@@ -235,10 +213,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
