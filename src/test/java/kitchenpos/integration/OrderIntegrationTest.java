@@ -147,9 +147,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     private OrderTable createTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(3);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(3, false);
         final HttpEntity<OrderTable> request = new HttpEntity<>(orderTable);
 
         return testRestTemplate

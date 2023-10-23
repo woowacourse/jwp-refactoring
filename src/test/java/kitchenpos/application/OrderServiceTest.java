@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.persistence.MenuRepository;
+import kitchenpos.persistence.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -48,9 +48,7 @@ class OrderServiceTest {
         @Test
         void 주문을_생성한다() {
             // given
-            final OrderTable savedOrderTable = new OrderTable();
-            savedOrderTable.setId(1L);
-            savedOrderTable.setEmpty(false);
+            final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
 
             final Order savedOrder = new Order();
             savedOrder.setId(1L);
@@ -60,7 +58,7 @@ class OrderServiceTest {
 
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
-            when(orderTableDao.findById(anyLong()))
+            when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
             when(orderDao.save(any(Order.class)))
                     .thenReturn(savedOrder);
@@ -124,7 +122,7 @@ class OrderServiceTest {
             // given
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
-            when(orderTableDao.findById(anyLong()))
+            when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.empty());
 
             // when
@@ -145,12 +143,11 @@ class OrderServiceTest {
         @Test
         void 주문을_생성할_때_주문_테이블이_빈_상태면_실패한다() {
             // given
-            final OrderTable savedOrderTable = new OrderTable();
-            savedOrderTable.setEmpty(true);
+            final OrderTable savedOrderTable = new OrderTable(null, null, 0, true);
 
             when(menuRepository.countByIdIn(any()))
                     .thenReturn(2L);
-            when(orderTableDao.findById(anyLong()))
+            when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
 
             // when

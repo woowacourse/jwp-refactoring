@@ -19,9 +19,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void 테이블_그룹_생성을_요청한다() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(0, true);
         final HttpEntity<OrderTable> createTableRequest = new HttpEntity<>(orderTable);
 
         final OrderTable table1 = createTable(createTableRequest).getBody();
@@ -46,9 +44,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void 테이블_그룹을_삭제요청한다() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(0, true);
         final HttpEntity<OrderTable> createTableRequest = new HttpEntity<>(orderTable);
 
         final OrderTable table1 = createTable(createTableRequest).getBody();
