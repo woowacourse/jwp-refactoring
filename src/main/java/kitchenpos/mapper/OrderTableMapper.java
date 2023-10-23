@@ -37,13 +37,7 @@ public class OrderTableMapper {
             final List<OrderTable> orderTables
     ) {
         return orderTables.stream()
-                .map(orderTable -> new OrderTableResponse(
-                                orderTable.getId(),
-                                orderTable.getTableGroupId(),
-                                orderTable.getNumberOfGuests(),
-                                orderTable.isEmpty()
-                        )
-                )
+                .map(OrderTableMapper::toOrderTableResponse)
                 .collect(Collectors.toList());
     }
 }

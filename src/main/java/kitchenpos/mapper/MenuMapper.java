@@ -5,9 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
-import kitchenpos.dto.menu.MenuProductCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
 
 public class MenuMapper {
@@ -35,23 +33,7 @@ public class MenuMapper {
 
     public static List<MenuResponse> toMenuResponses(final List<Menu> menus) {
         return menus.stream()
-                .map(
-                        menu -> new MenuResponse(
-                                menu.getId(),
-                                menu.getName(),
-                                menu.getPrice(),
-                                menu.getMenuGroupId(),
-                                MenuProductMapper.toMenuProductResponses(menu.getMenuProducts())
-                        )
-                ).collect(Collectors.toList());
-    }
-
-    public static MenuProduct toMenuProduct(final MenuProductCreateRequest request, final Menu menu, final Product product) {
-        return new MenuProduct(
-                null,
-                menu,
-                product,
-                request.getQuantity()
-        );
+                .map(menu -> toMenuResponse(menu, menu.getMenuProducts()))
+                .collect(Collectors.toList());
     }
 }

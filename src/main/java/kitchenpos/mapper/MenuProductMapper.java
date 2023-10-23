@@ -21,12 +21,7 @@ public class MenuProductMapper {
 
     public static List<MenuProductResponse> toMenuProductResponses(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                .map(menuProduct -> new MenuProductResponse(
-                                menuProduct.getSeq(),
-                                menuProduct.getMenuId(),
-                                menuProduct.getProductId(),
-                                menuProduct.getQuantity()
-                        )
-                ).collect(Collectors.toList());
+                .map(MenuProductMapper::toMenuProductResponse)
+                .collect(Collectors.toList());
     }
 }

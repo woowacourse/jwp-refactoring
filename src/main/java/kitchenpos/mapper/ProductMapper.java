@@ -20,11 +20,7 @@ public class ProductMapper {
 
     public static List<ProductResponse> toProductResponses(final List<Product> products) {
         return products.stream()
-                .map(product -> new ProductResponse(
-                        product.getId(),
-                        product.getName(),
-                        product.getPrice().longValue()
-                ))
+                .map(ProductMapper::toProductResponse)
                 .collect(Collectors.toList());
     }
 }
