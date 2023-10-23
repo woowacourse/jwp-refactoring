@@ -32,7 +32,36 @@ public class Price {
         }
     }
 
+    public Price multiply(long value) {
+        return new Price(this.value.multiply(BigDecimal.valueOf(value)));
+    }
+
+    public Price add(Price other) {
+        return new Price(value.add(other.value));
+    }
+
+    public boolean isGreaterThan(Price other) {
+        return value.compareTo(other.value) > 0;
+    }
+
     public BigDecimal value() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Price price = (Price) o;
+        return value.compareTo(price.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

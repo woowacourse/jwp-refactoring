@@ -20,6 +20,6 @@ public class ProductResponse {
     }
 
     public static ProductResponse from(Product product) {
-        return new ProductResponse(product.id(), product.name(), product.price());
+        return new ProductResponse(product.id(), product.name(), product.price().value());
     }
 }

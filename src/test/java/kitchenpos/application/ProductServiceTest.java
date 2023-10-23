@@ -12,6 +12,7 @@ import java.util.Optional;
 import kitchenpos.application.dto.product.CreateProductCommand;
 import kitchenpos.application.dto.product.CreateProductResponse;
 import kitchenpos.application.dto.product.SearchProductResponse;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
@@ -32,7 +33,7 @@ class ProductServiceTest extends IntegrationTest {
         assertAll(
                 () -> assertThat(result).isPresent(),
                 () -> assertThat(result.get().id()).isPositive(),
-                () -> assertThat(result.get().price()).isEqualByComparingTo(BigDecimal.ONE)
+                () -> assertThat(result.get().price()).isEqualTo(new Price(BigDecimal.ONE))
         );
     }
 

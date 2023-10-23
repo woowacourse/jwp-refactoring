@@ -57,11 +57,12 @@ public class Menu {
     }
 
     private void validatePrice(Price price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
+        Price sum = new Price(BigDecimal.ZERO);
         for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.product().price().multiply(BigDecimal.valueOf(menuProduct.quantity())));
+            Price productPrice = menuProduct.product().price();
+            sum = sum.add(productPrice.multiply(menuProduct.quantity()));
         }
-        if (price.value().compareTo(sum) > 0) {
+        if (price.isGreaterThan(sum)) {
             throw new MenuException(SUM_OF_MENU_PRODUCTS_PRICE_MUST_BE_LESS_THAN_PRICE);
         }
     }

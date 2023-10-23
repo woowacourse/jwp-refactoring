@@ -20,7 +20,7 @@ public class CreateProductResponse {
     }
 
     public static CreateProductResponse from(Product product) {
-        return new CreateProductResponse(product.id(), product.name(), product.price());
+        return new CreateProductResponse(product.id(), product.name(), product.price().value());
     }
 
     public Long id() {
