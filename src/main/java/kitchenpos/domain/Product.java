@@ -1,10 +1,14 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Product {
-    private final Long id;
+
+    @Id
+    private Long id;
     private final String name;
     private final BigDecimal price;
 
@@ -15,7 +19,7 @@ public class Product {
         this.price = price;
     }
 
-    private void validate(BigDecimal price) {
+    private void validate(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }

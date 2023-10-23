@@ -7,12 +7,12 @@ import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -50,7 +50,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -67,7 +67,7 @@ class MenuServiceTest {
                     .willReturn(MENU.후라이드_치킨_16000원_1마리());
             given(menuGroupDao.existsById(any()))
                     .willReturn(true);
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                     .willReturn(Optional.of(ProductFixture.PRODUCT.후라이드_치킨()));
             given(menuProductDao.save(any()))
                     .willReturn(menuProduct);
@@ -104,7 +104,7 @@ class MenuServiceTest {
             // given
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                     .willReturn(Optional.empty());
             CreateMenuRequest menu = REQUEST.후라이드_치킨_16000원_1마리_등록_요청();
 
@@ -122,7 +122,7 @@ class MenuServiceTest {
 
             given(menuGroupDao.existsById(anyLong()))
                     .willReturn(true);
-            given(productDao.findById(anyLong()))
+            given(productRepository.findById(anyLong()))
                     .willReturn(Optional.of(product));
 
             // when & then

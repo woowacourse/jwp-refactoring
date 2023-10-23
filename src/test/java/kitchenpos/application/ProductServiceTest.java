@@ -4,9 +4,9 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -31,7 +31,7 @@ import static org.mockito.BDDMockito.given;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -44,7 +44,7 @@ class ProductServiceTest {
             // given
             CreateProductRequest request = ProductFixture.REQUEST.후라이드_치킨_16000원();
             Product product = ProductFixture.PRODUCT.후라이드_치킨();
-            given(productDao.save(any(Product.class)))
+            given(productRepository.save(any(Product.class)))
                     .willReturn(product);
 
             // when
@@ -77,7 +77,7 @@ class ProductServiceTest {
         void 상품_목록을_조회한다() {
             // given
             List<Product> products = List.of(ProductFixture.PRODUCT.후라이드_치킨());
-            given(productDao.findAll())
+            given(productRepository.findAll())
                     .willReturn(products);
 
             // when

@@ -17,7 +17,6 @@ import kitchenpos.domain.mapper.OrderMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +53,7 @@ public class OrderService {
 
         final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItemIds());
         final Order order = OrderMapper.toOrder(request, orderLineItems);
-        final Order savedOrder = orderDao.save(order.updateOrder(entity.getId(), OrderStatus.COOKING.name(), LocalDateTime.of(2021, 1, 1, 0, 0, 0)));
+        final Order savedOrder = orderDao.save(order);
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems, orderId);
 
