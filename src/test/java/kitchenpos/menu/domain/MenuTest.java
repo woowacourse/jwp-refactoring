@@ -1,10 +1,14 @@
 package kitchenpos.menu.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.common.vo.PriceIsNegativeException;
+import kitchenpos.menu.exception.MenuPriceIsBiggerThanActualPriceException;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -31,5 +35,37 @@ class MenuTest {
         // when, then
         assertThatCode(() -> new Menu(null, "name", price))
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    void 메뉴_가격이_메뉴_상품_가격_보다_크다면_예외를_던진다() {
+        // given
+        Menu menu = new Menu(null, "name", BigDecimal.valueOf(1000L));
+        Product product = new Product("name", BigDecimal.valueOf(500L));
+
+        List<MenuProduct> menuProducts = List.of(
+                new MenuProduct(product.getId(), 1L,
+                        new ProductPriceSnapshot(product.getPrice().multiply(BigDecimal.valueOf(1L)))));
+
+        // when, then
+        assertThatThrownBy(() -> menu.setupMenuProducts(menuProducts))
+                .isInstanceOf(MenuPriceIsBiggerThanActualPriceException.class);
+    }
+
+    @Test
+    void 메뉴_가격이_메뉴_상품_가격_보다_작다면_메뉴_상품을_등록할_수_있다() {
+        // given
+        Menu menu = new Menu(null, "name", BigDecimal.valueOf(499L));
+        Product product = new Product("name", BigDecimal.valueOf(500L));
+
+        List<MenuProduct> menuProducts = List.of(
+                new MenuProduct(product.getId(), 1L,
+                        new ProductPriceSnapshot(product.getPrice().multiply(BigDecimal.valueOf(1L)))));
+
+        // when
+        menu.setupMenuProducts(menuProducts);
+
+        // then
+        assertThat(menu.getMenuProducts()).isEqualTo(menuProducts);
     }
 }
