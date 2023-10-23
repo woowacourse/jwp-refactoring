@@ -7,9 +7,9 @@ import kitchenpos.domain.OrderTable;
 public class TableGroupCreateRequest {
 
     private final LocalDateTime createdDate;
-    private final List<OrderTable> orderTables;
+    private final List<OrderTableRequest> orderTables;
 
-    public TableGroupCreateRequest(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroupCreateRequest(final LocalDateTime createdDate, final List<OrderTableRequest> orderTables) {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
@@ -18,7 +18,7 @@ public class TableGroupCreateRequest {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public List<OrderTableRequest> getOrderTables() {
         return orderTables;
     }
 }

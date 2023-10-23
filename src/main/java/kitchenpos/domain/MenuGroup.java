@@ -8,12 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * create table menu_group
- * (
- *     id   bigint       not null auto_increment,
- *     name varchar(255) not null,
- *     primary key (id)
- * );
+ * create table menu_group ( id   bigint       not null auto_increment, name varchar(255) not null, primary key (id) );
  */
 
 @Entity

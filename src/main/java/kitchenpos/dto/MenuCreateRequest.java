@@ -9,13 +9,13 @@ public class MenuCreateRequest {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+    private final List<MenuProductRequest> menuProducts;
 
     public MenuCreateRequest(
             final String name,
             final BigDecimal price,
             final Long menuGroupId,
-            final List<MenuProduct> menuProducts
+            final List<MenuProductRequest> menuProducts
     ) {
         this.name = name;
         this.price = price;
@@ -35,7 +35,7 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
     }
 }

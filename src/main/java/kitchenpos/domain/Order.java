@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "order")
@@ -39,11 +40,11 @@ public class Order {
 
     public Order(
             final OrderTable orderTable,
-            final String orderStatus,
+            final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTable, orderStatus.name(), orderedTime, orderLineItems);
     }
 
     public Order(
@@ -53,11 +54,29 @@ public class Order {
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
+        validate(orderTable, orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        validateEmptyOrderTable(orderTable);
+        validateEmptyOrderLienItem(orderLineItems);
+    }
+
+    private void validateEmptyOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있습니다.");
+        }
+    }
+
+    private void validateEmptyOrderLienItem(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("[ERROR] 주문 항목이 비어있습니다.");
+        }
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

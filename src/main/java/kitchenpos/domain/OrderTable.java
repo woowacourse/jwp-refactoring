@@ -44,14 +44,43 @@ public class OrderTable {
             final int numberOfGuests,
             final boolean empty
     ) {
+        validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("[ERROR] 손님의 수가 음수입니다.");
+        }
+    }
+
     public void changeEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        validateTableIsEmpty();
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateTableIsEmpty() {
+        if (this.empty) {
+            throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있습니다.");
+        }
+    }
+
+    public void group(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 
     public Long getId() {

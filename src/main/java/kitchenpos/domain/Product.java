@@ -28,7 +28,7 @@ public class Product {
 
     public Product(
             final String name,
-            final Price price
+            final BigDecimal price
     ) {
         this(null, name, price);
     }
@@ -36,11 +36,11 @@ public class Product {
     public Product(
             final Long id,
             final String name,
-            final Price price
+            final BigDecimal price
     ) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = Price.from(price);
     }
 
     public Long getId() {

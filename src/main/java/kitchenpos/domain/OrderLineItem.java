@@ -32,6 +32,13 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(
+            final Menu menu,
+            final long quantity
+    ) {
+        this(null, null, menu, quantity);
+    }
+
+    public OrderLineItem(
             final Order order,
             final Menu menu,
             final long quantity
