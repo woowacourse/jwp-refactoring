@@ -46,6 +46,9 @@ values (5, 5, 1);
 insert into menu_product (menu_id, product_id, quantity)
 values (6, 6, 1);
 
+insert into table_group (created_date)
+values (now());
+
 insert into order_table (number_of_guests, empty)
 values (0, true);
 insert into order_table (number_of_guests, empty)
@@ -62,6 +65,8 @@ insert into order_table (number_of_guests, empty)
 values (0, true);
 insert into order_table (number_of_guests, empty)
 values (0, true);
+insert into order_table (number_of_guests, empty, table_group_id)
+values (0, false, 1);
 insert into order_table (number_of_guests, empty)
 values (0, false);
 
@@ -73,3 +78,7 @@ insert into orders (order_table_id, order_status, ordered_time)
 values (9, 'COMPLETION', now());
 insert into orders (order_table_id, order_status, ordered_time)
 values (9, 'COMPLETION', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (10, 'COMPLETION', now());
+insert into orders (order_table_id, order_status, ordered_time)
+values (10, 'COMPLETION', now());
