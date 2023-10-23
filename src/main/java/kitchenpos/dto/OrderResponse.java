@@ -13,7 +13,7 @@ public class OrderResponse {
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
-    public OrderResponse(
+    private OrderResponse(
             final Long id,
             final Long orderTableId,
             final String orderStatus,

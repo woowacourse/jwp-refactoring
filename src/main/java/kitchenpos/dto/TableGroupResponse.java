@@ -11,7 +11,7 @@ public class TableGroupResponse {
     private final LocalDateTime createdDate;
     private final List<OrderTable> orderTables;
 
-    public TableGroupResponse(
+    private TableGroupResponse(
             final Long id,
             final LocalDateTime createdDate,
             final List<OrderTable> orderTables

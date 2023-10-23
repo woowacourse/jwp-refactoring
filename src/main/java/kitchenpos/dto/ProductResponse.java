@@ -9,7 +9,11 @@ public class ProductResponse {
     private String name;
     private BigDecimal price;
 
-    public ProductResponse(final Long id, final String name, final BigDecimal price) {
+    private ProductResponse(
+            final Long id,
+            final String name,
+            final BigDecimal price
+    ) {
         this.id = id;
         this.name = name;
         this.price = price;

@@ -1,6 +1,5 @@
 package kitchenpos.dto;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableResponse {
@@ -10,7 +9,7 @@ public class OrderTableResponse {
     private final int numberOfGuests;
     private final boolean empty;
 
-    public OrderTableResponse(
+    private OrderTableResponse(
             final Long id,
             final Long tableGroupId,
             final int numberOfGuests,
