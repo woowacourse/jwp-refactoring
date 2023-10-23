@@ -38,13 +38,7 @@ public class TableGroupService {
         }
 
         for (OrderTable foundOrderTable : foundOrderTables) {
-            if (!foundOrderTable.isEmpty()) {
-                throw new IllegalArgumentException("비어있지 않은 테이블은 그룹화할 수 없습니다.");
-            }
-
-            if (foundOrderTable.isGrouped()) {
-                throw new IllegalArgumentException("이미 그룹화된 테이블은 그룹화할 수 없습니다.");
-            }
+            validateTableStatus(foundOrderTable);
         }
 
         TableGroup tableGroup = TableGroup.builder()
@@ -53,6 +47,16 @@ public class TableGroupService {
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
+    }
+
+    private void validateTableStatus(OrderTable foundOrderTable) {
+        if (!foundOrderTable.isEmpty()) {
+            throw new IllegalArgumentException("비어있지 않은 테이블은 그룹화할 수 없습니다.");
+        }
+
+        if (foundOrderTable.isGrouped()) {
+            throw new IllegalArgumentException("이미 그룹화된 테이블은 그룹화할 수 없습니다.");
+        }
     }
 
     @Transactional
