@@ -2,19 +2,11 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableChangeEmptyRequest;
@@ -23,13 +15,9 @@ import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
-
-    private final List<String> EXCLUDE_STATUS = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
 
     @Nested
     class create_성공_테스트 {
@@ -182,7 +170,7 @@ class TableServiceTest extends ServiceTest {
             orderTableDao.save(new OrderTable(1L, 2, true));
             final var request = new OrderTableChangeNumberRequest(1L, 3, true);
 
-                    // when & then
+            // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(2L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 주문 테이블입니다.");
