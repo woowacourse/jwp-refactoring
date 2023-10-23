@@ -2,8 +2,8 @@ package kitchenpos.api.order;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.ui.dto.response.OrderLineItemResponse;
-import kitchenpos.ui.dto.response.OrderResponse;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

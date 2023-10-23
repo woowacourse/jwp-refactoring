@@ -1,7 +1,7 @@
 package kitchenpos.api.menu;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.ui.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

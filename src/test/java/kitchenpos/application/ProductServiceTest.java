@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.request.ProductCreateRequest;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

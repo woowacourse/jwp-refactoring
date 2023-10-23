@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto.request;
+package kitchenpos.application.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

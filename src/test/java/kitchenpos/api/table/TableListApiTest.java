@@ -1,7 +1,7 @@
 package kitchenpos.api.table;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

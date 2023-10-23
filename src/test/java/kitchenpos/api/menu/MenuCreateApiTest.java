@@ -1,10 +1,10 @@
 package kitchenpos.api.menu;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.ui.dto.request.MenuCreateRequest;
-import kitchenpos.ui.dto.request.MenuProductCreateRequest;
-import kitchenpos.ui.dto.response.MenuProductResponse;
-import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductCreateRequest;
+import kitchenpos.application.dto.response.MenuProductResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

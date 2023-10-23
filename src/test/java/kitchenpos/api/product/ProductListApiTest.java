@@ -3,7 +3,7 @@ package kitchenpos.api.product;
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Price;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

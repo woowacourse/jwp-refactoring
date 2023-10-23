@@ -3,8 +3,8 @@ package kitchenpos.application;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.request.ProductCreateRequest;
-import kitchenpos.ui.dto.response.ProductResponse;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

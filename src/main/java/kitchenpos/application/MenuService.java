@@ -8,9 +8,9 @@ import kitchenpos.domain.vo.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.request.MenuCreateRequest;
-import kitchenpos.ui.dto.request.MenuProductCreateRequest;
-import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.application.dto.request.MenuCreateRequest;
+import kitchenpos.application.dto.request.MenuProductCreateRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

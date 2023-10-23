@@ -4,8 +4,8 @@ import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.vo.Price;
-import kitchenpos.ui.dto.response.MenuProductResponse;
-import kitchenpos.ui.dto.response.MenuResponse;
+import kitchenpos.application.dto.response.MenuProductResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
