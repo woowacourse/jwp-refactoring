@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Price;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
@@ -154,7 +155,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new BigDecimal(1000), menuGroup));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
         final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
         final OrderResponse orderResponse = orderService.create(orderRequest);

@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.exception.InvalidProductPriceException;
+import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ class ProductServiceTest extends ServiceBaseTest {
 
         //when&then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(InvalidProductPriceException.class)
-                .hasMessage("잘못된 상품 가격입니다.");
+                .isInstanceOf(InvalidPriceException.class)
+                .hasMessage("잘못된 가격입니다.");
     }
 
     @Test

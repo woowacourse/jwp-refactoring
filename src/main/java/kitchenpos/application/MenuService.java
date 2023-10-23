@@ -6,6 +6,7 @@ import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -41,7 +42,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
 
-        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
+        final Menu menu = new Menu(menuRequest.getName(), new Price(menuRequest.getPrice()), menuGroup);
         final List<MenuProduct> menuProducts = getMenuProducts(menu, menuRequest.getMenuProducts());
         menu.initMenuProducts(menuProducts);
 

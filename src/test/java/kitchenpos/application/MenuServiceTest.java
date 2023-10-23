@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.exception.InvalidMenuProductsPriceException;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
@@ -29,7 +30,7 @@ class MenuServiceTest extends ServiceBaseTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     void create() {
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product product = productRepository.save(new Product("메뉴 1", new BigDecimal(10000)));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
         final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(9999), menuGroup.getId(),
                 List.of(new MenuProductRequest(product.getId(), 1L)));
 
@@ -48,21 +49,21 @@ class MenuServiceTest extends ServiceBaseTest {
     void menuPriceOverZero() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product product = productRepository.save(new Product("메뉴 1", new BigDecimal(10000)));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
         final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(-1), menuGroup.getId(),
                 List.of(new MenuProductRequest(product.getId(), 1L)));
 
         //when&then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(InvalidMenuPriceException.class)
-                .hasMessage("잘못된 메뉴 가격입니다.");
+                .isInstanceOf(InvalidPriceException.class)
+                .hasMessage("잘못된 가격입니다.");
     }
 
     @Test
     @DisplayName("메뉴는 존재하는 메뉴 그룹에 속해있어야 한다.")
     void menuBelongToValidMenuGroup() {
         //given
-        final Product product = productRepository.save(new Product("메뉴 1", new BigDecimal(10000)));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
         final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(100), 999L,
                 List.of(new MenuProductRequest(product.getId(), 1L)));
 
@@ -91,7 +92,7 @@ class MenuServiceTest extends ServiceBaseTest {
     void menuPriceSameOrOverThanProductsPrices() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product product = productRepository.save(new Product("메뉴 1", new BigDecimal(10000)));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
         final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(999999), menuGroup.getId(),
                 List.of(new MenuProductRequest(product.getId(), 1L)));
 
@@ -106,7 +107,7 @@ class MenuServiceTest extends ServiceBaseTest {
     void list() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Product product = productRepository.save(new Product("메뉴 1", new BigDecimal(10000)));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
         final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(9999), menuGroup.getId(),
                 List.of(new MenuProductRequest(product.getId(), 1L)));
         menuService.create(request);

@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.InvalidMenuProductsPriceException;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -24,7 +23,8 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne
     private MenuGroup menuGroup;
@@ -35,23 +35,15 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
+    public Menu(final String name, final Price price, final MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        validatePrice(price);
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidMenuPriceException();
-        }
     }
 
     public void initMenuProducts(List<MenuProduct> menuProducts){
@@ -64,8 +56,7 @@ public class Menu {
         for (final MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
-
-        if (price.compareTo(sum) > 0) {
+        if(price.getPrice().compareTo(sum) > 0){
             throw new InvalidMenuProductsPriceException();
         }
     }
@@ -79,7 +70,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
     public MenuGroup getMenuGroup() {
