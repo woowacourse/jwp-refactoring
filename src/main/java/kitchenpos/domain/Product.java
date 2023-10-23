@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Product {
 
     @Id
-    private Long id;
+    private final Long id;
     private final String name;
     private final BigDecimal price;
 

@@ -4,7 +4,6 @@ import kitchenpos.domain.Menu;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CreateMenuResponse {
     private final Long id;
@@ -26,11 +25,8 @@ public class CreateMenuResponse {
                 .id(created.getId())
                 .name(created.getName())
                 .price(created.getPrice())
-                .menuGroupId(created.getMenuGroupId())
-                .menuProducts(created.getMenuProducts().stream()
-                        .map(MenuProductResponse::from)
-                        .collect(Collectors.toList())
-                )
+                .menuGroupId(created.getMenuGroup().getId())
+                .menuProducts(MenuProductResponse.from(created))
                 .build();
     }
 

@@ -100,20 +100,14 @@
 
 ### 기존의 DAO를 제거하고 SpringDataJdbc를 사용한다.
 
-- [ ] MenuDao
-- [ ] MenuGroupDao
-- [ ] MenuProductDao
+- [x] MenuDao
+- [x] MenuGroupDao
+- [x] MenuProductDao
 - [ ] OrderDao
 - [ ] OrderLineItemDao
 - [ ] OrderTableDao
-- [ ] ProductDao
+- [x] ProductDao
 - [ ] TableGroupDao
-
-### 중간테이블을 제거하고 도메인 관계로 표현한다.
-
-- [ ] MenuProduct
-- [ ] OrderLineItem
-- [ ] OrderTable
 
 ### 도메인 양방향 의존성을 제거한다.
 
@@ -124,17 +118,22 @@
 - [ ] Menu
     - MenuGroup
     - MenuProduct (List) -> 양방향
-- [ ] MenuProduct
-    - menuId
-    - productId
+
 - [ ] Order
     - orderTableId
     - orderStatus
     - orderLineItem (List) -> 양방향
+
+- [ ] MenuProduct
+    - menuId -> 양방향
+    - productId
+
 - [ ] OrderLineItem
     - orderId -> 양방향
     - menuId
+
 - [ ] OrderTable
     - tableGroupId
+
 - [ ] TableGroup
     - orderTable (List) -> 양방향

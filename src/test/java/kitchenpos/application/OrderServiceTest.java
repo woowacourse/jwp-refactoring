@@ -4,13 +4,13 @@ import kitchenpos.application.dto.request.CreateOrderRequest;
 import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.application.dto.response.CreateOrderResponse;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.repository.MenuRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -43,7 +43,7 @@ import static org.mockito.BDDMockito.given;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private OrderDao orderDao;
@@ -69,7 +69,7 @@ class OrderServiceTest {
                     .map(OrderLineItem::getOrderId)
                     .collect(Collectors.toList())
             );
-            given(menuDao.countByIdIn(anyList()))
+            given(menuRepository.countByIdIn(anyList()))
                     .willReturn((long) request.getOrderLineItemIds().size());
 
             given(orderTableDao.findById(anyLong()))

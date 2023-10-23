@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.RESPONSE;
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,7 +40,7 @@ class MenuRestControllerTest {
                 .id(1L)
                 .name("후라이드치킨")
                 .price(BigDecimal.valueOf(16000L))
-                .menuGroupId(1L)
+                .menuGroup(MENU_GROUP.메뉴_그룹_치킨())
                 .build();
     }
 
@@ -67,7 +68,7 @@ class MenuRestControllerTest {
                             jsonPath("id").value(menu.getId()),
                             jsonPath("name").value(menu.getName()),
                             jsonPath("price").value(menu.getPrice()),
-                            jsonPath("menuGroupId").value(menu.getMenuGroupId())
+                            jsonPath("menuGroupId").value(menu.getMenuGroup().getId())
                     );
         }
 
@@ -85,7 +86,7 @@ class MenuRestControllerTest {
                             jsonPath("$[0].id").value(menu.getId()),
                             jsonPath("$[0].name").value(menu.getName()),
                             jsonPath("$[0].price").value(menu.getPrice()),
-                            jsonPath("$[0].menuGroupId").value(menu.getMenuGroupId())
+                            jsonPath("$[0].menuGroupId").value(menu.getMenuGroup().getId())
                     );
         }
     }

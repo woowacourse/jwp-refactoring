@@ -1,23 +1,27 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Menu {
+
+    @Id
     private final Long id;
     private final String name;
     private final BigDecimal price;
-    private final Long menuGroupId;
+    private final MenuGroup menuGroup;
     private final List<MenuProduct> menuProducts;
 
-    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
@@ -34,7 +38,12 @@ public class Menu {
     }
 
     public Menu updateMenuProducts(List<MenuProduct> savedMenuProducts) {
-        return new Menu(id, name, price, menuGroupId, savedMenuProducts);
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct savedMenuProduct : savedMenuProducts) {
+            sum = sum.add(savedMenuProduct.getPrice());
+        }
+        validPrice(sum);
+        return new Menu(id, name, price, menuGroup, savedMenuProducts);
     }
 
     public static MenuBuilder builder() {
@@ -45,7 +54,7 @@ public class Menu {
         private Long id;
         private String name;
         private BigDecimal price;
-        private Long menuGroupId;
+        private MenuGroup menuGroup;
         private List<MenuProduct> menuProducts = new ArrayList<>();
 
         private MenuBuilder() {
@@ -66,8 +75,8 @@ public class Menu {
             return this;
         }
 
-        public MenuBuilder menuGroupId(Long menuGroupId) {
-            this.menuGroupId = menuGroupId;
+        public MenuBuilder menuGroup(MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
             return this;
         }
 
@@ -77,7 +86,7 @@ public class Menu {
         }
 
         public Menu build() {
-            return new Menu(id, name, price, menuGroupId, menuProducts);
+            return new Menu(id, name, price, menuGroup, menuProducts);
         }
     }
 
@@ -93,8 +102,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

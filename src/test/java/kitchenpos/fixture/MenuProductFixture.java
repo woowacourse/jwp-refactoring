@@ -4,6 +4,8 @@ import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.domain.MenuProduct;
 
+import static kitchenpos.fixture.ProductFixture.PRODUCT;
+
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuProductFixture {
 
@@ -14,7 +16,6 @@ public class MenuProductFixture {
 
         public static MenuProductRequest 후라이드_치킨_1마리_요청() {
             return MenuProductRequest.builder()
-                    .seq(1L)
                     .menuId(1L)
                     .productId(1L)
                     .quantity(1)
@@ -39,8 +40,7 @@ public class MenuProductFixture {
         public static MenuProduct 후라이드_치킨_1마리() {
             return MenuProduct.builder()
                     .seq(1L)
-                    .menuId(1L)
-                    .productId(1L)
+                    .product(PRODUCT.후라이드_치킨(16000L))
                     .quantity(1)
                     .build();
         }

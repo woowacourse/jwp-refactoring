@@ -8,6 +8,7 @@ import kitchenpos.domain.Menu;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP;
 import static kitchenpos.fixture.MenuProductFixture.MENU_PRODUCT;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -69,7 +70,7 @@ public class MenuFixture {
                     .id(1L)
                     .name("후라이드치킨")
                     .price(BigDecimal.valueOf(16000L))
-                    .menuGroupId(1L)
+                    .menuGroup(MENU_GROUP.메뉴_그룹_치킨())
                     .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
                     .build();
         }
@@ -79,7 +80,7 @@ public class MenuFixture {
                     .id(1L)
                     .name("후라이드치킨")
                     .price(BigDecimal.valueOf(price))
-                    .menuGroupId(1L)
+                    .menuGroup(MENU_GROUP.메뉴_그룹_치킨())
                     .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
                     .build();
         }

@@ -1,15 +1,19 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+
+import java.math.BigDecimal;
+
 public class MenuProduct {
+
+    @Id
     private final Long seq;
-    private final Long menuId;
-    private final Long productId;
+    private final Product product;
     private final long quantity;
 
-    private MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    private MenuProduct(Long seq, Product product, long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
     }
 
@@ -17,30 +21,25 @@ public class MenuProduct {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
+    public BigDecimal getPrice() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    }
+
     public static MenuProductBuilder builder() {
         return new MenuProductBuilder();
     }
 
-    public MenuProduct updateMenuId(Long menuId) {
-        return new MenuProduct(seq, menuId, productId, quantity);
-    }
-
     public static final class MenuProductBuilder {
         private Long seq;
-        private Long menuId;
-        private Long productId;
+        private Product product;
         private long quantity;
 
         private MenuProductBuilder() {
@@ -51,13 +50,8 @@ public class MenuProduct {
             return this;
         }
 
-        public MenuProductBuilder menuId(Long menuId) {
-            this.menuId = menuId;
-            return this;
-        }
-
-        public MenuProductBuilder productId(Long productId) {
-            this.productId = productId;
+        public MenuProductBuilder product(Product product) {
+            this.product = product;
             return this;
         }
 
@@ -67,7 +61,7 @@ public class MenuProduct {
         }
 
         public MenuProduct build() {
-            return new MenuProduct(seq, menuId, productId, quantity);
+            return new MenuProduct(seq, product, quantity);
         }
     }
 }

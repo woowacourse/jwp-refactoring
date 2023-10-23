@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.ProductFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -10,6 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
@@ -43,5 +45,21 @@ public class MenuTest {
         // when & then
         Assertions.assertThatThrownBy(() -> menu.validPrice(productPrice))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest(name = "메뉴가 {0}원이고 상품이 {1}원이면 예외")
+    @CsvSource(value = {"17000,16999", "17000,10000", "17000,1000", "17000,1", "15123,0"})
+    void 메뉴_가격이_상품들의_가격_합보다_크면_예외(Long menuPrice, Long productPrice) {
+        // given
+        Menu menu = MenuFixture.MENU.후라이드_치킨_N원_1마리(menuPrice);
+        Product product = ProductFixture.PRODUCT.후라이드_치킨(productPrice);
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> menu.updateMenuProducts(List.of(
+                MenuProduct.builder()
+                        .product(product)
+                        .quantity(1L)
+                        .build()))
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 }
