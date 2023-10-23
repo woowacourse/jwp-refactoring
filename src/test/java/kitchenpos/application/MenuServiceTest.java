@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.CreateMenuProductRequest;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import org.assertj.core.api.SoftAssertions;
@@ -35,24 +35,24 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
 
     @Test
     @DisplayName("메뉴를 등록한다")
     void create() {
         // given
-        final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final MenuGroup 두마리메뉴 = menuGroupDao.save(menuGroup("두마리메뉴"));
+        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
         final CreateMenuRequest menu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
@@ -70,8 +70,8 @@ class MenuServiceTest {
         // given
         final BigDecimal invalidPrice = null;
 
-        final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final MenuGroup 두마리메뉴 = menuGroupDao.save(menuGroup("두마리메뉴"));
+        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
@@ -87,8 +87,8 @@ class MenuServiceTest {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
 
-        final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final MenuGroup 두마리메뉴 = menuGroupDao.save(menuGroup("두마리메뉴"));
+        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
@@ -104,7 +104,7 @@ class MenuServiceTest {
         // given
         final Long invalidMenuGroupId = -999L;
 
-        final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
@@ -119,8 +119,8 @@ class MenuServiceTest {
     void create_invalidPrice_moreThanSum() {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(50000);
-        final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final MenuGroup 두마리메뉴 = menuGroupDao.save(menuGroup("두마리메뉴"));
+        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
@@ -134,20 +134,20 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다")
     void list() {
         // given
-        final Product 후라이드 = productDao.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final Product 양념치킨 = productDao.save(product("양념치킨", BigDecimal.valueOf(20000)));
+        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 양념치킨 = productRepository.save(product("양념치킨", BigDecimal.valueOf(20000)));
 
-        final MenuGroup 두마리메뉴 = menuGroupDao.save(menuGroup("두마리메뉴"));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = menuProduct(후라이드.getId(), 2l);
         final MenuProduct 후라이드_1개 = menuProduct(후라이드.getId(), 1l);
         final MenuProduct 양념치킨_1개 = menuProduct(양념치킨.getId(), 1l);
 
-        final Menu 후라이드_후라이드 = menuDao.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
-        final Menu 후라이드_양념치킨 = menuDao.save(menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
+        final Menu 후라이드_후라이드 = menuRepository.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
+        final Menu 후라이드_양념치킨 = menuRepository.save(menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴.getId(), List.of(후라이드_1개, 양념치킨_1개)));
 
-        menuProductDao.save(menuProduct(후라이드_후라이드.getId(), 후라이드_2개));
-        menuProductDao.save(menuProduct(후라이드_양념치킨.getId(), 후라이드_1개));
-        menuProductDao.save(menuProduct(후라이드_양념치킨.getId(), 양념치킨_1개));
+        menuProductRepository.save(menuProduct(후라이드_후라이드.getId(), 후라이드_2개));
+        menuProductRepository.save(menuProduct(후라이드_양념치킨.getId(), 후라이드_1개));
+        menuProductRepository.save(menuProduct(후라이드_양념치킨.getId(), 양념치킨_1개));
 
         final Menu expect1 = 후라이드_후라이드;
         final Menu expect2 = 후라이드_양념치킨;

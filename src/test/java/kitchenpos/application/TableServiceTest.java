@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.ui.dto.CreateOrderTableRequest;
@@ -31,10 +31,10 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("테이블을 등록한다")
@@ -56,8 +56,8 @@ class TableServiceTest {
     @DisplayName("테이블 목록을 조회한다")
     void list() {
         // given
-        final OrderTable expect1 = orderTableDao.save(orderTable(2, true));
-        final OrderTable expect2 = orderTableDao.save(orderTable(4, true));
+        final OrderTable expect1 = orderTableRepository.save(orderTable(2, true));
+        final OrderTable expect2 = orderTableRepository.save(orderTable(4, true));
 
         // when
         final List<OrderTable> actual = tableService.list();
@@ -74,7 +74,7 @@ class TableServiceTest {
     @DisplayName("테이블의 비어있음 정보를 변경한다")
     void changeEmpty() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
 
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 
@@ -103,8 +103,8 @@ class TableServiceTest {
     @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블의 주문이 조리중이거나 식사중이면 예외가 발생한다")
     void changeEmpty_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
-        orderDao.save(order(두명_테이블.getId(), orderStatus));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
+        orderRepository.save(order(두명_테이블.getId(), orderStatus));
 
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 
@@ -117,7 +117,7 @@ class TableServiceTest {
     @DisplayName("테이블의 손님 수를 변경한다")
     void changeNumberOfGuests() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, false));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, false));
 
         int newNumberOfGuests = 10;
         final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
@@ -133,7 +133,7 @@ class TableServiceTest {
     @DisplayName("테이블의 손님 수를 변경할 때 손님 수가 음수이면 예외가 발생한다")
     void changeNumberOfGuests_invalidNumberOfGuests() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, false));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, false));
 
         final int invalidNumberOfGuests = -1;
         final ChangeNumberOfGuestsRequest invalidOrderTable = new ChangeNumberOfGuestsRequest(invalidNumberOfGuests);
@@ -162,7 +162,7 @@ class TableServiceTest {
     void changeNumberOfGuests_emptyTable() {
         // given
         int newNumberOfGuests = 10;
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
 
         final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
 

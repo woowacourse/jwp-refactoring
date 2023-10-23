@@ -1,12 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.dto.CreateTableGroupOrderTableRequest;
 import kitchenpos.ui.dto.CreateTableGroupRequest;
 import org.assertj.core.api.SoftAssertions;
@@ -38,20 +37,17 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
-
-    @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("테이블 그룹을 등록한다")
     void create() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
-        final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
+        final OrderTable 네명_테이블 = orderTableRepository.save(orderTable(4, true));
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
@@ -82,7 +78,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록할 때 테이블 목록이 1개이면 예외가 발생한다")
     void create_oneOrderTable() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디));
 
@@ -95,7 +91,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록할 때 등록하려는 테이블이 모두 존재하지 않으면 예외가 발생한다")
     void create_invalidNumberOfTable() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 존재하지_않는_테이블_아이디 = new CreateTableGroupOrderTableRequest(10L);
@@ -111,8 +107,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록할 때 테이블이 비어있지 않으면 예외가 발생한다")
     void create_notEmptyTable() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
-        final OrderTable 네명_테이블_사용중 = orderTableDao.save(orderTable(4, false));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
+        final OrderTable 네명_테이블_사용중 = orderTableRepository.save(orderTable(4, false));
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 사용중인_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블_사용중.getId());
@@ -127,12 +123,12 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 등록할 때 테이블이 이미 그룹화 되어 있다면 예외가 발생한다")
     void create_alreadyGroup() {
         // given
-        final OrderTable 두명_테이블 = orderTableDao.save(orderTable(2, true));
-        final OrderTable 세명_테이블 = orderTableDao.save(orderTable(3, true));
-        final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupDao.save(tableGroup());
-        orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
-        orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
+        final OrderTable 두명_테이블 = orderTableRepository.save(orderTable(2, true));
+        final OrderTable 세명_테이블 = orderTableRepository.save(orderTable(3, true));
+        final OrderTable 네명_테이블 = orderTableRepository.save(orderTable(4, true));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(tableGroup());
+        orderTableRepository.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
+        orderTableRepository.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
@@ -147,11 +143,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해제한다")
     void ungroup() {
         // given
-        final OrderTable 세명_테이블 = orderTableDao.save(orderTable(3, true));
-        final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupDao.save(tableGroup());
-        final OrderTable 그룹화된_세명_테이블 = orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
-        final OrderTable 그룹화된_네명_테이블 = orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
+        final OrderTable 세명_테이블 = orderTableRepository.save(orderTable(3, true));
+        final OrderTable 네명_테이블 = orderTableRepository.save(orderTable(4, true));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(tableGroup());
+        final OrderTable 그룹화된_세명_테이블 = orderTableRepository.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
+        final OrderTable 그룹화된_네명_테이블 = orderTableRepository.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
 
         // when
         tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
@@ -172,14 +168,14 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해제할 때 해제하려는 테이블의 주문이 조리중이나 식사중이면 예외가 발생한다")
     void ungroup_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
-        final OrderTable 세명_테이블 = orderTableDao.save(orderTable(3, true));
-        final OrderTable 네명_테이블 = orderTableDao.save(orderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupDao.save(tableGroup());
-        final OrderTable 그룹화된_세명_테이블 = orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
-        final OrderTable 그룹화된_네명_테이블 = orderTableDao.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
+        final OrderTable 세명_테이블 = orderTableRepository.save(orderTable(3, true));
+        final OrderTable 네명_테이블 = orderTableRepository.save(orderTable(4, true));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(tableGroup());
+        final OrderTable 그룹화된_세명_테이블 = orderTableRepository.save(orderTable(그룹화된_세명_네명_테이블.getId(), 세명_테이블));
+        final OrderTable 그룹화된_네명_테이블 = orderTableRepository.save(orderTable(그룹화된_세명_네명_테이블.getId(), 네명_테이블));
 
-        orderDao.save(order(그룹화된_세명_테이블.getId(), orderStatus));
-        orderDao.save(order(그룹화된_네명_테이블.getId(), orderStatus));
+        orderRepository.save(order(그룹화된_세명_테이블.getId(), orderStatus));
+        orderRepository.save(order(그룹화된_네명_테이블.getId(), orderStatus));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))

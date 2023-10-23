@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.CreateMenuGroupRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 등록한다")
@@ -42,8 +42,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회한다")
     void list() {
         // given
-        final MenuGroup expect1 = menuGroupDao.save(menuGroup("추천메뉴"));
-        final MenuGroup expect2 = menuGroupDao.save(menuGroup("신메뉴"));
+        final MenuGroup expect1 = menuGroupRepository.save(menuGroup("추천메뉴"));
+        final MenuGroup expect2 = menuGroupRepository.save(menuGroup("신메뉴"));
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();

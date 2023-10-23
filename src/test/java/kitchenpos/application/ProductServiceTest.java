@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.CreateProductRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("상품을 등록한다")
@@ -59,8 +59,8 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다")
     void list() {
         // given
-        final Product expect1 = productDao.save(product("후라이드", BigDecimal.valueOf(17000)));
-        final Product expect2 = productDao.save(product("양념치킨", BigDecimal.valueOf(20000)));
+        final Product expect1 = productRepository.save(product("후라이드", BigDecimal.valueOf(17000)));
+        final Product expect2 = productRepository.save(product("양념치킨", BigDecimal.valueOf(20000)));
 
         // when
         final List<Product> actual = productService.list();
