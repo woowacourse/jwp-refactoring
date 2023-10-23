@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.common.IntegrationTest;
+import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.dao.jpa.JpaTableGroupRepository;
 import kitchenpos.domain.Order;

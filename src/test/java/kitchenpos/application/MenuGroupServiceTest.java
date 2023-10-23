@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import java.util.List;
-import kitchenpos.common.IntegrationTest;
+import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;

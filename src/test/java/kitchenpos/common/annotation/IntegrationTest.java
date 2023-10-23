@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos.common.annotation;
 
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

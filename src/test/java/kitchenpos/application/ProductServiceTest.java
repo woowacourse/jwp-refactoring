@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import kitchenpos.common.IntegrationTest;
+import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.exception.ProductException;

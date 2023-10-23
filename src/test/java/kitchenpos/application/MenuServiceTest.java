@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.common.IntegrationTest;
+import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
