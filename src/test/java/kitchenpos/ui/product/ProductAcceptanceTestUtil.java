@@ -5,6 +5,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.application.product.request.ProductCreateRequest;
+import kitchenpos.ui.ControllerAcceptanceTestHelper;
 import kitchenpos.ui.product.response.ProductResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
