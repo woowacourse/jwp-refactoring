@@ -102,7 +102,7 @@ class TableServiceTest {
         void 변경하려는_테이블의_주문_상태가_변경_불가하면_예외를_반환한다() {
             // given
             OrderTable orderTable = new OrderTable(1, false);
-            Orders orders = new Orders(orderTable, OrderStatus.COOKING.name(),
+            Orders orders = new Orders(orderTable, OrderStatus.COOKING,
                     LocalDateTime.now());
             em.persist(orderTable);
             em.persist(orders);

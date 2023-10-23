@@ -61,7 +61,7 @@ public class OrderService {
 
         // order entity를 생성
         Orders orders = orderRepository.save(
-                new Orders(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now()));
+                new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
 
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             orderLineItemRepository.save(new OrderLineItem(orders,

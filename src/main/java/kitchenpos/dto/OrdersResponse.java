@@ -26,7 +26,7 @@ public class OrdersResponse {
 
     public static OrdersResponse from(Orders orders) {
         return new OrdersResponse(orders.getId(), orders.getOrderTable().getId(),
-                orders.getOrderStatus(), orders.getOrderedTime(),
+                orders.getOrderStatus().name(), orders.getOrderedTime(),
                 orders.getOrderLineItems().stream().map(OrderLineItemDto::from).collect(
                         toList()));
     }

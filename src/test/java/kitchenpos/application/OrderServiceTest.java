@@ -134,7 +134,7 @@ class OrderServiceTest {
         void 주문의_상태를_변경한다() {
             // given
             OrderTable orderTable = new OrderTable(4, false);
-            Orders orders = new Orders(orderTable, OrderStatus.COOKING.name(),
+            Orders orders = new Orders(orderTable, OrderStatus.COOKING,
                     LocalDateTime.now());
             em.persist(orderTable);
             em.persist(orders);
@@ -165,7 +165,7 @@ class OrderServiceTest {
         void 변경하려는_주문의_주문_상태가_계산_완료인_경우_예외를_반환한다() {
             // given
             OrderTable orderTable = new OrderTable(4, false);
-            Orders orders = new Orders(orderTable, OrderStatus.COMPLETION.name(),
+            Orders orders = new Orders(orderTable, OrderStatus.COMPLETION,
                     LocalDateTime.now());
             em.persist(orderTable);
             em.persist(orders);

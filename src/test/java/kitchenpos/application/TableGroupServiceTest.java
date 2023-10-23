@@ -174,7 +174,7 @@ class TableGroupServiceTest {
             OrderTable orderTable2 = new OrderTable(2, false);
             TableGroup tableGroup = TableGroup.of(LocalDateTime.now(),
                     List.of(orderTable1, orderTable2));
-            Orders orders = new Orders(orderTable1, OrderStatus.COOKING.name(),
+            Orders orders = new Orders(orderTable1, OrderStatus.COOKING,
                     LocalDateTime.now());
             em.persist(orderTable1);
             em.persist(orderTable2);

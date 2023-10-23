@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,7 +29,8 @@ public class Orders {
     private OrderTable orderTable;
 
     @Column(name = "order_status")
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
@@ -35,7 +38,7 @@ public class Orders {
     @OneToMany(mappedBy = "orders")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Orders(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Orders(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -45,18 +48,19 @@ public class Orders {
     }
 
     public void changeOrderStatus(String orderStatus) {
+        OrderStatus status = OrderStatus.resolve(orderStatus);
         validateDoesStatusChangeable();
-        this.orderStatus = orderStatus;
+        this.orderStatus = status;
     }
 
     private void validateDoesStatusChangeable() {
-        if (Objects.equals(orderStatus, OrderStatus.COMPLETION.name())) {
+        if (Objects.equals(orderStatus, OrderStatus.COMPLETION)) {
             throw new OrderStatusNotChangeableException();
         }
     }
 
     public boolean isOrderUnCompleted() {
-        return !orderStatus.equals(OrderStatus.COMPLETION.name());
+        return !Objects.equals(orderStatus, OrderStatus.COMPLETION);
     }
 
     public Long getId() {
@@ -67,7 +71,7 @@ public class Orders {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
