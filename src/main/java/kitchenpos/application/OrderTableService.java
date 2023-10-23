@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.response.OrderTableResponse;
@@ -20,16 +22,19 @@ public class OrderTableService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public OrderTableService(TableGroupRepository tableGroupRepository, OrderTableRepository orderTableRepository) {
+    public OrderTableService(TableGroupRepository tableGroupRepository, OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
-    public Long create(final Long tableGroupId, final int numberOfGuests) {
+    public Long create(final Long tableGroupId, final int numberOfGuests, final List<Long> orderIds) {
         TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        OrderTable orderTable = new OrderTable(tableGroup, numberOfGuests);
+        List<Order> orders = orderRepository.findAllByIdIn(orderIds);
+        OrderTable orderTable = new OrderTable(tableGroup, orders, numberOfGuests);
         return orderTableRepository.save(orderTable).getId();
     }
 

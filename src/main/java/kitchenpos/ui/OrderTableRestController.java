@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderTableService;
+import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,8 @@ public class OrderTableRestController {
     }
 
     @PostMapping("/api/order-tables/{tableGroupId}")
-    public ResponseEntity<Long> create(@PathVariable Long tableGroupId, @RequestParam int numberOfGuests) {
-        Long orderTableId = orderTableService.create(tableGroupId, numberOfGuests);
+    public ResponseEntity<Long> create(@RequestBody OrderTableCreateRequest request) {
+        Long orderTableId = orderTableService.create(request.getTableGroupId(), request.getNumberOfGuests(), request.getOrderIds());
         final URI uri = URI.create("/api/orders/" + orderTableId);
         return ResponseEntity.created(uri).build();
     }
