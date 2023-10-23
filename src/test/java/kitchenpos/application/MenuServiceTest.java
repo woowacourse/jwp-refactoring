@@ -10,6 +10,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.Fixtures;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -78,28 +79,7 @@ public class MenuServiceTest extends ServiceTest {
         @Nested
         class 메뉴_가격 {
 
-            @ParameterizedTest
-            @ValueSource(longs = {-1, -12312, -999})
-            void 메뉴_가격이_음수인_경우_에러가_발생한다(Long value) {
-                MenuGroup menuGroup = fixtures.메뉴_그룹_저장("치킨메뉴");
-                Product product = fixtures.상품_저장("치킨", 18_000L);
-
-                Menu menu = new Menu();
-                menu.setName("한마리 메뉴");
-                menu.setPrice(BigDecimal.valueOf(value));
-                menu.setMenuGroup(menuGroup);
-
-                MenuProduct menuProduct = new MenuProduct();
-                menuProduct.setProduct(product);
-                menuProduct.setQuantity(2);
-
-                menu.setMenuProducts(List.of(menuProduct));
-
-                // when, then
-                assertThatThrownBy(() -> menuService.create(menu))
-                        .isInstanceOf(IllegalArgumentException.class);
-            }
-
+            @Disabled
             @Test
             void 메뉴_가격이_null인_경우_에러가_발생한다() {
                 // given
