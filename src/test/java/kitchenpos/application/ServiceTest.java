@@ -1,14 +1,19 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.ProductRepository;
@@ -48,6 +53,9 @@ public abstract class ServiceTest {
     @Autowired
     protected OrderRepository orderRepository;
 
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
+
     protected void 복수_상품_저장(final Product... products) {
         productRepository.saveAll(List.of(products));
     }
@@ -70,5 +78,10 @@ public abstract class ServiceTest {
 
     protected TableGroup 단일_단체지정_저장(final TableGroup tableGroup) {
         return tableGroupRepository.save(tableGroup);
+    }
+
+    protected Order 단일_주문_저장(final OrderTable orderTable, final OrderLineItem... orderLineItems) {
+        final var order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItems));
+        return orderRepository.save(order);
     }
 }

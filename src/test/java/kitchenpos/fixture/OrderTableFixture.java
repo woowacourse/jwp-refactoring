@@ -17,4 +17,8 @@ public class OrderTableFixture {
     public static OrderTable 빈테이블_1명_단체지정() {
         return new OrderTable(TableGroupFixture.단체지정_여러_테이블(List.of(빈테이블_1명(), 빈테이블_1명())), 1, true);
     }
+
+    public static OrderTable 주문테이블_INVALID() {
+        return new OrderTable(999999L, null, 2, false);
+    }
 }

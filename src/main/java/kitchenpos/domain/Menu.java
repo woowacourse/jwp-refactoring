@@ -35,7 +35,13 @@ public class Menu {
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
+    }
+
+    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
+                final List<MenuProduct> menuProducts) {
         validate(price, menuProducts);
+        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
