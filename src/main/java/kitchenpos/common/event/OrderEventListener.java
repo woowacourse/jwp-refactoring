@@ -1,15 +1,17 @@
 package kitchenpos.common.event;
 
 import kitchenpos.order.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderEventListener {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderEventListener(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @EventListener
     public void validateOrdersCompleted(ValidateAllOrderCompletedEvent event) {
