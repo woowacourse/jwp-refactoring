@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -41,40 +40,30 @@ public class TableService {
 
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableEmptyUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException("할당된 그룹이 존재합니다.");
-        }
+        orderTable.checkTableGroupsEmpty();
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("주문이 아직 완료상태가 아닙니다.");
         }
 
-        savedOrderTable.changeEmpty(request.isEmpty());
-        final OrderTable savedTable = orderTableRepository.save(savedOrderTable);
-
-        return TableResponse.from(savedTable);
+        orderTable.changeEmpty(request.isEmpty());
+        final OrderTable updatedTable = orderTableRepository.save(orderTable);
+        return TableResponse.from(updatedTable);
     }
 
     @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId, final TableGuestUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블의 상태가 비어 있습니다.");
-        }
-        final OrderTable updatedOrderTable = new OrderTable(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroup(),
-                request.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        orderTable.checkEmptyIsFalse();
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        final OrderTable savedTable = orderTableRepository.save(updatedOrderTable);
-        return TableResponse.from(savedTable);
+        final OrderTable updatedTable = orderTableRepository.save(orderTable);
+        return TableResponse.from(updatedTable);
     }
 }

@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,6 +45,22 @@ public class OrderTable {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public void checkTableGroupsEmpty() {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("할당된 그룹이 존재합니다.");
+        }
+    }
+
+    public void checkEmptyIsFalse() {
+        if (this.empty) {
+            throw new IllegalArgumentException("테이블의 상태가 비어 있습니다.");
+        }
+    }
+
+    public void changeNumberOfGuests(final int number) {
+        this.numberOfGuests = number;
     }
 
     public Long getId() {
