@@ -1,16 +1,15 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.entity.OrderEntity;
 
 public interface OrderDao {
-    Order save(Order entity);
+    OrderEntity save(OrderEntity entity);
 
-    Optional<Order> findById(Long id);
+    Optional<OrderEntity> findById(Long id);
 
-    List<Order> findAll();
+    List<OrderEntity> findAll();
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 

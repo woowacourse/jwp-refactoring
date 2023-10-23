@@ -1,14 +1,13 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Product;
-
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.dao.entity.ProductEntity;
 
 public interface ProductDao {
-    Product save(Product entity);
+    ProductEntity save(ProductEntity entity);
 
-    Optional<Product> findById(Long id);
+    Optional<ProductEntity> findById(Long id);
 
-    List<Product> findAll();
+    List<ProductEntity> findAll();
 }

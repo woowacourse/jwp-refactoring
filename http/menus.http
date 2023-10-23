@@ -8,7 +8,11 @@ Content-Type: application/json
   "menuGroupId": 1,
   "menuProducts": [
     {
-      "productId": 1,
+      "product": {
+        "id" : 1,
+        "name" : "후라이드",
+        "price" : 16000
+      },
       "quantity": 2
     }
   ]

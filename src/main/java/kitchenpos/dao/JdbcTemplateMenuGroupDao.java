@@ -1,6 +1,11 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuGroup;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import javax.sql.DataSource;
+import kitchenpos.dao.entity.MenuGroupEntity;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -8,12 +13,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
@@ -32,14 +31,14 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     }
 
     @Override
-    public MenuGroup save(final MenuGroup entity) {
+    public MenuGroupEntity save(final MenuGroupEntity entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<MenuGroup> findById(final Long id) {
+    public Optional<MenuGroupEntity> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -48,7 +47,7 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     }
 
     @Override
-    public List<MenuGroup> findAll() {
+    public List<MenuGroupEntity> findAll() {
         final String sql = "SELECT id, name FROM menu_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
@@ -61,15 +60,15 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
-    private MenuGroup select(final Long id) {
+    private MenuGroupEntity select(final Long id) {
         final String sql = "SELECT id, name FROM menu_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private MenuGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuGroup entity = new MenuGroup(
+    private MenuGroupEntity toEntity(final ResultSet resultSet) throws SQLException {
+        final MenuGroupEntity entity = new MenuGroupEntity(
             resultSet.getLong("id"),
             resultSet.getString("name")
         );
