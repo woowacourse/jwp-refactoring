@@ -151,14 +151,12 @@ class TableGroupServiceTest extends ServiceBaseTest {
         //given
         final OrderTableResponse savedOrderTable = tableService.create(new OrderTableRequest(5, false));
         final OrderTableResponse savedOrderTable2 = tableService.create(new OrderTableRequest(5, false));
-        final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(savedOrderTable.getId()), new OrderTableIdRequest(savedOrderTable2.getId()));
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
-        final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
+        final TableGroupResponse tableGroupResponse = tableGroupService.create(new TableGroupRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId()),
+                new OrderTableIdRequest(savedOrderTable2.getId()))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
-        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
-        final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
-        final OrderResponse orderResponse = orderService.create(orderRequest);
+        final OrderResponse orderResponse = orderService.create(new OrderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 3L))));
+
         orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(orderStatus));
 
         //when&then
