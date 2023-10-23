@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.OrderTableExceptionType.NOT_EXIST_ORDER_TABLE;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.exception.OrderTableException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +41,11 @@ public class TableGroupService {
                 .collect(Collectors.toList());
         List<OrderTable> orderTables = orderTableRepository.getByIdIn(orderTableIds);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+        if (orderTableIds.size() != orderTables.size()) {
+            throw new OrderTableException(NOT_EXIST_ORDER_TABLE);
+        }
 
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
         return tableGroupRepository.save(tableGroup);
     }
 

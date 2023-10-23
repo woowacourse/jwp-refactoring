@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.exception.OrderTableExceptionType.NOT_EXIST_ORDER_TABLE;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_STATUS_IS_NOT_COMPLETION;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_SIZE_NOT_ENOUGH;
 import static kitchenpos.exception.TableGroupExceptionType.ILLEGAL_ADD_ORDER_TABLE_EXCEPTION;
@@ -109,6 +110,24 @@ class TableGroupServiceTest extends IntegrationTest {
 
             // then
             assertThat(exceptionType).isEqualTo(ILLEGAL_ADD_ORDER_TABLE_EXCEPTION);
+        }
+
+        @Test
+        void 요청된_테이블들이_하나라도_저장되어_있지_않으면_예외_발생() {
+            // given
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(
+                    new OrderTableIdRequest(1L),
+                    new OrderTableIdRequest(2L),
+                    new OrderTableIdRequest(135213412L)
+            ));
+
+            // when
+            BaseExceptionType exceptionType = assertThrows(OrderTableException.class, () ->
+                    tableGroupService.create(tableGroupCreateRequest)
+            ).exceptionType();
+
+            // then
+            assertThat(exceptionType).isEqualTo(NOT_EXIST_ORDER_TABLE);
         }
     }
 
