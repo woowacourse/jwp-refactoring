@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
 import static java.lang.Long.MAX_VALUE;
 import static kitchenpos.fixture.OrderTableFixture.테이블;
@@ -6,13 +6,13 @@ import static kitchenpos.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableChangedEvent;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableChangedEvent;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.dto.table.OrderTableRequest;
+import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

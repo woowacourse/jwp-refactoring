@@ -5,10 +5,10 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusUpdateRequest;
@@ -50,7 +50,7 @@ public class OrderService {
                 .map(OrderResponse::from)
                 .collect(toList());
     }
-    
+
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));

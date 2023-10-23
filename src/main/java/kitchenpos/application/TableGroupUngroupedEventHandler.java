@@ -4,10 +4,10 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroupUngroupedEvent;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

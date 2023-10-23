@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.OrderTableResponse;
 
 public class TableGroupResponse {
     private Long id;

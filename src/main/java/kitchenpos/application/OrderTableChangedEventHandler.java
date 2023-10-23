@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTableChangedEvent;
+import kitchenpos.domain.table.OrderTableChangedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

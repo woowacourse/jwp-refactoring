@@ -1,13 +1,13 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableChangedEvent;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableChangedEvent;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.dto.table.OrderTableRequest;
+import kitchenpos.dto.table.OrderTableResponse;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
