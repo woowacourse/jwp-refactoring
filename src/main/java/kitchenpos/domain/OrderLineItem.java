@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,10 +17,10 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_order_line_item_to_orders")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))
     private Order order;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_order_line_item_to_menu")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
     private Menu menu;
     @Column(nullable = false)
     private long quantity;

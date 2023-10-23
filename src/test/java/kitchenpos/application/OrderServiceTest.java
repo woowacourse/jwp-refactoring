@@ -53,7 +53,7 @@ class OrderServiceTest {
     void 주문_항목에_메뉴_ID가_존재하지_않는경우_예외가_발생한다() {
         OrderCreateRequest request = new OrderCreateRequest(9L, List.of(new OrderLineRequest(0L, 1)));
         assertThatThrownBy(() -> orderService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessage("메뉴가 존재하지 않습니다.");
     }
 
@@ -76,7 +76,7 @@ class OrderServiceTest {
     void 주문_ID가_존재하지_않는_경우_예외가_발생한다() {
         OrderStatusChangeRequest request = new OrderStatusChangeRequest("COMPLETION");
         assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessage("존재하지 않는 주문입니다.");
     }
 

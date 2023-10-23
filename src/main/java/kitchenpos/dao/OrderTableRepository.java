@@ -12,6 +12,6 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     default OrderTable getById(final Long orderTableId){
         return findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(RuntimeException::new);
     }
 }

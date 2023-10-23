@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class Menu {
     @Embedded
     private Price price;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_menu_to_menu_group")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
     private MenuGroup menuGroup;
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;

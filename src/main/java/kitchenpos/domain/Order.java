@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "fk_orders_to_order_table")
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_orders_to_order_table"))
     private OrderTable orderTable;
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;

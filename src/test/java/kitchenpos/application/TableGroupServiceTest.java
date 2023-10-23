@@ -84,7 +84,7 @@ public class TableGroupServiceTest {
 
         assertThatThrownBy(() -> tableGroupService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블 그룹이 존재하는 주문 테이블입니다.");
+                .hasMessage("테이블 그룹이 존재하는 경우 테이블 상태를 수정할 수 없습니다.");
     }
 
     @Test

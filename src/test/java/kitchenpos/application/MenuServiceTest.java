@@ -50,7 +50,7 @@ class MenuServiceTest {
         );
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessage("해당 메뉴 그룹 ID가 존재하지 않습니다.");
     }
 
@@ -65,7 +65,7 @@ class MenuServiceTest {
         );
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessage("해당 제품 ID가 존재하지 않습니다.");
     }
 

@@ -7,6 +7,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     default Menu getById(final Long menuId){
         return findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
+                .orElseThrow(() -> new RuntimeException("메뉴가 존재하지 않습니다."));
     }
 }
