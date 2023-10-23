@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.DuplicateCreateTableGroup;
-import kitchenpos.exception.InvalidOrderTableException;
+import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
+import kitchenpos.exception.orderTableException.InvalidOrderTableException;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;

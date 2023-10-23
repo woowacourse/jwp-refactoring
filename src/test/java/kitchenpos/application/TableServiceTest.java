@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.exception.IllegalOrderStatusException;
-import kitchenpos.exception.IllegalOrderTableGuestNumberException;
-import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.orderException.IllegalOrderStatusException;
+import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
+import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -87,7 +88,7 @@ class TableServiceTest extends ServiceBaseTest {
     void changeEmptyValidStatus(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 2, false));
-        final Order order = new Order(orderTable);
+        final Order order = new Order(orderTable, null);
         order.changeOrderStatus(orderStatus);
         orderRepository.save(order);
 

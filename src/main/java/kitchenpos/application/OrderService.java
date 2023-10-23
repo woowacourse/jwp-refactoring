@@ -12,9 +12,9 @@ import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
-import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.menuException.MenuNotFoundException;
 import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
-import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.orderException.OrderNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

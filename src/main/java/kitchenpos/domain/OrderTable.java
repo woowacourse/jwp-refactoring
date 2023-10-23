@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.IllegalOrderTableGuestNumberException;
+import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

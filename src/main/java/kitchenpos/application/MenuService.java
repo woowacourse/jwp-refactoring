@@ -11,8 +11,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.ProductNotFoundException;
+import kitchenpos.exception.menuGroupException.MenuGroupNotFoundException;
+import kitchenpos.exception.productException.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

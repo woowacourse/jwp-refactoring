@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.InvalidOrderLineItemException;
+import kitchenpos.exception.orderLineItemException.InvalidOrderLineItemException;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;

@@ -9,8 +9,8 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.exception.InvalidOrderTableException;
-import kitchenpos.exception.TableGroupNotFoundException;
+import kitchenpos.exception.orderTableException.InvalidOrderTableException;
+import kitchenpos.exception.tableGroupException.TableGroupNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
