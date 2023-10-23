@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class NumberOfGuests {
 
-    private static final int MIN_NUMBER_OF_GUEST = 1;
+    private static final int MIN_NUMBER_OF_GUEST = 0;
 
     @Column(name = "number_of_guests")
     private int numberOfGuests;
@@ -25,7 +25,7 @@ public class NumberOfGuests {
 
     private void validate(int numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUEST) {
-            throw new IllegalArgumentException("손님 수는 최소 1명 이상이어야 합니다.");
+            throw new IllegalArgumentException("손님 수는 음수가 될 수 없습니다.");
         }
     }
 

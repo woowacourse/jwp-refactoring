@@ -23,10 +23,10 @@ class NumberOfGuestsTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {-1, 0})
+    @ValueSource(ints = {-1, -10_000})
     void 손님_수가_1명_미만이면_예외가_발생한다(int value) {
         assertThatThrownBy(() -> NumberOfGuests.from(value))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("손님 수는 최소 1명 이상이어야 합니다.");
+                .hasMessage("손님 수는 음수가 될 수 없습니다.");
     }
 }

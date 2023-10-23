@@ -160,14 +160,14 @@ class TableServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(ints = {0, -1})
+        @ValueSource(ints = {-1, -1_000})
         void 변경하는_손님_수가_1명_미만_이면_예외가_발생한다(int value) {
             OrderTable orderTable = orderTableRepository.save(OrderTable.builder().numberOfGuests(2).build());
             OrderTableUpdateRequest orderTableUpdateRequest = new OrderTableUpdateRequest(value, false);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableUpdateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("손님 수는 최소 1명 이상이어야 합니다.");
+                    .hasMessage("손님 수는 음수가 될 수 없습니다.");
         }
     }
 }
