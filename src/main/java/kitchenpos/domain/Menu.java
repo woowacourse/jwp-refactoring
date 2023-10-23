@@ -38,6 +38,7 @@ public class Menu extends BaseDate {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+        validateMenuProducts(menuProducts);
     }
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
@@ -53,12 +54,19 @@ public class Menu extends BaseDate {
         }
     }
 
-    public Long getId() {
-        return id;
+    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -75,31 +83,5 @@ public class Menu extends BaseDate {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void changeMenuProducts(final List<MenuProduct> menuProducts) {
-        validateMenuProducts(menuProducts);
-        this.menuProducts = menuProducts;
-    }
-
-    private void validateMenuProducts(final List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Menu{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", menuProducts=" + menuProducts +
-                '}';
     }
 }
