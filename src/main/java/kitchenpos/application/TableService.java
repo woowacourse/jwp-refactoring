@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -44,18 +43,18 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (isOrderProceeding(orderTableId)) {
             throw new IllegalArgumentException();
         }
 
         orderTable.changeEmpty(request.isEmpty());
-        final OrderTable saved = orderTableRepository.save(orderTable);
-        return OrderTableResponse.of(saved);
+        return OrderTableResponse.of(orderTable);
+    }
+
+    private boolean isOrderProceeding(final Long orderTableId) {
+        return orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId,
+                Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
     }
 
     @Transactional
@@ -63,9 +62,8 @@ public class TableService {
                                                    final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
+        
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        final OrderTable saved = orderTableRepository.save(orderTable);
-        return OrderTableResponse.of(saved);
+        return OrderTableResponse.of(orderTable);
     }
 }
