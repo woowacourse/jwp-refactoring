@@ -2,8 +2,6 @@ package kitchenpos.application.tablegroup;
 
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.domain.tablegroup.TableGroupValidator;
@@ -18,14 +16,10 @@ import static kitchenpos.application.dto.TableGroupRequest.OrderTableIdRequest;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
     private final TableGroupValidator tableGroupValidator;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository, TableGroupValidator tableGroupValidator) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+    public TableGroupService(TableGroupRepository tableGroupRepository, TableGroupValidator tableGroupValidator) {
         this.tableGroupRepository = tableGroupRepository;
         this.tableGroupValidator = tableGroupValidator;
     }
