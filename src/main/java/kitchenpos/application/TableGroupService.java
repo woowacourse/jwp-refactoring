@@ -36,7 +36,15 @@ public class TableGroupService {
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList()));
 
+        validateOrderTableStatus(orderTables);
+
         return createTableGroupBy(orderTables);
+    }
+
+    private void validateOrderTableStatus(final List<OrderTable> orderTables) {
+        if (orderTables.stream().anyMatch(orderTable -> !orderTable.isEmpty())) {
+            throw new IllegalArgumentException("단체 지정시 주문 테이블은 비어있을 수 없습니다.");
+        }
     }
 
     private TableGroup createTableGroupBy(final List<OrderTable> orderTables) {

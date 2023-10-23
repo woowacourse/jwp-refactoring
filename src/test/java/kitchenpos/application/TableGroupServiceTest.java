@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
@@ -84,7 +86,7 @@ class TableGroupServiceTest {
             // expect
             assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야합니다");
+                    .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야 합니다");
         }
 
 
@@ -101,7 +103,8 @@ class TableGroupServiceTest {
 
             // expect
             assertThatThrownBy(() -> tableGroupService.create(orderTableIdRequests))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("단체 지정시 주문 테이블은 비어있을 수 없습니다.");
         }
 
     }
@@ -124,7 +127,7 @@ class TableGroupServiceTest {
         // given
         final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 1, true));
         final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 2, true));
-        final Order order = Order.createBy(firstOrderTable);
+        final Order order = new Order(firstOrderTable, OrderStatus.MEAL, LocalDateTime.now());
         orderRepository.save(order);
 
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(

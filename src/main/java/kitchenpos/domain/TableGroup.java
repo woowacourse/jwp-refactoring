@@ -42,7 +42,7 @@ public class TableGroup {
 
     private void validate(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("단체 지정시 주문 테이블은 둘 이상이여야합니다");
+            throw new IllegalArgumentException("단체 지정시 주문 테이블은 둘 이상이여야 합니다");
         }
     }
 

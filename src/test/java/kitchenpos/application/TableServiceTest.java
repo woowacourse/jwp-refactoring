@@ -83,7 +83,7 @@ class TableServiceTest {
         @Test
         void 존재하지_않는_주문_테이블_식별자를_인자로_받으면_예외가_발생한다() {
             // given
-            final Long notExistOrderTableId = null;
+            final Long notExistOrderTableId = 999999999L;
             final UpdateTableGuestRequest updateTableGuestRequest = new UpdateTableGuestRequest(-1);
 
             // expect

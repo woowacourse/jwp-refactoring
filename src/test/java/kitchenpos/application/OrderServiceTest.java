@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.Menu;
@@ -78,7 +79,7 @@ class OrderServiceTest {
 
             assertThatThrownBy(() -> orderService.create(createOrderRequest))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("주문 생성시 주문 목은 비어있을 수 없습니다.");
+                    .hasMessageContaining("주문 생성시 주문 테이블은 비어있을 수 없습니다");
         }
 
         @Test
@@ -133,10 +134,8 @@ class OrderServiceTest {
     @Test
     void 주문_상태가_완료라면_상태_변경시_예외가_발생한다() {
         // given
-        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 5, false));
-
-        final Order expected = orderRepository.save(Order.createBy(orderTable));
+        final Order expected = orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now()));
 
         final UpdateOrderRequest updateOrderRequest = new UpdateOrderRequest(OrderStatus.COMPLETION.name());
 

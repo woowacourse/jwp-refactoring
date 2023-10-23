@@ -76,9 +76,9 @@ class MenuServiceTest {
         }
 
         @Test
-        void 메뉴_그룹이_지정되지_않았다면_예외가_발생한다() {
+        void 메뉴_그룹이_존재하지_않는다면_예외가_발생한다() {
             // given
-            final Long menuGroupId = null;
+            final Long menuGroupId = 999999L;
             final Product product = productRepository.save(new Product("치즈피자", new BigDecimal(3_000)));
             final MenuProductDto menuProductDto = new MenuProductDto(product.getId(), 3);
             final CreateMenuRequest createMenuRequest = new CreateMenuRequest("치즈피자", 5_000, menuGroupId, List.of(menuProductDto));

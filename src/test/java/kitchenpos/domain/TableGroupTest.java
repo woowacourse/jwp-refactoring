@@ -20,7 +20,7 @@ class TableGroupTest {
         // when
         assertThatThrownBy(() -> new TableGroup(List.of(orderTable)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야합니다");
+                .hasMessageContaining("단체 지정시 주문 테이블은 둘 이상이여야 합니다");
     }
 
 }
