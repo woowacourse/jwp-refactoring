@@ -6,7 +6,16 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    public OrderTable(
+            final Long id,
+            final Long tableGroupId,
+            final int numberOfGuests,
+            final boolean empty
+    ) {
+        this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public OrderTable(
@@ -21,10 +30,6 @@ public class OrderTable {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getTableGroupId() {

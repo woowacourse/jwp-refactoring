@@ -20,7 +20,7 @@ public class Menu {
     ) {
         this.id = id;
         this.name = name;
-        this.price = new Price(price);
+        this.price = Price.from(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
@@ -32,7 +32,7 @@ public class Menu {
             final List<MenuProduct> menuProducts
     ) {
         this.name = name;
-        this.price = new Price(price);
+        this.price = Price.from(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }

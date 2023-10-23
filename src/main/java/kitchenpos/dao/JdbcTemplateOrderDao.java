@@ -1,5 +1,6 @@
 package kitchenpos.dao;
 
+import java.util.ArrayList;
 import kitchenpos.domain.Order;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -90,11 +91,10 @@ public class JdbcTemplateOrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        final Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        final Long orderTableId = resultSet.getLong("order_table_id");
+        final String orderStatus = resultSet.getString("order_status");
+        final LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
+        return new Order(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 }
