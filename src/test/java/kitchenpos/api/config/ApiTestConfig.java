@@ -7,6 +7,7 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
+import kitchenpos.domain.Menu;
 import kitchenpos.ui.MenuGroupRestController;
 import kitchenpos.ui.MenuRestController;
 import kitchenpos.ui.OrderRestController;

@@ -5,6 +5,11 @@ import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.request.MenuProductCreateRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
 import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,9 +38,12 @@ class MenuCreateApiTest extends ApiTestConfig {
                 List.of(menuProductCreateRequest)
         );
 
+        final Menu menu = spyMenu(request);
+        final MenuProduct menuProduct = spyMenuProduct(menuProductCreateRequest, menu);
+        menu.addMenuProducts(List.of(menuProduct));
+
         // when
-        final MenuProductResponse menuProductResponse = new MenuProductResponse(1L, menuProductCreateRequest.getQuantity(), menuProductCreateRequest.getProductId());
-        final MenuResponse response = new MenuResponse(1L, request.getName(), request.getPrice(), request.getMenuGroupId(), List.of(menuProductResponse));
+        final MenuResponse response = MenuResponse.from(menu);
 
         when(menuService.create(eq(request))).thenReturn(response);
 
@@ -44,5 +53,35 @@ class MenuCreateApiTest extends ApiTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrl(String.format("/api/menus/%d", response.getId())));
+    }
+
+    private Menu spyMenu(final MenuCreateRequest menuCreateRequest) {
+        final MenuGroup menuGroup = spyMenuGroup(menuCreateRequest.getMenuGroupId());
+        final Menu menu = new Menu(menuCreateRequest.getName(), new Price(menuCreateRequest.getPrice()), menuGroup);
+        final Menu spyMenu = spy(menu);
+        when(spyMenu.getId()).thenReturn(1L);
+        return spyMenu;
+    }
+
+    private MenuGroup spyMenuGroup(final Long menuGroupId) {
+        final MenuGroup menuGroup = new MenuGroup("여우 팬모임");
+        final MenuGroup spyMenuGroup = spy(menuGroup);
+        when(spyMenuGroup.getId()).thenReturn(menuGroupId);
+        return spyMenuGroup;
+    }
+
+    private MenuProduct spyMenuProduct(final MenuProductCreateRequest menuProductCreateRequest, final Menu menu) {
+        final Product product = spyProduct(menuProductCreateRequest.getProductId());
+        final MenuProduct menuProduct = new MenuProduct(menuProductCreateRequest.getQuantity(), menu, product);
+        final MenuProduct spyMenuProduct = spy(menuProduct);
+        when(spyMenuProduct.getSeq()).thenReturn(1L);
+        return spyMenuProduct;
+    }
+
+    private Product spyProduct(final Long productId) {
+        final Product product = new Product("상품", new Price(BigDecimal.valueOf(19000)));
+        final Product spyProduct = spy(product);
+        when(spyProduct.getId()).thenReturn(productId);
+        return spyProduct;
     }
 }
