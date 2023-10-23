@@ -49,7 +49,7 @@ public class Order {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (this.orderStatus == OrderStatus.COMPLETION) {
+        if (isCompleted()) {
             throw new OrderException("이미 완료된 주문이라 주문 상태를 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus;
