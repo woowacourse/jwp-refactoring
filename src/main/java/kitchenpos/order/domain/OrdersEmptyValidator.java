@@ -7,11 +7,11 @@ import kitchenpos.table.domain.OrderTableValidator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrdersEmptyValidatorOrder implements OrderTableValidator {
+public class OrdersEmptyValidator implements OrderTableValidator {
 
     private final OrderRepository orderRepository;
 
-    public OrdersEmptyValidatorOrder(final OrderRepository orderRepository) {
+    public OrdersEmptyValidator(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
