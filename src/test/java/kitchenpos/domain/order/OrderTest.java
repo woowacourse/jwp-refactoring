@@ -34,4 +34,18 @@ class OrderTest {
         assertThatThrownBy(() -> completionOrder.changeStatus(changingStatus))
             .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("주문에 주문상품을 추가하면 연관관계가 맺어진다.")
+    @Test
+    void add_orderLineItem() {
+        // given
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
+        final Order order = new Order(2L);
+
+        // when
+        order.addOrderLineItems(orderLineItem);
+
+        // then
+        assertThat(orderLineItem.getOrder()).isEqualTo(order);
+    }
 }

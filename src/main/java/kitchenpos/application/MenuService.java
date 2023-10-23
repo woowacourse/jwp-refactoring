@@ -56,7 +56,7 @@ public class MenuService {
 
     private void addMenuProduct(final Menu menu, final List<MenuProductDto> menuProductDtos) {
         final List<MenuProduct> menuProducts = menuProductDtos.stream()
-            .map(menuProductDto -> MenuProduct.forSave(menuProductDto.getProductId(), menuProductDto.getQuantity()))
+            .map(menuProductDto -> new MenuProduct(menuProductDto.getProductId(), menuProductDto.getQuantity()))
             .collect(Collectors.toUnmodifiableList());
 
         for (MenuProduct menuProduct : menuProducts) {

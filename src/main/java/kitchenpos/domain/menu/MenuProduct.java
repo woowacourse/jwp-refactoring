@@ -28,15 +28,15 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    private MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
+    public MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
         this.seq = seq;
         this.menu = menu;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public static MenuProduct forSave(final Long productId, final long quantity) {
-        return new MenuProduct(null, null, productId, quantity);
+    public MenuProduct (final Long productId, final long quantity) {
+        this(null, null, productId, quantity);
     }
 
     public void setMenu(final Menu menu) {
