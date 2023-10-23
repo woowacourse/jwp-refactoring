@@ -1,10 +1,17 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -31,16 +38,21 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
-        validateAllExistOrderLineItems(request.getOrderLineItemIds());
-        final Order order = Order.forSave(OrderStatus.COOKING,
-                                          orderLineItemRepository.findAllById(request.getOrderLineItemIds()));
+    public OrderResponse create(final OrderCreateRequest request) {
+        validateAllExistOrderLineItems(request.getOrderLineItems());
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
+        final List<OrderLineItem> orderLineItems = makeOrderLineItems(request.getOrderLineItems());
+        final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems);
 
-        return orderRepository.save(order);
+        orderTable.addOrder(order);
+        orderRepository.save(order);
+
+        return OrderResponse.from(order);
     }
 
-    private void validateAllExistOrderLineItems(final List<Long> orderLineItemIds) {
+    private void validateAllExistOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemIds) {
         final boolean existsAll = orderLineItemIds.stream()
+            .map(OrderLineItemCreateRequest::getMenuId)
             .allMatch(menuRepository::existsById);
 
         if (!existsAll) {
@@ -48,15 +60,28 @@ public class OrderService {
         }
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    private List<OrderLineItem> makeOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final OrderLineItemCreateRequest request : orderLineItemCreateRequests) {
+            final Menu menu = menuRepository.getById(request.getMenuId());
+            final OrderLineItem orderLineItem = OrderLineItem.forSave(request.getQuantity(), menu);
+            orderLineItems.add(orderLineItem);
+        }
+
+        return orderLineItems;
+    }
+
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+            .map(OrderResponse::from)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderChangeOrderStatusRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeOrderStatusRequest request) {
         final Order order = orderRepository.getById(orderId);
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
 
-        return order;
+        return OrderResponse.from(order);
     }
 }

@@ -17,19 +17,28 @@ public class OrderLineItem {
     private long quantity;
 
     @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long seq, final long quantity) {
+    public OrderLineItem(final Long seq, final long quantity, final Menu menu) {
         this.seq = seq;
         this.quantity = quantity;
+        this.menu = menu;
     }
 
-    public static OrderLineItem forSave(final long quantity) {
-        return new OrderLineItem(null, quantity);
+    public static OrderLineItem forSave(final long quantity, final Menu menu) {
+        return new OrderLineItem(null, quantity, menu);
+    }
+
+    public void joinOrder(final Order order) {
+        this.order = order;
     }
 
     public Long getSeq() {

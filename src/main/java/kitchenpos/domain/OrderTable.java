@@ -70,6 +70,10 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
+    public void addOrder(final Order order) {
+        order.joinOrderTable(this);
+    }
+
     public boolean hasTableGroup() {
         return tableGroup != null;
     }

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,21 +19,24 @@ public class MenuGroup {
 
     private String name;
 
-    @OneToMany
-    @JoinColumn(name = "menu_group_id")
-    private List<Menu> menus;
+    @OneToMany(mappedBy = "menuGroup", cascade = CascadeType.ALL)
+    private List<Menu> menus = new ArrayList<>();
 
     protected MenuGroup() {
     }
 
-    public MenuGroup(final Long id, final String name, final List<Menu> menus) {
+    public MenuGroup(final Long id, final String name) {
         this.id = id;
         this.name = name;
-        this.menus = menus;
     }
 
     public static MenuGroup forSave(final String name) {
-        return new MenuGroup(null, name, new ArrayList<>());
+        return new MenuGroup(null, name);
+    }
+
+    public void addMenu(final Menu menu) {
+        menus.add(menu);
+        menu.joinMenuGroup(this);
     }
 
     public Long getId() {

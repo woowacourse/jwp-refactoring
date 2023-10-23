@@ -1,15 +1,14 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class Orders {
 
-    @OneToMany(mappedBy = "orderTable")
-    @JoinColumn(name = "order_table_id")
+    @OneToMany(mappedBy = "orderTable", cascade = CascadeType.ALL)
     private List<Order> orders;
 
     protected Orders() {

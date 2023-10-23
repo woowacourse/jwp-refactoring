@@ -27,15 +27,15 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuCreateRequest request) {
-        validateExistingMenuGroup(request.getMenuGroupId());
+        validateMenuGroup(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = menuProductRepository.getAllById(request.getMenuProductIds());
 
         final Menu menu = Menu.forSave(request.getName(), menuProducts);
         return menuRepository.save(menu);
     }
 
-    private void validateExistingMenuGroup(final Long menuGroupId) {
-        if (menuGroupRepository.existsById(menuGroupId)) {
+    private void validateMenuGroup(final Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
         }
     }

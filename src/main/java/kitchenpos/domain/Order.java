@@ -10,6 +10,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,13 +34,17 @@ public class Order {
     @Embedded
     private OrderLineItems orderLineItems;
 
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
     protected Order() {
     }
 
     public Order(final Long id, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderStatus = orderStatus;
-        this.orderLineItems = new OrderLineItems(orderLineItems);
+        this.orderLineItems = new OrderLineItems(orderLineItems, this);
     }
 
     public static Order forSave(final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
@@ -46,14 +52,23 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
-        validateOrderStatus(orderStatus);
+        validateOrderStatus();
         this.orderStatus = orderStatus;
     }
 
-    private void validateOrderStatus(final OrderStatus orderStatus) {
-        if (orderStatus == OrderStatus.COMPLETION) {
+    private void validateOrderStatus() {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("주문이 완료된 상태는 변경할 수 없습니다.");
         }
+    }
+
+    public void joinOrderTable(final OrderTable orderTable) {
+        this.orderTable = orderTable;
+    }
+
+    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        orderLineItems.forEach(orderLineItem -> orderLineItem.joinOrder(this));
+        this.orderLineItems = new OrderLineItems(orderLineItems, this);
     }
 
     public Long getId() {

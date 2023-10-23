@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Menu {
@@ -23,18 +25,26 @@ public class Menu {
     @Embedded
     private MenuProducts menuProducts;
 
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
     protected Menu() {
     }
 
     public Menu(final Long id, final String name, final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.menuProducts = new MenuProducts(menuProducts);
+        this.menuProducts = new MenuProducts(menuProducts, this);
         this.price = this.menuProducts.calculatePrice();
     }
 
     public static Menu forSave(final String name, final List<MenuProduct> menuProducts) {
         return new Menu(null, name, menuProducts);
+    }
+
+    public void joinMenuGroup(final MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
     public Long getId() {

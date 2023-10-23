@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MenuProduct {
@@ -14,10 +14,15 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @OneToOne
-    @JoinColumn(name = "product_id")
+
+    @ManyToOne
     private Product product;
+
     private long quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
 
     protected MenuProduct() {
     }
@@ -29,7 +34,12 @@ public class MenuProduct {
     }
 
     public static MenuProduct forSave(final Product product, final long quantity) {
+
         return new MenuProduct(null, product, quantity);
+    }
+
+    public void joinMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     public Long getSeq() {

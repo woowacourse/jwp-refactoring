@@ -2,21 +2,21 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany
-    @JoinColumn(name = "order_id")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public OrderLineItems() {
     }
 
-    public OrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public OrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
+        orderLineItems.forEach(orderLineItem -> orderLineItem.joinOrder(order));
         this.orderLineItems = orderLineItems;
     }
 
