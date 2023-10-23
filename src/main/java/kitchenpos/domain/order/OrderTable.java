@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.exception.OrderTableException;
+import kitchenpos.exception.TableGroupException;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,6 +47,12 @@ public class OrderTable {
     }
 
     public void changeTableGroup(TableGroup tableGroup) {
+        if (isNotEmpty()) {
+            throw new TableGroupException("주문 테이블이 주문이 가능한 상태여서 테이블 그룹을 생성할 수 없습니다.");
+        }
+        if (existsTableGroup()) {
+            throw new TableGroupException("주문 테이블이 이미 테이블 그룹에 속해 있어 테이블 그룹을 생성할 수 없습니다.");
+        }
         empty = Boolean.FALSE;
         this.tableGroup = tableGroup;
     }
@@ -60,8 +67,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean existsTableGroup() {
+    private boolean existsTableGroup() {
         return Objects.nonNull(tableGroup);
+    }
+
+    private boolean isNotEmpty() {
+        return !this.empty;
     }
 
     private void validateOrderStatusWhenChangeEmpty(Order order) {

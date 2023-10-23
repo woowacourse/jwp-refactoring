@@ -123,11 +123,7 @@ class TableServiceTest extends MockServiceTest {
         OrderTable ordertable = new OrderTable(
                 1L,
                 new GuestNumber(1),
-                false);
-
-        Order order = new Order(LocalDateTime.now());
-        order.completeOrder();
-        ordertable.addOrder(order);
+                true);
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         ordertable.changeTableGroup(tableGroup);
