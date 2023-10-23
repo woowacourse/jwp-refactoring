@@ -43,6 +43,8 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
     class 주문_테이블을_저장한다 {
 
         private TableGroup tableGroup;
+        private OrderTable orderTable1;
+        private OrderTable orderTable2;
 
         @BeforeEach
         void setUp() {
@@ -53,12 +55,18 @@ class OrderTableServiceIntegratedTest extends ServiceIntegrateTest {
             final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
             TableGroup tableGroup = new TableGroup(orderTables, now());
             this.tableGroup = tableGroupRepository.save(tableGroup);
+            this.orderTable1 = orderTable1;
+            this.orderTable2 = orderTable2;
         }
 
         @Test
         void 주문_테이블을_저장한다() {
             // when, then
-            assertDoesNotThrow(() -> orderTableService.create(tableGroup.getId(), 3));
+            assertDoesNotThrow(() -> orderTableService.create(
+                    tableGroup.getId(),
+                    3,
+                    List.of(orderTable1.getId(), orderTable2.getId()))
+            );
         }
 
     }
