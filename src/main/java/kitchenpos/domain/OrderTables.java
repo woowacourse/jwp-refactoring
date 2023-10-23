@@ -39,7 +39,13 @@ public class OrderTables {
         }
     }
 
+    public void ungroup() {
+        orderTables.forEach(OrderTable::ungroup);
+        orderTables.clear();
+    }
+
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
+
 }

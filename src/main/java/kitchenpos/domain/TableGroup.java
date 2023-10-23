@@ -28,18 +28,18 @@ public class TableGroup {
     }
 
     public TableGroup(final Long id, final OrderTables orderTables) {
-        changeOrderTableTableGroup(orderTables, this);
+        changeOrderTableTableGroup(orderTables);
         this.id = id;
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
     }
 
     public void ungroup() {
-        changeOrderTableTableGroup(this.orderTables, null);
+        orderTables.ungroup();
     }
 
-    private void changeOrderTableTableGroup(final OrderTables orderTables, final TableGroup tableGroup) {
-        orderTables.getOrderTables().stream().forEach(orderTable -> orderTable.changeTableGroup(tableGroup));
+    private void changeOrderTableTableGroup(final OrderTables orderTables) {
+        orderTables.getOrderTables().stream().forEach(orderTable -> orderTable.changeTableGroup(this));
     }
 
     public Long getId() {
