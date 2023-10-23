@@ -8,5 +8,11 @@ Content-Type: application/json
 
 ###
 GET {{host}}/api/menu-groups
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "추천메뉴"
+}
 
 ###

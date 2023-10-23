@@ -1,40 +1,82 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
+@Entity
 public class OrderLineItem {
+
+    private static final int MIN_QUANTITY = 1;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
-    private long quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
+
+    @NotNull
+    private Long quantity;
+
+    protected OrderLineItem() {
+    }
+
+    public OrderLineItem(Order order, Menu menu, Long quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public static OrderLineItem create(Order order, Menu menu, Long quantity) {
+        validateOrder(order);
+        validateMenu(menu);
+        validateQuantity(quantity);
+
+        return new OrderLineItem(order, menu, quantity);
+    }
+
+    private static void validateOrder(Order order) {
+        if (order == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    private static void validateMenu(Menu menu) {
+        if (menu == null) {
+            throw new NullPointerException();
+        }
+    }
+
+    private static void validateQuantity(Long quantity) {
+        if (quantity < MIN_QUANTITY) {
+            throw new IllegalArgumentException("주문 메뉴의 수량은 1개 이상어이야 합니다.");
+        }
+    }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Order getOrder() {
+        return order;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
 }

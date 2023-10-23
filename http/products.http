@@ -9,5 +9,11 @@ Content-Type: application/json
 
 ###
 GET {{host}}/api/products
+Content-Type: application/json
 
+{
+  "id": 1,
+  "name": "강정치킨",
+  "price": 17000
+}
 ###

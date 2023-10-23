@@ -14,7 +14,26 @@ Content-Type: application/json
 
 ###
 GET {{host}}/api/orders
+Content-Type: application/json
 
+{
+  "id": 1,
+  "orderStatus": "COOKING",
+  "orderTable": {
+    "id": 1,
+    "tableGroupId": 1,
+    "numberOfGuests": 0,
+    "isEmpty": true
+  },
+  "orderLineItems": [
+    {
+      "seq": 1,
+      "name": "후라이드 치킨",
+      "price": 10000,
+      "quantity": 1
+    }
+  ]
+}
 ###
 PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
