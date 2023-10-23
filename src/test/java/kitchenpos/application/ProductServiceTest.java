@@ -37,7 +37,7 @@ class ProductServiceTest {
     class 생성_테스트 {
 
         @Test
-        void 상품의_0_보다_작으면_예외() {
+        void 상품의_가격이_0_보다_작으면_예외() {
             // given
             ProductCreateRequest request = new ProductCreateRequest("name", BigDecimal.valueOf(-1));
 
@@ -54,6 +54,17 @@ class ProductServiceTest {
             // when && then
             assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 상품의_이름을_명시하지_않으면_예외() {
+            // given
+            ProductCreateRequest request = new ProductCreateRequest(null, BigDecimal.valueOf(1000));
+
+            // when && then
+            assertThatThrownBy(() -> productService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("상품의 이름은 필수입니다.");
         }
 
         @Test
@@ -85,7 +96,7 @@ class ProductServiceTest {
     @Test
     void 목록_조회() {
         // given
-        List<Product> products = List.of(ProductFixture.builder().withPrice(1000L).build());
+        List<Product> products = List.of(ProductFixture.builder().withName("상품이름").withPrice(1000L).build());
         given((productRepository.findAll()))
             .willReturn(products);
 

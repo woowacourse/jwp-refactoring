@@ -43,11 +43,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuServiceTest {
 
     private static final Product PRODUCT_1000 = ProductFixture.builder()
+        .withName("1000상품")
         .withId(1L)
         .withPrice(1000L)
         .build();
 
     private static final Product PRODUCT_500 = ProductFixture.builder()
+        .withName("500상품")
         .withId(2L)
         .withPrice(500L)
         .build();
@@ -87,7 +89,7 @@ class MenuServiceTest {
             @Test
             void 메뉴_생성_시_가격을_보내지_않으면_예외() {
                 // given
-                MenuCreateRequest request = new MenuCreateRequest(null, null, null,
+                MenuCreateRequest request = new MenuCreateRequest("상품", null, null,
                     null);
 
                 // when && then
@@ -99,7 +101,7 @@ class MenuServiceTest {
             void 메뉴_상품_가격의_총합이_메뉴의_가격보다_높으면_예외() {
                 // given
                 MenuCreateRequest request = new MenuCreateRequest(
-                    null,
+                    "상품",
                     BigDecimal.valueOf(6600),
                     1L,
                     List.of(
@@ -126,7 +128,7 @@ class MenuServiceTest {
         void 메뉴_그룹이_저장된_메뉴_그룹이_아니면_예외() {
             // given
             MenuCreateRequest request = new MenuCreateRequest(
-                null,
+                "상",
                 BigDecimal.valueOf(5400),
                 1L,
                 List.of(new MenuProductCreateRequest(1L, 5L)));
@@ -143,7 +145,7 @@ class MenuServiceTest {
         void 존재하지_않는_상품을_메뉴_상품에_넣으면_예외() {
             // given
             MenuCreateRequest request = new MenuCreateRequest(
-                null,
+                "상품",
                 BigDecimal.valueOf(5400),
                 1L,
                 List.of(new MenuProductCreateRequest(1L, 5L)));
@@ -224,6 +226,7 @@ class MenuServiceTest {
         List<MenuProduct> ofFirstMenu = List.of(firstMenuProduct, secondMenuProduct);
         Menu menu = MenuFixture.builder()
             .withId(menuId)
+            .withName("상품")
             .withMenuProducts(ofFirstMenu)
             .withPrice(1000L)
             .build();

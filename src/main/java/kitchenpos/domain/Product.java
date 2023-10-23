@@ -20,9 +20,19 @@ public class Product {
     }
 
     public Product(Long id, String name, Price price) {
+        validate(name, price);
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    private void validate(String name, Price price) {
+        if (name == null) {
+            throw new IllegalArgumentException("상품의 이름은 필수입니다.");
+        }
+        if (price == null) {
+            throw new IllegalArgumentException("상품의 가격은 필수입니다.");
+        }
     }
 
     public Long getId() {
