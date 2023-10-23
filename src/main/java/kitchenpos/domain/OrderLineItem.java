@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
@@ -18,7 +19,7 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-//    @NotNull
+    @NotNull
     private Long quantity;
 
     protected OrderLineItem() {
