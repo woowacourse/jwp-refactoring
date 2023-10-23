@@ -12,22 +12,22 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.OrderCustomDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ordertable.NumberOfGuests;
+import kitchenpos.ui.request.OrderLineItemsRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,11 +40,13 @@ import org.springframework.context.annotation.Import;
 @Import({ProductService.class, MenuService.class,
         JdbcTemplateMenuDao.class, MenuGroupService.class, JdbcTemplateMenuGroupDao.class,
         JdbcTemplateMenuProductDao.class, OrderService.class,
-        JdbcTemplateOrderDao.class, TableService.class,
-        JdbcTemplateOrderLineItemDao.class})
+        TableService.class, OrderCustomDao.class})
 class TableServiceTest {
 
     private TableService tableService;
+
+    @Autowired
+    OrderCustomDao orderCustomDao;
 
     @Autowired
     OrderTableDao orderTableDao;
@@ -55,7 +57,7 @@ class TableServiceTest {
     @BeforeEach
     void setUp() {
         this.tableService = new TableService(
-                new JdbcTemplateOrderDao(dataSource),
+                orderCustomDao,
                 orderTableDao
         );
     }
@@ -101,14 +103,15 @@ class TableServiceTest {
             final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
 
             // given : 주문
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
-            final Order savedOrder = orderService.create(order);
+            final OrderResponse savedOrder = orderService.create(
+                    savedOrderTable.getId(),
+                    List.of(
+                            new OrderLineItemsRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()),
+                            new OrderLineItemsRequest(orderLineItem2.getMenuId(), orderLineItem2.getQuantity())
+                    )
+            );
 
-            final Order changingStatusOrder = new Order();
-            changingStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
-            orderService.changeOrderStatus(savedOrder.getId(), changingStatusOrder);
+            orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), false))
                     .isInstanceOf(IllegalArgumentException.class);

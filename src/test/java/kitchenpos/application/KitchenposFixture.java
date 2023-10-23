@@ -58,9 +58,6 @@ public class KitchenposFixture {
     }
 
     public static OrderLineItem 주문할메뉴만들기(final Menu savedMenu, final int quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setMenuId(savedMenu.getId());
-        return orderLineItem;
+        return new OrderLineItem(null, null, savedMenu.getId(), quantity);
     }
 }

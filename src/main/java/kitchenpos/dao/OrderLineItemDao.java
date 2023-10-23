@@ -4,8 +4,9 @@ import kitchenpos.domain.OrderLineItem;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.CrudRepository;
 
-public interface OrderLineItemDao {
+public interface OrderLineItemDao extends CrudRepository<OrderLineItem, Long> {
     OrderLineItem save(OrderLineItem entity);
 
     Optional<OrderLineItem> findById(Long id);

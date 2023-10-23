@@ -10,19 +10,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.OrderCustomDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.OrderLineItemsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,7 @@ import org.springframework.context.annotation.Import;
 @DataJdbcTest
 @Import({ProductService.class, MenuService.class,
         JdbcTemplateMenuDao.class, MenuGroupService.class, JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class, OrderService.class,
-        JdbcTemplateOrderDao.class, TableService.class,
-        JdbcTemplateOrderLineItemDao.class})
+        JdbcTemplateMenuProductDao.class, OrderService.class, TableService.class, OrderCustomDao.class})
 class OrderServiceTest {
 
     @Autowired
@@ -68,10 +66,13 @@ class OrderServiceTest {
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
 
         // given : 주문
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
-        final Order savedOrder = orderService.create(order);
+        final OrderResponse savedOrder = orderService.create(
+                savedOrderTable.getId(),
+                List.of(
+                        new OrderLineItemsRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()),
+                        new OrderLineItemsRequest(orderLineItem2.getMenuId(), orderLineItem2.getQuantity())
+                )
+        );
 
         assertThat(savedOrder).isNotNull();
     }
@@ -85,10 +86,7 @@ class OrderServiceTest {
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
 
         // given : 주문
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of()); // 비어있는 OrderLineItems
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(savedOrderTable.getId(), List.of())) // 비어있는 OrderLineItems
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -110,9 +108,7 @@ class OrderServiceTest {
         final Menu savedMenu2 = 저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct);
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(4);
-        orderLineItem.setMenuId(0L); // 존재하지 않는 메뉴
+        final OrderLineItem orderLineItem = new OrderLineItem(null, null, 0L, 4); // 존재하지 않는 메뉴
 
         final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
@@ -120,11 +116,10 @@ class OrderServiceTest {
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
 
         // given : 주문
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(savedOrderTable.getId(), List.of(
+                new OrderLineItemsRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()),
+                new OrderLineItemsRequest(orderLineItem2.getMenuId(), orderLineItem2.getQuantity())
+        )))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -150,11 +145,10 @@ class OrderServiceTest {
         final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
 
         // given : 주문
-        final Order order = new Order();
-        order.setOrderTableId(0L); // 존재하지 않는 주문 테이블
-        order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(0L, List.of(
+                new OrderLineItemsRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()),
+                new OrderLineItemsRequest(orderLineItem2.getMenuId(), orderLineItem2.getQuantity())
+        )))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -185,11 +179,14 @@ class OrderServiceTest {
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
 
         // given : 주문
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(List.of(orderLineItem, orderLineItem2));
-        final Order savedOrder = orderService.create(order);
+        final OrderResponse savedOrder = orderService.create(
+                savedOrderTable.getId(),
+                List.of(
+                        new OrderLineItemsRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity()),
+                        new OrderLineItemsRequest(orderLineItem2.getMenuId(), orderLineItem2.getQuantity())
+                )
+        );
 
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(savedOrder).extracting("orderStatus").isEqualTo(OrderStatus.COOKING.name());
     }
 }

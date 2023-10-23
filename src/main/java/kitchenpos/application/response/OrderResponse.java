@@ -1,0 +1,50 @@
+package kitchenpos.application.response;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.domain.Order;
+
+public class OrderResponse {
+    @JsonProperty
+    private final Long id;
+    @JsonProperty
+    private final Long orderTableId;
+    @JsonProperty
+    private final String orderStatus;
+    @JsonProperty
+    private final LocalDateTime orderedTime;
+    @JsonProperty
+    private final List<OrderLineItemResponse> orderLineItems;
+
+    public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
+                         final LocalDateTime orderedTime,
+                         final List<OrderLineItemResponse> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public static OrderResponse from(final Order order) {
+        return new OrderResponse(
+                order.getId(),
+                order.getOrderTableId(),
+                order.getOrderStatus(),
+                order.getOrderedTime(),
+                OrderLineItemResponse.from(order.getOrderLineItems())
+        );
+    }
+
+    public static List<OrderResponse> from(final List<Order> orders) {
+        return orders
+                .stream().map(OrderResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    public Long getId() {
+        return id;
+    }
+}

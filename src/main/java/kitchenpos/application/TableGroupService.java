@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderCustomDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupCustomDao;
 import kitchenpos.domain.OrderStatus;
@@ -17,11 +17,11 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
+    private final OrderCustomDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupCustomDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupCustomDao tableGroupDao) {
+    public TableGroupService(final OrderCustomDao orderDao, final OrderTableDao orderTableDao, final TableGroupCustomDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
