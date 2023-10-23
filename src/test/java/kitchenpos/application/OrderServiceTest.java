@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.exception.OrderExceptionType.EMPTY_ORDER_LINE_ITEM_EXCEPTION;
 import static kitchenpos.exception.OrderExceptionType.ORDER_STATUS_ALREADY_COMPLETION_EXCEPTION;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_EMPTY_EXCEPTION;
@@ -13,9 +14,9 @@ import kitchenpos.dao.jpa.JpaOrderRepository;
 import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.dao.jpa.JpaTableGroupRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.exception.BaseExceptionType;
@@ -92,11 +93,9 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void 주문의_상태가_이미_계산완료면_예외가_발생한다() {
             // given
-            tableGroupRepository.getReferenceById(1L);
+            tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
             OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
-            Order order = orderRepository.save(
-                    new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now(), List.of(new OrderLineItem(null, null, 1)))
-            );
+            Order order = orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now()));
 
             // when
             BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->

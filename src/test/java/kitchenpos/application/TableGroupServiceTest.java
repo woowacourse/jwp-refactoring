@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_STATUS_IS_NOT_COMPLETION;
 import static kitchenpos.exception.OrderTableExceptionType.ORDER_TABLE_SIZE_NOT_ENOUGH;
 import static kitchenpos.exception.TableGroupExceptionType.ILLEGAL_ADD_ORDER_TABLE_EXCEPTION;
@@ -11,18 +10,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.common.IntegrationTest;
-import kitchenpos.dao.jpa.JpaOrderRepository;
 import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.dao.jpa.JpaTableGroupRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.CreateOrderLineItemRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.exception.BaseExceptionType;
 import kitchenpos.exception.OrderTableException;
 import kitchenpos.exception.TableGroupException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -40,7 +40,9 @@ class TableGroupServiceTest extends IntegrationTest {
     @Autowired
     private JpaTableGroupRepository tableGroupRepository;
     @Autowired
-    private JpaOrderRepository orderRepository;
+    private OrderService orderService;
+    @Autowired
+    private TableService tableService;
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -91,8 +93,8 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void 요청된_모든_테이블들이_이미_다른_테이블_그룹이_저장되어_있으면_예외를_발생한다() {
             // given
-            TableGroup savedTableGroup = tableGroupRepository.getReferenceById(1L);
-            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(savedTableGroup, 1, false));
+            TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(tableGroup, 1, false));
             OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 1, false));
             List<OrderTableIdRequest> orderTableIds = List.of(
                     new OrderTableIdRequest(orderTable1.id()),
@@ -111,24 +113,34 @@ class TableGroupServiceTest extends IntegrationTest {
     }
 
     @Nested
-    class 테이블_그룹_헤제 {
+    class 테이블_그룹_해제 {
 
-        // TODO: 전체 테스트로 하면 자꾸 실패.. 아마 아래 테스트로 데이터에 영향이 가는 듯하다. flyway를 사용하는 상황에서 어떻게 테스트 간의 데이터 독립성을 지킬 수 있을까?
         @Test
-        @Disabled
         void 요청된_테이블_그룹_ID로_묶인_주문_테이블들의_상태가_하나라도_COOKING이거나_MEAL이면_예외를_발생한다() {
             // given
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 1, true));
+            OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 1, false));
+            OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, 2, false));
 
-            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(
-                    new OrderTableIdRequest(1L),
-                    new OrderTableIdRequest(2L),
-                    new OrderTableIdRequest(orderTable.id())
+            Order order1 = orderService.create(new OrderCreateRequest(
+                    orderTable1.id(), List.of(
+                    new CreateOrderLineItemRequest(1L, 1L),
+                    new CreateOrderLineItemRequest(1L, 2L))
             ));
-            TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
-            orderTable.changeEmpty(false);
+            Order order2 = orderService.create(new OrderCreateRequest(
+                    orderTable2.id(), List.of(
+                    new CreateOrderLineItemRequest(1L, 1L),
+                    new CreateOrderLineItemRequest(1L, 2L))
+            ));
 
-            orderRepository.save(new Order(orderTable, COOKING, LocalDateTime.now(), List.of()));
+            tableService.changeEmpty(orderTable1.id(), true);
+            tableService.changeEmpty(orderTable2.id(), true);
+
+            TableGroup tableGroup = tableGroupService.create(new TableGroupCreateRequest(List.of(
+                    new OrderTableIdRequest(orderTable1.id()),
+                    new OrderTableIdRequest(orderTable2.id())
+            )));
+
+            order1.changeOrderStatus(OrderStatus.COOKING);
 
             // when
             BaseExceptionType exceptionType = assertThrows(OrderTableException.class, () ->
