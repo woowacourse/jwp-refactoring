@@ -1,5 +1,5 @@
 ###
-POST http://localhost:8080/api/orders
+POST {{host}}/api/orders
 Content-Type: application/json
 
 {
@@ -13,10 +13,10 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/api/orders
+GET {{host}}/api/orders
 
 ###
-PUT http://localhost:8080/api/orders/1/order-status
+PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT http://localhost:8080/api/orders/1/order-status
+PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
 
 {

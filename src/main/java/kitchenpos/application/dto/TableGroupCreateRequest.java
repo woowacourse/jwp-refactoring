@@ -14,6 +14,9 @@ public class TableGroupCreateRequest {
         return orderTables;
     }
 
+    public TableGroupCreateRequest() {
+    }
+
     public static class OrderTableRequest {
 
         private Long id;
@@ -24,6 +27,9 @@ public class TableGroupCreateRequest {
 
         public Long getId() {
             return id;
+        }
+
+        public OrderTableRequest() {
         }
     }
 }
