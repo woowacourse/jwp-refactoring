@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.common.event.ValidateAllOrderCompletedEvent;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
@@ -13,7 +14,6 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderIsNotCompletedException;
 import kitchenpos.supports.ServiceTestContext;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.dto.request.ChangeEmptyTableRequest;
 import kitchenpos.table.dto.request.ChangeTableGuestRequest;
 import kitchenpos.table.dto.request.CreateOrderTableRequest;
@@ -22,6 +22,7 @@ import kitchenpos.table.exception.NotEnoughGuestsException;
 import kitchenpos.table.exception.OrderTableEmptyException;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.exception.TableGroupExistsException;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -99,6 +100,27 @@ class TableServiceTest extends ServiceTestContext {
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                 .isInstanceOf(OrderIsNotCompletedException.class);
+    }
+
+    @Test
+    void 빈_테이블로_변경할_때_주문이_모두_마쳤는지에_대한_검증_이벤트가_발행된다() {
+        // given
+        OrderTable orderTable = OrderTableFixture.of(null, 2, false);
+        orderTableRepository.save(orderTable);
+
+        Order order = OrderFixture.of(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
+        orderRepository.save(order);
+
+        ChangeEmptyTableRequest request = new ChangeEmptyTableRequest(false);
+
+        tableService.changeEmpty(orderTable.getId(), request);
+
+        // when
+        long eventOccurredCount = applicationEvents.stream(ValidateAllOrderCompletedEvent.class)
+                .count();
+
+        // then
+        assertThat(eventOccurredCount).isEqualTo(1);
     }
 
     @Test

@@ -1,19 +1,19 @@
 package kitchenpos.supports;
 
-import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.product.repository.ProductRepository;
 import kitchenpos.product.service.ProductService;
 import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.table.service.TableService;
 import kitchenpos.tablegroup.repository.TableGroupRepository;
 import kitchenpos.tablegroup.service.TableGroupService;
-import kitchenpos.table.service.TableService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestConstructor.AutowireMode;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @TestConstructor(autowireMode = AutowireMode.ALL)
@@ -29,6 +31,7 @@ import org.springframework.test.context.TestExecutionListeners;
         value = DatabaseCleaner.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
 )
+@RecordApplicationEvents
 public class ServiceTestContext {
 
     @Autowired
@@ -60,4 +63,7 @@ public class ServiceTestContext {
     protected TableGroupRepository tableGroupRepository;
     @Autowired
     protected OrderTableRepository orderTableRepository;
+
+    @Autowired
+    protected ApplicationEvents applicationEvents;
 }
