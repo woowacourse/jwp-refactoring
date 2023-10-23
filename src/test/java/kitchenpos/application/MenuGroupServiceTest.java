@@ -1,26 +1,17 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest extends ServiceTest {
-
-    @InjectMocks
-    private MenuGroupService menuGroupService;
-
-    @Mock
-    private MenuGroupDao menuGroupDao;
 
     @Nested
     class create_성공_테스트 {
@@ -28,16 +19,13 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 메뉴_그룹을_생성할_수_있다() {
             // given
-            final var menuGroup = new MenuGroup("메뉴_그룹_이름");
-            menuGroup.setId(1L);
-            given(menuGroupDao.save(menuGroup)).willReturn(menuGroup);
+            final var request = new MenuGroupCreateRequest("메뉴_그룹_이름");
 
             // when
-            final var actual = menuGroupService.create(menuGroup);
+            final var actual = menuGroupService.create(request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(menuGroup);
+            assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
         }
     }
 
@@ -50,10 +38,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
         @Test
         void 메뉴_그룹이_존재하지_않으면_빈_값을_반환한다() {
-            // given
-            given(menuGroupDao.findAll()).willReturn(Collections.emptyList());
-
-            // when
+            // given & when
             final var actual = menuGroupService.list();
 
             // then
@@ -63,10 +48,9 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 메뉴_그룹이_하나_이상_존재하면_메뉴_그룹_목록을_반환한다() {
             // given
-            final var menuGroup = new MenuGroup("메뉴_그룹_이름");
-            given(menuGroupDao.findAll()).willReturn(List.of(menuGroup));
+            final var menuGroup = menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
 
-            final var expected = List.of(menuGroup);
+            final var expected = List.of(MenuGroupResponse.toResponse(menuGroup));
 
             // when
             final var actual = menuGroupService.list();
