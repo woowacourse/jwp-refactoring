@@ -19,7 +19,7 @@ public class TableGroupFixture {
 
     public static TableGroup 단체_지정(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        tableGroup.changeOrderTables(orderTables);
+        tableGroup.group(orderTables);
         return tableGroup;
     }
 

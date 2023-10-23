@@ -42,10 +42,10 @@ public class TableGroup extends BaseEntity {
         return new TableGroup(LocalDateTime.now());
     }
 
-    public void changeOrderTables(List<OrderTable> orderTables) {
+    public void group(List<OrderTable> orderTables) {
         validate(orderTables);
         for (OrderTable orderTable : orderTables) {
-            orderTable.changeTableGroup();
+            orderTable.group();
         }
         this.orderTables.addAll(orderTables);
     }

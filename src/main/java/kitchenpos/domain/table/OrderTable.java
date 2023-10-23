@@ -18,7 +18,7 @@ public class OrderTable extends BaseEntity {
 
     @Column(name = "table_group_id")
     private Long tableGroupId;
-    
+
     private int numberOfGuests;
     private boolean empty;
 
@@ -40,14 +40,14 @@ public class OrderTable extends BaseEntity {
         this.empty = empty;
     }
 
-    public void changeTableGroup() {
+    public void group() {
         if (!empty || Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
         }
         this.empty = false;
     }
 
-    public void clearTableGroup() {
+    public void ungroup() {
         this.tableGroupId = null;
     }
 

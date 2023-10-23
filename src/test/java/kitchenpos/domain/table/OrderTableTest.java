@@ -50,7 +50,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(1L, 0, true);
 
         // when
-        orderTable.clearTableGroup();
+        orderTable.ungroup();
 
         // then
         assertThat(orderTable.getTableGroupId()).isNull();
@@ -62,7 +62,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(1L, 0, true);
 
         // expect
-        assertThatThrownBy(orderTable::changeTableGroup)
+        assertThatThrownBy(orderTable::group)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
     }
@@ -73,7 +73,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(null, 0, false);
 
         // expect
-        assertThatThrownBy(orderTable::changeTableGroup)
+        assertThatThrownBy(orderTable::group)
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비어있지 않거나, 이미 단체 지정이 된 테이블은 단체 지정을 할 수 없습니다.");
     }
@@ -84,7 +84,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(null, 0, true);
 
         // when
-        orderTable.changeTableGroup();
+        orderTable.group();
 
         // then
         assertThat(orderTable.isEmpty()).isFalse();

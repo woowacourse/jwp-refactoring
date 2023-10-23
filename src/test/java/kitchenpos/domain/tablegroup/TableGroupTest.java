@@ -27,7 +27,7 @@ class TableGroupTest {
         OrderTable orderTable = new OrderTable(0, true);
 
         // expect
-        assertThatThrownBy(() -> tableGroup.changeOrderTables(List.of(orderTable)))
+        assertThatThrownBy(() -> tableGroup.group(List.of(orderTable)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("단체 지정하려는 테이블은 2개 이상이어야 합니다.");
     }
@@ -40,7 +40,7 @@ class TableGroupTest {
         OrderTable orderTable2 = new OrderTable(0, true);
 
         // when
-        tableGroup.changeOrderTables(List.of(orderTable1, orderTable2));
+        tableGroup.group(List.of(orderTable1, orderTable2));
 
         // then
         assertThat(tableGroup.getOrderTables()).containsExactly(orderTable1, orderTable2);

@@ -30,14 +30,14 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(TableGroupRequest request) {
-        TableGroup tableGroup = tableGroupRepository.save(TableGroup.create());
-        tableGroup.changeOrderTables(orderTableRepository.findAllByIdIn(request.getOrderTableIds()));
-        return TableGroupResponse.from(tableGroup);
+        TableGroup tableGroup = TableGroup.create();
+        tableGroup.group(orderTableRepository.findAllByIdIn(request.getOrderTableIds()));
+        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
     public void ungroup(Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        orderTables.forEach(OrderTable::clearTableGroup);
+        orderTables.forEach(OrderTable::ungroup);
         applicationEventPublisher.publishEvent(new TableGroupUngroupedEvent(tableGroupId));
     }
 }
