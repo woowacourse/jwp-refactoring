@@ -1,9 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -13,9 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
-import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
 
 @Entity(name = "orders")
 public class Order {
@@ -24,8 +23,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
@@ -39,25 +38,24 @@ public class Order {
     protected Order() {
     }
 
-    private Order(final OrderTable orderTable, final OrderStatus orderStatus,
+    private Order(final Long orderTableId, final OrderStatus orderStatus,
         final LocalDateTime orderedTime) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public static Order of(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
 
-        if (orderTable.isEmpty()) {
-            throw new EmptyOrderTableException();
-        }
+//        if (orderTable.isEmpty()) {
+//            throw new EmptyOrderTableException();
+//        }
 
         if (orderLineItems.isEmpty()) {
             throw new EmptyOrderLineItemsException();
         }
 
-        //            orderLineItem.setOrder(order);
         order.orderLineItems.addAll(orderLineItems);
         return order;
     }
@@ -74,8 +72,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

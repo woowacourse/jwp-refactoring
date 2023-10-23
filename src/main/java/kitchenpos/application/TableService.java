@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateDto;
 import kitchenpos.application.dto.OrderTableUpdateGuestDto;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

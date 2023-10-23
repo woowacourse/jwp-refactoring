@@ -1,7 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.util.List;
 import java.util.Set;
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {

@@ -10,14 +10,14 @@ import kitchenpos.application.exception.OrderAppException.NotFoundOrderException
 import kitchenpos.application.exception.OrderAppException.OrderAlreadyCompletedException;
 import kitchenpos.application.exception.OrderLineItemAppException.EmptyOrderLineItemException;
 import kitchenpos.application.exception.OrderTableAppException.NotFoundOrderTableException;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +51,7 @@ public class OrderService {
 
         final List<OrderLineItem> orderLineItems = makeOrderLineItems(orderLineItemDtos);
 
-        final Order newOrder = Order.of(orderTable, orderLineItems);
+        final Order newOrder = Order.of(orderCreateDto.getOrderTableId(), orderLineItems);
 
         return orderRepository.save(newOrder);
     }

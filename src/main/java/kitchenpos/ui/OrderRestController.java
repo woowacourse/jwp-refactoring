@@ -5,7 +5,7 @@ import java.util.List;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderCreateDto;
 import kitchenpos.application.dto.OrderStatusUpdateDto;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

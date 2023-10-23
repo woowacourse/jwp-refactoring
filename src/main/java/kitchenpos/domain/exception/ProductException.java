@@ -1,7 +1,7 @@
 package kitchenpos.domain.exception;
 
-import static kitchenpos.domain.Product.MINIMUM_PRODUCT_NAME_LENGTH;
-import static kitchenpos.domain.Product.MINIMUM_PRODUCT_PRICE;
+import static kitchenpos.domain.product.Product.MINIMUM_PRODUCT_NAME_LENGTH;
+import static kitchenpos.domain.product.Product.MINIMUM_PRODUCT_PRICE;
 
 import java.math.BigDecimal;
 import kitchenpos.common.KitchenPosException;
