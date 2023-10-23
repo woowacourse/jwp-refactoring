@@ -111,7 +111,8 @@ class OrderServiceTest extends IntegrationTest {
     void list() {
         // given
         final Order order = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
-        orderLineItemRepository.save(new OrderLineItem(order, generateMenu("chicken", 20000L).getId(), 1L));
+        final Menu menu = generateMenu("chicken", 20000L);
+        orderLineItemRepository.save(new OrderLineItem(order, menu.getId(), menu.getName(), menu.getPrice(), 1L));
 
         // when
         final List<OrderResult> list = orderService.list();
@@ -130,7 +131,8 @@ class OrderServiceTest extends IntegrationTest {
         // given
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
         final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3));
-        orderLineItemRepository.save(new OrderLineItem(existOrder, generateMenu("chicken", 20000L).getId(), 1L));
+        final Menu menu = generateMenu("chicken", 20000L);
+        orderLineItemRepository.save(new OrderLineItem(existOrder, menu.getId(), menu.getName(), menu.getPrice(), 1L));
 
         // when
         final OrderResult changedOrder = orderService.changeOrderStatus(existOrder.getId(), request);
