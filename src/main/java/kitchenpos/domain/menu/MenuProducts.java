@@ -1,6 +1,6 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.exception.MenuProductsException;
+import kitchenpos.exception.MenuProductException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -21,7 +21,7 @@ public class MenuProducts {
 
     public void add(List<MenuProduct> menuProducts) {
         if (isNull(menuProducts)) {
-            throw new MenuProductsException("메뉴 상품이 존재하지 않습니다.");
+            throw new MenuProductException("메뉴 상품이 존재하지 않습니다.");
         }
         this.menuProducts.addAll(menuProducts);
     }
