@@ -23,13 +23,12 @@ public class Price {
     }
 
     private Price(BigDecimal value) {
-        this.value = value;
+        validate(value);
+        this.value = value.setScale(PRICE_SCALE, RoundingMode.DOWN);
     }
 
     public static Price from(final BigDecimal value) {
-        validate(value);
-        final BigDecimal scaledPrice = value.setScale(PRICE_SCALE, RoundingMode.DOWN);
-        return new Price(scaledPrice);
+        return new Price(value);
     }
 
     private static void validate(final BigDecimal price) {

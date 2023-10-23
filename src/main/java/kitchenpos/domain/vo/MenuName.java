@@ -15,12 +15,12 @@ public class MenuName {
     }
 
     private MenuName(final String name) {
+        validate(name);
         this.name = name;
     }
 
-    public static MenuName from(final String value) {
-        validate(value);
-        return new MenuName(value);
+    public static MenuName from(final String name) {
+        return new MenuName(name);
     }
 
     private static void validate(final String name) {

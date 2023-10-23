@@ -16,10 +16,10 @@ class PriceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"0", "9"})
-    @DisplayName("0부터 19자리 수까지 가격을 생성할 수 있다.")
+    @DisplayName("0부터 전체 자리 수 19, 소수점 자리 수 2까지 가격을 생성할 수 있다.")
     void 가격_생성_성공(String number) {
         // given
-        BigDecimal value = new BigDecimal(number.repeat(19));
+        BigDecimal value = new BigDecimal(number.repeat(17));
 
         // when
         final Price price = Price.from(value);

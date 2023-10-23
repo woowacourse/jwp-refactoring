@@ -15,12 +15,12 @@ public class ProductName {
     }
 
     private ProductName(final String name) {
+        validate(name);
         this.name = name;
     }
 
-    public static ProductName from(final String value) {
-        validate(value);
-        return new ProductName(value);
+    public static ProductName from(final String name) {
+        return new ProductName(name);
     }
 
     private static void validate(final String name) {
