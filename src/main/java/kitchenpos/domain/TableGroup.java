@@ -23,7 +23,7 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "order_table", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL)
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {

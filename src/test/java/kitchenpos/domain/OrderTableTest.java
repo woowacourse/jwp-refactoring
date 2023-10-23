@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -16,7 +18,7 @@ class OrderTableTest {
     @ValueSource(ints = {-1, Integer.MIN_VALUE})
     void 변경하려는_게스트_수가_0보다_작다면_예외가_발생한다(final int numberOfGuests) {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 3, false);
+        final OrderTable orderTable = new OrderTable(new TableGroup(), 3, false);
 
         // expect
         assertThatThrownBy(() -> orderTable.updateNumberOfGuests(numberOfGuests))
@@ -27,12 +29,12 @@ class OrderTableTest {
     @Test
     void 주문_테이블이_비어이있다면_손님_수를_변경할_수_없다() {
         // given
-        final OrderTable orderTable = new OrderTable(1L, 3, true);
+        final OrderTable orderTable = new OrderTable(new TableGroup(), 3, true);
 
         // expect
         assertThatThrownBy(() -> orderTable.updateNumberOfGuests(5))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("빈 테이블에는 손님을 지정할 수 없습니다.");
+                .hasMessageContaining("빈 테이블에는 손님이 있을 수 없습니다.");
     }
 
 }

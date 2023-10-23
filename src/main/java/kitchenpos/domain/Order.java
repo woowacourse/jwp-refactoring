@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,10 +10,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -31,8 +31,6 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "seq")
-    private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
@@ -40,28 +38,28 @@ public class Order {
     public Order(
             final OrderTable orderTable,
             final OrderStatus orderStatus,
-            final LocalDateTime orderedTime,
-            final List<OrderLineItem> orderLineItems
+            final LocalDateTime orderedTime
     ) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTable, orderStatus, orderedTime);
     }
 
     public Order(
             final Long id,
             final OrderTable orderTable,
             final OrderStatus orderStatus,
-            final LocalDateTime orderedTime,
-            final List<OrderLineItem> orderLineItems
+            final LocalDateTime orderedTime
     ) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public static Order createBy(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 생성시 주문 테이블은 테이블은 비어있을 수 없습니다");
+        }
+        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void updateStatus(final String status) {
@@ -87,9 +85,5 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

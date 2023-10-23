@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import java.util.List;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.dto.table.CreateOrderTableRequest;
 import kitchenpos.ui.dto.table.UpdateTableGuestRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TableServiceTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableService tableService;
@@ -57,7 +57,7 @@ class TableServiceTest {
         void 주문_테이블의_저장된_손님_수를_변경할_수_있다() {
             // given
             final OrderTable orderTable = new OrderTable(null, null, 0, false);
-            final OrderTable expected = orderTableDao.save(orderTable);
+            final OrderTable expected = orderTableRepository.save(orderTable);
             final UpdateTableGuestRequest updateTableGuestRequest = new UpdateTableGuestRequest(5);
 
             // when
@@ -71,7 +71,7 @@ class TableServiceTest {
         void 주문_테이블_게스트_수가_0보다_작다면_예외가_발생한다() {
             // given
             final OrderTable orderTable = new OrderTable(null, null, 0, false);
-            final OrderTable expected = orderTableDao.save(orderTable);
+            final OrderTable expected = orderTableRepository.save(orderTable);
             final UpdateTableGuestRequest updateTableGuestRequest = new UpdateTableGuestRequest(-1);
 
             // expect
@@ -95,7 +95,7 @@ class TableServiceTest {
         void 주문_테이블이_비어있다면_예외가_발생한다() {
             // given
             final OrderTable orderTable = new OrderTable(null, null, 0, true);
-            final OrderTable expected = orderTableDao.save(orderTable);
+            final OrderTable expected = orderTableRepository.save(orderTable);
             final UpdateTableGuestRequest updateTableGuestRequest = new UpdateTableGuestRequest(-1);
 
             // expected

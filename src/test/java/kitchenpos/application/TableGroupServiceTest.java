@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.dto.tablegroup.OrderTableIdRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -34,10 +32,10 @@ class TableGroupServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -48,8 +46,8 @@ class TableGroupServiceTest {
         @Test
         void 단쳬_지정을_저장할_수_있다() {
             // given
-            final OrderTable firstOrderTable = orderTableDao.save(new OrderTable(null, 0, true));
-            final OrderTable secondOrderTable = orderTableDao.save(new OrderTable(null, 0, true));
+            final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 0, true));
+            final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 0, true));
 
             final List<OrderTableIdRequest> orderTableIdRequests = List.of(
                     new OrderTableIdRequest(firstOrderTable.getId()),
@@ -80,7 +78,7 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_2개_미만이면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(new OrderTable(null, 0, true));
+            final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
             final List<OrderTableIdRequest> orderTableIdRequests = List.of(new OrderTableIdRequest(orderTable.getId()));
 
             // expect
@@ -93,8 +91,8 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블이_빈_상태가_아니라면_예외가_발생한다() {
             // given
-            final OrderTable firstOrderTable = orderTableDao.save(new OrderTable(null, 3, false));
-            final OrderTable secondOrderTable = orderTableDao.save(new OrderTable(null, 3, false));
+            final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+            final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
 
             final List<OrderTableIdRequest> orderTableIdRequests = List.of(
                     new OrderTableIdRequest(firstOrderTable.getId()),
@@ -111,8 +109,8 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_해제할_수_있다() {
         // given
-        final OrderTable firstOrderTable = orderTableDao.save(new OrderTable(null, 3, false));
-        final OrderTable secondOrderTable = orderTableDao.save(new OrderTable(null, 3, false));
+        final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
 
         final TableGroup tableGroup = new TableGroup(List.of(firstOrderTable, secondOrderTable));
         final TableGroup expected = tableGroupRepository.save(tableGroup);
@@ -124,10 +122,10 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정_해제시_식사_중인_주문이_있을_경우_예외가_발생한다() {
         // given
-        final OrderTable firstOrderTable = orderTableDao.save(new OrderTable(null, 1, true));
-        final OrderTable secondOrderTable = orderTableDao.save(new OrderTable(null, 2, true));
-        final Order order = new Order(firstOrderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
-        orderDao.save(order);
+        final OrderTable firstOrderTable = orderTableRepository.save(new OrderTable(null, 1, true));
+        final OrderTable secondOrderTable = orderTableRepository.save(new OrderTable(null, 2, true));
+        final Order order = Order.createBy(firstOrderTable);
+        orderRepository.save(order);
 
         final List<OrderTableIdRequest> orderTableIdRequests = List.of(
                 new OrderTableIdRequest(firstOrderTable.getId()),
