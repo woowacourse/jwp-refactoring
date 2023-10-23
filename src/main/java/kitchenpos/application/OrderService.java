@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.OrderChangeStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.domain.*;
@@ -82,10 +83,10 @@ public class OrderService {
     }
     
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                                                 .orElseThrow(() -> new NotExistOrderException("존재하지 않는 주문입니다"));
-        savedOrder.changeOrderStatus(order.getOrderStatus());
+        savedOrder.changeOrderStatus(OrderStatus.from(request.getOrderStatus()));
         return savedOrder;
     }
 }
