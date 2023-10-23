@@ -59,7 +59,7 @@ public class Order {
     }
 
     public void validateOrderComplete() {
-        if (orderStatus.equals(OrderStatus.MEAL) || orderStatus.equals(OrderStatus.COOKING)) {
+        if (!orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalOrderStatusException();
         }
     }
