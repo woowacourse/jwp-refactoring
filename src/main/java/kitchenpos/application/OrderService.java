@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class OrderService {
 
     private final MenuRepository menuRepository;
@@ -35,7 +36,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
         final OrderTable orderTable = findOrderTable(request);
         Order order = makeOrder(request);
@@ -80,12 +80,12 @@ public class OrderService {
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
         return OrderResponse.of(orders);
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);

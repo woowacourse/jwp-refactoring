@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;
@@ -18,13 +19,13 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
         Product newProduct = productRepository.save(
             new Product(null, request.getName(), new Price(request.getPrice())));
         return ProductResponse.of(newProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         return ProductResponse.of(productRepository.findAll());
     }
