@@ -33,33 +33,37 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuCreateRequest req) {
-        // 1. 존재하는 상품이 메뉴에 들어가있는지 확인
+        // 1. 존재하는 상품이 메뉴에 들어가있는지 확인 -> 이벤트
         List<Product> productsInMenuProduct = req.getMenuProducts()
                 .stream()
-                .map(it -> productRepository.findById(it.getProductId())
+                .map(product -> productRepository.findById(product.getProductId())
                         .orElseThrow(ProductNotFoundException::new))
                 .collect(Collectors.toList());
 
         // 2. 메뉴 그룹이 존재하는지 확인
-        MenuGroup menuGroup = findMenuGroup(req.getMenuGroupId());
         List<MenuProduct> menuProducts = req.toMenuProducts();
+
+        MenuGroup menuGroup = findMenuGroup(req.getMenuGroupId());
         Menu menu = new Menu(req.getName(), req.getPrice(), menuGroup.getId(), menuProducts);
 
         // 2. 메뉴 가격 총합 예외
+        validateMenuPrice(menuProducts, menu);
+
+        return menuRepository.save(menu);
+    }
+
+    private void validateMenuPrice(final List<MenuProduct> menuProducts, final Menu menu) {
         BigDecimal menuProductsTotalPrice = menuProducts.stream()
                 .map(menuProduct -> {
                     Product product = productRepository.findById(menuProduct.getProductId())
                             .orElseThrow(MenuPriceExpensiveThanProductsPriceException::new);
 
                     return BigDecimal.valueOf(product.getMultiplyPrice(menuProduct.getQuantity()));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         if (menu.isExpensiveThan(menuProductsTotalPrice)) {
             throw new MenuPriceExpensiveThanProductsPriceException();
         }
-
-        return menuRepository.save(menu);
     }
 
     private MenuGroup findMenuGroup(final Long id) {

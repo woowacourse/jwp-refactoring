@@ -38,35 +38,19 @@ public class OrderService {
     @Transactional
     public Order create(final OrderCreateRequest req) {
         // 1. 주문 품목이 비어 있다면 예외
-        if(req.getOrderLineItems().isEmpty()) {
-            throw new OrderLineItemEmptyException();
-        }
+        validateOrderLineItemsEmpty(req);
 
         // 2. 주문 테이블이 없다면 예외
         OrderTable orderTable = findOrderTable(req);
 
         // 3. 주문 테이블이 비어있다면 예외
-        if (!orderTableRepository.existsByIdAndEmptyIsFalse(req.getOrderTableId())) {
-            throw new OrderTableEmptyException();
-        }
+        validateOrderTableEmpty(req);
 
+        // 4. OrderLineItem이랑 req가 같지 않는 경우 & 매핑
+        List<OrderLineItem> orderLineItems = makeOrderLineItems(req.getOrderLineItems());
+        validateOrderLineItemEmpty(req, orderLineItems);
 
-        // 4. 매핑
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItemCreateRequest orderLineItemReq : req.getOrderLineItems()) {
-            Menu menu = findMenu(orderLineItemReq);
-
-            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemReq.getQuantity());
-            orderLineItems.add(orderLineItem);
-        }
         Order order = Order.createDefault(orderTable.getId(), orderLineItems);
-
-        if (orderLineItems.size() != req.getOrderLineItems().size()) {
-            throw new OrderLineItemEmptyException();
-        }
-
-
-
         return orderRepository.save(order);
     }
 
@@ -75,9 +59,39 @@ public class OrderService {
                 .orElseThrow(OrderTableNotFoundException::new);
     }
 
+    private void validateOrderLineItemsEmpty(final OrderCreateRequest req) {
+        if (req.getOrderLineItems().isEmpty()) {
+            throw new OrderLineItemEmptyException();
+        }
+    }
+
+    private void validateOrderTableEmpty(final OrderCreateRequest req) {
+        if (!orderTableRepository.existsByIdAndEmptyIsFalse(req.getOrderTableId())) {
+            throw new OrderTableEmptyException();
+        }
+    }
+
+    private List<OrderLineItem> makeOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemRequests) {
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+        orderLineItemRequests.forEach(orderLineItemRequest -> {
+            Menu menu = findMenu(orderLineItemRequest);
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
+            orderLineItems.add(orderLineItem);
+        });
+
+        return orderLineItems;
+    }
+
     private Menu findMenu(final OrderLineItemCreateRequest orderLineItemReq) {
         return menuRepository.findById(orderLineItemReq.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
+    }
+
+    private void validateOrderLineItemEmpty(final OrderCreateRequest req, final List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.size() != req.getOrderLineItems().size()) {
+            throw new OrderLineItemEmptyException();
+        }
     }
 
     @Transactional(readOnly = true)
