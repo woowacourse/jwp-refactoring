@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -38,6 +37,7 @@ public class Menu {
     }
 
     public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+        validateNotNull(price, menuGroup);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -45,9 +45,25 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void addMenuProducts(final List<MenuProduct> toAddMenuProducts) {
-        toAddMenuProducts.forEach(menuProduct -> menuProduct.changeMenu(this));
-        this.menuProducts.addAll(toAddMenuProducts);
+    private void validateNotNull(final Price price, final MenuGroup menuGroup) {
+        if (price == null) {
+            throw new IllegalArgumentException("Price의 값은 null 일 수 없습니다.");
+        }
+
+        if (menuGroup == null) {
+            throw new IllegalArgumentException("MenuGroup의 값은 null 일 수 없습니다.");
+        }
+    }
+
+    public void addMenuProducts(final MenuProducts toAddMenuProducts) {
+        final Price sum = toAddMenuProducts.getPriceSumOfProducts();
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
+
+        toAddMenuProducts.getMenuProducts().forEach(menuProduct -> menuProduct.changeMenu(this));
+        this.menuProducts.addAll(toAddMenuProducts.getMenuProducts());
     }
 
     public Long getId() {

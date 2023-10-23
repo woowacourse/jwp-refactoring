@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -10,6 +9,9 @@ import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.domain.menu.service.MenuService;
+import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
+import kitchenpos.domain.menu.service.dto.MenuGroupResponse;
+import kitchenpos.domain.menu.service.dto.MenuResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,15 +25,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static kitchenpos.application.fixture.MenuFixture.menu;
-import static kitchenpos.application.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.application.fixture.MenuGroupFixture.western;
 import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.application.fixture.ProductFixture.noodle;
 import static kitchenpos.application.fixture.ProductFixture.potato;
-import static kitchenpos.application.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.spy;
@@ -65,103 +67,52 @@ class MenuServiceTest {
             final Product potato = potato();
             final MenuProduct wooDong = menuProduct(noodle, 1);
             final MenuProduct frenchFries = menuProduct(potato, 1);
-            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
+            final MenuGroup menuGroup = western();
+            final Menu expected = spy(menu("우동세트", BigDecimal.valueOf(9000), menuGroup, List.of(wooDong, frenchFries)));
 
-            given(menuGroupRepository.existsById(any())).willReturn(true);
-            given(productRepository.findById(any()))
-                    .willReturn(Optional.ofNullable(noodle))
-                    .willReturn(Optional.ofNullable(potato));
-
-            final Menu spyExpected = spy(menu(expected.getName(), expected.getPrice().getPrice(), expected.getMenuGroup(), new ArrayList<>()));
-            given(menuRepository.save(expected)).willReturn(spyExpected);
+            given(menuGroupRepository.findById(anyLong())).willReturn(Optional.ofNullable(menuGroup));
+            given(menuProductRepository.fetchAllById(anyList())).willReturn(List.of(wooDong, frenchFries));
+            given(menuRepository.save(any(Menu.class))).willReturn(expected);
+            final long savedId = 1L;
+            given(expected.getId()).willReturn(savedId);
 
             // when
-            final Menu actual = menuService.create(expected);
+            final MenuCreateRequest request = new MenuCreateRequest("우동", 1L, 1L, List.of(1L, 2L));
+            final MenuResponse actual = menuService.create(request);
 
             // then
-            assertThat(actual)
-                    .usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(spyExpected);
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getName()).isEqualTo(expected.getName()),
+                    () -> assertThat(actual.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue()),
+                    () -> assertMenuGroup(actual.getMenuGroup(), expected.getMenuGroup()),
+                    () -> assertThat(actual.getMenuProductResponses()).hasSize(expected.getMenuProducts().getMenuProducts().size())
+            );
+        }
+
+        private void assertMenuGroup(final MenuGroupResponse actual, final MenuGroup expected) {
+            assertThat(actual.getId()).isEqualTo(expected.getId());
+            assertThat(actual.getName()).isEqualTo(expected.getName());
         }
 
         @Test
         void 메뉴_가격이_0보다_작으면_생성할_수_없다() {
             // given
-            final MenuProduct wooDong = menuProduct(noodle(), 1);
-            final MenuProduct frenchFries = menuProduct(potato(), 1);
-
-            final BigDecimal underZeroPrice = BigDecimal.valueOf(-1);
+            final long underZeroPrice = -1L;
+            final MenuCreateRequest request = new MenuCreateRequest("우동세트", underZeroPrice, 1L, List.of(1L, 2L));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu("우동세트", underZeroPrice, western(), List.of(wooDong, frenchFries))))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴_가격이_null이면_생성할_수_없다() {
-            // given
-            final MenuProduct wooDong = menuProduct(noodle(), 1);
-            final MenuProduct frenchFries = menuProduct(potato(), 1);
-
-            final Price nullPrice = null;
-            final Menu expected = menu("우동세트", nullPrice, western(), List.of(wooDong, frenchFries));
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 메뉴_그룹이_없으면_메뉴를_생성할_수_없다() {
-            // given
-            final MenuProduct wooDong = menuProduct(noodle(), 1);
-            final MenuProduct frenchFries = menuProduct(potato(), 1);
-
-            final MenuGroup noneExistedMenuGroup = menuGroup("noneExistedMenuGroupId");
-            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), noneExistedMenuGroup, List.of(wooDong, frenchFries));
-
-            given(menuGroupRepository.existsById(any())).willReturn(false);
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품이_저장되어_있지_않으면_메뉴를_생성할_수_없다() {
             // given
-            final Product noneExistedProduct = product("noneExistedProduct", BigDecimal.valueOf(0));
-            final MenuProduct wooDong = menuProduct(noneExistedProduct, 1);
-            final MenuProduct frenchFries = menuProduct(potato(), 1);
-            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), List.of(wooDong, frenchFries));
-
-            given(menuGroupRepository.existsById(any())).willReturn(true);
-            given(productRepository.findById(noneExistedProduct.getId())).willReturn(Optional.empty());
+            final MenuCreateRequest request = new MenuCreateRequest("우동세트", 9000L, 1L, List.of(1L, 2L));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 가격이_총_합산_가격보다_크면_메뉴를_만들_수_없다() {
-            // given
-            final Product noodle = noodle();
-            final MenuProduct wooDong = menuProduct(noodle, 1);
-            final Product potato = potato();
-            final MenuProduct frenchFries = menuProduct(potato, 1);
-
-            final Price overSumOfProductPrice = noodle.getPrice().add(potato.getPrice().getPrice()).add(BigDecimal.valueOf(1000));
-            final Menu expected = menu("우동세트", overSumOfProductPrice, western(), List.of(wooDong, frenchFries));
-
-            given(menuGroupRepository.existsById(any())).willReturn(true);
-            given(productRepository.findById(any()))
-                    .willReturn(Optional.ofNullable(noodle))
-                    .willReturn(Optional.ofNullable(potato));
-
-            // when, then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
