@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
@@ -31,7 +32,7 @@ public class Menu {
 
     @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "menu_id", nullable = false)
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "price"))

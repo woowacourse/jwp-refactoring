@@ -1,6 +1,5 @@
 package kitchenpos.menu.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
@@ -51,17 +50,20 @@ public class MenuService {
     }
 
     private List<MenuProduct> setupMenuProducts(CreateMenuRequest request, Menu menu) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        for (MenuProductRequest menuProductRequest : request.getMenuProducts()) {
-            Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(ProductNotFoundException::new);
-
-            ProductPriceSnapshot priceSnapshot = new ProductPriceSnapshot(product.getPrice());
-            menuProducts.add(new MenuProduct(product.getId(),menuProductRequest.getQuantity(), priceSnapshot));
-        }
+        List<MenuProduct> menuProducts = request.getMenuProducts().stream()
+                .map(this::createMenuProduct)
+                .collect(Collectors.toList());
         menu.setupMenuProducts(menuProducts);
 
         return menuProducts;
+    }
+
+    private MenuProduct createMenuProduct(MenuProductRequest menuProductRequest) {
+        Product product = productRepository.findById(menuProductRequest.getProductId())
+                .orElseThrow(ProductNotFoundException::new);
+        ProductPriceSnapshot priceSnapshot = new ProductPriceSnapshot(product.getPrice());
+
+        return new MenuProduct(product.getId(), menuProductRequest.getQuantity(), priceSnapshot);
     }
 
     public List<MenuResponse> findAll() {
