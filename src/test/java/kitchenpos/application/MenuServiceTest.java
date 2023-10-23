@@ -8,12 +8,12 @@ import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.exception.MenuGroupNotFoundException;
-import kitchenpos.menu.exception.MenuPriceExpensiveThanProductsPriceException;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.exception.ProductNotFoundException;
+import kitchenpos.product.exception.ProductPriceMoreLessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -112,7 +112,7 @@ class MenuServiceTest extends IntegrationTestHelper {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(req))
-                .isInstanceOf(MenuPriceExpensiveThanProductsPriceException.class);
+                .isInstanceOf(ProductPriceMoreLessException.class);
     }
 
     @Test

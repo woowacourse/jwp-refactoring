@@ -26,6 +26,10 @@ public class Price {
         return new Price(BigDecimal.valueOf(price));
     }
 
+    public void addPrice(final BigDecimal price) {
+        this.price.add(price);
+    }
+
     private static void validateEmptyPrice(final Long price) {
         if (price == null || price < ZERO_PRICE) {
             throw new PriceEmptyException();
