@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.product;
 
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductRequest;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.dto.product.ProductRequest;
+import kitchenpos.dto.product.ProductResponse;
 import kitchenpos.test.ServiceTest;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.Nested;

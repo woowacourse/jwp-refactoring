@@ -17,7 +17,7 @@ import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -25,7 +25,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupUngroupedEvent;
 import kitchenpos.test.ServiceTest;
@@ -39,7 +39,7 @@ import org.springframework.context.ApplicationEventPublisher;
 @SuppressWarnings("NonAsciiCharacters")
 @ServiceTest
 public class TableGroupUngroupedEventHandlerTest {
-    
+
     @Autowired
     private OrderRepository orderRepository;
 

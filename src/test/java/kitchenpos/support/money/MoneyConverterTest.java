@@ -1,4 +1,4 @@
-package kitchenpos.common;
+package kitchenpos.support.money;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
