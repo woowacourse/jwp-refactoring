@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.menu;
-import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
 import static kitchenpos.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
@@ -65,7 +64,7 @@ class OrderServiceTest {
     @BeforeEach
     void setUpMenu() {
         final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final MenuGroup 두마리메뉴 = menuGroupRepository.save(menuGroup("두마리메뉴"));
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = menuProduct(후라이드.getId(), 2l);
         후라이드_2개_메뉴 = menuRepository.save(menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개)));
     }

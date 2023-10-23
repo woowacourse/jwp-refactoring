@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -42,8 +41,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회한다")
     void list() {
         // given
-        final MenuGroup expect1 = menuGroupRepository.save(menuGroup("추천메뉴"));
-        final MenuGroup expect2 = menuGroupRepository.save(menuGroup("신메뉴"));
+        final MenuGroup expect1 = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+        final MenuGroup expect2 = menuGroupRepository.save(new MenuGroup("신메뉴"));
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();
