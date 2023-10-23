@@ -1,88 +1,64 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.application.fixture.MenuProductFixture.createMenuProduct;
-import static kitchenpos.application.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import kitchenpos.application.dto.menu.MenuRequest;
 import kitchenpos.application.dto.menu.MenuResponse;
 import kitchenpos.application.dto.menu.ProductQuantityDto;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
+class MenuServiceTest extends DataDependentIntegrationTest {
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
+    private static final long NOT_EXIST_ID = Long.MAX_VALUE;
 
-    @Mock
-    private MenuDao menuDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-    @Mock
-    private MenuProductDao menuProductDao;
+    @Autowired
+    private ProductRepository productRepository;
 
-    @Mock
-    private ProductDao productDao;
-
-    @InjectMocks
+    @Autowired
     private MenuService menuService;
 
     @DisplayName("메뉴를 생성, 저장한다.")
     @Test
     void create_success() {
         // given
-        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
-        final Product product = createProduct(1L, "product", 1000L);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
         final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), menuGroup.getId(), List.of(
             new ProductQuantityDto(product.getId(), 2)
         ));
-        final Menu menu = createMenu(1L, "menu", 500L, menuGroup.getId());
-        final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
-
-        given(menuGroupDao.existsById(anyLong()))
-            .willReturn(true);
-        given(productDao.findById(anyLong()))
-            .willReturn(Optional.of(product));
-        given(menuDao.save(any(Menu.class)))
-            .willReturn(menu);
-        given(menuProductDao.save(any(MenuProduct.class)))
-            .willReturn(menuProduct);
 
         // when
         final MenuResponse savedMenu = menuService.create(menuRequest);
 
         // then
-        assertThat(savedMenu).isNotNull();
+        assertAll(
+            () -> assertThat(savedMenu.getId()).isNotNull(),
+            () -> assertThat(savedMenu.getName()).isEqualTo("menu"),
+            () -> assertThat(savedMenu.getMenuProducts()).usingRecursiveComparison()
+            .isEqualTo(List.of(new ProductQuantityDto(product.getId(), 2)))
+        );
     }
 
     @DisplayName("메뉴를 저장 시, 가격이 0보다 작으면 예외가 발생한다.")
     @Test
     void create_price_fail() {
         // given
-        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(-1L), menuGroup.getId(), Collections.emptyList());
 
         // when, then
@@ -94,10 +70,7 @@ class MenuServiceTest {
     @Test
     void create_menuGroup_fail() {
         // given
-        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), 1L, Collections.emptyList());
-
-        given(menuGroupDao.existsById(anyLong()))
-            .willReturn(false);
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), NOT_EXIST_ID, Collections.emptyList());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -108,15 +81,11 @@ class MenuServiceTest {
     @Test
     void create_menuProduct_fail() {
         // given
-        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
-        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), menuGroup.getId(), List.of(
-            new ProductQuantityDto(0L, 2)
-        ));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
-        given(menuGroupDao.existsById(anyLong()))
-            .willReturn(true);
-        given(productDao.findById(anyLong()))
-            .willReturn(Optional.empty());
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), menuGroup.getId(), List.of(
+            new ProductQuantityDto(NOT_EXIST_ID, 2)
+        ));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -127,16 +96,11 @@ class MenuServiceTest {
     @Test
     void create_menuTotalPrice_fail() {
         // given
-        final Product product = createProduct(1L, "product", 1000L);
-        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(2001L), menuGroup.getId(), List.of(
             new ProductQuantityDto(product.getId(), 2)
         ));
-
-        given(menuGroupDao.existsById(anyLong()))
-            .willReturn(true);
-        given(productDao.findById(anyLong()))
-            .willReturn(Optional.of(product));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -147,24 +111,19 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
-        final Product product = createProduct(1L, "product", 1000L);
-        final Menu menu1 = createMenu(1L, "menu", 500L, menuGroup.getId());
-        final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu1.getId());
-        menu1.addMenuProducts(List.of(menuProduct));
-
-        final Menu menu2 = createMenu(2L, "menu2", 1000L, menuGroup.getId());
-        final MenuProduct menuProduct2 = createMenuProduct(product.getId(), 3, menu2.getId());
-        menu2.addMenuProducts(List.of(menuProduct2));
-
-        given(menuDao.findAll())
-            .willReturn(List.of(menu1, menu2));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(1000L), menuGroup.getId(), List.of(
+            new ProductQuantityDto(product.getId(), 2L)
+        ));
+        final MenuResponse menuResponse = menuService.create(menuRequest);
 
         // when
         final List<MenuResponse> foundMenus = menuService.list();
 
         // then
         assertThat(foundMenus).usingRecursiveComparison()
-            .isEqualTo(List.of(MenuResponse.from(menu1), MenuResponse.from(menu2)));
+            .comparingOnlyFields("id")
+            .isEqualTo(List.of(menuResponse));
     }
 }

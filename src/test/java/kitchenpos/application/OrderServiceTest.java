@@ -1,95 +1,88 @@
 package kitchenpos.application;
 
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.application.dto.menu.MenuRequest;
+import kitchenpos.application.dto.menu.MenuResponse;
+import kitchenpos.application.dto.menu.ProductQuantityDto;
 import kitchenpos.application.dto.order.MenuQuantityDto;
 import kitchenpos.application.dto.order.OrderRequest;
 import kitchenpos.application.dto.order.OrderResponse;
 import kitchenpos.application.dto.order.OrderStatusChangeRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.support.DataDependentIntegrationTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class OrderServiceTest {
+class OrderServiceTest extends DataDependentIntegrationTest {
 
-    private static final MenuGroup MENU_GROUP = createMenuGroup(1L, "menuGroup");
-    private static final OrderTable ORDER_TABLE = createOrderTable(1L, 3);
+    private Long menuId;
+    private MenuGroup menuGroup;
+    private OrderTable orderTable;
+    private static final long NOT_EXIST_ID = Long.MAX_VALUE;
 
-    @Mock
-    private MenuDao menuDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderLineItemDao orderLineItemDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private MenuService menuService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @BeforeEach
+    void setUp() {
+        menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
+        final MenuResponse menu = menuService.create(new MenuRequest("menu", BigDecimal.valueOf(1000L), menuGroup.getId(),
+            List.of(new ProductQuantityDto(product.getId(), 2)
+            )));
+        menuId = menu.getId();
+        orderTable = orderTableRepository.save(new OrderTable(3, false));
+    }
 
     @DisplayName("새 주문을 저장한다.")
     @Test
     void create_success() {
         // given
-        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
-        final OrderRequest orderRequest = new OrderRequest(ORDER_TABLE.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
-        final Order order = createOrder(1L, ORDER_TABLE.getId());
-        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
-        order.addOrderLineItems(List.of(orderLineItem));
-
-        given(menuDao.countByIdIn(anyList()))
-            .willReturn(1L);
-        given(orderTableDao.findById(anyLong()))
-            .willReturn(Optional.of(ORDER_TABLE));
-        given(orderDao.save(any(Order.class)))
-            .willReturn(order);
-        given(orderLineItemDao.save(any(OrderLineItem.class)))
-            .willReturn(orderLineItem);
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3)));
 
         // when
         final OrderResponse savedOrder = orderService.create(orderRequest);
 
         // then
-        assertThat(savedOrder).usingRecursiveComparison()
-            .isEqualTo(OrderResponse.from(order));
+        assertAll(
+            () -> assertThat(savedOrder.getId()).isNotNull(),
+            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId()),
+            () -> assertThat(savedOrder.getOrderLineItems()).usingRecursiveComparison()
+                .isEqualTo(List.of(new MenuQuantityDto(menuId, 3)))
+        );
     }
 
     @DisplayName("주문 저장 시, 주문할 메뉴가 비어있으면 예외가 발생한다.")
     @Test
     void create_empty_fail() {
         // given
-        final Order order = createOrder(1L, ORDER_TABLE.getId());
-        final OrderRequest orderRequest = new OrderRequest(ORDER_TABLE.getId(), Collections.emptyList());
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), Collections.emptyList());
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -100,10 +93,7 @@ class OrderServiceTest {
     @Test
     void create_notExistMenu_fail() {
         // given
-        final OrderRequest orderRequest = new OrderRequest(ORDER_TABLE.getId(), List.of(new MenuQuantityDto(0L, 3)));
-
-        given(menuDao.countByIdIn(anyList()))
-            .willReturn(0L);
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(NOT_EXIST_ID, 3)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -114,13 +104,7 @@ class OrderServiceTest {
     @Test
     void create_notExistTable_fail() {
         // given
-        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
-        final OrderRequest orderRequest = new OrderRequest(0L, List.of(new MenuQuantityDto(menu.getId(), 3)));
-
-        given(menuDao.countByIdIn(anyList()))
-            .willReturn(1L);
-        given(orderTableDao.findById(anyLong()))
-            .willReturn(Optional.empty());
+        final OrderRequest orderRequest = new OrderRequest(NOT_EXIST_ID, List.of(new MenuQuantityDto(menuId, 3)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -131,16 +115,10 @@ class OrderServiceTest {
     @Test
     void create_emptyTable_fail() {
         // given
-        final OrderTable emptyOrderTable = createOrderTable(1L, 3);
-        emptyOrderTable.updateEmpty(true);
+        orderTable.updateEmpty(true);
+        orderTableRepository.save(orderTable);
 
-        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
-        final OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
-
-        given(menuDao.countByIdIn(anyList()))
-            .willReturn(1L);
-        given(orderTableDao.findById(anyLong()))
-            .willReturn(Optional.of(emptyOrderTable));
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -151,41 +129,32 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        final Order order1 = createOrder(1L, ORDER_TABLE.getId());
-        final Menu menu = createMenu(1L, "menuGroup", 1000L, MENU_GROUP.getId());
-        final OrderLineItem orderLineItem1 = createOrderLineItem(order1.getId(), menu.getId(), 3);
-        order1.addOrderLineItems(List.of(orderLineItem1));
-        final Order order2 = createOrder(2L, ORDER_TABLE.getId());
-        final OrderLineItem orderLineItem2 = createOrderLineItem(order2.getId(), menu.getId(), 3);
-        order2.addOrderLineItems(List.of(orderLineItem2));
-
-
-        given(orderDao.findAll())
-            .willReturn(List.of(order1, order2));
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3)));
+        final OrderResponse createdOrder = orderService.create(orderRequest);
+        final OrderRequest orderRequest2 = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 2)));
+        final OrderResponse createdOrder2 = orderService.create(orderRequest2);
 
         // when
         final List<OrderResponse> result = orderService.list();
 
         // then
         assertThat(result).usingRecursiveComparison()
-            .isEqualTo(List.of(OrderResponse.from(order1), OrderResponse.from(order2)));
+            .ignoringFields("orderedTime")
+            .isEqualTo(List.of(createdOrder, createdOrder2));
     }
 
     @DisplayName("Order 상태를 바꾼다.")
     @Test
     void changeOrderStatus() {
         // given
-        final Order prevOrder = createOrder(1L, ORDER_TABLE.getId());
+        final OrderResponse prevOrder = orderService.create(new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3))));
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
-
-        given(orderDao.findById(anyLong()))
-            .willReturn(Optional.of(prevOrder));
 
         // when
         final OrderResponse changedOrder = orderService.changeOrderStatus(prevOrder.getId(), statusChangeRequest);
 
         // then
-        assertThat(changedOrder.getId()).isEqualTo(1L);
+        assertThat(changedOrder.getId()).isEqualTo(prevOrder.getId());
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
@@ -194,11 +163,9 @@ class OrderServiceTest {
     void changeOrderStatus_notExist_fail() {
         // given
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
-        given(orderDao.findById(anyLong()))
-            .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, statusChangeRequest))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(NOT_EXIST_ID, statusChangeRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -206,14 +173,11 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_wrongStatus_fail() {
         // given
-        final Order order = createOrder(1L, ORDER_TABLE.getId());
-        order.changeOrderStatus(OrderStatus.COMPLETION);
-        final Long orderId = order.getId();
+        final OrderResponse prevOrder = orderService.create(new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3))));
+        final OrderResponse completedOrder = orderService.changeOrderStatus(prevOrder.getId(), new OrderStatusChangeRequest(OrderStatus.COMPLETION.name()));
+        final Long orderId = completedOrder.getId();
 
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
-
-        given(orderDao.findById(anyLong()))
-            .willReturn(Optional.of(order));
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, statusChangeRequest))

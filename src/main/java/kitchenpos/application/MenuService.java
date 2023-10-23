@@ -8,57 +8,55 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.menu.MenuRequest;
 import kitchenpos.application.dto.menu.MenuResponse;
 import kitchenpos.application.dto.menu.ProductQuantityDto;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+        final MenuRepository menuRepository,
+        final MenuGroupRepository menuGroupRepository,
+        final MenuProductRepository menuProductRepository,
+        final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        // TODO: 2023-10-23 1. request 받도록 수정
-        // TODO: 2023-10-23 2. 비즈니스 로직 도메인으로 이동 + 단위테스트 작성
-        // TODO: 2023-10-23 3. JPA 적용
         final BigDecimal price = menuRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId());
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+            .orElseThrow(IllegalArgumentException::new);
 
-        final List<MenuProduct> menuProducts = getProductsInMenuRequest(menuRequest.getMenuProducts());
+        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
+
+        final List<MenuProduct> menuProducts = getMenuProductsFromRequest(menuRequest.getMenuProducts(), menu);
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+            final Product product = menuProduct.getProduct();
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
@@ -66,32 +64,31 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
-        final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            // TODO: 2023-10-23 request 받아오게 + JPA로 리팩터링하면서 Menu가지는 MenuProduct 만들기
-            final MenuProduct menuProductToSave = new MenuProduct(menuId, menuProduct.getProductId(), menuProduct.getQuantity());
-            savedMenuProducts.add(menuProductDao.save(menuProductToSave));
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.addMenuProducts(savedMenuProducts);
 
         return MenuResponse.from(menu);
     }
 
-    private List<MenuProduct> getProductsInMenuRequest(final List<ProductQuantityDto> requests) {
+    private List<MenuProduct> getMenuProductsFromRequest(final List<ProductQuantityDto> requests, final Menu menu) {
         return requests.stream()
-            .map(request -> new MenuProduct(null, request.getProductId(), request.getQuantity()))
+            .map(request -> new MenuProduct(menu, getProduct(request.getProductId()), request.getQuantity()))
             .collect(Collectors.toList());
     }
 
-    public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+    private Product getProduct(final Long productId) {
+        return productRepository.findById(productId)
+            .orElseThrow(IllegalArgumentException::new);
+    }
 
-        for (final Menu menu : menus) {
-            menu.addMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
+    @Transactional(readOnly = true)
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuRepository.findAll();
 
         return menus.stream()
             .map(MenuResponse::from)

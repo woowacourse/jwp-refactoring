@@ -6,17 +6,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.product.ProductRequest;
 import kitchenpos.application.dto.product.ProductResponse;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    private final ProductRepository productRepository;
+
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -28,12 +29,13 @@ public class ProductService {
             throw new IllegalArgumentException();
         }
 
-        final Product savedProduct = productDao.save(product);
+        final Product savedProduct = productRepository.save(product);
         return ProductResponse.from(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
-        final List<Product> products = productDao.findAll();
+        final List<Product> products = productRepository.findAll();
 
         return products.stream()
             .map(ProductResponse::from)
