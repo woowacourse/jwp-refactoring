@@ -5,7 +5,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Order;
 import kitchenpos.ui.request.OrderCreateRequest;
-import kitchenpos.ui.request.OrderUpdateRequest;
+import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
 
 import static io.restassured.http.ContentType.JSON;
 
@@ -43,7 +43,7 @@ public class OrderStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 주문_상태_변경_요청(final Long orderId, final OrderUpdateRequest request) {
+    public static ExtractableResponse<Response> 주문_상태_변경_요청(final Long orderId, final OrderUpdateOrderStatusRequest request) {
         return RestAssured.given()
                 .log().all()
                 .contentType(JSON)

@@ -9,7 +9,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
-import kitchenpos.ui.request.OrderUpdateRequest;
+import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
 import kitchenpos.ui.request.TableCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -196,7 +196,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateRequest("COOKING"));
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COOKING"));
             final Order result = response.jsonPath().getObject("", Order.class);
 
             assertAll(
@@ -229,9 +229,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateRequest("COMPLETION"));
+            주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COMPLETION"));
 
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateRequest("COMPLETION"));
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COMPLETION"));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
