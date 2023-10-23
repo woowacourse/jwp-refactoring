@@ -5,18 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderChangeRequest;
 import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,9 +45,6 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
-
     @Nested
     @DisplayName("주문 목록을 생성할 때 ")
     class Create {
@@ -58,17 +55,15 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
             final OrderTable orderTable = new OrderTable(null, 1, false);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
-            final List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    orderLineItems);
+                    List.of(orderLineItemRequest));
 
             // when
             final Order savedOrder = orderService.create(orderCreateRequest);
@@ -83,18 +78,18 @@ class OrderServiceTest {
         @ParameterizedTest
         @EmptySource
         @DisplayName("주문 항목이 빈 값이거나 컬렉션이 비어있는 경우 예외가 발생한다.")
-        void throwsExceptionWhenOrderLineItemsAreNull(List<OrderLineItem> orderLineItems) {
+        void throwsExceptionWhenOrderLineItemsAreNull(List<OrderLineItemRequest> orderLineItemRequests) {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
             final OrderTable orderTable = new OrderTable(null, 1, false);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    orderLineItems);
+                    orderLineItemRequests);
 
             // when, then
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -107,21 +102,20 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
-            final OrderLineItem orderLineItemA = new OrderLineItem(null, menu, 1);
-            final OrderLineItem orderLineItemB = new OrderLineItem(null, menu, 1);
-            final List<OrderLineItem> orderLineItems = List.of(orderLineItemA, orderLineItemB);
+            final OrderLineItemRequest orderLineItemRequestA = new OrderLineItemRequest(menu.getId(), 1);
+            final OrderLineItemRequest orderLineItemRequestB = new OrderLineItemRequest(menu.getId(), 1);
 
             final OrderTable orderTable = new OrderTable(null, 1, false);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    orderLineItems);
+            final OrderCreateRequest request = new OrderCreateRequest(savedOrderTable.getId(),
+                    List.of(orderLineItemRequestA, orderLineItemRequestB));
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -131,11 +125,11 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
-            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L, List.of(orderLineItem));
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when, then
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -148,15 +142,15 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
             final OrderTable orderTable = new OrderTable(null, 1, true);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    List.of(orderLineItem));
+                    List.of(orderLineItemRequest));
 
             // when, then
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -170,17 +164,18 @@ class OrderServiceTest {
         // given
         final MenuGroup menuGroup = new MenuGroup("치킨");
         final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-        final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+        final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
         menuRepository.save(menu);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
         final OrderTable orderTable = new OrderTable(null, 1, false);
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
+
         final OrderCreateRequest orderCreateRequestA = new OrderCreateRequest(savedOrderTable.getId(),
-                List.of(orderLineItem));
+                List.of(orderLineItemRequest));
         final OrderCreateRequest orderCreateRequestB = new OrderCreateRequest(savedOrderTable.getId(),
-                List.of(orderLineItem));
+                List.of(orderLineItemRequest));
 
         orderService.create(orderCreateRequestA);
         orderService.create(orderCreateRequestB);
@@ -202,15 +197,15 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final OrderTable orderTable = new OrderTable(null, 1, false);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    List.of(orderLineItem));
+                    List.of(orderLineItemRequest));
             final Order savedOrder = orderService.create(orderCreateRequest);
 
             final OrderChangeRequest orderChangeRequest = new OrderChangeRequest(OrderStatus.COMPLETION);
@@ -231,15 +226,15 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
             final OrderTable orderTable = new OrderTable(null, 1, false);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    List.of(orderLineItem));
+                    List.of(orderLineItemRequest));
             orderService.create(orderCreateRequest);
 
             final OrderChangeRequest orderChangeRequest = new OrderChangeRequest(OrderStatus.COMPLETION);
@@ -255,15 +250,15 @@ class OrderServiceTest {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
             final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, "후라이드 치킨", new BigDecimal("15000.00"));
+            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
             menuRepository.save(menu);
 
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu, 1);
             final OrderTable orderTable = new OrderTable(null, 1, false);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    List.of(orderLineItem));
+                    List.of(orderLineItemRequest));
             final Order savedOrder = orderService.create(orderCreateRequest);
             savedOrder.setOrderStatus(OrderStatus.COMPLETION);
 

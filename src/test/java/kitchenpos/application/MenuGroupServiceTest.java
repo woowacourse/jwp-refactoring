@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menugroup.MenuGroupCreateRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,10 +29,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 정상적으로 생성한다.")
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup("치킨");
+        final MenuGroupCreateRequest request = new MenuGroupCreateRequest("치킨");
 
         // when
-        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         // then
         assertAll(

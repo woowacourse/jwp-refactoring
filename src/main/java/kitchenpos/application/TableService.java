@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.ordertable.OrderTableChangNumberOfGuestRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -21,9 +24,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setTableGroup(null);
-
+    public OrderTable create(final OrderTableCreateRequest request) {
+        final OrderTable orderTable = new OrderTable(null, request.getNumberOfGuests(), request.isEmpty());
         return orderTableRepository.save(orderTable);
     }
 
@@ -32,7 +34,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,14 +47,14 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(request.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableChangNumberOfGuestRequest request) {
+        final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();

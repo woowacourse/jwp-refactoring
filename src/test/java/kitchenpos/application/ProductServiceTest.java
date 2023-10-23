@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,10 +38,11 @@ class ProductServiceTest {
         @DisplayName("정상적으로 생성된다.")
         void create() {
             // given
-            final Product product = new Product("떡볶이", new BigDecimal("4500.00"));
+            final ProductCreateRequest request = new ProductCreateRequest("떡볶이",
+                    new BigDecimal("4500.00"));
 
             // when
-            final Product savedProduct = productService.create(product);
+            final Product savedProduct = productService.create(request);
 
             // then
             assertAll(
@@ -53,10 +55,10 @@ class ProductServiceTest {
         @DisplayName("가격이 비어있으면 예외가 발생한다.")
         void throwsExceptionWhenPriceIsNull() {
             // given
-            final Product product = new Product("떡볶이", null);
+            final ProductCreateRequest request = new ProductCreateRequest("떡볶이", null);
 
             // when, then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -65,10 +67,10 @@ class ProductServiceTest {
         @DisplayName("가격이 0보다 작은 경우 예외가 발생한다.")
         void throwsExceptionWhenPriceIsUnderZero(int price) {
             // given
-            final Product product = new Product("떡볶이", new BigDecimal(price));
+            final ProductCreateRequest request = new ProductCreateRequest("떡볶이", new BigDecimal(price));
 
             // when, then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

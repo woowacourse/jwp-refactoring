@@ -35,12 +35,17 @@ public class Menu {
 
     public Menu(
             final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts,
             final String name,
             final BigDecimal price
     ) {
         this.menuGroup = menuGroup;
         this.name = name;
         this.price = price;
+
+        for (final MenuProduct menuProduct : menuProducts) {
+            addMenuProduct(menuProduct);
+        }
     }
 
     public void addMenuProduct(final MenuProduct menuProduct) {

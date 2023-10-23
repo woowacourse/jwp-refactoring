@@ -10,6 +10,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tablegroup.OrderTableRequest;
+import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -51,13 +53,16 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTableA = new OrderTable(null, 2, true);
             final OrderTable orderTableB = new OrderTable(null, 3, true);
-            final OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
-            final OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
+            orderTableRepository.save(orderTableA);
+            orderTableRepository.save(orderTableB);
 
-            final List<OrderTable> orderTables = List.of(savedOrderTableA, savedOrderTableB);
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(orderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(orderTableB.getId());
+            final TableGroupCreateRequest request =
+                    new TableGroupCreateRequest(List.of(orderTableRequestA, orderTableRequestB));
 
             // when
-            final TableGroup savedTableGroup = tableGroupService.create(orderTables);
+            final TableGroup savedTableGroup = tableGroupService.create(request);
 
             // then
             assertThat(savedTableGroup.getOrderTables()).hasSize(2);
@@ -66,15 +71,17 @@ class TableGroupServiceTest {
         @ParameterizedTest
         @NullAndEmptySource
         @DisplayName("테이블 그룹의 주문 테이블이 빈 값이거나 컬렉션이 비어있는 경우 예외가 발생한다.")
-        void throwExceptionWhenTableGroupIsNullOrEmpty(List<OrderTable> orderTables) {
+        void throwExceptionWhenTableGroupIsNullOrEmpty(List<OrderTableRequest> orderTables) {
             // given
             final OrderTable orderTableA = new OrderTable(null, 2, true);
             final OrderTable orderTableB = new OrderTable(null, 3, true);
             orderTableRepository.save(orderTableA);
             orderTableRepository.save(orderTableB);
 
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables);
+
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(orderTables))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -85,8 +92,11 @@ class TableGroupServiceTest {
             final OrderTable orderTableA = new OrderTable(null, 2, true);
             orderTableRepository.save(orderTableA);
 
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTableA.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTableRequest));
+
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(List.of(orderTableA)))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -99,8 +109,11 @@ class TableGroupServiceTest {
             orderTableRepository.save(orderTableA);
             orderTableRepository.save(orderTableB);
 
+            final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTableA.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTableRequest));
+
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(List.of(orderTableA)))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,8 +127,13 @@ class TableGroupServiceTest {
 
             final List<OrderTable> orderTables = List.of(orderTableA, orderTableB);
 
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(orderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(orderTableB.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableRequestA, orderTableRequestB));
+
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(orderTables))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -133,8 +151,13 @@ class TableGroupServiceTest {
 
             final List<OrderTable> orderTables = List.of(savedOrderTableA, savedOrderTableB);
 
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(savedOrderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(savedOrderTableB.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableRequestA, orderTableRequestB));
+
             // when, then
-            assertThatThrownBy(() -> tableGroupService.create(orderTables))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -152,7 +175,12 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
             final OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
-            final TableGroup savedTableGroup = tableGroupService.create(List.of(savedOrderTableA, savedOrderTableB));
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(savedOrderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(savedOrderTableB.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableRequestA, orderTableRequestB));
+
+            final TableGroup savedTableGroup = tableGroupService.create(request);
 
             // when
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -183,7 +211,12 @@ class TableGroupServiceTest {
             final Order order = new Order(new ArrayList<>(), orderTableA, orderStatus);
             orderRepository.save(order);
 
-            final TableGroup savedTableGroup = tableGroupService.create(List.of(savedOrderTableA, savedOrderTableB));
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(savedOrderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(savedOrderTableB.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableRequestA, orderTableRequestB));
+
+            final TableGroup savedTableGroup = tableGroupService.create(request);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

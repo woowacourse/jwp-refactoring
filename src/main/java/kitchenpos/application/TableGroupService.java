@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tablegroup.OrderTableRequest;
+import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -31,18 +33,20 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+    public TableGroup create(final TableGroupCreateRequest request) {
+        final List<OrderTableRequest> orderTableRequests = request.getOrderTables();
+
+        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<Long> orderTableIds = orderTableRequests.stream()
+                .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 

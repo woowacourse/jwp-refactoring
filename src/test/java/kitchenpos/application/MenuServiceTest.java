@@ -5,11 +5,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -51,11 +53,12 @@ class MenuServiceTest {
             final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
             productRepository.save(product);
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("15000.00"));
-            menu.addMenuProduct(new MenuProduct(menu, product, 1));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1);
+            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", new BigDecimal("15000.00"),
+                    savedMenuGroup.getId(), List.of(menuProductRequest));
 
             // when
-            final Menu savedMenu = menuService.create(menu);
+            final Menu savedMenu = menuService.create(request);
 
             // then
             assertAll(
@@ -72,11 +75,12 @@ class MenuServiceTest {
             final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
             productRepository.save(product);
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", null);
-            menu.addMenuProduct(new MenuProduct(menu, product, 1));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1);
+            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", null,
+                    savedMenuGroup.getId(), List.of(menuProductRequest));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -88,10 +92,12 @@ class MenuServiceTest {
             final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
             productRepository.save(product);
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal(price));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1);
+            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", new BigDecimal(price),
+                    savedMenuGroup.getId(), List.of(menuProductRequest));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -100,10 +106,12 @@ class MenuServiceTest {
         void throwsExceptionWhenProductIdNonExist() {
             // given
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("31000.00"));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 1);
+            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", new BigDecimal("31000.00"),
+                    savedMenuGroup.getId(), List.of(menuProductRequest));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,10 +122,12 @@ class MenuServiceTest {
             final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
             productRepository.save(product);
             final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-            final Menu menu = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("31000.00"));
+            final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1);
+            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", new BigDecimal("31000.00"),
+                    savedMenuGroup.getId(), List.of(menuProductRequest));
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -129,12 +139,12 @@ class MenuServiceTest {
         final Product productA = new Product("후라이드치킨", new BigDecimal("15000.00"));
         productRepository.save(productA);
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-        final Menu menuA = new Menu(savedMenuGroup, "후라이드치킨", new BigDecimal("15000.00"));
+        final Menu menuA = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드치킨", new BigDecimal("15000.00"));
         menuRepository.save(menuA);
 
         final Product productB = new Product("양념치킨", new BigDecimal("17000.00"));
         productRepository.save(productB);
-        final Menu menuB = new Menu(savedMenuGroup, "양념치킨", new BigDecimal("17000.00"));
+        final Menu menuB = new Menu(savedMenuGroup, new ArrayList<>(), "양념치킨", new BigDecimal("17000.00"));
         menuRepository.save(menuB);
 
         // when

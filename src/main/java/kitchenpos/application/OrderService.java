@@ -1,14 +1,17 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderChangeRequest;
 import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -37,22 +40,33 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest orderCreateRequest) {
-        final List<OrderLineItem> orderLineItems = orderCreateRequest.getOrderLineItems();
+    public Order create(final OrderCreateRequest request) {
+        final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(orderLineItem -> orderLineItem.getMenu().getId())
+        final List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+        final List<Menu> savedMenus = menuRepository.findAllByIdIn(menuIds);
+
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final Menu savedMenu : savedMenus) {
+            for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+                final OrderLineItem orderLineItem =
+                        new OrderLineItem(null, savedMenu, orderLineItemRequest.getQuantity());
+                orderLineItems.add(orderLineItem);
+            }
+        }
+
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
@@ -74,7 +88,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderChangeRequest orderChangeRequest) {
+    public Order changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -82,7 +96,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = orderChangeRequest.getOrderStatus();
+        final OrderStatus orderStatus = request.getOrderStatus();
         savedOrder.setOrderStatus(orderStatus);
 
         orderRepository.save(savedOrder);
