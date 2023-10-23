@@ -11,7 +11,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -39,9 +38,6 @@ public abstract class ServiceTest {
 
     @Autowired
     protected MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    protected MenuProductRepository menuProductRepository;
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;
