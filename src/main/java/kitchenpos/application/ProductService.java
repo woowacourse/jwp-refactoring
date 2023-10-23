@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.JpaProductRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,17 +19,19 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final Price price = product.getPrice();
+    public ProductResponse create(final ProductRequest request) {
+        Price price = new Price(request.getPrice());
+        Product product = new Product(request.getName(), price);
 
-        if (Objects.isNull(price)) {
-            throw new IllegalArgumentException();
-        }
-
-        return jpaProductRepository.save(product);
+        Product savedProduct = jpaProductRepository.save(product);
+        return new ProductResponse(savedProduct);
     }
 
-    public List<Product> list() {
-        return jpaProductRepository.findAll();
+    public List<ProductResponse> list() {
+        List<Product> savedProducts = jpaProductRepository.findAll();
+
+        return savedProducts.stream()
+                .map(ProductResponse::new)
+                .collect(Collectors.toList());
     }
 }

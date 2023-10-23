@@ -8,6 +8,8 @@ import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.response.ProductResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,30 +31,16 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품을_등록한다() {
             // given
-            Product product = new Product();
-            product.setName("햄버거");
-            product.setPrice(BigDecimal.valueOf(10_000));
+            ProductRequest request = new ProductRequest("햄버거", BigDecimal.valueOf(10_000L));
 
             // when
-            Product result = productService.create(product);
+            ProductResponse result = productService.create(request);
 
             // then
-            assertThat(result.getName()).isEqualTo(product.getName());
-            assertThat(product.getPrice()).isEqualTo(product.getPrice());
+            assertThat(result.getName()).isEqualTo(request.getName());
+            assertThat(result.getPrice()).isEqualTo(request.getPrice());
         }
 
-        @Disabled
-        @Test
-        void 가격이_null인_경우_예외가_발생한다() {
-            // given
-            Product product = new Product();
-            product.setName("햄버거");
-            product.setPrice(null);
-
-            // when, then
-            assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
     }
 
     @Test
@@ -61,12 +49,12 @@ class ProductServiceTest extends ServiceTest {
         Product product = fixtures.상품_저장("햄버거", 10_000L);
 
         // when
-        List<Product> results = productService.list();
+        List<ProductResponse> results = productService.list();
 
         // then
         assertThat(results).hasSize(1);
         assertThat(results.get(0).getName()).isEqualTo(product.getName());
-        assertThat(results.get(0).getPrice()).isEqualTo(product.getPrice());
+        assertThat(results.get(0).getPrice()).isEqualTo(product.getPrice().getValue());
     }
 
 }
