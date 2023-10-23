@@ -29,7 +29,7 @@ public class Price {
         if (price == null) {
             throw new IllegalArgumentException("금액은 NULL이 될 수 없습니다.");
         }
-        if (price.compareTo(MIN_PRICE) <= 0) {
+        if (price.compareTo(MIN_PRICE) < 0) {
             throw new IllegalArgumentException("금액은 음수가 될 수 없습니다.");
         }
     }

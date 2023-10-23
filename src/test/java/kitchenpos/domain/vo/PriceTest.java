@@ -23,7 +23,7 @@ class PriceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {0, -1})
+    @ValueSource(ints = {-1, -100_000})
     void 값이_0보다_작으면_예외가_발생한다(int value) {
         assertThatThrownBy(() -> Price.of(value))
                 .isInstanceOf(IllegalArgumentException.class)
