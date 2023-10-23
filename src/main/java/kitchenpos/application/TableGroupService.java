@@ -51,15 +51,17 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        findTableGroup(tableGroupId);
+        checkTableGroupExists(tableGroupId);
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupIdWithOrders(tableGroupId);
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
     }
 
-    private TableGroup findTableGroup(Long tableGroupId) {
-        return tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new TableGroupException("해당하는 테이블 그룹이 존재하지 않습니다."));
+    private void checkTableGroupExists(Long tableGroupId) {
+        if (tableGroupRepository.existsById(tableGroupId)) {
+            return;
+        }
+        throw new TableGroupException("해당하는 테이블 그룹이 존재하지 않습니다.");
     }
 }
