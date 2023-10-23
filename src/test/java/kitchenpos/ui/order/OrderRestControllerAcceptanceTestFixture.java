@@ -10,7 +10,6 @@ import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuProductCreateRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.application.OrderService;
@@ -51,9 +50,6 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
     private MenuService menuService;
 
     protected MenuGroup menuGroup;
@@ -70,8 +66,10 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         MenuCreateRequest req = new MenuCreateRequest("메뉴", 10000L, menuGroup.getId(), List.of(
                 new MenuProductCreateRequest(product.getId(), 1)
         ));
+
         menu = menuService.create(req);
-        menuProduct = menuProductRepository.save(메뉴_상품_10개_생성(product.getId()));
+        menuProduct = 메뉴_상품_10개_생성(product.getId()); // TODO: 라이프사이클
+        menuProduct.setMenu(menu);
 
         orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
         orderLineItem = 주문_품목_생성(menu.getId(), 1L);

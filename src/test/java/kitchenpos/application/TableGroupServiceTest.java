@@ -45,7 +45,7 @@ class TableGroupServiceTest extends IntegrationTestHelper {
         // given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(10, true));
         OrderTable otherTable = orderTableRepository.save(new OrderTable(20, true));
-        TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId(), otherTable.getId()));
+        TableGroupCreateRequest request = 단체_지정_생성_요청(List.of(orderTable.getId(), otherTable.getId()));
 
         // when
         TableGroupResponse result = tableGroupService.create(request);

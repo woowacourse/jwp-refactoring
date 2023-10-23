@@ -36,21 +36,6 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest req) {
-//        List<Long> orderTableIds = req.getOrderTables();
-//
-//        validateTableSize(orderTableIds);
-//        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-//        validateTableNotFound(orderTableIds, savedOrderTables);
-//
-//        TableGroup tableGroup = TableGroup.createDefault();
-//        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-//
-//        for (final OrderTable orderTable : savedOrderTables) {
-//            orderTable.initTableGroup(tableGroup);
-//        }
-//
-//        return savedTableGroup;
-
         // 1. 주문 테이블이 2개보다 적으면 예외
         validateTableSize(req.getOrderTables());
 

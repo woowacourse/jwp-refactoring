@@ -10,7 +10,6 @@ import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuProductCreateRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.ui.dto.MenuResponse;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
@@ -38,9 +37,6 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
     protected MenuGroup menuGroup;
     protected MenuProduct menuProduct;
     protected Product product;
@@ -54,7 +50,8 @@ class MenuRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
                 new MenuProductCreateRequest(product.getId(), 1)
         ));
         menu = menuService.create(req);
-        menuProduct = menuProductRepository.save(메뉴_상품_10개_생성(product.getId()));
+        menuProduct = 메뉴_상품_10개_생성(product.getId());
+        menuProduct.setMenu(menu);
     }
 
     protected <T> ExtractableResponse 메뉴를_생성한다(final String url, final T request) {
