@@ -52,6 +52,8 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
         orderTable.isEmpty()
     );
 
+    orderTableDao.save(orderTableEntity);
+
     return OrderTableMapper.mapToOrderTable(orderTableEntity);
   }
 
