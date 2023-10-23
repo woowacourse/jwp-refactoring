@@ -6,8 +6,10 @@ import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
@@ -52,14 +54,22 @@ public abstract class IntegrationTest {
     protected TableGroupRepository tableGroupRepository;
     @Autowired
     protected OrderValidator orderValidator;
+    @Autowired
+    protected MenuValidator menuValidator;
 
     protected MenuGroup generateMenuGroup(final String name) {
         final MenuGroup menuGroup = new MenuGroup(name);
         return menuGroupRepository.save(menuGroup);
     }
 
-    protected Menu generateMenu(final String name, final Long price) {
-        final Menu menu = new Menu(name, BigDecimal.valueOf(price), generateMenuGroup(name + "-group"));
+    protected Menu generateMenu(final String name, final Long price, final List<MenuProduct> menuProducts) {
+        final Menu menu = new Menu(
+                name,
+                BigDecimal.valueOf(price),
+                generateMenuGroup(name + "-group"),
+                menuProducts,
+                menuValidator
+        );
         return menuRepository.save(menu);
     }
 

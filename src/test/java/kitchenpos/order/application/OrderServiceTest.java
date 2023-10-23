@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import kitchenpos.generic.IntegrationTest;
 import kitchenpos.generic.Price;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.application.dto.OrderCreationRequest;
 import kitchenpos.order.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.order.application.dto.OrderResult;
@@ -17,6 +18,7 @@ import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,8 +32,19 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void create_order_success() {
         // given
-        final Menu menuA = generateMenu("chicken", 20000L);
-        final Menu menuB = generateMenu("beer", 10000L);
+        final Product chicken = generateProduct("chicken", 20000L);
+        final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+        final List<MenuProduct> menuProducts = List.of(
+                new MenuProduct(chicken.getId(), 1L),
+                new MenuProduct(cheeseBall.getId(), 1L)
+        );
+        final Menu menuA = generateMenu("chicken", 25000L, menuProducts);
+        final List<MenuProduct> menuProductsB = List.of(
+                new MenuProduct(chicken.getId(), 1L),
+                new MenuProduct(cheeseBall.getId(), 2L)
+        );
+
+        final Menu menuB = generateMenu("beer", 30000L, menuProductsB);
         final OrderTable orderTable = generateOrderTable(3);
         final OrderCreationRequest request = new OrderCreationRequest(
                 orderTable.getId(),
@@ -57,7 +70,13 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void order_table_is_not_exist() {
             // given
-            final Menu menuA = generateMenu("chicken", 20000L);
+            final Product chicken = generateProduct("chicken", 20000L);
+            final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+            final List<MenuProduct> menuProducts = List.of(
+                    new MenuProduct(chicken.getId(), 1L),
+                    new MenuProduct(cheeseBall.getId(), 2L)
+            );
+            final Menu menuA = generateMenu("chicken", 30000L, menuProducts);
             final Long notExistId = 10000L;
             final OrderCreationRequest request = new OrderCreationRequest(
                     notExistId,
@@ -73,7 +92,13 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void any_menu_in_order_doesnt_exist() {
             // given
-            final Menu menuA = generateMenu("chicken", 20000L);
+            final Product chicken = generateProduct("chicken", 20000L);
+            final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+            final List<MenuProduct> menuProducts = List.of(
+                    new MenuProduct(chicken.getId(), 1L),
+                    new MenuProduct(cheeseBall.getId(), 2L)
+            );
+            final Menu menuA = generateMenu("chicken", 30000L, menuProducts);
             final OrderTable orderTable = generateOrderTable(3);
             final OrderCreationRequest request = new OrderCreationRequest(
                     orderTable.getId(),
@@ -92,8 +117,18 @@ class OrderServiceTest extends IntegrationTest {
         @Test
         void order_table_state_is_empty() {
             // given
-            final Menu menuA = generateMenu("chicken", 20000L);
-            final Menu menuB = generateMenu("beer", 10000L);
+            final Product chicken = generateProduct("chicken", 20000L);
+            final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+            final List<MenuProduct> menuProductsA = List.of(
+                    new MenuProduct(chicken.getId(), 1L),
+                    new MenuProduct(cheeseBall.getId(), 1L)
+            );
+            final Menu menuA = generateMenu("chicken", 25000L, menuProductsA);
+            final List<MenuProduct> menuProductsB = List.of(
+                    new MenuProduct(chicken.getId(), 1L),
+                    new MenuProduct(cheeseBall.getId(), 2L)
+            );
+            final Menu menuB = generateMenu("chicken", 30000L, menuProductsB);
             final OrderTable orderTable = generateOrderTable(3, true);
             final OrderCreationRequest request = new OrderCreationRequest(
                     orderTable.getId(),
@@ -113,7 +148,13 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        final Menu menu = generateMenu("chicken", 20000L);
+        final Product chicken = generateProduct("chicken", 20000L);
+        final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+        final List<MenuProduct> menuProducts = List.of(
+                new MenuProduct(chicken.getId(), 1L),
+                new MenuProduct(cheeseBall.getId(), 2L)
+        );
+        final Menu menu = generateMenu("chicken", 30000L, menuProducts);
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1L));
         generateOrder(OrderStatus.COOKING, generateOrderTable(3), orderLineItems);
 
@@ -136,7 +177,13 @@ class OrderServiceTest extends IntegrationTest {
     void change_order_status_success() {
         // given
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
-        final Menu menu = generateMenu("chicken", 20000L);
+        final Product chicken = generateProduct("chicken", 20000L);
+        final Product cheeseBall = generateProduct("cheese-ball", 5000L);
+        final List<MenuProduct> menuProducts = List.of(
+                new MenuProduct(chicken.getId(), 1L),
+                new MenuProduct(cheeseBall.getId(), 2L)
+        );
+        final Menu menu = generateMenu("chicken", 30000L, menuProducts);
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1L));
         final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3), orderLineItems);
 

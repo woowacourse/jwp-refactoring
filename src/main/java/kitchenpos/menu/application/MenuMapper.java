@@ -27,10 +27,8 @@ public class MenuMapper {
 
     public Menu from(final MenuCreationRequest request) {
         final MenuGroup menuGroup = getMenuGroup(request.getMenuGroupId());
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
         final List<MenuProduct> menuProducts = menuProductFromRequest(request.getMenuProducts());
-        menu.addMenuProducts(menuProducts, menuValidator);
-        return menu;
+        return new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts, menuValidator);
     }
 
     private MenuGroup getMenuGroup(final Long menuGroupId) {

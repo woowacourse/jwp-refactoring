@@ -46,15 +46,10 @@ class MenuServiceTest extends IntegrationTest {
                 menuGroup.getId(),
                 productsRequest
         );
-        entityManager.flush();
-        System.out.println("=====================================");
-        System.out.println("=====================================");
-        System.out.println("=====================================");
-        System.out.println("=====================================");
-        System.out.println("=====================================");
+
         // when
         final MenuResult createdMenu = menuService.create(creationRequest);
-        entityManager.flush();
+
         // then
         assertThat(createdMenu.getId()).isNotNull();
     }
@@ -70,7 +65,7 @@ class MenuServiceTest extends IntegrationTest {
                     "chicken-set",
                     BigDecimal.valueOf(0L),
                     menuGroup.getId(),
-                    null
+                    List.of()
             );
 
             // when & then
@@ -87,7 +82,7 @@ class MenuServiceTest extends IntegrationTest {
                     "chicken-set",
                     null,
                     menuGroup.getId(),
-                    null
+                    List.of()
             );
 
             // when & then
@@ -165,15 +160,25 @@ class MenuServiceTest extends IntegrationTest {
                 new MenuProduct(chicken.getId(), 1L),
                 new MenuProduct(cheeseBall.getId(), 2L)
         );
-        final Menu menuA = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(28000L), menuGroup));
-        menuA.addMenuProducts(menuProductsA, menuValidator);
+        menuRepository.save(new Menu(
+                "chicken-set-A",
+                BigDecimal.valueOf(28000L),
+                menuGroup,
+                menuProductsA,
+                menuValidator
+        ));
 
         final List<MenuProduct> menuProductsB = List.of(
                 new MenuProduct(chicken.getId(), 1L),
                 new MenuProduct(cheeseBall.getId(), 1L)
         );
-        final Menu menuB = menuRepository.save(new Menu("chicken-set-A", BigDecimal.valueOf(24000L), menuGroup));
-        menuB.addMenuProducts(menuProductsB, menuValidator);
+        menuRepository.save(new Menu(
+                "chicken-set-A",
+                BigDecimal.valueOf(24000L),
+                menuGroup,
+                menuProductsB,
+                menuValidator
+        ));
         menuProductRepository.saveAll(menuProductsA);
         menuProductRepository.saveAll(menuProductsB);
 

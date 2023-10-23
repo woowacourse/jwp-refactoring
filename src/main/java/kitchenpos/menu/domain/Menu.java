@@ -38,25 +38,26 @@ public class Menu {
             final Long id,
             final String name,
             final Price price,
-            final MenuGroup menuGroup
+            final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts,
+            final MenuValidator validator
     ) {
+        validator.validateProducts(menuProducts, price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
     }
 
     public Menu(
             final String name,
             final BigDecimal price,
-            final MenuGroup menuGroup
+            final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts,
+            final MenuValidator validator
     ) {
-        this(null, name, Price.from(price), menuGroup);
-    }
-
-    public void addMenuProducts(final List<MenuProduct> menuProducts, final MenuValidator validator) {
-        validator.validateProducts(menuProducts, this.price);
-        this.menuProducts = menuProducts;
+        this(null, name, Price.from(price), menuGroup, menuProducts, validator);
     }
 
     public Long getId() {
