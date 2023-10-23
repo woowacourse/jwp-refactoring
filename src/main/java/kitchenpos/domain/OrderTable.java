@@ -47,7 +47,7 @@ public class OrderTable {
         }
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void changeTableGroup(final TableGroup tableGroup) {
         this.empty = false;
         this.tableGroup = tableGroup;
     }

@@ -4,6 +4,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.TableGroupRequest;
@@ -35,16 +36,14 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = getOrderTables(tableGroupRequest);
-        final TableGroup tableGroup = new TableGroup(orderTables);
-        orderTables.stream().forEach(it -> it.setTableGroup(tableGroup));
+        final TableGroup tableGroup = new TableGroup(getOrderTables(tableGroupRequest));
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    private List<OrderTable> getOrderTables(final TableGroupRequest tableGroupRequest) {
+    private OrderTables getOrderTables(final TableGroupRequest tableGroupRequest) {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
                 .map(it -> it.getId())
                 .collect(Collectors.toList());
@@ -54,7 +53,7 @@ public class TableGroupService {
             throw new InvalidOrderTableException();
         }
 
-        return orderTables;
+        return new OrderTables(orderTables);
     }
 
     @Transactional

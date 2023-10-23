@@ -1,19 +1,12 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.DuplicateCreateTableGroup;
-import kitchenpos.exception.InvalidOrderTableException;
-import org.springframework.util.CollectionUtils;
-
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -24,33 +17,29 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
-    private List<OrderTable> orderTables = new ArrayList<>();
+    @Embedded
+    private OrderTables orderTables;
 
     protected TableGroup() {
     }
 
-    public TableGroup(final List<OrderTable> orderTables) {
+    public TableGroup(final OrderTables orderTables) {
         this(null, orderTables);
     }
 
-    public TableGroup(final Long id, final List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
+    public TableGroup(final Long id, final OrderTables orderTables) {
+        changeOrderTableTableGroup(orderTables, this);
         this.id = id;
         this.createdDate = LocalDateTime.now();
         this.orderTables = orderTables;
     }
 
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new InvalidOrderTableException();
-        }
+    public void ungroup() {
+        changeOrderTableTableGroup(this.orderTables, null);
+    }
 
-        for (final OrderTable savedOrderTable : orderTables) {
-            if (savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new DuplicateCreateTableGroup();
-            }
-        }
+    private void changeOrderTableTableGroup(final OrderTables orderTables, final TableGroup tableGroup) {
+        orderTables.getOrderTables().stream().forEach(orderTable -> orderTable.changeTableGroup(tableGroup));
     }
 
     public Long getId() {
@@ -62,10 +51,6 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void ungroup() {
-        orderTables.stream().forEach(it -> it.setTableGroup(null));
+        return orderTables.getOrderTables();
     }
 }

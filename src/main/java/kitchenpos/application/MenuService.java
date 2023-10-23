@@ -4,12 +4,11 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductRepository;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
-import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.MenuGroupNotFoundException;
@@ -42,20 +41,19 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
 
-        final Menu menu = new Menu(menuRequest.getName(), new Price(menuRequest.getPrice()), menuGroup);
-        final List<MenuProduct> menuProducts = getMenuProducts(menu, menuRequest.getMenuProducts());
-        menu.initMenuProducts(menuProducts);
+        final Menu menu = new Menu(menuRequest.getName(), new Price(menuRequest.getPrice()), menuGroup,
+                getMenuProducts(menuRequest));
 
         return MenuResponse.from(menuRepository.save(menu));
     }
 
-    private List<MenuProduct> getMenuProducts(final Menu menu, final List<MenuProductRequest> menuProducts) {
-        return menuProducts.stream()
+    private MenuProducts getMenuProducts(final MenuRequest menuRequest) {
+        return new MenuProducts(menuRequest.getMenuProducts().stream()
                 .map(productRequest -> {
                     final Product product = productRepository.findById(productRequest.getProductId())
                             .orElseThrow(ProductNotFoundException::new);
-                    return new MenuProduct(menu, product, productRequest.getQuantity());
-                }).collect(Collectors.toList());
+                    return new MenuProduct(product, productRequest.getQuantity());
+                }).collect(Collectors.toList()), menuRequest.getPrice());
     }
 
     public List<MenuResponse> list() {

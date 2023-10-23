@@ -155,7 +155,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableIdRequests);
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 3L);
         final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), List.of(orderLineItemRequest));
         final OrderResponse orderResponse = orderService.create(orderRequest);

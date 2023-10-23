@@ -14,9 +14,6 @@ public class OrderLineItem {
     private Long seq;
 
     @ManyToOne
-    private Order order;
-
-    @ManyToOne
     private Menu menu;
 
     private long quantity;
@@ -24,23 +21,18 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this(null, order, menu, quantity);
+    public OrderLineItem(final Menu menu, final long quantity) {
+        this(null, menu, quantity);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
+    public OrderLineItem(final Long seq, final Menu menu, final long quantity) {
         this.seq = seq;
-        this.order = order;
         this.menu = menu;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public Menu getMenu() {

@@ -4,6 +4,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -12,7 +13,7 @@ import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.MenuNotFoundException;
-import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
 import kitchenpos.exception.OrderNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,21 +42,20 @@ public class OrderService {
     public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
-        final Order order = new Order(orderTable);
-        order.initOrderLineItem(getOrderLineItems(order, orderRequest.getOrderLineItems()));
+        final Order order = new Order(orderTable, getOrderLineItems(orderRequest.getOrderLineItems()));
 
         final Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> getOrderLineItems(final Order order, final List<OrderLineItemRequest> orderLineItemRequests) {
-        return orderLineItemRequests.stream()
+    private OrderLineItems getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+        return new OrderLineItems(orderLineItemRequests.stream()
                 .map(orderLineItemRequest -> {
                     final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                             .orElseThrow(MenuNotFoundException::new);
-                    return new OrderLineItem(order, menu, orderLineItemRequest.getQuantity());
-                }).collect(Collectors.toList());
+                    return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
+                }).collect(Collectors.toList()));
     }
 
     public List<OrderResponse> list() {

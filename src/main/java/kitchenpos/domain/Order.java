@@ -1,10 +1,8 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.IllegalOrderStatusException;
-import kitchenpos.exception.InvalidOrderLineItemException;
-import org.springframework.util.CollectionUtils;
+import kitchenpos.exception.orderException.IllegalOrderStatusException;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,9 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,32 +29,22 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable) {
-        this(null, orderTable);
+    public Order(final OrderTable orderTable, final OrderLineItems orderLineItems) {
+        this(null, orderTable, orderLineItems);
     }
 
-    public Order(final Long id, final OrderTable orderTable) {
+    public Order(final Long id, final OrderTable orderTable, final OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
-    }
-
-    public void initOrderLineItem(final List<OrderLineItem> orderLineItems){
-        validateOrderLineItems(orderLineItems);
         this.orderLineItems = orderLineItems;
-    }
-
-    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new InvalidOrderLineItemException();
-        }
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
@@ -72,8 +58,8 @@ public class Order {
         }
     }
 
-    public void validateOrderComplete(){
-        if(orderStatus.equals(OrderStatus.MEAL) || orderStatus.equals(OrderStatus.COOKING)){
+    public void validateOrderComplete() {
+        if (orderStatus.equals(OrderStatus.MEAL) || orderStatus.equals(OrderStatus.COOKING)) {
             throw new IllegalOrderStatusException();
         }
     }
@@ -95,6 +81,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderTables();
     }
 }
