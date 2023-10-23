@@ -38,11 +38,6 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
-    @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("테이블을 정상적으로 등록할 수 있다.")
     @Test
@@ -110,7 +105,8 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
 
@@ -131,7 +127,8 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(주문테이블.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹 지정된 테이블은 빈 테이블로 변경할 수 없습니다.");
     }
 
     @DisplayName("테이블 empty 상태 변경 시, 주문의 상태가 COOKING 또는 MEAL인 경우 예외가 발생한다.")
@@ -152,7 +149,8 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(주문테이블.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("조리중 또는 식사중인 주문 테이블은 빈 테이블로 변경할 수 없습니다.");
     }
 
     @DisplayName("테이블의 numberOfGuests를 변경할 수 있다.")
@@ -196,7 +194,8 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
     @DisplayName("테이블의 numberOfGuests 변경 시, 테이블이 비어있는 경우 예외가 발생한다.")
@@ -210,6 +209,7 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(주문테이블.getId(), request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈 테이블의 방문한 손님 수는 변경할 수 없습니다.");
     }
 }

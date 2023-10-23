@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class MenuProduct {
@@ -17,7 +18,8 @@ public class MenuProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private long quantity;
+    @NotNull
+    private Long quantity;
 
     protected MenuProduct() {
     }
@@ -30,12 +32,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(final Menu menu, final Product product, final long quantity) {
-        this(null, menu, product, quantity);
-    }
-
     public static MenuProduct create(final Menu menu, final Product product, final long quantity) {
-        return new MenuProduct(menu, product, quantity);
+        return new MenuProduct(null, menu, product, quantity);
     }
 
     private void validateQuantity(final long quantity) {
@@ -57,7 +55,7 @@ public class MenuProduct {
         return product;
     }
 
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 }

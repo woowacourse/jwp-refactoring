@@ -28,7 +28,7 @@ public class Menu {
     @Embedded
     private MenuProducts menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     private Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
@@ -40,16 +40,8 @@ public class Menu {
         this.menuProducts = MenuProducts.create(menuProducts);
     }
 
-    private Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
-    }
-
-    public static Menu createWithMenuProducts(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
-        return new Menu(name, price, menuGroup, menuProducts);
-    }
-
     public static Menu create(final String name, final BigDecimal price, final MenuGroup menuGroup) {
-        return new Menu(name, price, menuGroup, new ArrayList<>());
+        return new Menu(null, name, price, menuGroup, new ArrayList<>());
     }
 
     private void validate(final String name, final BigDecimal price) {
@@ -93,11 +85,11 @@ public class Menu {
         return menuProducts.getMenuProducts();
     }
 
-    public void updateMenuProducts(final List<MenuProduct> menuProducts) {
-        final MenuProducts menuProducts1 = MenuProducts.create(menuProducts);
-        if (!menuProducts1.isValidPrice(price)) {
+    public void updateMenuProducts(final List<MenuProduct> menuProductsRequest) {
+        final MenuProducts menuProducts = MenuProducts.create(menuProductsRequest);
+        if (menuProducts.isInvalidPrice(price)) {
             throw new IllegalArgumentException("메뉴 금액의 합계는 각 상품들의 금액 합계보다 클 수 없습니다.");
         }
-        this.menuProducts = menuProducts1;
+        this.menuProducts = menuProducts;
     }
 }

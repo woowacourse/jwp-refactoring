@@ -53,12 +53,8 @@ public class Order {
         }
     }
 
-    private Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
     public static Order create(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable, orderLineItems);
+        return new Order(null, orderTable, COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order create(final OrderTable orderTable) {
@@ -72,26 +68,6 @@ public class Order {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getOrderTable() {
-        return orderTable.getId();
-    }
-
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
     public void changeOrderStatus(final OrderStatus orderStatus) {
         // TODO: meal -> cooking의 상태를 가능하게 할 것인가?
         if (COMPLETION.equals(this.orderStatus)) {
@@ -101,20 +77,28 @@ public class Order {
         this.orderedTime = LocalDateTime.now();
     }
 
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItemsSize(orderLineItems.size());
+        this.orderLineItems = orderLineItems;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOrderTable() {
+        return orderTable.getId();
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemsSize(orderLineItems.size());
-        this.orderLineItems = orderLineItems;
     }
 }

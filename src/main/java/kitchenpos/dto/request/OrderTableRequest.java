@@ -1,12 +1,12 @@
 package kitchenpos.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class OrderTableRequest {
 
-    private Long id;
+    private final Long id;
 
-    public OrderTableRequest() {
-    }
-
+    @JsonCreator
     public OrderTableRequest(final Long id) {
         this.id = id;
     }

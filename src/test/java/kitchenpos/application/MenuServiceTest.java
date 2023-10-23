@@ -4,7 +4,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.MenuCreateRequest;
@@ -34,9 +33,6 @@ class MenuServiceTest extends ServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
@@ -49,19 +45,20 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = MenuGroup.create("두마리메뉴");
-        두마리메뉴 = menuGroupRepository.save(menuGroup);
+        두마리메뉴 = MenuGroup.create("두마리메뉴");
+        menuGroupRepository.save(두마리메뉴);
 
-        Product product1 = Product.create("후라이드", BigDecimal.valueOf(16000));
-        Product product2 = Product.create("양념치킨", BigDecimal.valueOf(16000));
-        Product product3 = Product.create("간장치킨", BigDecimal.valueOf(16000));
-        Product 후라이드 = productRepository.save(product1);
-        Product 양념치킨 = productRepository.save(product2);
-        Product 간장치킨 = productRepository.save(product3);
+        Product 후라이드 = Product.create("후라이드", BigDecimal.valueOf(16000));
+        Product 양념치킨 = Product.create("양념치킨", BigDecimal.valueOf(16000));
+        Product 간장치킨 = Product.create("간장치킨", BigDecimal.valueOf(16000));
 
-        후라이드_한마리 = new MenuProductCreateRequest(후라이드.getId(), 1);
-        양념치킨_한마리 = new MenuProductCreateRequest(양념치킨.getId(), 1);
-        간장치킨_한마리 = new MenuProductCreateRequest(간장치킨.getId(), 1);
+        productRepository.save(후라이드);
+        productRepository.save(양념치킨);
+        productRepository.save(간장치킨);
+
+        후라이드_한마리 = new MenuProductCreateRequest(후라이드.getId(), 1L);
+        양념치킨_한마리 = new MenuProductCreateRequest(양념치킨.getId(), 1L);
+        간장치킨_한마리 = new MenuProductCreateRequest(간장치킨.getId(), 1L);
     }
 
     @DisplayName("메뉴를 정상적으로 등록할 수 있다.")
@@ -102,7 +99,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 가격은 0원 이상이어야 합니다.");
     }
 
     @DisplayName("메뉴 등록 시 메뉴 가격이 상품 총 가격보다 큰 경우 예외가 발생한다.")
@@ -137,7 +135,8 @@ class MenuServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("요청한 menuGroupId에 해당하는 MenuGroup이 존재하지 않습니다.");
     }
 
     @DisplayName("메뉴 목록을 조회할 수 있다.")

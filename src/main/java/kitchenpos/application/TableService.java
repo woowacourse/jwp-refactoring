@@ -38,7 +38,7 @@ public class TableService {
     }
 
     public OrderTable changeEmpty(final Long orderTableId, final TableEmptyStatusUpdateRequest request) {
-        final OrderTable orderTable = findOrderTable(orderTableId);
+        final OrderTable orderTable = getOrderTable(orderTableId);
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(COOKING, MEAL))) {
             throw new IllegalArgumentException("조리중 또는 식사중인 주문 테이블은 빈 테이블로 변경할 수 없습니다.");
@@ -49,12 +49,12 @@ public class TableService {
     }
 
     public OrderTable changeNumberOfGuests(final Long orderTableId, final TableNumberOfGuestsUpdateRequest request) {
-        final OrderTable orderTable = findOrderTable(orderTableId);
+        final OrderTable orderTable = getOrderTable(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableRepository.save(orderTable);
     }
 
-    private OrderTable findOrderTable(final Long orderTableId) {
+    private OrderTable getOrderTable(final Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
     }

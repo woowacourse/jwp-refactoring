@@ -21,8 +21,7 @@ public class OrderTable {
     @NotNull
     private Boolean empty;
 
-    public OrderTable() {
-
+    protected OrderTable() {
     }
 
     public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {

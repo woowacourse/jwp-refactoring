@@ -1,16 +1,29 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
+    @NotNull
     private final String name;
-    private final long price;
-    private final long menuGroupId;
+
+    @NotNull
+    private final Long price;
+
+    @NotNull
+    private final Long menuGroupId;
+
+    @NotNull
     private final List<MenuProductCreateRequest> menuProducts;
 
-    public MenuCreateRequest(final String name, final long price, final long menuGroupId, final List<MenuProductCreateRequest> menuProducts) {
+    public MenuCreateRequest(
+            final String name,
+            final Long price,
+            final Long menuGroupId,
+            final List<MenuProductCreateRequest> menuProducts
+    ) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
@@ -21,11 +34,11 @@ public class MenuCreateRequest {
         return name;
     }
 
-    public long getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public long getMenuGroupId() {
+    public Long getMenuGroupId() {
         return menuGroupId;
     }
 

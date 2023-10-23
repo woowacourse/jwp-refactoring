@@ -24,11 +24,11 @@ public class MenuProducts {
         return new MenuProducts(menuProducts);
     }
 
-    public boolean isValidPrice(final BigDecimal price) {
+    public boolean isInvalidPrice(final BigDecimal price) {
         final double sum = menuProducts.stream()
                 .mapToDouble(MenuProduct::calculateMenuProductPrice)
                 .sum();
-        return sum >= price.doubleValue();
+        return sum < price.doubleValue();
     }
 
     public List<MenuProduct> getMenuProducts() {

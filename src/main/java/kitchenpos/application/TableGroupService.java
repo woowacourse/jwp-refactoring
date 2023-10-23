@@ -24,7 +24,11 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(
+            final OrderRepository orderRepository,
+            final OrderTableRepository orderTableRepository,
+            final TableGroupRepository tableGroupRepository
+    ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;

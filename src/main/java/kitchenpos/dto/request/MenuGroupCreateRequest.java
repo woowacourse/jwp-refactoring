@@ -1,12 +1,15 @@
 package kitchenpos.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.validation.constraints.NotNull;
+
 public class MenuGroupCreateRequest {
 
-    private String name;
+    @NotNull
+    private final String name;
 
-    private MenuGroupCreateRequest() {
-    }
-
+    @JsonCreator
     public MenuGroupCreateRequest(final String name) {
         this.name = name;
     }
