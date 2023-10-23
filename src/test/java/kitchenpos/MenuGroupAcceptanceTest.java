@@ -4,7 +4,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.step.MenuGroupStep;
-import kitchenpos.ui.request.MenuGroupRequest;
+import kitchenpos.ui.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -23,7 +23,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_생성한다() {
-        final MenuGroupRequest request = MENU_GROUP_REQUEST_일식;
+        final MenuGroupCreateRequest request = MENU_GROUP_REQUEST_일식;
         ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(request);
 
         assertThat(response.statusCode()).isEqualTo(CREATED.value());
@@ -32,11 +32,11 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_조회한다() {
-        final List<MenuGroupRequest> requests = List.of(MENU_GROUP_REQUEST_일식, MENU_GROUP_REQUEST_한식);
+        final List<MenuGroupCreateRequest> requests = List.of(MENU_GROUP_REQUEST_일식, MENU_GROUP_REQUEST_한식);
         requests.forEach(MenuGroupStep::메뉴_그룹_생성_요청);
 
         final List<MenuGroup> menuGroups = requests.stream()
-                .map(MenuGroupRequest::toMenuGroup)
+                .map(MenuGroupCreateRequest::toMenuGroup)
                 .collect(Collectors.toList());
 
         final ExtractableResponse<Response> response = 메뉴_그룹_조회_요청();

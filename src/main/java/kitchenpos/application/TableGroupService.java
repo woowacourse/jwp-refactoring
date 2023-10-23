@@ -6,7 +6,7 @@ import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroup create(final TableGroupCreateRequest request) {
         final TableGroup tableGroup = request.toTableGroup();
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 

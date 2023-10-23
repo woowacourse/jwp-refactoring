@@ -3,7 +3,7 @@ package kitchenpos;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.request.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -47,8 +47,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 상품을_조회한다() {
-            final List<ProductRequest> requests = List.of(PRODUCT_CREATE_REQUEST_스키야키, PRODUCT_CREATE_REQUEST_우동);
-            for (final ProductRequest request : requests) {
+            final List<ProductCreateRequest> requests = List.of(PRODUCT_CREATE_REQUEST_스키야키, PRODUCT_CREATE_REQUEST_우동);
+            for (final ProductCreateRequest request : requests) {
                 상품_생성_요청(request);
             }
 
@@ -56,7 +56,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
             final List<Product> result = response.jsonPath().getList("", Product.class);
 
             final List<Product> products = requests.stream()
-                    .map(ProductRequest::toProduct)
+                    .map(ProductCreateRequest::toProduct)
                     .collect(Collectors.toList());
 
             assertAll(

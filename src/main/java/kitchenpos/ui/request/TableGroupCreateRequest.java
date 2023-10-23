@@ -6,13 +6,13 @@ import kitchenpos.domain.TableGroup;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class TableGroupRequest {
+public class TableGroupCreateRequest {
 
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<OrderTable> orderTables;
 
-    public TableGroupRequest(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroupCreateRequest(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
