@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import static kitchenpos.fixture.MenuGroupFixture.일식메뉴;
+import static kitchenpos.fixture.MenuGroupFixture.일식메뉴_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -22,7 +24,7 @@ class MenuGroupServiceTest {
 
     @Test
     void 메뉴_그룹을_등록한다() {
-        var menuGroup = 일식메뉴();
+        var menuGroup = 일식메뉴_REQUEST();
 
         assertThat(menuGroupService.create(menuGroup))
                 .usingRecursiveComparison()
@@ -30,6 +32,7 @@ class MenuGroupServiceTest {
     }
 
     @Test
+    @Transactional
     void 모든_메뉴그룹들을_가져온다() {
         assertThat(menuGroupService.list())
                 .usingRecursiveFieldByFieldElementComparator()

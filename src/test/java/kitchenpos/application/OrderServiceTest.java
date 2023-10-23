@@ -2,21 +2,22 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.양념치킨;
-import static kitchenpos.fixture.MenuFixture.후라이드_두마리;
 import static kitchenpos.fixture.MenuFixture.후라이드치킨;
 import static kitchenpos.fixture.OrderTableFixture.테이블1;
 import static kitchenpos.fixture.OrderTableFixture.테이블9;
@@ -36,8 +37,7 @@ class OrderServiceTest {
 
     @Test
     void 주문시_주문_항목이_null이면_안된다() {
-        var order = new Order();
-        order.setOrderLineItems(null);
+        var order = new OrderRequest(테이블1().getId(), null);
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -45,8 +45,7 @@ class OrderServiceTest {
 
     @Test
     void 주문시_주문_항목이_있어야한다() {
-        var order = new Order();
-        order.setOrderLineItems(new ArrayList<>());
+        var order = new OrderRequest(테이블1().getId(), new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -54,42 +53,19 @@ class OrderServiceTest {
 
     @Test
     void 주문시_주문_항목의_메뉴는_기존_메뉴여야_한다() {
-        Menu unsaved = 후라이드_두마리();
-
-        var order = new Order();
-        var item = new OrderLineItem();
-        item.setMenuId(unsaved.getId());
-        order.setOrderLineItems(List.of(item));
+        var item = new OrderLineItemRequest(-1L, 1);
+        var order = new OrderRequest(테이블1().getId(), List.of(item));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void 주문시_주문_Id를_직접_지정할_수_없다() {
-        var fullTable = 테이블1();
-        fullTable.setEmpty(false);
-        tableService.changeEmpty(fullTable.getId(), fullTable);
-        var order = new Order();
-        order.setOrderTableId(fullTable.getId());
-        var item = new OrderLineItem();
-        item.setMenuId(후라이드치킨().getId());
-        order.setOrderLineItems(List.of(item));
-
-        order.setId(Long.MAX_VALUE);
-
-        assertThat(orderService.create(order).getId()).isNotEqualTo(Long.MAX_VALUE);
-    }
-
-    @Test
     void 주문시_기존_테이블에서만_주문할_수_있다() {
         var unsavedTable = 테이블9();
 
-        var order = new Order();
-        order.setOrderTableId(unsavedTable.getId());
-        var item = new OrderLineItem();
-        item.setMenuId(후라이드치킨().getId());
-        order.setOrderLineItems(List.of(item));
+        var item = new OrderLineItemRequest(후라이드치킨().getId(), 1);
+        var order = new OrderRequest(unsavedTable.getId(), List.of(item));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -99,11 +75,8 @@ class OrderServiceTest {
     void 주문시_빈_테이블이면_안된다() {
         var emptyTable = 테이블1();
 
-        var order = new Order();
-        order.setOrderTableId(emptyTable.getId());
-        var item = new OrderLineItem();
-        item.setMenuId(후라이드치킨().getId());
-        order.setOrderLineItems(List.of(item));
+        var item = new OrderLineItemRequest(후라이드치킨().getId(), 1);
+        var order = new OrderRequest(emptyTable.getId(), List.of(item));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -111,38 +84,35 @@ class OrderServiceTest {
 
     @Test
     void 주문시_주문_테이블을_지정한다() {
-        var fullTable = 테이블1();
-        fullTable.setEmpty(false);
-        tableService.changeEmpty(fullTable.getId(), fullTable);
-        var order = new Order();
-        order.setOrderTableId(fullTable.getId());
-        var item = new OrderLineItem();
-        item.setMenuId(후라이드치킨().getId());
-        order.setOrderLineItems(List.of(item));
+        var fullTable = tableService.changeEmpty(테이블1().getId(), false);
 
-        assertThat(orderService.create(order).getOrderTableId()).isEqualTo(fullTable.getId());
+        var item = new OrderLineItemRequest(후라이드치킨().getId(), 1);
+        var order = new OrderRequest(fullTable.getId(), List.of(item));
+
+        assertThat(orderService.create(order).getOrderTable().getId()).isEqualTo(fullTable.getId());
     }
 
     @Test
     void 주문시_조리중으로_바꾼다() {
-        var order = orderFromTable1(양념치킨());
+        var order = orderOneFromTable1(양념치킨());
 
-        assertThat(orderService.create(order).getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @Test
     void 주문시_주문_시각을_기록한다() {
         var startedTime = LocalDateTime.now();
 
-        var order = orderFromTable1(후라이드치킨());
+        var order = orderOneFromTable1(후라이드치킨());
 
-        assertThat(orderService.create(order).getOrderedTime()).isBetween(startedTime, LocalDateTime.now());
+        assertThat(order.getOrderedTime()).isBetween(startedTime, LocalDateTime.now());
     }
 
     @Test
+    @Transactional
     void 모든_주문들을_가져온다() {
-        Order saved = orderFromTable1(후라이드치킨());
-        Order other = orderFromTable1(양념치킨());
+        Order saved = orderOneFromTable1(후라이드치킨());
+        Order other = orderOneFromTable1(양념치킨());
 
         assertThat(orderService.list())
                 .usingRecursiveFieldByFieldElementComparator()
@@ -153,42 +123,36 @@ class OrderServiceTest {
     void 주문상태_변경시_기존_주문을_사용해야한다() {
         var notLikelyOrderId = Long.MAX_VALUE;
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(notLikelyOrderId, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(notLikelyOrderId, OrderStatus.COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문상태_변경시_계산완료_상태이면_안된다() {
-        Order ordered = orderFromTable1(양념치킨());
-        ordered.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderService.changeOrderStatus(ordered.getId(), ordered);
+        Order ordered = orderOneFromTable1(양념치킨());
+        orderService.changeOrderStatus(ordered.getId(), OrderStatus.COMPLETION);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(ordered.getId(), new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(ordered.getId(), OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문상태_변경시_변경된_주문을_반환한다() {
-        Order ordered = orderFromTable1(양념치킨());
-        ordered.setOrderStatus(OrderStatus.MEAL.name());
+        Order ordered = orderOneFromTable1(양념치킨());
 
-        Order changed = orderService.changeOrderStatus(ordered.getId(), ordered);
+        Order changed = orderService.changeOrderStatus(ordered.getId(), OrderStatus.MEAL);
 
-        assertThat(changed.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(changed.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
-    private Order orderFromTable1(Menu menu) {
+    private Order orderOneFromTable1(Menu menu) {
         var fullTable = 테이블1();
-        fullTable.setEmpty(false);
         try {
-            tableService.changeEmpty(fullTable.getId(), fullTable);
+            tableService.changeEmpty(테이블1().getId(), false);
         } catch (IllegalArgumentException ignored) {
         }
-        var order = new Order();
-        order.setOrderTableId(fullTable.getId());
-        var item = new OrderLineItem();
-        item.setMenuId(menu.getId());
-        order.setOrderLineItems(List.of(item));
+        var item = new OrderLineItemRequest(menu.getId(), 1);
+        var order = new OrderRequest(fullTable.getId(), List.of(item));
 
         return orderService.create(order);
     }
