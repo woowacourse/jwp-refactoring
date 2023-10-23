@@ -63,6 +63,9 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuest(int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("비어있는 테이블 인원 수는 수정할 수 없습니다.");
+        }
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 

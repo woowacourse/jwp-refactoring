@@ -66,10 +66,6 @@ public class TableService {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 테이블 인원 수는 수정할 수 없습니다.");
-        }
-
         orderTable.changeNumberOfGuest(orderTableRequest.getNumberOfGuests());
         return OrderTableResponse.from(orderTable);
     }
