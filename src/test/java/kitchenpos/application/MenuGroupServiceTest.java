@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.MenuGroupRequest;
+import kitchenpos.ui.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,18 +21,14 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴그룹을_등록한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("세트메뉴");
-        menuGroup.setId(1L);
+        MenuGroupRequest request = new MenuGroupRequest("세트메뉴");
 
         // when
-        MenuGroup result = menuGroupService.create(menuGroup);
+        MenuGroupResponse response = menuGroupService.create(request);
 
         // then
-        assertThat(result)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(menuGroup);
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getName()).isEqualTo("세트메뉴");
     }
 
     @Test
