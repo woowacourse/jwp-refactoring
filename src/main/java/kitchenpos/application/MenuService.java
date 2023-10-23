@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
@@ -11,7 +10,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.exception.MenuGroupNotFoundException;
-import kitchenpos.exception.MenuPriceTooExpensiveException;
 import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
@@ -48,23 +46,9 @@ public class MenuService {
                         .orElseThrow(ProductNotFoundException::new), dto.getQuantity())))
                 .collect(toList());
 
-        validateSumBiggerThanSinglePrice(request.getPrice(), menuProducts);
-        menu.setMenuProducts(menuProducts);
+        menu.changeMenuProducts(menuProducts);
 
         return MenuResponse.from(menu);
-    }
-
-    private void validateSumBiggerThanSinglePrice(BigDecimal price,
-            List<MenuProduct> menuProducts) {
-        BigDecimal sum = menuProducts.stream()
-                .map(menuProduct -> menuProduct.getProduct().getPrice()
-                        .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
-                .reduce(BigDecimal::multiply)
-                .orElseThrow(RuntimeException::new);
-
-        if (price.compareTo(sum) > 0) {
-            throw new MenuPriceTooExpensiveException();
-        }
     }
 
     public List<MenuResponse> list() {

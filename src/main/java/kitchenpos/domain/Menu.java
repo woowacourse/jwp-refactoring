@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.exception.MenuPriceTooExpensiveException;
 
 @Entity
 public class Menu {
@@ -47,6 +48,23 @@ public class Menu {
         return new Menu(name, Price.from(price), menuGroup, menuProducts);
     }
 
+    public void changeMenuProducts(List<MenuProduct> menuProducts) {
+        validateSumBiggerThanSinglePrice(menuProducts);
+        this.menuProducts = menuProducts;
+    }
+
+    private void validateSumBiggerThanSinglePrice(List<MenuProduct> menuProducts) {
+        BigDecimal sum = menuProducts.stream()
+                .map(menuProduct -> menuProduct.getProduct().getPrice()
+                        .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElseThrow(RuntimeException::new);
+
+        if (price.isLessThan(sum)) {
+            throw new MenuPriceTooExpensiveException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -65,9 +83,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

@@ -44,22 +44,14 @@ public class OrderService {
 
     @Transactional
     public OrdersResponse create(OrdersCreateRequest request) {
-        // 요청의 orderLinItem 내용이 없는지 확인
         List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
-        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new InvalidRequestParameterException();
-        }
+        validateOrderLineItemIsNotEmpty(orderLineItemDtos);
 
-        // orderTableId가 실제로 존재하는지 확인
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
 
-        // orderTable이 isEmpty()상태라면 예외
-        if (orderTable.isEmpty()) {
-            throw new CannotMakeOrderWithEmptyTableException();
-        }
+        validateOrderTableNotEmpty(orderTable);
 
-        // order entity를 생성
         Orders orders = orderRepository.save(
                 new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
 
@@ -71,6 +63,18 @@ public class OrderService {
         }
 
         return OrdersResponse.from(orders);
+    }
+
+    private void validateOrderLineItemIsNotEmpty(List<OrderLineItemDto> orderLineItemDtos) {
+        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
+            throw new InvalidRequestParameterException();
+        }
+    }
+
+    private void validateOrderTableNotEmpty(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new CannotMakeOrderWithEmptyTableException();
+        }
     }
 
     public List<OrdersResponse> list() {
