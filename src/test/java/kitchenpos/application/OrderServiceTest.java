@@ -136,7 +136,7 @@ class OrderServiceTest extends ServiceTest {
             menuDao.save(new Menu("메뉴_이름", BigDecimal.valueOf(100L), 1L, List.of()));
             final var order = orderDao.save(new Order(1L, "", LocalDateTime.now(), List.of()));
             final var orderLineItem = orderLineItemDao.save(new OrderLineItem(1L, 1L, 5));
-            order.setOrderLineItems(List.of(orderLineItem));
+            order.applyOrderLineItem(List.of(orderLineItem));
             orderDao.save(order);
 
             final var expected = List.of(OrderResponse.toResponse(order));

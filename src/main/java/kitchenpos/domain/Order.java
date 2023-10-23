@@ -48,6 +48,10 @@ public class Order {
         }
     }
 
+    public void applyOrderLineItem(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
+
     public Long getId() {
         return id;
     }
@@ -66,9 +70,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

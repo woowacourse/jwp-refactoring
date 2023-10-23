@@ -47,7 +47,7 @@ public class OrderService {
         final Order savedOrder = saveOrder(request);
 
         final List<OrderLineItem> savedOrderLineItems = getOrderLineItems(orderLineItems, savedOrder);
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+        savedOrder.applyOrderLineItem(savedOrderLineItems);
 
         return OrderResponse.toResponse(savedOrder);
     }

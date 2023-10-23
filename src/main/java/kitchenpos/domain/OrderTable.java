@@ -28,6 +28,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -44,15 +48,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

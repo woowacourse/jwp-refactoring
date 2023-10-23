@@ -47,7 +47,7 @@ public class TableService {
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
         validateTableGroupId(savedOrderTable);
         validateOrderStatusComplete(orderTableId);
-        savedOrderTable.setEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty());
         return OrderTableResponse.toResponse(orderTableDao.save(savedOrderTable));
     }
 
@@ -71,23 +71,32 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
                                                    final OrderTableChangeNumberRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-        validateNumberOfGuests(numberOfGuests);
-        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
-        validateOrderTableIsEmpty(savedOrderTable);
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-        return OrderTableResponse.toResponse(orderTableDao.save(savedOrderTable));
+        validateNumberOfGuests(request.getNumberOfGuests());
+        final OrderTable findOrderTable = findOrderTableById(orderTableId);
+        validateOrderTableIsEmpty(findOrderTable);
+        final OrderTable saveOrderTable = saveOrderTable(findOrderTable, request.getNumberOfGuests());
+        return OrderTableResponse.toResponse(saveOrderTable);
     }
 
-    private static void validateOrderTableIsEmpty(final OrderTable savedOrderTable) {
+    private void validateOrderTableIsEmpty(final OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있습니다.");
         }
     }
 
-    private static void validateNumberOfGuests(final int numberOfGuests) {
+    private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("[ERROR] 손님의 수가 음수입니다.");
         }
+    }
+
+    private OrderTable saveOrderTable(final OrderTable orderTable, final int numberOfGuests) {
+        return orderTableDao.save(
+                new OrderTable(
+                        orderTable.getTableGroupId(),
+                        numberOfGuests,
+                        orderTable.isEmpty()
+                )
+        );
     }
 }

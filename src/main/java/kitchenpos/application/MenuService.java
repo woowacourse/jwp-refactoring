@@ -38,7 +38,6 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         validateMenuGroup(request.getMenuGroupId());
         validateMenuPrice(request.getPrice(), request.getMenuProducts());
-
         final Menu savedMenu = saveMenu(request);
         return MenuResponse.toResponse(savedMenu);
     }
