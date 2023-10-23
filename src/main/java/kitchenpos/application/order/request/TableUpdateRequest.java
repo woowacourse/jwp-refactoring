@@ -1,11 +1,11 @@
 package kitchenpos.application.order.request;
 
-public class OrderTableCreateRequest {
+public class TableUpdateRequest {
 
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
+    public TableUpdateRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }

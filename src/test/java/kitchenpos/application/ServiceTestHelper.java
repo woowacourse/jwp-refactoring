@@ -4,7 +4,8 @@ import kitchenpos.application.menu.MenuGroupService;
 import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
-import kitchenpos.application.order.request.OrderTableCreateRequest;
+import kitchenpos.application.order.request.TableCreateRequest;
+import kitchenpos.application.order.request.TableUpdateRequest;
 import kitchenpos.application.product.ProductService;
 import kitchenpos.application.product.request.ProductCreateRequest;
 import kitchenpos.application.tablegroup.TableGroupService;
@@ -136,12 +137,12 @@ public abstract class ServiceTestHelper {
     }
 
     public OrderTable 테이블_등록() {
-        OrderTableCreateRequest request = new OrderTableCreateRequest(0, true);
+        TableCreateRequest request = new TableCreateRequest(0, true);
         return tableService.create(request);
     }
 
     public OrderTable 손님_채운_테이블_생성(int numberOfGuests) {
-        OrderTableCreateRequest request = new OrderTableCreateRequest(numberOfGuests, false);
+        TableCreateRequest request = new TableCreateRequest(numberOfGuests, false);
         return tableService.create(request);
     }
 
@@ -150,18 +151,26 @@ public abstract class ServiceTestHelper {
     }
 
     public OrderTable 테이블_손님_수_변경(Long orderTableId, int numberOfGuests) {
-        OrderTable orderTable = OrderTable.of(numberOfGuests, false);
-        return tableService.changeNumberOfGuests(orderTableId, orderTable);
+        TableUpdateRequest updateRequest = new TableUpdateRequest(numberOfGuests, false);
+        return tableService.changeNumberOfGuests(orderTableId, updateRequest);
     }
 
     public OrderTable 테이블_채움(Long orderTableId) {
-        OrderTable orderTable = OrderTable.of(0, false); // 요청이지
-        return tableService.changeEmpty(orderTableId, orderTable);
+        TableUpdateRequest updateRequest = new TableUpdateRequest(0, false);
+        return tableService.changeEmpty(orderTableId, updateRequest);
     }
 
     public OrderTable 테이블_비움(Long orderTableId) {
-        OrderTable orderTable = OrderTable.of(0, true);
-        return tableService.changeEmpty(orderTableId, orderTable);
+        TableUpdateRequest updateRequest = new TableUpdateRequest(0, true);
+        return tableService.changeEmpty(orderTableId, updateRequest);
+    }
+
+    public TableUpdateRequest 테이블_비움요청(){
+        return new TableUpdateRequest(0, true);
+    }
+
+    public TableUpdateRequest 테이블_채움요청(){
+        return new TableUpdateRequest(0, false);
     }
 
     public TableGroup 테이블_그룹화(List<OrderTable> orderTables) {

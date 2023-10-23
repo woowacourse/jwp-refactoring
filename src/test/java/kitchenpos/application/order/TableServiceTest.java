@@ -62,17 +62,21 @@ class TableServiceTest extends ServiceTestHelper {
     void 주문_테이블_비움상태_변경시_주문_상태가_조리중이면_예외가_발생한다() {
         // given
         주문_요청(손님있는_테이블, 이달의음료세트);
+        var 테이블_비움요청 = 테이블_비움요청();
 
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(손님있는_테이블.getId(), 손님있는_테이블));
+                .isThrownBy(() -> tableService.changeEmpty(손님있는_테이블.getId(), 테이블_비움요청));
     }
 
     @Test
     void 주문_테이블_비움상태_변경시_주문_상태가_식사중이면_예외가_발생한다() {
+        // given
+        var 테이블_비움요청 = 테이블_비움요청();
+
         // when & then
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableService.changeEmpty(손님있는_식사중_테이블.getId(), 손님있는_식사중_테이블));
+                .isThrownBy(() -> tableService.changeEmpty(손님있는_식사중_테이블.getId(), 테이블_비움요청));
     }
 
     @Test
