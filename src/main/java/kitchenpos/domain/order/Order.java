@@ -2,19 +2,8 @@ package kitchenpos.domain.order;
 
 import kitchenpos.exception.OrderException;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,14 +23,15 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
     public Order(LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
+        this.orderLineItems = new OrderLineItems();
     }
 
     public void changeOrderTable(OrderTable orderTable) {
@@ -64,8 +54,8 @@ public class Order {
     }
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems.add(orderLineItems);
         for (OrderLineItem orderLineItem : orderLineItems) {
-            this.orderLineItems.add(orderLineItem);
             orderLineItem.changeOrder(this);
         }
     }
@@ -87,7 +77,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     @Override

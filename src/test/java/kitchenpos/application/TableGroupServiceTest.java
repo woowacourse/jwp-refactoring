@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 class TableGroupServiceTest extends MockServiceTest {
@@ -152,13 +151,11 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_삭제하면_주문테이블이_주문이_가능한_상태로_바뀌고_테이블_그룹_아이디가_null_로_바뀐다() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), true);
         OrderTable secondOrderTable = new OrderTable(new GuestNumber(1), true);
 
-        BDDMockito.given(tableGroupRepository.findById(BDDMockito.anyLong()))
-                .willReturn(Optional.of(tableGroup));
+        BDDMockito.given(tableGroupRepository.existsById(BDDMockito.anyLong()))
+                .willReturn(true);
         BDDMockito.given(orderTableRepository.findAllByTableGroupIdWithOrders(BDDMockito.anyLong()))
                 .willReturn(List.of(firstOrderTable, secondOrderTable));
 
@@ -177,14 +174,12 @@ class TableGroupServiceTest extends MockServiceTest {
     @Test
     void 테이블그룹을_삭제할_때_주문테이블_내에_존재하는_주문들_중_COOKING_또는_MEAL_상태가_존재하면_예외를_던진다() {
         // given
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-
         OrderTable firstOrderTable = new OrderTable(new GuestNumber(1), false);
         Order order = new Order(LocalDateTime.now());
         firstOrderTable.addOrder(order);
 
-        BDDMockito.given(tableGroupRepository.findById(BDDMockito.anyLong()))
-                .willReturn(Optional.of(tableGroup));
+        BDDMockito.given(tableGroupRepository.existsById(BDDMockito.anyLong()))
+                .willReturn(true);
         BDDMockito.given(orderTableRepository.findAllByTableGroupIdWithOrders(BDDMockito.anyLong()))
                 .willReturn(List.of(firstOrderTable));
 
