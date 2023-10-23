@@ -19,7 +19,8 @@ class MenuTest {
 
         //when then
         assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts("TestMenu", null, menuGroup))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("메뉴 금액은 null일 수 없습니다.");
     }
 
     @ParameterizedTest(name = "메뉴 금액이 0원 미만인 경우, 생성할 수 없다")
@@ -42,7 +43,8 @@ class MenuTest {
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
         //when then
         assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts("TestMenu", menuPrice, null))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("메뉴 그룹은 null일 수 없습니다.");
     }
 
     @Test
@@ -54,7 +56,8 @@ class MenuTest {
 
         //when then
         assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts(null, menuPrice, menuGroup))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("메뉴 이름은 null일 수 없습니다.");
     }
 
     @Test

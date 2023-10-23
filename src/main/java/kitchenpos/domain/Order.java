@@ -67,7 +67,7 @@ public class Order {
 
     private static void validateOrderTable(OrderTable orderTable) {
         if (orderTable == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("주문 테이블은 null일 수 없습니다.");
         }
 
         if (Boolean.TRUE.equals(orderTable.isEmpty())) {

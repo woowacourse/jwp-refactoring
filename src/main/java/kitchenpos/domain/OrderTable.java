@@ -59,7 +59,7 @@ public class OrderTable {
 
     private static void validateNumberEmpty(Boolean empty) {
         if (empty == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("empty는 null일 수 없습니다.");
         }
     }
 

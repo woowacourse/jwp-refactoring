@@ -29,7 +29,8 @@ class OrderTest {
     void createOrderFailTest_ByOrderTableIsNull() {
         //when then
         assertThatThrownBy(() -> Order.createWithEmptyOrderLinItems(null))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("주문 테이블은 null일 수 없습니다.");
     }
 
     @DisplayName("주문 테이블이 주문할 수 없는 상태일 경우, 생성할 수 없다.")

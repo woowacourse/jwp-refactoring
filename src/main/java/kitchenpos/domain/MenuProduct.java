@@ -56,13 +56,13 @@ public class MenuProduct {
 
     private static void validateMenu(Menu menu) {
         if (menu == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("메뉴는 null일 수 없습니다.");
         }
     }
 
     private static void validateQuantity(Long quantity) {
         if (quantity == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("상품 수량은 null일 수 없습니다.");
         }
         if (quantity < MIN_QUANTITY) {
             throw new IllegalArgumentException("상품 개수는 1개 이상이어야 합니다.");
@@ -71,7 +71,7 @@ public class MenuProduct {
 
     private static void validateProduct(Product product) {
         if (product == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("상품은 null일 수 없습니다.");
         }
     }
 

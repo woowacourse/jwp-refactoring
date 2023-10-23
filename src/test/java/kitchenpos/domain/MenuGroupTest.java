@@ -13,7 +13,8 @@ class MenuGroupTest {
     void createMenuGroupFailTest_ByNameIsNull() {
         //when then
         assertThatThrownBy(() -> MenuGroup.from(null))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("메뉴 그룹 이름은 null일 수 없습니다.");
     }
 
     @Test

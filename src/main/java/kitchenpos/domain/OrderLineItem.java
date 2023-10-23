@@ -47,13 +47,13 @@ public class OrderLineItem {
 
     private static void validateOrder(Order order) {
         if (order == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("주문은 null일 수 없습니다.");
         }
     }
 
     private static void validateMenu(Menu menu) {
         if (menu == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("주문 메뉴는 null일 수 없습니다.");
         }
     }
 

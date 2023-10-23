@@ -51,7 +51,8 @@ class ProductServiceTest {
 
         //when then
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("상품 금액은 null일 수 없습니다.");
     }
 
     @ParameterizedTest(name = "상품 금액이 0원 미만이면, 저장할 수 없다.")

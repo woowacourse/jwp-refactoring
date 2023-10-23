@@ -28,7 +28,7 @@ public class MenuProducts {
 
     private static void validate(List<MenuProduct> menuProducts) {
         if (menuProducts == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("메뉴 상품은 null일 수 없습니다.");
         }
     }
 

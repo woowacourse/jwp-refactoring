@@ -33,7 +33,7 @@ public class MenuGroup {
 
     private static void validateName(String name) {
         if (name == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("메뉴 그룹 이름은 null일 수 없습니다.");
         }
         if (name.isBlank() || name.length() > MAX_NAME_LENGTH) {
             throw new IllegalArgumentException("메뉴 그룹 이름은 1글자 이상, 255자 이하여야 합니다.");

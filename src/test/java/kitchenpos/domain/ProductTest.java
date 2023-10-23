@@ -16,7 +16,8 @@ class ProductTest {
     @Test
     void createProductFailTest_ByNameIsNull() {
         assertThatThrownBy(() -> Product.create(null, BigDecimal.TEN))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("상품 이름은 null일 수 없습니다.");
     }
 
     @ParameterizedTest(name = "상품 이름은 1글자 이상, 255자 이하여야 한다.")

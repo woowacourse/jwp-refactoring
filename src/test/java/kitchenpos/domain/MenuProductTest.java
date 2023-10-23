@@ -24,7 +24,7 @@ class MenuProductTest {
                 .hasMessage("상품 개수는 1개 이상이어야 합니다.");
     }
 
-    @DisplayName("메뉴에 속해있는 상품은 null일 수 없다.")
+    @DisplayName("메뉴에 속해있는 상품 수량은 null일 수 없다.")
     @Test
     void createMenuProductFailTest_ByQuantityIsNull() {
         //given
@@ -34,6 +34,7 @@ class MenuProductTest {
 
         //when then
         assertThatThrownBy(() -> MenuProduct.create(menu, null, product))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("상품 수량은 null일 수 없습니다.");
     }
 }
