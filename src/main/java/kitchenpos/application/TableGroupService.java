@@ -45,7 +45,7 @@ public class TableGroupService {
 
     private OrderTables getOrderTables(final TableGroupRequest tableGroupRequest) {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
-                .map(it -> it.getId())
+                .map(orderTable -> orderTable.getId())
                 .collect(Collectors.toList());
 
         final List<OrderTable> orderTables = orderTableRepository.findByIdIn(orderTableIds);
