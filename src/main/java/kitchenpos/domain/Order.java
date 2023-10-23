@@ -8,9 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -18,11 +15,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @ManyToOne(optional = false)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_orders_to_order_table"))
     private OrderTable orderTable;
@@ -40,10 +34,6 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public OrderTable getOrderTable() {

@@ -6,19 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Menu {
+public class Menu extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(nullable = false)
     private String name;
     @Embedded
@@ -33,10 +27,6 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {

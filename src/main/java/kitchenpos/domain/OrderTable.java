@@ -6,19 +6,13 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class OrderTable {
+public class OrderTable extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
     private TableGroup tableGroup;
@@ -32,10 +26,6 @@ public class OrderTable {
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public TableGroup getTableGroup() {
