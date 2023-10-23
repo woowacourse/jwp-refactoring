@@ -1,12 +1,10 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupRequest;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.menugroup.MenuGroupRequest;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
