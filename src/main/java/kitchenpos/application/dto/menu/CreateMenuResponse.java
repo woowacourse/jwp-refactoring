@@ -40,7 +40,7 @@ public class CreateMenuResponse {
                 menu.name(),
                 menu.price().value(),
                 MenuGroupResponse.from(menu.menuGroup()),
-                menu.menuProducts().stream()
+                menu.menuProducts().items().stream()
                         .map(MenuProductResponse::from)
                         .collect(Collectors.toList())
         );

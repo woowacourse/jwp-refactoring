@@ -26,9 +26,9 @@ class MenuTest {
 
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                new Menu(null, 메뉴가격, null, List.of(
+                new Menu(null, 메뉴가격, null, new MenuProducts(List.of(
                         가격이_1인_상품_2개, 가격이_3인_상품_3개
-                ))).exceptionType();
+                )))).exceptionType();
 
         // then
         assertThat(exceptionType).isEqualTo(SUM_OF_MENU_PRODUCTS_PRICE_MUST_BE_LESS_THAN_PRICE);
@@ -45,8 +45,8 @@ class MenuTest {
         MenuProduct 가격이_3인_상품_3개 = new MenuProduct(가격이_3인_상품, 3);
 
         // when & then
-        assertThatCode(() -> new Menu(null, 메뉴가격, null, List.of(
+        assertThatCode(() -> new Menu(null, 메뉴가격, null, new MenuProducts(List.of(
                 가격이_1인_상품_2개, 가격이_3인_상품_3개
-        ))).doesNotThrowAnyException();
+        )))).doesNotThrowAnyException();
     }
 }

@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -86,7 +87,11 @@ public class IntegrationTest {
     }
 
     protected Menu 메뉴(String 메뉴이름, Price 가격, MenuGroup 메뉴그룹, MenuProduct... 메뉴상품) {
-        return new Menu(메뉴이름, 가격, 메뉴그룹, Arrays.asList(메뉴상품));
+        return new Menu(메뉴이름, 가격, 메뉴그룹, 메뉴상품들(메뉴상품));
+    }
+
+    protected MenuProducts 메뉴상품들(MenuProduct... 메뉴상품) {
+        return new MenuProducts(Arrays.asList(메뉴상품));
     }
 
     protected Order 주문(OrderTable 주문테이블, OrderStatus 주문상태, OrderLineItem... 주문항목) {

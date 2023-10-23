@@ -14,6 +14,7 @@ import kitchenpos.application.dto.menu.SearchMenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -64,7 +65,7 @@ public class ControllerTest {
                 "후라이드+후라이드",
                 new Price(BigDecimal.valueOf(1)),
                 new MenuGroup(1L, "추천메뉴"),
-                List.of(menuProduct)
+                new MenuProducts(List.of(menuProduct))
         );
     }
 
@@ -72,7 +73,7 @@ public class ControllerTest {
         MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
         Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
         MenuProduct menuProduct = new MenuProduct(1L, product, 3);
-        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup, List.of(menuProduct));
+        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup, new MenuProducts(List.of(menuProduct)));
         return CreateMenuResponse.from(menu);
     }
 
@@ -80,7 +81,7 @@ public class ControllerTest {
         MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
         Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
         MenuProduct menuProduct = new MenuProduct(1L, product, 3);
-        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup, List.of(menuProduct));
+        Menu menu = new Menu(1L, "메뉴", new Price(BigDecimal.ONE), menuGroup, new MenuProducts(List.of(menuProduct)));
         return SearchMenuResponse.from(menu);
     }
 
