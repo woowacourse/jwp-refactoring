@@ -27,8 +27,6 @@ public class TableService {
     @Transactional
     public OrderTable create(final CreateOrderTableRequest request) {
         final OrderTable orderTable = request.toEntity();
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
 
         return orderTableRepository.save(orderTable);
     }
@@ -43,7 +41,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 
@@ -52,7 +50,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.changeEmpty(orderTable.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
@@ -73,7 +71,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
     }

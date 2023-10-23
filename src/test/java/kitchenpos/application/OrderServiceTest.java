@@ -32,7 +32,6 @@ import static kitchenpos.fixture.MenuFixture.menu;
 import static kitchenpos.fixture.MenuProductFixture.menuProduct;
 import static kitchenpos.fixture.OrderFixture.order;
 import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
-import static kitchenpos.fixture.OrderTableFixture.orderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -72,7 +71,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록한다")
     void create() {
         // given
-        final OrderTable 주문_테이블 = orderTableRepository.save(orderTable(3, false));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
 
         final CreateOrderRequest order = new CreateOrderRequest(주문_테이블.getId(), List.of(주문항목));
@@ -92,7 +91,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록할 때 주문항목이 없으면 예외가 발생한다")
     void create_emptyOrderLineItems() {
         // given
-        final OrderTable 주문_테이블 = orderTableRepository.save(orderTable(3, false));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final List<CreateOrderLineItemRequest> 빈_주문_항목 = Collections.emptyList();
 
         final CreateOrderRequest invalidOrder = new CreateOrderRequest(주문_테이블.getId(), 빈_주문_항목);
@@ -106,7 +105,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록할 때 주문항목의 개수와 메뉴 개수가 다르면 예외가 발생한다.")
     void create_invalidNumberOfOrderLineItems() {
         // given
-        final OrderTable 주문_테이블 = orderTableRepository.save(orderTable(3, false));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
 
         final CreateOrderLineItemRequest 후라이드_2개_메뉴_1개 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
         final CreateOrderLineItemRequest 후라이드_2개_메뉴_2개 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 2l);
@@ -135,7 +134,7 @@ class OrderServiceTest {
     @DisplayName("주문을 등록할 때 주문 테이블이 비어있으면 예외가 발생한다")
     void create_emptyTable() {
         // given
-        final OrderTable 비어있는_테이블 = orderTableRepository.save(orderTable(3, true));
+        final OrderTable 비어있는_테이블 = orderTableRepository.save(new OrderTable(3, true));
 
         final CreateOrderLineItemRequest 주문항목 = new CreateOrderLineItemRequest(후라이드_2개_메뉴.getId(), 1l);
 
@@ -150,8 +149,8 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회한다")
     void list() {
         // given
-        final OrderTable 세명_테이블 = orderTableRepository.save(orderTable(3, false));
-        final OrderTable 네명_테이블 = orderTableRepository.save(orderTable(4, false));
+        final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, false));
+        final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, false));
 
         final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
 
@@ -173,7 +172,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다")
     void changeOrderStatus() {
         // given
-        final OrderTable 주문_테이블 = orderTableRepository.save(orderTable(3, false));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
         final Order 주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COOKING, List.of(주문항목)));
 
@@ -191,7 +190,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경할 때 주문 상태가 이미 COMPLETION이면 예외가 발생한다")
     void changeOrderStatus_orderStatusCompletion() {
         // given
-        final OrderTable 주문_테이블 = orderTableRepository.save(orderTable(3, false));
+        final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
         final Order 완료된_주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COMPLETION, List.of(주문항목)));
 

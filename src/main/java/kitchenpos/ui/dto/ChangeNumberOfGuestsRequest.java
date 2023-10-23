@@ -18,9 +18,6 @@ public class ChangeNumberOfGuestsRequest {
     }
 
     public OrderTable toEntity() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTable;
+        return new OrderTable(numberOfGuests);
     }
 }

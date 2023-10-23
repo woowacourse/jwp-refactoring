@@ -24,10 +24,6 @@ public class CreateOrderTableRequest {
     }
 
     public OrderTable toEntity() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-
-        return orderTable;
+        return new OrderTable(numberOfGuests, empty);
     }
 }

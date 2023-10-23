@@ -18,9 +18,6 @@ public class CreateTableGroupOrderTableRequest {
     }
 
     public OrderTable toEntity() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-
-        return orderTable;
+        return new OrderTable(id);
     }
 }

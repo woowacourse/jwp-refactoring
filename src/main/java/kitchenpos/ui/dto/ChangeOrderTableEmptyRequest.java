@@ -18,9 +18,6 @@ public class ChangeOrderTableEmptyRequest {
     }
 
     public OrderTable toEntity() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-
-        return orderTable;
+        return new OrderTable(empty);
     }
 }
