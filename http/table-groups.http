@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/table-groups
+POST http://localhost:8080/api/table-groups
 Content-Type: application/json
 
 {
@@ -14,6 +14,6 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{host}}/api/table-groups/1
+DELETE http://localhost:8080/api/table-groups/1
 
 ###

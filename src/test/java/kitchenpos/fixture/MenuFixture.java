@@ -1,36 +1,40 @@
 package kitchenpos.fixture;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
 
     public static Menu 메뉴_생성(
-            BigDecimal price,
+            Long price,
             MenuGroup savedMenuGroup,
             MenuProduct menuProduct
     ) {
-        return new Menu(
+        Menu menu = Menu.of(
                 "메뉴",
                 price,
-                savedMenuGroup.getId(),
-                List.of(menuProduct)
+                savedMenuGroup
         );
+
+        menu.addAllMenuProducts(List.of(menuProduct));
+        return menu;
     }
 
-    public static Menu 존재하지_않는_MenuGroup_을_가진_메뉴_생성(
-            BigDecimal price,
-            MenuProduct savedMenuProduct
+    public static Menu 존재하지_않는_메뉴_그룹을_가진_메뉴_생성(
+            Long price,
+            MenuProduct menuProduct
     ) {
-        return new Menu(
+        Menu menu = Menu.of(
                 "메뉴",
                 price,
-                Long.MAX_VALUE,
-                List.of(savedMenuProduct)
+                MenuGroupFixture.후추와_함께하는_메뉴()
         );
+
+        menu.addAllMenuProducts(List.of(menuProduct));
+        return menu;
     }
 
 }
