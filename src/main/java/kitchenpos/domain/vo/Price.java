@@ -26,6 +26,14 @@ public class Price {
         }
     }
 
+    public boolean isGreaterThan(final BigDecimal other) {
+        return value.compareTo(other) > 0;
+    }
+
+    public BigDecimal multiply(final long other) {
+        return value.multiply(BigDecimal.valueOf(other));
+    }
+
     public BigDecimal getValue() {
         return value;
     }
