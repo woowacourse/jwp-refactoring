@@ -55,7 +55,7 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final Integer numberOfGuests) {
-        if (isEmpty()) {
+        if (isEmpty() || numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
 

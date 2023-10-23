@@ -27,6 +27,10 @@ public class TableGroup {
         this.createdDate = LocalDateTime.now();
     }
 
+    public void initOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+    }
+
 
     public Long getId() {
         return id;

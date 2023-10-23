@@ -55,6 +55,7 @@ public class TableGroupService {
             savedOrderTable.joinTableGroup(savedTableGroup);
             orderTableRepository.save(savedOrderTable);
         }
+        savedTableGroup.initOrderTables(savedOrderTables);
 
         return TableGroupResponse.of(savedTableGroup);
     }
