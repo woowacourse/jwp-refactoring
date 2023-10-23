@@ -8,7 +8,8 @@ public class MenuName {
 
     private String name;
 
-    protected MenuName() {}
+    protected MenuName() {
+    }
 
     public MenuName(String name) {
         this.name = name;
