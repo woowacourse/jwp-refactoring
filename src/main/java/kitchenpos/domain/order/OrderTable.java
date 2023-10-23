@@ -46,7 +46,7 @@ public class OrderTable {
     }
 
     public void changeTableGroup(TableGroup tableGroup) {
-        this.empty = Boolean.FALSE;
+        empty = Boolean.FALSE;
         this.tableGroup = tableGroup;
     }
 
@@ -82,7 +82,7 @@ public class OrderTable {
             throw new OrderTableException("주문테이블이 주문을 할 수 없는 상태라 주문을 추가할 수 없습니다.");
         }
         order.changeOrderTable(this);
-        this.orders.add(order);
+        orders.add(order);
     }
 
     public void ungroup() {
