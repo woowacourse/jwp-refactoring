@@ -1,10 +1,10 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menu.CreateMenuGroupRequest;
+import kitchenpos.dto.menu.CreateMenuGroupResponse;
+import kitchenpos.dto.menu.ListMenuGroupResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,34 +13,31 @@ class MenuGroupServiceTest extends ApplicationIntegrationTest {
     @Test
     void create_menu_group() {
         //given
-        final MenuGroup menuGroup = new MenuGroup("치킨");
-
+        final CreateMenuGroupRequest menuGroup = CreateMenuGroupRequest.of("치킨");
         //when
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final CreateMenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroup);
 
         //then
-        assertThat(createdMenuGroup)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(menuGroup);
+        assertThat(createdMenuGroup.getName()).isEqualTo(menuGroup.getName());
     }
 
     @Test
     void list_menu_groups() {
         //given
-        final int originalSize = menuGroupService.list().size();
-        final MenuGroup menuGroup = new MenuGroup("치킨");
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final int originalSize = menuGroupService.list().getMenuGroups().size();
+        final CreateMenuGroupRequest menuGroup = CreateMenuGroupRequest.of("치킨");
+        final CreateMenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroup);
 
         //when
-        final List<MenuGroup> foundMenuGroups = menuGroupService.list();
+        final ListMenuGroupResponse foundMenuGroups = menuGroupService.list();
 
         //then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(foundMenuGroups).hasSize(originalSize + 1);
-            softly.assertThat(foundMenuGroups)
-                    .usingRecursiveFieldByFieldElementComparator()
-                    .contains(createdMenuGroup);
+            softly.assertThat(foundMenuGroups.getMenuGroups()).hasSize(originalSize + 1);
+            softly.assertThat(foundMenuGroups.getMenuGroups().get(0))
+                    .usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(createdMenuGroup);
         });
     }
 }
