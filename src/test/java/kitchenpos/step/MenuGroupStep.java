@@ -10,16 +10,8 @@ import static io.restassured.http.ContentType.JSON;
 
 public class MenuGroupStep {
 
-    public static final MenuGroupRequest 일식 = new MenuGroupRequest(1L, "일식");
-    public static final MenuGroupRequest 한식 = new MenuGroupRequest(2L, "한식");
-
-
-    public static MenuGroupRequest toRequest(final MenuGroup menuGroup) {
-        return new MenuGroupRequest(
-                menuGroup.getId(),
-                menuGroup.getName()
-        );
-    }
+    public static final MenuGroupRequest MENU_GROUP_REQUEST_일식 = new MenuGroupRequest("일식");
+    public static final MenuGroupRequest MENU_GROUP_REQUEST_한식 = new MenuGroupRequest("한식");
 
     public static MenuGroup 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(final MenuGroupRequest request) {
         final ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(request);
