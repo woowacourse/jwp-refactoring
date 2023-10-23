@@ -1,58 +1,56 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
 class MenuGroupServiceTest {
-    @InjectMocks
+
+    @Autowired
     private MenuGroupService menuGroupService;
-    @Mock
-    private MenuGroupDao menuGroupDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
-    @DisplayName("메뉴 그룹을 생성한다.")
+    @DisplayName("메뉴를 생성한다.")
     void create() {
-        //given
-        final MenuGroup menuGroup = MenuGroup.from("추천메뉴");
-        final MenuGroup result = new MenuGroup(1L, "추천메뉴");
-        given(menuGroupDao.save(menuGroup)).willReturn(result);
+        // Given
+        MenuGroupCreateRequest createRequest = new MenuGroupCreateRequest("추천메뉴");
 
-        //when
-        menuGroupService.create(menuGroup);
+        // When
+        Long createdMenuGroupId = menuGroupService.create(createRequest);
 
-        //then
-        assertThat(menuGroup).usingRecursiveComparison().ignoringFields("id").isEqualTo(result);
+        // Then
+        assertThat(createdMenuGroupId).isNotNull();
+        assertThat(menuGroupRepository.findById(createdMenuGroupId).get().getName()).isEqualTo(createRequest.getName());
     }
 
     @Test
-    @DisplayName("메뉴 그룹을 조회한다.")
-    void list() {
-        //given
-        final List<MenuGroup> menuGroups = List.of(
-                new MenuGroup(1L, "추천"),
-                new MenuGroup(2L, "추천메"),
-                new MenuGroup(3L, "추천메뉴"));
-        given(menuGroupDao.findAll()).willReturn(menuGroups);
+    @DisplayName("메뉴를 모두 조회한다.")
+    void findAll() {
+        // Given
+        final MenuGroup menuGroup1 = menuGroupRepository.save(MenuGroup.from("그룹1"));
+        final MenuGroup menuGroup2 = menuGroupRepository.save(MenuGroup.from("그룹2"));
 
-        //when
-        final List<MenuGroup> result = menuGroupService.list();
+        // When
+        List<MenuGroupResponse> menuGroups = menuGroupService.findAll();
 
-
-        then(menuGroupDao).should(times(1)).findAll();
-        assertThat(result).hasSize(3);
+        // Then
+        assertThat(menuGroups).isNotEmpty();
+        assertThat(menuGroups).hasSize(6);
+        assertThat(menuGroups.get(4)).usingRecursiveComparison().isEqualTo(menuGroup1);
+        assertThat(menuGroups.get(5)).usingRecursiveComparison().isEqualTo(menuGroup2);
     }
 }
