@@ -2,10 +2,10 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -90,7 +90,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
         final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-        final Menu savedMenu = 메뉴_생성_요청하고_메뉴_반환(
+        final MenuResponse menu = 메뉴_생성_요청하고_메뉴_반환(
                 MENU_CREATE_REQUEST_스키야키(
                         BigDecimal.valueOf(11_900),
                         menuGroup.getId(),
@@ -99,7 +99,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         );
 
         final ExtractableResponse<Response> response = 메뉴_조회_요청();
-        final List<Menu> result = response.jsonPath().getList("", Menu.class);
+        final List<MenuResponse> result = response.jsonPath().getList("", MenuResponse.class);
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
@@ -107,7 +107,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(result.get(0))
                         .usingRecursiveComparison()
                         .ignoringFields("price", "menuProducts")
-                        .isEqualTo(savedMenu)
+                        .isEqualTo(menu)
         );
     }
 }

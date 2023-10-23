@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 
 public class MenuGroupResponse {
 
-    private final long id;
+    private final Long id;
     private final String name;
 
-    private MenuGroupResponse(final long id, final String name) {
+    private MenuGroupResponse(final Long id, final String name) {
         this.id = id;
         this.name = name;
     }
@@ -25,7 +25,7 @@ public class MenuGroupResponse {
                 .collect(Collectors.toList());
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

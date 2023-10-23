@@ -40,6 +40,14 @@ public class MenuProduct extends BaseDate {
     public MenuProduct() {
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
     public void setMenu(final Menu menu) {
         this.menu = menu;
     }
@@ -58,5 +66,15 @@ public class MenuProduct extends BaseDate {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "MenuProduct{" +
+                "seq=" + seq +
+                ", menu=" + menu +
+                ", product=" + product +
+                ", quantity=" + quantity +
+                '}';
     }
 }
