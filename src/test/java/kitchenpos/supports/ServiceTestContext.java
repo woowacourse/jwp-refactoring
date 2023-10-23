@@ -1,6 +1,5 @@
 package kitchenpos.supports;
 
-import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
@@ -53,8 +52,6 @@ public class ServiceTestContext {
     protected MenuRepository menuRepository;
     @Autowired
     protected MenuGroupRepository menuGroupRepository;
-    @Autowired
-    protected MenuProductRepository menuProductRepository;
     @Autowired
     protected OrderRepository orderRepository;
     @Autowired

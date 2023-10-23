@@ -1,12 +1,13 @@
 package kitchenpos.menu.domain;
 
+import java.math.BigDecimal;
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Table(name = "menu_product")
@@ -17,30 +18,26 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
     @Column(name = "product_id")
     private Long productId;
 
     private long quantity;
 
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "product_price_snapshot"))
+    private ProductPriceSnapshot productPriceSnapshot;
+
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long productId, Menu menu, long quantity) {
+    public MenuProduct(Long productId, long quantity, ProductPriceSnapshot productPriceSnapshot) {
         this.productId = productId;
-        this.menu = menu;
         this.quantity = quantity;
+        this.productPriceSnapshot = productPriceSnapshot;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Long getProductId() {
@@ -49,5 +46,9 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public BigDecimal getPrice() {
+        return productPriceSnapshot.getValue();
     }
 }
