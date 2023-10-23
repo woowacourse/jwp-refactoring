@@ -3,11 +3,10 @@ package kitchenpos.table.domain;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTablesGroupingValidator implements OrderTablesValidator {
+public class OrderTablesGroupingValidator {
 
     private static final int MINIMUM_TABLE_SIZE = 2;
 
-    @Override
     public void validate(final OrderTables orderTables) {
         validateSize(orderTables);
         validateGroupOrderTableIsAvailable(orderTables);

@@ -12,13 +12,16 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public void groupByTableGroup(final TableGroup tableGroup, final OrderTablesValidator tablesGroupingValidator) {
+    public void groupByTableGroup(
+            final TableGroup tableGroup,
+            final OrderTablesGroupingValidator tablesGroupingValidator
+    ) {
         tablesGroupingValidator.validate(this);
         orderTables.forEach(orderTable -> orderTable.groupByTableGroup(tableGroup));
     }
 
-    public void ungroup(final OrderTablesValidator orderTablesGroupingValidator) {
-        orderTablesGroupingValidator.validate(this);
+    public void ungroup(final OrderTablesValidator orderTablesValidator) {
+        orderTablesValidator.validate(this);
         orderTables.forEach(OrderTable::ungroup);
     }
 

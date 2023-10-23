@@ -18,7 +18,7 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
     private final OrderTablesMapper orderTablesMapper;
-    private final OrderTablesValidator orderTablesGroupingValidator;
+    private final OrderTablesGroupingValidator orderTablesGroupingValidator;
     private final OrderTablesValidator ordersStatusValidator;
 
     public TableGroupService(
