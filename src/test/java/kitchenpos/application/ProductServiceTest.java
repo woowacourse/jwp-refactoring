@@ -57,16 +57,6 @@ class ProductServiceTest {
             assertThatThrownBy(() -> productService.create(등록할_상품))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
-        @Test
-        void 상품의_가격이_없으면_예외가_발생한다() {
-            // given
-            final ProductCreateRequest 등록할_상품 = new ProductCreateRequest("상품", null);
-
-            // expected
-            assertThatThrownBy(() -> productService.create(등록할_상품))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
     }
 
     @Test

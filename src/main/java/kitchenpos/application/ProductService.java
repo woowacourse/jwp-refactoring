@@ -2,9 +2,7 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.dto.product.ProductCreateRequest;
 import kitchenpos.application.dto.product.ProductCreateResponse;
 import kitchenpos.application.dto.product.ProductResponse;
@@ -24,12 +22,6 @@ public class ProductService {
     }
 
     public ProductCreateResponse create(final ProductCreateRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final Product product = new Product(request.getName(), request.getPrice());
         final Product savedProduct = productRepository.save(product);
 
