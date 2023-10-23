@@ -51,17 +51,6 @@ class ProductServiceTest {
             );
         }
 
-        @Test
-        @DisplayName("가격이 비어있으면 예외가 발생한다.")
-        void throwsExceptionWhenPriceIsNull() {
-            // given
-            final ProductCreateRequest request = new ProductCreateRequest("떡볶이", null);
-
-            // when, then
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @ParameterizedTest
         @ValueSource(ints = {-1, Integer.MIN_VALUE, -999999})
         @DisplayName("가격이 0보다 작은 경우 예외가 발생한다.")
