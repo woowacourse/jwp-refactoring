@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.exception.InvalidRequestParameterException;
 
 @Entity
 public class Menu {
@@ -22,7 +21,8 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
@@ -31,7 +31,7 @@ public class Menu {
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    private Menu(String name, BigDecimal price, MenuGroup menuGroup,
+    private Menu(String name, Price price, MenuGroup menuGroup,
             List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
@@ -44,10 +44,7 @@ public class Menu {
 
     public static Menu of(String name, BigDecimal price, MenuGroup menuGroup,
             List<MenuProduct> menuProducts) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidRequestParameterException();
-        }
-        return new Menu(name, price, menuGroup, menuProducts);
+        return new Menu(name, Price.from(price), menuGroup, menuProducts);
     }
 
     public Long getId() {
@@ -59,7 +56,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
     public MenuGroup getMenuGroup() {
