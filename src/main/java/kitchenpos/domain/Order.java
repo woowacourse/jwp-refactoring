@@ -39,12 +39,12 @@ public class Order {
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order() {
+        this.orderStatus = OrderStatus.COOKING;
     }
 
-    public Order(final OrderTable orderTable) {
+    public void addOrderTable(final OrderTable orderTable) {
         validateOrderTable(orderTable);
         this.orderTable = orderTable;
-        this.orderStatus = OrderStatus.COOKING;
     }
 
     private void validateOrderTable(final OrderTable orderTable) {

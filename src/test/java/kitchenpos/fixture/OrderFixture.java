@@ -25,11 +25,14 @@ public class OrderFixture {
     }
 
     public static Order 주문(OrderTable orderTable) {
-        return new Order(orderTable);
+        Order order = new Order();
+        order.addOrderTable(orderTable);
+        return order;
     }
 
     public static Order 주문(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        Order order = new Order(orderTable);
+        Order order = new Order();
+        order.addOrderTable(orderTable);
         order.addOrderLineItems(orderLineItems);
         return order;
     }

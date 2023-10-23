@@ -33,7 +33,8 @@ public class OrderService {
     public OrderDto create(final OrderCreateDto request) {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        final Order order = new Order(orderTable);
+        final Order order = new Order();
+        order.addOrderTable(orderTable);
         order.addOrderLineItems(getOrderLineItems(request));
 
         orderRepository.save(order);
