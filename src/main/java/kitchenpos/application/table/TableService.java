@@ -4,11 +4,9 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableChangedEvent;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,14 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
     private final OrderTableRepository orderTableRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(
-            OrderTableRepository orderTableRepository,
-            ApplicationEventPublisher applicationEventPublisher
-    ) {
+    public TableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public OrderTableResponse create(OrderTableRequest request) {
@@ -41,10 +34,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-
         orderTable.changeEmpty(request.isEmpty());
-        applicationEventPublisher.publishEvent(new OrderTableChangedEvent(orderTableId));
-
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 

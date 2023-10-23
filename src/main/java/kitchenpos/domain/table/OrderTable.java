@@ -7,10 +7,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.support.domain.BaseEntity;
+import kitchenpos.support.domain.BaseRootEntity;
 
 @Entity
-public class OrderTable extends BaseEntity {
+public class OrderTable extends BaseRootEntity<OrderTable> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -62,6 +62,7 @@ public class OrderTable extends BaseEntity {
             throw new IllegalArgumentException("단체 지정이 되어있는 경우 테이블의 상태를 변경할 수 없습니다.");
         }
         this.empty = empty;
+        registerEvent(new OrderTableChangedEvent(id));
     }
 
     public Long getId() {
