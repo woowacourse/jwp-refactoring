@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -35,21 +37,21 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(final MenuCreateRequest request) {
+        final BigDecimal price = request.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final List<MenuProductDto> menuProductDtos = request.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
+        for (final MenuProductDto menuProduct : menuProductDtos) {
             final Product product = productDao.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
@@ -59,12 +61,14 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
+        final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), null);
         final Menu savedMenu = menuDao.save(menu);
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
+        for (final MenuProductDto menuProductDto : menuProductDtos) {
+            final MenuProduct menuProduct = new MenuProduct(menuId, menuProductDto.getProductId(),
+                    menuProductDto.getQuantity());
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);

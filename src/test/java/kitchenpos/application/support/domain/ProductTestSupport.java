@@ -1,6 +1,7 @@
 package kitchenpos.application.support.domain;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.domain.Product;
 
 public class ProductTestSupport {
@@ -38,6 +39,10 @@ public class ProductTestSupport {
             result.setName(name);
             result.setPrice(price);
             return result;
+        }
+
+        public ProductCreateRequest buildToProductCreateRequest() {
+            return new ProductCreateRequest(name, price);
         }
     }
 }

@@ -11,6 +11,8 @@ import static org.mockito.BDDMockito.given;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.support.domain.OrderTableTestSupport;
 import kitchenpos.application.support.domain.OrderTestSupport;
 import kitchenpos.dao.MenuDao;
@@ -47,18 +49,18 @@ class OrderServiceTest {
     void create() {
         //given
         final OrderTable orderTable = OrderTableTestSupport.builder().build();
-        final Order order = OrderTestSupport.builder().orderTableId(orderTable.getId()).build();
+        final OrderTestSupport.Builder builder = OrderTestSupport.builder().orderTableId(orderTable.getId());
+        final Order order = builder.build();
+        final OrderCreateRequest request = builder.buildToOrderCreateRequest();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
         given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
         given(orderDao.save(any(Order.class))).willReturn(order);
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
-        }
+        given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(orderLineItems.get(0));
 
         //when
-        final Order result = target.create(order);
+        final Order result = target.create(request);
 
         //then
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
@@ -68,12 +70,12 @@ class OrderServiceTest {
     @Test
     void create_fail_no_OrderLineItem() {
         //given
-        final Order order = OrderTestSupport.builder().orderLineItems(Collections.emptyList()).build();
+        final OrderCreateRequest request = OrderTestSupport.builder().orderLineItems(Collections.emptyList()).buildToOrderCreateRequest();
 
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(order))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,13 +83,14 @@ class OrderServiceTest {
     @Test
     void create_fail_invalid_menu() {
         //given
-        final Order order = OrderTestSupport.builder().build();
+        final OrderCreateRequest request = OrderTestSupport.builder().buildToOrderCreateRequest();
+
         given(menuDao.countByIdIn(anyList())).willReturn(0L);
 
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(order))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -96,7 +99,9 @@ class OrderServiceTest {
     void create_fail_invalid_table() {
         //given
         final OrderTable orderTable = OrderTableTestSupport.builder().build();
-        final Order order = OrderTestSupport.builder().orderTableId(orderTable.getId()).build();
+        final OrderTestSupport.Builder builder = OrderTestSupport.builder();
+        final Order order = builder.orderTableId(orderTable.getId()).build();
+        final OrderCreateRequest request = builder.buildToOrderCreateRequest();
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
         given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
@@ -104,7 +109,7 @@ class OrderServiceTest {
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(order))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -134,11 +139,10 @@ class OrderServiceTest {
         given(orderDao.save(any(Order.class))).willReturn(order);
         given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(order.getOrderLineItems());
 
-        final Order input = new Order();
-        input.setOrderStatus(MEAL.name());
+        final OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
 
         //when
-        final Order result = target.changeOrderStatus(order.getId(), input);
+        final Order result = target.changeOrderStatus(order.getId(), request);
 
         //then
         assertThat(result.getOrderStatus()).isEqualTo(MEAL.name());
@@ -152,11 +156,11 @@ class OrderServiceTest {
         final Order order = OrderTestSupport.builder().orderStatus(beforeStatus.name()).build();
 
         given(orderDao.findById(anyLong())).willReturn(Optional.of(order));
-
+        final OrderStatusChangeRequest request = new OrderStatusChangeRequest(MEAL.name());
         //when
 
         //then
-        assertThatThrownBy(() -> target.changeOrderStatus(order.getId(), order))
+        assertThatThrownBy(() -> target.changeOrderStatus(order.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

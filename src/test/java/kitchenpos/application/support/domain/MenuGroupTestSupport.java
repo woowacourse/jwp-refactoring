@@ -1,5 +1,6 @@
 package kitchenpos.application.support.domain;
 
+import kitchenpos.application.dto.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupTestSupport {
@@ -30,6 +31,10 @@ public class MenuGroupTestSupport {
             result.setId(id);
             result.setName(name);
             return result;
+        }
+
+        public MenuGroupCreateRequest buildToMenuGroupCreateRequest() {
+            return new MenuGroupCreateRequest(name);
         }
     }
 }

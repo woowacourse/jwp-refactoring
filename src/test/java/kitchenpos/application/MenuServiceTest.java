@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.support.domain.MenuTestSupport;
 import kitchenpos.application.support.domain.ProductTestSupport;
 import kitchenpos.dao.MenuDao;
@@ -44,7 +45,9 @@ class MenuServiceTest {
     @Test
     void create() {
         //given
-        final Menu menu = MenuTestSupport.builder().build();
+        final MenuTestSupport.Builder builder = MenuTestSupport.builder();
+        final Menu menu = builder.build();
+        final MenuCreateRequest request = builder.buildToMenuCreateRequest();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
@@ -56,7 +59,7 @@ class MenuServiceTest {
         //when
 
         //then
-        Assertions.assertDoesNotThrow(() -> target.create(menu));
+        Assertions.assertDoesNotThrow(() -> target.create(request));
     }
 
     @DisplayName("메뉴의 가격이 음수이면 예외처리한다.")
@@ -64,11 +67,11 @@ class MenuServiceTest {
     void create_fail_price_minus() {
         //given
         final BigDecimal price = new BigDecimal("-1");
-        final Menu menu = MenuTestSupport.builder().price(price).build();
+        final MenuCreateRequest request = MenuTestSupport.builder().price(price).buildToMenuCreateRequest();
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(menu))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -76,12 +79,12 @@ class MenuServiceTest {
     @Test
     void create_fail_not_in_menuGroup() {
         //given
-        final Menu menu = MenuTestSupport.builder().menuGroupId(null).build();
+        final MenuCreateRequest request = MenuTestSupport.builder().menuGroupId(null).buildToMenuCreateRequest();
 
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(menu))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,7 +93,9 @@ class MenuServiceTest {
     void create_fail_price_greaterThan_product_price() {
         //given
         final BigDecimal price = new BigDecimal(Long.MAX_VALUE);
-        final Menu menu = MenuTestSupport.builder().price(price).build();
+        final MenuTestSupport.Builder builder = MenuTestSupport.builder().price(price);
+        final Menu menu = builder.build();
+        final MenuCreateRequest request = builder.buildToMenuCreateRequest();
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
@@ -101,7 +106,7 @@ class MenuServiceTest {
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(menu))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

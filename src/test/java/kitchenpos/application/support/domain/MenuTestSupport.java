@@ -2,6 +2,9 @@ package kitchenpos.application.support.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
@@ -57,6 +60,16 @@ public class MenuTestSupport {
             result.setMenuGroupId(menuGroupId);
             result.setMenuProducts(menuProducts);
             return result;
+        }
+
+        public MenuCreateRequest buildToMenuCreateRequest() {
+            final List<MenuProductDto> menuProductDtos = menuProducts.stream()
+                    .map(it -> new MenuProductDto(it.getProductId(), it.getQuantity()))
+                    .collect(Collectors.toList());
+            if (menuGroupId == null) {
+                return new MenuCreateRequest(name, price, -1L, menuProductDtos);
+            }
+            return new MenuCreateRequest(name, price, menuGroupId, menuProductDtos);
         }
     }
 }

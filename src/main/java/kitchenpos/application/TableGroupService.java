@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import java.util.Collections;
+import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -29,20 +32,20 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupCreateRequest request) {
+        final List<OrderTableDto> orderTableDtos = request.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<Long> orderTableIds = orderTableDtos.stream()
+                .map(OrderTableDto::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableDtos.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -52,7 +55,7 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 

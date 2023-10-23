@@ -1,5 +1,6 @@
 package kitchenpos.application.support.domain;
 
+import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableTestSupport {
@@ -44,6 +45,10 @@ public class OrderTableTestSupport {
             result.setNumberOfGuests(numberOfGuests);
             result.setEmpty(empty);
             return result;
+        }
+
+        public OrderTableCreateRequest buildToOrderTableCreateRequest() {
+            return new OrderTableCreateRequest(numberOfGuests, empty);
         }
     }
 }

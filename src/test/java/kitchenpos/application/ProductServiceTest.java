@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.support.domain.ProductTestSupport;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -29,12 +30,12 @@ class ProductServiceTest {
     @Test
     void create() {
         //given
-        final Product product = ProductTestSupport.builder().build();
+        final ProductCreateRequest request = ProductTestSupport.builder().buildToProductCreateRequest();
 
         //when
 
         //then
-        Assertions.assertDoesNotThrow(() -> target.create(product));
+        Assertions.assertDoesNotThrow(() -> target.create(request));
     }
 
     @DisplayName("상품의 가격이 음수이면 예외 처리한다.")
@@ -42,12 +43,12 @@ class ProductServiceTest {
     void create_fail_price_minus() {
         //given
         final BigDecimal price = new BigDecimal("-1");
-        final Product product = ProductTestSupport.builder().price(price).build();
+        final ProductCreateRequest request = ProductTestSupport.builder().price(price).buildToProductCreateRequest();
 
         //when
 
         //then
-        assertThatThrownBy(() -> target.create(product))
+        assertThatThrownBy(() -> target.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

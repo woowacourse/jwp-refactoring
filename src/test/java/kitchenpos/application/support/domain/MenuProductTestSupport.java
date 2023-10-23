@@ -1,5 +1,6 @@
 package kitchenpos.application.support.domain;
 
+import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuProductTestSupport {

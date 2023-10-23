@@ -1,7 +1,11 @@
 package kitchenpos.application.support.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -59,6 +63,14 @@ public class OrderTestSupport {
             result.setOrderedTime(orderedTime);
             result.setOrderLineItems(orderLineItems);
             return result;
+        }
+
+        public OrderCreateRequest buildToOrderCreateRequest() {
+            final List<OrderLineItemDto> orderLineItemDtos = orderLineItems.stream()
+                    .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
+                    .collect(Collectors.toList());
+
+            return new OrderCreateRequest(orderTableId, orderLineItemDtos);
         }
     }
 }

@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
 import kitchenpos.application.support.domain.MenuGroupTestSupport;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
@@ -29,18 +30,18 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         //given
-        final var origin = MenuGroupTestSupport.builder().id(null).build();
-        final var expectedResult = MenuGroupTestSupport.builder().id(1L).name(origin.getName()).build();
+        final MenuGroupCreateRequest request = MenuGroupTestSupport.builder().id(null).name("허브 허브 메뉴")
+                .buildToMenuGroupCreateRequest();
+        final var expectedResult = MenuGroupTestSupport.builder().id(1L).name(request.getName()).build();
         given(menuGroupDao.save(any(MenuGroup.class))).willReturn(expectedResult);
 
         //when
+        final MenuGroup result = target.create(request);
 
-        final MenuGroup result = target.create(origin);
         //then
         SoftAssertions.assertSoftly(
                 soft -> {
-                    soft.assertThat(origin.getName()).isEqualTo(result.getName());
-                    soft.assertThat(origin.getId()).isNull();
+                    soft.assertThat(request.getName()).isEqualTo(result.getName());
                     soft.assertThat(result.getId()).isNotNull();
                 }
         );

@@ -2,6 +2,9 @@ package kitchenpos.application.support.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -44,6 +47,13 @@ public class TableGroupTestSupport {
             result.setCreatedDate(createdDate);
             result.setOrderTables(orderTables);
             return result;
+        }
+
+        public TableGroupCreateRequest buildToTableGroupCreateRequest() {
+            final List<OrderTableDto> orderTableDtos = orderTables.stream()
+                    .map(it -> new OrderTableDto(it.getId()))
+                    .collect(Collectors.toList());
+            return new TableGroupCreateRequest(orderTableDtos);
         }
     }
 }
