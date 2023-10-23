@@ -23,7 +23,7 @@ public class Price {
     }
 
     private void validateValue(BigDecimal value) {
-        if (value.compareTo(BigDecimal.ZERO) < 0 ) {
+        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }

@@ -3,14 +3,25 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 class PriceTest {
 
     @Test
-    void 가격이_0원_미만이면_예외가_발생한다() {
+    void 가격이_0원_미만인_경우_예외가_발생한다() {
         // when, then
         assertThatThrownBy(() -> new Price(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 가격이_null_인_경우_예외가_발생한다() {
+        // given
+        BigDecimal value = null;
+
+        // when, then
+        assertThatThrownBy(() -> new Price(value))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

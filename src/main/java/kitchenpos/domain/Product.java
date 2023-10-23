@@ -21,6 +21,14 @@ public class Product {
     @Embedded
     private Price price;
 
+    public Product(String name, Price price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public Product() {
+    }
+
     public Long getId() {
         return id;
     }

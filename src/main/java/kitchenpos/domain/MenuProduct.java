@@ -28,6 +28,20 @@ public class MenuProduct {
     @Column(nullable = false)
     private long quantity;
 
+    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this(null, menu, product, quantity);
+    }
+
+    public MenuProduct() {
+    }
+
     public Long getSeq() {
         return seq;
     }

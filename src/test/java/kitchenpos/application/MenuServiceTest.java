@@ -7,14 +7,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.Fixtures;
-import org.junit.jupiter.api.Disabled;
+import kitchenpos.ui.dto.request.MenuProductRequest;
+import kitchenpos.ui.dto.request.MenuRequest;
+import kitchenpos.ui.dto.response.MenuResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MenuServiceTest extends ServiceTest {
@@ -34,25 +33,22 @@ public class MenuServiceTest extends ServiceTest {
             MenuGroup menuGroup = fixtures.메뉴_그룹_저장("치킨메뉴");
             Product product = fixtures.상품_저장("치킨", 18_000L);
 
-            Menu menu = new Menu();
-            menu.setName("한마리 메뉴");
-            menu.setPrice(BigDecimal.valueOf(19_000));
-            menu.setMenuGroup(menuGroup);
-
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(2);
-
-            menu.setMenuProducts(List.of(menuProduct));
+            MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1L);
+            MenuRequest request = new MenuRequest(
+                    "한마리 메뉴",
+                    BigDecimal.valueOf(18_000),
+                    menuGroup.getId(),
+                    List.of(menuProductRequest)
+            );
 
             // when
-            Menu result = menuService.create(menu);
+            MenuResponse result = menuService.create(request);
 
             // then
-            assertThat(result)
-                    .usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(menu);
+            assertThat(result.getId()).isNotNull();
+            assertThat(result.getName()).isEqualTo("한마리 메뉴");
+            assertThat(result.getPrice()).isEqualTo(BigDecimal.valueOf(18_000));
+            assertThat(result.getMenuGroupId()).isEqualTo(menuGroup.getId());
         }
 
         @Test
@@ -60,69 +56,35 @@ public class MenuServiceTest extends ServiceTest {
             // given
             Product product = fixtures.상품_저장("치킨", 18_000L);
 
-            Menu menu = new Menu();
-            menu.setName("한마리 메뉴");
-            menu.setPrice(BigDecimal.valueOf(19_000));
-            menu.setMenuGroup(null);
-
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(2);
-
-            menu.setMenuProducts(List.of(menuProduct));
+            MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1L);
+            MenuRequest request = new MenuRequest(
+                    "한마리 메뉴",
+                    BigDecimal.valueOf(18_000),
+                    -1L,
+                    List.of(menuProductRequest)
+            );
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Nested
-        class 메뉴_가격 {
+        @Test
+        void 메뉴그룹이_null_인_경우_예외가_발생한다() {
+            // given
+            Product product = fixtures.상품_저장("치킨", 18_000L);
 
-            @Disabled
-            @Test
-            void 메뉴_가격이_null인_경우_에러가_발생한다() {
-                // given
-                MenuGroup menuGroup = fixtures.메뉴_그룹_저장("치킨메뉴");
-                Product product = fixtures.상품_저장("치킨", 18_000L);
+            MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1L);
+            MenuRequest request = new MenuRequest(
+                    "한마리 메뉴",
+                    BigDecimal.valueOf(18_000),
+                    null,
+                    List.of(menuProductRequest)
+            );
 
-                Menu menu = new Menu();
-                menu.setName("한마리 메뉴");
-                menu.setPrice(null);
-                menu.setMenuGroup(menuGroup);
-
-                MenuProduct menuProduct = new MenuProduct();
-                menuProduct.setProduct(product);
-                menuProduct.setQuantity(2);
-
-                menu.setMenuProducts(List.of(menuProduct));
-
-                // when, then
-                assertThatThrownBy(() -> menuService.create(menu))
-                        .isInstanceOf(IllegalArgumentException.class);
-            }
-
-            @Test
-            void 메뉴_가격이_메뉴_상품의_총_가격보다_큰_경우_예외가_발생한다() {
-                // given
-                MenuGroup menuGroup = fixtures.메뉴_그룹_저장("치킨메뉴");
-                Product product = fixtures.상품_저장("치킨", 18_000L);
-
-                Menu menu = new Menu();
-                menu.setName("한마리 메뉴");
-                menu.setPrice(BigDecimal.valueOf(19_000));
-                menu.setMenuGroup(menuGroup);
-
-                MenuProduct menuProduct = new MenuProduct();
-                menuProduct.setProduct(product);
-                menuProduct.setQuantity(1);
-
-                menu.setMenuProducts(List.of(menuProduct));
-
-                // when, then
-                assertThatThrownBy(() -> menuService.create(menu))
-                        .isInstanceOf(IllegalArgumentException.class);
-            }
+            // when, then
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -132,6 +94,7 @@ public class MenuServiceTest extends ServiceTest {
         MenuGroup menuGroup = fixtures.메뉴_그룹_저장("치킨메뉴");
         Product product = fixtures.상품_저장("치킨", 18_000L);
         Menu menu = fixtures.메뉴_저장(menuGroup, "치킨 + 콜라", 18_000L);
+        fixtures.메뉴_상품_저장(menu, product, 1L);
 
         // when
         List<Menu> menus = menuService.list();
@@ -139,5 +102,5 @@ public class MenuServiceTest extends ServiceTest {
         // then
         assertThat(menus.get(0)).isEqualTo(menu);
     }
-
 }
+
