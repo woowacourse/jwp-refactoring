@@ -3,10 +3,10 @@ package kitchenpos.application;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.OrderCreateRequest;

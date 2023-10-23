@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.dto.menu;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
@@ -7,8 +7,8 @@ import static kitchenpos.support.money.Money.valueOf;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
 
 public class MenuRequest {

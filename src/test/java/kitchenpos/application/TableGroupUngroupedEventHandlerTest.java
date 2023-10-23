@@ -13,12 +13,12 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.product.Product;

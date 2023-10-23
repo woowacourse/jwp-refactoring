@@ -3,10 +3,10 @@ package kitchenpos.fixture;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuRequest;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.support.money.Money;
 
 public class MenuFixture {

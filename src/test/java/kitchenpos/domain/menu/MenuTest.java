@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.상품;
