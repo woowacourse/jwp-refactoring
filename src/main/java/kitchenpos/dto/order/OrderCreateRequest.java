@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.table.OrderTable;
 
 public class OrderCreateRequest {
     private Long orderTableId;
@@ -17,10 +16,10 @@ public class OrderCreateRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toOrder(OrderTable orderTable) {
+    public Order toOrder() {
         return orderLineItems.stream()
                 .map(itemRequest -> new OrderLineItem(itemRequest.getMenuId(), itemRequest.getQuantity()))
-                .collect(Collectors.collectingAndThen(toList(), items -> new Order(orderTable, items)));
+                .collect(Collectors.collectingAndThen(toList(), items -> new Order(orderTableId, items)));
     }
 
     public Long getOrderTableId() {
@@ -30,11 +29,4 @@ public class OrderCreateRequest {
     public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
-
-    public List<Long> getMenuIds() {
-        return orderLineItems.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(toList());
-    }
-
 }

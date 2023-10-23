@@ -14,11 +14,11 @@ import kitchenpos.dto.order.OrderLineItemRequest;
 public class OrderFixture {
 
     public static Order 주문(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+        return new Order(null, orderTable.getId(), orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order 주문(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable, orderLineItems);
+        return new Order(orderTable.getId(), orderLineItems);
     }
 
     public static OrderCreateRequest 주문_생성_요청(Long orderTableId, List<OrderLineItem> orderLineItems) {

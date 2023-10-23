@@ -9,13 +9,9 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.support.domain.BaseEntity;
 
 @Table(name = "orders")
@@ -26,9 +22,7 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -41,29 +35,26 @@ public class Order extends BaseEntity {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(
             Long id,
-            OrderTable orderTable,
+            Long orderTableId,
             OrderStatus orderStatus,
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
     ) {
-        validate(orderTable);
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
-    private void validate(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블인 경우 주문을 할 수 없습니다.");
-        }
+    public void place(OrderValidator orderValidator) {
+        orderValidator.validate(this);
     }
 
     public void validateUngroupTableAllowed() {
@@ -89,8 +80,8 @@ public class Order extends BaseEntity {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

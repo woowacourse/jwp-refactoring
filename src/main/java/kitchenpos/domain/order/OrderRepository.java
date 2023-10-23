@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query("select o from Order o where o.orderTable.id = :orderTableId")
+    @Query("select o from Order o where o.orderTableId = :orderTableId")
     Optional<Order> findByOrderTableId(Long orderTableId);
 
-    @Query("select o from Order o where o.orderTable.id in :orderTableIds")
+    @Query("select o from Order o where o.orderTableId in :orderTableIds")
     List<Order> findAllByOrderTableIds(List<Long> orderTableIds);
 
     default Order getById(Long id) {
