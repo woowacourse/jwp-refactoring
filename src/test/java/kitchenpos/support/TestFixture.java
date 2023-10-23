@@ -1,15 +1,11 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
-import kitchenpos.ui.dto.request.MenuGroupRequest;
-import kitchenpos.ui.dto.request.MenuProductRequest;
-import kitchenpos.ui.dto.request.MenuRequest;
-import kitchenpos.ui.dto.request.ProductRequest;
+import kitchenpos.ui.dto.request.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,30 +32,25 @@ public class TestFixture {
         return new MenuRequest("신메뉴", 실제_상품_가격과_갯수를_곱한_총합, 메뉴그룹.getId(), 메뉴에_속하는_수량이_있는_상품);
     }
 
-    public static Order 주문(OrderTable 테이블, List<Menu> 주문_할_메뉴들){
-        List<OrderLineItem> 주문항목들 = new ArrayList<>();
+    public static OrderRequest 주문(OrderTable 테이블, List<Menu> 주문_할_메뉴들) {
+        List<OrderLineItemRequest> 주문항목들 = new ArrayList<>();
         for (Menu 메뉴 : 주문_할_메뉴들) {
-            주문항목들.add(new OrderLineItem(메뉴.getId(), 1));
+            주문항목들.add(new OrderLineItemRequest(메뉴.getId(), 1));
         }
-
-        final Order 새로운_주문 = new Order();
-        새로운_주문.setOrderTableId(테이블.getId());
-        새로운_주문.setOrderLineItems(주문항목들);
-
-        return 새로운_주문;
+        return new OrderRequest(테이블.getId(), 주문항목들);
     }
 
-    public static OrderTable 주문_테이블(){
+    public static OrderTable 주문_테이블() {
         final OrderTable 테이블 = new OrderTable();
         테이블.setEmpty(true);
         return 테이블;
     }
 
-    public static OrderTable 빈_테이블(){
+    public static OrderTable 빈_테이블() {
         return new OrderTable();
     }
 
-    public static TableGroup 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들){
+    public static TableGroup 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들) {
         final TableGroup 테이블그룹 = new TableGroup();
         테이블그룹.setOrderTables(그룹화_할_테이블들);
         return 테이블그룹;

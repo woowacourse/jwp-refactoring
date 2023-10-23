@@ -3,8 +3,11 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.request.UpdateOrderStateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -209,8 +212,7 @@ class TableGroupServiceTest {
             final Order 저장된_주문 = orderService.create(주문(테이블1, List.of(저장한_메뉴)));
 
             // 테이블 주문을 완료 시킨다
-            final Order 변경할_주문_상태 = new Order();
-            변경할_주문_상태.setOrderStatus(OrderStatus.COMPLETION.name());
+            final UpdateOrderStateRequest 변경할_주문_상태 = new UpdateOrderStateRequest(OrderStatus.COMPLETION.name());
             orderService.changeOrderStatus(저장된_주문.getId(), 변경할_주문_상태);
 
             // when
