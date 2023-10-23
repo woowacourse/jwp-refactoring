@@ -26,6 +26,8 @@ public class ProductService {
         return productRepository.save(new Product(productName, productPrice));
     }
     
+    
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }

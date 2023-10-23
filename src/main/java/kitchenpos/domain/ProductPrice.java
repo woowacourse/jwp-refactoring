@@ -19,4 +19,12 @@ public class ProductPrice {
             throw new InvalidProductPriceException("상품 가격은 0원 이상이어야 합니다");
         }
     }
+    
+    public ProductPrice multiply(final BigDecimal value) {
+        return new ProductPrice(this.productPrice.multiply(value));
+    }
+    
+    public BigDecimal getProductPrice() {
+        return productPrice;
+    }
 }
