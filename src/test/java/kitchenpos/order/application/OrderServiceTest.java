@@ -18,6 +18,7 @@ import kitchenpos.order.application.dto.OrderStatusChangeRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderedMenu;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.Nested;
@@ -155,7 +156,8 @@ class OrderServiceTest extends IntegrationTest {
                 new MenuProduct(cheeseBall.getId(), 2L)
         );
         final Menu menu = generateMenu("chicken", 30000L, menuProducts);
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1L));
+        final OrderedMenu orderedMenu = new OrderedMenu(menu.getName(), menu.getPrice());
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(orderedMenu, 1L));
         generateOrder(OrderStatus.COOKING, generateOrderTable(3), orderLineItems);
 
         // when
@@ -184,7 +186,8 @@ class OrderServiceTest extends IntegrationTest {
                 new MenuProduct(cheeseBall.getId(), 2L)
         );
         final Menu menu = generateMenu("chicken", 30000L, menuProducts);
-        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getName(), menu.getPrice(), 1L));
+        final OrderedMenu orderedMenu = new OrderedMenu(menu.getName(), menu.getPrice());
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(orderedMenu, 1L));
         final Order existOrder = generateOrder(OrderStatus.COOKING, generateOrderTable(3), orderLineItems);
 
         // when
@@ -214,7 +217,8 @@ class OrderServiceTest extends IntegrationTest {
         void order_status_is_completion() {
             // given
             final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.MEAL);
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem("menu", Price.from(1000L), 1L));
+            final OrderedMenu orderedMenu = new OrderedMenu("menu", Price.from(1000L));
+            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(orderedMenu, 1L));
             final Order existOrder = generateOrder(OrderStatus.COMPLETION, generateOrderTable(3), orderLineItems);
 
             // when & then

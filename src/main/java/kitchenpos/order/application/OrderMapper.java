@@ -13,6 +13,7 @@ import kitchenpos.order.application.dto.OrderItemsWithQuantityRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.domain.OrderedMenu;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,7 +41,8 @@ public class OrderMapper {
         validateExistMenus(menuIds, menusByMenuId.values());
         return orderLineItemRequests.stream().map(request -> {
             final Menu menu = menusByMenuId.get(request.getMenuId());
-            return new OrderLineItem(menu.getName(), menu.getPrice(), request.getQuantity());
+            final OrderedMenu orderedMenu = new OrderedMenu(menu.getName(), menu.getPrice());
+            return new OrderLineItem(orderedMenu, request.getQuantity());
         }).collect(Collectors.toList());
     }
 
