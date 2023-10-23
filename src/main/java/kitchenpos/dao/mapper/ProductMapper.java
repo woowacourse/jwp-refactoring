@@ -10,6 +10,7 @@ public class ProductMapper {
 
   public static Product mapToProduct(final ProductEntity entity) {
     return new Product(
+        entity.getId(),
         entity.getName(),
         entity.getPrice()
     );
