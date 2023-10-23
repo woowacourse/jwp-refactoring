@@ -23,13 +23,13 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(Long id) {
+    public TableGroup(Long id, LocalDateTime localDateTime) {
         this.id = id;
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = localDateTime;
     }
 
-    public static TableGroup createEmpty() {
-        return new TableGroup(null);
+    public static TableGroup createEmpty(LocalDateTime createdDate) {
+        return new TableGroup(null, createdDate);
     }
 
     public void group(List<OrderTable> orderTables) {

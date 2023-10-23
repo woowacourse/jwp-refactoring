@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.time.LocalDateTime;
 import kitchenpos.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -90,7 +91,7 @@ class OrderTableTest {
         @Test
         void 성공() {
             // given
-            TableGroup tableGroup = new TableGroup(1L);
+            TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
             OrderTable orderTable = new OrderTable(5, true);
 
             // when
@@ -106,7 +107,7 @@ class OrderTableTest {
         @Test
         void 테이블이_비어있지_않으면_예외() {
             // given
-            TableGroup tableGroup = new TableGroup(1L);
+            TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
             OrderTable orderTable = new OrderTable(5, false);
 
             // when && then
@@ -118,7 +119,7 @@ class OrderTableTest {
         @Test
         void 이미_그룹화된_테이블이면_예외() {
             // given
-            TableGroup tableGroup = new TableGroup(1L);
+            TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
             OrderTable orderTable = new OrderTable(1L, 2L,5, true);
 
             // when && then

@@ -2,6 +2,7 @@ package kitchenpos.tablegroup.application;
 
 import static java.util.stream.Collectors.toList;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.Order;
 import kitchenpos.order.persistence.OrderRepository;
@@ -57,7 +58,7 @@ public class TableGroupService {
     }
 
     private TableGroup saveTableGroup(List<OrderTable> savedOrderTables) {
-        TableGroup tableGroup = tableGroupRepository.save(TableGroup.createEmpty());
+        TableGroup tableGroup = tableGroupRepository.save(TableGroup.createEmpty(LocalDateTime.now()));
         tableGroup.group(savedOrderTables);
         return tableGroup;
     }

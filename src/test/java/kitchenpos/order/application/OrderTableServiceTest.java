@@ -114,7 +114,7 @@ class OrderTableServiceTest {
         @Test
         void 특정_테이블그룹에_속한다면_예외() {
             // given
-            Long tableGroupId = tableGroupRepository.save(TableGroup.createEmpty()).getId();
+            Long tableGroupId = tableGroupRepository.save(TableGroup.createEmpty(LocalDateTime.now())).getId();
             OrderTable orderTableA = orderTableRepository.save(new OrderTable(null, tableGroupId, 3, true));
             OrderTable orderTableB = orderTableRepository.save(new OrderTable(null, tableGroupId, 2, true));
 

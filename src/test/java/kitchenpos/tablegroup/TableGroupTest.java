@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.ordertable.OrderTable;
@@ -28,7 +29,7 @@ class TableGroupTest {
                 new OrderTable(3, true),
                 new OrderTable(2, true)
             );
-            TableGroup tableGroup = TableGroup.createEmpty();
+            TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
             assertThatNoException().isThrownBy(() -> tableGroup.group(orderTables));
@@ -42,7 +43,7 @@ class TableGroupTest {
             for (long i = 1; i <= size; i++) {
                 orderTables.add(new OrderTable(i, null, 2, false));
             }
-            TableGroup tableGroup = TableGroup.createEmpty();
+            TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
             assertThatThrownBy(() -> tableGroup.group(orderTables))
@@ -57,7 +58,7 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, null, 2, false)
             );
-            TableGroup tableGroup = TableGroup.createEmpty();
+            TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
             assertThatThrownBy(() -> tableGroup.group(orderTables))
@@ -72,7 +73,7 @@ class TableGroupTest {
                 new OrderTable(1L, null, 3, true),
                 new OrderTable(2L, 1L, 2, false)
             );
-            TableGroup tableGroup = TableGroup.createEmpty();
+            TableGroup tableGroup = TableGroup.createEmpty(LocalDateTime.now());
 
             // when && then
             assertThatThrownBy(() -> tableGroup.group(orderTables))
@@ -84,7 +85,7 @@ class TableGroupTest {
     @Test
     void 테이블_그룹을_해제한다() {
         // given
-        TableGroup tableGroup = new TableGroup(1L);
+        TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
         tableGroup.group(List.of(new OrderTable(3, true), new OrderTable(2, true)));
 
         // when

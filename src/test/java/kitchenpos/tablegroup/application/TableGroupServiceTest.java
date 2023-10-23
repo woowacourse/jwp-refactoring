@@ -148,7 +148,7 @@ class TableGroupServiceTest {
             // given
             var orderTableA = new OrderTable(2, true);
             var orderTableB = new OrderTable(3, true);
-            TableGroup tableGroup = tableGroupRepository.save(TableGroup.createEmpty());
+            TableGroup tableGroup = tableGroupRepository.save(TableGroup.createEmpty(LocalDateTime.now()));
             tableGroup.group(List.of(orderTableA, orderTableB));
 
             // when && then
