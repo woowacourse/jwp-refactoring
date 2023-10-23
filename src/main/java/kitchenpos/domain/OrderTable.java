@@ -63,4 +63,12 @@ public class OrderTable {
         this.tableGroup = tableGroup;
         this.empty = false;
     }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
 }

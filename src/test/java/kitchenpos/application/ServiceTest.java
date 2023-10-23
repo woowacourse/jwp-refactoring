@@ -13,7 +13,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.ProductRepository;
@@ -52,9 +51,6 @@ public abstract class ServiceTest {
 
     @Autowired
     protected OrderRepository orderRepository;
-
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
 
     protected void 복수_상품_저장(final Product... products) {
         productRepository.saveAll(List.of(products));

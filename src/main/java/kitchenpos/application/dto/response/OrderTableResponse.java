@@ -17,6 +17,14 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse toResponse(final OrderTable orderTable) {
+        if (orderTable.getTableGroup() == null) {
+            return new OrderTableResponse(
+                    orderTable.getId(),
+                    null,
+                    orderTable.getNumberOfGuests(),
+                    orderTable.isEmpty()
+            );
+        }
         return new OrderTableResponse(
                 orderTable.getId(),
                 orderTable.getTableGroup().getId(),
