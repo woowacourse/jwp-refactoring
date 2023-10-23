@@ -23,7 +23,7 @@ public class TableService {
     public OrderTableResponse create(OrderTableCreateRequest orderTableCreateRequest) {
         OrderTable orderTable = OrderTable.builder()
                 .numberOfGuests(orderTableCreateRequest.getNumberOfGuests())
-                .empty(false)
+                .empty(orderTableCreateRequest.isEmpty())
                 .build();
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
