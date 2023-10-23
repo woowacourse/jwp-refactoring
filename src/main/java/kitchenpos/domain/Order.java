@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,36 +26,28 @@ public class Order {
     @JoinColumn(nullable = false)
     private OrderTable orderTable;
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<OrderLineItem> orderLineItems;
     private OrderStatus orderStatus;
 
-    Order() {
+    public Order() {
     }
 
-    private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                  final LocalDateTime orderedTime,
-                  final List<OrderLineItem> orderLineItems) {
-        this.id = id;
+    public Order(final OrderTable orderTable,
+                 final List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-    }
+        this.orderStatus = OrderStatus.COOKING;
+        this.orderedTime = LocalDateTime.now();
 
-    public Order(final OrderStatus orderStatus) {
-        this(null, null, orderStatus, null, null);
-    }
-
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-    }
-
-    public void initOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        orderLineItems.forEach(it -> it.setOrder(this));
         this.orderLineItems = orderLineItems;
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+
         this.orderStatus = orderStatus;
     }
 

@@ -33,10 +33,6 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this(null, order, menu, quantity);
-    }
-
     public OrderLineItem(final Menu menu, final long quantity) {
         this(null, null, menu, quantity);
     }
@@ -47,6 +43,10 @@ public class OrderLineItem {
 
     public Order getOrder() {
         return order;
+    }
+
+    public void setOrder(final Order order) {
+        this.order = order;
     }
 
     public Menu getMenu() {

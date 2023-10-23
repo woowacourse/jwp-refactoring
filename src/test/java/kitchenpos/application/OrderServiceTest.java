@@ -8,7 +8,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.Fixture;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
@@ -27,7 +26,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceIntegrationTest {
-    private static final Order ORDER_STATUS_COOKING = new Order(OrderStatus.COOKING);
 
     @Autowired
     private OrderService orderService;
