@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.common.vo.Money;
 
 @Table(name = "menu_product")
 @Entity
@@ -25,12 +26,12 @@ public class MenuProduct {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "product_price_snapshot"))
-    private ProductPriceSnapshot productPriceSnapshot;
+    private Money productPriceSnapshot;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity, ProductPriceSnapshot productPriceSnapshot) {
+    public MenuProduct(Long productId, long quantity, Money productPriceSnapshot) {
         this.productId = productId;
         this.quantity = quantity;
         this.productPriceSnapshot = productPriceSnapshot;

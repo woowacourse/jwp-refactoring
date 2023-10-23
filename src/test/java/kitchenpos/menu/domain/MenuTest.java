@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.vo.Money;
 import kitchenpos.common.vo.PriceIsNegativeException;
 import kitchenpos.menu.exception.MenuPriceIsBiggerThanActualPriceException;
 import kitchenpos.product.domain.Product;
@@ -45,7 +46,7 @@ class MenuTest {
 
         List<MenuProduct> menuProducts = List.of(
                 new MenuProduct(product.getId(), 1L,
-                        new ProductPriceSnapshot(product.getPrice().multiply(BigDecimal.valueOf(1L)))));
+                        new Money(product.getPrice().multiply(BigDecimal.valueOf(1L)))));
 
         // when, then
         assertThatThrownBy(() -> menu.setupMenuProducts(menuProducts))
@@ -60,7 +61,7 @@ class MenuTest {
 
         List<MenuProduct> menuProducts = List.of(
                 new MenuProduct(product.getId(), 1L,
-                        new ProductPriceSnapshot(product.getPrice().multiply(BigDecimal.valueOf(1L)))));
+                        new Money(product.getPrice().multiply(BigDecimal.valueOf(1L)))));
 
         // when
         menu.setupMenuProducts(menuProducts);

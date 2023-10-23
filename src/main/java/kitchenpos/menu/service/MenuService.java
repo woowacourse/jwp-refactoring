@@ -2,9 +2,9 @@ package kitchenpos.menu.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.common.vo.Money;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.ProductPriceSnapshot;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
@@ -61,7 +61,7 @@ public class MenuService {
     private MenuProduct createMenuProduct(MenuProductRequest menuProductRequest) {
         Product product = productRepository.findById(menuProductRequest.getProductId())
                 .orElseThrow(ProductNotFoundException::new);
-        ProductPriceSnapshot priceSnapshot = new ProductPriceSnapshot(product.getPrice());
+        Money priceSnapshot = new Money(product.getPrice());
 
         return new MenuProduct(product.getId(), menuProductRequest.getQuantity(), priceSnapshot);
     }
