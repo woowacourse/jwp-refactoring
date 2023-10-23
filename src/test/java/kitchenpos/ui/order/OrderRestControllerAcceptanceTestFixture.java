@@ -68,7 +68,7 @@ class OrderRestControllerAcceptanceTestFixture extends IntegrationTestHelper {
         ));
 
         menu = menuService.create(req);
-        menuProduct = 메뉴_상품_10개_생성(product.getId()); // TODO: 라이프사이클
+        menuProduct = 메뉴_상품_10개_생성(product.getId());
         menuProduct.setMenu(menu);
 
         orderTable = orderTableRepository.save(주문_테이블_생성(1, false));
