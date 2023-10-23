@@ -38,8 +38,8 @@ public class OrderTable {
     }
   }
 
-  public boolean isNotBelongTableGroup() {
-    return tableGroupId == null;
+  public boolean isBelongTableGroup() {
+    return tableGroupId != null;
   }
 
   public void changeNumberOfGuests(final int numberOfGuests) {

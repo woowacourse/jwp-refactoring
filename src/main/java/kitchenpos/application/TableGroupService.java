@@ -42,7 +42,7 @@ public class TableGroupService {
     );
 
     savedOrderTables.validateMatchingOrderTableSize(orderTableIds.size());
-    savedOrderTables.validateNotEmptyOrNotBelongTableGroup();
+    savedOrderTables.validateEmptyOrBelongTableGroup();
 
     return tableGroupRepository.save(
         new TableGroup(
