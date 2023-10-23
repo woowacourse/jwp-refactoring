@@ -20,7 +20,6 @@ class MenuTest extends BaseTest {
             BigDecimal firstProductPrice, Long firstProductQuantity,
             BigDecimal secondProductPrice, Long secondProductQuantity,
             BigDecimal menuPrice) {
-
         // given
         Product firstProduct = new Product(
                 new ProductName("chicken"),
