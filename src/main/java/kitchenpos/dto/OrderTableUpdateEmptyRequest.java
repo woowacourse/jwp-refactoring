@@ -2,7 +2,10 @@ package kitchenpos.dto;
 
 public class OrderTableUpdateEmptyRequest {
 
-    private final boolean empty;
+    private boolean empty;
+
+    public OrderTableUpdateEmptyRequest() {
+    }
 
     public OrderTableUpdateEmptyRequest(boolean empty) {
         this.empty = empty;
