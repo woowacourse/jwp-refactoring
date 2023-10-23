@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.ProductRequest;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.times;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -28,26 +28,21 @@ class ProductServiceTest {
     @Test
     void 상품을_등록한다() {
         // given
-        Product product = new Product();
-        product.setName("kong hana");
-        product.setPrice(BigDecimal.valueOf(99999999999999L));
 
         // when, then
-        productService.create(product);
+        productService.create(new ProductRequest("kong hana", BigDecimal.valueOf(99999999999999L)));
 
-        then(productDao).should(times(1)).save(any());
+        then(productRepository).should(times(1)).save(any());
     }
 
     @Test
     void 상품의_가격이_음수면_예외발생() {
         // given
-        Product product = new Product();
-        product.setName("product");
-        product.setPrice(BigDecimal.valueOf(-1));
+        ProductRequest productRequest = new ProductRequest("productRequest", BigDecimal.valueOf(-1));
 
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(productDao).should(never()).save(any());
+        then(productRepository).should(never()).save(any());
     }
 }
