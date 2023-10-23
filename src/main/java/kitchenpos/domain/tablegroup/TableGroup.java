@@ -11,11 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.support.domain.BaseEntity;
+import kitchenpos.support.domain.BaseRootEntity;
 import org.springframework.util.CollectionUtils;
 
 @Entity
-public class TableGroup extends BaseEntity {
+public class TableGroup extends BaseRootEntity<TableGroup> {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -54,6 +54,11 @@ public class TableGroup extends BaseEntity {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("단체 지정하려는 테이블은 2개 이상이어야 합니다.");
         }
+    }
+
+    public void ungroup() {
+        orderTables.clear();
+        registerEvent(new TableGroupUngroupedEvent(id));
     }
 
     public Long getId() {

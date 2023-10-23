@@ -45,18 +45,6 @@ class OrderTableTest {
     }
 
     @Test
-    void 단체지정을_해제한다() {
-        // given
-        OrderTable orderTable = new OrderTable(1L, 0, true);
-
-        // when
-        orderTable.ungroup();
-
-        // then
-        assertThat(orderTable.getTableGroupId()).isNull();
-    }
-
-    @Test
     void 단체지정을_할_때_이미_단체지정이_되어있으면_예외를_던진다() {
         // given
         OrderTable orderTable = new OrderTable(1L, 0, true);

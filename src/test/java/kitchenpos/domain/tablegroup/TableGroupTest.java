@@ -45,4 +45,19 @@ class TableGroupTest {
         // then
         assertThat(tableGroup.getOrderTables()).containsExactly(orderTable1, orderTable2);
     }
+
+    @Test
+    void 단체_지정을_해제한다() {
+        // given
+        TableGroup tableGroup = TableGroup.create();
+        OrderTable orderTable1 = new OrderTable(0, true);
+        OrderTable orderTable2 = new OrderTable(0, true);
+        tableGroup.group(List.of(orderTable1, orderTable2));
+
+        // when
+        tableGroup.ungroup();
+
+        // then
+        assertThat(tableGroup.getOrderTables()).isEmpty();
+    }
 }
