@@ -41,6 +41,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
+        if (menu.getMenuGroup() == null) {
+            throw new IllegalArgumentException();
+        }
+
         if (!jpaMenuGroupRepository.existsById(menu.getMenuGroup().getId())) {
             throw new IllegalArgumentException();
         }
