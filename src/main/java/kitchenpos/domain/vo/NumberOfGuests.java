@@ -6,6 +6,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class NumberOfGuests {
 
+    private static final int MINIMUM_GUEST = 0;
+
     @Column(nullable = false)
     private int numberOfGuests;
 
@@ -18,7 +20,7 @@ public class NumberOfGuests {
     }
 
     private void validate(int numberOfGuests) {
-        if (numberOfGuests < 0) {
+        if (numberOfGuests < MINIMUM_GUEST) {
             throw new IllegalArgumentException("테이블 인원 수가 0보다 작을 수 없습니다.");
         }
     }
