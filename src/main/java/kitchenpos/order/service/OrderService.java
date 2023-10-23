@@ -1,7 +1,6 @@
 package kitchenpos.order.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
@@ -14,9 +13,7 @@ import kitchenpos.order.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.order.exception.OrderLineEmptyException;
 import kitchenpos.order.exception.OrderNotFoundException;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
@@ -31,23 +28,20 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
 
     public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository, OrderLineItemRepository orderLineItemRepository) {
+            OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
     }
 
     @Transactional
     public OrderResponse create(CreateOrderRequest request) {
         Order order = saveOrder(request);
         setupOrderLineItems(request, order);
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(order);
 
-        return OrderResponse.from(order, orderLineItems);
+        return OrderResponse.from(order, order.getOrderLineItems());
     }
 
     private Order saveOrder(CreateOrderRequest request) {
@@ -60,33 +54,26 @@ public class OrderService {
     }
 
     private void setupOrderLineItems(CreateOrderRequest request, Order order) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItemRequest orderLineItemRequest : request.getOrderLineItems()) {
-            OrderLineItem orderLineItem = saveOrderLineItem(order, orderLineItemRequest);
-            orderLineItems.add(orderLineItem);
-        }
-        validateOrderLineNotEmpty(orderLineItems);
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems()
+                .stream()
+                .map(each -> createOrderLineItem(order, each))
+                .collect(Collectors.toList());
+
+        order.setupOrderLineItems(orderLineItems);
     }
 
-    private OrderLineItem saveOrderLineItem(Order order, OrderLineItemRequest orderLineItemRequest) {
+    private OrderLineItem createOrderLineItem(Order order, OrderLineItemRequest orderLineItemRequest) {
         Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), order, orderLineItemRequest.getQuantity());
 
-        return orderLineItemRepository.save(orderLineItem);
-    }
-
-    private void validateOrderLineNotEmpty(List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new OrderLineEmptyException();
-        }
+        return new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
     }
 
     public List<OrderResponse> findAll() {
         List<Order> orders = orderRepository.findAll();
 
         return orders.stream()
-                .map(each -> OrderResponse.from(each, orderLineItemRepository.findAllByOrder(each)))
+                .map(each -> OrderResponse.from(each, each.getOrderLineItems()))
                 .collect(Collectors.toList());
     }
 
@@ -95,9 +82,8 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(order);
 
-        return OrderResponse.from(order, orderLineItems);
+        return OrderResponse.from(order, order.getOrderLineItems());
     }
 
     public void validateOrdersCompleted(Long orderTableId) {

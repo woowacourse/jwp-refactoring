@@ -17,10 +17,6 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
     @Column(name = "menu_id")
     private Long menuId;
 
@@ -29,18 +25,13 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, Order order, long quantity) {
+    public OrderLineItem(Long menuId, long quantity) {
         this.menuId = menuId;
-        this.order = order;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public Long getMenuId() {

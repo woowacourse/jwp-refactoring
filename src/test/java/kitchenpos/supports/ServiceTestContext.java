@@ -4,7 +4,6 @@ import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menugroup.service.MenuGroupService;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.product.repository.ProductRepository;
@@ -54,8 +53,6 @@ public class ServiceTestContext {
     protected MenuGroupRepository menuGroupRepository;
     @Autowired
     protected OrderRepository orderRepository;
-    @Autowired
-    protected OrderLineItemRepository orderLineItemRepository;
     @Autowired
     protected TableGroupRepository tableGroupRepository;
     @Autowired
