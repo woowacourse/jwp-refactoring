@@ -1,29 +1,51 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "order_table")
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(nullable = false)
     private boolean empty;
+
+    protected OrderTable() {
+    }
+
+    public OrderTable(
+            final TableGroup tableGroup,
+            final int numberOfGuests,
+            final boolean empty
+    ) {
+        this(null, tableGroup, numberOfGuests, empty);
+    }
 
     public OrderTable(
             final Long id,
-            final Long tableGroupId,
+            final TableGroup tableGroup,
             final int numberOfGuests,
             final boolean empty
     ) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable(
-            final Long tableGroupId,
-            final int numberOfGuests,
-            final boolean empty
-    ) {
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -36,12 +58,8 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
