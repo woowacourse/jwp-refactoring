@@ -39,7 +39,9 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderCreateRequest request) {
-        final List<OrderLineItem> orderLineItems = request.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+                .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
 
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)

@@ -5,11 +5,11 @@ import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import kitchenpos.ui.request.OrderUpdateRequest;
 import kitchenpos.ui.request.TableCreateRequest;
 import org.junit.jupiter.api.Nested;
@@ -61,13 +61,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
-
             final Long orderTableId = savedOrderTable.getId();
             final ExtractableResponse<Response> response = 주문_생성_요청(
                     new OrderCreateRequest(
                             orderTableId,
-                            List.of(orderLineItem)
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     ));
 
             assertAll(
@@ -112,13 +110,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final OrderLineItem orderLineItem1 = new OrderLineItem(menuId, 1L);
-            final OrderLineItem orderLineItem2 = new OrderLineItem(menuId, 1L);
-
             final Long orderTableId = savedOrderTable.getId();
             final ExtractableResponse<Response> response = 주문_생성_요청(new OrderCreateRequest(
                     orderTableId,
-                    List.of(orderLineItem1, orderLineItem2)
+                    List.of(
+                            new OrderLineItemCreateRequest(menuId, 1L),
+                            new OrderLineItemCreateRequest(menuId, 1L)
+                    )
             ));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -141,14 +139,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 1L);
-
-            final Order order = new Order();
-            order.setOrderLineItems(List.of(orderLineItem));
-
             final ExtractableResponse<Response> response = 주문_생성_요청(new OrderCreateRequest(
                     1L,
-                    List.of(orderLineItem)
+                    List.of(new OrderLineItemCreateRequest(menuId, 1L))
             ));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
@@ -176,12 +169,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
-
             final Order savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
                             savedOrderTable.getId(),
-                            List.of(orderLineItem)
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
 
@@ -220,12 +211,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
-
             final Order savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
                             savedOrderTable.getId(),
-                            List.of(orderLineItem)
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
 
@@ -259,12 +248,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
-
             final Order savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
                             savedOrderTable.getId(),
-                            List.of(orderLineItem)
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
 
