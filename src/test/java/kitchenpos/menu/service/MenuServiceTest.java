@@ -5,19 +5,21 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.vo.Money;
 import kitchenpos.common.vo.PriceIsNegativeException;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
-import kitchenpos.menugroup.exception.MenuGroupNotFoundException;
 import kitchenpos.menu.exception.MenuPriceIsBiggerThanActualPriceException;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.exception.MenuGroupNotFoundException;
 import kitchenpos.product.domain.Product;
 import kitchenpos.supports.ServiceTestContext;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTestContext {
@@ -122,5 +124,31 @@ class MenuServiceTest extends ServiceTestContext {
 
         // then
         assertThat(response).hasSize(1);
+    }
+
+    @Test
+    void 상품의_가격이_변경되더라도_메뉴_가격은_변하지_않는다() {
+        // given
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Product product = ProductFixture.of("name", BigDecimal.valueOf(1000L));
+
+        // when
+        menuGroupRepository.save(menuGroup);
+        productRepository.save(product);
+
+        CreateMenuRequest request = new CreateMenuRequest("menuName",
+                BigDecimal.valueOf(999L),
+                menuGroup.getId(),
+                List.of(new MenuProductRequest(product.getId(), 1L)));
+
+        menuService.create(request);
+
+        ReflectionTestUtils.setField(product, "price", new Money(BigDecimal.valueOf(2000L)));
+
+        List<MenuResponse> menuResponses = menuService.findAll();
+
+        // then
+        assertThat(menuResponses.get(0).getPrice().doubleValue())
+                .isEqualTo(BigDecimal.valueOf(999L).doubleValue());
     }
 }
