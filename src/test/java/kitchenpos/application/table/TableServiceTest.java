@@ -6,11 +6,11 @@ import static kitchenpos.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableChangedEvent;
 import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.test.ServiceTest;

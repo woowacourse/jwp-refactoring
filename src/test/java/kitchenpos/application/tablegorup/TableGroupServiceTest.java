@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.tablegorup;
 
 import static kitchenpos.fixture.OrderTableFixture.테이블;
 import static kitchenpos.fixture.TableGroupFixture.단체_지정;
@@ -7,13 +7,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupUngroupedEvent;
+import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.dto.TableGroupRequest;
-import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
+import kitchenpos.domain.tablegroup.TableGroupUngroupedEvent;
+import kitchenpos.dto.tablegroup.TableGroupRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

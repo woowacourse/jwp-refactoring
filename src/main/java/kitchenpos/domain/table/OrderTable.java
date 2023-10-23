@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.support.domain.BaseEntity;
 
 @Entity

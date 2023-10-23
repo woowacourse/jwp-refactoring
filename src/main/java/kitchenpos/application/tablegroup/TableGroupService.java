@@ -1,13 +1,13 @@
-package kitchenpos.application;
+package kitchenpos.application.tablegroup;
 
 import java.util.List;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupUngroupedEvent;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.dto.TableGroupRequest;
-import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
+import kitchenpos.domain.tablegroup.TableGroupUngroupedEvent;
+import kitchenpos.dto.tablegroup.TableGroupRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
