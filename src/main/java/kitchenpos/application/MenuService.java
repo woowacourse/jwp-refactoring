@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.dao.jpa.JpaMenuGroupRepository;
+import kitchenpos.dao.jpa.JpaMenuProductRepository;
 import kitchenpos.dao.jpa.JpaMenuRepository;
 import kitchenpos.dao.jpa.JpaProductRepository;
 import kitchenpos.domain.Menu;
@@ -19,25 +20,29 @@ public class MenuService {
     private final JpaMenuRepository menuRepository;
     private final JpaMenuGroupRepository menuGroupRepository;
     private final JpaProductRepository productRepository;
+    private final JpaMenuProductRepository menuProductRepository;
 
     public MenuService(
             JpaMenuRepository menuRepository,
             JpaMenuGroupRepository menuGroupRepository,
-            JpaProductRepository productRepository
+            JpaProductRepository productRepository,
+            JpaMenuProductRepository menuProductRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
     public Menu create(final MenuCreateRequest request) {
         MenuGroup menuGroup = menuGroupRepository.getById(request.menuGroupId());
-        Menu menu = new Menu(request.name(), request.price(), menuGroup);
+        Menu menu = menuRepository.save(new Menu(request.name(), request.price(), menuGroup));
 
         for (MenuProductCreateRequest menuProductCreateRequest : request.menuProducts()) {
             Product product = productRepository.getById(menuProductCreateRequest.productId());
-            new MenuProduct(menu, product, menuProductCreateRequest.quantity());
+            MenuProduct menuProduct = new MenuProduct(menu, product, menuProductCreateRequest.quantity());
+            menuProductRepository.save(menuProduct);
         }
         return menuRepository.save(menu);
     }

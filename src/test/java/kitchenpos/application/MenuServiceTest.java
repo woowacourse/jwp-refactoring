@@ -54,6 +54,27 @@ class MenuServiceTest extends IntegrationTest {
         }
 
         @Test
+        void 메뉴_저장시_메뉴_상품도_함께_저장한다() {
+            // given
+            List<MenuProductCreateRequest> menuProductCreateRequests = List.of(
+                    new MenuProductCreateRequest(1L, 1L),
+                    new MenuProductCreateRequest(2L, 1L)
+            );
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
+                    "수원왕갈비통닭",
+                    BigDecimal.valueOf(1000),
+                    1L,
+                    menuProductCreateRequests
+            );
+
+            // when
+            Menu menu = menuService.create(menuCreateRequest);
+
+            // then
+            assertThat(menu.menuProducts().size()).isEqualTo(2);
+        }
+
+        @Test
         void 메뉴_가격이_Null이면_예외_발생() {
             // given
             List<MenuProductCreateRequest> menuProductCreateRequests = List.of(
