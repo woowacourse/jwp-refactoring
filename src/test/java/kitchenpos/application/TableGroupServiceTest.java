@@ -1,15 +1,19 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
 import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -128,11 +132,28 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 테이블들의_주문_상태가_조리_또는_식사면_예외가_발생한다() {
             // given
-            final var tableGroup = TableGroupFixture.단체지정_주문테이블_2개();
-            given(orderTableRepository.findAllByTableGroupId(any()))
-                    .willReturn(tableGroup.getOrderTables());
-            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
-                    .willReturn(true);
+            final var orderTable1 = OrderTableFixture.빈테이블_1명();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var tableGroup = TableGroupFixture.단체지정_여러_테이블(savedOrderTables);
+            final var savedTableGroup = 단일_단체지정_저장(tableGroup);
+
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
+
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
+
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct1, menuProduct2);
+            final var savedMenu = 단일_메뉴_저장(menu);
+            final var orderLineItem = OrderLineItemFixture.주문항목_망고치킨_2개(savedMenu);
+
+            final var order = 단일_주문_저장(orderTable1, orderLineItem);
+            order.changeOrderStatus(MEAL);
 
             // when & then
             final var id = tableGroup.getId();
