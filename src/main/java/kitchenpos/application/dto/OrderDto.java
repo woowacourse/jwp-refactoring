@@ -14,7 +14,7 @@ public class OrderDto {
     private LocalDateTime orderedTime;
     private List<OrderLineItemDto> orderLineItems;
 
-    public OrderDto(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemDto> orderLineItems) {
+    private OrderDto(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemDto> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
