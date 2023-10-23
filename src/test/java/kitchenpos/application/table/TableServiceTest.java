@@ -4,7 +4,6 @@ import kitchenpos.application.dto.OrderTableEmptyRequest;
 import kitchenpos.application.dto.OrderTableNumberOfGuestRequest;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.application.table.TableService;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
@@ -60,7 +59,7 @@ class TableServiceTest {
                     .ignoringFields("id", "tableGroupId")
                     .isEqualTo(orderTable(10, false));
             softly.assertThat(savedOrderTable.getId()).isNotNull();
-//            softly.assertThat(savedOrderTable.getTableGroupId()).isNull();
+            softly.assertThat(savedOrderTable.getTableGroupId()).isNull();
         });
     }
 

@@ -2,7 +2,6 @@ package kitchenpos.application.tablegroup;
 
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
@@ -86,8 +85,7 @@ class TableGroupServiceTest {
     void 단체_지정을_생성할_때_저장되어있는_주문_테이블의_개수와_다르면_예외가_발생한다() {
         // given
         OrderTable orderTable = orderTableRepository.save(orderTable(10, true));
-        OrderTable orderTable2 = orderTable(3, true);
-        TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(orderTable2.getId())));
+        TableGroupRequest tableGroup = tableGroupRequest(List.of(new OrderTableIdRequest(orderTable.getId()), new OrderTableIdRequest(Long.MAX_VALUE)));
 
         // expect
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))

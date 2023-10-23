@@ -19,10 +19,19 @@ public class OrderTableGroupingEventHandler {
     @Transactional
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void handle(GroupingEvent event) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(event.getOrderTableIds());
+        List<Long> orderTableIds = event.getOrderTableIds();
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+
+        validate(orderTableIds, orderTables);
         for (OrderTable orderTable : orderTables) {
             orderTable.changeTableGroup(event.getTableGroupId());
             orderTableRepository.save(orderTable);
+        }
+    }
+
+    private void validate(List<Long> orderTableIds, List<OrderTable> orderTables) {
+        if (orderTableIds.size() != orderTables.size()) {
+            throw new IllegalArgumentException("주문 테이블의 개수와 맞지 않습니다");
         }
     }
 }
