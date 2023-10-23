@@ -21,18 +21,21 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductCreateRequest productCreateRequest) {
+    public ProductResponse create(final ProductCreateRequest productCreateRequest) {
         final Product product = new Product(
                 new ProductName(productCreateRequest.getName()),
                 new ProductPrice(productCreateRequest.getPrice())
         );
-
-        return productRepository.save(product);
+        return convertToResponse(productRepository.save(product));
     }
 
     public List<ProductResponse> list() {
         return productRepository.findAll().stream()
-                .map(product -> new ProductResponse(product.getId(), product.getName(), product.getPrice()))
+                .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    private ProductResponse convertToResponse(final Product product) {
+        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
     }
 }

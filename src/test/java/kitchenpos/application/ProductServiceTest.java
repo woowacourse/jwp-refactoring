@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
@@ -26,7 +25,7 @@ class ProductServiceTest {
         @Test
         void 상품이_정상적으로_등록된다() {
             final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
-            final Product savedProduct = productService.create(productCreateRequest);
+            final ProductResponse savedProduct = productService.create(productCreateRequest);
 
             assertSoftly(softly -> {
                 softly.assertThat(savedProduct.getId()).isNotNull();
@@ -39,7 +38,7 @@ class ProductServiceTest {
         @ValueSource(ints = {0, 1, 255})
         void 상품_이름은_255자_이하이다(int length) {
             final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상".repeat(length), BigDecimal.valueOf(1000));
-            final Product savedProduct = productService.create(productCreateRequest);
+            final ProductResponse savedProduct = productService.create(productCreateRequest);
 
             assertSoftly(softly -> {
                 softly.assertThat(savedProduct.getId()).isNotNull();
@@ -94,8 +93,7 @@ class ProductServiceTest {
         final List<ProductResponse> expected = productService.list();
         for (int i = 0; i < 3; i++) {
             final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품" + i, BigDecimal.valueOf(1000));
-            final Product product = productService.create(productCreateRequest);
-            expected.add(new ProductResponse(product.getId(), product.getName(), product.getPrice()));
+            expected.add(productService.create(productCreateRequest));
         }
 
         final List<ProductResponse> result = productService.list();
