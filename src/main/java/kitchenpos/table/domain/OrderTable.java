@@ -65,21 +65,13 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public void changeEmpty(final boolean empty) {
-        validateGroupedTable();
+    public void changeEmpty(final boolean empty, final OrderTableValidator orderTableValidator) {
+        orderTableValidator.validate(this);
         this.empty = empty;
     }
 
-    private void validateGroupedTable() {
-        if (Objects.isNull(tableGroup)) {
-            return;
-        }
-        throw new IllegalArgumentException("Cannot change empty status of table in group");
-    }
-
-    public void changeNumberOfGuests(final int numberOfGuests, final TableValidator tableValidator) {
-        tableValidator.validateNumberOfGuests(numberOfGuests);
-        tableValidator.validateTableIsEmpty(this);
+    public void changeNumberOfGuests(final int numberOfGuests, final TableChangeNumberOfGuestValidator tableValidator) {
+        tableValidator.validate(numberOfGuests, this);
         this.numberOfGuests = numberOfGuests;
     }
 

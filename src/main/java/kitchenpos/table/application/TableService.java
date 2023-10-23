@@ -2,13 +2,14 @@ package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.order.application.dto.OrderTableResult;
 import kitchenpos.table.application.dto.OrderTableCreationRequest;
 import kitchenpos.table.application.dto.OrderTableEmptyStatusChangeRequest;
 import kitchenpos.table.application.dto.OrderTableGuestAmountChangeRequest;
-import kitchenpos.order.application.dto.OrderTableResult;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableValidator;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
+import kitchenpos.table.domain.TableChangeNumberOfGuestValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,17 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final TableValidationService tableValidationService;
-    private final TableValidator tableValidator;
+    private final TableChangeNumberOfGuestValidator tableChangeNumberOfGuestValidator;
+    private final OrderTableValidator ordersEmptyValidator;
 
     public TableService(
             final OrderTableRepository orderTableRepository,
-            final TableValidationService tableValidationService,
-            final TableValidator tableValidator
+            final TableChangeNumberOfGuestValidator tableChangeNumberOfGuestValidator,
+            final OrderTableValidator ordersEmptyValidator
     ) {
         this.orderTableRepository = orderTableRepository;
-        this.tableValidationService = tableValidationService;
-        this.tableValidator = tableValidator;
+        this.tableChangeNumberOfGuestValidator = tableChangeNumberOfGuestValidator;
+        this.ordersEmptyValidator = ordersEmptyValidator;
     }
 
     @Transactional
@@ -46,8 +47,7 @@ public class TableService {
     public OrderTableResult changeEmpty(final Long orderTableId, final OrderTableEmptyStatusChangeRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-        tableValidationService.validateChangeEmptyAvailable(orderTableId);
-        orderTable.changeEmpty(request.getEmpty());
+        orderTable.changeEmpty(request.getEmpty(), ordersEmptyValidator);
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 
@@ -58,7 +58,7 @@ public class TableService {
     ) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("Order table does not exist."));
-        orderTable.changeNumberOfGuests(request.getNumberOfGuests(), tableValidator);
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests(), tableChangeNumberOfGuestValidator);
         return OrderTableResult.from(orderTableRepository.save(orderTable));
     }
 }
