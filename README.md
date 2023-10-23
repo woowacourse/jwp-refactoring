@@ -95,3 +95,46 @@
 | 단체 지정    | table group      | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목    | order line item  | 주문에 속하는 수량이 있는 메뉴             |
 | 매장 식사    | eat in           | 포장하지 않고 매장에서 식사하는 것           |
+
+## 요구사항
+
+### 기존의 DAO를 제거하고 SpringDataJdbc를 사용한다.
+
+- [ ] MenuDao
+- [ ] MenuGroupDao
+- [ ] MenuProductDao
+- [ ] OrderDao
+- [ ] OrderLineItemDao
+- [ ] OrderTableDao
+- [ ] ProductDao
+- [ ] TableGroupDao
+
+### 중간테이블을 제거하고 도메인 관계로 표현한다.
+
+- [ ] MenuProduct
+- [ ] OrderLineItem
+- [ ] OrderTable
+
+### 도메인 양방향 의존성을 제거한다.
+
+- ~~MenuGroup~~
+- ~~OrderStatus~~
+- ~~Product~~
+
+- [ ] Menu
+    - MenuGroup
+    - MenuProduct (List) -> 양방향
+- [ ] MenuProduct
+    - menuId
+    - productId
+- [ ] Order
+    - orderTableId
+    - orderStatus
+    - orderLineItem (List) -> 양방향
+- [ ] OrderLineItem
+    - orderId -> 양방향
+    - menuId
+- [ ] OrderTable
+    - tableGroupId
+- [ ] TableGroup
+    - orderTable (List) -> 양방향
