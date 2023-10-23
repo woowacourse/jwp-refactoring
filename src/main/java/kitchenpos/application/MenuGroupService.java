@@ -23,7 +23,8 @@ public class MenuGroupService {
         return MenuGroupResponse.from(savedMenuGroup);
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupRepository.findAll();
+    public List<MenuGroupResponse> list() {
+        final List<MenuGroup> menuGroups = menuGroupRepository.findAll();
+        return MenuGroupResponse.from(menuGroups);
     }
 }

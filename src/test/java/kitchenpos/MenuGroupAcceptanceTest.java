@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.step.MenuGroupStep;
 import kitchenpos.ui.request.MenuGroupCreateRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -40,7 +41,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                 .collect(Collectors.toList());
 
         final ExtractableResponse<Response> response = 메뉴_그룹_조회_요청();
-        final List<MenuGroup> result = response.jsonPath().getList("", MenuGroup.class);
+        final List<MenuGroupResponse> result = response.jsonPath().getList("", MenuGroupResponse.class);
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
