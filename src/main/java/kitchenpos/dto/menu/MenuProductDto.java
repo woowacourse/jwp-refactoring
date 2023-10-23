@@ -1,6 +1,6 @@
 package kitchenpos.dto.menu;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuProductDto {
 

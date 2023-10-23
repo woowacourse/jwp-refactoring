@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableChangeGuestRequest;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;

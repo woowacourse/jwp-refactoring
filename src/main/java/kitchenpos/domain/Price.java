@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class Price {

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.product;
 
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import kitchenpos.domain.Price;
 
 @Table(name = "product")
 @Entity
@@ -33,7 +34,7 @@ public class Product {
         this.price = Price.from(price);
     }
 
-    public Product (final String name, final Integer price) {
+    public Product(final String name, final Integer price) {
         this(null, name, price);
     }
 

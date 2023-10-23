@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.Price;
 
 @Entity
 public class Menu {
@@ -40,8 +41,8 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public Menu (final String name, final Integer price, final Long menuGroupId) {
-        this (null, name, Price.from(price), menuGroupId);
+    public Menu(final String name, final Integer price, final Long menuGroupId) {
+        this(null, name, Price.from(price), menuGroupId);
     }
 
     public void validateOverPrice(final BigDecimal productSumPrice) {

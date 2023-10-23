@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -135,7 +135,6 @@ class MenuServiceTest {
 
         final MenuGroup menuGroup2 = menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
         final Menu menu2 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup2.getId()));
-
 
         // when
         final List<MenuResponse> result = menuService.list();

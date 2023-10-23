@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
