@@ -1,12 +1,13 @@
 package kitchenpos.menu.appllication;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.product.domain.Product;
@@ -43,17 +44,27 @@ public class MenuService {
 
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest request) {
         final List<MenuProductCreateRequest> menuProductCreateRequests = request.menuProducts();
-        final List<Long> productIds = menuProductCreateRequests.stream()
-                .map(MenuProductCreateRequest::productId)
-                .collect(Collectors.toUnmodifiableList());
+
+        final List<Long> productIds = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::productId);
         final List<Product> products = productRepository.getAllById(productIds);
+
+        final List<Long> quantities = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::quantity);
 
         return IntStream.range(0, products.size())
                 .mapToObj(index -> new MenuProduct(
                                 products.get(index),
-                                menuProductCreateRequests.get(index).quantity()
+                                quantities.get(index)
                         )
                 )
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private <R, T> List<T> parseProcess(
+            List<R> requests,
+            Function<R, T> processor
+    ) {
+        return requests.stream()
+                .map(processor)
                 .collect(Collectors.toUnmodifiableList());
     }
 
