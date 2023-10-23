@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다")
     void create() {
         //given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("떡볶이");
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest("떡볶이");
 
         //when
-        final MenuGroup saved = menuGroupService.create(menuGroup);
+        final MenuGroupResponse saved = menuGroupService.create(menuGroup);
 
         //then
         assertThat(saved.getId()).isNotNull();
@@ -35,7 +35,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성할 때 이름이 없으면 예외가 발생한다")
     void create_fail() {
         //given
-        final MenuGroup menuGroup = new MenuGroup();
+        final MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest(null);
 
         //when, then
         assertThatThrownBy(() -> menuGroupService.create(menuGroup))
@@ -46,5 +46,13 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 전체 조회할 수 있다")
     void list() {
         assertDoesNotThrow(() -> menuGroupService.list());
+    }
+
+    @Test
+    @DisplayName("메뉴 그룹이 존재하지 않으면 예외가 발생한다")
+    void validateExistence() {
+        assertThatThrownBy(() -> menuGroupService.validateExistenceById(0L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 메뉴 그룹입니다.");
     }
 }

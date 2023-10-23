@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.EntityFactory;
+import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,58 +20,36 @@ class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private EntityFactory entityFactory;
 
-    @Nested
-    @DisplayName("상품 생성 테스트")
-    class CreateTest {
-        @Test
-        @DisplayName("상품을 생성할 수 있다")
-        void create() {
-            //given
-            final Product request = new Product();
-            request.setName("떡볶이");
-            request.setPrice(BigDecimal.valueOf(5000));
+    @Test
+    @DisplayName("상품을 생성할 수 있다")
+    void create() {
+        //given
+        final ProductCreateRequest request = new ProductCreateRequest("떡볶이", BigDecimal.valueOf(5000));
 
-            //when
-            final Product product = productService.create(request);
+        //when
+        final ProductResponse product = productService.create(request);
 
-            //then
-            assertSoftly(softAssertions -> {
-                assertThat(product.getId()).isNotNull();
-                assertThat(product.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(5000));
-                assertThat(product.getName()).isEqualTo("떡볶이");
-            });
-        }
-
-        @Test
-        @DisplayName("상품을 생성할 때 가격이 음수면 예외가 발생한다")
-        void create_fail() {
-            //given
-            final Product request = new Product();
-            request.setName("떡볶이");
-            request.setPrice(BigDecimal.valueOf(-1));
-
-            //when
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        @DisplayName("상품을 생성할 때 가격이 존재하지 않으면 예외가 발생한다")
-        void create_fail2() {
-            //given
-            final Product request = new Product();
-            request.setName("떡볶이");
-
-            //when
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        //then
+        assertSoftly(softAssertions -> {
+            assertThat(product.getId()).isNotNull();
+            assertThat(product.getName()).isEqualTo("떡볶이");
+        });
     }
 
     @Test
     @DisplayName("상품 전체 조회를 할 수 있다")
     void list() {
         assertDoesNotThrow(() -> productService.list());
+    }
+
+    @Test
+    @DisplayName("ID로 조회할 때 존재하지 않는 상품이면 예외가 발생한다")
+    void findById() {
+        assertThatThrownBy(() -> productService.findByIdOrThrow(0L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
     }
 }
