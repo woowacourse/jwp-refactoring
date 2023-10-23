@@ -2,16 +2,16 @@ package kitchenpos.application.dto;
 
 public class TableCreateRequest {
 
-    private final Integer numberOfGuest;
+    private final Integer numberOfGuests;
     private final Boolean empty;
 
     public TableCreateRequest(final Integer numberOfGuest, final Boolean empty) {
-        this.numberOfGuest = numberOfGuest;
+        this.numberOfGuests = numberOfGuest;
         this.empty = empty;
     }
 
-    public Integer getNumberOfGuest() {
-        return numberOfGuest;
+    public Integer getNumberOfGuests() {
+        return numberOfGuests;
     }
 
     public Boolean getEmpty() {

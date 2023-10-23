@@ -31,7 +31,7 @@ public class TableService {
         final OrderTable orderTable = new OrderTable();
         orderTable.setId(null);
         orderTable.setTableGroupId(null);
-        orderTable.setNumberOfGuests(request.getNumberOfGuest());
+        orderTable.setNumberOfGuests(request.getNumberOfGuests());
         orderTable.setEmpty(request.getEmpty());
 
         return TableResponse.from(orderTableDao.save(orderTable));
