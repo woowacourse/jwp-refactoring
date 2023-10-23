@@ -4,46 +4,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuCreationRequest;
 import kitchenpos.menu.application.dto.MenuResult;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menu.domain.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
 
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuRepository menuRepository;
-    private final MenuValidator menuValidator;
+    private final MenuMapper menuMapper;
 
     public MenuService(
-            final MenuGroupRepository menuGroupRepository,
             final MenuRepository menuRepository,
-            final MenuValidator menuValidator
+            final MenuMapper menuMapper
     ) {
-        this.menuGroupRepository = menuGroupRepository;
         this.menuRepository = menuRepository;
-        this.menuValidator = menuValidator;
+        this.menuMapper = menuMapper;
     }
 
     @Transactional
     public MenuResult create(final MenuCreationRequest request) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("MenuGroup does not exist."));
-        final Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup));
-        final List<MenuProduct> menuProducts = extractMenuProductFromRequest(request);
-        menu.addMenuProducts(menuProducts, menuValidator);
+        final Menu menu = menuMapper.from(request);
+        menuRepository.save(menu);
         return MenuResult.from(menu);
-    }
-
-    private List<MenuProduct> extractMenuProductFromRequest(final MenuCreationRequest request) {
-        return request.getMenuProducts().stream()
-                .map(menuProduct -> new MenuProduct(menuProduct.getProductId(), menuProduct.getQuantity()))
-                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
