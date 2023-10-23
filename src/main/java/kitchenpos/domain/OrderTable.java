@@ -46,7 +46,7 @@ public class OrderTable {
     }
 
     public void validateTableGroupIsNonNull() {
-        if (Objects.nonNull(tableGroup.getId())) {
+        if (!Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
     }
@@ -64,6 +64,7 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
     public void validateIsEmpty() {
         if (isEmpty()) {
             throw new IllegalArgumentException();
