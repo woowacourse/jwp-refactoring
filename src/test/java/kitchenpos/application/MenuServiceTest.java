@@ -135,8 +135,7 @@ class MenuServiceTest {
         @Test
         void 메뉴_상품이_존재하지_않으면_예외가_발생한다() {
             final Product product = productDao.save(new Product(null, "상품", BigDecimal.ONE));
-            product.setId(product.getId() + 1);
-            menuProducts.add(new MenuProduct(null, null, product.getId(), 1));
+            menuProducts.add(new MenuProduct(null, null, product.getId() + 1, 1));
 
             final Menu menu = new Menu(null, "메뉴", BigDecimal.ZERO, savedMenuGroupId, menuProducts);
 

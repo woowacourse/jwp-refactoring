@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,8 +24,8 @@ class ProductServiceTest {
     class 상품을_등록한다 {
         @Test
         void 상품이_정상적으로_등록된다() {
-            final Product product = new Product(null, "상품", BigDecimal.valueOf(1000));
-            final Product savedProduct = productService.create(product);
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
+            final Product savedProduct = productService.create(productCreateRequest);
 
             assertSoftly(softly -> {
                 softly.assertThat(savedProduct.getId()).isNotNull();
@@ -36,8 +37,8 @@ class ProductServiceTest {
         @ParameterizedTest
         @ValueSource(ints = {0, 1, 255})
         void 상품_이름은_255자_이하이다(int length) {
-            final Product product = new Product(null, "상".repeat(length), BigDecimal.valueOf(1000));
-            final Product savedProduct = productService.create(product);
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상".repeat(length), BigDecimal.valueOf(1000));
+            final Product savedProduct = productService.create(productCreateRequest);
 
             assertSoftly(softly -> {
                 softly.assertThat(savedProduct.getId()).isNotNull();
@@ -48,41 +49,41 @@ class ProductServiceTest {
 
         @Test
         void 상품_이름이_없으면_예외가_발생한다() {
-            final Product product = new Product(null, null, BigDecimal.valueOf(1000));
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest(null, BigDecimal.valueOf(1000));
 
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품_가격이_없으면_예외가_발생한다() {
-            final Product product = new Product(null, "상품", null);
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", null);
 
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품_이름이_256자_이상이면_예외가_발생한다() {
-            final Product product = new Product(null, "상".repeat(256), BigDecimal.valueOf(1000));
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상".repeat(256), BigDecimal.valueOf(1000));
 
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품_가격이_0원_이하이면_예외가_발생한다() {
-            final Product product = new Product(null, "상품", BigDecimal.valueOf(-1));
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(-1));
 
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품_가격이_1000조_이상이면_예외가_발생한다() {
-            final Product product = new Product(null, "상품", BigDecimal.valueOf(Math.pow(10, 17)));
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품", BigDecimal.valueOf(Math.pow(10, 17)));
 
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -91,8 +92,8 @@ class ProductServiceTest {
     void 상품의_목록을_조회한다() {
         final List<Product> expected = productService.list();
         for (int i = 0; i < 3; i++) {
-            final Product product = new Product(null, "상품" + i, BigDecimal.valueOf(1000));
-            expected.add(productService.create(product));
+            final ProductCreateRequest productCreateRequest = new ProductCreateRequest("상품" + i, BigDecimal.valueOf(1000));
+            expected.add(productService.create(productCreateRequest));
         }
 
         final List<Product> result = productService.list();
@@ -101,7 +102,7 @@ class ProductServiceTest {
             softly.assertThat(result).hasSize(expected.size());
             softly.assertThat(result)
                     .usingRecursiveComparison()
-                    .ignoringFields("id")
+                    .comparingOnlyFields("name")
                     .isEqualTo(expected);
         });
     }
