@@ -15,10 +15,9 @@ import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.CannotChangeEmptyTableNumberOfGuestsException;
 import kitchenpos.exception.InvalidRequestParameterException;
-import kitchenpos.exception.UnCompletedOrderExistsException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.UnCompletedOrderExistsException;
 import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -90,12 +89,6 @@ class TableServiceTest {
             // when, then
             assertThrows(OrderTableNotFoundException.class,
                     () -> tableService.changeEmpty(-1L, request));
-        }
-
-        @Disabled
-        @Test
-        void 변경하려는_테이블이_단체_테이블에_속해있다면_예외를_반환한다() {
-            // TODO
         }
 
         @Test
