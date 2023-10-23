@@ -6,6 +6,7 @@ import static kitchenpos.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.NoSuchElementException;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableChangedEvent;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -58,7 +59,7 @@ class TableServiceTest {
         void 존재하지_않는_테이블인_경우_예외를_던진다() {
             // expect
             assertThatThrownBy(() -> sut.changeEmpty(MAX_VALUE, request))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(NoSuchElementException.class)
                     .hasMessage("존재하지 않는 테이블입니다.");
         }
 
@@ -120,8 +121,8 @@ class TableServiceTest {
         void 변경하려는_테이블이_없는_경우_예외를_던진다() {
             // expect
             assertThatThrownBy(() -> sut.changeNumberOfGuests(MAX_VALUE, request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("주문 테이블을 찾을 수 없습니다.");
+                    .isInstanceOf(NoSuchElementException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @Test
