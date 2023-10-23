@@ -10,7 +10,7 @@ import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.menu.CreateMenuRequest;
 import kitchenpos.ui.dto.menu.MenuProductDto;
-import kitchenpos.vo.Money;
+import kitchenpos.domain.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -54,8 +54,7 @@ class MenuServiceTest {
                 () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getName()).isEqualTo("치즈피자"),
                 () -> assertThat(actual.getPrice()).isEqualTo(Money.valueOf(5_000)),
-                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId()),
-                () -> assertThat(actual.getMenuProducts()).hasSize(1)
+                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId())
         );
     }
 

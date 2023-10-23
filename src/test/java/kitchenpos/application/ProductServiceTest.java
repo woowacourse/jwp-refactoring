@@ -4,7 +4,7 @@ import java.util.List;
 
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.product.CreateProductRequest;
-import kitchenpos.vo.Money;
+import kitchenpos.domain.vo.Money;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

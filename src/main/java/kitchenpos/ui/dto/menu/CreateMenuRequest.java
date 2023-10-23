@@ -27,11 +27,7 @@ public class CreateMenuRequest {
     }
 
     public Menu toDomain() {
-        return new Menu(name, BigDecimal.valueOf(price), menuGroupId,
-                menuProducts.stream()
-                        .map(menuProductDto -> new MenuProduct(null, menuProductDto.getProductId(), menuProductDto.getQuantity()))
-                        .collect(Collectors.toList())
-        );
+        return new Menu(name, BigDecimal.valueOf(price), menuGroupId);
     }
 
     public String getName() {
