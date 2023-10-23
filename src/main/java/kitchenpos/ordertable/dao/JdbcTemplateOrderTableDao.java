@@ -34,7 +34,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
 
     @Override
     public OrderTable save(final OrderTable entity) {
-        if (Objects.isNull(entity.getId())) {
+        if (Objects.isNull(entity.id())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
             return select(key.longValue());
@@ -86,10 +86,10 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
                 " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("tableGroupId", entity.getTableGroupId())
-                .addValue("numberOfGuests", entity.getNumberOfGuests())
+                .addValue("tableGroupId", entity.tableGroup())
+                .addValue("numberOfGuests", entity.numberOfGuests())
                 .addValue("empty", entity.isEmpty())
-                .addValue("id", entity.getId());
+                .addValue("id", entity.id());
         jdbcTemplate.update(sql, parameters);
     }
 

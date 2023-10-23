@@ -53,8 +53,8 @@ class TableGroupServiceTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(saved.getCreatedDate().truncatedTo(ChronoUnit.MINUTES))
-                        .isEqualTo(tableGroup.getCreatedDate().truncatedTo(ChronoUnit.MINUTES));
+                softly.assertThat(saved.createdDate().truncatedTo(ChronoUnit.MINUTES))
+                        .isEqualTo(tableGroup.createdDate().truncatedTo(ChronoUnit.MINUTES));
             });
         }
 
@@ -106,7 +106,7 @@ class TableGroupServiceTest {
             final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
             initOrderTables(tableGroup);
             final OrderTable orderTable = tableGroup.getOrderTables().get(0);
-            tableService.changeEmpty(orderTable.getId(), OrderTableFixtures.NOT_EMPTY.get());
+            tableService.changeEmpty(orderTable.id(), OrderTableFixtures.NOT_EMPTY.get());
 
             // when, then
             assertThatIllegalArgumentException()
@@ -123,7 +123,7 @@ class TableGroupServiceTest {
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             final OrderTable orderTable = tableGroup.getOrderTables().get(0);
-            orderTable.setTableGroupId(savedTableGroup.getId());
+            orderTable.setTableGroupId(savedTableGroup.id());
             orderTableDao.save(orderTable);
 
             // when, then
@@ -145,7 +145,7 @@ class TableGroupServiceTest {
 
             // when, then
             assertThatNoException()
-                    .isThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()));
+                    .isThrownBy(() -> tableGroupService.ungroup(savedTableGroup.id()));
         }
 
         @Test
@@ -158,15 +158,15 @@ class TableGroupServiceTest {
 
             final Order order = OrderFixtures.BASIC.get();
             final OrderTable orderTable = tableGroup.getOrderTables().get(0);
-            order.setOrderTableId(orderTable.getId());
+            order.setOrderTable(orderTable.id());
             final Order savedOrder = orderService.create(order);
 
             savedOrder.setOrderStatus(OrderStatus.COOKING.name());
-            orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+            orderService.changeOrderStatus(savedOrder.id(), savedOrder);
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()));
+                    .isThrownBy(() -> tableGroupService.ungroup(savedTableGroup.id()));
         }
     }
 
@@ -175,7 +175,7 @@ class TableGroupServiceTest {
         final OrderTable secondOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
 
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-        orderTables.get(0).setId(firstOrderTable.getId());
-        orderTables.get(1).setId(secondOrderTable.getId());
+        orderTables.get(0).setId(firstOrderTable.id());
+        orderTables.get(1).setId(secondOrderTable.id());
     }
 }

@@ -38,7 +38,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.tableGroup())) {
             throw new IllegalArgumentException();
         }
 
@@ -54,7 +54,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+        final int numberOfGuests = orderTable.numberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();

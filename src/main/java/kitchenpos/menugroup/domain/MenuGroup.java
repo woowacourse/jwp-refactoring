@@ -15,6 +15,14 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
+    public MenuGroup() {
+    }
+
+    public MenuGroup(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Long id() {
         return id;
     }

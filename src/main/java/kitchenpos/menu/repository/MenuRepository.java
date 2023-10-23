@@ -12,8 +12,4 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
                         .orElseThrow(() -> new IllegalArgumentException("해당 메뉴가 존재하지 않습니다. id : " + id)))
                 .collect(Collectors.toUnmodifiableList());
     }
-
-    default int countByIdIn(List<Long> menuIds) {
-        return findAllById(menuIds).size();
-    }
 }

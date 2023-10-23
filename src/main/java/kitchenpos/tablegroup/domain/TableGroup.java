@@ -9,7 +9,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
@@ -17,7 +17,7 @@ public class TableGroup {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedDate() {
+    public LocalDateTime createdDate() {
         return createdDate;
     }
 

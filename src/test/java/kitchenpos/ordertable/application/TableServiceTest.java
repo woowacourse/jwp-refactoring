@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.order.apllication.OrderService;
 import kitchenpos.order.domain.Order;
@@ -46,8 +45,8 @@ class TableServiceTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(savedOrderTable.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
-            softly.assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+            softly.assertThat(savedOrderTable.tableGroup()).isEqualTo(orderTable.tableGroup());
+            softly.assertThat(savedOrderTable.numberOfGuests()).isEqualTo(orderTable.numberOfGuests());
         });
     }
 
@@ -75,7 +74,7 @@ class TableServiceTest {
             savedOrderTable.setEmpty(false);
 
             // when
-            final OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
+            final OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.id(), savedOrderTable);
 
             // then
             assertThat(updatedOrderTable.isEmpty()).isFalse();
@@ -101,18 +100,18 @@ class TableServiceTest {
             final OrderTable secondOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
 
             final List<OrderTable> orderTables = tableGroup.getOrderTables();
-            orderTables.get(0).setId(firstOrderTable.getId());
-            orderTables.get(1).setId(secondOrderTable.getId());
+            orderTables.get(0).setId(firstOrderTable.id());
+            orderTables.get(1).setId(secondOrderTable.id());
 
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
-            savedOrderTable.setTableGroupId(savedTableGroup.getId());
+            savedOrderTable.setTableGroupId(savedTableGroup.id());
             orderTableDao.save(savedOrderTable);
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable));
+                    .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.id(), savedOrderTable));
         }
 
         @Test
@@ -122,12 +121,12 @@ class TableServiceTest {
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
 
             final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderTable(savedOrderTable.id());
             orderService.create(order);
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable));
+                    .isThrownBy(() -> tableService.changeEmpty(savedOrderTable.id(), savedOrderTable));
         }
     }
 
@@ -146,13 +145,13 @@ class TableServiceTest {
             newOrderTable.setNumberOfGuests(3);
 
             // when
-            tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable);
+            tableService.changeNumberOfGuests(savedOrderTable.id(), newOrderTable);
 
             // then
-            final int numberOfGuests = orderTableDao.findById(savedOrderTable.getId())
+            final int numberOfGuests = orderTableDao.findById(savedOrderTable.id())
                     .orElse(OrderTableFixtures.EMPTY.get())
-                    .getNumberOfGuests();
-            assertThat(numberOfGuests).isEqualTo(newOrderTable.getNumberOfGuests());
+                    .numberOfGuests();
+            assertThat(numberOfGuests).isEqualTo(newOrderTable.numberOfGuests());
         }
 
         @Test
@@ -165,7 +164,7 @@ class TableServiceTest {
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable));
+                    .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable.id(), newOrderTable));
         }
 
         @Test
@@ -177,7 +176,7 @@ class TableServiceTest {
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable));
+                    .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable.id(), newOrderTable));
         }
 
         @Test
@@ -189,7 +188,7 @@ class TableServiceTest {
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable));
+                    .isThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.id(), newOrderTable));
         }
     }
 }

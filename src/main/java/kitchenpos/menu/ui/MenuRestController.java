@@ -23,8 +23,8 @@ public class MenuRestController {
 
     @PostMapping("/api/menus")
     public ResponseEntity<Void> create(@RequestBody final MenuCreateRequest request) {
-        final Menu created = menuService.create(request);
-        final URI uri = URI.create("/api/menus/" + created.id());
+        final Long id = menuService.create(request);
+        final URI uri = URI.create("/api/menus/" + id);
         return ResponseEntity.created(uri).build();
     }
 

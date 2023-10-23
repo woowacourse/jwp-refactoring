@@ -33,14 +33,14 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public Long create(final MenuCreateRequest request) {
         final Menu menu = new Menu(
                 request.name(),
                 request.price(),
                 menuGroupRepository.getById(request.menuGroupId())
         );
         menu.addMenuProducts(createMenuProducts(request));
-        return menuRepository.save(menu);
+        return menuRepository.save(menu).id();
     }
 
     private List<MenuProduct> createMenuProducts(final MenuCreateRequest request) {

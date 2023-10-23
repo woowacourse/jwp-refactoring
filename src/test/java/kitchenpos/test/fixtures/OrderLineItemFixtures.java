@@ -1,6 +1,6 @@
 package kitchenpos.test.fixtures;
 
-import kitchenpos.order.domain.vo.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 
 public enum OrderLineItemFixtures {
     EMPTY(0L, 0L, 0L, 0L),
@@ -21,8 +21,8 @@ public enum OrderLineItemFixtures {
     public OrderLineItem get() {
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
+        orderLineItem.setOrder(orderId);
+        orderLineItem.setMenu(menuId);
         orderLineItem.setQuantity(quantity);
         return orderLineItem;
     }

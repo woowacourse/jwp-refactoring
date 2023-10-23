@@ -41,18 +41,18 @@ class OrderServiceTest {
             // given
             final Order order = OrderFixtures.BASIC.get();
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
-            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderTable(savedOrderTable.id());
 
             // when
             final Order saved = orderService.create(order);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(saved.getId()).isEqualTo(saved.getId());
-                softly.assertThat(saved.getOrderTableId()).isEqualTo(order.getOrderTableId());
-                softly.assertThat(saved.getOrderStatus()).isEqualTo(order.getOrderStatus());
-                softly.assertThat(saved.getOrderedTime().truncatedTo(ChronoUnit.MINUTES))
-                        .isEqualTo(order.getOrderedTime().truncatedTo(ChronoUnit.MINUTES));
+                softly.assertThat(saved.id()).isEqualTo(saved.id());
+                softly.assertThat(saved.orderTable()).isEqualTo(order.orderTable());
+                softly.assertThat(saved.orderStatus()).isEqualTo(order.orderStatus());
+                softly.assertThat(saved.orderedTime().truncatedTo(ChronoUnit.MINUTES))
+                        .isEqualTo(order.orderedTime().truncatedTo(ChronoUnit.MINUTES));
             });
         }
 
@@ -85,7 +85,7 @@ class OrderServiceTest {
         void orderTableNotExistException() {
             // given
             final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTableId(-1L);
+            order.setOrderTable(-1L);
 
             // when, then
             assertThatIllegalArgumentException()
@@ -99,7 +99,7 @@ class OrderServiceTest {
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
 
             final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderTable(savedOrderTable.id());
 
             // when, then
             assertThatIllegalArgumentException()
@@ -114,7 +114,7 @@ class OrderServiceTest {
         final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
 
         final Order order = OrderFixtures.BASIC.get();
-        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderTable(savedOrderTable.id());
 
         orderService.create(order);
 
@@ -134,7 +134,7 @@ class OrderServiceTest {
             // given
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
             final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderTable(savedOrderTable.id());
             order.setOrderStatus(OrderStatus.MEAL.name());
             final Order savedOrder = orderService.create(order);
 
@@ -142,10 +142,10 @@ class OrderServiceTest {
 
 
             // when
-            final Order changed = orderService.changeOrderStatus(savedOrder.getId(), newOrder);
+            final Order changed = orderService.changeOrderStatus(savedOrder.id(), newOrder);
 
             // then
-            assertThat(changed.getOrderStatus()).isEqualTo(newOrder.getOrderStatus());
+            assertThat(changed.orderStatus()).isEqualTo(newOrder.orderStatus());
         }
 
         @Test
@@ -165,7 +165,7 @@ class OrderServiceTest {
             // given
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
             final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTableId(savedOrderTable.getId());
+            order.setOrderTable(savedOrderTable.id());
 
             final Order savedOrder = orderService.create(order);
             savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
@@ -173,7 +173,7 @@ class OrderServiceTest {
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), savedOrder));
+                    .isThrownBy(() -> orderService.changeOrderStatus(savedOrder.id(), savedOrder));
         }
     }
 }

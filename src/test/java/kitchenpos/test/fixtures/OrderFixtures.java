@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.vo.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.vo.OrderStatus;
 
 public enum OrderFixtures {
@@ -30,7 +30,7 @@ public enum OrderFixtures {
 
     public Order get() {
         final Order order = new Order();
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(orderTableId);
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
         order.setOrderLineItems(orderLineItems);

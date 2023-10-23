@@ -53,7 +53,7 @@ public class MenuProduct {
         this.seq = seq;
     }
 
-    public Menu getMenu() {
+    public Menu menu() {
         return menu;
     }
 
@@ -61,7 +61,7 @@ public class MenuProduct {
         this.menu = menu;
     }
 
-    public Product getProduct() {
+    public Product product() {
         return product;
     }
 
@@ -69,7 +69,7 @@ public class MenuProduct {
         this.product = product;
     }
 
-    public long getQuantity() {
+    public long quantity() {
         return quantity;
     }
 
