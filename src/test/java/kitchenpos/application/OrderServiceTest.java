@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
@@ -15,8 +14,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +44,7 @@ class OrderServiceTest {
     @Autowired
     private MenuDao menuDao;
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private ProductRepository productRepository;
 
@@ -54,7 +53,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, "메뉴 그룹"));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(null, "메뉴 그룹"));
         final Product savedProduct = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
         final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, null, savedProduct.getId(), 2));
         final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
@@ -163,7 +162,7 @@ class OrderServiceTest {
             final Order savedOrder = orderDao.save(new Order(null, savedOrderTable.getId(), "COMPLETION", LocalDateTime.now(), orderLineItems));
             final Order changeStatusOrder = new Order(null, null, "MEAL", null, null);
 
-            Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeStatusOrder))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeStatusOrder))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
