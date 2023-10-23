@@ -24,7 +24,7 @@ public class MenuGroup {
         this(null, name);
     }
 
-    public MenuGroup(final Long id, final String name) {
+    private MenuGroup(final Long id, final String name) {
         validate(name);
         this.id = id;
         this.name = name;

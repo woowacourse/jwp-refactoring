@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
@@ -31,7 +32,8 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -55,10 +57,8 @@ public class Order {
             throw new EmptyOrderLineItemsException();
         }
 
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            order.orderLineItems.add(orderLineItem);
-            orderLineItem.setOrder(order);
-        }
+        //            orderLineItem.setOrder(order);
+        order.orderLineItems.addAll(orderLineItems);
         return order;
     }
 
