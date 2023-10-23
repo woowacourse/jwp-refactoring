@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import javax.transaction.Transactional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -37,10 +37,10 @@ public class ServiceTest {
     protected MenuProductRepository menuProductRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderLineItemDao orderLineItemDao;
+    protected OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     protected TableGroupRepository tableGroupRepository;

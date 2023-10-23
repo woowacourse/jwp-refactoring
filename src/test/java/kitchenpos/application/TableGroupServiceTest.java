@@ -100,7 +100,7 @@ class TableGroupServiceTest extends ServiceTest {
     class 테이블_그룹_삭제 {
 
         @Test
-        void 다테이블_그룹을_삭제할_수_있다() {
+        void 테이블_그룹을_삭제할_수_있다() {
             // given
             final var 테이블1 = orderTableRepository.save(빈테이블());
             final var 테이블2 = orderTableRepository.save(빈테이블());
@@ -131,9 +131,10 @@ class TableGroupServiceTest extends ServiceTest {
 
             final var 테이블그룹 = tableGroupRepository.save(테이블그룹(List.of(테이블1, 테이블2)));
 
-            final var order = orderDao.save(주문(테이블1.getId(), orderStatus.name()));
-            final var 주문상품 = orderLineItemDao.save(주문상품(order.getId(), 후라이드메뉴.getId(), 1));
-            order.setOrderLineItems(List.of(주문상품));
+            final var order = 주문(테이블1);
+            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            order.changeOrderStatus(orderStatus);
+            orderRepository.save(order);
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹.getId()))

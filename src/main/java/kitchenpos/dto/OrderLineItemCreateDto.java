@@ -12,10 +12,6 @@ public class OrderLineItemCreateDto {
         this.quantity = quantity;
     }
 
-    public OrderLineItem toDomain() {
-        return new OrderLineItem(menuId, quantity);
-    }
-
     public Long getMenuId() {
         return menuId;
     }

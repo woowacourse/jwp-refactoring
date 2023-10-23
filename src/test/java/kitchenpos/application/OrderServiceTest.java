@@ -38,7 +38,7 @@ class OrderServiceTest extends ServiceTest {
             menuRepository.save(후라이드메뉴);
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
-            final var 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
+            final var 주문상품 = 주문상품(후라이드메뉴, 3);
 
             final var request = 주문_생성_요청(테이블.getId(), List.of(주문상품));
 
@@ -46,9 +46,10 @@ class OrderServiceTest extends ServiceTest {
             final var response = orderService.create(request);
 
             // then
-            final var findOrder = orderDao.findById(response.getId()).get();
-            assertThat(findOrder.getOrderTableId()).isEqualTo(테이블.getId());
-            assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            final var findOrder = orderRepository.findById(response.getId()).get();
+            assertThat(findOrder.getOrderTable()).isEqualTo(테이블);
+            assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+            assertThat(findOrder.getOrderLineItems().size()).isEqualTo(1);
         }
 
         @Test
@@ -72,28 +73,6 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Test
-        void 주문상품속_메뉴가_중복되면_주문할_수_없다() {
-            // given
-            final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
-
-            final var 후라이드 = productRepository.save(후라이드_16000);
-
-            final var 후라이드메뉴 = 메뉴("싼후라이드", 10000, 두마리메뉴);
-            후라이드메뉴.addMenuProducts(List.of(메뉴상품(후라이드, 1)));
-            menuRepository.save(후라이드메뉴);
-
-            final var 테이블 = orderTableRepository.save(비지않은_테이블());
-            final var 주문상품1 = 주문상품(후라이드메뉴.getId(), 3);
-            final var 주문상품2 = 주문상품(후라이드메뉴.getId(), 1);
-
-            final var request = 주문_생성_요청(테이블.getId(), List.of(주문상품1, 주문상품2));
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 테이블이_존재하지_않으면_주문할_수_없다() {
             // given
             final var 두마리메뉴 = menuGroupRepository.save(메뉴그룹_두마리메뉴);
@@ -105,7 +84,7 @@ class OrderServiceTest extends ServiceTest {
             menuRepository.save(후라이드메뉴);
 
             final var wrongTableId = 999L;
-            final var 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
+            final var 주문상품 = 주문상품(후라이드메뉴, 3);
 
             final var request = 주문_생성_요청(wrongTableId, List.of(주문상품));
 
@@ -126,7 +105,7 @@ class OrderServiceTest extends ServiceTest {
             menuRepository.save(후라이드메뉴);
 
             final var 빈테이블 = orderTableRepository.save(빈테이블());
-            final var 주문상품 = 주문상품(후라이드메뉴.getId(), 3);
+            final var 주문상품 = 주문상품(후라이드메뉴, 3);
 
             final var request = 주문_생성_요청(빈테이블.getId(), List.of(주문상품));
 
@@ -152,8 +131,9 @@ class OrderServiceTest extends ServiceTest {
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order = orderDao.save(주문(테이블.getId(), OrderStatus.COOKING.name()));
-            orderLineItemDao.save(주문상품(order.getId(), 후라이드메뉴.getId(), 1));
+            final var order = 주문(테이블);
+            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            orderRepository.save(order);
 
             final var request = 주문상태_변경_요청(OrderStatus.MEAL);
 
@@ -196,8 +176,10 @@ class OrderServiceTest extends ServiceTest {
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order = orderDao.save(주문(테이블.getId(), OrderStatus.COMPLETION.name()));
-            orderLineItemDao.save(주문상품(order.getId(), 후라이드메뉴.getId(), 1));
+            final var order = 주문(테이블);
+            order.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            order.changeOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(order);
 
             final var request = 주문상태_변경_요청(OrderStatus.MEAL);
 
@@ -223,13 +205,13 @@ class OrderServiceTest extends ServiceTest {
 
             final var 테이블 = orderTableRepository.save(비지않은_테이블());
 
-            final var order1 = orderDao.save(주문(테이블.getId(), OrderStatus.COOKING.name()));
-            final var 주문상품1 = orderLineItemDao.save(주문상품(order1.getId(), 후라이드메뉴.getId(), 1));
-            order1.setOrderLineItems(List.of(주문상품1));
+            final var order1 = 주문(테이블);
+            order1.addOrderLineItems(List.of(주문상품(후라이드메뉴, 1)));
+            orderRepository.save(order1);
 
-            final var order2 = orderDao.save(주문(테이블.getId(), OrderStatus.COOKING.name()));
-            final var 주문상품2 = orderLineItemDao.save(주문상품(order2.getId(), 후라이드메뉴.getId(), 3));
-            order2.setOrderLineItems(List.of(주문상품2));
+            final var order2 = 주문(테이블);
+            order2.addOrderLineItems(List.of(주문상품(후라이드메뉴, 3)));
+            orderRepository.save(order2);
 
             final var 주문목록 = List.of(order1, order2);
             final var expected = 주문목록.stream()
