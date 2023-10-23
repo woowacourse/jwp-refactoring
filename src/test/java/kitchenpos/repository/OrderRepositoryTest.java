@@ -1,23 +1,29 @@
 package kitchenpos.repository;
 
-import kitchenpos.BaseTest;
-import kitchenpos.domain.menu.*;
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupName;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProductQuantity;
+import kitchenpos.domain.order.GuestNumber;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemQuantity;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@DataJpaTest
-class OrderRepositoryTest extends BaseTest {
+class OrderRepositoryTest extends RepositoryTest {
 
     @Autowired
     private OrderRepository orderRepository;
@@ -33,9 +39,6 @@ class OrderRepositoryTest extends BaseTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
-
-    @Autowired
-    private EntityManager em;
 
     @Test
     void 주문을_조회할_때_주문_아이템과_함께_조회횐다() {

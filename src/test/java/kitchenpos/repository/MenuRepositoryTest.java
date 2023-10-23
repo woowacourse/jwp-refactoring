@@ -1,21 +1,23 @@
 package kitchenpos.repository;
 
-import kitchenpos.BaseTest;
-import kitchenpos.domain.menu.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupName;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProductQuantity;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductName;
 import kitchenpos.domain.product.ProductPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
 
-@DataJpaTest
-class MenuRepositoryTest extends BaseTest {
+class MenuRepositoryTest extends RepositoryTest {
 
     @Autowired
     private ProductRepository productRepository;
@@ -25,9 +27,6 @@ class MenuRepositoryTest extends BaseTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private EntityManager em;
 
     @Test
     void 메뉴를_가져올_때_메뉴_상품을_같이_조회한다() {

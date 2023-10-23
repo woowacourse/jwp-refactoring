@@ -1,6 +1,5 @@
 package kitchenpos.repository;
 
-import kitchenpos.BaseTest;
 import kitchenpos.domain.order.GuestNumber;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderTable;
@@ -8,14 +7,11 @@ import kitchenpos.domain.order.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@DataJpaTest
-class OrderTableRepositoryTest extends BaseTest {
+class OrderTableRepositoryTest extends RepositoryTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -25,9 +21,6 @@ class OrderTableRepositoryTest extends BaseTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private EntityManager em;
 
     @Test
     void 주문_테이블을_조회할_때_주문들도_함께_조회한다() {
