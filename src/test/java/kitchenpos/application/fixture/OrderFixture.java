@@ -6,7 +6,6 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import org.aspectj.weaver.ast.Or;
 
 public class OrderFixture {
 

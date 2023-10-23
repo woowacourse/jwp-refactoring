@@ -1,5 +1,13 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.tablegroup.TableGroupRequest;
+import kitchenpos.application.dto.tablegroup.TableGroupResponse;
+import kitchenpos.application.dto.tablegroup.TableOfGroupDto;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -9,12 +17,6 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -29,20 +31,16 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
+        final List<Long> orderTableIds = convertToOrderTables(tableGroupRequest.getOrderTables());
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -52,8 +50,8 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup tableGroupToSave = new TableGroup(tableGroup.getId(), LocalDateTime.now(), orderTables);
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroupToSave);
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.groupBy(savedTableGroup);
@@ -61,7 +59,13 @@ public class TableGroupService {
         }
         savedTableGroup.addOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
+    }
+
+    private List<Long> convertToOrderTables(final List<TableOfGroupDto> tables) {
+        return tables.stream()
+            .map(TableOfGroupDto::getId)
+            .collect(Collectors.toList());
     }
 
     @Transactional

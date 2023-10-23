@@ -12,8 +12,13 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.order.MenuQuantityDto;
+import kitchenpos.application.dto.order.OrderRequest;
+import kitchenpos.application.dto.order.OrderResponse;
+import kitchenpos.application.dto.order.OrderStatusChangeRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -56,8 +61,9 @@ class OrderServiceTest {
     @Test
     void create_success() {
         // given
-        final Order order = createOrder(1L, ORDER_TABLE.getId());
         final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
+        final OrderRequest orderRequest = new OrderRequest(ORDER_TABLE.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
+        final Order order = createOrder(1L, ORDER_TABLE.getId());
         final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
         order.addOrderLineItems(List.of(orderLineItem));
 
@@ -71,24 +77,22 @@ class OrderServiceTest {
             .willReturn(orderLineItem);
 
         // when
-        final Order savedOrder = orderService.create(order);
+        final OrderResponse savedOrder = orderService.create(orderRequest);
 
         // then
         assertThat(savedOrder).usingRecursiveComparison()
-            .isEqualTo(order);
+            .isEqualTo(OrderResponse.from(order));
     }
 
-    @DisplayName("주문 저장 시, 메뉴가 비어있으면 예외가 발생한다.")
+    @DisplayName("주문 저장 시, 주문할 메뉴가 비어있으면 예외가 발생한다.")
     @Test
     void create_empty_fail() {
         // given
         final Order order = createOrder(1L, ORDER_TABLE.getId());
-        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
-        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), menu.getId(), 3);
-        order.addOrderLineItems(List.of(orderLineItem));
+        final OrderRequest orderRequest = new OrderRequest(ORDER_TABLE.getId(), Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -96,15 +100,13 @@ class OrderServiceTest {
     @Test
     void create_notExistMenu_fail() {
         // given
-        final Order order = createOrder(1L, ORDER_TABLE.getId());
-        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
-        order.addOrderLineItems(List.of(orderLineItem));
+        final OrderRequest orderRequest = new OrderRequest(ORDER_TABLE.getId(), List.of(new MenuQuantityDto(0L, 3)));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(0L);
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,9 +114,8 @@ class OrderServiceTest {
     @Test
     void create_notExistTable_fail() {
         // given
-        final Order order = createOrder(1L, 0L);
-        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
-        order.addOrderLineItems(List.of(orderLineItem));
+        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
+        final OrderRequest orderRequest = new OrderRequest(0L, List.of(new MenuQuantityDto(menu.getId(), 3)));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(1L);
@@ -122,7 +123,7 @@ class OrderServiceTest {
             .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -130,20 +131,19 @@ class OrderServiceTest {
     @Test
     void create_emptyTable_fail() {
         // given
-        final OrderTable orderTable = createOrderTable(1L, 3);
-        orderTable.updateEmpty(true);
+        final OrderTable emptyOrderTable = createOrderTable(1L, 3);
+        emptyOrderTable.updateEmpty(true);
 
-        final Order order = createOrder(1L, orderTable.getId());
-        final OrderLineItem orderLineItem = createOrderLineItem(order.getId(), 0L, 3);
-        order.addOrderLineItems(List.of(orderLineItem));
+        final Menu menu = createMenu(1L, "menu", 1000L, MENU_GROUP.getId());
+        final OrderRequest orderRequest = new OrderRequest(emptyOrderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
 
         given(menuDao.countByIdIn(anyList()))
             .willReturn(1L);
         given(orderTableDao.findById(anyLong()))
-            .willReturn(Optional.of(orderTable));
+            .willReturn(Optional.of(emptyOrderTable));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -164,11 +164,11 @@ class OrderServiceTest {
             .willReturn(List.of(order1, order2));
 
         // when
-        final List<Order> result = orderService.list();
+        final List<OrderResponse> result = orderService.list();
 
         // then
         assertThat(result).usingRecursiveComparison()
-            .isEqualTo(List.of(order1, order2));
+            .isEqualTo(List.of(OrderResponse.from(order1), OrderResponse.from(order2)));
     }
 
     @DisplayName("Order 상태를 바꾼다.")
@@ -176,14 +176,13 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final Order prevOrder = createOrder(1L, ORDER_TABLE.getId());
-        final Order changeOrder = createOrder(1L, ORDER_TABLE.getId());
-        changeOrder.changeOrderStatus(OrderStatus.MEAL);
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.of(prevOrder));
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(prevOrder.getId(), changeOrder);
+        final OrderResponse changedOrder = orderService.changeOrderStatus(prevOrder.getId(), statusChangeRequest);
 
         // then
         assertThat(changedOrder.getId()).isEqualTo(1L);
@@ -194,12 +193,12 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_notExist_fail() {
         // given
-        final Order order = createOrder(1L, ORDER_TABLE.getId());
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, statusChangeRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -209,15 +208,15 @@ class OrderServiceTest {
         // given
         final Order order = createOrder(1L, ORDER_TABLE.getId());
         order.changeOrderStatus(OrderStatus.COMPLETION);
+        final Long orderId = order.getId();
 
-        final Order changeOrder = createOrder(1L, ORDER_TABLE.getId());
-        changeOrder.changeOrderStatus(OrderStatus.MEAL);
+        final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 
         given(orderDao.findById(anyLong()))
             .willReturn(Optional.of(order));
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, changeOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, statusChangeRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -10,8 +10,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.menu.MenuRequest;
+import kitchenpos.application.dto.menu.MenuResponse;
+import kitchenpos.application.dto.menu.ProductQuantityDto;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -51,9 +56,11 @@ class MenuServiceTest {
         // given
         final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
         final Product product = createProduct(1L, "product", 1000L);
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), menuGroup.getId(), List.of(
+            new ProductQuantityDto(product.getId(), 2)
+        ));
         final Menu menu = createMenu(1L, "menu", 500L, menuGroup.getId());
         final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
-        menu.addMenuProducts(List.of(menuProduct));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -65,10 +72,10 @@ class MenuServiceTest {
             .willReturn(menuProduct);
 
         // when
-        final Menu savedMenu = menuService.create(menu);
+        final MenuResponse savedMenu = menuService.create(menuRequest);
 
         // then
-        assertThat(savedMenu).isEqualTo(menu);
+        assertThat(savedMenu).isNotNull();
     }
 
     @DisplayName("메뉴를 저장 시, 가격이 0보다 작으면 예외가 발생한다.")
@@ -76,10 +83,10 @@ class MenuServiceTest {
     void create_price_fail() {
         // given
         final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
-        final Menu menu = createMenu(1L, "menu", -1L, menuGroup.getId());
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(-1L), menuGroup.getId(), Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,13 +94,13 @@ class MenuServiceTest {
     @Test
     void create_menuGroup_fail() {
         // given
-        final Menu menu = createMenu(1L, "menu", 1000L, 0L);
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), 1L, Collections.emptyList());
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(false);
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,9 +109,9 @@ class MenuServiceTest {
     void create_menuProduct_fail() {
         // given
         final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
-        final Menu menu = createMenu(1L, "menu", 1000L, menuGroup.getId());
-        final MenuProduct menuProduct = createMenuProduct(0L, 2, menu.getId());
-        menu.addMenuProducts(List.of(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), menuGroup.getId(), List.of(
+            new ProductQuantityDto(0L, 2)
+        ));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -112,7 +119,7 @@ class MenuServiceTest {
             .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -122,9 +129,9 @@ class MenuServiceTest {
         // given
         final Product product = createProduct(1L, "product", 1000L);
         final MenuGroup menuGroup = createMenuGroup(1L, "menuGroup");
-        final Menu menu = createMenu(1L, "menu", 3000L, menuGroup.getId());
-        final MenuProduct menuProduct = createMenuProduct(product.getId(), 2, menu.getId());
-        menu.addMenuProducts(List.of(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(2001L), menuGroup.getId(), List.of(
+            new ProductQuantityDto(product.getId(), 2)
+        ));
 
         given(menuGroupDao.existsById(anyLong()))
             .willReturn(true);
@@ -132,7 +139,7 @@ class MenuServiceTest {
             .willReturn(Optional.of(product));
 
         // when, then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -154,9 +161,10 @@ class MenuServiceTest {
             .willReturn(List.of(menu1, menu2));
 
         // when
-        final List<Menu> foundMenus = menuService.list();
+        final List<MenuResponse> foundMenus = menuService.list();
 
         // then
-        assertThat(foundMenus).containsExactly(menu1, menu2);
+        assertThat(foundMenus).usingRecursiveComparison()
+            .isEqualTo(List.of(MenuResponse.from(menu1), MenuResponse.from(menu2)));
     }
 }

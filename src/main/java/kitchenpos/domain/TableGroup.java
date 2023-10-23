@@ -19,6 +19,10 @@ public class TableGroup {
         this(id, createdDate, new ArrayList<>());
     }
 
+    public TableGroup(final LocalDateTime createdDate) {
+        this(null, createdDate);
+    }
+
     public void addOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }

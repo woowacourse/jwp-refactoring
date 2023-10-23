@@ -1,13 +1,15 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.product.ProductRequest;
+import kitchenpos.application.dto.product.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -18,17 +20,23 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductResponse create(final ProductRequest productRequest) {
+        final BigDecimal price = productRequest.getPrice();
+        final Product product = new Product(productRequest.getName(), price);
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        return productDao.save(product);
+        final Product savedProduct = productDao.save(product);
+        return ProductResponse.from(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        final List<Product> products = productDao.findAll();
+
+        return products.stream()
+            .map(ProductResponse::from)
+            .collect(Collectors.toList());
     }
 }

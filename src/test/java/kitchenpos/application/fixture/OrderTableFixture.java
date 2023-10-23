@@ -8,6 +8,10 @@ public class OrderTableFixture {
         return new OrderTable(id, guests, false);
     }
 
+    public static OrderTable createOrderTable(final Long id, final int guests, final boolean empty) {
+        return new OrderTable(id, guests, empty);
+    }
+
     public static OrderTable createOrderTable(final Long id, final Long tableGroupId, final int guests) {
         return new OrderTable(id, tableGroupId, guests, false);
     }

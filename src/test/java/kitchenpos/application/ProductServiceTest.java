@@ -6,7 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.product.ProductRequest;
+import kitchenpos.application.dto.product.ProductResponse;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -30,25 +33,27 @@ class ProductServiceTest {
     void create_success() {
         // given
         final Product product = createProduct(1L, "product", 1000L);
+        final ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000L));
 
         given(productDao.save(any(Product.class)))
             .willReturn(product);
 
         // when
-        final Product savedProduct = productService.create(product);
+        final ProductResponse savedProduct = productService.create(productRequest);
 
         // then
-        assertThat(savedProduct).isEqualTo(product);
+        assertThat(savedProduct).usingRecursiveComparison()
+            .isEqualTo(ProductResponse.from(product));
     }
 
     @DisplayName("새 상품의 가격이 0보다 작다면 예외가 발생한다.")
     @Test
     void create_wrongPrice_fail() {
         // given
-        final Product product = createProduct(1L, "product", -1L);
+        final ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(-1L));
 
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -63,9 +68,10 @@ class ProductServiceTest {
             .willReturn(List.of(product1, product2));
 
         // when
-        final List<Product> foundProducts = productService.list();
+        final List<ProductResponse> foundProducts = productService.list();
 
         // then
-        assertThat(foundProducts).containsExactly(product1, product2);
+        assertThat(foundProducts).usingRecursiveComparison()
+            .isEqualTo(List.of(ProductResponse.from(product1), ProductResponse.from(product2)));
     }
 }

@@ -17,6 +17,10 @@ public class OrderTable {
         this(id, null, numberOfGuests, empty);
     }
 
+    public OrderTable(final int numberOfGuests, final boolean empty) {
+        this(null, numberOfGuests, empty);
+    }
+
     public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
