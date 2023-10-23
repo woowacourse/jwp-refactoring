@@ -3,18 +3,33 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.application.dto.OrderTableCreateDto;
+import kitchenpos.application.dto.OrderTableUpdateGuestDto;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItemRepository;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @Sql(scripts = {"classpath:truncate.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class TableServiceTest {
@@ -23,21 +38,37 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Test
     void 테이블을_등록할_수_있다() {
         // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
+        final OrderTableCreateDto orderTableCreateDto = new OrderTableCreateDto(0);
 
         // when
-        final OrderTable result = tableService.create(orderTable);
+        final OrderTable result = tableService.create(orderTableCreateDto);
 
         // then
         assertThat(result.getId()).isNotNull();
-        assertThat(result.isEmpty()).isTrue();
+        assertThat(result.isEmpty()).isFalse();
         assertThat(result.getNumberOfGuests()).isZero();
     }
 
@@ -60,28 +91,24 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = createOrderTable(true, 0);
 
-        final OrderTable updateTable = new OrderTable();
-        updateTable.setEmpty(false);
-
         // when
-        final OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), updateTable);
+        final OrderTable result = tableService.changeEmpty(savedOrderTable.getId());
 
         // then
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.isEmpty()).isTrue();
     }
 
     @Test
     void 테이블의_손님수를_변경할_수_있다() {
         // given
-        final OrderTable orderTable = createOrderTable(false, 0);
+        final OrderTableCreateDto orderTableCreateDto = new OrderTableCreateDto(0);
 
-        final OrderTable savedTable = tableService.create(orderTable);
-
-        final OrderTable updateTable = new OrderTable();
-        updateTable.setNumberOfGuests(4);
+        final OrderTable savedTable = tableService.create(orderTableCreateDto);
 
         // when
-        final OrderTable result = tableService.changeNumberOfGuests(savedTable.getId(), updateTable);
+        final OrderTableUpdateGuestDto orderTableUpdateGuestDto = new OrderTableUpdateGuestDto(4);
+        final OrderTable result = tableService.changeNumberOfGuests(savedTable.getId(),
+            orderTableUpdateGuestDto);
 
         // then
         assertThat(result.getNumberOfGuests()).isEqualTo(4);
@@ -89,70 +116,73 @@ class TableServiceTest {
 
     @Test
     void 빈_테이블에_손님수를_변경할_때_예외가_발생한다() {
-        // given when
+        // given
         final OrderTable savedOrderTable = createOrderTable(true, 0);
 
-        final OrderTable updateTable = new OrderTable();
-        updateTable.setNumberOfGuests(4);
+        // when
+        final OrderTableUpdateGuestDto orderTableUpdateGuestDto = new OrderTableUpdateGuestDto(4);
 
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), updateTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                orderTableUpdateGuestDto))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 손님수가_음수일_때_예외가_발생한다() {
-        // given
-        final OrderTable savedOrderTable = createOrderTable(false, 0);
+        // given when
+        final OrderTable savedOrderTable = createOrderTable(true, 0);
 
         // when
-        final OrderTable updateTable = new OrderTable();
-        updateTable.setNumberOfGuests(-4);
+        final OrderTableUpdateGuestDto orderTableUpdateGuestDto = new OrderTableUpdateGuestDto(-4);
 
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), updateTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> tableService.changeNumberOfGuests(savedOrderTable.getId(),
+                orderTableUpdateGuestDto))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 존재하지_않는_테이블을_수정할때_예외가_발생한다() {
-        // given
-        final OrderTable updateTable = new OrderTable();
-        updateTable.setEmpty(false);
-
-        // when
+        // given when
         final Long notExistOrderTableId = 99999L;
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(notExistOrderTableId, updateTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(notExistOrderTableId))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 조리_또는_식사_중인_테이블의_빈상태를_변경할_때_예외가_발생한다() {
         // given
         final OrderTable savedOrderTable = createOrderTable(false, 2);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트 메뉴그룹"));
+        final Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(2000)));
+        final MenuProduct menuProduct = new MenuProduct(product, 1);
+        final Menu menu = menuRepository.save(Menu.of("테스트 메뉴", BigDecimal.valueOf(1000), menuGroup,
+            List.of(menuProduct)));
+        menuProductRepository.save(menuProduct);
+
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
+        final Order order = Order.of(savedOrderTable, List.of(orderLineItem));
+        order.changeOrderStatus(OrderStatus.COOKING);
+        orderRepository.save(order);
+
+        orderLineItemRepository.save(orderLineItem);
 
         // when
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-
-        orderDao.save(order);
-
-        final OrderTable updateTable = new OrderTable();
-        updateTable.setEmpty(true);
 
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), updateTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     private OrderTable createOrderTable(final boolean emptyStatus, final int guests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(emptyStatus);
-        orderTable.setNumberOfGuests(guests);
-        return tableService.create(orderTable);
+        final OrderTable orderTable = new OrderTable(guests);
+        orderTable.changeEmpty(emptyStatus);
+        return orderTableRepository.save(orderTable);
     }
 }

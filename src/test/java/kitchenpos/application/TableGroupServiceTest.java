@@ -3,16 +3,29 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.dto.TableGroupCreateDto;
+import kitchenpos.application.exception.TableGroupAppException.UngroupingNotPossibleException;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +33,9 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Sql(scripts = {"classpath:truncate.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class TableGroupServiceTest {
@@ -29,40 +44,57 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     private OrderTable firstTable;
     private OrderTable secondTable;
 
     @BeforeEach
     void init() {
-        final OrderTable firstOrderTable = new OrderTable();
-        firstOrderTable.setEmpty(true);
-        firstOrderTable.setNumberOfGuests(0);
-        firstTable = orderTableDao.save(firstOrderTable);
+        final OrderTable firstOrderTable = new OrderTable(
+            0
+        );
+        firstOrderTable.changeEmpty(false);
+        firstTable = orderTableRepository.save(firstOrderTable);
 
-        final OrderTable secondOrderTable = new OrderTable();
-        secondOrderTable.setEmpty(true);
-        secondOrderTable.setNumberOfGuests(0);
-        secondTable = orderTableDao.save(secondOrderTable);
+        final OrderTable secondOrderTable = new OrderTable(
+            0
+        );
+        secondOrderTable.changeEmpty(false);
+        secondTable = orderTableRepository.save(secondOrderTable);
     }
 
     @Test
     void 테이블_그룹을_생성한다() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(firstTable, secondTable));
+        final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
+            List.of(firstTable.getId(), secondTable.getId()));
 
         // when
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
         // then
         final List<OrderTable> updatedOrderTables = savedTableGroup.getOrderTables();
         final List<Long> updatedOrderTableIds = updatedOrderTables.stream().map(OrderTable::getId)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
         assertThat(updatedOrderTables).hasSize(2);
         assertThat(updatedOrderTableIds).containsExactly(firstTable.getId(), secondTable.getId());
@@ -70,86 +102,93 @@ class TableGroupServiceTest {
 
     @Test
     void 테이블_그룹_생성_시_테이블_리스트가_비어있으면_예외가_발생한다() {
-        // given
-        final TableGroup tableGroup = new TableGroup();
-
-        // when
-        tableGroup.setOrderTables(Collections.emptyList());
+        // given when
+        final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
+            Collections.emptyList());
 
         // then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateDto))
+            .isInstanceOf(InvalidOrderTablesException.class);
     }
 
     @Test
     void 테이블_그룹_생성_시_테이블_리스트가_1개만_있으면_예외가_발생한다() {
-        // given
-        final TableGroup tableGroup = new TableGroup();
+        // given when
+        final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
+            List.of(firstTable.getId()));
 
         // then
-        tableGroup.setOrderTables(List.of(firstTable));
-
-        // then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateDto))
+            .isInstanceOf(InvalidOrderTablesException.class);
     }
 
     @Test
     void 테이블_그룹_생성_시_이미_다른_그룹에_속한경우_예외가_발생한다() {
         // given
-        final TableGroup firstTableGroup = new TableGroup();
-        firstTableGroup.setOrderTables(List.of(firstTable, secondTable));
+        final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
+            List.of(firstTable.getId(), secondTable.getId()));
 
-        final TableGroup savedFirstTableGroup = tableGroupService.create(firstTableGroup);
-
-        firstTable.setTableGroupId(savedFirstTableGroup.getId());
-        secondTable.setTableGroupId(savedFirstTableGroup.getId());
+        tableGroupService.create(tableGroupCreateDto);
 
         // when
-        final TableGroup newTableGroup = new TableGroup();
-        newTableGroup.setOrderTables(List.of(firstTable, secondTable));
+        final TableGroupCreateDto duplicatedTableGroupCreateDto = new TableGroupCreateDto(
+            List.of(firstTable.getId()));
 
         // then
-        assertThatThrownBy(() -> tableGroupService.create(newTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(duplicatedTableGroupCreateDto))
+            .isInstanceOf(InvalidOrderTablesException.class);
     }
 
     @Test
     void 테이블_그룹을_해제한다() {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(firstTable, secondTable));
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
+            List.of(firstTable.getId(), secondTable.getId()));
+
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
 
         // then
-        final OrderTable ungroupedOrderTable = orderTableDao.findAll().stream()
-                .filter(orderTable -> orderTable.getId().equals(firstTable.getId()))
-                .findFirst()
-                .get();
+        final OrderTable ungroupedOrderTable = orderTableRepository.findAll().stream()
+            .filter(orderTable -> orderTable.getId().equals(firstTable.getId()))
+            .findFirst()
+            .get();
 
-        assertThat(ungroupedOrderTable.getTableGroupId()).isNull();
+        final TableGroup result = tableGroupRepository.findAll().get(0);
+
+        assertThat(result.getOrderTables()).isEmpty();
+        assertThat(ungroupedOrderTable.getTableGroup()).isNull();
     }
 
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void 조리_또는_식사_중인_테이블_그룹을_해제할_때_예외가_발생한다(final OrderStatus orderStatus) {
         // given
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(firstTable, secondTable));
-        final TableGroup createdGroup = tableGroupService.create(tableGroup);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트메뉴그룹"));
+        final Product product = productRepository.save(
+            new Product("테스트상품", BigDecimal.valueOf(1000)));
+
+        final MenuProduct menuProduct = new MenuProduct(product, 1);
+
+        final Menu menu = menuRepository.save(Menu.of("테스트메뉴", BigDecimal.valueOf(500), menuGroup,
+            List.of(menuProduct)));
+
+        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+
+        final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
+            List.of(firstTable.getId(), secondTable.getId()));
+
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
         // when
-        final Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(firstTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        final Order order = Order.of(firstTable, List.of(orderLineItem));
+        order.changeOrderStatus(orderStatus);
+        orderRepository.save(order);
 
         // then
-        assertThatThrownBy(() -> tableGroupService.ungroup(createdGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+            .isInstanceOf(UngroupingNotPossibleException.class);
     }
 }
