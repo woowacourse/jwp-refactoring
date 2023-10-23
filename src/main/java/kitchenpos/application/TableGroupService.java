@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.orderTableException.InvalidOrderTableException;
@@ -45,7 +46,7 @@ public class TableGroupService {
 
     private OrderTables getOrderTables(final TableGroupRequest tableGroupRequest) {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
-                .map(orderTable -> orderTable.getId())
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> orderTables = orderTableRepository.findByIdIn(orderTableIds);
@@ -61,7 +62,7 @@ public class TableGroupService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
 
-        orderRepository.findByOrderTableIn(tableGroup.getOrderTables()).stream()
+        orderRepository.findByOrderTableIn(tableGroup.getOrderTables())
                 .forEach(Order::validateOrderComplete);
 
         tableGroup.ungroup();

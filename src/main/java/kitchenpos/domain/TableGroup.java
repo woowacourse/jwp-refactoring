@@ -39,7 +39,7 @@ public class TableGroup {
     }
 
     private void changeOrderTableTableGroup(final OrderTables orderTables) {
-        orderTables.getOrderTables().stream().forEach(orderTable -> orderTable.changeTableGroup(this));
+        orderTables.getOrderTables().forEach(orderTable -> orderTable.changeTableGroup(this));
     }
 
     public Long getId() {
