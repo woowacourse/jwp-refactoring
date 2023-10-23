@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
-import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(final ProductCreateRequest productCreateRequest) {
+    public ProductResponse create(final ProductRequest productRequest) {
         final Product product = new Product(
-                new ProductName(productCreateRequest.getName()),
-                new ProductPrice(productCreateRequest.getPrice())
+                new ProductName(productRequest.getName()),
+                new ProductPrice(productRequest.getPrice())
         );
         return convertToResponse(productRepository.save(product));
     }
