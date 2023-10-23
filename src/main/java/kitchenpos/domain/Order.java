@@ -41,9 +41,7 @@ public class Order {
     }
 
     public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+        this(orderTable, orderStatus, orderedTime, new ArrayList<>());
     }
 
     public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime,
@@ -81,6 +79,13 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -99,12 +104,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void changeOrderStatus(final OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
-        this.orderStatus = orderStatus;
     }
 }
