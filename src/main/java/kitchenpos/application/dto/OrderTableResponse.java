@@ -16,10 +16,14 @@ public class OrderTableResponse {
         this.empty = empty;
     }
 
-    public static OrderTableResponse of(OrderTable orderTable){
+    public static OrderTableResponse of(OrderTable orderTable) {
+        Long tableGroupId = null;
+        if (orderTable.getTableGroup() != null) {
+            tableGroupId = orderTable.getTableGroup().getId();
+        }
         return new OrderTableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroup().getId(),
+                tableGroupId,
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );

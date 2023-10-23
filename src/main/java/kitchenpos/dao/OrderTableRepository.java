@@ -12,6 +12,6 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     default OrderTable getById(final Long orderTableId){
         return findById(orderTableId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new RuntimeException("주문 테이블 ID가 존재하지 않습니다."));
     }
 }

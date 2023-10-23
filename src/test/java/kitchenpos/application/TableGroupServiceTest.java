@@ -122,7 +122,7 @@ public class TableGroupServiceTest {
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 완료 상태일때만 테이블 분리가 가능합니다.");
+                .hasMessage("주문 완료 상태일때만 테이블 수정 가능합니다.");
     }
 
     @Test

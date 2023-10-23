@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -28,12 +29,17 @@ public class Order extends BaseEntity{
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     public Order(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문을 등록할 수 없는 빈 테이블 입니다.");
-        }
+        validateOrderTableIsNotEmpty(orderTable);
         this.orderTable = orderTable;
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
+        orderTable.getOrders().add(this);
+    }
+
+    private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {
+        if (Objects.isNull(orderTable) || orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문을 등록할 수 없는 빈 테이블 입니다.");
+        }
     }
 
     public OrderTable getOrderTable() {

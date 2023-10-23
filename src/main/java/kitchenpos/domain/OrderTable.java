@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class OrderTable extends BaseEntity{
+public class OrderTable extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
@@ -55,9 +55,16 @@ public class OrderTable extends BaseEntity{
 
     public void attachTableGroup(final TableGroup tableGroup) {
         validateTableGroupIsNull();
+        validateTableGroupIsNotNull(tableGroup);
         this.tableGroup = tableGroup;
         this.empty = false;
         tableGroup.getOrderTables().add(this);
+    }
+
+    private void validateTableGroupIsNotNull(final TableGroup tableGroup) {
+        if (Objects.isNull(tableGroup)) {
+            throw new IllegalArgumentException("테이블 그룹이 존재하지 않는 경우 예외가 발생한다.");
+        }
     }
 
     /*
@@ -73,17 +80,25 @@ public class OrderTable extends BaseEntity{
     private void validateOrderCompletion() {
         for (Order order : orders) {
             if (order.getOrderStatus() != OrderStatus.COMPLETION) {
-                throw new IllegalArgumentException("주문 완료 상태일때만 테이블 분리가 가능합니다.");
+                throw new IllegalArgumentException("주문 완료 상태일때만 테이블 수정 가능합니다.");
             }
         }
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다.");
+        }
+
         if (empty) {
             throw new IllegalArgumentException("주문을 등록할 수 없는 상태에서는 방문한 손님 수를 변경할 수 없습니다.");
         }
 
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     protected OrderTable() {
