@@ -13,7 +13,7 @@ import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.vo.OrderStatus;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
@@ -43,7 +43,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable orderTableA = orderTableRepository.save(테이블(0, true));
             OrderTable orderTableB = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
 
             //when
             LocalDateTime now = LocalDateTime.now();
@@ -59,7 +60,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 테이블_목록이_비어있으면_예외를_던진다() {
             //given
-            TableGroupRequest request = new TableGroupRequest(Collections.emptyList());
+            TableGroupCreateRequest request = new TableGroupCreateRequest(Collections.emptyList());
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -70,7 +71,7 @@ class TableGroupServiceTest extends ServiceTest {
         void 테이블_개수가_2보다_작으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTable.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTable.getId()));
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -83,7 +84,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTableA = orderTableRepository.save(테이블(0, true));
             OrderTable orderTableB = 테이블(0, true);
             ReflectionTestUtils.setField(orderTableB, "id", -1L);
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -95,7 +97,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given®
             OrderTable orderTableA = orderTableRepository.save(테이블(1, false));
             OrderTable orderTableB = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
 
             //when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -107,7 +110,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable orderTableA = orderTableRepository.save(테이블(0, true));
             OrderTable orderTableB = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
             tableGroupService.create(request);
 
             //when, then
@@ -124,7 +128,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable orderTableA = orderTableRepository.save(테이블(0, true));
             OrderTable orderTableB = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
             TableGroupResponse response = tableGroupService.create(request);
 
             //when
@@ -143,7 +148,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable orderTableA = orderTableRepository.save(테이블(0, true));
             OrderTable orderTableB = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
             TableGroupResponse response = tableGroupService.create(request);
             orderRepository.save(주문(orderTableA, orderStatus, LocalDateTime.now()));
 
@@ -157,7 +163,8 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable orderTableA = orderTableRepository.save(테이블(0, true));
             OrderTable orderTableB = orderTableRepository.save(테이블(0, true));
-            TableGroupRequest request = new TableGroupRequest(List.of(orderTableA.getId(), orderTableB.getId()));
+            TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableA.getId(), orderTableB.getId()));
             TableGroupResponse response = tableGroupService.create(request);
             orderRepository.save(주문(orderTableA, OrderStatus.COMPLETION, LocalDateTime.now()));
 

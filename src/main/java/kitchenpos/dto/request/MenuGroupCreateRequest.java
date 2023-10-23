@@ -1,13 +1,13 @@
 package kitchenpos.dto.request;
 
-public class MenuGroupRequest {
+public class MenuGroupCreateRequest {
 
     private String name;
 
-    protected MenuGroupRequest() {
+    protected MenuGroupCreateRequest() {
     }
 
-    public MenuGroupRequest(String name) {
+    public MenuGroupCreateRequest(String name) {
         this.name = name;
     }
 

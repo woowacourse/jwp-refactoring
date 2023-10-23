@@ -11,8 +11,9 @@ import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.vo.OrderStatus;
+import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,14 +45,14 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderResponse create(OrderRequest orderRequest) {
-        List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
+    public OrderResponse create(OrderCreateRequest orderCreateRequest) {
+        List<OrderLineItemRequest> orderLineItemRequests = orderCreateRequest.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문의 메뉴가 존재하지 않습니다.");
         }
 
-        OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+        OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("테이블 정보가 존재하지 않습니다."));
 
         if (orderTable.isEmpty()) {
@@ -60,7 +61,7 @@ public class OrderService {
 
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         orderRepository.save(order);
-        List<OrderLineItem> orderLineItems = createMenusForOrder(order, orderRequest.getOrderLineItems());
+        List<OrderLineItem> orderLineItems = createMenusForOrder(order, orderCreateRequest.getOrderLineItems());
         order.addMenus(orderLineItems);
         return OrderResponse.from(order);
     }
@@ -77,7 +78,7 @@ public class OrderService {
         return new OrderLineItem(order, menu, orderLineItem.getQuantity());
     }
 
-    public OrderResponse changeOrderStatus(Long orderId, OrderRequest orderRequest) {
+    public OrderResponse changeOrderStatus(Long orderId, OrderUpdateStatusRequest orderRequest) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 

@@ -10,7 +10,7 @@ import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.vo.OrderStatus;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,14 +34,14 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroupResponse create(TableGroupRequest tableGroupRequest) {
-        List<Long> tableIds = tableGroupRequest.getTableIds();
+    public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
+        List<Long> tableIds = tableGroupCreateRequest.getTableIds();
 
         if (CollectionUtils.isEmpty(tableIds) || tableIds.size() < 2) {
             throw new IllegalArgumentException("테이블 그룹화를 위해서는 테이블이 2개 이상 필요합니다.");
         }
 
-        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(tableGroupRequest.getTableIds());
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(tableGroupCreateRequest.getTableIds());
 
         if (orderTables.size() != tableIds.size()) {
             throw new IllegalArgumentException("존재하지 않는 테이블이 존재합니다.");

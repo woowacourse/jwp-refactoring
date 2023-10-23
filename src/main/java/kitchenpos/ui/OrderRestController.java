@@ -3,7 +3,8 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +32,8 @@ public class OrderRestController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> create(@RequestBody OrderRequest orderRequest) {
-        OrderResponse response = orderService.create(orderRequest);
+    public ResponseEntity<OrderResponse> create(@RequestBody OrderCreateRequest orderCreateRequest) {
+        OrderResponse response = orderService.create(orderCreateRequest);
         URI uri = URI.create("/api/orders/" + response.getId());
         return ResponseEntity.created(uri)
                 .body(response);
@@ -41,7 +42,7 @@ public class OrderRestController {
     @PutMapping("/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable Long orderId,
-            @RequestBody OrderRequest orderRequest
+            @RequestBody OrderUpdateStatusRequest orderRequest
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderRequest));
     }

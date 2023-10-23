@@ -12,8 +12,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.test.ServiceTest;
 import org.assertj.core.util.BigDecimalComparator;
@@ -43,20 +43,20 @@ class MenuServiceTest extends ServiceTest {
             //given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequestA = new MenuRequest(
+            MenuCreateRequest menuCreateRequestA = new MenuCreateRequest(
                     "기본 텐동",
                     BigDecimal.valueOf(11000),
                     menuGroup.getId(),
                     List.of(new MenuProductRequest(product.getId(), 1))
             );
-            MenuRequest menuRequestB = new MenuRequest(
+            MenuCreateRequest menuCreateRequestB = new MenuCreateRequest(
                     "할인 텐동",
                     BigDecimal.valueOf(10000),
                     menuGroup.getId(),
                     List.of(new MenuProductRequest(product.getId(), 1))
             );
-            MenuResponse menuResponseA = menuService.create(menuRequestA);
-            MenuResponse menuResponseB = menuService.create(menuRequestB);
+            MenuResponse menuResponseA = menuService.create(menuCreateRequestA);
+            MenuResponse menuResponseB = menuService.create(menuCreateRequestB);
 
             //when
             List<MenuResponse> menus = menuService.list();
@@ -85,7 +85,7 @@ class MenuServiceTest extends ServiceTest {
             //given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequest = new MenuRequest(
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "텐동",
                     BigDecimal.valueOf(11000),
                     menuGroup.getId(),
@@ -93,7 +93,7 @@ class MenuServiceTest extends ServiceTest {
             );
 
             //when
-            MenuResponse menuResponse = menuService.create(menuRequest);
+            MenuResponse menuResponse = menuService.create(menuCreateRequest);
 
             //then
             assertSoftly(softly -> {
@@ -118,7 +118,7 @@ class MenuServiceTest extends ServiceTest {
             //given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequest = new MenuRequest(
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "텐동",
                     null,
                     menuGroup.getId(),
@@ -126,7 +126,7 @@ class MenuServiceTest extends ServiceTest {
             );
 
             //when, then
-            assertThatThrownBy(() -> menuService.create(menuRequest))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -136,7 +136,7 @@ class MenuServiceTest extends ServiceTest {
             //given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequest = new MenuRequest(
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "텐동",
                     new BigDecimal(price),
                     menuGroup.getId(),
@@ -144,7 +144,7 @@ class MenuServiceTest extends ServiceTest {
             );
 
             //when, then
-            assertThatThrownBy(() -> menuService.create(menuRequest))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -152,7 +152,7 @@ class MenuServiceTest extends ServiceTest {
         void 존재하지_않는_메뉴_그룹이라면_예외를_던진다() {
             //given
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequest = new MenuRequest(
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "텐동",
                     BigDecimal.valueOf(11000),
                     -1L,
@@ -160,7 +160,7 @@ class MenuServiceTest extends ServiceTest {
             );
 
             //when, then
-            assertThatThrownBy(() -> menuService.create(menuRequest))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -168,7 +168,7 @@ class MenuServiceTest extends ServiceTest {
         void 존재하지_않은_상품이라면_예외를_던진다() {
             //given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            MenuRequest menuRequest = new MenuRequest(
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "텐동",
                     BigDecimal.valueOf(11000),
                     menuGroup.getId(),
@@ -176,7 +176,7 @@ class MenuServiceTest extends ServiceTest {
             );
 
             //when, then
-            assertThatThrownBy(() -> menuService.create(menuRequest))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -185,7 +185,7 @@ class MenuServiceTest extends ServiceTest {
             //given
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
-            MenuRequest menuRequest = new MenuRequest(
+            MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "텐동",
                     BigDecimal.valueOf(12000),
                     menuGroup.getId(),
@@ -193,7 +193,7 @@ class MenuServiceTest extends ServiceTest {
             );
 
             //when, then
-            assertThatThrownBy(() -> menuService.create(menuRequest))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

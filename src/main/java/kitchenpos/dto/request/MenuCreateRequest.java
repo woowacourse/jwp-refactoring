@@ -3,17 +3,17 @@ package kitchenpos.dto.request;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class MenuRequest {
+public class MenuCreateRequest {
 
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
-    protected MenuRequest() {
+    protected MenuCreateRequest() {
     }
 
-    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
+    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

@@ -6,7 +6,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class TableService {
         return OrderTableResponse.from(orderTable);
     }
 
-    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest orderTableRequest) {
+    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableUpdateEmptyRequest orderTableRequest) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 
@@ -58,7 +59,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableRequest orderTableRequest) {
+    public OrderTableResponse changeNumberOfGuests(
+            Long orderTableId,
+            OrderTableUpdateNumberOfGuestRequest orderTableRequest
+    ) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 

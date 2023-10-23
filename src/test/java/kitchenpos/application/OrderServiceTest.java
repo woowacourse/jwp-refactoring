@@ -25,8 +25,9 @@ import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.vo.OrderStatus;
+import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.test.ServiceTest;
 import kitchenpos.test.TestTransactional;
@@ -74,8 +75,9 @@ class OrderServiceTest extends ServiceTest {
             menuProductRepository.save(메뉴_상품(menu, product, 1));
 
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderRequest request =
-                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request =
+                    new OrderCreateRequest(orderTable.getId(), null,
+                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
             OrderResponse orderResponseA = orderService.create(request);
             OrderResponse orderResponseB = orderService.create(request);
 
@@ -113,8 +115,9 @@ class OrderServiceTest extends ServiceTest {
         void 정상적인_주문이라면_주문을_추가한다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderRequest request =
-                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request =
+                    new OrderCreateRequest(orderTable.getId(), null,
+                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
             //when
             LocalDateTime now = LocalDateTime.now();
@@ -139,7 +142,7 @@ class OrderServiceTest extends ServiceTest {
         void 주문_메뉴_목록이_비어있으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderRequest request = new OrderRequest(orderTable.getId(), null, Collections.emptyList());
+            OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), null, Collections.emptyList());
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -150,8 +153,9 @@ class OrderServiceTest extends ServiceTest {
         void 주문_메뉴_목록에_메뉴가_존재하지_않으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderRequest request =
-                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId() + 1, 1L)));
+            OrderCreateRequest request =
+                    new OrderCreateRequest(orderTable.getId(), null,
+                            List.of(new OrderLineItemRequest(menu.getId() + 1, 1L)));
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -161,7 +165,8 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블이라면_예외를_던진다() {
             //given
-            OrderRequest request = new OrderRequest(-1L, null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(-1L, null,
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -172,8 +177,9 @@ class OrderServiceTest extends ServiceTest {
         void 테이블이_비어있으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(0, true));
-            OrderRequest request =
-                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request =
+                    new OrderCreateRequest(orderTable.getId(), null,
+                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -194,8 +200,9 @@ class OrderServiceTest extends ServiceTest {
             menuProductRepository.save(메뉴_상품(menu, product, 1));
 
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderRequest request =
-                    new OrderRequest(orderTable.getId(), null, List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request =
+                    new OrderCreateRequest(orderTable.getId(), null,
+                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
             OrderResponse orderResponse = orderService.create(request);
             orderId = orderResponse.getId();
         }
@@ -203,7 +210,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상적인_주문이라면_주문_상태를_수정한다() {
             //given
-            OrderRequest request = new OrderRequest(null, OrderStatus.MEAL.name(), Collections.emptyList());
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
 
             //when
             OrderResponse response = orderService.changeOrderStatus(orderId, request);
@@ -223,7 +230,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문이라면_예외를_던진다() {
             //given
-            OrderRequest request = new OrderRequest(null, OrderStatus.MEAL.name(), Collections.emptyList());
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
 
             //when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, request))
@@ -233,10 +240,9 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 완료된_주문이라면_예외를_던진다() {
             //given
-            OrderRequest completeRequest = new OrderRequest(null, OrderStatus.COMPLETION.name(),
-                    Collections.emptyList());
+            OrderUpdateStatusRequest completeRequest = new OrderUpdateStatusRequest(OrderStatus.COMPLETION.name());
             orderService.changeOrderStatus(orderId, completeRequest);
-            OrderRequest request = new OrderRequest(null, OrderStatus.MEAL.name(), Collections.emptyList());
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
 
             //when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))

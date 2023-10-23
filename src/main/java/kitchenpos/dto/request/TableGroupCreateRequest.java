@@ -2,14 +2,14 @@ package kitchenpos.dto.request;
 
 import java.util.List;
 
-public class TableGroupRequest {
+public class TableGroupCreateRequest {
 
     private List<Long> tableIds;
 
-    protected TableGroupRequest() {
+    protected TableGroupCreateRequest() {
     }
 
-    public TableGroupRequest(List<Long> tableIds) {
+    public TableGroupCreateRequest(List<Long> tableIds) {
         this.tableIds = tableIds;
     }
 

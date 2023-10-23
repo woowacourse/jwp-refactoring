@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
@@ -23,10 +23,10 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 모든_메뉴_그룹_목록을_조회한다() {
             //given
-            MenuGroupRequest menuGroupRequestA = new MenuGroupRequest("일식");
-            MenuGroupRequest menuGroupRequestB = new MenuGroupRequest("중식");
-            MenuGroupResponse menuGroupResponseA = menuGroupService.create(menuGroupRequestA);
-            MenuGroupResponse menuGroupResponseB = menuGroupService.create(menuGroupRequestB);
+            MenuGroupCreateRequest menuGroupCreateRequestA = new MenuGroupCreateRequest("일식");
+            MenuGroupCreateRequest menuGroupCreateRequestB = new MenuGroupCreateRequest("중식");
+            MenuGroupResponse menuGroupResponseA = menuGroupService.create(menuGroupCreateRequestA);
+            MenuGroupResponse menuGroupResponseB = menuGroupService.create(menuGroupCreateRequestB);
 
             //when
             List<MenuGroupResponse> menuGroups = menuGroupService.list();
@@ -49,15 +49,15 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_추가한다() {
         //given
-        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("일식");
+        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("일식");
 
         //when
-        MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupCreateRequest);
 
         //then
         assertSoftly(softly -> {
             softly.assertThat(menuGroupResponse.getId()).isNotNull();
-            softly.assertThat(menuGroupResponse.getName()).isEqualTo(menuGroupRequest.getName());
+            softly.assertThat(menuGroupResponse.getName()).isEqualTo(menuGroupCreateRequest.getName());
         });
     }
 }

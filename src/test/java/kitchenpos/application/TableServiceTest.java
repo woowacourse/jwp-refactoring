@@ -15,7 +15,8 @@ import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.vo.OrderStatus;
-import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.request.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.test.ServiceTest;
 import org.junit.jupiter.api.Nested;
@@ -88,7 +89,7 @@ class TableServiceTest extends ServiceTest {
         void 정상적인_테이블이라면_테이블을_빈_테이블로_수정한다() {
             //given
             OrderTableResponse orderTable = tableService.create();
-            OrderTableRequest request = new OrderTableRequest(null, 0, true);
+            OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
             //when
             OrderTableResponse response = tableService.changeEmpty(orderTable.getId(), request);
@@ -105,7 +106,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블이라면_예외를_던진다() {
             //given
-            OrderTableRequest request = new OrderTableRequest(null, 0, true);
+            OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
             //when, then
             assertThatThrownBy(() -> tableService.changeEmpty(-1L, request))
@@ -117,7 +118,7 @@ class TableServiceTest extends ServiceTest {
             //given
             TableGroup tableGroup = tableGroupRepository.save(테이블_그룹(LocalDateTime.now()));
             OrderTable orderTable = orderTableRepository.save(테이블(tableGroup, 5, false));
-            OrderTableRequest request = new OrderTableRequest(null, 0, true);
+            OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
             //when, then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
@@ -130,7 +131,7 @@ class TableServiceTest extends ServiceTest {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(2, false));
             orderRepository.save(주문(orderTable, orderStatus, LocalDateTime.now()));
-            OrderTableRequest request = new OrderTableRequest(null, 0, true);
+            OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
             //when, then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
@@ -145,7 +146,7 @@ class TableServiceTest extends ServiceTest {
         void 정상적인_테이블이라면_테이블_인원_수를_수정한다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(2, false));
-            OrderTableRequest request = new OrderTableRequest(null, 4, false);
+            OrderTableUpdateNumberOfGuestRequest request = new OrderTableUpdateNumberOfGuestRequest(4);
 
             //when
             OrderTableResponse response = tableService.changeNumberOfGuests(orderTable.getId(), request);
@@ -164,7 +165,7 @@ class TableServiceTest extends ServiceTest {
         void 수정되는_인원_수가_0보다_작으면_예외를_던진다(int numberOfGuests) {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(2, false));
-            OrderTableRequest request = new OrderTableRequest(null, numberOfGuests, false);
+            OrderTableUpdateNumberOfGuestRequest request = new OrderTableUpdateNumberOfGuestRequest(numberOfGuests);
 
             //when, then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
@@ -174,7 +175,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블이라면_예외를_던진다() {
             //given
-            OrderTableRequest request = new OrderTableRequest(null, 4, false);
+            OrderTableUpdateNumberOfGuestRequest request = new OrderTableUpdateNumberOfGuestRequest(4);
 
             //when, then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(-1L, request))
@@ -185,7 +186,7 @@ class TableServiceTest extends ServiceTest {
         void 테이블이_비어있으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(0, true));
-            OrderTableRequest request = new OrderTableRequest(null, 4, false);
+            OrderTableUpdateNumberOfGuestRequest request = new OrderTableUpdateNumberOfGuestRequest(4);
 
             //when, then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))

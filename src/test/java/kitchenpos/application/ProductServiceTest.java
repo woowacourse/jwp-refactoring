@@ -6,7 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.test.ServiceTest;
 import org.assertj.core.util.BigDecimalComparator;
@@ -28,10 +28,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 모든_상품_목록을_조회한다() {
             //given
-            ProductRequest productRequestA = new ProductRequest("텐동", BigDecimal.valueOf(11000));
-            ProductRequest productRequestB = new ProductRequest("사케동", BigDecimal.valueOf(12000));
-            ProductResponse productResponseA = productService.create(productRequestA);
-            ProductResponse productResponseB = productService.create(productRequestB);
+            ProductCreateRequest productCreateRequestA = new ProductCreateRequest("텐동", BigDecimal.valueOf(11000));
+            ProductCreateRequest productCreateRequestB = new ProductCreateRequest("사케동", BigDecimal.valueOf(12000));
+            ProductResponse productResponseA = productService.create(productCreateRequestA);
+            ProductResponse productResponseB = productService.create(productCreateRequestB);
 
             //when
             List<ProductResponse> products = productService.list();
@@ -58,10 +58,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 정상적인_상품이라면_상품을_추가한다() {
             //given
-            ProductRequest productRequest = new ProductRequest("텐동", BigDecimal.valueOf(11000));
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("텐동", BigDecimal.valueOf(11000));
 
             //when
-            ProductResponse productResponse = productService.create(productRequest);
+            ProductResponse productResponse = productService.create(productCreateRequest);
 
             //then
             assertSoftly(softly -> {
@@ -74,10 +74,10 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 가격이_NULL이라면_예외를_던진다() {
             //given
-            ProductRequest productRequest = new ProductRequest("텐동", null);
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("텐동", null);
 
             //when, then
-            assertThatThrownBy(() -> productService.create(productRequest))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -85,10 +85,10 @@ class ProductServiceTest extends ServiceTest {
         @ValueSource(longs = {Integer.MIN_VALUE, -1})
         void 가격이_0보다_작으면_예외를_던진다(long price) {
             //given
-            ProductRequest productRequest = new ProductRequest("텐동", BigDecimal.valueOf(price));
+            ProductCreateRequest productCreateRequest = new ProductCreateRequest("텐동", BigDecimal.valueOf(price));
 
             //when, then
-            assertThatThrownBy(() -> productService.create(productRequest))
+            assertThatThrownBy(() -> productService.create(productCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
