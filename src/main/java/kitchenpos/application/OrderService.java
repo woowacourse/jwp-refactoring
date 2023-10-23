@@ -9,15 +9,13 @@ import kitchenpos.application.exception.MenuAppException.NotFoundMenuException;
 import kitchenpos.application.exception.OrderAppException.NotFoundOrderException;
 import kitchenpos.application.exception.OrderAppException.OrderAlreadyCompletedException;
 import kitchenpos.application.exception.OrderLineItemAppException.EmptyOrderLineItemException;
-import kitchenpos.application.exception.OrderTableAppException.NotFoundOrderTableException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTableRepository;
-import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.order.OrderTableChangeService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +24,14 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderTableChangeService orderTableChangeService;
 
     public OrderService(
         final OrderRepository orderRepository, final MenuRepository menuRepository,
-        final OrderTableRepository orderTableRepository
-    ) {
+        final OrderTableChangeService orderTableChangeService) {
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderTableChangeService = orderTableChangeService;
     }
 
     @Transactional
@@ -45,13 +42,10 @@ public class OrderService {
             throw new EmptyOrderLineItemException();
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(
-                orderCreateDto.getOrderTableId())
-            .orElseThrow(NotFoundOrderTableException::new);
-
         final List<OrderLineItem> orderLineItems = makeOrderLineItems(orderLineItemDtos);
 
-        final Order newOrder = Order.of(orderCreateDto.getOrderTableId(), orderLineItems);
+        final Order newOrder = Order.of(orderCreateDto.getOrderTableId(), orderTableChangeService,
+            orderLineItems);
 
         return orderRepository.save(newOrder);
     }

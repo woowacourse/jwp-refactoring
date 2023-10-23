@@ -1,5 +1,6 @@
 package kitchenpos.domain.table;
 
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,7 +39,8 @@ public class OrderTable {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final OrderStatusChecker orderStatusChecker, final boolean empty) {
+        orderStatusChecker.validateOrderStatusChangeable(List.of(id));
         if (Objects.nonNull(tableGroup)) {
             throw new TableGroupException.GroupAlreadyExistsException();
         }

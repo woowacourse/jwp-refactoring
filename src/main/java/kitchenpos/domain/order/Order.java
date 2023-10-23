@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
+import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
 
 @Entity(name = "orders")
 public class Order {
@@ -45,12 +46,14 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order of(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public static Order of(final Long orderTableId,
+        final OrderTableChangeService orderTableChangeService,
+        final List<OrderLineItem> orderLineItems) {
         final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
 
-//        if (orderTable.isEmpty()) {
-//            throw new EmptyOrderTableException();
-//        }
+        if (orderTableChangeService.isNotEmpty(orderTableId)) {
+            throw new EmptyOrderTableException();
+        }
 
         if (orderLineItems.isEmpty()) {
             throw new EmptyOrderLineItemsException();

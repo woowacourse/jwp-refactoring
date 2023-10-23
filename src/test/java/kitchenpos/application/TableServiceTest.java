@@ -18,9 +18,11 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItemRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTableChangeService;
 import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,12 @@ class TableServiceTest {
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
+
+    @Autowired
+    private OrderTableChangeService orderTableChangeService;
+
+    @Autowired
+    private OrderStatusChecker orderStatusChecker;
 
     @Test
     void 테이블을_등록할_수_있다() {
@@ -167,7 +175,8 @@ class TableServiceTest {
         menuProductRepository.save(menuProduct);
 
         final OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
-        final Order order = Order.of(savedOrderTable, List.of(orderLineItem));
+        final Order order = Order.of(savedOrderTable.getId(), orderTableChangeService,
+            List.of(orderLineItem));
         order.changeOrderStatus(OrderStatus.COOKING);
         orderRepository.save(order);
 
@@ -182,7 +191,8 @@ class TableServiceTest {
 
     private OrderTable createOrderTable(final boolean emptyStatus, final int guests) {
         final OrderTable orderTable = new OrderTable(guests);
-        orderTable.changeEmpty(emptyStatus);
-        return orderTableRepository.save(orderTable);
+        orderTableRepository.save(orderTable);
+        orderTable.changeEmpty(orderStatusChecker, emptyStatus);
+        return orderTable;
     }
 }

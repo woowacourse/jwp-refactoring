@@ -25,6 +25,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,9 @@ class OrderServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private OrderStatusChecker orderStatusChecker;
 
     private OrderTable mockOrderTable;
     private Menu mockMenu;
@@ -130,8 +134,8 @@ class OrderServiceTest {
     @Test
     void 주문_생성_시_테이블이_비어있으면_예외가_발생한다() {
         // given when
-        final OrderTable emptyOrderTable = new OrderTable(2);
-        emptyOrderTable.changeEmpty(true);
+        final OrderTable emptyOrderTable = orderTableRepository.save(new OrderTable(2));
+        emptyOrderTable.changeEmpty(orderStatusChecker, true);
         final OrderTable savedOrderTable = orderTableRepository.save(emptyOrderTable);
 
         final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(mockMenu.getId(), 2);

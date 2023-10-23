@@ -14,15 +14,16 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTableChangeService;
 import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
@@ -59,7 +60,10 @@ class TableGroupServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
+    private OrderTableChangeService orderTableChangeService;
+
+    @Autowired
+    private OrderStatusChecker orderStatusChecker;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -72,14 +76,14 @@ class TableGroupServiceTest {
         final OrderTable firstOrderTable = new OrderTable(
             0
         );
-        firstOrderTable.changeEmpty(false);
         firstTable = orderTableRepository.save(firstOrderTable);
+        firstOrderTable.changeEmpty(orderStatusChecker, false);
 
         final OrderTable secondOrderTable = new OrderTable(
             0
         );
-        secondOrderTable.changeEmpty(false);
         secondTable = orderTableRepository.save(secondOrderTable);
+        secondOrderTable.changeEmpty(orderStatusChecker, false);
     }
 
     @Test
@@ -183,7 +187,8 @@ class TableGroupServiceTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
         // when
-        final Order order = Order.of(firstTable, List.of(orderLineItem));
+        final Order order = Order.of(firstTable.getId(), orderTableChangeService,
+            List.of(orderLineItem));
         order.changeOrderStatus(orderStatus);
         orderRepository.save(order);
 

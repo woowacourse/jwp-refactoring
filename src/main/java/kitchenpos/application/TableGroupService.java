@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupCreateDto;
 import kitchenpos.application.exception.TableGroupAppException;
 import kitchenpos.application.exception.TableGroupAppException.UngroupingNotPossibleException;
@@ -64,7 +65,10 @@ public class TableGroupService {
 
     private boolean isExistCookingOrMeal(final TableGroup findTableGroup) {
         final List<OrderTable> orderTables = findTableGroup.getOrderTables();
-        final Set<Order> findOrders = orderRepository.findAllByOrderTableIn(orderTables);
+        final List<Long> orderTableIds = orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+        final Set<Order> findOrders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
 
         return findOrders.stream()
             .anyMatch(orderTable -> orderTable.isSameStatus(OrderStatus.COOKING)
