@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -37,27 +36,14 @@ public class TableGroupService {
         }
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
         final TableGroup tableGroup = new TableGroup(savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.joinTableGroup(savedTableGroup);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.initOrderTables(savedOrderTables);
-
-        return TableGroupResponse.of(savedTableGroup);
+        return TableGroupResponse.of(tableGroup);
     }
 
     @Transactional
@@ -68,14 +54,17 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (isOrdersProceeding(orderTableIds)) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.unjoinTableGroup();
-            orderTableRepository.save(orderTable);
         }
+    }
+
+    private boolean isOrdersProceeding(final List<Long> orderTableIds) {
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
     }
 }
