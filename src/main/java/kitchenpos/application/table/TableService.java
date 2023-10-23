@@ -39,8 +39,8 @@ public class TableService {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         savedOrderTable.changeEmpty(request.isEmpty(), tableValidator);
-
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     private OrderTable getOrderTable(Long orderTableId) {
@@ -55,6 +55,7 @@ public class TableService {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
+        orderTableRepository.save(savedOrderTable);
         return OrderTableResponse.from(savedOrderTable);
     }
 }

@@ -44,6 +44,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다"));
         order.changeOrderStatus(request.getOrderStatus());
+        orderRepository.save(order);
         return OrderResponse.from(order);
     }
 }
