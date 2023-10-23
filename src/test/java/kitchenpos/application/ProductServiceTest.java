@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
@@ -59,8 +58,8 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다")
     void list() {
         // given
-        final Product expect1 = productRepository.save(product("후라이드", BigDecimal.valueOf(17000)));
-        final Product expect2 = productRepository.save(product("양념치킨", BigDecimal.valueOf(20000)));
+        final Product expect1 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(17000)));
+        final Product expect2 = productRepository.save(new Product("양념치킨", BigDecimal.valueOf(20000)));
 
         // when
         final List<Product> actual = productService.list();

@@ -22,7 +22,6 @@ import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.menu;
 import static kitchenpos.fixture.MenuProductFixture.menuProduct;
-import static kitchenpos.fixture.ProductFixture.product;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -50,7 +49,7 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록한다")
     void create() {
         // given
-        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
@@ -69,7 +68,7 @@ class MenuServiceTest {
         // given
         final BigDecimal invalidPrice = null;
 
-        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
@@ -86,7 +85,7 @@ class MenuServiceTest {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(-1);
 
-        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
@@ -103,7 +102,7 @@ class MenuServiceTest {
         // given
         final Long invalidMenuGroupId = -999L;
 
-        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
@@ -118,7 +117,7 @@ class MenuServiceTest {
     void create_invalidPrice_moreThanSum() {
         // given
         final BigDecimal invalidPrice = BigDecimal.valueOf(50000);
-        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
 
@@ -133,8 +132,8 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 조회한다")
     void list() {
         // given
-        final Product 후라이드 = productRepository.save(product("후라이드", BigDecimal.valueOf(16000)));
-        final Product 양념치킨 = productRepository.save(product("양념치킨", BigDecimal.valueOf(20000)));
+        final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
+        final Product 양념치킨 = productRepository.save(new Product("양념치킨", BigDecimal.valueOf(20000)));
 
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = menuProduct(후라이드.getId(), 2l);
