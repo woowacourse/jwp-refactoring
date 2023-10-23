@@ -16,7 +16,7 @@ import java.util.List;
 import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
 import static kitchenpos.step.MenuGroupStep.일식;
-import static kitchenpos.step.MenuStep.toMenuRequest;
+import static kitchenpos.step.MenuStep.MENU_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_메뉴_반환;
 import static kitchenpos.step.MenuStep.메뉴_조회_요청;
@@ -50,7 +50,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                     List.of(menuProduct)
             );
 
-            final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(MENU_CREATE_REQUEST_스키야키(BigDecimal.valueOf(11_900), menuGroup.getId(), List.of(menuProduct)));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
@@ -73,7 +73,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                     List.of(menuProduct)
             );
 
-            final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(MENU_CREATE_REQUEST_스키야키(BigDecimal.valueOf(11_900), null, List.of(menuProduct)));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -88,14 +88,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(2L);
 
-            final Menu menu = new Menu(
-                    product.getName(),
-                    product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN),
-                    menuGroup,
-                    List.of(menuProduct)
-            );
-
-            final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
+            final BigDecimal inappropriatePrice = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).add(BigDecimal.TEN);
+            final ExtractableResponse<Response> response = 메뉴_생성_요청(MENU_CREATE_REQUEST_스키야키(inappropriatePrice, menuGroup.getId(), List.of(menuProduct)));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -117,7 +111,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 List.of(menuProduct)
         );
 
-        final Menu createdMenu = 메뉴_생성_요청하고_메뉴_반환(toMenuRequest(menu));
+        final Menu savedMenu = 메뉴_생성_요청하고_메뉴_반환(MENU_CREATE_REQUEST_스키야키(BigDecimal.valueOf(11_900), menuGroup.getId(), List.of(menuProduct)));
 
         final ExtractableResponse<Response> response = 메뉴_조회_요청();
         final List<Menu> result = response.jsonPath().getList("", Menu.class);
@@ -128,7 +122,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(result.get(0))
                         .usingRecursiveComparison()
                         .ignoringFields("price", "menuProducts")
-                        .isEqualTo(createdMenu)
+                        .isEqualTo(savedMenu)
         );
     }
 }

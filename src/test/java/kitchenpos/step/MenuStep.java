@@ -4,24 +4,27 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.ui.request.MenuRequest;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static io.restassured.http.ContentType.JSON;
 
 public class MenuStep {
 
-    public static MenuRequest toMenuRequest(final Menu menu) {
+    public static MenuRequest MENU_CREATE_REQUEST_스키야키(BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
         return new MenuRequest(
-                menu.getId(),
-                menu.getName(),
-                menu.getPrice(),
-                menu.getMenuGroup().getId(),
-                menu.getMenuProducts()
+                "스키야키",
+                price,
+                menuGroupId,
+                menuProducts
         );
     }
 
-    public static Long 메뉴_생성_요청하고_아이디_반환(final Menu menu) {
-        final ExtractableResponse<Response> response = 메뉴_생성_요청(toMenuRequest(menu));
+    public static Long 메뉴_생성_요청하고_아이디_반환(final MenuRequest request) {
+        final ExtractableResponse<Response> response = 메뉴_생성_요청(request);
         return response.jsonPath().getLong("id");
     }
 

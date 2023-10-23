@@ -36,7 +36,6 @@ public class MenuService {
                 .orElseThrow(IllegalArgumentException::new);
 
         final Menu menu = new Menu(
-                request.getId(),
                 request.getName(),
                 request.getPrice(),
                 menuGroup,
