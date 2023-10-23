@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class Menu {
     @ManyToOne
     private MenuGroup menuGroup;
 
+    @JsonIgnoreProperties("menu")
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
