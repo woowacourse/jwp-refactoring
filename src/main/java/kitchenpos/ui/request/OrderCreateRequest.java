@@ -6,28 +6,29 @@ import kitchenpos.domain.OrderLineItem;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class OrderRequest {
+public class OrderCreateRequest {
 
-    private final Long id;
-    private final Long orderTableId;
-    private final String orderStatus;
-    private final LocalDateTime orderedTime;
-    private final List<OrderLineItem> orderLineItems;
+    private Long orderTableId;
+    private String orderStatus;
+    private LocalDateTime orderedTime;
+    private List<OrderLineItem> orderLineItems;
 
-    public OrderRequest(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
-        this.id = id;
+    public OrderCreateRequest(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order toOrder() {
-        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public OrderCreateRequest(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(orderTableId, null, null, orderLineItems);
     }
 
-    public Long getId() {
-        return id;
+    public OrderCreateRequest() {
+    }
+
+    public Order toOrder() {
+        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getOrderTableId() {

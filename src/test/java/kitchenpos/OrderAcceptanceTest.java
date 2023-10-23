@@ -16,10 +16,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderTableFixture.NOT_EMPTY_테이블;
-import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
 import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_일식;
+import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
 import static kitchenpos.step.MenuStep.MENU_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_아이디_반환;
+import static kitchenpos.step.OrderStep.ORDER_CREATE_REQUEST;
+import static kitchenpos.step.OrderStep.ORDER_UPDATE_REQUEST;
 import static kitchenpos.step.OrderStep.주문_상태_변경_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청하고_주문_반환;
@@ -62,7 +64,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             order.setOrderTableId(savedOrderTable.getId());
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
+            final ExtractableResponse<Response> response = 주문_생성_요청(ORDER_CREATE_REQUEST(savedOrderTable.getId(), List.of(orderLineItem)));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
@@ -85,11 +87,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             menuProduct.setProduct(product);
             menuProduct.setQuantity(1L);
 
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of());
-
-            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
+            final ExtractableResponse<Response> response = 주문_생성_요청(ORDER_CREATE_REQUEST(savedOrderTable.getId(), List.of()));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -115,11 +113,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderLineItem orderLineItem1 = new OrderLineItem(menuId, 1L);
             final OrderLineItem orderLineItem2 = new OrderLineItem(menuId, 1L);
 
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-
-            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
+            final ExtractableResponse<Response> response = 주문_생성_요청(ORDER_CREATE_REQUEST(savedOrderTable.getId(), List.of(orderLineItem1, orderLineItem2)));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -144,7 +138,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Order order = new Order();
             order.setOrderLineItems(List.of(orderLineItem));
 
-            final ExtractableResponse<Response> response = 주문_생성_요청(OrderStep.toRequest(order));
+            final ExtractableResponse<Response> response = 주문_생성_요청(ORDER_CREATE_REQUEST(1L, List.of(orderLineItem)));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -222,7 +216,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Order savedOrder = 주문_생성_요청하고_주문_반환(OrderStep.toRequest(order));
             savedOrder.setOrderStatus("COOKING");
 
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(OrderStep.toRequest(savedOrder));
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), ORDER_UPDATE_REQUEST("COOKING"));
             final Order result = response.jsonPath().getObject("", Order.class);
 
             assertAll(
@@ -260,10 +254,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final Order savedOrder = 주문_생성_요청하고_주문_반환(OrderStep.toRequest(order));
             savedOrder.setOrderStatus("COMPLETION");
 
-            주문_상태_변경_요청(OrderStep.toRequest(savedOrder));
+            주문_상태_변경_요청(savedOrder.getId(), ORDER_UPDATE_REQUEST("COMPLETION"));
 
             savedOrder.setOrderStatus("COOKING");
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(OrderStep.toRequest(savedOrder));
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), ORDER_UPDATE_REQUEST("COMPLETION"));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
