@@ -1,6 +1,6 @@
 package kitchenpos.exception;
 
-public class MenuGroupException extends RuntimeException {
+public class MenuGroupException extends BaseException {
 
     private final MenuGroupExceptionType exceptionType;
 
@@ -8,6 +8,7 @@ public class MenuGroupException extends RuntimeException {
         this.exceptionType = exceptionType;
     }
 
+    @Override
     public MenuGroupExceptionType exceptionType() {
         return exceptionType;
     }
