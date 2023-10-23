@@ -36,10 +36,7 @@ public class TableGroup {
 
     private TableGroup(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
-        orderTables.forEach(orderTable -> {
-            orderTable.setTableGroup(this);
-            orderTable.setEmpty(false);
-        });
+        orderTables.forEach(orderTable -> orderTable.group(this));
     }
 
     public static TableGroup from(final List<OrderTable> orderTables) {

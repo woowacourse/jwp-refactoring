@@ -49,6 +49,11 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void group(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }
