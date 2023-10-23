@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -45,12 +44,16 @@ public class OrderTableService {
     public void changeIsEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateTableGroupIsNotNull();
+        validateOrderStatusIsCookingAndMeal(orderTableId);
+        savedOrderTable.updateEmpty(isEmpty);
+        orderTableRepository.save(savedOrderTable);
+    }
+
+    private void validateOrderStatusIsCookingAndMeal(Long orderTableId) {
         if (orderTableRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(COOKING, MEAL))) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.updateEmpty(isEmpty);
-        orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional
