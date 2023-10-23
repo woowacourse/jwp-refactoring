@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,8 +13,14 @@ import java.util.Optional;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableChangeNumberRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,32 +31,19 @@ class TableServiceTest extends ServiceTest {
 
     private final List<String> EXCLUDE_STATUS = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
 
-    @InjectMocks
-    private TableService tableService;
-
-    @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
     @Nested
     class create_성공_테스트 {
 
         @Test
         void 주문_테이블을_생성할_수_있다() {
             // given
-            final var beforeOrderTable = new OrderTable(1L, 3, true);
-            final var afterOrderTable = new OrderTable(null, 3, true);
-
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
+            final var request = new OrderTableCreateRequest(null, 3, true);
 
             // when
-            final var actual = tableService.create(beforeOrderTable);
+            final var actual = tableService.create(request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(afterOrderTable);
+            assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
         }
     }
 
@@ -62,10 +56,7 @@ class TableServiceTest extends ServiceTest {
 
         @Test
         void 주문_목록이_존재하지_않으면_빈_값을_반환한다() {
-            // given
-            given(tableService.list()).willReturn(Collections.emptyList());
-
-            // when
+            // given & when
             final var actual = tableService.list();
 
             // then
@@ -75,11 +66,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 3, false);
+            tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+            final var orderTable = orderTableDao.save(new OrderTable(1L, 3, false));
 
-            given(tableService.list()).willReturn(List.of(orderTable));
-
-            final var expected = List.of(orderTable);
+            final var expected = List.of(OrderTableResponse.toResponse(orderTable));
 
             // when
             final var actual = tableService.list();
@@ -100,19 +90,14 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블을_빈_테이블로_만들_수_있다() {
             // given
-            final var orderTable = new OrderTable(null, 3, true);
-            orderTable.setId(1L);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, EXCLUDE_STATUS)).willReturn(Boolean.FALSE);
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
+            orderTableDao.save(new OrderTable(null, 3, true));
+            final var request = new OrderTableChangeEmptyRequest(null, 3, true);
 
             // when
-            final var actual = tableService.changeEmpty(1L, orderTable);
+            final var actual = tableService.changeEmpty(1L, request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+            assertThat(actual.isEmpty()).isTrue();
         }
     }
 
@@ -122,10 +107,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문_테이블을_사용하면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 3, true);
+            final var request = new OrderTableChangeEmptyRequest(1L, 3, true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 주문 테이블입니다.");
         }
@@ -133,12 +118,12 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블의_그룹_아이디가_존재하면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 3, true);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
+            tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+            orderTableDao.save(new OrderTable(1L, 3, true));
+            final var request = new OrderTableChangeEmptyRequest(1L, 3, true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 해당 주문 테이블은 다른 그룹에 속하는 테이블입니다.");
         }
@@ -146,14 +131,13 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블에_이미_주문_상태가_존재하면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(null, 3, true);
-            orderTable.setId(1L);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, EXCLUDE_STATUS)).willReturn(true);
+            tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+            orderTableDao.save(new OrderTable(null, 3, true));
+            orderDao.save(new Order(1L, "MEAL", LocalDateTime.now(), List.of()));
+            final var request = new OrderTableChangeEmptyRequest(null, 3, true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 아직 모든 주문이 완료되지 않았습니다.");
         }
@@ -165,18 +149,15 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 손님의_수를_변경할_수_있다() {
             // given
-            final var beforeOrderTable = new OrderTable(1L, 3, false);
-            final var afterOrderTable = new OrderTable(1L, 2, false);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(beforeOrderTable));
-            given(orderTableDao.save(any(OrderTable.class))).willAnswer(invocation -> invocation.getArgument(0));
+            tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+            orderTableDao.save(new OrderTable(1L, 3, false));
+            final var request = new OrderTableChangeNumberRequest(1L, 2, false);
 
             // when
-            final var actual = tableService.changeNumberOfGuests(1L, afterOrderTable);
+            final var actual = tableService.changeNumberOfGuests(1L, request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(afterOrderTable);
+            assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
         }
     }
 
@@ -186,10 +167,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 손님의_수가_음수일_때_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, -3, false);
+            final var request = new OrderTableChangeNumberRequest(1L, -3, false);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 손님의 수가 음수입니다.");
         }
@@ -197,10 +178,12 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블을_사용하면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 2, true);
+            tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+            orderTableDao.save(new OrderTable(1L, 2, true));
+            final var request = new OrderTableChangeNumberRequest(1L, 3, true);
 
-            // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+                    // when & then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(2L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 주문 테이블입니다.");
         }
@@ -208,12 +191,12 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블의_상태가_비어있으면_예외를_반환한다() {
             // given
-            final var orderTable = new OrderTable(1L, 2, true);
-
-            given(orderTableDao.findById(1L)).willReturn(Optional.of(orderTable));
+            tableGroupDao.save(new TableGroup(LocalDateTime.now(), List.of()));
+            orderTableDao.save(new OrderTable(1L, 2, true));
+            final var request = new OrderTableChangeNumberRequest(1L, 2, true);
 
             // when & then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 주문 테이블이 비어있습니다.");
         }
