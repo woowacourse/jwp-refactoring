@@ -24,4 +24,8 @@ public class MenuProducts {
     public void addAll(final List<MenuProduct> menuProducts) {
         this.menuProducts.addAll(menuProducts);
     }
+
+    public List<MenuProduct> menuProducts() {
+        return menuProducts;
+    }
 }

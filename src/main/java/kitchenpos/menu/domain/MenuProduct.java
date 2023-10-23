@@ -25,7 +25,6 @@ public class MenuProduct {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-
     private long quantity;
 
     public MenuProduct() {
@@ -44,6 +43,10 @@ public class MenuProduct {
 
     public BigDecimal totalPrice() {
         return this.product.multiplyPrice(BigDecimal.valueOf(this.quantity));
+    }
+
+    public Long seq() {
+        return seq;
     }
 
     public void setSeq(final Long seq) {

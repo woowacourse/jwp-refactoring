@@ -8,6 +8,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
+import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.product.domain.Product;
@@ -69,7 +70,10 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuRepository.findAll();
+        return menus.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

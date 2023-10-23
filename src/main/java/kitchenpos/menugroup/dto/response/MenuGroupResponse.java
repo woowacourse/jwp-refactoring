@@ -1,0 +1,28 @@
+package kitchenpos.menugroup.dto.response;
+
+import kitchenpos.menugroup.domain.MenuGroup;
+
+public class MenuGroupResponse {
+    private final Long id;
+    private final String name;
+
+    private MenuGroupResponse(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public static MenuGroupResponse from(final MenuGroup menuGroup) {
+        return new MenuGroupResponse(
+                menuGroup.id(),
+                menuGroup.name()
+        );
+    }
+
+    public Long id() {
+        return id;
+    }
+
+    public String name() {
+        return name;
+    }
+}

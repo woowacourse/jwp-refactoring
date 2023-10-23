@@ -15,7 +15,7 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
@@ -23,7 +23,7 @@ public class MenuGroup {
         this.id = id;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 

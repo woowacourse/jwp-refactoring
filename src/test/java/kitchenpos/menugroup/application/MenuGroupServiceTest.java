@@ -25,7 +25,7 @@ class MenuGroupServiceTest {
         final MenuGroup saved = menuGroupService.create(menuGroup);
 
         // then
-        assertThat(saved.getName()).isEqualTo(menuGroup.getName());
+        assertThat(saved.name()).isEqualTo(menuGroup.name());
     }
 
     @Test
