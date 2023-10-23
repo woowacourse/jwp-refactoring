@@ -41,12 +41,12 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
         savedOrderTable.validateOrderTableHasTableGroupId();
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
             List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("요리중이거나 식사중인 주문 테이블은 상태를 변경할 수 없습니다.");
         }
         savedOrderTable.changeEmptyStatus();
         return OrderTableResponse.from(savedOrderTable);
@@ -57,10 +57,7 @@ public class TableService {
                                                    final OrderTableChangeGuestRequest orderTableChangeGuestRequest
     ) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
         orderTable.changeNumberOfGuests(orderTableChangeGuestRequest.getNumberOfGuests());
         return OrderTableResponse.from(orderTable);
     }

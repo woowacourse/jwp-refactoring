@@ -49,19 +49,19 @@ public class OrderService {
     private void validateOrderLineItem(final OrderRequest orderRequest) {
         final List<Long> menuIds = orderRequest.getMenuId();
         if (menuIds.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴없이 주문은 할 수 없습니다.");
         }
         final List<Menu> menus = menuRepository.findAllById(menuIds);
         if (menuIds.size() != menus.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않은 메뉴로 주문을 할 수 없습니다.");
         }
     }
 
     private OrderTable validateOrderTableIsEmpty(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블이 현재 비어있습니다.");
         }
         return orderTable;
     }
@@ -90,7 +90,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
         order.changeStatus(request.getStatus());
 
         return OrderResponse.from(order);

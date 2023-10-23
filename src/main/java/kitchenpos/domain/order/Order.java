@@ -54,7 +54,7 @@ public class Order {
 
     public void changeStatus(final String changingStatus) {
         if (orderStatus == OrderStatus.COMPLETION) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 Completion인 상태인 경우 주문 테이블의 상태를 변경할 수 없습니다.");
         }
         this.orderStatus = OrderStatus.valueOf(changingStatus);
     }

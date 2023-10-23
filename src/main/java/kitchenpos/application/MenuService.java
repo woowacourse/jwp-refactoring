@@ -38,7 +38,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
         final BigDecimal productsPrice = getProductsPrice(request.getProductIds());
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());

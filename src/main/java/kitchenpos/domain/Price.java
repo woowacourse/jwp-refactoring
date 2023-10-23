@@ -28,7 +28,7 @@ public class Price {
 
     private static void validateValue(final Integer value) {
         if (Objects.isNull(value) || value < ZERO) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품 가격은 null 혹은 음수가 될 수 없습니다.");
         }
     }
 

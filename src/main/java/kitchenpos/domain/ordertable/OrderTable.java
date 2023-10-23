@@ -45,7 +45,7 @@ public class OrderTable {
 
     public void validateOrderTableHasTableGroupId() {
         if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 테이블 그룹에 속한 주문 테이블입니다.");
         }
     }
 
@@ -54,13 +54,20 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateIsEmptyForChangeNumberOfGuests();
         validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }
 
+    private void validateIsEmptyForChangeNumberOfGuests() {
+        if (empty) {
+            throw new IllegalArgumentException("주문테이블이 비어있는 상태이면 손님 수를 변경할 수 없습니다.");
+        }
+    }
+
     private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("변경할 손님 수는 음수이면 안됩니다.");
         }
     }
 

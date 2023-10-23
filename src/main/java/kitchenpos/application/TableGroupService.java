@@ -50,7 +50,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 그룹입니다."));
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
         validateOrderTableIsCompletion(orderTables);
         tableGroup.ungroup();
@@ -62,7 +62,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("현재 요리중이거나 식사 중인 경우 그룹해제를 할 수 없습니다.");
         }
     }
 }

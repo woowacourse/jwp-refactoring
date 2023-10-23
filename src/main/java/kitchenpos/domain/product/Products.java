@@ -13,7 +13,7 @@ public class Products {
 
     public void validateProductsCnt(final int requestProductCnt) {
         if (products.size() != requestProductCnt) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 상품에 대한 요청이 있습니다.");
         }
     }
 
