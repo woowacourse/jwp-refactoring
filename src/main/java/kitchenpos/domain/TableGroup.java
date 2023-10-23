@@ -24,7 +24,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    protected TableGroup() {
+    public TableGroup() {
     }
 
     public TableGroup(final Long id) {

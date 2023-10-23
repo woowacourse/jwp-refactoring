@@ -16,6 +16,7 @@ import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,8 @@ class TableGroupServiceTest {
     @Test
     void create() {
         // given
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(10L, 11L));
+
         final TableGroup tableGroup = new TableGroup(1L);
 
         final OrderTable orderTable1 = new OrderTable(10L, null, 2, true);
@@ -56,7 +59,7 @@ class TableGroupServiceTest {
                 .willReturn(tableGroup);
 
         // when & then
-        assertThat(tableGroupService.create(tableGroup)).isEqualTo(tableGroup);
+        assertThat(tableGroupService.create(tableGroupRequest)).isEqualTo(tableGroup.getId());
 
         then(orderTableRepository).should(times(1)).findAllByIdIn(anyList());
         then(tableGroupRepository).should(times(1)).save(any());
@@ -67,10 +70,11 @@ class TableGroupServiceTest {
     @Test
     void create_FailWhenTableIsNull() {
         // given
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(null);
         final TableGroup tableGroup = new TableGroup(1L);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 수가 올바르지 않습니다.");
     }
@@ -79,12 +83,13 @@ class TableGroupServiceTest {
     @Test
     void create_FailWhenTableIsUnderTwo() {
         // given
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(10L));
         final TableGroup tableGroup = new TableGroup(1L);
         final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, true);
         tableGroup.addOrderTable(orderTable1);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 수가 올바르지 않습니다.");
     }
@@ -93,6 +98,7 @@ class TableGroupServiceTest {
     @Test
     void create_FailWhenTableSizeUnMatch() {
         // given
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(10L, 11L));
         final TableGroup tableGroup = new TableGroup(1L);
         final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, false);
         final OrderTable orderTable2 = new OrderTable(11L, tableGroup, 3, true);
@@ -100,7 +106,7 @@ class TableGroupServiceTest {
         tableGroup.addOrderTable(orderTable2);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 수가 일치하지 않습니다.");
     }
@@ -109,6 +115,7 @@ class TableGroupServiceTest {
     @Test
     void create_FailWhenTableIsNotEmpty() {
         // given
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(10L, 11L));
         final TableGroup tableGroup = new TableGroup(1L);
         final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, false);
         final OrderTable orderTable2 = new OrderTable(11L, tableGroup, 3, true);
@@ -119,7 +126,7 @@ class TableGroupServiceTest {
                 .willReturn(tableGroup.getOrderTables());
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블이 비어있지 않거나 이미 할당되어 있습니다.");
     }
@@ -142,11 +149,6 @@ class TableGroupServiceTest {
                 List.of(orderTable1.getId(), orderTable2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
         )).willReturn(false);
-
-        given(orderTableRepository.save(orderTable1))
-                .willReturn(orderTable1);
-        given(orderTableRepository.save(orderTable2))
-                .willReturn(orderTable2);
 
         // when
         tableGroupService.ungroup(1L);

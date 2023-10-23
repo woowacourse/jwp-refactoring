@@ -10,6 +10,7 @@ import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -28,20 +29,15 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+    public Long create(final TableGroupRequest request) {
+        final List<Long> orderTableIds = request.getTableIds();
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException("테이블의 수가 올바르지 않습니다.");
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("테이블의 수가 일치하지 않습니다.");
         }
 
@@ -51,16 +47,20 @@ public class TableGroupService {
             }
         }
 
+        final TableGroup tableGroup = new TableGroup();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            final OrderTable updatedOrderTable = new OrderTable(savedOrderTable.getId(), tableGroup,
-                    savedOrderTable.getNumberOfGuests(), false);
+            final OrderTable updatedOrderTable = new OrderTable(
+                    savedOrderTable.getId(), tableGroup,
+                    savedOrderTable.getNumberOfGuests(),
+                    false
+            );
             orderTableRepository.save(updatedOrderTable);
             savedTableGroup.addOrderTable(savedOrderTable);
         }
 
-        return savedTableGroup;
+        return savedTableGroup.getId();
     }
 
     @Transactional
@@ -77,8 +77,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            new OrderTable(orderTable.getId(), null, 0, false);
-            orderTableRepository.save(orderTable);
+            final OrderTable updatedOrderTable = new OrderTable(orderTable.getId(), null, 0, false);
+            orderTableRepository.save(updatedOrderTable);
         }
     }
 }
