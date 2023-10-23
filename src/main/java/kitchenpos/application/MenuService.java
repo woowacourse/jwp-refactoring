@@ -6,11 +6,11 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.List;
 import java.util.Map;
-import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
