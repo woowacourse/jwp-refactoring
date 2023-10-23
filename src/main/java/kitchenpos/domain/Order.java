@@ -55,18 +55,6 @@ public class Order {
     public Order(
             OrderTable orderTable,
             OrderStatus orderStatus,
-            LocalDateTime orderedTime
-    ) {
-        checkOrderTableEmpty(orderTable);
-        this.id = null;
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-    }
-
-    public Order(
-            OrderTable orderTable,
-            OrderStatus orderStatus,
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
     ) {

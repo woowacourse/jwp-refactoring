@@ -15,10 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
+import kitchenpos.dao.jpa.JpaMenuRepository;
 import kitchenpos.dao.jpa.JpaOrderRepository;
 import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.dao.jpa.JpaTableGroupRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
@@ -42,6 +45,8 @@ class TableServiceTest extends IntegrationTest {
     private JpaOrderTableRepository orderTableRepository;
     @Autowired
     private JpaOrderRepository orderRepository;
+    @Autowired
+    private JpaMenuRepository menuRepository;
 
     @Test
     void 테이블_저장() {
@@ -72,7 +77,12 @@ class TableServiceTest extends IntegrationTest {
             // given
             TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
             OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 1, false));
-            orderRepository.save(new Order(orderTable, MEAL, LocalDateTime.now()));
+            Menu menu = menuRepository.getById(1L);
+            List<OrderLineItem> orderLineItems = List.of(
+                    new OrderLineItem(null, menu, 1),
+                    new OrderLineItem(null, menu, 2)
+            );
+            orderRepository.save(new Order(orderTable, MEAL, LocalDateTime.now(), orderLineItems));
 
             // when
             BaseExceptionType exceptionType = assertThrows(OrderTableException.class, () ->
@@ -87,7 +97,12 @@ class TableServiceTest extends IntegrationTest {
         void 테이블의_Empty_상태를_변경할_때_테이블의_주문이_이미_계산_완료된_상태이면_예외가_발생한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
-            orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now()));
+            Menu menu = menuRepository.getById(1L);
+            List<OrderLineItem> orderLineItems = List.of(
+                    new OrderLineItem(null, menu, 1),
+                    new OrderLineItem(null, menu, 2)
+            );
+            orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems));
 
             // when
             BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
@@ -102,7 +117,12 @@ class TableServiceTest extends IntegrationTest {
         void 주문_테이블의_주문_가능_상태를_빈_테이블로_변경한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
-            orderRepository.save(new Order(orderTable, COOKING, LocalDateTime.now()));
+            Menu menu = menuRepository.getById(1L);
+            List<OrderLineItem> orderLineItems = List.of(
+                    new OrderLineItem(null, menu, 1),
+                    new OrderLineItem(null, menu, 2)
+            );
+            orderRepository.save(new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems));
 
             // when
             OrderTable result = tableService.changeEmpty(orderTable.id(), true);

@@ -10,10 +10,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
+import kitchenpos.dao.jpa.JpaMenuRepository;
 import kitchenpos.dao.jpa.JpaOrderRepository;
 import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.dao.jpa.JpaTableGroupRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -35,6 +38,8 @@ class OrderServiceTest extends IntegrationTest {
     private JpaTableGroupRepository tableGroupRepository;
     @Autowired
     private JpaOrderRepository orderRepository;
+    @Autowired
+    private JpaMenuRepository menuRepository;
 
     @Nested
     class 주문_저장 {
@@ -95,8 +100,14 @@ class OrderServiceTest extends IntegrationTest {
             // given
             tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
             OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
-            Order order = orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now()));
 
+            Menu menu = menuRepository.getById(1L);
+            List<OrderLineItem> orderLineItems = List.of(
+                    new OrderLineItem(null, menu, 1),
+                    new OrderLineItem(null, menu, 2)
+            );
+            Order order = orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems));
+            
             // when
             BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
                     orderService.changeOrderStatus(order.id(), OrderStatus.COOKING)

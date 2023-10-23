@@ -8,12 +8,27 @@ import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_EMPTY_EXCEPTIO
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import kitchenpos.exception.BaseExceptionType;
 import kitchenpos.exception.OrderException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
+
+    private Menu menu;
+    private List<OrderLineItem> orderLineItems;
+
+    @BeforeEach
+    void setUp() {
+        this.menu = new Menu("신메뉴", BigDecimal.valueOf(1000), new MenuGroup("신메뉴 그룹"));
+        this.orderLineItems = List.of(
+                new OrderLineItem(null, menu, 1),
+                new OrderLineItem(null, menu, 2)
+        );
+    }
 
     @Test
     void 주문_저장시_테이블이_주문_불가능한_상태면_예외_발생() {
@@ -22,7 +37,7 @@ class OrderTest {
 
         // when
         BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
-                new Order(orderTable, COOKING, LocalDateTime.now())
+                new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems)
         ).exceptionType();
 
         // then
@@ -33,21 +48,21 @@ class OrderTest {
     void OrderLineItem을_추가한다() {
         // given
         OrderTable orderTable = new OrderTable(null, 10, false);
-        Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
         OrderLineItem orderLineItem = new OrderLineItem(1L, order, null, 10);
 
         // when
         order.add(orderLineItem);
 
         // then
-        assertThat(order.orderLineItems().size()).isEqualTo(1);
+        assertThat(order.orderLineItems().size()).isEqualTo(3);
     }
 
     @Test
     void 주문_상태를_변경한다() {
         // given
         OrderTable orderTable = new OrderTable(1L, null, 10, false);
-        Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
 
         // when
         order.changeOrderStatus(COMPLETION);
@@ -60,7 +75,7 @@ class OrderTest {
     void 이미_주문_상태가_계산_완료이면_예외_발생() {
         // given
         OrderTable orderTable = new OrderTable(1L, null, 10, false);
-        Order order = new Order(orderTable, COMPLETION, LocalDateTime.now());
+        Order order = new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems);
 
         // when
         BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
@@ -75,7 +90,7 @@ class OrderTest {
     void 테이블의_empty를_변경할_때_계산_완료된_상태면_예외_발생() {
         // given
         OrderTable orderTable = new OrderTable(1L, null, 10, false);
-        Order order = new Order(orderTable, COMPLETION, LocalDateTime.now());
+        Order order = new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems);
 
         // when
         BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
