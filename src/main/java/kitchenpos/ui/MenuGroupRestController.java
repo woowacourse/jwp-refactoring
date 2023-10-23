@@ -1,18 +1,22 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.request.CreateMenuGroupRequest;
+import kitchenpos.ui.dto.response.CreateMenuGroupResponse;
+import kitchenpos.ui.dto.response.ReadMenuGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
-
 @RestController
 public class MenuGroupRestController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {
@@ -20,18 +24,23 @@ public class MenuGroupRestController {
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroup menuGroup) {
-        final MenuGroup created = menuGroupService.create(menuGroup);
+    public ResponseEntity<CreateMenuGroupResponse> create(@RequestBody final CreateMenuGroupRequest request) {
+        final MenuGroup created = menuGroupService.create(request);
         final URI uri = URI.create("/api/menu-groups/" + created.getId());
+        final CreateMenuGroupResponse response = new CreateMenuGroupResponse(created);
+
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                             .body(response);
     }
 
     @GetMapping("/api/menu-groups")
-    public ResponseEntity<List<MenuGroup>> list() {
+    public ResponseEntity<List<ReadMenuGroupResponse>> list() {
+        final List<ReadMenuGroupResponse> responses = menuGroupService.list()
+                                                                      .stream()
+                                                                      .map(ReadMenuGroupResponse::new)
+                                                                      .collect(Collectors.toList());
+
         return ResponseEntity.ok()
-                .body(menuGroupService.list())
-                ;
+                             .body(responses);
     }
 }

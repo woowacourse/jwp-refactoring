@@ -1,34 +1,57 @@
 package kitchenpos.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import kitchenpos.domain.common.CreatedTimeEntity;
 
-public class TableGroup {
+@Entity
+public class TableGroup extends CreatedTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+
+    @Embedded
+    private OrderTables orderTables;
+
+    protected TableGroup() {
+    }
+
+    public TableGroup(final List<OrderTable> orderTables) {
+        this.orderTables = OrderTables.of(this, orderTables);
+    }
+
+    public void ungroupOrderTables() {
+        orderTables.ungroup();
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    @Override
+    public boolean equals(final Object target) {
+        if (this == target) {
+            return true;
+        }
+        if (target == null || getClass() != target.getClass()) {
+            return false;
+        }
+        final TableGroup targetTableGroup = (TableGroup) target;
+        return Objects.equals(getId(), targetTableGroup.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

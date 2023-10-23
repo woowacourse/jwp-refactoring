@@ -1,56 +1,57 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.메뉴_생성;
-import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹_생성;
-import static kitchenpos.fixture.MenuProductFixture.메뉴_상품_생성;
-import static kitchenpos.fixture.OrderFixture.주문_생성;
-import static kitchenpos.fixture.OrderLineItemFixture.주문_항목_생성;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
-import static kitchenpos.fixture.ProductFixture.상품_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.config.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.exception.MenuNotFoundException;
+import kitchenpos.application.exception.OrderTableNotFoundException;
+import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.OrderFixture;
+import kitchenpos.domain.exception.InvalidOrderLineItemException;
+import kitchenpos.domain.exception.InvalidOrderStatusException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.request.CreateOrderLineItemRequest;
+import kitchenpos.ui.dto.request.CreateOrderRequest;
+import kitchenpos.ui.dto.request.UpdateOrderStatusRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@ServiceTest
+@IntegrationTest
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Autowired
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Autowired
     OrderService orderService;
@@ -58,71 +59,61 @@ class OrderServiceTest {
     @Test
     void create_메서드는_order를_전달하면_order를_저장하고_반환한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
-        final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
-        final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order order = 주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem));
+        final Menu persistMenu = persistMenu();
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
+        final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(persistMenu.getId(), 1L);
+        final CreateOrderRequest request = new CreateOrderRequest(persistOrderTable.getId(), List.of(createOrderLineItemRequest));
 
         // when
-        final Order actual = orderService.create(order);
+        final Order actual = orderService.create(request);
 
         // then
-        assertThat(actual.getId()).isPositive();
+        assertAll(
+                () -> assertThat(actual.getId()).isPositive(),
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING)
+        );
     }
 
     @Test
     void create_메서드는_order의_orderLineItem이_없다면_예외가_발생한다() {
         // given
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order invalidOrder = 주문_생성(persistOrderTable.getId(), Collections.emptyList());
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
+        final CreateOrderRequest invalidRequest = new CreateOrderRequest(persistOrderTable.getId(), Collections.emptyList());
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(invalidRequest))
+                .isInstanceOf(InvalidOrderLineItemException.class);
     }
 
     @Test
     void create_메서드는_order의_orderLineItem의_menu가_없다면_예외가_발생한다() {
         // given
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(-999L);
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order invalidOrder = 주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem));
+        final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(-999L, 1L);
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
+        final CreateOrderRequest invalidRequest = new CreateOrderRequest(persistOrderTable.getId(), List.of(createOrderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(invalidRequest))
+                .isInstanceOf(MenuNotFoundException.class);
     }
 
     @Test
     void create_메서드는_order의_orderTable이_없다면_예외가_발생한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
-        final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
-        final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final Order invalidOrder = 주문_생성(-999L, Arrays.asList(persistOrderLineItem));
+        final Menu persistMenu = persistMenu();
+        final CreateOrderLineItemRequest createOrderLineItemRequest = new CreateOrderLineItemRequest(persistMenu.getId(), 1L);
+        final CreateOrderRequest invalidRequest = new CreateOrderRequest(-999L, List.of(createOrderLineItemRequest));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(invalidRequest))
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
     void list_메서드는_등록한_모든_order를_반환한다() {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
-        final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
-        final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order expected = orderDao.save(
-                주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem), "MEAL")
-        );
+        final Menu persistMenu = persistMenu();
+        final Order expected = persistOrder(persistMenu, OrderStatus.COOKING);
 
         // when
         final List<Order> actual = orderService.list();
@@ -138,42 +129,49 @@ class OrderServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus_메서드는_전달한_orderId의_상태가_COMPLETION이_아닌_order라면_전달한_상태로_변경한다(final String orderStatus) {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
-        final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
-        final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order persistOrder = orderDao.save(
-                주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem), "MEAL")
-        );
+        final Menu persistMenu = persistMenu();
+        final Order persistOrder = persistOrder(persistMenu, OrderStatus.COOKING);
+        final UpdateOrderStatusRequest request = new UpdateOrderStatusRequest(orderStatus);
 
         // when
-        final Order statusOrder = OrderFixture.주문_생성(orderStatus);
-        final Order actual = orderService.changeOrderStatus(persistOrder.getId(), statusOrder);
+        final Order actual = orderService.changeOrderStatus(persistOrder.getId(), request);
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo(orderStatus);
+        assertThat(actual.getOrderStatus().name()).isEqualTo(orderStatus);
     }
 
     @ParameterizedTest(name = "orderStatus가 {0}일 때 예외가 발생한다")
     @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus_메서드는_전달한_orderId의_상태가_COMPLETION이라면_예외가_발생한다(final String orderStatus) {
         // given
-        final MenuGroup persistMenuGroup = menuGroupDao.save(메뉴_그룹_생성());
-        final Product persistProduct = productDao.save(상품_생성());
-        final MenuProduct menuProduct = 메뉴_상품_생성(persistProduct.getId());
-        final Menu persistMenu = menuDao.save(메뉴_생성(persistMenuGroup.getId(), Arrays.asList(menuProduct)));
-        final OrderLineItem persistOrderLineItem = 주문_항목_생성(persistMenu.getId());
-        final OrderTable persistOrderTable = orderTableDao.save(주문_테이블_생성());
-        final Order persistOrder = orderDao.save(
-                주문_생성(persistOrderTable.getId(), Arrays.asList(persistOrderLineItem), "COMPLETION")
-        );
+        final Menu persistMenu = persistMenu();
+        final Order persistOrder = persistOrder(persistMenu, OrderStatus.COMPLETION);
+        final UpdateOrderStatusRequest invalidRequest = new UpdateOrderStatusRequest(orderStatus);
 
         // when & then
-        final Order statusOrder = OrderFixture.주문_생성(orderStatus);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(persistOrder.getId(), invalidRequest))
+                .isInstanceOf(InvalidOrderStatusException.class);
+    }
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(persistOrder.getId(), statusOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+    private Menu persistMenu() {
+        final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
+        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
+
+        return menuRepository.save(Menu.of(
+                "메뉴",
+                BigDecimal.TEN,
+                List.of(persistMenuProduct),
+                persistMenuGroup)
+        );
+    }
+
+    private Order persistOrder(final Menu persistMenu, final OrderStatus orderStatus) {
+        final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
+        final OrderLineItem persistOrderLineItem = new OrderLineItem(persistMenu, 1L);
+
+        return orderRepository.save(
+                new Order(persistOrderTable, orderStatus, LocalDateTime.now(), List.of(persistOrderLineItem))
+        );
     }
 }
