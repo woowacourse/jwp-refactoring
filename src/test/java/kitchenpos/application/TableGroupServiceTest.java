@@ -2,27 +2,18 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
@@ -77,7 +68,8 @@ class TableGroupServiceTest extends ServiceTest {
             final var orderTable1 = orderTableDao.save(new OrderTable(null, 3, true));
             final var orderTable2 = orderTableDao.save(new OrderTable(null, 2, true));
             final var orderTable3 = new OrderTable(null, 4, true);
-            final var request = new TableGroupCreateRequest(LocalDateTime.now(), List.of(orderTable1, orderTable2, orderTable3));
+            final var request = new TableGroupCreateRequest(LocalDateTime.now(),
+                    List.of(orderTable1, orderTable2, orderTable3));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))

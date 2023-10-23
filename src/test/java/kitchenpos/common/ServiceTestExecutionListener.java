@@ -21,7 +21,9 @@ public class ServiceTestExecutionListener extends AbstractTestExecutionListener 
     }
 
     private List<String> getTruncateQueries(final JdbcTemplate jdbcTemplate) {
-        return jdbcTemplate.queryForList("SELECT Concat('DELETE FROM ', TABLE_NAME, ';') AS q FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'", String.class);
+        return jdbcTemplate.queryForList(
+                "SELECT Concat('DELETE FROM ', TABLE_NAME, ';') AS q FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'",
+                String.class);
     }
 
     private JdbcTemplate getJdbcTemplate(final TestContext testContext) {
@@ -39,7 +41,8 @@ public class ServiceTestExecutionListener extends AbstractTestExecutionListener 
     }
 
     private void resetAutoIncrement(final JdbcTemplate jdbcTemplate) {
-        final List<String> tableNames = jdbcTemplate.queryForList("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'", String.class);
+        final List<String> tableNames = jdbcTemplate.queryForList(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'", String.class);
         for (final String tableName : tableNames) {
             if (INCLUDE_ID_TABLE_NAMES.contains(tableName)) {
                 final String resetQuery = String.format("ALTER TABLE %s ALTER COLUMN ID RESTART WITH 1;", tableName);
