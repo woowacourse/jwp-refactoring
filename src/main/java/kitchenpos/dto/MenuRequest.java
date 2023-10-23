@@ -1,6 +1,7 @@
 package kitchenpos.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuRequest {
 
@@ -17,6 +18,12 @@ public class MenuRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public List<Long> getProductIds() {
+        return menuProducts.stream()
+            .map(MenuProductDto::getProductId)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     public String getName() {

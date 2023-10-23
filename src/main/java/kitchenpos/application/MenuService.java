@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.Products;
 import kitchenpos.dto.MenuProductDto;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -40,29 +40,18 @@ public class MenuService {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
+        final BigDecimal productsPrice = getProductsPrice(request.getProductIds());
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId());
-        final BigDecimal productsPrice = getProductsPrice(menu, request.getMenuProducts());
         menu.validateOverPrice(productsPrice);
         menuRepository.save(menu);
         addMenuProduct(menu, request.getMenuProducts());
         return MenuResponse.from(menu);
     }
 
-    private BigDecimal getProductsPrice(final Menu menu, final List<MenuProductDto> menuProducts) {
-        final List<Long> productIds = menuProducts.stream()
-            .map(MenuProductDto::getProductId)
-            .collect(Collectors.toUnmodifiableList());
-
-        final List<Product> products = productRepository.findAllById(productIds);
-
-        if (menuProducts.size() != products.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        return products.stream()
-            .map(Product::getPrice)
-            .reduce(BigDecimal::multiply)
-            .get();
+    private BigDecimal getProductsPrice(final List<Long> productIds) {
+        final Products products = new Products(productRepository.findAllById(productIds));
+        products.validateProductsCnt(productIds.size());
+        return products.getTotalPrice();
     }
 
     private void addMenuProduct(final Menu menu, final List<MenuProductDto> menuProductDtos) {
