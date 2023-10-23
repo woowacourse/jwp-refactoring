@@ -1,12 +1,9 @@
 package kitchenpos.domain.ordertable;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class TableGroupTest {
 
