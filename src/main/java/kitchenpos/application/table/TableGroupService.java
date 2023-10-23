@@ -2,8 +2,6 @@ package kitchenpos.application.table;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.GroupOrderTableRequest;
 import kitchenpos.application.dto.TableGroupingRequest;
@@ -16,25 +14,26 @@ import kitchenpos.domain.table.OrderTablesValidator;
 import kitchenpos.domain.table.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderTablesValidator orderTablesValidator;
     private final TableGroupRepository tableGroupRepository;
     private final TableValidationService tableValidationService;
-    private final OrderTablesValidator orderTablesValidator;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
+            final OrderTablesValidator orderTablesValidator,
             final TableGroupRepository tableGroupRepository,
-            final TableValidationService tableValidationService,
-            final OrderTablesValidator orderTablesValidator
+            final TableValidationService tableValidationService
     ) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTablesValidator = orderTablesValidator;
         this.tableGroupRepository = tableGroupRepository;
         this.tableValidationService = tableValidationService;
-        this.orderTablesValidator = orderTablesValidator;
     }
 
     @Transactional
@@ -48,11 +47,9 @@ public class TableGroupService {
 
     private OrderTables getOrderTablesByRequest(final TableGroupingRequest request) {
         final List<Long> orderTableIds = extractOrderTableIds(request);
-        final Map<Long, OrderTable> orderTablesById = orderTableRepository.findAllByIdIn(orderTableIds).stream()
-                .collect(Collectors.toMap(OrderTable::getId, Function.identity()));
-        return new OrderTables(request.getOrderTables().stream().map(orderTableRequest ->
-                getOrderTableByRequest(orderTableRequest, orderTablesById)
-        ).collect(Collectors.toList()));
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateTablesExist(orderTableIds, orderTables);
+        return new OrderTables(orderTables);
     }
 
     private List<Long> extractOrderTableIds(final TableGroupingRequest request) {
@@ -61,13 +58,10 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private OrderTable getOrderTableByRequest(
-            final GroupOrderTableRequest orderTableRequest,
-            final Map<Long, OrderTable> orderTablesById
-    ) {
-        return orderTablesById.computeIfAbsent(orderTableRequest.getId(), id -> {
+    public void validateTablesExist(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTableIds.size() != orderTables.size()) {
             throw new IllegalArgumentException("Order table does not exist.");
-        });
+        }
     }
 
     @Transactional

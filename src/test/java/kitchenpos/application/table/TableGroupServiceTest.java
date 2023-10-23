@@ -59,7 +59,10 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void order_table_is_empty() {
             // given
-            final TableGroupingRequest request = new TableGroupingRequest(List.of());
+            final OrderTable orderTableA = generateOrderTable(1, false);
+            final TableGroupingRequest request = new TableGroupingRequest(List.of(
+                    new GroupOrderTableRequest(orderTableA.getId())
+            ));
 
             // when & then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -144,8 +147,8 @@ class TableGroupServiceTest extends IntegrationTest {
         @Test
         void any_order_status_is_not_completion() {
             // given
-            final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, true);
-            final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, true);
+            final OrderTable orderTableA = generateOrderTableWithOutTableGroup(1, false);
+            final OrderTable orderTableB = generateOrderTableWithOutTableGroup(2, false);
             generateOrder(OrderStatus.COOKING, orderTableA);
             generateOrder(OrderStatus.COMPLETION, orderTableB);
             final TableGroup tableGroup = generateTableGroup();

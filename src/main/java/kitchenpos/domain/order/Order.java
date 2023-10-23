@@ -28,16 +28,18 @@ public class Order {
             final Long id,
             final Long orderTableId,
             final OrderStatus orderStatus,
-            final LocalDateTime orderedTime
+            final LocalDateTime orderedTime,
+            final OrderValidator orderValidator
     ) {
+        orderValidator.validateExistTable(orderTableId);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(final Long orderTableId) {
-        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now());
+    public Order(final Long orderTableId, final OrderValidator orderValidator) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderValidator);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

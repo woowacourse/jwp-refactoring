@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import kitchenpos.application.IntegrationTest;
 import kitchenpos.application.dto.MenuCreationRequest;
 import kitchenpos.application.dto.MenuProductWithQuantityRequest;
@@ -25,6 +27,9 @@ class MenuServiceTest extends IntegrationTest {
     @Autowired
     private MenuValidator menuValidator;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Test
     void create_menu_success() {
         // given
@@ -41,10 +46,15 @@ class MenuServiceTest extends IntegrationTest {
                 menuGroup.getId(),
                 productsRequest
         );
-
+        entityManager.flush();
+        System.out.println("=====================================");
+        System.out.println("=====================================");
+        System.out.println("=====================================");
+        System.out.println("=====================================");
+        System.out.println("=====================================");
         // when
         final MenuResult createdMenu = menuService.create(creationRequest);
-
+        entityManager.flush();
         // then
         assertThat(createdMenu.getId()).isNotNull();
     }

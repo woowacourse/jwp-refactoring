@@ -14,6 +14,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderValidator;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
@@ -48,6 +49,8 @@ public abstract class IntegrationTest {
     protected ProductRepository productRepository;
     @Autowired
     protected TableGroupRepository tableGroupRepository;
+    @Autowired
+    protected OrderValidator orderValidator;
 
     protected MenuGroup generateMenuGroup(final String name) {
         final MenuGroup menuGroup = new MenuGroup(name);
@@ -69,7 +72,8 @@ public abstract class IntegrationTest {
                 null,
                 orderTable.getId(),
                 orderStatus,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                orderValidator
         );
         return orderRepository.save(order);
     }

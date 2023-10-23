@@ -10,9 +10,7 @@ import kitchenpos.dao.order.OrderLineItemRepository;
 import kitchenpos.dao.order.OrderRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderMenuExistValidationEvent;
-import kitchenpos.domain.order.OrderTableExistValidationEvent;
-import org.springframework.context.ApplicationEventPublisher;
+import kitchenpos.domain.order.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,26 +19,23 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final ApplicationEventPublisher eventPublisher
-
+            final OrderValidator orderValidator
     ) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.eventPublisher = eventPublisher;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResult create(final OrderCreationRequest request) {
-        final List<OrderItemsWithQuantityRequest> orderLineItemRequests = request.getOrderLineItems();
         final Long orderTableId = request.getOrderTableId();
-        eventPublisher.publishEvent(new OrderTableExistValidationEvent(orderTableId));
-        final Order order = orderRepository.save(new Order(orderTableId));
-        final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, orderLineItemRequests);
+        final Order order = orderRepository.save(new Order(orderTableId, orderValidator));
+        final List<OrderLineItem> orderLineItems = getOrderLineItemsByRequest(order, request.getOrderLineItems());
         orderLineItemRepository.saveAll(orderLineItems);
         return OrderResult.from(order);
     }
@@ -50,7 +45,7 @@ public class OrderService {
             final List<OrderItemsWithQuantityRequest> orderLineItemRequests
     ) {
         final List<Long> menuIds = extractMenuIds(orderLineItemRequests);
-        eventPublisher.publishEvent(new OrderMenuExistValidationEvent(menuIds));
+        orderValidator.validateExistMenus(menuIds);
         return orderLineItemRequests.stream().map(orderItemRequest ->
                 new OrderLineItem(order, orderItemRequest.getMenuId(), orderItemRequest.getQuantity())
         ).collect(Collectors.toList());
