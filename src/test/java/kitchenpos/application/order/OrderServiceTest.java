@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuRepository;
@@ -106,8 +107,8 @@ public class OrderServiceTest {
 
             // expect
             assertThatThrownBy(() -> sut.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("등록되지 않은 테이블에서 주문을 할 수 없습니다.");
+                    .isInstanceOf(NoSuchElementException.class)
+                    .hasMessage("존재하지 않는 테이블입니다.");
         }
 
         @Test
@@ -169,8 +170,8 @@ public class OrderServiceTest {
 
             // expect
             assertThatThrownBy(() -> sut.changeOrderStatus(MAX_VALUE, request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("주문을 찾을 수 없습니다.");
+                    .isInstanceOf(NoSuchElementException.class)
+                    .hasMessage("존재하지 않는 주문입니다.");
         }
 
         @Test

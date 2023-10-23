@@ -37,24 +37,21 @@ public class OrderService {
         if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴를 주문할 수 없습니다.");
         }
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에서 주문을 할 수 없습니다."));
+        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         Order order = request.toOrder(orderTable);
         return OrderResponse.from(orderRepository.save(order));
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
-        return orders.stream()
+        return orderRepository.findAll().stream()
                 .map(OrderResponse::from)
                 .collect(toList());
     }
 
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("주문을 찾을 수 없습니다."));
+        Order order = orderRepository.getById(orderId);
         order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        return OrderResponse.from(order);
+        return OrderResponse.from(orderRepository.save(order));
     }
 }
