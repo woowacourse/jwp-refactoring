@@ -2,11 +2,15 @@ package kitchenpos.domain.menu;
 
 import kitchenpos.exception.MenuException;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -24,8 +28,8 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -39,34 +43,19 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+        this.menuProducts = new MenuProducts();
     }
 
     public void addMenuProducts(List<MenuProduct> menuProducts) {
-        if (isNull(menuProducts) ||
-                isMenuPriceGreaterThanTotalMenuProductsPrice(menuProducts)) {
+        this.menuProducts.add(menuProducts);
+        BigDecimal menuProductsPrice = this.menuProducts.calculateTotalMenuProductsPrice();
+
+        if (price.isGreaterThan(menuProductsPrice)) {
             throw new MenuException("메뉴 가격이 전체 상품 * 수량 가격의 합 보다 큽니다");
         }
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.changeMenu(this);
         }
-        this.menuProducts = menuProducts;
-    }
-
-    private boolean isNull(List<MenuProduct> menuProducts) {
-        return Objects.isNull(menuProducts);
-    }
-
-    private boolean isMenuPriceGreaterThanTotalMenuProductsPrice(List<MenuProduct> menuProducts) {
-        BigDecimal totalMenuProductsPrice = calculateTotalMenuProductsPrice(menuProducts);
-        return price.isGreaterThan(totalMenuProductsPrice);
-    }
-
-    private BigDecimal calculateTotalMenuProductsPrice(List<MenuProduct> menuProducts) {
-        BigDecimal totalMenuProductsPrice = BigDecimal.valueOf(0L);
-        for (MenuProduct menuProduct : menuProducts) {
-            totalMenuProductsPrice = totalMenuProductsPrice.add(menuProduct.calculateTotalPrice());
-        }
-        return totalMenuProductsPrice;
     }
 
     public Long getId() {
@@ -86,6 +75,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 }
