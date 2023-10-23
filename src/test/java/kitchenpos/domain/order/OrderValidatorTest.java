@@ -28,10 +28,9 @@ class OrderValidatorTest {
         // given
         OrderTable orderTable = orderTable(10, true);
         orderTableRepository.save(orderTable);
-        Order order = new Order(orderTable.getId(), List.of(orderLineItem(1L, 10)));
 
         // expect
-        assertThatThrownBy(() -> order.validate(orderValidator))
+        assertThatThrownBy(() -> Order.createWithoutId(orderTable.getId(), List.of(orderLineItem(1L, 10)), orderValidator))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 테이블이 빈 테이블입니다");
     }

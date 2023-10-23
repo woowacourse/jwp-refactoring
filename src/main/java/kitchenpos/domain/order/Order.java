@@ -44,6 +44,12 @@ public class Order {
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
+    public static Order createWithoutId(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator orderValidator) {
+        Order order = new Order(orderTableId, orderLineItems);
+        orderValidator.validate(order);
+        return order;
+    }
+
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("완료 상태의 주문은 변경할 수 없습니다");
@@ -56,11 +62,7 @@ public class Order {
             throw new IllegalArgumentException("주문 항목은 하나 이상이여야 합니다");
         }
     }
-
-    public void validate(OrderValidator orderValidator) {
-        orderValidator.validate(this);
-    }
-
+    
     public Long getId() {
         return id;
     }

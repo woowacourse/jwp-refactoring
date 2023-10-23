@@ -16,18 +16,19 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
+    private final OrderMapper orderMapper;
 
     public OrderService(
             final OrderRepository orderRepository,
-            OrderValidator orderValidator) {
+            OrderValidator orderValidator, OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        Order order = request.toOrder();
-        order.validate(orderValidator);
+        Order order = orderMapper.toOrder(request, orderValidator);
         orderRepository.save(order);
         return OrderResponse.from(order);
     }
