@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.dto.request.MenuProductRequest;
 
 @Entity
 public class MenuProduct {
@@ -39,6 +40,10 @@ public class MenuProduct {
         this.menu = menu;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public static MenuProduct from(final MenuProductRequest request) {
+        return new MenuProduct(null, request.getProductId(), request.getQuantity());
     }
 
     public Long getSeq() {

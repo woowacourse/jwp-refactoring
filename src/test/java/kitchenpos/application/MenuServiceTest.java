@@ -19,6 +19,7 @@ import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequset;
@@ -52,8 +53,8 @@ class MenuServiceTest {
     @Test
     void create() {
         // given
-        final Product product1 = new Product(100L, "후라이드 치킨", BigDecimal.valueOf(16000));
-        final Product product2 = new Product(101L, "양념 치킨", BigDecimal.valueOf(17000));
+        final Product product1 = new Product(100L, "후라이드 치킨", new Price(BigDecimal.valueOf(16000)));
+        final Product product2 = new Product(101L, "양념 치킨", new Price(BigDecimal.valueOf(17000)));
 
         final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
         final MenuRequset menuRequest = new MenuRequset(
@@ -64,7 +65,7 @@ class MenuServiceTest {
                         new MenuProductRequest(product1.getId(), 1),
                         new MenuProductRequest(product2.getId(), 1)
                 ));
-        final Menu menu = new Menu(1L, "후라이드 양념 세트", BigDecimal.valueOf(30000), menuGroup.getId());
+        final Menu menu = new Menu(1L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), menuGroup.getId());
 
         MenuProduct menuProduct1 = new MenuProduct(menu, product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(menu, product2.getId(), 1);
@@ -102,7 +103,7 @@ class MenuServiceTest {
                         new MenuProductRequest(10L, 1),
                         new MenuProductRequest(11L, 1)
                 ));
-        final Menu menu = new Menu(1L, "후라이드 양념 세트", BigDecimal.valueOf(30000), null);
+        final Menu menu = new Menu(1L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), null);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -114,12 +115,12 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        final Product product1 = new Product(100L, "후라이드 치킨", BigDecimal.valueOf(16000));
-        final Product product2 = new Product(101L, "양념 치킨", BigDecimal.valueOf(17000));
+        final Product product1 = new Product(100L, "후라이드 치킨", new Price(BigDecimal.valueOf(16000)));
+        final Product product2 = new Product(101L, "양념 치킨", new Price(BigDecimal.valueOf(17000)));
 
         final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
-        final Menu menu1 = new Menu(1L, "후라이드 양념 세트", BigDecimal.valueOf(30000), menuGroup.getId());
-        final Menu menu2 = new Menu(2L, "후라이드 간장 세트", BigDecimal.valueOf(31000), menuGroup.getId());
+        final Menu menu1 = new Menu(1L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), menuGroup.getId());
+        final Menu menu2 = new Menu(2L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(31000)), menuGroup.getId());
 
         MenuProduct menuProduct1 = new MenuProduct(menu1, product1.getId(), 1);
         MenuProduct menuProduct2 = new MenuProduct(menu2, product2.getId(), 1);

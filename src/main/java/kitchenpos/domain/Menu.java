@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -22,7 +21,7 @@ public class Menu {
     private String name;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Price price;
 
     @Column(nullable = false)
     private Long menuGroupId;
@@ -33,15 +32,30 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+    public Menu(final String name, final Price price, final Long menuGroupId) {
         this(null, name, price, menuGroupId);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
+    }
+
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
+    public void validateMenuPrice(final Price productSum) {
+        if (this.price.isGreaterThan(productSum)) {
+            throw new IllegalArgumentException("메뉴의 가격이 상품 가격들의 합보다 큽니다.");
+        }
     }
 
     public Long getId() {
@@ -52,7 +66,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

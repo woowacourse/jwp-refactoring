@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
@@ -34,7 +35,7 @@ class ProductServiceTest {
     void create() {
         // given
         final ProductRequest productRequest = new ProductRequest("후라이드 치킨", BigDecimal.valueOf(16000));
-        final Product product = new Product(100L, "후라이드 치킨", BigDecimal.valueOf(16000));
+        final Product product = new Product(100L, "후라이드 치킨", new Price(BigDecimal.valueOf(16000)));
 
         given(productRepository.save(any()))
                 .willReturn(product);
@@ -48,8 +49,8 @@ class ProductServiceTest {
     @Test
     void list() {
         // given
-        final Product product1 = new Product(100L, "후라이드 치킨", BigDecimal.valueOf(16000));
-        final Product product2 = new Product(101L, "양념 치킨", BigDecimal.valueOf(17000));
+        final Product product1 = new Product(100L, "후라이드 치킨", new Price(BigDecimal.valueOf(16000)));
+        final Product product2 = new Product(101L, "양념 치킨", new Price(BigDecimal.valueOf(17000)));
         final List<Product> products = List.of(product1, product2);
 
         final List<ProductResponse> productResponses = products.stream()

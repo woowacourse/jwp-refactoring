@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
@@ -19,7 +20,7 @@ public class ProductService {
 
     @Transactional
     public Long create(final ProductRequest request) {
-        final Product product = new Product(request.getName(), request.getPrice());
+        final Product product = new Product(request.getName(), new Price(request.getPrice()));
         final Product saveProduct = productRepository.save(product);
 
         return saveProduct.getId();

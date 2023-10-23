@@ -21,6 +21,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
@@ -58,8 +59,8 @@ class OrderServiceTest {
         // given
         final TableGroup tableGroup = new TableGroup(10L);
         final OrderTable orderTable = new OrderTable(1000L, tableGroup, 2, false);
-        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
-        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", BigDecimal.valueOf(30000), 1L);
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
+        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
         final OrderRequest orderRequest = new OrderRequest(
                 orderTable.getId(),
@@ -105,7 +106,7 @@ class OrderServiceTest {
         // given
         final Order order = new Order(1L, 100L, OrderStatus.COOKING.name());
 
-        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
         final OrderRequest orderRequest = new OrderRequest(
                 100L,
@@ -131,8 +132,8 @@ class OrderServiceTest {
         // given
         final Order order = new Order(1L, 100L, OrderStatus.COOKING.name());
 
-        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", BigDecimal.valueOf(30000), 1L);
-        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", BigDecimal.valueOf(30000), 1L);
+        final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
+        final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
         final OrderRequest orderRequest = new OrderRequest(
                 100L,
