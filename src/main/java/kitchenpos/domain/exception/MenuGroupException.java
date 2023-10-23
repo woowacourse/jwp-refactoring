@@ -14,4 +14,13 @@ public abstract class MenuGroupException extends KitchenPosException {
             super(NOT_EXISTS_MENU_GROUP_MESSAGE + menuGroupId);
         }
     }
+
+    public static class InvalidMenuGroupNameException extends MenuGroupException {
+
+        private static final String INVALID_MENU_GROUP_NAME_MESSAGE = "메뉴 그룹 이름은 반드시 존재해야합니다.";
+
+        public InvalidMenuGroupNameException() {
+            super(INVALID_MENU_GROUP_NAME_MESSAGE);
+        }
+    }
 }

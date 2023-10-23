@@ -11,7 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.exception.MenuException.InvalidMenuNameException;
 import kitchenpos.domain.exception.MenuException.PriceMoreThanProductsException;
+import org.springframework.lang.NonNull;
 
 @Entity
 public class Menu {
@@ -20,6 +22,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
+    @NonNull
     private String name;
     @Embedded
     private Price price;
@@ -46,10 +49,17 @@ public class Menu {
                           final BigDecimal price,
                           final MenuGroup menuGroup,
                           final List<MenuProduct> menuProducts) {
+        validateName(name);
         Price menuPrice = Price.from(price);
         validateTotalPrice(menuPrice, menuProducts);
 
         return new Menu(name, menuPrice, menuGroup, menuProducts);
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidMenuNameException();
+        }
     }
 
     private static void validateTotalPrice(final Price price, final List<MenuProduct> menuProducts) {

@@ -25,4 +25,13 @@ public abstract class MenuException extends KitchenPosException {
             super(NOT_EXISTS_PRODUCT_MESSAGE);
         }
     }
+
+    public static class InvalidMenuNameException extends MenuException {
+
+        private static final String INVALID_MENU_NAME_MESSAGE = "메뉴 이름은 반드시 존재해야합니다.";
+
+        public InvalidMenuNameException() {
+            super(INVALID_MENU_NAME_MESSAGE);
+        }
+    }
 }

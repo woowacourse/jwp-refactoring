@@ -24,6 +24,6 @@ public class OrderLineItemRequest {
     }
 
     public OrderLineItem toEntity() {
-        return new OrderLineItem(menuId, quantity);
+        return OrderLineItem.of(menuId, quantity);
     }
 }

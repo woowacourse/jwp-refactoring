@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.exception.ProductException.InvalidProductNameException;
+import org.springframework.lang.NonNull;
 
 @Entity
 public class Product {
@@ -15,6 +17,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
+    @NonNull
     private String name;
     @Embedded
     private Price price;
@@ -28,7 +31,14 @@ public class Product {
     }
 
     public static Product of(final String name, final BigDecimal price) {
+        validateName(name);
         return new Product(name, Price.from(price));
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new InvalidProductNameException();
+        }
     }
 
     public Long getId() {

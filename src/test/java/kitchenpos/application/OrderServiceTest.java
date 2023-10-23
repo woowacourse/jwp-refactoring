@@ -51,8 +51,8 @@ class OrderServiceTest {
     private OrderTableRepository orderTableRepository;
 
 
-    private final OrderLineItem orderLineItem1 = new OrderLineItem(1L, 10);
-    private final OrderLineItem orderLineItem2 = new OrderLineItem(1L, 10);
+    private final OrderLineItem orderLineItem1 = OrderLineItem.of(1L, 10);
+    private final OrderLineItem orderLineItem2 = OrderLineItem.of(1L, 10);
     private final OrderTable orderTable = new OrderTable(10);
     private final Order order = Order.of(orderTable, List.of(orderLineItem1, orderLineItem2));
 
