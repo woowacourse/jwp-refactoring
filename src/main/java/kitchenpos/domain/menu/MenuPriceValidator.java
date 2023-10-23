@@ -25,7 +25,7 @@ public class MenuPriceValidator implements MenuValidator {
     }
 
     private void validatePrice(Menu menu) {
-        BigDecimal totalPrice = menu.getMenuProducts().getMenuProducts().stream()
+        BigDecimal totalPrice = menu.getMenuProducts().stream()
                 .map(this::totalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal menuPrice = menu.getPrice();

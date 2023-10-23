@@ -34,7 +34,7 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<OrderTableIdRequest> orderTableRequests = request.getOrderTables();
 
-        // TODO: 분리
+        // TODO : 여기 맘에 안듬
         final List<Long> orderTableIds = orderTableRequests.stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());

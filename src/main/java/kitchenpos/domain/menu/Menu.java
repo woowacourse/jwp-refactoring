@@ -1,30 +1,25 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.vo.Money;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-public class Menu {
+public class Menu extends AbstractAggregateRoot<Menu> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Money price;
     private Long menuGroupId;
-    @Embedded
-    private MenuProducts menuProducts;
 
-    protected Menu() {
-    }
+    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu(String name, BigDecimal price, Long menuGroup) {
         this(name, price, menuGroup, new ArrayList<>());
@@ -34,12 +29,13 @@ public class Menu {
         this(null, name, price, menuGroup, menuProducts);
     }
 
+    @PersistenceCreator
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = new Money(price);
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new MenuProducts(menuProducts);
+        this.menuProducts = new ArrayList<>(menuProducts);
     }
 
     public static Menu createWithoutId(String name, BigDecimal price, Long menuGroup, List<MenuProduct> menuProducts, MenuValidator menuValidator) {
@@ -64,7 +60,7 @@ public class Menu {
         return menuGroupId;
     }
 
-    public MenuProducts getMenuProducts() {
+    public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 

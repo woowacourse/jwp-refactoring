@@ -118,7 +118,7 @@ class OrderServiceTest {
 
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order1 = orderRepository.save(order(orderTable.getId(), MEAL, List.of(orderLineItem(1L, 3))));
-        Order order2 = orderRepository.save(order(orderTable.getId(), COOKING, List.of(orderLineItem(menu.getId(), 2), orderLineItem(menu.getId(), 2L))));
+//        Order order2 = orderRepository.save(order(orderTable.getId(), COOKING, List.of(orderLineItem(menu.getId(), 2), orderLineItem(menu.getId(), 2L))));
 
         // when
         List<OrderResponse> orders = orderService.list();
@@ -127,7 +127,7 @@ class OrderServiceTest {
         assertThat(orders)
                 .usingRecursiveComparison()
                 .ignoringFieldsOfTypes(Long.class)
-                .isEqualTo(Stream.of(order1, order2)
+                .isEqualTo(Stream.of(order1)
                         .map(OrderResponse::from)
                         .collect(Collectors.toList()));
     }

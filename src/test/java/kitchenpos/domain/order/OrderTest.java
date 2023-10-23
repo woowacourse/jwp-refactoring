@@ -27,9 +27,8 @@ class OrderTest {
     @Test
     void 주문의_상태를_변경할_때_완료_상태면_예외가_발생한다() {
         // given
-        OrderTable orderTable = orderTable(10, false);
         OrderLineItem orderLineItem = orderLineItem(1L, 10);
-        Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION, List.of(orderLineItem));
+        Order order = new Order(1L, OrderStatus.COMPLETION, List.of(orderLineItem));
 
         // expect
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
@@ -40,8 +39,7 @@ class OrderTest {
     @Test
     void 주문_상태를_변경한다() {
         // given
-        OrderTable orderTable = orderTable(10, false);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING, List.of(orderLineItem(1L, 10)));
+        Order order = new Order(1L, OrderStatus.COOKING, List.of(orderLineItem(1L, 10)));
 
         // when
         order.changeOrderStatus(OrderStatus.MEAL);

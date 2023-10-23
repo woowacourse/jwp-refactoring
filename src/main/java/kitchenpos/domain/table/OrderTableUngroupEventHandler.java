@@ -25,6 +25,7 @@ public class OrderTableUngroupEventHandler {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(event.getTableGroupId());
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup(tableValidator);
+            orderTableRepository.save(orderTable);
         }
     }
 }

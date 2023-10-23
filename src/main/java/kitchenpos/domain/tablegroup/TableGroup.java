@@ -1,29 +1,23 @@
 package kitchenpos.domain.tablegroup;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
 public class TableGroup extends AbstractAggregateRoot<TableGroup> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
-
-    protected TableGroup() {
-    }
 
     public TableGroup(LocalDateTime createdDate) {
         this(null, createdDate);
     }
 
+    @PersistenceCreator
     public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;

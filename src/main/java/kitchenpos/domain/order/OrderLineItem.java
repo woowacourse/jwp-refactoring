@@ -1,25 +1,19 @@
 package kitchenpos.domain.order;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 
-@Entity
 public class OrderLineItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     private Long menuId;
     private long quantity;
-
-    protected OrderLineItem() {
-    }
 
     public OrderLineItem(Long menuId, long quantity) {
         this(null, menuId, quantity);
     }
 
+    @PersistenceCreator
     public OrderLineItem(Long seq, Long menuId, long quantity) {
         this.seq = seq;
         this.menuId = menuId;

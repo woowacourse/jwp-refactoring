@@ -1,27 +1,18 @@
 package kitchenpos.domain.table;
 
 import kitchenpos.domain.vo.NumberOfGuest;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.Objects;
 
-@Entity
 public class OrderTable extends AbstractAggregateRoot<OrderTable> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "table_group_id")
     private Long tableGroupId;
     private NumberOfGuest numberOfGuests;
     private boolean empty;
-
-    public OrderTable() {
-    }
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
@@ -31,6 +22,7 @@ public class OrderTable extends AbstractAggregateRoot<OrderTable> {
         this(null, tableGroupId, numberOfGuests, empty);
     }
 
+    @PersistenceCreator
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
