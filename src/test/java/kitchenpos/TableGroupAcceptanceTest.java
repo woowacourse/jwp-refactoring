@@ -4,6 +4,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -28,15 +29,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블_그룹을_생성한다() {
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.changeOrderTables(
-                    List.of(
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블()),
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
-                    )
-            );
+            final OrderTable table1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
+            final OrderTable table2 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
 
-            final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(tableGroup);
+            final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(new TableGroupCreateRequest(List.of(table1.getId(), table2.getId())));
             final TableGroup result = response.jsonPath().getObject("", TableGroup.class);
 
             assertAll(
@@ -44,47 +40,28 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                     () -> assertThat(result.getOrderTables())
                             .usingRecursiveComparison()
                             .ignoringFields("id", "tableGroupId", "empty")
-                            .isEqualTo(tableGroup.getOrderTables())
+                            .isEqualTo(List.of(table1, table2))
             );
         }
 
         @Test
         void 테이블_그룹으로_묶이는_테이블은_다른_그룹으로_이미_묶인_테이블이_아니다() {
-            final TableGroup tableGroup1 = new TableGroup();
-            final OrderTable orderTable1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
-            tableGroup1.changeOrderTables(
-                    List.of(
-                            orderTable1,
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
-                    )
-            );
+            final OrderTable table1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
+            final OrderTable table2 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
+            final OrderTable table3 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
 
-            테이블_그룹_생성_요청(tableGroup1);
-
-            final TableGroup tableGroup2 = new TableGroup();
-            tableGroup2.changeOrderTables(
-                    List.of(
-                            orderTable1,
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
-                    )
-            );
-
-            final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(tableGroup2);
+            테이블_그룹_생성_요청(new TableGroupCreateRequest(List.of(table1.getId(), table2.getId())));
+            final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(new TableGroupCreateRequest(List.of(table1.getId(), table3.getId())));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
 
         @Test
         void 테이블_그룹으로_묶이는_테이블은_모두_비어있는_상태여야한다() {
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.changeOrderTables(
-                    List.of(
-                            테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블()),
-                            테이블_생성_요청하고_테이블_반환(EMPTY_테이블())
-                    )
-            );
+            final OrderTable table1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
+            final OrderTable table2 = 테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블());
 
-            final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(tableGroup);
+            final ExtractableResponse<Response> response = 테이블_그룹_생성_요청(new TableGroupCreateRequest(List.of(table1.getId(), table2.getId())));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -95,17 +72,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블_그룹을_해제한다() {
-            final TableGroup tableGroup = new TableGroup();
-            final OrderTable orderTable1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
-            final OrderTable orderTable2 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
-            tableGroup.changeOrderTables(
-                    List.of(
-                            orderTable1,
-                            orderTable2
-                    )
-            );
+            final OrderTable table1 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
+            final OrderTable table2 = 테이블_생성_요청하고_테이블_반환(EMPTY_테이블());
 
-            final Long tableGroupId = 테이블_그룹_생성_요청하고_아이디_반환(tableGroup);
+            final Long tableGroupId = 테이블_그룹_생성_요청하고_아이디_반환(new TableGroupCreateRequest(List.of(table1.getId(), table2.getId())));
 
             final ExtractableResponse<Response> response = 테이블_그룹_삭제_요청(tableGroupId);
 

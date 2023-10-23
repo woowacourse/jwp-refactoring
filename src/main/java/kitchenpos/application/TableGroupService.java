@@ -35,16 +35,12 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
-        final TableGroup tableGroup = request.toTableGroup();
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+        final List<Long> orderTableIds = request.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -53,8 +49,6 @@ public class TableGroupService {
                 throw new IllegalArgumentException();
             }
         }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 

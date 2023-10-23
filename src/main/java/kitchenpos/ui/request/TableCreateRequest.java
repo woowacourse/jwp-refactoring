@@ -4,40 +4,31 @@ import kitchenpos.domain.OrderTable;
 
 public class TableCreateRequest {
 
-    private final Long id;
-    private final Long tableGroupId;
-    private final Integer numberOfGuests;
-    private final boolean empty;
+    private Integer numberOfGuests;
+    private Boolean empty;
 
-    public TableCreateRequest(final Long id, final Long tableGroupId, final Integer numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroupId = tableGroupId;
+    public TableCreateRequest(final Integer numberOfGuests, final Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
+    public TableCreateRequest() {
+    }
+
     public OrderTable toOrderTable() {
         return new OrderTable(
-                id,
-                tableGroupId,
+                null,
+                null,
                 numberOfGuests,
                 empty
         );
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public Boolean getEmpty() {
         return empty;
     }
 }

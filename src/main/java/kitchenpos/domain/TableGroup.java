@@ -29,14 +29,14 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
+    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
+    }
+
     private static void validateOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
     }
 
     public TableGroup() {
