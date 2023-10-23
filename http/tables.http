@@ -31,7 +31,7 @@ PUT localhost:8080/api/tables/1/empty
 Content-Type: application/json
 
 {
-  "empty": true
+  "empty": false
 }
 
 ###
@@ -39,7 +39,7 @@ PUT localhost:8080/api/tables/2/empty
 Content-Type: application/json
 
 {
-  "empty": true
+  "empty": false
 }
 
 ###

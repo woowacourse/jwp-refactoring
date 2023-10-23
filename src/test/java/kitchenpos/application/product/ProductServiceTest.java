@@ -1,9 +1,7 @@
 package kitchenpos.application.product;
 
 import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.application.product.ProductService;
 import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.support.ServiceTest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -22,8 +20,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 class ProductServiceTest {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private ProductRepository productRepository;
 
     @Test
     void 상품을_생성한다() {

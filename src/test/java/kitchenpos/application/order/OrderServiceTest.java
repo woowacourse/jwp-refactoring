@@ -112,13 +112,8 @@ class OrderServiceTest {
     @Test
     void 주문을_조회한다() {
         // given
-
-        MenuGroup menuGroup = menuGroupRepository.save(menuGroup("menuGroup"));
-        Menu menu = menuRepository.save(menu("메뉴", 10000L, menuGroup.getId(), List.of()));
-
         OrderTable orderTable = orderTableRepository.save(orderTable(10, false));
         Order order1 = orderRepository.save(order(orderTable.getId(), MEAL, List.of(orderLineItem(1L, 3))));
-//        Order order2 = orderRepository.save(order(orderTable.getId(), COOKING, List.of(orderLineItem(menu.getId(), 2), orderLineItem(menu.getId(), 2L))));
 
         // when
         List<OrderResponse> orders = orderService.list();
@@ -171,5 +166,4 @@ class OrderServiceTest {
             softly.assertThat(changedOrder.getId()).isEqualTo(savedOrder.getId());
         });
     }
-
 }

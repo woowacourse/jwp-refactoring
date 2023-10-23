@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderTableRepository extends Repository<OrderTable, Long> {
+
     OrderTable save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);
@@ -15,6 +16,4 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
-
-    <S extends OrderTable> List<S> saveAll(Iterable<S> orderTables);
 }
