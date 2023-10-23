@@ -51,7 +51,14 @@ public class Order {
     }
 
     public static Order from(final OrderTable orderTable) {
+        validateOrderTable(orderTable);
         return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    }
+
+    private static void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new OrderException.CannotOrderStateByOrderTableEmptyException();
+        }
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

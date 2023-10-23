@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
+import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -105,8 +106,8 @@ class TableGroupServiceTest extends ServiceTest {
         @DisplayName("주문 테이블이 존재하고, 주문 상태가 조리 or 식사이면 예외가 발생한다.")
         void throws_existsOrderTableAndOrderStatusIsMealOrCooking() {
             // given
-            final OrderTable orderTable1 = ORDER_TABLE1();
-            final OrderTable orderTable2 = ORDER_TABLE1();
+            final OrderTable orderTable1 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
+            final OrderTable orderTable2 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
 
             final TableGroup tableGroup = TABLE_GROUP1();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);

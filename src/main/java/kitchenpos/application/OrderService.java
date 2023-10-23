@@ -44,7 +44,6 @@ public class OrderService {
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(OrderTableException.NotFoundOrderTableException::new);
-        OrderValidator.validateOrderTable(orderTable);
 
         final Order order = Order.from(orderTable);
         final Order savedOrder = orderRepository.save(order);

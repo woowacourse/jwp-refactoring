@@ -9,10 +9,4 @@ public class OrderValidator {
             throw new OrderException.NotFoundOrderLineItemMenuExistException();
         }
     }
-
-    public static void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new OrderException.CannotOrderStateByOrderTableEmptyException();
-        }
-    }
 }

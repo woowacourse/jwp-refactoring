@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_CHANGE_EMPTY_REQUEST;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_CHANGE_GUEST_REQUEST;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_CREATE_REQUEST;
@@ -121,7 +120,7 @@ class TableServiceTest extends ServiceTest {
         void throws_existsByOrderTableIdAndOrderStatusIn() {
             // given
             final OrderTableChangeEmptyRequest request = ORDER_TABLE1_CHANGE_EMPTY_REQUEST();
-            final OrderTable orderTable = ORDER_TABLE1();
+            final OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable);
 
