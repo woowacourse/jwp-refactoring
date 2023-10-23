@@ -1,45 +1,43 @@
 package kitchenpos.application;
 
-import static kitchenpos.common.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
-import static kitchenpos.common.TableGroupFixtures.TABLE_GROUP1_ORDER_TABLES;
+import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
+import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
+import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
+import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1_CREATE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.any;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.common.ServiceTest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.TableGroupException;
-import kitchenpos.exception.TableGroupException.CannotCreateTableGroupStateException;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
 
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
-    @Mock
-    private TableGroupDao tableGroupDao;
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Nested
     @DisplayName("테이블 그룹 생성 시")
@@ -49,119 +47,24 @@ class TableGroupServiceTest {
         @DisplayName("생성에 성공한다.")
         void success() {
             // given
-            TableGroup tableGroup = TABLE_GROUP1_CREATE_REQUEST();
-            List<OrderTable> orderTables = tableGroup.getOrderTables();
-            List<Long> ids = orderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toUnmodifiableList());
+            final TableGroupCreateRequest request = TABLE_GROUP1_CREATE_REQUEST();
 
-            orderTables.forEach(orderTable -> orderTable.setEmpty(true));
-            BDDMockito.given(orderTableDao.findAllByIdIn(ids))
-                    .willReturn(orderTables);
-
-            TableGroup tableGroupToSave = TABLE_GROUP1_CREATE_REQUEST();
-            tableGroupToSave.setCreatedDate(LocalDateTime.now());
-            tableGroupToSave.setId(1L);
-            BDDMockito.given(tableGroupDao.save(any(TableGroup.class)))
-                    .willReturn(tableGroupToSave);
+            final OrderTable orderTable1 = ORDER_TABLE1();
+            final OrderTable orderTable2 = ORDER_TABLE1();
+            orderTableRepository.save(orderTable1);
+            orderTableRepository.save(orderTable2);
 
             // when
-            TableGroup savedtableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse response = tableGroupService.create(request);
+            final List<OrderTableResponse> orderTableResponses = response.getOrderTables().getOrderTables();
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(savedtableGroup.getId()).isNotNull();
-                softly.assertThat(savedtableGroup.getCreatedDate()).isNotNull();
-                softly.assertThat(savedtableGroup.getOrderTables())
-                        .usingRecursiveFieldByFieldElementComparator()
-                        .isEqualTo(orderTables);
+                softly.assertThat(response.getId()).isNotNull();
+                softly.assertThat(response.getCreatedDate()).isNotNull();
+                softly.assertThat(orderTableResponses.get(0).getTableGroup()).isNotNull();
+                softly.assertThat(orderTableResponses.get(1).getTableGroup()).isNotNull();
             });
-        }
-
-        @Test
-        @DisplayName("주문 테이블 목록이 비어있거나 2개 미만이면 예외가 발생한다.")
-        void throws_orderTablesIsEmpty() {
-            // given
-            final TableGroup emptyTableGroup = new TableGroup();
-            final TableGroup size1TableGroup = new TableGroup();
-            size1TableGroup.setOrderTables(List.of(new OrderTable()));
-
-            // when & then
-            assertSoftly(softly -> {
-                softly.assertThatThrownBy(() -> tableGroupService.create(emptyTableGroup))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("[ERROR] 주문 테이블 목록이 비어있거나 2개 미만일 수 없습니다.");
-
-                softly.assertThatThrownBy(() -> tableGroupService.create(size1TableGroup))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("[ERROR] 주문 테이블 목록이 비어있거나 2개 미만일 수 없습니다.");
-            });
-        }
-
-        @Test
-        @DisplayName("요청받은 주문 테이블 사이즈와 저장된 주문 테이블 사이즈가 다르면 예외가 발생한다.")
-        void throws_notSameOrderTableSize() {
-            // given
-            TableGroup tableGroupRequest = TABLE_GROUP1_CREATE_REQUEST();
-
-            List<OrderTable> orderTables = TABLE_GROUP1_ORDER_TABLES();
-            List<Long> ids = orderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toList());
-
-            List<OrderTable> notMatchedOrderTables = List.of(new OrderTable());
-            BDDMockito.given(orderTableDao.findAllByIdIn(ids))
-                    .willReturn(notMatchedOrderTables);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                    .isInstanceOf(TableGroupException.NotFoundOrderTableExistException.class)
-                    .hasMessage("[ERROR] 주문 테이블 목록 중 존재하지 않는 주문 테이블이 있습니다.");
-        }
-
-        @Test
-        @DisplayName("찾은 주문 테이블이 비어있지 않은 상태이면 예외가 발생한다.")
-        void throws_orderTableIsEmpty() {
-            // given
-            TableGroup tableGroup = TABLE_GROUP1_CREATE_REQUEST();
-            tableGroup.setId(1L);
-            List<OrderTable> orderTables = tableGroup.getOrderTables();
-            List<Long> ids = orderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toUnmodifiableList());
-
-            orderTables.forEach(orderTable -> orderTable.setEmpty(false));
-            BDDMockito.given(orderTableDao.findAllByIdIn(ids))
-                    .willReturn(orderTables);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(CannotCreateTableGroupStateException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않을 때 테이블 그룹을 생성할 수 없습니다.");
-        }
-
-        @Test
-        @DisplayName("찾은 주문 테이블의 테이블 그룹이 존재하면 예외가 발생한다.")
-        void throws_AlreadyExistTableGroup() {
-            // given
-            TableGroup tableGroup = TABLE_GROUP1_CREATE_REQUEST();
-            tableGroup.setId(1L);
-            List<OrderTable> orderTables = tableGroup.getOrderTables();
-            List<Long> ids = orderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toUnmodifiableList());
-
-            orderTables.forEach(orderTable -> {
-                orderTable.setEmpty(true);
-                orderTable.setTableGroupId(1L);
-            });
-            BDDMockito.given(orderTableDao.findAllByIdIn(ids))
-                    .willReturn(orderTables);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                    .isInstanceOf(CannotCreateTableGroupStateException.class)
-                    .hasMessage("[ERROR] 주문 테이블이 빈 상태가 아니거나 테이블 그룹이 존재하지 않을 때 테이블 그룹을 생성할 수 없습니다.");
         }
     }
 
@@ -173,30 +76,28 @@ class TableGroupServiceTest {
         @DisplayName("해제에 성공한다.")
         void success() {
             // given
-            final Long tableGroupId = 1L;
+            final OrderTable orderTable1 = ORDER_TABLE1();
+            final OrderTable orderTable2 = ORDER_TABLE1();
 
-            TableGroup tableGroup = TABLE_GROUP1_CREATE_REQUEST();
-            List<OrderTable> orderTables = tableGroup.getOrderTables();
-            orderTables.forEach(orderTable -> orderTable.setTableGroupId(tableGroupId));
-            List<Long> ids = orderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toUnmodifiableList());
-            List<String> orderStatuses = List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+            TableGroup tableGroup = TABLE_GROUP1();
+            TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-            BDDMockito.given(orderTableDao.findAllByTableGroupId(tableGroupId))
-                    .willReturn(orderTables);
+            orderTable1.confirmTableGroup(savedTableGroup);
+            orderTable2.confirmTableGroup(savedTableGroup);
 
-            BDDMockito.given(orderDao.existsByOrderTableIdInAndOrderStatusIn(ids, orderStatuses))
-                    .willReturn(false);
+            orderTableRepository.save(orderTable1);
+            orderTableRepository.save(orderTable2);
 
             // when
-            tableGroupService.ungroup(tableGroupId);
+            tableGroupService.ungroup(savedTableGroup.getId());
+            final TableGroup upGrouppedTableGroup = tableGroupRepository.findById(savedTableGroup.getId()).get();
+            final List<OrderTable> orderTables = upGrouppedTableGroup.getOrderTables();
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderTables.get(0).getTableGroupId()).isNull();
+                softly.assertThat(orderTables.get(0).getTableGroup()).isNull();
                 softly.assertThat(orderTables.get(0).isEmpty()).isFalse();
-                softly.assertThat(orderTables.get(1).getTableGroupId()).isNull();
+                softly.assertThat(orderTables.get(1).getTableGroup()).isNull();
                 softly.assertThat(orderTables.get(1).isEmpty()).isFalse();
             });
         }
@@ -205,25 +106,23 @@ class TableGroupServiceTest {
         @DisplayName("주문 테이블이 존재하고, 주문 상태가 조리 or 식사이면 예외가 발생한다.")
         void throws_existsOrderTableAndOrderStatusIsMealOrCooking() {
             // given
-            final Long tableGroupId = 1L;
+            final OrderTable orderTable1 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
+            final OrderTable orderTable2 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
 
-            TableGroup tableGroup = TABLE_GROUP1_CREATE_REQUEST();
-            List<OrderTable> orderTables = tableGroup.getOrderTables();
-            orderTables.forEach(orderTable -> orderTable.setTableGroupId(tableGroupId));
+            final TableGroup tableGroup = TABLE_GROUP1();
+            final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-            List<Long> ids = orderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toUnmodifiableList());
-            List<String> orderStatuses = List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+            orderTable1.confirmTableGroup(savedTableGroup);
+            orderTable2.confirmTableGroup(savedTableGroup);
 
-            BDDMockito.given(orderTableDao.findAllByTableGroupId(tableGroupId))
-                    .willReturn(orderTables);
+            final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-            BDDMockito.given(orderDao.existsByOrderTableIdInAndOrderStatusIn(ids, orderStatuses))
-                    .willReturn(true);
+            final Order order = Order.from(savedOrderTable1);
+            order.changeStatus(OrderStatus.MEAL);
+            orderRepository.save(order);
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(TableGroupException.CannotUngroupStateByOrderStatusException.class)
                     .hasMessage("[ERROR] 주문 테이블의 주문 상태가 조리중이거나 식사중일 때 테이블 그룹을 해제할 수 없습니다.");
         }

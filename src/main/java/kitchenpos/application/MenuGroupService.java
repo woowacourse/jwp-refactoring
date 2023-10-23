@@ -1,26 +1,28 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import javax.transaction.Transactional;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menugroup.MenuGroupCreateRequest;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
+import kitchenpos.dto.menugroup.MenuGroupsResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class MenuGroupService {
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
-        return menuGroupDao.save(menuGroup);
+    public MenuGroupResponse create(final MenuGroupCreateRequest request) {
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(request.getName()));
+        return MenuGroupResponse.from(savedMenuGroup);
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupDao.findAll();
+    public MenuGroupsResponse list() {
+        return MenuGroupsResponse.from(menuGroupRepository.findAll());
     }
 }
