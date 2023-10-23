@@ -8,7 +8,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.NotExistMenuGroupException;
 import kitchenpos.domain.exception.NotExistProductException;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -24,17 +23,13 @@ public class MenuService {
     
     private final ProductRepository productRepository;
     
-    private final MenuProductRepository menuProductRepository;
-    
     private final MenuRepository menuRepository;
     
     public MenuService(final MenuGroupRepository menuGroupRepository,
                        final ProductRepository productRepository,
-                       final MenuProductRepository menuProductRepository,
                        final MenuRepository menuRepository) {
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
-        this.menuProductRepository = menuProductRepository;
         this.menuRepository = menuRepository;
     }
     
@@ -47,9 +42,7 @@ public class MenuService {
                 menuGroup,
                 menuProducts);
         
-        Menu savedMenu = menuRepository.save(menu);
-        saveMenuProduct(menu, menuProducts);
-        return savedMenu;
+        return menuRepository.save(menu);
     }
     
     private MenuGroup getMenuGroup(final MenuCreateRequest request) {
@@ -70,15 +63,6 @@ public class MenuService {
     private Product getProduct(final Long productId) {
         return productRepository.findById(productId)
                                 .orElseThrow(() -> new NotExistProductException("존재하지 않는 상품입니다"));
-    }
-    
-    private void saveMenuProduct(final Menu menu, final List<MenuProduct> menuProducts) {
-        List<MenuProduct> menuProductsWithMain = menuProducts.stream()
-                                                             .map(menuProduct -> new MenuProduct(menu,
-                                                                     menuProduct.getProduct(),
-                                                                     menuProduct.getQuantity()))
-                                                             .collect(Collectors.toList());
-        menuProductRepository.saveAll(menuProductsWithMain);
     }
     
     

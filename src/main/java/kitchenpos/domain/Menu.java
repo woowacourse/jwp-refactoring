@@ -22,8 +22,18 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
     
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts;
+    
+    public static Menu of(final String name,
+                          final BigDecimal menuPrice,
+                          final MenuGroup menuGroup,
+                          final List<MenuProduct> menuProducts) {
+        return new Menu(name,
+                new MenuPrice(menuPrice),
+                menuGroup,
+                menuProducts);
+    }
     
     public Menu(final String menuName,
                 final MenuPrice menuPrice,
@@ -43,16 +53,9 @@ public class Menu {
         this.menuPrice = menuPrice;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-    }
-    
-    public static Menu of(final String name,
-                          final BigDecimal menuPrice,
-                          final MenuGroup menuGroup,
-                          final List<MenuProduct> menuProducts) {
-        return new Menu(name,
-                new MenuPrice(menuPrice),
-                menuGroup,
-                menuProducts);
+        this.menuProducts.forEach(menuProduct -> new MenuProduct(this,
+                menuProduct.getProduct(),
+                menuProduct.getQuantity()));
     }
     
     private static void validate(final MenuPrice menuPrice,

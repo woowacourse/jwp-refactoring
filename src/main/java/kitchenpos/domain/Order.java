@@ -30,7 +30,7 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
     
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems;
     
     public Order(final OrderTable orderTable,
@@ -44,12 +44,15 @@ public class Order {
                  final OrderStatus orderStatus,
                  final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        validateOrderLineItemsEmpty(orderLineItems);
+        validate(orderTable, orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+        this.orderLineItems.forEach(orderLineItem -> new OrderLineItem(this,
+                              orderLineItem.getMenu(),
+                              orderLineItem.getQuantity()));
     }
     
     private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {

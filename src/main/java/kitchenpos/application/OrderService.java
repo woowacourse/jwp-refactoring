@@ -46,9 +46,7 @@ public class OrderService {
         Order order = new Order(orderTable,
                 orderStatus,
                 orderLineItems);
-        Order savedOrder = orderRepository.save(order);
-        saveOrderLineItems(order, orderLineItems);
-        return savedOrder;
+        return orderRepository.save(order);
     }
     
     private List<OrderLineItem> getOrderLineItems(final List<OrderLineItemRequest> request) {
