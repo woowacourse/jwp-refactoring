@@ -35,6 +35,10 @@ public class MenuProduct {
         this.quantity = quantity;
     }
     
+    public ProductPrice getProductPrice() {
+        return this.product.multiplyQuantity(this.quantity);
+    }
+    
     public Long getSeq() {
         return seq;
     }

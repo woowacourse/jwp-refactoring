@@ -1,14 +1,23 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.InvalidProductPriceException;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class Price {
+public class MenuPrice {
     
     private final BigDecimal price;
     
-    public Price(final BigDecimal price) {
+    public MenuPrice(final BigDecimal price) {
+        validate(price);
         this.price = price;
+    }
+    
+    private void validate(final BigDecimal menuPrice) {
+        if (Objects.isNull(menuPrice) || menuPrice.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidProductPriceException("메뉴 가격은 0원 이상이어야 합니다");
+        }
     }
     
     public BigDecimal getPrice() {
@@ -19,8 +28,8 @@ public class Price {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Price price1 = (Price) o;
-        return price.equals(price1.price);
+        MenuPrice menuPrice1 = (MenuPrice) o;
+        return price.equals(menuPrice1.price);
     }
     
     @Override
