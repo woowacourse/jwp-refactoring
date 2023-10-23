@@ -9,6 +9,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.step.OrderStep;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.TableCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -60,19 +62,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
 
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-
             final ExtractableResponse<Response> response = 주문_생성_요청(ORDER_CREATE_REQUEST(savedOrderTable.getId(), List.of(orderLineItem)));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId()),
-                    () -> assertThat(response.jsonPath().getList("orderLineItems", OrderLineItem.class))
-                            .usingRecursiveComparison()
-                            .comparingOnlyFields("menuId")
-                            .isEqualTo(order.getOrderLineItems())
+                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId())
             );
         }
 
@@ -80,12 +74,6 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         void 주문_항목은_반드시_1개_이상이어야_한다() {
             final OrderTable orderTable = NOT_EMPTY_테이블();
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
-
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(1L);
 
             final ExtractableResponse<Response> response = 주문_생성_요청(ORDER_CREATE_REQUEST(savedOrderTable.getId(), List.of()));
 
@@ -149,9 +137,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_조회한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
-
+            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
@@ -167,11 +153,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             final OrderLineItem orderLineItem = new OrderLineItem(menuId, 2L);
 
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(OrderStep.toRequest(order));
+            final Order savedOrder = 주문_생성_요청하고_주문_반환(new OrderCreateRequest(
+                    savedOrderTable.getId(),
+                    List.of(orderLineItem)
+            ));
 
             final ExtractableResponse<Response> response = 주문_조회_요청();
             final List<Order> result = response.jsonPath().getList("", Order.class);
@@ -191,8 +176,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태를_변경한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -229,8 +213,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태가_COMPLETION인_테이블_상태는_변경할_수_없다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);

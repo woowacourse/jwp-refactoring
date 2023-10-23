@@ -28,7 +28,6 @@ public class OrderStep {
     public static OrderCreateRequest toRequest(final Order order) {
         return new OrderCreateRequest(
                 order.getOrderTableId(),
-                order.getOrderStatus(),
                 order.getOrderedTime(),
                 order.getOrderLineItems()
         );

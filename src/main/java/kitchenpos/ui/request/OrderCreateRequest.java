@@ -13,22 +13,22 @@ public class OrderCreateRequest {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public OrderCreateRequest(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    public OrderCreateRequest(final Long orderTableId, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
+        this.orderStatus = "COOKING";
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
     public OrderCreateRequest(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(orderTableId, null, null, orderLineItems);
+        this(orderTableId, null, orderLineItems);
     }
 
     public OrderCreateRequest() {
     }
 
     public Order toOrder() {
-        return new Order(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+        return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public Long getOrderTableId() {
