@@ -31,12 +31,6 @@ public class TableGroup {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
-
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     private void addOrderTable(final OrderTable orderTable) {

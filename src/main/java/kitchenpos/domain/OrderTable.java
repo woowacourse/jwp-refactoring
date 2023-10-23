@@ -49,8 +49,15 @@ public class OrderTable {
     }
 
     public void group(TableGroup tableGroup) {
+        validateTableToGroup();
         this.tableGroup = tableGroup;
         this.empty = false;
+    }
+
+    private void validateTableToGroup() {
+        if (!empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void unGroup() {
