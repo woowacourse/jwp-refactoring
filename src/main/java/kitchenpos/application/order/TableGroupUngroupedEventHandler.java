@@ -1,10 +1,10 @@
-package kitchenpos.application;
+package kitchenpos.application.order;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.tablegroup.TableGroupUngroupedEvent;

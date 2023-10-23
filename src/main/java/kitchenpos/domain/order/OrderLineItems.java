@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static javax.persistence.CascadeType.PERSIST;
 

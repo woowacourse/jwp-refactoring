@@ -1,7 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static javax.persistence.GenerationType.IDENTITY;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
 import java.util.List;

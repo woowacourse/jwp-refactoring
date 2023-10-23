@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -1,7 +1,7 @@
-package kitchenpos.dto;
+package kitchenpos.dto.order;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemResponse {
     private Long seq;

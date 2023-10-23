@@ -1,11 +1,11 @@
-package kitchenpos.dto;
+package kitchenpos.dto.order;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
 
 public class OrderCreateRequest {

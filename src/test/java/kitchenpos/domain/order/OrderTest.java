@@ -1,8 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static java.util.List.of;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.fixture.OrderLineItemFixture.주문_항목;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
