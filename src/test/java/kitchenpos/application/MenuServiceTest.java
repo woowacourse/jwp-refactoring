@@ -90,11 +90,6 @@ class MenuServiceTest {
             );
         }
 
-        private void assertMenuGroup(final MenuGroupResponse actual, final MenuGroup expected) {
-            assertThat(actual.getId()).isEqualTo(expected.getId());
-            assertThat(actual.getName()).isEqualTo(expected.getName());
-        }
-
         @Test
         void 메뉴_가격이_0보다_작으면_생성할_수_없다() {
             // given
@@ -135,12 +130,25 @@ class MenuServiceTest {
             given(menuProductRepository.findAllByMenuId(anyLong())).willReturn(List.of(wooDong, frenchFries));
 
             // when
-            final List<Menu> actual = menuService.list();
+            final List<MenuResponse> actual = menuService.list();
 
             // then
-            assertThat(actual)
-                    .usingRecursiveFieldByFieldElementComparator()
-                    .containsExactly(spyExpected);
+            assertThat(actual).hasSize(1);
+            final MenuResponse menuResponse = actual.get(0);
+            assertAll(
+                    () -> assertThat(menuResponse.getId()).isNotNull(),
+                    () -> assertThat(menuResponse.getName()).isEqualTo(expected.getName()),
+                    () -> assertThat(menuResponse.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue()),
+                    () -> assertThat(menuResponse.getMenuGroup()).isNotNull(),
+                    () -> assertMenuGroup(menuResponse.getMenuGroup(), expected.getMenuGroup()),
+                    () -> assertThat(menuResponse.getMenuProductResponses()).hasSize(expected.getMenuProducts().getMenuProducts().size())
+            );
         }
     }
+
+    private void assertMenuGroup(final MenuGroupResponse actual, final MenuGroup expected) {
+        assertThat(actual.getId()).isEqualTo(expected.getId());
+        assertThat(actual.getName()).isEqualTo(expected.getName());
+    }
+
 }

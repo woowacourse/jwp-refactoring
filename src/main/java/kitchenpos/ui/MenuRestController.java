@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.service.MenuService;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
 import kitchenpos.domain.menu.service.dto.MenuResponse;
@@ -31,7 +30,7 @@ public class MenuRestController {
     }
 
     @GetMapping("/api/menus")
-    public ResponseEntity<List<Menu>> list() {
+    public ResponseEntity<List<MenuResponse>> list() {
         return ResponseEntity.ok()
                 .body(menuService.list())
                 ;

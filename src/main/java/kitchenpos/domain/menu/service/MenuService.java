@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Transactional(readOnly = true)
 public class MenuService {
@@ -53,7 +55,7 @@ public class MenuService {
         menu.addMenuProducts(menuProducts);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
@@ -63,6 +65,8 @@ public class MenuService {
             menu.addMenuProducts(menuProducts);
         }
 
-        return menus;
+        return menus.stream()
+                .map(MenuResponse::toDto)
+                .collect(toList());
     }
 }
