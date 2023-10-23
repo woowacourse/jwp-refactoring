@@ -22,6 +22,9 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
+    public TableGroup() {
+    }
+
     public void addOrderTables(final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         orderTables.forEach(this::addOrderTable);

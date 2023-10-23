@@ -31,6 +31,12 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public void changeEmpty(boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
