@@ -13,5 +13,5 @@ public interface JpaOrderTableRepository extends JpaRepository<OrderTable, Long>
         return findById(id).orElseThrow(() -> new OrderTableException(NOT_EXIST_ORDER_TABLE));
     }
 
-    List<OrderTable> getByIdIn(List<Long> orderTables);
+    List<OrderTable> getByIdIn(List<Long> ids);
 }
