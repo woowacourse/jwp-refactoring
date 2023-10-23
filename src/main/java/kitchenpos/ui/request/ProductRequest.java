@@ -6,18 +6,12 @@ import java.math.BigDecimal;
 
 public class ProductRequest {
 
-    private final Long id;
     private final String name;
     private final BigDecimal price;
 
-    public ProductRequest(final Long id, final String name, final BigDecimal price) {
-        this.id = id;
+    public ProductRequest(final String name, final BigDecimal price) {
         this.name = name;
         this.price = price;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -29,6 +23,6 @@ public class ProductRequest {
     }
 
     public Product toProduct() {
-        return new Product(id, name, price);
+        return new Product(name, price);
     }
 }
