@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
     private Long id;
@@ -23,6 +24,17 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        validateOrderStatusNotCompletion();
+        this.orderStatus = orderStatus.name();
+    }
+
+    private void validateOrderStatusNotCompletion() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.getOrderStatus())) {
+            throw new IllegalArgumentException("[ERROR] 완료된 주문은 상태 변경이 불가능합니다.");
+        }
     }
 
     public Long getId() {
