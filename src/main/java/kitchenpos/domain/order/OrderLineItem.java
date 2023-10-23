@@ -31,10 +31,6 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Long getMenuId() {
         return menuId;
     }

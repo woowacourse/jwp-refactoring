@@ -105,10 +105,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

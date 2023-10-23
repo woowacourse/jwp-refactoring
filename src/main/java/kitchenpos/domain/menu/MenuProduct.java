@@ -40,10 +40,6 @@ public class MenuProduct {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Product getProduct() {
         return product;
     }
