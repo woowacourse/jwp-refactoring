@@ -26,7 +26,7 @@ public class MenuProduct {
             throw new IllegalArgumentException("상품이 존재해야 합니다.");
         }
         if (quantity <= 0) {
-            throw new IllegalArgumentException("상품의 갯수는 양수여야 합니다.");
+            throw new IllegalArgumentException("상품의 개수는 양수여야 합니다.");
         }
         this.seq = seq;
         this.product = product;

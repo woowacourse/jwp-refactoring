@@ -74,7 +74,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문을 생성할 때 주문 항목 메뉴의 갯수와 실제 존재하는 메뉴의 갯수가 다르면 예외가 발생한다")
+        @DisplayName("주문을 생성할 때 주문 항목 메뉴의 개수와 실제 존재하는 메뉴의 개수가 다르면 예외가 발생한다")
         void create_fail2() {
             //given
             final OrderTable orderTable = entityFactory.saveOrderTableWithNotEmpty();

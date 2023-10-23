@@ -23,7 +23,7 @@ class MenuProductTest {
     void create_fail2() {
         assertThatThrownBy(() -> new MenuProduct(new Product(), 0))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("상품의 갯수는 양수여야 합니다.");
+                .hasMessage("상품의 개수는 양수여야 합니다.");
     }
 
     @Test

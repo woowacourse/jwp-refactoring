@@ -80,7 +80,7 @@ class TableGroupServiceTest {
         }
 
         @Test
-        @DisplayName("단체 지정을 생성할 때 요청 주문 테이블의 갯수와 실제 주문 테이블의 갯수가 다르면 예외가 발생한다")
+        @DisplayName("단체 지정을 생성할 때 요청 주문 테이블의 개수와 실제 주문 테이블의 개수가 다르면 예외가 발생한다")
         void create_fail2() {
             //given
             final OrderTable orderTable1 = entityFactory.saveOrderTable();
