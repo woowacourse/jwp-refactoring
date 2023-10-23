@@ -39,7 +39,7 @@ public class OrderTable {
   }
 
   public boolean isNotBelongTableGroup() {
-    return tableGroupId != null;
+    return tableGroupId == null;
   }
 
   public void changeNumberOfGuests(final int numberOfGuests) {

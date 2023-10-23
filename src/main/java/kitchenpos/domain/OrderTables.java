@@ -34,7 +34,7 @@ public class OrderTables {
 
   public void validateNotEmptyOrNotBelongTableGroup() {
     if (orderTables.stream()
-        .anyMatch(orderTable -> !orderTable.isEmpty() || orderTable.isNotBelongTableGroup())) {
+        .anyMatch(orderTable -> orderTable.isEmpty() || orderTable.isNotBelongTableGroup())) {
       throw new IllegalArgumentException();
     }
   }
