@@ -13,10 +13,6 @@ public class TableGroupFixture {
         return new TableGroup(orderTables);
     }
 
-    public static TableGroup 단체지정_주문테이블_2개() {
-        return new TableGroup(List.of(OrderTableFixture.주문테이블_N명(1), OrderTableFixture.주문테이블_N명(5)));
-    }
-
     public static TableGroupCreateRequest 단체지정요청_생성(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)

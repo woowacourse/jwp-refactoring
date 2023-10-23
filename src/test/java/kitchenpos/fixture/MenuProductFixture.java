@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
@@ -17,9 +16,5 @@ public class MenuProductFixture {
 
     public static MenuProduct 메뉴상품_생성(final Product product, final Long quantity) {
         return new MenuProduct(product, quantity);
-    }
-
-    public static MenuProductRequest 메뉴상품요청_생성(final MenuProduct menuProduct) {
-        return new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity());
     }
 }
