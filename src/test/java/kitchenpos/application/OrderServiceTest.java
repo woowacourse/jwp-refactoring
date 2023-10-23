@@ -57,7 +57,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
 
             // when
@@ -88,7 +88,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_아이템의_메뉴가_존재하지_않으면_예외_발생() {
             // given
-            OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(null, 1L);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(null, 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
 
             // when, then
@@ -101,7 +101,7 @@ class OrderServiceTest extends ServiceTest {
         void 주문_테이블이_존재하지_않으면_예외_발생() {
             // given
             long invalidOrderTableId = -1L;
-            OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             OrderCreateRequest request = createOrderRequest(invalidOrderTableId, COOKING, orderLineItemRequest);
 
             // when, then
@@ -116,7 +116,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable newOrderTable = OrderTable.of(null, 10, true);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
-            OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
 
             // when, then
@@ -132,7 +132,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
             OrderResponse orderResponse = orderService.create(orderRequest);
 
@@ -152,10 +152,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderLineItemRequest orderLineItemRequest = OrderLineItemRequest.of(menu.getId(), 1L);
+            OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
             OrderResponse orderResponse = orderService.create(orderRequest);
-            OrderUpdateStatusRequest request = OrderUpdateStatusRequest.from(MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);
 
             // when
             OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), request);
@@ -168,7 +168,7 @@ class OrderServiceTest extends ServiceTest {
         void 주문이_존재하지_않으면_예외_발생() {
             // given
             Long invalidOrderId = -1L;
-            OrderUpdateStatusRequest request = OrderUpdateStatusRequest.from(MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);
 
             // when, then
             assertThatThrownBy(
@@ -182,7 +182,7 @@ class OrderServiceTest extends ServiceTest {
             Order order = Order.of(orderTable, COMPLETION.name(), LocalDateTime.now());
             Order savedOrder = orderRepository.save(order);
 
-            OrderUpdateStatusRequest request = OrderUpdateStatusRequest.from(MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);
 
             // when, then
             assertThatThrownBy(
@@ -194,6 +194,6 @@ class OrderServiceTest extends ServiceTest {
     private OrderCreateRequest createOrderRequest(final Long orderTableId,
                                                   final OrderStatus status,
                                                   final OrderLineItemRequest... orderLineItemRequests) {
-        return OrderCreateRequest.of(orderTableId, status, Arrays.asList(orderLineItemRequests));
+        return new OrderCreateRequest(orderTableId, status, Arrays.asList(orderLineItemRequests));
     }
 }

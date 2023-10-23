@@ -49,8 +49,8 @@ class TableGroupServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(savedOrderTable1.getId()),
-                    SingleOrderTableCreateRequest.from(savedOrderTable2.getId())
+                    new SingleOrderTableCreateRequest(savedOrderTable1.getId()),
+                    new SingleOrderTableCreateRequest(savedOrderTable2.getId())
             );
 
             // when
@@ -66,7 +66,7 @@ class TableGroupServiceTest extends ServiceTest {
         void 요청의_주문_테이블이_2개_미만이면_예외_발생() {
             // given
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(savedOrderTable1.getId())
+                    new SingleOrderTableCreateRequest(savedOrderTable1.getId())
             );
 
             // when, then
@@ -80,7 +80,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             long invalidOrderTableId = -1L;
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(invalidOrderTableId)
+                    new SingleOrderTableCreateRequest(invalidOrderTableId)
             );
 
             // when, then
@@ -95,8 +95,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable = OrderTable.of(null, 15, false);
             orderTable = orderTableRepository.save(orderTable);
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(orderTable.getId()),
-                    SingleOrderTableCreateRequest.from(savedOrderTable1.getId())
+                    new SingleOrderTableCreateRequest(orderTable.getId()),
+                    new SingleOrderTableCreateRequest(savedOrderTable1.getId())
             );
 
             // when, then
@@ -115,8 +115,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(savedOrderTable1.getId()),
-                    SingleOrderTableCreateRequest.from(savedOrderTable2.getId())
+                    new SingleOrderTableCreateRequest(savedOrderTable1.getId()),
+                    new SingleOrderTableCreateRequest(savedOrderTable2.getId())
             );
 
             // when, then
@@ -133,8 +133,8 @@ class TableGroupServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(savedOrderTable1.getId()),
-                    SingleOrderTableCreateRequest.from(savedOrderTable2.getId())
+                    new SingleOrderTableCreateRequest(savedOrderTable1.getId()),
+                    new SingleOrderTableCreateRequest(savedOrderTable2.getId())
             );
             TableGroupResponse response = tableGroupService.create(request);
 
@@ -149,8 +149,8 @@ class TableGroupServiceTest extends ServiceTest {
         void 요청에_대한_주문의_상태가_COOKING이나_MEAL이면_예외_발생(OrderStatus orderStatus) {
             // given
             TableGroupCreateRequest request = createTableGroup(
-                    SingleOrderTableCreateRequest.from(savedOrderTable1.getId()),
-                    SingleOrderTableCreateRequest.from(savedOrderTable2.getId())
+                    new SingleOrderTableCreateRequest(savedOrderTable1.getId()),
+                    new SingleOrderTableCreateRequest(savedOrderTable2.getId())
             );
             TableGroupResponse response = tableGroupService.create(request);
             Order order = createOrder(savedOrderTable1, orderStatus);
@@ -164,7 +164,7 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     private TableGroupCreateRequest createTableGroup(final SingleOrderTableCreateRequest... tableRequests) {
-        return TableGroupCreateRequest.from(Arrays.asList(tableRequests));
+        return new TableGroupCreateRequest(Arrays.asList(tableRequests));
     }
 
     private Order createOrder(final OrderTable orderTable,

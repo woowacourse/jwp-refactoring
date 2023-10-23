@@ -9,10 +9,12 @@ public class MenuCreateRequest {
     private final Long menuGroupId;
     private final List<MenuProductCreateRequest> menuProducts;
 
-    public MenuCreateRequest(final String name,
-                             final Long price,
-                             final Long menuGroupId,
-                             final List<MenuProductCreateRequest> menuProducts) {
+    public MenuCreateRequest(
+            final String name,
+            final Long price,
+            final Long menuGroupId,
+            final List<MenuProductCreateRequest> menuProducts
+    ) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

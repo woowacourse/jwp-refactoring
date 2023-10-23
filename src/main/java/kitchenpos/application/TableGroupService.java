@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
+    public static final int MIN_ORDER_TABLE_SIZE = 2;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -39,6 +40,17 @@ public class TableGroupService {
     public TableGroupResponse create(
             final TableGroupCreateRequest tableGroupCreateRequest
     ) {
+        final TableGroup tableGroup = saveTableGroup(tableGroupCreateRequest);
+        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
+            orderTable.updateTableGroup(tableGroup);
+        }
+        return TableGroupMapper.toTableGroupResponse(tableGroup);
+    }
+
+    // TODO: 2023/10/23 로직 분리
+    private TableGroup saveTableGroup(
+            final TableGroupCreateRequest tableGroupCreateRequest
+    ) {
         final List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateOrderTableSize(orderTables, orderTableIds);
@@ -46,15 +58,10 @@ public class TableGroupService {
         validateOrderTableStatus(orderTables);
 
         final TableGroup tableGroup = TableGroupMapper.toTableGroup(LocalDateTime.now(), orderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(savedTableGroup);
-        }
-
-        return TableGroupMapper.toTableGroupResponse(savedTableGroup);
+        return tableGroupRepository.save(tableGroup);
     }
 
+    // TODO: 2023/10/23 뎁스
     private void validateOrderTableStatus(
             final List<OrderTable> savedOrderTables
     ) {
@@ -77,7 +84,7 @@ public class TableGroupService {
     private void validateNumberOfOrderTable(
             final List<OrderTable> orderTables
     ) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_ORDER_TABLE_SIZE) {
             throw new IllegalArgumentException("order table 수는 2 이상이어야 합니다.");
         }
     }

@@ -6,12 +6,8 @@ public class OrderUpdateStatusRequest {
 
     private final OrderStatus orderStatus;
 
-    private OrderUpdateStatusRequest(final OrderStatus orderStatus) {
+    public OrderUpdateStatusRequest(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public static OrderUpdateStatusRequest from(final OrderStatus orderStatus) {
-        return new OrderUpdateStatusRequest(orderStatus);
     }
 
     public OrderStatus getOrderStatus() {

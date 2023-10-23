@@ -41,13 +41,14 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
+    // TODO: 2023/10/23 로직 분리
     public MenuResponse create(
             final MenuCreateRequest request
     ) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu group 입니다."));
-
         final Menu menu = MenuMapper.toMenu(request, menuGroup);
+
         final List<MenuProduct> menuProducts = convertToMenuProducts(request);
         final BigDecimal sum = calculateSumByMenuProducts(menuProducts);
         validateMenuPrice(menu, sum);
@@ -58,6 +59,7 @@ public class MenuService {
         return MenuMapper.toMenuResponse(savedMenu, savedMenuProducts);
     }
 
+    // TODO: 2023/10/23 로직 분리
     private List<MenuProduct> convertToMenuProducts(
             final MenuCreateRequest menuRequest
     ) {
@@ -88,6 +90,7 @@ public class MenuService {
         }
     }
 
+    // TODO: 2023/10/23 로직 다시 생각해보기
     private List<MenuProduct> saveMenuProducts(
             final Menu menu,
             final List<MenuProduct> menuProducts
@@ -101,7 +104,7 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public List<MenuResponse> readAll() {
-        List<Menu> menus = menuRepository.findAll();
+        final List<Menu> menus = menuRepository.findAll();
         return MenuMapper.toMenuResponses(menus);
     }
 }

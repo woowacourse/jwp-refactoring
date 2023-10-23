@@ -16,12 +16,15 @@ public class MenuGroupMapper {
     }
 
     public static MenuGroupResponse toMenuGroupResponse(final MenuGroup menuGroup) {
-        return MenuGroupResponse.from(menuGroup);
+        return new MenuGroupResponse(
+                menuGroup.getId(),
+                menuGroup.getName()
+        );
     }
 
     public static List<MenuGroupResponse> toMenuGroupResponses(final List<MenuGroup> menuGroups) {
         return menuGroups.stream()
-                .map(MenuGroupResponse::from)
+                .map(MenuGroupMapper::toMenuGroupResponse)
                 .collect(Collectors.toList());
     }
 }

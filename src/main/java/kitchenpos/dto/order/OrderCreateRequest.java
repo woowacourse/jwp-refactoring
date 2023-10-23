@@ -9,17 +9,14 @@ public class OrderCreateRequest {
     private final OrderStatus orderStatus;
     private final List<OrderLineItemRequest> orderLineItems;
 
-    private OrderCreateRequest(final Long orderTableId,
-                               OrderStatus orderStatus, final List<OrderLineItemRequest> orderLineItems) {
+    public OrderCreateRequest(
+            final Long orderTableId,
+            final OrderStatus orderStatus,
+            final List<OrderLineItemRequest> orderLineItems
+    ) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
-    }
-
-    public static OrderCreateRequest of(final Long orderTableId,
-                                        final OrderStatus orderStatus,
-                                        final List<OrderLineItemRequest> orderLineItems) {
-        return new OrderCreateRequest(orderTableId, orderStatus, orderLineItems);
     }
 
     public Long getOrderTableId() {

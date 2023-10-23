@@ -34,7 +34,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            TableCreateRequest tableCreateRequest = TableCreateRequest.of(0, true);
+            TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
 
             // when
             OrderTableResponse response = tableService.create(tableCreateRequest);
@@ -57,7 +57,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            TableCreateRequest tableCreateRequest = TableCreateRequest.of(0, true);
+            TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
             OrderTableResponse response = tableService.create(tableCreateRequest);
 
             // when
@@ -78,7 +78,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = OrderTable.of(null, 0, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            TableUpdateEmptyRequest request = TableUpdateEmptyRequest.from(false);
+            TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
 
             // when
             OrderTableResponse response = tableService.changeEmpty(savedOrderTable.getId(), request);
@@ -91,7 +91,7 @@ class TableServiceTest extends ServiceTest {
         void 존재하지_않는_테이블_상태_변경_시_예외_발생() {
             // given
             long invalidOrderTableId = -1;
-            TableUpdateEmptyRequest request = TableUpdateEmptyRequest.from(false);
+            TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
 
             // when, then
             assertThatThrownBy(
@@ -109,7 +109,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = OrderTable.of(tableGroup, 10, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            TableUpdateEmptyRequest request = TableUpdateEmptyRequest.from(false);
+            TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
 
             // when, then
             assertThatThrownBy(
@@ -126,7 +126,7 @@ class TableServiceTest extends ServiceTest {
             Order order = createOrder(savedOrderTable, status);
             orderRepository.save(order);
 
-            TableUpdateEmptyRequest request = TableUpdateEmptyRequest.from(false);
+            TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
 
             // when, then
             assertThatThrownBy(
@@ -144,7 +144,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = OrderTable.of(null, 0, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            TableUpdateNumberOfGuestsRequest request = TableUpdateNumberOfGuestsRequest.from(10);
+            TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(10);
 
             // when
             OrderTableResponse orderTableResponse = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
@@ -166,7 +166,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = OrderTable.of(null, 0, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            TableUpdateNumberOfGuestsRequest request = TableUpdateNumberOfGuestsRequest.from(numberOfGuests);
+            TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(numberOfGuests);
 
             // when, then
             assertThatThrownBy(
@@ -178,7 +178,7 @@ class TableServiceTest extends ServiceTest {
         void 존재하지_않는_테이블_인원수_변경_시_예외_발생() {
             // given
             long invalidOrderTableId = -1;
-            TableUpdateNumberOfGuestsRequest request = TableUpdateNumberOfGuestsRequest.from(10);
+            TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(10);
 
             // when, then
             assertThatThrownBy(
@@ -192,7 +192,7 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = OrderTable.of(null, 0, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-            TableUpdateNumberOfGuestsRequest request = TableUpdateNumberOfGuestsRequest.from(10);
+            TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(10);
 
             // when, then
             assertThatThrownBy(

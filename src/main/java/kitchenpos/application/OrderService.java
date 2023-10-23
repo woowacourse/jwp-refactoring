@@ -44,28 +44,38 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
+    /**
+     * 음.............id 로 변환하고 하나씩 찾는 것 보다 효율적인 방법은 없나..........
+     * in으로 한번에 찾으면 없는걸 검증하기 어려븜.. 따로 처리 해줘야함...
+     */
+    // TODO: 2023/10/23
     public OrderResponse create(
+            final OrderCreateRequest request
+    ) {
+        final Order order = saveOrder(request);
+        saveOrderLineItems(request.getOrderLineItems(), order);
+
+        return OrderMapper.toOrderResponse(order);
+    }
+
+    private List<Long> convertToMenuIds(final List<OrderLineItemRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+    }
+
+    // TODO: 2023/10/23 로직 분리
+    private Order saveOrder(
             final OrderCreateRequest request
     ) {
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
         validateEmptyByOrderLineItems(orderLineItemRequests);
-
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
+        final List<Long> menuIds = convertToMenuIds(orderLineItemRequests);
         validateOrderLineItemSize(orderLineItemRequests, menuIds);
-
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 order table 입니다."));
-
         validateEmptyByOrderTable(orderTable);
-        final Order savedOrder = orderRepository.save(
-                Order.of(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now()));
-
-        saveOrderLineItems(orderLineItemRequests, savedOrder);
-
-        return OrderMapper.toOrderResponse(savedOrder);
+        return orderRepository.save(OrderMapper.toOrder(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
     }
 
     private void validateEmptyByOrderTable(
@@ -76,6 +86,7 @@ public class OrderService {
         }
     }
 
+    // TODO: 2023/10/23 로직 분리
     private void saveOrderLineItems(
             final List<OrderLineItemRequest> orderLineItems,
             final Order savedOrder
@@ -84,13 +95,15 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItem : orderLineItems) {
             Menu menu = menuRepository.findById(orderLineItem.getMenuId())
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu입니다."));
-            savedOrderLineItems.add(orderLineItemRepository.save(
-                    OrderLineItem.of(savedOrder, menu, orderLineItem.getQuantity())));
+            savedOrderLineItems.add(orderLineItemRepository.save(OrderLineItem.of(savedOrder, menu, orderLineItem.getQuantity())));
         }
         savedOrder.updateOrderLineItems(savedOrderLineItems);
     }
 
-    private void validateOrderLineItemSize(List<OrderLineItemRequest> orderLineItems, List<Long> menuIds) {
+    private void validateOrderLineItemSize(
+            final List<OrderLineItemRequest> orderLineItems,
+            final List<Long> menuIds
+    ) {
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("메뉴의 메뉴 그룹은 기존에 존재하는 메뉴 그룹이어야 합니다.");
         }

@@ -7,10 +7,12 @@ public class OrderLineItemResponse {
     private final Long menuId;
     private final long quantity;
 
-    public OrderLineItemResponse(final Long seq,
-                                 final Long orderId,
-                                 final Long menuId,
-                                 final long quantity) {
+    public OrderLineItemResponse(
+            final Long seq,
+            final Long orderId,
+            final Long menuId,
+            final long quantity
+    ) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;

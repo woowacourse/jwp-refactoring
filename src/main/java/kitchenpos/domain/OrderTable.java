@@ -70,7 +70,6 @@ public class OrderTable {
 
     public void updateEmpty(final boolean empty) {
         validateTableGroup();
-
         this.empty = empty;
     }
 
