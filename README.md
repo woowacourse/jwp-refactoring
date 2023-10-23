@@ -16,6 +16,7 @@
 > menus : 메뉴
 - 메뉴는 메뉴명(name), 메뉴 가격(price), 메뉴 그룹 ID(menu group id), 메뉴 상품들(menu products)로 구성된다.
   - 메뉴 상품(menu product): 메뉴 ID(menu id), 상품 ID(product id), 수량(quantity)으로 구성된다.
+    - 메뉴 상품의 수량은 1 이상이어야 한다.
 - [ ] 메뉴명, 메뉴 가격, 메뉴 그룹 ID, 메뉴 상품들로 메뉴를 등록할 수 있다.
   - 메뉴 가격은 0원 이상이어야 한다.
   - 메뉴 그룹 ID가 존재하는 경우에만 등록할 수 있다.
@@ -52,6 +53,7 @@
 - 주문은 주문 테이블 ID(order table id), 주문 상태(order status), 주문 시각(ordered time), 주문 항목들(order line items)로 구성된다.
   - 주문 상태(order status): COOKING, MEAL, COMPLETION 값을 가진다.
   - 주문 항목(order line item): 주문 ID(order id), 메뉴 ID(menu id), 수량(quantity)으로 구성된다.
+    - 주문 항목의 수량은 0 이상이어야 한다.
 - [ ] 주문을 등록할 수 있다.
   - 주문 항목이 1개 이상이어야 한다.
   - 주문 테이블 ID가 존재하는 경우에만 등록할 수 있다.

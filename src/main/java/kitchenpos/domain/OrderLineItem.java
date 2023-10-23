@@ -45,7 +45,6 @@ public class OrderLineItem {
     }
 
     private void validateQuantity(final Long quantity) {
-        // TODO: OrderLineItem readme 작성하기 (validate)
         if (Objects.isNull(quantity)) {
             throw new IllegalArgumentException("주문 항목의 수량은 null이 될 수 없습니다.");
         }

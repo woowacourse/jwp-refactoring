@@ -20,7 +20,6 @@ public class ProductService {
     }
 
     public Product create(final ProductCreateRequest request) {
-        // TODO: BigDecimal 안으로
         final BigDecimal price = BigDecimal.valueOf(request.getPrice());
         final Product product = Product.create(request.getName(), price);
         return productRepository.save(product);

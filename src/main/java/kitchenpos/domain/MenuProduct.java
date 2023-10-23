@@ -36,8 +36,7 @@ public class MenuProduct {
         return new MenuProduct(null, menu, product, quantity);
     }
 
-    private void validateQuantity(final long quantity) {
-        // TODO: MenuProduct readme 작성하기 (validate)
+    private void validateQuantity(final Long quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("메뉴 상품의 수량은 1개 이상이어야 합니다.");
         }
