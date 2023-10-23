@@ -76,7 +76,8 @@ class TableServiceTest {
 
             // expect
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(expected.getId(), updateTableGuestRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("손님 수는 0보다 작을 수 없습니다.");
         }
 
         @Test
@@ -99,7 +100,8 @@ class TableServiceTest {
 
             // expected
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(expected.getId(), updateTableGuestRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("빈 테이블에는 손님이 있을 수 없습니다.");
         }
 
     }
