@@ -105,8 +105,6 @@ class TableServiceTest extends ServiceTest {
             final var tableGroup = TableGroupFixture.단체지정_여러_테이블(savedOrderTables);
             단일_단체지정_저장(tableGroup);
 
-            orderTable1.changeEmpty(false);
-
             final var request = OrderTableFixture.테이블요청_empty_수정_생성(true);
 
             // when & then

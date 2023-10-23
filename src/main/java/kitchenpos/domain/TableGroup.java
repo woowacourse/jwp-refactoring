@@ -63,7 +63,7 @@ public class TableGroup {
     public void addOrderTable(final OrderTable orderTable) {
         this.orderTables.add(orderTable);
         if (orderTable.getTableGroup() != this) {
-            orderTable.setTableGroup(this);
+            orderTable.changeTableGroup(this);
         }
     }
 
