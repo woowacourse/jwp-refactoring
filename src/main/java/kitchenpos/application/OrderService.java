@@ -43,7 +43,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto create(final CreateOrderDto createOrderDto) {
+    public OrderDto create(CreateOrderDto createOrderDto) {
         Long orderTableId = createOrderDto.getOrderTableId();
         OrderTable orderTable = findOrderTable(orderTableId);
         List<OrderLineItem> orderLineItems = makeOrderLineItems(createOrderDto.getOrderLineItems());

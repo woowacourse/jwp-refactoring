@@ -8,7 +8,12 @@ import kitchenpos.application.dto.UpdateOrderTableGuestNumberDto;
 import kitchenpos.ui.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.request.UpdateOrderTableGuestNumberRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
