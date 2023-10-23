@@ -22,7 +22,7 @@ public class OrderTable {
 
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {

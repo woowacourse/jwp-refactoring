@@ -36,7 +36,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(final OrderTable orderTable) {

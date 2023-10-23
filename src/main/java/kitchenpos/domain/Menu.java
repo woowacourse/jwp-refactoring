@@ -32,7 +32,7 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {

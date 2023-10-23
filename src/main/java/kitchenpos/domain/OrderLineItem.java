@@ -21,7 +21,7 @@ public class OrderLineItem {
 
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     public OrderLineItem(final Order order, final Menu menu, final long quantity) {

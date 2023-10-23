@@ -27,7 +27,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {

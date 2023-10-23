@@ -20,7 +20,7 @@ public class Product {
 
     private BigDecimal price;
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(final String name, final BigDecimal price) {
