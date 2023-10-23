@@ -3,10 +3,10 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuQuantityDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -45,15 +45,11 @@ public class OrderService {
     }
 
     public OrderResponse create(OrderRequest orderRequest) {
-        List<OrderLineItemRequest> orderLineItems = orderRequest.getOrderLineItems();
+        List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException("주문의 메뉴가 존재하지 않습니다.");
         }
-
-        List<MenuQuantityDto> menuQuantities = orderLineItems.stream()
-                .map(this::convertToMenuQuantity)
-                .collect(Collectors.toList());
 
         OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("테이블 정보가 존재하지 않습니다."));
@@ -64,14 +60,21 @@ public class OrderService {
 
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         orderRepository.save(order);
-        order.addMenus(menuQuantities);
+        List<OrderLineItem> orderLineItems = createMenusForOrder(order, orderRequest.getOrderLineItems());
+        order.addMenus(orderLineItems);
         return OrderResponse.from(order);
     }
 
-    private MenuQuantityDto convertToMenuQuantity(OrderLineItemRequest orderLineItem) {
+    private List<OrderLineItem> createMenusForOrder(Order order, List<OrderLineItemRequest> orderLineItems) {
+        return orderLineItems.stream()
+                .map(orderLineItem -> createOrderLineItem(order, orderLineItem))
+                .collect(Collectors.toList());
+    }
+
+    private OrderLineItem createOrderLineItem(Order order, OrderLineItemRequest orderLineItem) {
         Menu menu = menuRepository.findById(orderLineItem.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 메뉴입니다."));
-        return new MenuQuantityDto(menu, orderLineItem.getQuantity());
+        return new OrderLineItem(order, menu, orderLineItem.getQuantity());
     }
 
     public OrderResponse changeOrderStatus(Long orderId, OrderRequest orderRequest) {

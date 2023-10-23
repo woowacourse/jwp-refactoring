@@ -16,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.application.dto.MenuQuantityDto;
 import kitchenpos.domain.vo.OrderStatus;
 
 @Table(name = "orders")
@@ -90,10 +89,8 @@ public class Order {
         return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
     }
 
-    public void addMenus(List<MenuQuantityDto> menuQuantities) {
-        menuQuantities.stream()
-                .map(menuQuantity -> new OrderLineItem(this, menuQuantity.getMenu(), menuQuantity.getQuantity()))
-                .forEach(orderLineItem -> orderLineItems.add(orderLineItem));
+    public void addMenus(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems.addAll(orderLineItems);
     }
 
     public void checkEditable() {
