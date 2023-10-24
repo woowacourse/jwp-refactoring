@@ -21,11 +21,28 @@ public class Product {
     @Embedded
     private Price price;
 
+    public Product() {
+    }
+
+    public Product(final String name, final BigDecimal price) {
+        this(null, name, price);
+    }
+
+    public Product(final Long id, final String name, final BigDecimal price) {
+        this(id, name, new Price(price));
+    }
+
+    public Product(final Long id, final String name, final Price price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
     public BigDecimal multiplyPrice(final BigDecimal other) {
         return this.price.multiply(other);
     }
 
-    public Long getId() {
+    public Long id() {
         return id;
     }
 
@@ -33,7 +50,7 @@ public class Product {
         this.id = id;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
@@ -41,7 +58,7 @@ public class Product {
         this.name = name;
     }
 
-    public Price getPrice() {
+    public Price price() {
         return price;
     }
 

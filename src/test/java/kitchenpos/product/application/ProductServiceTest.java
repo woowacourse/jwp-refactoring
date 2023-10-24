@@ -33,8 +33,8 @@ class ProductServiceTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(saved.getName()).isEqualTo(product.getName());
-                softly.assertThat(saved.getPrice().intValue()).isEqualTo(product.getPrice().intValue());
+                softly.assertThat(saved.name()).isEqualTo(product.name());
+                softly.assertThat(saved.price().intValue()).isEqualTo(product.price().intValue());
             });
         }
 
