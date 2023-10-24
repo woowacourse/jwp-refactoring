@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -45,8 +46,9 @@ class OrderServiceSpringBootTest {
 
         //then
         assertSoftly(softly -> {
-            assertThat(orderRepository.findById(order.getId())).isNotEmpty();
-            assertThat(orderLineItemRepository.findAllByOrderId(order.getId())).hasSize(2);
+            final Optional<Order> orderOptional = orderRepository.findById(order.getId());
+            assertThat(orderOptional).isNotEmpty();
+            assertThat(orderOptional.get().getOrderLineItems()).hasSize(2);
         });
     }
 }

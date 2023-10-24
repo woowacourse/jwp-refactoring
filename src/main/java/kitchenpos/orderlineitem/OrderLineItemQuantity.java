@@ -4,13 +4,13 @@ import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class OrderLineQuantity {
+public class OrderLineItemQuantity {
     private long quantity;
 
-    protected OrderLineQuantity() {
+    protected OrderLineItemQuantity() {
     }
 
-    public OrderLineQuantity(final long quantity) {
+    public OrderLineItemQuantity(final long quantity) {
         validate(quantity);
         this.quantity = quantity;
     }
@@ -33,7 +33,7 @@ public class OrderLineQuantity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final OrderLineQuantity quantity = (OrderLineQuantity) o;
+        final OrderLineItemQuantity quantity = (OrderLineItemQuantity) o;
         return this.quantity == quantity.quantity;
     }
 

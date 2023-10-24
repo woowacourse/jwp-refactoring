@@ -12,28 +12,23 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
+//    private Long orderId;
     private Long menuId;
     @Embedded
-    private OrderLineQuantity quantity;
+    private OrderLineItemQuantity quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long orderId,
+    public OrderLineItem(
                          final Long menuId,
-                         final OrderLineQuantity quantity) {
-        this.orderId = orderId;
+                         final OrderLineItemQuantity quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Long getOrderId() {
-        return orderId;
     }
 
     public Long getMenuId() {

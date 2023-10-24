@@ -3,12 +3,11 @@ package kitchenpos.order.application;
 import kitchenpos.menu.application.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.SaveOrderLineItemsEvent;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
 import kitchenpos.orderlineitem.OrderLineItem;
-import kitchenpos.orderlineitem.OrderLineQuantity;
+import kitchenpos.orderlineitem.OrderLineItemQuantity;
 import kitchenpos.orderlineitem.application.OrderLineItemRepository;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
@@ -35,7 +34,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -126,11 +124,10 @@ class OrderServiceTest {
             // given
             final OrderTable orderTable = new OrderTable(new NumberOfGuests(0), Empty.EMPTY);
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
-            final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
+            final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
             given(menuRepository.countByIdIn(any())).willReturn(3L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderRepository.save(any())).willReturn(order);
-            doNothing().when(publisher).publishEvent(any(SaveOrderLineItemsEvent.class));
 
             // when
             final Order result = orderService.create(request);
@@ -150,11 +147,11 @@ class OrderServiceTest {
     void list() {
         // given
         final List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, 1L, new OrderLineQuantity(2)),
-                new OrderLineItem(2L, 1L, new OrderLineQuantity(3)),
-                new OrderLineItem(3L, 1L, new OrderLineQuantity(4))
+                new OrderLineItem(1L, new OrderLineItemQuantity(2)),
+                new OrderLineItem(2L, new OrderLineItemQuantity(3)),
+                new OrderLineItem(3L, new OrderLineItemQuantity(4))
         );
-        final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
         given(orderRepository.findAll()).willReturn(List.of(order));
 
         // when
@@ -194,7 +191,7 @@ class OrderServiceTest {
         @DisplayName("주문의 상태를 변경한다.")
         void changeOrderStatus() {
             // given
-            final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now());
+            final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
             given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
 
             // when

@@ -3,10 +3,11 @@ package kitchenpos.order.application;
 import kitchenpos.menu.application.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.SaveOrderLineItemsEvent;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
+import kitchenpos.orderlineitem.OrderLineItem;
+import kitchenpos.orderlineitem.OrderLineItemQuantity;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.OrderTableRepository;
 import org.springframework.context.ApplicationEventPublisher;
@@ -40,10 +41,11 @@ public class OrderService {
         final List<OrderLineItemDto> orderLineItemsDtos = request.getOrderLineItems();
         validateExistenceOfOrderLineItem(orderLineItemsDtos);
         final OrderTable orderTable = findOrderTable(request);
-        final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
-        publisher.publishEvent(new SaveOrderLineItemsEvent(orderLineItemsDtos, savedOrder));
+        final List<OrderLineItem> orderLineItems = orderLineItemsDtos.stream()
+                .map(m -> new OrderLineItem(m.getMenuId(), new OrderLineItemQuantity(m.getQuantity())))
+                .collect(Collectors.toList());
 
-        return savedOrder;
+        return orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
     }
 
     private OrderTable findOrderTable(final OrderRequest request) {
