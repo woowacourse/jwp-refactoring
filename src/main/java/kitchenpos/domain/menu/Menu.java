@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -25,7 +25,7 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     private MenuGroup menuGroup;
 
     @Embedded

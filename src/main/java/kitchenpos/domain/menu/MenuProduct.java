@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -19,7 +18,7 @@ public class MenuProduct {
     @ManyToOne(fetch = LAZY)
     private Menu menu;
 
-    @OneToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY)
     private Product product;
 
     private long quantity;
