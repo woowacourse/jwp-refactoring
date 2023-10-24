@@ -63,7 +63,7 @@ class MenuServiceTest {
         final MenuResponse created = menuService.create(request);
 
         // then
-        assertThat(created.getId()).isEqualTo(1L);
+        assertThat(created.getId()).isEqualTo(menu.getId());
         assertThat(created.getName()).isEqualTo(request.getName());
         assertThat(created.getPrice())
             .isEqualTo(
