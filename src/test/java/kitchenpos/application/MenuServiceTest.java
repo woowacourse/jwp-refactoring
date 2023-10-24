@@ -14,12 +14,13 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuProductCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,19 +35,19 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private Long menuGroupId;
     private MenuProduct menuProduct;
 
     @BeforeEach
     void setUp() {
-        menuGroupId = menuGroupDao.save(메뉴_그룹()).getId();
-        Long productId = productDao.save(상품(PRICE)).getId();
-        menuProduct = 메뉴_상품(productId);
+        menuGroupId = menuGroupRepository.save(메뉴_그룹()).getId();
+        Product product = productRepository.save(상품(PRICE));
+        menuProduct = 메뉴_상품(product);
     }
 
     @Test

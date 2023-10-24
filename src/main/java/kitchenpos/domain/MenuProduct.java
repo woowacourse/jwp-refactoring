@@ -1,45 +1,57 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.math.BigDecimal;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class MenuProduct {
 
+    @GeneratedValue(strategy = IDENTITY)
+    @Id
     private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Embedded
     private Quantity quantity;
 
-    public MenuProduct(Long seq, Long menuId, Long productId, Quantity quantity) {
+    public MenuProduct(Long seq, Product product, Quantity quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long menuId, Long productId, Quantity quantity) {
-        this(null, menuId, productId, quantity);
+    public MenuProduct(Product product, Quantity quantity) {
+        this(null, product, quantity);
     }
 
-    public MenuProduct(Long productId, Quantity quantity) {
-        this(null, null, productId, quantity);
+    protected MenuProduct() {
     }
 
-    public static MenuProduct of(Long productId, long quantity) {
-        return new MenuProduct(productId, Quantity.valueOf(quantity));
+    public static MenuProduct of(Product product, long quantity) {
+        return new MenuProduct(product, Quantity.valueOf(quantity));
+    }
+
+    public BigDecimal calculateTotalPrice() {
+        return product.calculateTotalPrice(quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
     public Long getProductId() {
-        return productId;
+        return product.getId();
     }
 
     public Quantity getQuantity() {

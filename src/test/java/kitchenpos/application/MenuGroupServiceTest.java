@@ -7,9 +7,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dto.menu.MenuGroupCreateRequest;
 import kitchenpos.dto.menu.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuGroupServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -43,7 +43,7 @@ class MenuGroupServiceTest {
     @Test
     void 전체_메뉴_그룹을_조회한다() {
         // given
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹()).getId();
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹()).getId();
 
         // when
         List<MenuGroupResponse> menuGroups = menuGroupService.list();

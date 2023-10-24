@@ -1,25 +1,26 @@
 package kitchenpos.dto.table;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableResponse {
 
     private final Long id;
-    private final Long tableGroupId;
+    private final TableGroup tableGroupId;
     private final int numberOfGuests;
-    private final boolean isEmpty;
+    private final boolean empty;
 
-    public OrderTableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean isEmpty) {
+    public OrderTableResponse(Long id, TableGroup tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
-        this.isEmpty = isEmpty;
+        this.empty = empty;
     }
 
     public static OrderTableResponse from(OrderTable orderTable) {
         return new OrderTableResponse(
                 orderTable.getId(),
-                orderTable.getTableGroupId(),
+                orderTable.getTableGroup(),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty()
         );
@@ -29,7 +30,7 @@ public class OrderTableResponse {
         return id;
     }
 
-    public Long getTableGroupId() {
+    public TableGroup getTableGroupId() {
         return tableGroupId;
     }
 
@@ -38,6 +39,6 @@ public class OrderTableResponse {
     }
 
     public boolean isEmpty() {
-        return isEmpty;
+        return empty;
     }
 }

@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.dto.product.ProductResponse;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -66,7 +66,7 @@ class ProductServiceTest {
     @Test
     void 전체_상품을_조회한다() {
         // given
-        Long productId = productDao.save(상품()).getId();
+        Long productId = productRepository.save(상품()).getId();
 
         // when
         List<ProductResponse> products = productService.list();

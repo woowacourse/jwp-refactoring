@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "numberOfGuests": 0,
-  "isEmpty": true
+  "empty": true
 }
 
 ###
@@ -15,7 +15,7 @@ PUT {{host}}/api/tables/1/empty
 Content-Type: application/json
 
 {
-  "isEmpty": false
+  "empty": false
 }
 
 ###
@@ -31,7 +31,7 @@ PUT {{host}}/api/tables/1/empty
 Content-Type: application/json
 
 {
-  "isEmpty": true
+  "empty": true
 }
 
 ###
@@ -39,7 +39,7 @@ PUT {{host}}/api/tables/2/empty
 Content-Type: application/json
 
 {
-  "isEmpty": true
+  "empty": true
 }
 
 ###

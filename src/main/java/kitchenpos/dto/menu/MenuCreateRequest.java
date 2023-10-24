@@ -2,7 +2,6 @@ package kitchenpos.dto.menu;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
@@ -28,11 +27,8 @@ public class MenuCreateRequest {
         this.menuProducts = menuProducts;
     }
 
-    public Menu toMenu(BigDecimal menuProductTotalPrice) {
-        List<MenuProduct> products = this.menuProducts.stream()
-                .map(menuProduct -> MenuProduct.of(menuProduct.getProductId(), menuProduct.getQuantity()))
-                .collect(Collectors.toList());
-        return Menu.of(name, price, menuGroupId, products, menuProductTotalPrice);
+    public Menu toMenu(List<MenuProduct> menuProducts) {
+        return Menu.of(name, price, menuGroupId, menuProducts);
     }
 
     public String getName() {

@@ -15,15 +15,16 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.common.fixture.OrderTableFixture;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.table.OrderTableCreateRequest;
 import kitchenpos.dto.table.OrderTableIsEmptyUpdateRequest;
 import kitchenpos.dto.table.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,13 +40,13 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     void 주문_테이블을_생성한다() {
@@ -67,14 +68,14 @@ class TableServiceTest {
     @Test
     void 전체_주문을_조회한다() {
         // given
-        Long orderTableId = orderTableDao.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
+        Long orderTableId = orderTableRepository.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
 
         // when
         List<OrderTableResponse> orderTables = tableService.list();
 
         // then
         assertThat(orderTables).usingRecursiveComparison()
-                .isEqualTo(List.of(주문_테이블(orderTableId, null)));
+                .isEqualTo(List.of(OrderTableResponse.from(주문_테이블(orderTableId, null))));
     }
 
     @Nested
@@ -117,9 +118,9 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_단체_지정되어_있다면_예외를_던진다() {
             // given
-            Long tableGroupId = tableGroupDao.save(단체_지정()).getId();
+            TableGroup tableGroup = tableGroupRepository.save(단체_지정());
 
-            OrderTable groupedOrderTable = orderTableDao.save(빈_주문_테이블(tableGroupId));
+            OrderTable groupedOrderTable = orderTableRepository.save(빈_주문_테이블(tableGroup));
 
             // expect
             assertThatThrownBy(() -> tableService.changeIsEmpty(groupedOrderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))
@@ -131,7 +132,7 @@ class TableServiceTest {
         void 주문_테이블에_조리_혹은_식사_중인_주문이_있다면_예외를_던진다(String orderStatus) {
             // given
             OrderTableResponse orderTable = tableService.create(주문_테이블_생성_요청());
-            orderDao.save(주문(orderTable.getId(), OrderStatus.valueOf(orderStatus)));
+            orderRepository.save(주문(orderTable.getId(), OrderStatus.valueOf(orderStatus)));
 
             // expect
             assertThatThrownBy(() -> tableService.changeIsEmpty(orderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))

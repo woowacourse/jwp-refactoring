@@ -5,34 +5,34 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableCreateRequest;
 import kitchenpos.dto.table.OrderTableIsEmptyUpdateRequest;
 import kitchenpos.dto.table.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        OrderTable emptyOrderTable = orderTableDao.save(request.toEmptyOrderTable());
-        return OrderTableResponse.from(emptyOrderTable);
+        OrderTable orderTable = orderTableRepository.save(request.toEmptyOrderTable());
+        return OrderTableResponse.from(orderTable);
     }
 
     public List<OrderTableResponse> list() {
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
@@ -40,27 +40,27 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeIsEmpty(Long orderTableId, OrderTableIsEmptyUpdateRequest request) {
-        final OrderTable orderTable = orderTableDao.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        boolean hasCookingOrMealOrder = orderDao.existsByOrderTableIdAndOrderStatusIn(
+        boolean hasCookingOrMealOrder = orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId,
-                List.of(COOKING.name(), MEAL.name())
+                List.of(COOKING, MEAL)
         );
 
         orderTable.changeIsEmpty(hasCookingOrMealOrder, request.isEmpty());
-        OrderTable changedOrderTable = orderTableDao.save(orderTable);
+        OrderTable changedOrderTable = orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(changedOrderTable);
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableNumberOfGuestsUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        OrderTable changedOrderTable = orderTableDao.save(savedOrderTable);
+        OrderTable changedOrderTable = orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponse.from(changedOrderTable);
     }

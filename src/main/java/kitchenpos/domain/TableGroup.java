@@ -1,16 +1,31 @@
 package kitchenpos.domain;
 
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
+@Entity
 public class TableGroup {
 
     private static final int MINIMUM_SIZE = 2;
 
+    @GeneratedValue(strategy = IDENTITY)
+    @Id
     private Long id;
+
+    @Column(nullable = false)
     private LocalDateTime createdDate;
+
+    @OneToMany(mappedBy = "tableGroup", fetch = EAGER)
     private List<OrderTable> orderTables;
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
@@ -21,6 +36,9 @@ public class TableGroup {
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
+    }
+
+    protected TableGroup() {
     }
 
     public static TableGroup of(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
@@ -48,6 +66,10 @@ public class TableGroup {
                 throw new IllegalArgumentException("단체 지정의 주문 테이블이 차 있거나 이미 단체 지정되었습니다.");
             }
         }
+    }
+
+    public void group() {
+        orderTables.forEach(orderTable -> orderTable.group(this));
     }
 
     public void ungroup(boolean hasCookingOrMealOrder) {

@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.common.fixture.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,8 +24,8 @@ class OrderTableTest {
         void 단체_지정된_주문_테이블이라면_예외를_던진다() {
             // given
             OrderTable groupedOrderTable = new OrderTable(null, 0, true);
-            Long tableGroupId = 1L;
-            groupedOrderTable.group(tableGroupId);
+            TableGroup tableGroup = 단체_지정();
+            groupedOrderTable.group(tableGroup);
 
             boolean hasCookingOrMealOrder = false;
             boolean isEmpty = false;
@@ -53,8 +54,8 @@ class OrderTableTest {
         @CsvSource({"true, false", "false, true"})
         void 정상적으로_변경한다(boolean original, boolean expected) {
             // given
-            Long tableGroupId = null;
-            OrderTable orderTable = new OrderTable(tableGroupId, 0, original);
+            TableGroup tableGroup = null;
+            OrderTable orderTable = new OrderTable(tableGroup, 0, original);
             boolean hasCookingOrMealOrder = false;
 
             // when
@@ -105,27 +106,26 @@ class OrderTableTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    @ParameterizedTest
-    @CsvSource({"1, true", ", false"})
-    void 주문_테이블이_단체_지정되었는지_확인한다(Long tableGroupId, boolean expected) {
+    @Test
+    void 주문_테이블이_단체_지정되었는지_확인한다() {
         // given
-        OrderTable orderTable = new OrderTable(tableGroupId, 0, true);
+        OrderTable orderTable = new OrderTable(단체_지정(), 0, true);
 
         // when
         boolean actual = orderTable.isGrouped();
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isTrue();
     }
 
     @Test
     void 주문_테이블을_단체_지정한다() {
         // given
         OrderTable orderTable = new OrderTable(null, 0, true);
-        Long tableGroupId = 1L;
+        TableGroup tableGroup = 단체_지정();
 
         // when
-        orderTable.group(tableGroupId);
+        orderTable.group(tableGroup);
 
         // then
         assertThat(orderTable.isGrouped()).isTrue();
@@ -135,8 +135,8 @@ class OrderTableTest {
     void 주문_테이블을_단체_지정_해제한다() {
         // given
         OrderTable orderTable = new OrderTable(null, 0, true);
-        Long tableGroupId = 1L;
-        orderTable.group(tableGroupId);
+        TableGroup tableGroup = 단체_지정();
+        orderTable.group(tableGroup);
 
         // when
         orderTable.ungroup();

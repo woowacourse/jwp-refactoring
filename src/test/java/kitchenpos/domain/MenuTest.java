@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.common.fixture.MenuProductFixture.메뉴_상품;
+import static kitchenpos.common.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,7 +25,7 @@ class MenuTest {
             String menuName = "menuName";
             BigDecimal price = BigDecimal.ONE;
             Long menuGroupId = 1L;
-            List<MenuProduct> menuProducts = List.of(메뉴_상품(1L));
+            List<MenuProduct> menuProducts = List.of(메뉴_상품(상품()));
             BigDecimal menuProductTotalPrice = BigDecimal.ONE;
 
             // expect
@@ -32,8 +33,7 @@ class MenuTest {
                     menuName,
                     price,
                     menuGroupId,
-                    menuProducts,
-                    menuProductTotalPrice
+                    menuProducts
             ));
         }
 
@@ -44,11 +44,11 @@ class MenuTest {
 
             // expect
             assertThatThrownBy(() -> Menu.of(
-                    "menuName",
-                    invalidPrice,
-                    1L,
-                    List.of(메뉴_상품(1L)),
-                    BigDecimal.ONE)
+                            "menuName",
+                            invalidPrice,
+                            1L,
+                            List.of(메뉴_상품(상품()))
+                    )
             )
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("가격은 0 미만일 수 없습니다.");
@@ -58,15 +58,14 @@ class MenuTest {
         void 메뉴_가격이_메뉴_상품_총액을_초과하면_예외를_던진다() {
             // given
             BigDecimal invalidPrice = BigDecimal.ONE;
-            BigDecimal invalidMenuProductTotalPrice = BigDecimal.ZERO;
 
             // expect
             assertThatThrownBy(() -> Menu.of(
-                    "menuName",
-                    invalidPrice,
-                    1L,
-                    List.of(메뉴_상품(1L)),
-                    invalidMenuProductTotalPrice)
+                            "menuName",
+                            invalidPrice,
+                            1L,
+                            List.of(메뉴_상품(상품(BigDecimal.ZERO)))
+                    )
             )
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("메뉴 가격은 메뉴 상품 총액을 초과할 수 없습니다.");

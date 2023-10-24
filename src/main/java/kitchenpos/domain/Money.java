@@ -2,15 +2,22 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Money {
 
     private static final int MINIMUM_VALUE = 0;
 
-    private final BigDecimal value;
+    @Column(name = "price", nullable = false)
+    private BigDecimal value;
 
     private Money(BigDecimal value) {
         this.value = value;
+    }
+
+    protected Money() {
     }
 
     public static Money valueOf(BigDecimal value) {
@@ -26,6 +33,10 @@ public class Money {
 
     public boolean isGreaterThan(BigDecimal price) {
         return value.compareTo(price) > 0;
+    }
+
+    public BigDecimal multiply(long number) {
+        return value.multiply(BigDecimal.valueOf(number));
     }
 
     public BigDecimal getValue() {

@@ -1,19 +1,44 @@
 package kitchenpos.domain;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.EnumType.STRING;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.util.CollectionUtils;
 
+@Entity(name = "Orders")
 public class Order {
 
+    @GeneratedValue(strategy = IDENTITY)
+    @Id
     private Long id;
+
+    @Column(nullable = false)
     private Long orderTableId;
+
+    @Enumerated(STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
+
+    @CreatedDate
     private LocalDateTime orderedTime;
+
+    @OneToMany(cascade = PERSIST, fetch = EAGER)
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     public Order(
@@ -37,6 +62,9 @@ public class Order {
             List<OrderLineItem> orderLineItems
     ) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
+    protected Order() {
     }
 
     public static Order of(Long orderTableId, List<OrderLineItem> orderLineItems, long menuCount) {

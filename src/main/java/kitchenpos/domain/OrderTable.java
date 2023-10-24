@@ -1,23 +1,42 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
 
+    @GeneratedValue(strategy = IDENTITY)
+    @Id
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    private TableGroup tableGroup;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(name = "empty", nullable = false)
     private boolean isEmpty;
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean isEmpty) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.isEmpty = isEmpty;
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean isEmpty) {
-        this(null, tableGroupId, numberOfGuests, isEmpty);
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
+        this(null, tableGroup, numberOfGuests, isEmpty);
+    }
+
+    protected OrderTable() {
     }
 
     public void changeIsEmpty(boolean hasCookingOrMealOrder, boolean isEmpty) {
@@ -35,7 +54,7 @@ public class OrderTable {
     }
 
     public boolean isGrouped() {
-        return Objects.nonNull(tableGroupId);
+        return Objects.nonNull(tableGroup);
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -56,13 +75,13 @@ public class OrderTable {
         return !isEmpty;
     }
 
-    public void group(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void group(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
         this.isEmpty = false;
     }
 
     public void ungroup() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
         this.isEmpty = false;
     }
 
@@ -76,8 +95,8 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {

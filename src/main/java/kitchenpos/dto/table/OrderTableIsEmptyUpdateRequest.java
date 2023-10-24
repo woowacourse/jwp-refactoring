@@ -1,7 +1,10 @@
 package kitchenpos.dto.table;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class OrderTableIsEmptyUpdateRequest {
 
+    @JsonProperty("empty")
     private boolean isEmpty;
 
     public OrderTableIsEmptyUpdateRequest() {

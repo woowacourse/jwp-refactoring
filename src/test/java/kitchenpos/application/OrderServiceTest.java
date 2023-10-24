@@ -18,16 +18,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.common.fixture.OrderTableFixture;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,19 +43,16 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private OrderLineItem orderLineItem;
     private Long orderTableId;
@@ -62,17 +60,15 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        Long menuGroupId = menuGroupDao.save(메뉴_그룹()).getId();
-        Long productId = productDao.save(상품(PRICE)).getId();
+        Long menuGroupId = menuGroupRepository.save(메뉴_그룹()).getId();
+        Product product = productRepository.save(상품(PRICE));
 
-        MenuProduct menuProduct = 메뉴_상품(productId);
-        Long menuId = menuDao.save(메뉴(menuGroupId, PRICE, List.of(menuProduct))).getId();
-        menuProduct.setMenuId(menuId);
-        menuProductDao.save(menuProduct);
+        MenuProduct menuProduct = 메뉴_상품(product);
+        Menu menu = menuRepository.save(메뉴(menuGroupId, PRICE, List.of(menuProduct)));
 
-        orderTableId = orderTableDao.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
-        emptyOrderTableId = orderTableDao.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블()).getId();
-        orderLineItem = 주문_항목(menuId);
+        orderTableId = orderTableRepository.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
+        emptyOrderTableId = orderTableRepository.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블()).getId();
+        orderLineItem = 주문_항목(menu.getId());
     }
 
     @Test

@@ -1,13 +1,21 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Quantity {
 
     private static final int MINIMUM_QUANTITY = 0;
 
-    private final long value;
+    @Column(name = "quantity", nullable = false)
+    private long value;
 
     private Quantity(long value) {
         this.value = value;
+    }
+
+    protected Quantity() {
     }
 
     public static Quantity valueOf(long value) {
