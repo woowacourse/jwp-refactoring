@@ -7,21 +7,20 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.request.OrderCreationRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
@@ -29,6 +28,8 @@ import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Sql(value = "/initialization.sql")
 class OrderServiceTest {
 
-    @Autowired
-    private OrderService orderService;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
+    private OrderService orderService;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -153,11 +154,9 @@ class OrderServiceTest {
 
         List<OrderLineItemRequest> orderLineItemRequests = List.of(new OrderLineItemRequest(menu.getId(), 1L));
         OrderCreationRequest request = new OrderCreationRequest(orderTable.getId(), orderLineItemRequests);
-
-        Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemRepository.findAll()
-                .stream()
-                .filter(item -> item.getMenuId().equals(menu.getId()))
-                .findAny();
+        List<OrderLineItem> findOrderLineItemBeforeCreatingOrder =
+                em.createQuery("SELECT o FROM OrderLineItem o", OrderLineItem.class)
+                        .getResultList();
 
         assertThat(findOrderLineItemBeforeCreatingOrder).isEmpty();
 
@@ -165,12 +164,11 @@ class OrderServiceTest {
         orderService.create(request);
 
         //then
-        Optional<OrderLineItem> findOrderLineItemAfterCreatingOrder = orderLineItemRepository.findAll()
-                .stream()
-                .filter(item -> item.getMenuId().equals(menu.getId()))
-                .findAny();
+        List<OrderLineItem> findOrderLineItemAfterCreatingOrder =
+                em.createQuery("SELECT o FROM OrderLineItem o", OrderLineItem.class)
+                        .getResultList();
 
-        assertThat(findOrderLineItemAfterCreatingOrder).isPresent();
+        assertThat(findOrderLineItemAfterCreatingOrder).isNotEmpty();
     }
 
     @DisplayName("모든 주문 목록을 조회하면, 각 주문에 포함된 메뉴들도 함께 조회된다.")
@@ -188,8 +186,9 @@ class OrderServiceTest {
         Order savedOrder = orderRepository.findById(response.getId()).get();
         OrderLineItem expectedOrderLineItem = OrderLineItem.create(menu.getId(), 1L);
 
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
-
+        List<OrderLineItem> orderLineItems =
+                em.createQuery("SELECT o FROM OrderLineItem o", OrderLineItem.class)
+                        .getResultList();
         //then
         assertThat(orderLineItems).hasSize(1);
         assertThat(orderLineItems.get(0))
