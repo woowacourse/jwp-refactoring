@@ -136,11 +136,12 @@ class OrderServiceTest extends ServiceTest {
             final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+            final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId());
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
@@ -179,11 +180,12 @@ class OrderServiceTest extends ServiceTest {
             final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+            final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId());
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
@@ -210,11 +212,12 @@ class OrderServiceTest extends ServiceTest {
             final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+            final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId());
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
@@ -239,11 +242,12 @@ class OrderServiceTest extends ServiceTest {
             final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
             final Menu savedMenu = menuRepository.save(
                     new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+            final int orderLineItemSize = 1;
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable.getId());
+            Order order = Order.from(savedOrderTable.getId(), orderLineItemSize, orderLineItemSize);
             order.changeStatus(OrderStatus.COMPLETION);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);

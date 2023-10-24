@@ -46,8 +46,16 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order from(final Long orderTableId) {
+
+    public static Order from(final Long orderTableId, final int orderLineItemSize, final int foundMenuSize) {
+        validateOrderLineItemSize(orderLineItemSize, foundMenuSize);
         return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
+    }
+
+    private static void validateOrderLineItemSize(final int OrderLineItemSize, final int foundMenuSize) {
+        if (OrderLineItemSize != foundMenuSize) {
+            throw new OrderException.NotFoundOrderLineItemMenuExistException();
+        }
     }
 
     public void changeStatus(final OrderStatus orderStatus) {

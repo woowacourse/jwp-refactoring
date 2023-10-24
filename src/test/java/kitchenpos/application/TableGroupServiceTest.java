@@ -109,6 +109,7 @@ class TableGroupServiceTest extends ServiceTest {
             // given
             final OrderTable orderTable1 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
             final OrderTable orderTable2 = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
+            final int orderLineItemSize = 1;
 
             final TableGroup tableGroup = TABLE_GROUP1();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
@@ -118,7 +119,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-            final Order order = Order.from(savedOrderTable1.getId());
+            final Order order = Order.from(savedOrderTable1.getId(), orderLineItemSize, orderLineItemSize);
             order.changeStatus(OrderStatus.MEAL);
             orderRepository.save(order);
 

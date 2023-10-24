@@ -16,7 +16,6 @@ import kitchenpos.order.application.event.OrderCreateEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.exception.OrderException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -40,15 +39,13 @@ public class OrderService {
         final List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
-        OrderValidator.validateOrderLineItemSize(orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
 
         final Long orderTableId = request.getOrderTableId();
-        eventPublisher.publishEvent(new OrderCreateEvent(orderTableId));
-
-        final Order order = Order.from(orderTableId);
+        final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
         final Order savedOrder = orderRepository.save(order);
         associateOrderLineItem(orderLineItemRequests, savedOrder);
 
+        eventPublisher.publishEvent(new OrderCreateEvent(orderTableId));
         return OrderResponse.from(savedOrder);
     }
 
