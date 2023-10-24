@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -38,15 +37,11 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final ChangeOrderTableEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                                                               .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
+                                                               .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상태가 조리중이거나 식사중인 주문이 남아있다면 테이블 상태를 변경할 수 없습니다.");
         }
 
         savedOrderTable.changeEmpty(request.isEmpty());
@@ -59,15 +54,11 @@ public class TableService {
         final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다.");
         }
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                                                               .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+                                                               .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 

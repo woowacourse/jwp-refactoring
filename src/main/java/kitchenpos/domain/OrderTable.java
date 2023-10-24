@@ -49,10 +49,18 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("테이블이 비어있으면 손님 수를 변경할 수 없습니다.");
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 
     public void changeEmpty(final boolean empty) {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException("그룹화된 테이블의 상태를 변경할 수 없습니다.");
+        }
+
         this.empty = empty;
     }
 

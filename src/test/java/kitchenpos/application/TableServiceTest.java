@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,7 +99,8 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -116,7 +116,8 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(세명_테이블.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹화된 테이블의 상태를 변경할 수 없습니다.");
     }
 
     @ParameterizedTest(name = "주문 상태가 {0}일 때")
@@ -131,7 +132,8 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(두명_테이블.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 상태가 조리중이거나 식사중인 주문이 남아있다면 테이블 상태를 변경할 수 없습니다.");
     }
 
     @Test
@@ -161,7 +163,8 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(두명_테이블.getId(), invalidOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("손님 수는 음수일 수 없습니다.");
     }
 
     @Test
@@ -175,7 +178,8 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(invalidOrderTableId, orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -189,6 +193,7 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(두명_테이블.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블이 비어있으면 손님 수를 변경할 수 없습니다.");
     }
 }
