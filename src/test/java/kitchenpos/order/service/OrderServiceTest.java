@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -7,17 +7,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.EmptyTableException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.value.Quantity;
 import kitchenpos.order.dto.OrderLineItemsDto;
 import kitchenpos.order.dto.request.ChangeOrderRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.exception.EmptyListException;
-import kitchenpos.exception.EmptyTableException;
-import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.order.service.OrderService;
 import kitchenpos.util.ObjectCreator;
+import kitchenpos.util.ServiceTest;
+import kitchenpos.value.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

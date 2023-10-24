@@ -1,8 +1,7 @@
-package kitchenpos.application;
+package kitchenpos.util;
 
 import java.util.stream.Stream;
 import kitchenpos.exception.InvalidOrderStateException;
-import kitchenpos.util.TestConfig;
 import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;

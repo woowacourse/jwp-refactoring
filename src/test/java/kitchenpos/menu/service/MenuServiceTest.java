@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,16 +8,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.exception.InvalidNumberException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.value.Quantity;
-import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.MenuProductDto;
+import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
-import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.exception.InvalidNumberException;
-import kitchenpos.menu.service.MenuService;
 import kitchenpos.util.ObjectCreator;
+import kitchenpos.util.ServiceTest;
+import kitchenpos.value.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,10 +40,13 @@ class MenuServiceTest extends ServiceTest {
         // given
         final int newMenuId = menuService.list().size() + 1;
         final List<MenuProductDto> dto = List.of(
-                MenuProductDto.from(new MenuProduct(1L,1L,ObjectCreator.getObject(Product.class,1L),new Quantity(1L))),
-                MenuProductDto.from(new MenuProduct(2L,2L,ObjectCreator.getObject(Product.class,2L),new Quantity(2L)))
+                MenuProductDto.from(
+                        new MenuProduct(1L, 1L, ObjectCreator.getObject(Product.class, 1L), new Quantity(1L))),
+                MenuProductDto.from(
+                        new MenuProduct(2L, 2L, ObjectCreator.getObject(Product.class, 2L), new Quantity(2L)))
         );
-        final CreateMenuRequest request = ObjectCreator.getObject(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
+        final CreateMenuRequest request = ObjectCreator.getObject(CreateMenuRequest.class, "test",
+                BigDecimal.valueOf(29), 1L, dto);
         // when
         final MenuResponse actual = menuService.create(request);
 
@@ -63,7 +66,7 @@ class MenuServiceTest extends ServiceTest {
             final String errorMessage
     ) {
         // when & then
-        assertThatThrownBy(() -> menuService.create(createMenuRequest(products,price,menuGroupId)))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest(products, price, menuGroupId)))
                 .isInstanceOf(exception)
                 .hasMessage(errorMessage);
     }
@@ -79,7 +82,7 @@ class MenuServiceTest extends ServiceTest {
                     new MenuProduct(
                             productId,
                             productId,
-                            ObjectCreator.getObject(Product.class,productId)
+                            ObjectCreator.getObject(Product.class, productId)
                             , new Quantity(1L))
             ));
         }

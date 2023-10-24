@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.table.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -11,9 +11,8 @@ import kitchenpos.table.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.table.service.TableGroupService;
-import kitchenpos.table.service.TableService;
 import kitchenpos.util.ObjectCreator;
+import kitchenpos.util.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

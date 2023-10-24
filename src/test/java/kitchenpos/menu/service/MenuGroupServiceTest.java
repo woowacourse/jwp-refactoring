@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,8 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import kitchenpos.menu.dto.request.CreateMenuGroupRequest;
 import kitchenpos.menu.dto.response.MenuGroupResponse;
-import kitchenpos.menu.service.MenuGroupService;
 import kitchenpos.util.ObjectCreator;
+import kitchenpos.util.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

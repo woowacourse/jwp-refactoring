@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.order.ui;
 
 import static java.time.LocalDateTime.now;
 import static kitchenpos.order.domain.type.OrderStatus.COOKING;
@@ -14,12 +14,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.order.service.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.request.ChangeOrderRequest;
 import kitchenpos.order.dto.request.CreateOrderRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.order.ui.OrderRestController;
+import kitchenpos.order.service.OrderService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ class OrderRestControllerTest {
                 List.of()
         );
 
-        final Order order = getObject(Order.class,1L,1L,COOKING,now(),List.of());
+        final Order order = getObject(Order.class, 1L, 1L, COOKING, now(), List.of());
         when(orderService.create(any()))
                 .thenReturn(OrderResponse.from(order));
 
@@ -71,7 +70,7 @@ class OrderRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final Order order = getObject(Order.class,1L,1L,COOKING,now(),List.of());
+        final Order order = getObject(Order.class, 1L, 1L, COOKING, now(), List.of());
 
         when(orderService.list()).thenReturn(List.of(OrderResponse.from(order)));
 
@@ -86,7 +85,7 @@ class OrderRestControllerTest {
     void changeOrderStatus() throws Exception {
         // given
         final ChangeOrderRequest request = getObject(ChangeOrderRequest.class, "COOKING");
-        final Order order = getObject(Order.class,1L,1L,COOKING,now(),List.of());
+        final Order order = getObject(Order.class, 1L, 1L, COOKING, now(), List.of());
 
         when(orderService.changeOrderStatus(any(), any()))
                 .thenReturn(OrderResponse.from(order));

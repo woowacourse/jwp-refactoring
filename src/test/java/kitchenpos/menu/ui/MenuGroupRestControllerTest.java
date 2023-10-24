@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.menu.ui;
 
 import static kitchenpos.util.ObjectCreator.getObject;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,15 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.service.MenuService;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.dto.request.CreateMenuRequest;
-import kitchenpos.menu.dto.response.MenuResponse;
-import kitchenpos.menu.ui.MenuRestController;
-import kitchenpos.value.Price;
+import kitchenpos.menu.dto.request.CreateMenuGroupRequest;
+import kitchenpos.menu.dto.response.MenuGroupResponse;
+import kitchenpos.menu.service.MenuGroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +23,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(MenuRestController.class)
+@WebMvcTest(MenuGroupRestController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-class MenuRestControllerTest {
+class MenuGroupRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,44 +34,36 @@ class MenuRestControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private MenuService menuService;
+    private MenuGroupService menuGroupService;
 
-    @DisplayName("메뉴를 생성한다")
+    @DisplayName("메뉴 그룹을 생성한다")
     @Test
     void create() throws Exception {
         // given
-        final CreateMenuRequest request = getObject(
-                CreateMenuRequest.class,
-                "test",
-                BigDecimal.ZERO,
-                1L,
-                List.of()
-        );
-        final Menu menu = getObject(Menu.class,1L,"test",new Price(BigDecimal.ZERO),new MenuGroup(1L),List.of());
+        final CreateMenuGroupRequest request = getObject(CreateMenuGroupRequest.class, "test");
+        final MenuGroup menuGroup = getObject(MenuGroup.class, 1L, "test");
 
-        when(menuService.create(any()))
-                .thenReturn(MenuResponse.from(menu));
+        when(menuGroupService.create(any()))
+                .thenReturn(MenuGroupResponse.from(menuGroup));
 
         // when & then
-        mockMvc.perform(post("/api/menus")
+        mockMvc.perform(post("/api/menu-groups")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").isNumber())
-                .andExpect(jsonPath("name").isString())
-                .andExpect(jsonPath("price").isNumber())
-                .andExpect(jsonPath("menuGroupId").isNumber())
-                .andExpect(jsonPath("menuProducts").isArray());
+                .andExpect(jsonPath("name").isString());
     }
 
+    @DisplayName("메뉴 그룹 목록을 조회한다")
     @Test
     void list() throws Exception {
         // given
-        when(menuService.list())
+        when(menuGroupService.list())
                 .thenReturn(List.of());
 
         // when & then
-        mockMvc.perform(get("/api/menus"))
+        mockMvc.perform(get("/api/menu-groups"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }

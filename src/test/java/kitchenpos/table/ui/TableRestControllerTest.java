@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.table.ui;
 
 import static kitchenpos.util.ObjectCreator.getObject;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,14 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.table.service.TableService;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.value.NumberOfGuests;
 import kitchenpos.table.dto.request.ChangeEmptyRequest;
 import kitchenpos.table.dto.request.ChangeNumberOfGuestsRequest;
 import kitchenpos.table.dto.request.CreateOrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.table.ui.TableRestController;
+import kitchenpos.table.service.TableService;
+import kitchenpos.value.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ class TableRestControllerTest {
     void create() throws Exception {
         // given
         final CreateOrderTableRequest request = getObject(CreateOrderTableRequest.class, 1);
-        final OrderTable orderTable = getObject(OrderTable.class,1L,null,new NumberOfGuests(1),false);
+        final OrderTable orderTable = getObject(OrderTable.class, 1L, null, new NumberOfGuests(1), false);
 
         when(tableService.create(any()))
                 .thenReturn(OrderTableResponse.from(orderTable));
@@ -80,7 +79,7 @@ class TableRestControllerTest {
     void changeEmpty() throws Exception {
         // given
         final ChangeEmptyRequest request = getObject(ChangeEmptyRequest.class, true);
-        final OrderTable orderTable = getObject(OrderTable.class,1L, null,new NumberOfGuests(1),true);
+        final OrderTable orderTable = getObject(OrderTable.class, 1L, null, new NumberOfGuests(1), true);
 
         when(tableService.changeEmpty(any(), any()))
                 .thenReturn(OrderTableResponse.from(orderTable));
@@ -100,7 +99,7 @@ class TableRestControllerTest {
     void changeNumberOfGuests() throws Exception {
         // given
         final ChangeNumberOfGuestsRequest request = getObject(ChangeNumberOfGuestsRequest.class, 2);
-        final OrderTable orderTable = getObject(OrderTable.class,1L,null,new NumberOfGuests(2),true);
+        final OrderTable orderTable = getObject(OrderTable.class, 1L, null, new NumberOfGuests(2), true);
 
         when(tableService.changeNumberOfGuests(any(), any()))
                 .thenReturn(OrderTableResponse.from(orderTable));
