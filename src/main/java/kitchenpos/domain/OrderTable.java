@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -88,4 +89,10 @@ public class OrderTable {
         this.isEmpty = false;
     }
 
+    public void changeEmpty(boolean isEmpty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+        this.isEmpty = isEmpty;
+    }
 }

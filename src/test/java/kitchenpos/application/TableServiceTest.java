@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.OrderRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +52,6 @@ class TableServiceTest extends ServiceTest {
         assertThat(results).hasSize(1);
     }
 
-
     @Nested
     class 빈_테이블_설정 {
 
@@ -60,11 +60,10 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = fixtures.주문_테이블_저장();
 
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setEmpty(true);
+            OrderTableRequest request = new OrderTableRequest(0, true);
 
             // when
-            OrderTable result = tableService.changeEmpty(orderTable.getId(), newOrderTable);
+            OrderTableResponse result = tableService.changeEmpty(orderTable.getId(), request);
 
             // then
             assertThat(result.getId()).isEqualTo(orderTable.getId());
@@ -74,28 +73,10 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문_테이블을_설정하는_경우_예외가_발생한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(-1L);
-
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setEmpty(true);
+            OrderTableRequest request = new OrderTableRequest(0, true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문_테이블이_단체_지정이_되어있는_경우_예외가_발생한다() {
-            // given
-            TableGroup tableGroup = fixtures.단체_지정_저장();
-            OrderTable orderTable = fixtures.주문_테이블_저장(tableGroup, false);
-
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setEmpty(true);
-
-            // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(-1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -106,11 +87,10 @@ class TableServiceTest extends ServiceTest {
             OrderTable orderTable = fixtures.주문_테이블_저장();
             fixtures.주문_저장(orderTable, orderStatus);
 
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setEmpty(true);
+            OrderTableRequest request = new OrderTableRequest(0, true);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
