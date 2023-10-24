@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
@@ -31,7 +32,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public Menu create(final MenuCreateRequest request) {
         final Menu menu = new Menu(
                 request.getName(),
@@ -64,6 +64,7 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 상품으로 메뉴를 생성할 수 없습니다."));
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
     }

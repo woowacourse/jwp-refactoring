@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
     private final OrderTableRepository orderTableRepository;
 
@@ -17,16 +18,15 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTable create(final OrderTableCreateRequest request) {
         return orderTableRepository.save(new OrderTable(request.getNumberOfGuest(), request.isEmpty()));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTable> list() {
         return orderTableRepository.findAll();
     }
 
-    @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -35,7 +35,6 @@ public class TableService {
         return savedOrderTable;
     }
 
-    @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId,
                                            final OrderTableUpdateNumberOfGuestsRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();

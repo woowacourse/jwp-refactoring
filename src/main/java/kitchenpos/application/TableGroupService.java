@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
@@ -21,7 +22,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<Long> orderTableIds = request.getOrderTables();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
@@ -35,7 +35,6 @@ public class TableGroupService {
         return savedTableGroup;
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         orderTables.forEach(OrderTable::unGroup);
