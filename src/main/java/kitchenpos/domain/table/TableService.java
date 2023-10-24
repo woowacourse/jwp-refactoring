@@ -5,33 +5,28 @@ import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.domain.order.OrderStatus.MEAL;
-
 @Service
+@Transactional(readOnly = true)
 public class TableService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository,
-                        final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
+
+    public TableService(final OrderTableRepository orderTableRepository, OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
     public CreateOrderTableResponse create(final CreateOrderTableRequest request) {
         OrderTable entity = OrderTableMapper.toOrderTable(request);
-        OrderTable saved = orderTableRepository.save(entity);
-        return CreateOrderTableResponse.from(saved);
+        return CreateOrderTableResponse.from(orderTableRepository.save(entity));
     }
 
     public List<OrderTableResponse> list() {
@@ -42,31 +37,19 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final UpdateOrderTableEmptyRequest request) {
-        final OrderTable entity = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        validateOrderStatus(orderTableId);
-        OrderTable updated = entity.updateEmpty(request.isEmpty());
-        OrderTable save = orderTableRepository.save(updated);
-        return OrderTableResponse.from(save);
-    }
-
-    private void validateOrderStatus(Long orderTableId) {
-        Order order = orderRepository.findByOrderTableId(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
-        if (order == null) {
-            return;
-        }
-        if (order.getOrderStatus() == COOKING || order.getOrderStatus() == MEAL) {
-            throw new IllegalArgumentException();
-        }
+        orderTableValidator.validateUpdateEmpty(orderTable);
+        final OrderTable updated = orderTable.updateEmpty(request.isEmpty());
+        return OrderTableResponse.from(orderTableRepository.save(updated));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final UpdateOrderTableGuestsRequest request) {
-        final OrderTable entity = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        final OrderTable updated = entity.updateNumberOfGuests(request.getNumberOfGuests());
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
+        final OrderTable updated = orderTable.updateNumberOfGuests(request.getNumberOfGuests());
+        orderTableValidator.validateUpdateGuestNumber(updated);
         return OrderTableResponse.from(orderTableRepository.save(updated));
     }
 }

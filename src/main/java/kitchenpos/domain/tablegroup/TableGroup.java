@@ -7,6 +7,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableGroup {
     @Id
@@ -52,6 +53,13 @@ public class TableGroup {
 
     public TableGroup updateOrderTables(List<OrderTable> savedOrderTables) {
         return new TableGroup(id, createdDate, savedOrderTables);
+    }
+
+    public TableGroup fillTables() {
+        List<OrderTable> filledTables = getOrderTables().stream()
+                .map(OrderTable::fillTable)
+                .collect(Collectors.toList());
+        return new TableGroup(id, createdDate, filledTables);
     }
 
     public static final class TableGroupBuilder {
