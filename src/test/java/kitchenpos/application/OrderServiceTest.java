@@ -1,34 +1,27 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.*;
+import kitchenpos.fixture.MenuFixtures;
+import kitchenpos.fixture.MenuProductFixtures;
+import kitchenpos.fixture.OrderFixtures;
+import kitchenpos.fixture.OrderLineItemFixtures;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+
 import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuFixtures;
-import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
-import kitchenpos.fixture.OrderLineItemFixtures;
-import kitchenpos.fixture.OrderTableFixtures;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceTest {
 
@@ -48,7 +41,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable());
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
@@ -74,7 +67,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_EmptyOrderLineItem_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable());
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Order order = OrderFixtures.create(
                 savedOrderTable.getId(),
@@ -91,7 +84,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_EmptyTable_ExceptionThrown() {
         // given
-        OrderTable savedEmptyTable = orderTableDao.save(OrderTableFixtures.createEmptyTable());
+        OrderTable savedEmptyTable = orderTableDao.save(new OrderTable(5, true));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
@@ -110,7 +103,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable());
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
@@ -133,7 +126,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable());
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
@@ -158,7 +151,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus_AlreadyCompleted_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable());
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
         OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);

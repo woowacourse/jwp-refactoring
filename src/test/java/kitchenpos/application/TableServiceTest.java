@@ -1,34 +1,25 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixtures.createEmptyTable;
-import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
-import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import java.time.LocalDateTime;
-import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.MenuFixtures;
-import kitchenpos.fixture.MenuGroupFixtures;
-import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
-import kitchenpos.fixture.OrderLineItemFixtures;
+import kitchenpos.domain.*;
+import kitchenpos.fixture.*;
+import kitchenpos.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
+import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TableServiceTest extends ServiceTest {
 
@@ -48,10 +39,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable = new OrderTable();
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
 
         // when
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = tableService.create(request);
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
@@ -62,11 +53,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
 
-        tableService.create(orderTable1);
-        tableService.create(orderTable2);
+        tableService.create(request);
+        tableService.create(request);
 
         // when
         List<OrderTable> orderTables = tableService.list();
@@ -79,7 +69,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
+        OrderTable orderTable = tableService.create(request);
 
         Menu menu = createMenu("양념1마리", 17_000);
         menuDao.save(menu);
@@ -100,8 +91,9 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_InTableGroup_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable1 = tableService.create(createEmptyTable());
-        OrderTable savedOrderTable2 = tableService.create(createEmptyTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
+        OrderTable savedOrderTable1 = tableService.create(request);
+        OrderTable savedOrderTable2 = tableService.create(request);
 
         TableGroup tableGroup = createTableGroup(savedOrderTable1, savedOrderTable2);
         tableGroupService.create(tableGroup);
@@ -126,7 +118,8 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     void changeEmpty_InlvaidOrderStatus_ExceptionThrown(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
+        OrderTable orderTable = tableService.create(request);
 
         Menu menu = createMenu("양념1마리", 17_000);
         menuDao.save(menu);
@@ -146,7 +139,8 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         // given
         int expected = 5;
-        OrderTable orderTable = tableService.create(new OrderTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
+        OrderTable orderTable = tableService.create(request);
         orderTable.setNumberOfGuests(expected);
 
         // when
@@ -161,7 +155,8 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     void changeNumberOfGuests_NegativeNumber_ExceptionThrown(int invalidNumberOfGuests) {
         // given
-        OrderTable orderTable = tableService.create(new OrderTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
+        OrderTable orderTable = tableService.create(request);
         orderTable.setNumberOfGuests(invalidNumberOfGuests);
 
         // when, then
@@ -173,7 +168,8 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests_EmptyTable_ExceptionThrown() {
         // given
-        OrderTable savedOrderTable = tableService.create(createEmptyTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
+        OrderTable savedOrderTable = tableService.create(request);
 
         savedOrderTable.setNumberOfGuests(5);
 

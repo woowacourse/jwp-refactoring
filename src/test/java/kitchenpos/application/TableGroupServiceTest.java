@@ -10,6 +10,7 @@ import kitchenpos.fixture.OrderFixtures;
 import kitchenpos.fixture.OrderLineItemFixtures;
 import kitchenpos.request.MenuCreateRequest;
 import kitchenpos.request.MenuProductDto;
+import kitchenpos.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
-import static kitchenpos.fixture.OrderTableFixtures.createEmptyTable;
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
 import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,8 +50,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        OrderTable orderTable1 = tableService.create(createEmptyTable());
-        OrderTable orderTable2 = tableService.create(createEmptyTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(request);
+        OrderTable orderTable2 = tableService.create(request);
         TableGroup tableGroup = createTableGroup(orderTable1, orderTable2);
 
         // when
@@ -65,7 +66,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_TablesSizeLessThanTwo_ExceptionThrown() {
         // given
-        OrderTable orderTable = tableService.create(createEmptyTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable = tableService.create(request);
         TableGroup tableGroup = createTableGroup(orderTable);
 
         // when, then
@@ -77,8 +79,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_ContainsNotEmptyTable_ExceptionThrown() {
         // given
-        OrderTable notEmptyTable = tableService.create(new OrderTable());
-        OrderTable emptyTable = tableService.create(createEmptyTable());
+        OrderTable notEmptyTable = tableService.create(new OrderTableCreateRequest(5, false));
+        OrderTable emptyTable = tableService.create(new OrderTableCreateRequest(5, true));
         TableGroup tableGroup = createTableGroup(notEmptyTable, emptyTable);
 
         // when, then
@@ -90,8 +92,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         // given
-        OrderTable orderTable1 = tableService.create(createEmptyTable());
-        OrderTable orderTable2 = tableService.create(createEmptyTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(request);
+        OrderTable orderTable2 = tableService.create(request);
         TableGroup savedTableGroup = tableGroupService.create(
                 createTableGroup(orderTable1, orderTable2)
         );
@@ -113,8 +116,9 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     void ungroup_ContainsInvalidOrderProcessTable_ExceptionThrown(OrderStatus orderStatus) {
         // given
-        OrderTable orderTable1 = tableService.create(createEmptyTable());
-        OrderTable orderTable2 = tableService.create(createEmptyTable());
+        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(request);
+        OrderTable orderTable2 = tableService.create(request);
         TableGroup savedTableGroup = tableGroupService.create(
                 createTableGroup(orderTable1, orderTable2)
         );
