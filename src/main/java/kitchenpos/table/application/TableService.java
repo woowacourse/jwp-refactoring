@@ -4,14 +4,11 @@ import static kitchenpos.table.domain.exception.OrderTableExceptionType.ORDER_TA
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.OrderRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.exception.OrderException;
-import kitchenpos.order.domain.exception.OrderExceptionType;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.exception.OrderTableException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public TableService(final OrderTableRepository orderTableRepository,
-        final OrderRepository orderRepository) {
+    public TableService(
+        final OrderTableRepository orderTableRepository,
+        final ApplicationEventPublisher eventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -50,20 +49,9 @@ public class TableService {
     public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new OrderTableException(ORDER_TABLE_IS_NOT_FOUND));
-        validateContainedTablesOrderStatusIsNotCompletion(orderTableId);
+        eventPublisher.publishEvent(new TableChangeEmptyEvent(savedOrderTable.getId()));
         savedOrderTable.changeEmpty(orderTableDto.getEmpty());
         return OrderTableDto.from(savedOrderTable);
-    }
-
-    private void validateContainedTablesOrderStatusIsNotCompletion(final Long orderTableId) {
-        orderRepository.findByOrderTableId(orderTableId)
-            .ifPresent(this::validateOrderIsNotCompletion);
-    }
-
-    private void validateOrderIsNotCompletion(final Order order) {
-        if (order.isNotAlreadyCompletion()) {
-            throw new OrderException(OrderExceptionType.ORDER_IS_NOT_COMPLETION);
-        }
     }
 
     @Transactional
