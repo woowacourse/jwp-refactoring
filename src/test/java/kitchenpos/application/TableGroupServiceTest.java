@@ -63,7 +63,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 단체_지정을_등록한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블들_생성(2));
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
             // when
@@ -92,7 +92,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 단체_지정_등록시_주문_테이블이_한개라면_예외를_반환한다() {
             // given
-            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.빈_테이블_생성());
+            final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.빈_테이블_엔티티_생성());
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
 
             // when & then
@@ -103,8 +103,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 단체_지정_등록시_전달된_주문_테이블_개수와_실제_저장되어_있는_주문_테이블_개수가_다르다면_예외를_반환한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블들_생성(2));
-            orderTables.add(OrderTableFixture.빈_테이블_생성());
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            orderTables.add(OrderTableFixture.빈_테이블_엔티티_생성());
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
             // when & then
@@ -115,8 +115,8 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 단체_지정_등록시_주문_테이블중_비어있지_않은_것이_존재한다면_예외를_반환한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블들_생성(2));
-            final OrderTable notEmptyOrderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
+            final OrderTable notEmptyOrderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성());
             orderTables.add(notEmptyOrderTable);
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
@@ -128,7 +128,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 단체_지정_등록시_단체_지정이_null이_아닌_것이_존재한다면_예외를_반환한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블들_생성(2));
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_생성(orderTables));
             orderTableRepository.saveAll(orderTables);
 
@@ -144,7 +144,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 그룹을_해제한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블들_생성(2));
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             final TableGroup tableGroup = TableGroupFixture.단체_지정_생성(orderTables);
 
             // when
@@ -164,7 +164,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
         @Test
         void 그룹_해제시_특정_주문_테이블_아이디들_중_조리_혹은_식사_상태인_것이_존재한다면_예외를_반환한다() {
             // given
-            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블들_생성(2));
+            final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.빈_테이블_엔티티들_생성(2));
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));

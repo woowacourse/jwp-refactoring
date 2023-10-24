@@ -30,7 +30,7 @@ class OrderTableRepositoryTest {
     void 주문_테이블_아이디_리스트에서_존재하는_아이디_개수를_반환한다() {
         // given
         final Long unsavedId = 999L;
-        final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블들_생성(4));
+        final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블_엔티티들_생성(4));
 
         final List<Long> ids = List.of(
                 unsavedId, orderTables.get(0).getId(), orderTables.get(1).getId(), orderTables.get(2).getId()
@@ -54,7 +54,7 @@ class OrderTableRepositoryTest {
     @Test
     void 테이블_그룹_아이디_리스트에서_존재하는_아이디_개수를_반환한다() {
         // given
-        final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블들_생성(4));
+        final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블_엔티티들_생성(4));
         final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_생성(orderTables));
 
         // when
