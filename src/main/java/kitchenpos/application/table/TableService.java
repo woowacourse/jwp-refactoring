@@ -37,10 +37,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeOrderable(final ChangeOrderTableOrderableRequest request) {
-        final OrderTable savedOrderTable = convertToOrderTable(request.getOrderTableId());
-        final Order savedOrder = convertToOrder(savedOrderTable);
-        checkOrderCompleted(savedOrder, savedOrderTable);
+    public OrderTableResponse changeOrderable(final Long orderTableId, final ChangeOrderTableOrderableRequest request) {
+        final OrderTable savedOrderTable = convertToOrderTable(orderTableId);
+        if (orderRepository.existsByOrderTableId(orderTableId)) {
+            final Order savedOrder = convertToOrder(savedOrderTable);
+            checkOrderCompleted(savedOrder, savedOrderTable);
+        }
         checkHasTableGroup(savedOrderTable);
         savedOrderTable.setUnOrderable();
         return OrderTableResponse.of(savedOrderTable);
@@ -69,8 +71,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final ChangeNumberOfGuestsRequest request) {
-        final OrderTable savedOrderTable = convertToOrderTable(request.getOrderTableId());
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
+        final OrderTable savedOrderTable = convertToOrderTable(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.of(savedOrderTable);
     }

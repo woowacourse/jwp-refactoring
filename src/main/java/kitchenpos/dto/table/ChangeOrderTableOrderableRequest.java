@@ -1,20 +1,17 @@
 package kitchenpos.dto.table;
 
 public class ChangeOrderTableOrderableRequest {
-    private final long orderTableId;
-    private final boolean orderable;
+    private boolean orderable;
 
-    private ChangeOrderTableOrderableRequest(final long orderTableId, final boolean orderable) {
-        this.orderTableId = orderTableId;
+    private ChangeOrderTableOrderableRequest(final boolean orderable) {
         this.orderable = orderable;
     }
 
-    public static ChangeOrderTableOrderableRequest of(final long orderTableId, final boolean orderable) {
-        return new ChangeOrderTableOrderableRequest(orderTableId, orderable);
+    public ChangeOrderTableOrderableRequest() {
     }
 
-    public long getOrderTableId() {
-        return orderTableId;
+    public static ChangeOrderTableOrderableRequest of(final boolean orderable) {
+        return new ChangeOrderTableOrderableRequest(orderable);
     }
 
     public boolean isOrderable() {

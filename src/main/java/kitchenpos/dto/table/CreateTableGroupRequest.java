@@ -3,10 +3,13 @@ package kitchenpos.dto.table;
 import java.util.List;
 
 public class CreateTableGroupRequest {
-    private final List<OrderTableRequest> orderTables;
+    private List<OrderTableRequest> orderTables;
 
     private CreateTableGroupRequest(final List<OrderTableRequest> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public CreateTableGroupRequest() {
     }
 
     public static CreateTableGroupRequest of(final List<OrderTableRequest> orderTables) {

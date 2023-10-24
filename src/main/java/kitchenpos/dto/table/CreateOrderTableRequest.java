@@ -1,13 +1,16 @@
 package kitchenpos.dto.table;
 
 public class CreateOrderTableRequest {
-    private final int numberOfGuests;
-    private final boolean orderable;
+    private int numberOfGuests;
+    private boolean orderable;
 
 
     private CreateOrderTableRequest(int numberOfGuests, boolean orderable) {
         this.numberOfGuests = numberOfGuests;
         this.orderable = orderable;
+    }
+
+    public CreateOrderTableRequest() {
     }
 
     public static CreateOrderTableRequest of(int numberOfGuests, boolean orderable) {

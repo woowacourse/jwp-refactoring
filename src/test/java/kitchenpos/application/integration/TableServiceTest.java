@@ -53,10 +53,10 @@ class TableServiceTest extends ApplicationIntegrationTest {
         final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, true);
         final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
         final OrderResponse order = createOrder(createdOrderTable.getId());
-        orderService.changeOrderStatus(ChangeOrderStatusRequest.of(order.getId(), OrderStatus.MEAL));
+        orderService.changeOrderStatus(order.getId(), ChangeOrderStatusRequest.of(OrderStatus.MEAL));
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeOrderable(ChangeOrderTableOrderableRequest.of(createdOrderTable.getId(), false)))
+        assertThatThrownBy(() -> tableService.changeOrderable(createdOrderTable.getId(), ChangeOrderTableOrderableRequest.of(false)))
                 .isInstanceOf(OrderIsNotCompletedBadRequestException.class);
     }
 
@@ -66,11 +66,11 @@ class TableServiceTest extends ApplicationIntegrationTest {
         final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, false);
         final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
         final OrderResponse order = createOrder(createdOrderTable.getId());
-        orderService.changeOrderStatus(ChangeOrderStatusRequest.of(order.getId(), OrderStatus.COMPLETION));
+        orderService.changeOrderStatus(order.getId(), ChangeOrderStatusRequest.of(OrderStatus.COMPLETION));
         tableGroupService.create(CreateTableGroupRequest.of(List.of(OrderTableRequest.of(createdOrderTable.getId()), OrderTableRequest.of(createOrderTable(4, false).getId()))));
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeOrderable(ChangeOrderTableOrderableRequest.of(createdOrderTable.getId(), false)))
+        assertThatThrownBy(() -> tableService.changeOrderable(createdOrderTable.getId(), ChangeOrderTableOrderableRequest.of(false)))
                 .isInstanceOf(OrderTableIsInTableGroupBadRequest.class);
     }
 
@@ -82,7 +82,7 @@ class TableServiceTest extends ApplicationIntegrationTest {
         final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //when
-        final OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(ChangeNumberOfGuestsRequest.of(createdOrderTable.getId(), 5));
+        final OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(createdOrderTable.getId(), ChangeNumberOfGuestsRequest.of(5));
 
         //then
         SoftAssertions.assertSoftly(softAssertions -> {
@@ -99,7 +99,7 @@ class TableServiceTest extends ApplicationIntegrationTest {
         final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(ChangeNumberOfGuestsRequest.of(createdOrderTable.getId(), -1)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdOrderTable.getId(), ChangeNumberOfGuestsRequest.of(-1)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(OrderTable.NUMBER_OF_GUESTS_IS_BELOW_ZERO_ERROR_MESSAGE);
 
@@ -112,7 +112,7 @@ class TableServiceTest extends ApplicationIntegrationTest {
         final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(ChangeNumberOfGuestsRequest.of(createdOrderTable.getId(), 5)))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdOrderTable.getId(), ChangeNumberOfGuestsRequest.of(5)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(OrderTable.CHANGE_UNORDERABLE_TABLE_NUMBER_OF_TABLE_ERROR_MESSAGE);
     }

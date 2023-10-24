@@ -78,14 +78,14 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final ChangeOrderStatusRequest request) {
-        final Order savedOrder = convertToOrder(request);
+    public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
+        final Order savedOrder = convertToOrder(orderId);
         savedOrder.setOrderStatus(request.getOrderStatus());
         return OrderResponse.of(savedOrder);
     }
 
-    private Order convertToOrder(final ChangeOrderStatusRequest request) {
-        return orderRepository.findById(request.getOrderId())
-                .orElseThrow(() -> new OrderNotFoundException(request.getOrderId()));
+    private Order convertToOrder(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 }

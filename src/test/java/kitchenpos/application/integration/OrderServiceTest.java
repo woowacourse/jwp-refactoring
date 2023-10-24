@@ -132,7 +132,7 @@ class OrderServiceTest extends ApplicationIntegrationTest {
         final OrderResponse createdOrder = orderService.create(createOrderRequest);
 
         //when
-        final OrderResponse changedOrder = orderService.changeOrderStatus(ChangeOrderStatusRequest.of(createdOrder.getId(), changeOrderStatus));
+        final OrderResponse changedOrder = orderService.changeOrderStatus(createdOrder.getId(), ChangeOrderStatusRequest.of(changeOrderStatus));
 
         //then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(changeOrderStatus.toString());
@@ -145,10 +145,10 @@ class OrderServiceTest extends ApplicationIntegrationTest {
         final List<OrderLineItemRequest> orderLineItems = List.of(orderLineItem);
         final CreateOrderRequest createOrderRequest = CreateOrderRequest.of(orderTableId, orderLineItems);
         final OrderResponse createdOrder = orderService.create(createOrderRequest);
-        orderService.changeOrderStatus(ChangeOrderStatusRequest.of(createdOrder.getId(), OrderStatus.COMPLETION));
+        orderService.changeOrderStatus(createdOrder.getId(), ChangeOrderStatusRequest.of(OrderStatus.COMPLETION));
 
         //when & then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(ChangeOrderStatusRequest.of(createdOrder.getId(), OrderStatus.MEAL)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(createdOrder.getId(), ChangeOrderStatusRequest.of(OrderStatus.MEAL)))
                 .hasMessage(Order.CHANGE_COMPLETED_ORDER_STATUS_ERROR_MESSAGE)
                 .isInstanceOf(IllegalArgumentException.class);
     }

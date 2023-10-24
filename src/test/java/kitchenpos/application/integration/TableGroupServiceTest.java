@@ -109,11 +109,11 @@ public class TableGroupServiceTest extends ApplicationIntegrationTest {
         CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable1.getId()), OrderTableRequest.of(orderTable2.getId())));
         TableGroupResponse createdTableGroup = tableGroupService.create(createTableGroupRequest);
         orderService.changeOrderStatus(
-                ChangeOrderStatusRequest.of(createOrder(orderTable1.getId()).getId(), OrderStatus.COMPLETION)
-        );
+                createOrder(orderTable1.getId()).getId(),
+                ChangeOrderStatusRequest.of(OrderStatus.COMPLETION));
         orderService.changeOrderStatus(
-                ChangeOrderStatusRequest.of(createOrder(orderTable2.getId()).getId(), OrderStatus.COMPLETION)
-        );
+                createOrder(orderTable2.getId()).getId(),
+                ChangeOrderStatusRequest.of(OrderStatus.COMPLETION));
 
         // when
         tableGroupService.ungroup(UnGroupRequest.of(createdTableGroup.getId()));

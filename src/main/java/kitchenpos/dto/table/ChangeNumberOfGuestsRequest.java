@@ -1,20 +1,17 @@
 package kitchenpos.dto.table;
 
 public class ChangeNumberOfGuestsRequest {
-    private final long orderTableId;
-    private final int numberOfGuests;
+    private int numberOfGuests;
 
-    private ChangeNumberOfGuestsRequest(final long orderTableId, final int numberOfGuests) {
-        this.orderTableId = orderTableId;
+    private ChangeNumberOfGuestsRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public static ChangeNumberOfGuestsRequest of(final long orderTableId, final int numberOfGuests) {
-        return new ChangeNumberOfGuestsRequest(orderTableId, numberOfGuests);
+    public ChangeNumberOfGuestsRequest() {
     }
 
-    public long getOrderTableId() {
-        return orderTableId;
+    public static ChangeNumberOfGuestsRequest of(final int numberOfGuests) {
+        return new ChangeNumberOfGuestsRequest(numberOfGuests);
     }
 
     public int getNumberOfGuests() {

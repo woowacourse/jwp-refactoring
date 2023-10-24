@@ -55,29 +55,31 @@ public class TableGroupService {
     public void ungroup(final UnGroupRequest request) {
         final TableGroup tableGroup = convertToTableGroup(request.getTableGroupId());
         final List<OrderTable> orderTables = convertToOrderTables(request.getTableGroupId());
-        final List<Order> orders = convertToOrders(orderTables);
-        checkOrderCompleted(orders);
+        orderTables.forEach(this::checkTableHasOrderAndCompleted);
         tableGroup.ungroup();
     }
 
-    private static void checkOrderCompleted(final List<Order> orders) {
-        orders.forEach(order -> {
-            if (order.isNotCompleted()) {
-                throw new OrderIsNotCompletedBadRequestException(order.getId());
-            }
-        });
+    private void checkTableHasOrderAndCompleted(final OrderTable orderTable) {
+        if (orderRepository.existsByOrderTableId(orderTable.getId())) {
+            final Order order = convertToOrder(orderTable);
+            checkOrderCompleted(orderTable, order);
+        }
+    }
+
+    private Order convertToOrder(final OrderTable orderTable) {
+        return orderRepository.findByOrderTableId(orderTable.getId())
+                .orElseThrow(OrderNotFoundException::new);
+    }
+
+    private void checkOrderCompleted(final OrderTable orderTable, final Order order) {
+        if (order.isNotCompleted()) {
+            throw new OrderIsNotCompletedBadRequestException(orderTable.getId());
+        }
     }
 
     private TableGroup convertToTableGroup(final Long tableGroupId) {
         return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new TableGroupNotFoundException(tableGroupId));
-    }
-
-    private List<Order> convertToOrders(final List<OrderTable> orderTables) {
-        return orderTables.stream()
-                .map(orderTable -> orderRepository.findByOrderTableId(orderTable.getId()))
-                .map(maybeOrderTable -> maybeOrderTable.orElseThrow(OrderNotFoundException::new))
-                .collect(Collectors.toList());
     }
 
     private List<OrderTable> convertToOrderTables(final Long tableGroupId) {

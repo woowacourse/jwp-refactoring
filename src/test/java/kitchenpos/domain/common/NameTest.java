@@ -39,16 +39,6 @@ class NameTest extends DomainTest {
                 .hasMessage(Name.NAME_CANNOT_EXCEED_255_ERROR_MESSAGE);
     }
 
-    @Test
-    void throw_when_name_contains_special_characters() {
-        // given
-        String name = "a!@#$%^&*()_+-=[]{}\\|;':\",./<>?";
-
-        // when & then
-        assertThatThrownBy(() -> Name.of(name))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(Name.NAME_IS_IN_SPECIAL_CHARACTOR_ERROR_MESSAGE);
-    }
 
     @Test
     void throw_when_name_contains_only_numbers() {

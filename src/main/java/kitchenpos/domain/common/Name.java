@@ -8,7 +8,6 @@ import java.util.Objects;
 public class Name {
     public static final String NAME_IS_NOT_PROVIDED_ERROR_MESSAGE = "이름이 입력되지 않았습니다.";
     public static final String NAME_CANNOT_EXCEED_255_ERROR_MESSAGE = "이름은 255자를 초과할 수 없습니다.";
-    public static final String NAME_IS_IN_SPECIAL_CHARACTOR_ERROR_MESSAGE = "이름은 한글, 영문, 숫자만 입력 가능합니다.";
     public static final String NAME_CANNOT_CONTAIN_ONLY_NUMBER_ERROR_MESSAGE = "이름은 숫자만 입력할 수 없습니다.";
     @NotNull
     private String name;
@@ -27,9 +26,6 @@ public class Name {
         }
         if (value.length() > 255) {
             throw new IllegalArgumentException(NAME_CANNOT_EXCEED_255_ERROR_MESSAGE);
-        }
-        if (!value.matches("^[가-힣a-zA-Z0-9]+$")) {
-            throw new IllegalArgumentException(NAME_IS_IN_SPECIAL_CHARACTOR_ERROR_MESSAGE);
         }
         if (value.matches("^[0-9]+$")) {
             throw new IllegalArgumentException(NAME_CANNOT_CONTAIN_ONLY_NUMBER_ERROR_MESSAGE);
