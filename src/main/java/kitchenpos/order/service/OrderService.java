@@ -5,22 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.type.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.dto.request.ChangeOrderRequest;
-import kitchenpos.order.dto.request.CreateOrderRequest;
-import kitchenpos.order.dto.OrderLineItemsDto;
-import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.exception.EmptyListException;
-import kitchenpos.exception.EmptyTableException;
 import kitchenpos.exception.GroupTableException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.type.OrderStatus;
+import kitchenpos.order.dto.OrderLineItemsDto;
+import kitchenpos.order.dto.OrderTableIdValidateEvent;
+import kitchenpos.order.dto.request.ChangeOrderRequest;
+import kitchenpos.order.dto.request.CreateOrderRequest;
+import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,14 +30,14 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
     public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-                        OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
+                        OrderLineItemRepository orderLineItemRepository, ApplicationEventPublisher publisher) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     public OrderResponse create(final CreateOrderRequest request) {
@@ -56,12 +55,7 @@ public class OrderService {
             throw new NoSuchDataException("입력한 메뉴들이 일치하지 않습니다.");
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(()->new NoSuchDataException("입력한 id의 테이블이 존재하지 않습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new EmptyTableException("비어있는 테이블의 주문은 생성할 수 없습니다.");
-        }
+        publisher.publishEvent(new OrderTableIdValidateEvent(request.getOrderTableId()));
 
         final Order order = Order.builder()
                 .orderTableId(request.getOrderTableId())
@@ -105,7 +99,7 @@ public class OrderService {
 
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(()->new NoSuchDataException("해당하는 id의 주문이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchDataException("해당하는 id의 주문이 존재하지 않습니다."));
 
         if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new GroupTableException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");

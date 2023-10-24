@@ -1,22 +1,21 @@
 package kitchenpos.table.service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.type.OrderStatus;
+import kitchenpos.exception.EmptyTableException;
+import kitchenpos.exception.InvalidOrderStateException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.OrderStatusValidateByIdsEvent;
 import kitchenpos.table.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.exception.EmptyTableException;
-import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.exception.InvalidOrderStateException;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -24,15 +23,16 @@ import org.springframework.util.CollectionUtils;
 @Service
 @Transactional
 public class TableGroupService {
-    private final OrderRepository orderRepository;
+
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
-                             TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository,
+                             ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.publisher = publisher;
     }
 
     public TableGroupResponse create(final CreateTableGroupRequest request) {
@@ -62,10 +62,11 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        savedOrderTables.stream()
-                .forEach(orderTable -> orderTable.group(savedTableGroup.getId()));
+        for (final OrderTable orderTable:savedOrderTables){
+            orderTable.group(savedTableGroup.getId());
+        }
 
-        return TableGroupResponse.from(savedTableGroup,savedOrderTables);
+        return TableGroupResponse.from(savedTableGroup, savedOrderTables);
     }
 
     public void ungroup(final Long tableGroupId) {
@@ -75,10 +76,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블 그룹을 해제할 수 없습니다.");
-        }
+        publisher.publishEvent(new OrderStatusValidateByIdsEvent(orderTableIds));
 
         for (final OrderTable orderTable : orderTables) {
             final OrderTable ungroupTable = OrderTable.builder()

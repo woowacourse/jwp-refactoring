@@ -4,6 +4,7 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.order.domain.type.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.order.domain.type.OrderStatus;
 
 @Entity
@@ -38,6 +40,12 @@ public class Order {
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
+    }
+
+    public void validateStatus() {
+        if (!orderStatus.equals(COMPLETION)) {
+            throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블의 상태는 변경 할 수 없습니다.");
+        }
     }
 
     private Order(Builder builder) {

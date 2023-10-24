@@ -1,34 +1,33 @@
 package kitchenpos.table.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.type.OrderStatus;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.GroupTableException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.value.NumberOfGuests;
+import kitchenpos.table.dto.OrderStatusValidateByIdEvent;
 import kitchenpos.table.dto.request.ChangeEmptyRequest;
 import kitchenpos.table.dto.request.ChangeNumberOfGuestsRequest;
 import kitchenpos.table.dto.request.CreateOrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
-import kitchenpos.exception.EmptyListException;
-import kitchenpos.exception.GroupTableException;
-import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.exception.InvalidOrderStateException;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.repository.OrderTableRepository;
+import kitchenpos.value.NumberOfGuests;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class TableService {
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
+
+    public TableService(OrderTableRepository orderTableRepository, ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     public OrderTableResponse create(final CreateOrderTableRequest request) {
@@ -50,16 +49,13 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(()-> new NoSuchDataException("해당하는 id의 테이블이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchDataException("해당하는 id의 테이블이 존재하지 않습니다."));
 
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new GroupTableException("그룹이 설정된 테이블의 상태는 변경 할 수 없습니다.");
         }
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블의 상태는 변경 할 수 없습니다.");
-        }
+        publisher.publishEvent(new OrderStatusValidateByIdEvent(savedOrderTable.getId()));
 
         final OrderTable orderTable = OrderTable.builder()
                 .id(orderTableId)
@@ -76,7 +72,7 @@ public class TableService {
         final NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(()->new NoSuchDataException("해당하는 id의 테이블이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchDataException("해당하는 id의 테이블이 존재하지 않습니다."));
 
         if (savedOrderTable.isEmpty()) {
             throw new EmptyListException("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
