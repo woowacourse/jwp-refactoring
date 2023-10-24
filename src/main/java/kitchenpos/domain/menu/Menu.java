@@ -70,16 +70,20 @@ public class Menu {
     }
 
     public void changeMenuProducts(final Map<Product, Integer> productToQuantity) {
-        final var sumOfMenuProductPrice = productToQuantity.entrySet().stream()
-                .map(entry -> entry.getKey().getPrice().times(entry.getValue()))
-                .reduce(Money.ZERO, Money::plus);
-        if (price.isHigherThan(sumOfMenuProductPrice)) {
-            throw new IllegalArgumentException("메뉴 가격이 메뉴에 속한 상품 가격의 합보다 큽니다.");
-        }
+        validatePrice(Money.ZERO, productToQuantity);
         final List<MenuProduct> menuProducts = productToQuantity.entrySet().stream()
                 .map(entry -> new MenuProduct(null, this, entry.getKey().getId(), entry.getValue()))
                 .collect(Collectors.toList());
         this.menuProducts = menuProducts;
+    }
+
+    private void validatePrice(final Money initialPrice, final Map<Product, Integer> productToQuantity) {
+        final var sumOfMenuProductPrice = productToQuantity.entrySet().stream()
+                .map(entry -> entry.getKey().getPrice().times(entry.getValue()))
+                .reduce(initialPrice, Money::plus);
+        if (price.isHigherThan(sumOfMenuProductPrice)) {
+            throw new IllegalArgumentException("메뉴 가격이 메뉴에 속한 상품 가격의 합보다 큽니다.");
+        }
     }
 
     @Override
