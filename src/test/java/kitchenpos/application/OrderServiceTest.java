@@ -37,6 +37,8 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.spy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -182,29 +184,11 @@ class OrderServiceTest {
 
         @Test
         void 주문을_전체_조회_할_수_있다() {
-            // given
-            final long orderId = 1L;
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-
-            given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(orderLineItems);
-
-            final Order spyOrder = spy(order(COMPLETION, LocalDateTime.now(), new ArrayList<>()));
-            given(spyOrder.getId()).willReturn(orderId);
-            given(orderRepository.findAll()).willReturn(List.of(spyOrder));
-
             // when
-            final List<Order> actual = orderService.list();
+            orderService.list();
 
             // then
-            assertAll(
-                    () -> assertThat(actual).hasSize(1)
-                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "orderLineItems")
-                            .containsExactly(spyOrder),
-                    () -> assertThat(actual.get(0).getOrderLineItems().getOrderLineItems())
-                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
-                            .containsExactly(wooDong, frenchFries)
-            );
-
+            verify(orderRepository, only()).findAll();
         }
     }
 

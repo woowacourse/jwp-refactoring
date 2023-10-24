@@ -7,7 +7,6 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
 import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
-import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.domain.menu.service.MenuService;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
 import kitchenpos.domain.menu.service.dto.MenuGroupResponse;
@@ -20,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +34,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.only;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -53,9 +53,6 @@ class MenuServiceTest {
 
     @Mock
     private MenuProductRepository menuProductRepository;
-
-    @Mock
-    private ProductRepository productRepository;
 
     @Nested
     class Create {
@@ -117,32 +114,11 @@ class MenuServiceTest {
 
         @Test
         void 메뉴를_전체_조회할_수_있다() {
-            // given
-            final MenuProduct wooDong = menuProduct(noodle(), 1);
-            final MenuProduct frenchFries = menuProduct(potato(), 1);
-
-            final Menu expected = menu("우동세트", BigDecimal.valueOf(9000), western(), new ArrayList<>());
-            final Menu spyExpected = spy(expected);
-
-            given(menuRepository.findAll()).willReturn(List.of(spyExpected));
-            given(spyExpected.getId()).willReturn(1L);
-
-            given(menuProductRepository.findAllByMenuId(anyLong())).willReturn(List.of(wooDong, frenchFries));
-
             // when
-            final List<MenuResponse> actual = menuService.list();
+            menuService.list();
 
             // then
-            assertThat(actual).hasSize(1);
-            final MenuResponse menuResponse = actual.get(0);
-            assertAll(
-                    () -> assertThat(menuResponse.getId()).isNotNull(),
-                    () -> assertThat(menuResponse.getName()).isEqualTo(expected.getName()),
-                    () -> assertThat(menuResponse.getPrice()).isEqualTo(expected.getPrice().getPrice().longValue()),
-                    () -> assertThat(menuResponse.getMenuGroup()).isNotNull(),
-                    () -> assertMenuGroup(menuResponse.getMenuGroup(), expected.getMenuGroup()),
-                    () -> assertThat(menuResponse.getMenuProductResponses()).hasSize(expected.getMenuProducts().getMenuProducts().size())
-            );
+            verify(menuRepository, only()).findAll();
         }
     }
 

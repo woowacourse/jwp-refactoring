@@ -58,13 +58,6 @@ public class MenuService {
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
-        for (final Menu menu : menus) {
-            final MenuProducts menuProducts = new MenuProducts();
-            final List<MenuProduct> savedMenuProducts = menuProductRepository.findAllByMenuId(menu.getId());
-            menuProducts.addAll(savedMenuProducts);
-            menu.addMenuProducts(menuProducts);
-        }
-
         return menus.stream()
                 .map(MenuResponse::toDto)
                 .collect(toList());
