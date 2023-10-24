@@ -4,11 +4,18 @@ import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableId;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.application.dto.TableResponse;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -22,12 +29,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kitchenpos.fixture.MenuGroupFixtures.TEST_GROUP;
 import static kitchenpos.fixture.OrderTableFixtures.EMPTY_TABLE;
 import static kitchenpos.fixture.OrderTableFixtures.NOT_EMPTY_TABLE;
+import static kitchenpos.fixture.ProductFixtures.PIZZA;
 
 @Transactional
 @SpringBootTest
@@ -45,13 +53,32 @@ class TableGroupServiceTest {
     @Autowired
     private OrderDao orderDao;
 
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
     private OrderTable testTable1;
     private OrderTable testTable2;
+    private OrderTable emptyTable;
+    private Menu testMenu;
 
     @BeforeEach
     void setup() {
-        testTable1 = orderTableDao.save(EMPTY_TABLE());
-        testTable2 = orderTableDao.save(EMPTY_TABLE());
+        testTable1 = orderTableDao.save(NOT_EMPTY_TABLE());
+        testTable2 = orderTableDao.save(NOT_EMPTY_TABLE());
+        emptyTable = orderTableDao.save(EMPTY_TABLE());
+
+        final MenuGroup menuGroup = menuGroupDao.save(TEST_GROUP());
+        final Product product = productDao.save(PIZZA());
+        final Menu menu = new Menu.MenuFactory("test menu", product.getPrice(), menuGroup)
+                .addProduct(product, 1L)
+                .create();
+        testMenu = menuDao.save(menu);
     }
 
     @Nested
@@ -98,14 +125,13 @@ class TableGroupServiceTest {
         }
 
         @Test
-        @DisplayName("비어있지 않는 테이블로는 그룹을 생성시 예외가 발생한다.")
+        @DisplayName("비어있는 테이블로는 그룹을 생성시 예외가 발생한다.")
         void throwExceptionWithEmptyTable() {
             // given
-            final OrderTable savedNotEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
                             new OrderTableId(testTable1.getId()),
-                            new OrderTableId(savedNotEmptyTable.getId())
+                            new OrderTableId(emptyTable.getId())
                     ));
 
             // when
@@ -166,12 +192,12 @@ class TableGroupServiceTest {
         @ParameterizedTest(name = "테이블 주문 상태 : {0}")
         @ValueSource(strings = {"COOKING", "MEAL"})
         @DisplayName("완료상태가 아닌 주문이 있는경우 그룹해제시 예외가 발생한다.")
-        void throwExceptionWithUncompletedOrder(final String status) {
+        void throwExceptionWithUncompletedOrder(final String statusValue) {
             // given
-            final Order order = new Order();
-            order.setOrderStatus(status);
-            order.setOrderedTime(LocalDateTime.now());
-            order.setOrderTableId(testTable1.getId());
+            final Order order = new Order.OrderFactory(testTable1)
+                    .addMenu(testMenu, 1L)
+                    .create();
+            order.changeOrderStatus(OrderStatus.valueOf(statusValue));
             orderDao.save(order);
 
             // when

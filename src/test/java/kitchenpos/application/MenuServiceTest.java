@@ -44,9 +44,6 @@ class MenuServiceTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
     private MenuGroupDao menuGroupDao;
 
     @Autowired

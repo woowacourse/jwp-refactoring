@@ -13,6 +13,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
@@ -141,25 +142,31 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경 테스트")
     class ChangeStatusTest {
 
+        private Order testOrder;
+
+        @BeforeEach
+        void setup() {
+            final Order order = new Order.OrderFactory(notEmptyTable)
+                    .addMenu(testMenu, 1L)
+                    .create();
+            testOrder = orderDao.save(order);
+        }
+
         @ParameterizedTest(name = "초기상태 : {0}, 변경상태 : {1}")
         @CsvSource(value = {"COOKING,MEAL", "MEAL,COMPLETION", "COOKING,COMPLETION"})
         @DisplayName("성공 테스트")
         void success(final String originalStatus, final String statusToChange) {
             // given
-            final Order original = new Order();
-            original.setOrderStatus(originalStatus);
-            original.setOrderedTime(LocalDateTime.now());
-            original.setOrderTableId(notEmptyTable.getId());
-            final Order savedOrder = orderDao.save(original);
+            testOrder.changeOrderStatus(OrderStatus.valueOf(originalStatus));
 
             final OrderStatusChangeRequest changeRequest = new OrderStatusChangeRequest(statusToChange);
 
             // when
-            final OrderResponse response = orderService.changeOrderStatus(savedOrder.getId(), changeRequest);
+            final OrderResponse response = orderService.changeOrderStatus(testOrder.getId(), changeRequest);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(response.getId()).isEqualTo(savedOrder.getId());
+                softly.assertThat(response.getId()).isEqualTo(testOrder.getId());
                 softly.assertThat(response.getOrderStatus()).isEqualTo(statusToChange);
             });
         }
@@ -169,17 +176,13 @@ class OrderServiceTest {
         @DisplayName("실패 테스트")
         void fail(final String originalStatus, final String statusToChange) {
             // given
-            final Order original = new Order();
-            original.setOrderStatus(originalStatus);
-            original.setOrderedTime(LocalDateTime.now());
-            original.setOrderTableId(notEmptyTable.getId());
-            final Order savedOrder = orderDao.save(original);
+            testOrder.changeOrderStatus(OrderStatus.valueOf(originalStatus));
 
             final OrderStatusChangeRequest changeRequest = new OrderStatusChangeRequest(statusToChange);
 
             // when
             // then
-            final Long orderId = savedOrder.getId();
+            final Long orderId = testOrder.getId();
             Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, changeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -189,9 +192,9 @@ class OrderServiceTest {
     @DisplayName("주문들 리스트 조회 테스트")
     void getOrderList() {
         // given
-        final Order order = getOrder(notEmptyTable.getId(), List.of(getOrderLineItem(testMenu.getId())));
-        order.setOrderStatus("COOKING");
-        order.setOrderedTime(LocalDateTime.now());
+        final Order order = new Order.OrderFactory(notEmptyTable)
+                .addMenu(testMenu, 1L)
+                .create();
         final Order savedOrder = orderDao.save(order);
 
         // when
@@ -203,19 +206,5 @@ class OrderServiceTest {
             final OrderResponse savedResult = response.get(response.size() - 1);
             softly.assertThat(savedResult.getId()).isEqualTo(savedOrder.getId());
         });
-    }
-
-    private OrderLineItem getOrderLineItem(final Long menuId) {
-        final OrderLineItem orderMenuRequest = new OrderLineItem();
-        orderMenuRequest.setMenuId(menuId);
-        orderMenuRequest.setQuantity(1L);
-        return orderMenuRequest;
-    }
-
-    private Order getOrder(final Long tableId, final List<OrderLineItem> orderLineItems) {
-        final Order request = new Order();
-        request.setOrderTableId(tableId);
-        request.setOrderLineItems(orderLineItems);
-        return request;
     }
 }
