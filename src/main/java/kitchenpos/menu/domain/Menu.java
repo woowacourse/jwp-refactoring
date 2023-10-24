@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 @Entity
 public class Menu {

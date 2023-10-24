@@ -2,6 +2,7 @@ package kitchenpos.menu.dto.response;
 
 import java.math.BigDecimal;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menugroup.dto.response.MenuGroupResponse;
 
 public class MenuResponse {
 
