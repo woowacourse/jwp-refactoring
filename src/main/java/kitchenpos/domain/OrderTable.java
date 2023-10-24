@@ -67,7 +67,14 @@ public class OrderTable {
     }
 
     public void setEmpty(final boolean empty) {
+        validateGrouped();
         this.empty = empty;
+    }
+
+    private void validateGrouped() {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
