@@ -14,10 +14,10 @@ public class Product {
     private Long id;
 
     @Embedded
-    private ProductName productName;
+    private ProductName name;
 
     @Embedded
-    private Price price;
+    private ProductPrice price;
 
     protected Product() {
     }
@@ -28,31 +28,19 @@ public class Product {
 
     public Product(final Long id, final String name, final BigDecimal price) {
         this.id = id;
-        this.productName = new ProductName(name);
-        this.price = new Price(price);
+        this.name = new ProductName(name);
+        this.price = new ProductPrice(price);
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
-        return productName.getValue();
-    }
-
-    public void setName(final String name) {
-        this.productName = new ProductName(name);
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
         return price.getValue();
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = new Price(price);
     }
 }

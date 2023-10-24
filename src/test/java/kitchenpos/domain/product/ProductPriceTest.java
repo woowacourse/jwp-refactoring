@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @SuppressWarnings("NonAsciiCharacters")
-class PriceTest {
+class ProductPriceTest {
 
     @ParameterizedTest
     @NullSource
@@ -19,7 +19,7 @@ class PriceTest {
     void 가격이_null_이거나_0보다_작다면_예외가_발생한다(BigDecimal invalidPrice) {
         // given
         // when
-        final ThrowingCallable throwingCallable = () -> new Price(invalidPrice);
+        final ThrowingCallable throwingCallable = () -> new ProductPrice(invalidPrice);
 
         // then
         assertThatThrownBy(throwingCallable)
@@ -33,7 +33,7 @@ class PriceTest {
         final var invalidPrice = BigDecimal.valueOf(100.001);
 
         // when
-        final ThrowingCallable throwingCallable = () -> new Price(invalidPrice);
+        final ThrowingCallable throwingCallable = () -> new ProductPrice(invalidPrice);
 
         // then
         assertThatThrownBy(throwingCallable)

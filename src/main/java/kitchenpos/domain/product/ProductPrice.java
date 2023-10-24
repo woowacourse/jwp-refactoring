@@ -6,15 +6,15 @@ import javax.persistence.Embeddable;
 import kitchenpos.exception.InvalidPriceException;
 
 @Embeddable
-public class Price {
+public class ProductPrice {
 
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 
-    protected Price() {
+    protected ProductPrice() {
     }
 
-    public Price(final BigDecimal value) {
+    public ProductPrice(final BigDecimal value) {
         validate(value);
         this.value = value;
     }

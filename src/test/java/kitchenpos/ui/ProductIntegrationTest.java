@@ -66,7 +66,7 @@ class ProductIntegrationTest extends IntegrationTest {
         @Test
         void 정상적으로_등록한다() {
             //given
-            final var request = new ProductCreateRequest("상품명", new BigDecimal("1000"));
+            final var request = new ProductCreateRequest("상품명", new BigDecimal("1000.00"));
 
             //when
             final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, Product.class);
