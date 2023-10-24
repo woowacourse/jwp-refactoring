@@ -22,10 +22,18 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     public TableGroup(final OrderTables orderTables) {
+        validateGroupable(orderTables);
+
         this.orderTables = orderTables;
     }
 
     protected TableGroup() {
+    }
+
+    private void validateGroupable(final OrderTables orderTables) {
+        if (orderTables.isNotGroupable()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

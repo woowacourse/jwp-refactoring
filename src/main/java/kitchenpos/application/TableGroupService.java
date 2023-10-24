@@ -1,8 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.dto.TableGroupRequest;
+import kitchenpos.domain.dto.TableGroupResponse;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -26,19 +29,16 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final OrderTables orderTables = tableGroup.getOrderTables();
-
-        if (orderTables.canNotGroup()) {
-            throw new IllegalArgumentException();
-        }
-
+    public TableGroupResponse create(final TableGroupRequest request) {
+        final List<OrderTable> orderTableEntities = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
+        final OrderTables orderTables = new OrderTables(orderTableEntities);
+        final TableGroup tableGroup = new TableGroup(orderTables);
         tableGroupRepository.save(tableGroup);
 
         orderTables.updateGroup(tableGroup);
         orderTableRepository.saveAll(orderTables.getValues());
 
-        return tableGroup;
+        return TableGroupResponse.from(tableGroup);
     }
 
     @Transactional
@@ -49,12 +49,17 @@ public class TableGroupService {
         final OrderTables orderTables = tableGroup.getOrderTables();
 
         final List<Long> orderTableIds = orderTables.getOrderTableIds();
+        validateUngroupableStatus(orderTableIds);
+
+        orderTables.ungroup();
+
+        orderTableRepository.saveAll(orderTables.getValues());
+    }
+
+    private void validateUngroupableStatus(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
-
-        orderTables.ungroup();
-        orderTableRepository.saveAll(orderTables.getValues());
     }
 }

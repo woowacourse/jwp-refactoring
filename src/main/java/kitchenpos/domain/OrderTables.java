@@ -30,13 +30,13 @@ public class OrderTables {
         return values;
     }
 
-    public boolean canNotGroup() {
-        return isGroupSize()
+    public boolean isNotGroupable() {
+        return isNotGroupSize()
                 || isHasNotSaved()
                 || isHasUnableToGroup();
     }
 
-    private boolean isGroupSize() {
+    private boolean isNotGroupSize() {
         return CollectionUtils.isEmpty(values) || values.size() < MIN_TABLE_GROUP_SIZE;
     }
 
