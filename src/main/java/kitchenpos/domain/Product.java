@@ -13,22 +13,22 @@ public class Product {
     private String name;
     
     @Embedded
-    private ProductPrice price;
+    private ProductPrice productPrice;
     
-    public Product(final String name, final ProductPrice price) {
-        this(null, name, price);
+    public Product(final String name, final ProductPrice productPrice) {
+        this(null, name, productPrice);
     }
     
     public Product(final Long id,
                    final String name,
-                   final ProductPrice price) {
+                   final ProductPrice productPrice) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.productPrice = productPrice;
     }
     
     public ProductPrice multiplyQuantity(final long quantity) {
-        return this.price.multiply(BigDecimal.valueOf(quantity));
+        return this.productPrice.multiply(BigDecimal.valueOf(quantity));
     }
     
     public Long getId() {
@@ -39,7 +39,7 @@ public class Product {
         return name;
     }
     
-    public ProductPrice getPrice() {
-        return price;
+    public ProductPrice getProductPrice() {
+        return productPrice;
     }
 }

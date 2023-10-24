@@ -62,7 +62,7 @@ public class Menu {
         BigDecimal sum = BigDecimal.ZERO;
         menuProducts.stream()
                     .map(MenuProduct::getProductPrice)
-                    .map(ProductPrice::getProductPrice)
+                    .map(ProductPrice::getPrice)
                     .forEach(sum::add);
         if (menuPrice.getPrice().compareTo(sum) > 0) {
             throw new InvalidMenuPriceException("메뉴의 가격은 메뉴 상품 가격의 합보다 클 수 없습니다");

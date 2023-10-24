@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public class ProductPrice {
     
-    private final BigDecimal productPrice;
+    private final BigDecimal price;
     
-    public ProductPrice(final BigDecimal productPrice) {
-        validate(productPrice);
-        this.productPrice = productPrice;
+    public ProductPrice(final BigDecimal price) {
+        validate(price);
+        this.price = price;
     }
     
     private void validate(final BigDecimal productPrice) {
@@ -21,10 +21,10 @@ public class ProductPrice {
     }
     
     public ProductPrice multiply(final BigDecimal value) {
-        return new ProductPrice(this.productPrice.multiply(value));
+        return new ProductPrice(this.price.multiply(value));
     }
     
-    public BigDecimal getProductPrice() {
-        return productPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 }
