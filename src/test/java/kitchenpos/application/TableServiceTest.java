@@ -132,13 +132,12 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        int expected = 5;
         OrderTableCreateRequest request = new OrderTableCreateRequest(3, false);
         OrderTable orderTable = tableService.create(request);
-        orderTable.setNumberOfGuests(expected);
+        int expected = 5;
 
         // when
-        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
+        OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), expected);
 
         // then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(expected);
@@ -151,10 +150,9 @@ class TableServiceTest extends ServiceTest {
         // given
         OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
         OrderTable orderTable = tableService.create(request);
-        orderTable.setNumberOfGuests(invalidNumberOfGuests);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), invalidNumberOfGuests))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -165,10 +163,8 @@ class TableServiceTest extends ServiceTest {
         OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
         OrderTable savedOrderTable = tableService.create(request);
 
-        savedOrderTable.setNumberOfGuests(5);
-
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), 8))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
