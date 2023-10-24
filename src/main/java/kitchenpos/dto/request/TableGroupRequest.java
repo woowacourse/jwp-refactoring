@@ -5,7 +5,10 @@ import org.springframework.util.CollectionUtils;
 
 public class TableGroupRequest {
 
-    private final List<Long> tableIds;
+    private List<Long> tableIds;
+
+    protected TableGroupRequest() {
+    }
 
     public TableGroupRequest(final List<Long> tableIds) {
         if (CollectionUtils.isEmpty(tableIds) || tableIds.size() < 2) {
