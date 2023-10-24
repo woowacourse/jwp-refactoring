@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -10,27 +10,28 @@ import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class MenuServiceTest {
+@DisplayName("메뉴 서비스 테스트")
+class MenuServiceTest extends ServiceTestConfig {
 
     @Autowired
     MenuService menuService;
@@ -39,7 +40,7 @@ class MenuServiceTest {
     MenuRepository menuRepository;
 
     @Autowired
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
     MenuProductDao menuProductDao;
@@ -54,7 +55,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupDao.save(MenuGroupFixture.메뉴_그룹_생성());
+        menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
         products = productDao.saveAll(ProductFixture.상품들_생성(2));
         menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, products));
         final MenuProduct menuProduct1 = menuProductDao.save(MenuProductFixture.메뉴_상품_생성(products.get(0), menu));

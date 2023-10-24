@@ -1,39 +1,34 @@
 package kitchenpos.application;
 
-import kitchenpos.application.fixture.MenuGroupServiceFixture;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.repository.MenuGroupRepository;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class MenuGroupServiceTest extends MenuGroupServiceFixture {
+@DisplayName("메뉴 그룹 서비스 테스트")
+class MenuGroupServiceTest extends ServiceTestConfig {
 
-    @InjectMocks
+    @Autowired
     MenuGroupService menuGroupService;
 
-    @Mock
-    MenuGroupDao menuGroupDao;
+    @Autowired
+    MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴를_등록한다() {
         // given
-        given(menuGroupDao.save(any(MenuGroup.class))).willReturn(저장된_메뉴_그룹);
-
-        final MenuGroup menuGroup = new MenuGroup(메뉴_그룹_이름);
+        final MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹_생성();
 
         // when
         final MenuGroup actual = menuGroupService.create(menuGroup);
@@ -46,9 +41,9 @@ class MenuGroupServiceTest extends MenuGroupServiceFixture {
     }
 
     @Test
-    void 메뉴_목록을_조횐한다() {
+    void 메뉴_목록을_조회한다() {
         // given
-        given(menuGroupDao.findAll()).willReturn(저장된_메뉴_그룹들);
+        final List<MenuGroup> menuGroups = menuGroupRepository.saveAll(MenuGroupFixture.메뉴_그룹들_생성(3));
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();
@@ -56,12 +51,12 @@ class MenuGroupServiceTest extends MenuGroupServiceFixture {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
-                          .isEqualTo(저장된_메뉴_그룹1);
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
-                          .isEqualTo(저장된_메뉴_그룹2);
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
-                          .isEqualTo(저장된_메뉴_그룹3);
+            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().ignoringFields("id")
+                          .isEqualTo(menuGroups.get(0));
+            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().ignoringFields("id")
+                          .isEqualTo(menuGroups.get(1));
+            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison().ignoringFields("id")
+                          .isEqualTo(menuGroups.get(2));
         });
     }
 }

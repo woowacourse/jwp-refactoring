@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.ProductRepository;
@@ -10,17 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTestConfig {
 
     @Autowired
     private ProductService productService;
