@@ -44,7 +44,7 @@ public class MenuService {
 
     private MenuGroup findMenuGroup(final Long menuGroupId) {
         if (Objects.isNull(menuGroupId)) {
-            throw new IllegalArgumentException("등록되지 않은 메뉴 그룹으로 메뉴를 생성할 수 없습니다.");
+            throw new IllegalArgumentException("메뉴 그룹 아이디가 존재하지 않습니다.");
         }
         return menuGroupRepository.findById(menuGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 메뉴 그룹으로 메뉴를 생성할 수 없습니다."));
@@ -58,7 +58,7 @@ public class MenuService {
 
     private Product findProduct(final Long productId) {
         if (Objects.isNull(productId)) {
-            throw new IllegalArgumentException("등록되지 않은 상품으로 메뉴를 생성할 수 없습니다.");
+            throw new IllegalArgumentException("메뉴로 등록할 상품 아이디가 존재하지 않습니다.");
         }
         return productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 상품으로 메뉴를 생성할 수 없습니다."));
