@@ -1,4 +1,4 @@
-package kitchenpos.product.dto.request;
+package kitchenpos.common.dto.request;
 
 import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;

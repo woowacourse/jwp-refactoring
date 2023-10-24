@@ -1,4 +1,4 @@
-package kitchenpos.product.dto.response;
+package kitchenpos.common.dto.response;
 
 import java.math.BigDecimal;
 import kitchenpos.product.domain.Product;

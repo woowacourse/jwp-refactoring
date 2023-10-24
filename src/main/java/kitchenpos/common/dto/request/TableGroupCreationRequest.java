@@ -1,9 +1,8 @@
-package kitchenpos.tablegroup.dto.request;
+package kitchenpos.common.dto.request;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
-import kitchenpos.table.dto.request.OrderTableRequest;
 
 public class TableGroupCreationRequest {
 

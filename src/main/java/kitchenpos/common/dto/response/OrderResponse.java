@@ -1,9 +1,8 @@
-package kitchenpos.order.dto.response;
+package kitchenpos.common.dto.response;
 
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.dto.response.TableResponse;
 
 public class OrderResponse {
 
