@@ -174,12 +174,12 @@ class TableGroupServiceTest {
         final Product product = productRepository.save(
             new Product("테스트상품", BigDecimal.valueOf(1000)));
 
-        final MenuProduct menuProduct = new MenuProduct(product, 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1);
 
         final Menu menu = menuRepository.save(Menu.of("테스트메뉴", BigDecimal.valueOf(500), menuGroup,
             List.of(menuProduct)));
 
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), 1);
 
         final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
             List.of(firstTable.getId(), secondTable.getId()));

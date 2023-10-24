@@ -169,12 +169,12 @@ class TableServiceTest {
         final OrderTable savedOrderTable = createOrderTable(false, 2);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트 메뉴그룹"));
         final Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(2000)));
-        final MenuProduct menuProduct = new MenuProduct(product, 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1);
         final Menu menu = menuRepository.save(Menu.of("테스트 메뉴", BigDecimal.valueOf(1000), menuGroup,
             List.of(menuProduct)));
         menuProductRepository.save(menuProduct);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), 2);
         final Order order = Order.of(savedOrderTable.getId(), orderTableChangeService,
             List.of(orderLineItem));
         order.changeOrderStatus(OrderStatus.COOKING);

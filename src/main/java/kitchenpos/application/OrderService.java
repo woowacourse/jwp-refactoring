@@ -58,7 +58,7 @@ public class OrderService {
 
                 final long quantity = orderLineItemDto.getQuantity();
 
-                return new OrderLineItem(findMenu, quantity);
+                return new OrderLineItem(findMenu.getName(), findMenu.getPrice(), quantity);
             })
             .collect(Collectors.toList());
     }

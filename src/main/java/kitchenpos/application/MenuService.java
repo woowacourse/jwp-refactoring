@@ -53,7 +53,8 @@ public class MenuService {
                         menuProductCreateDto.getProductId()).orElseThrow(
                         () -> new NotFoundProductException(menuProductCreateDto.getProductId()));
 
-                    return new MenuProduct(product, menuProductCreateDto.getQuantity());
+                    return new MenuProduct(product.getName(), product.getPrice(),
+                        menuProductCreateDto.getQuantity());
                 })
             .collect(Collectors.toList());
     }

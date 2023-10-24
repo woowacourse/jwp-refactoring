@@ -155,7 +155,8 @@ class MenuServiceTest {
         assertThat(savedMenuProductResults.get(0)).usingRecursiveComparison()
             .ignoringFields("seq", "product.price", "menu.id")
             .isEqualTo(
-                new MenuProduct(savedProduct, menuProductCreateDto.getQuantity()));
+                new MenuProduct(savedProduct.getName(), savedProduct.getPrice(),
+                    menuProductCreateDto.getQuantity()));
     }
 
     private Product createProduct(final int price) {
