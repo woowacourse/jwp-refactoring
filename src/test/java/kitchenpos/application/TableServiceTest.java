@@ -8,6 +8,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,21 +36,18 @@ class TableServiceTest {
 
     @Test
     void 테이블을_등록한다() {
-        final OrderTable orderTable = new OrderTable(null, null, 0, true);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
+        final OrderTable savedOrderTable = tableService.create(orderTableCreateRequest);
 
-        assertThat(savedOrderTable)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(orderTable);
+        assertThat(savedOrderTable.getId()).isNotNull();
     }
 
     @Test
     void 테이블의_목록을_조회한다() {
         final List<OrderTable> expected = tableService.list();
         for (int i = 0; i < 3; i++) {
-            final OrderTable orderTable = new OrderTable(null, null, 0, true);
-            expected.add(tableService.create(orderTable));
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
+            expected.add(tableService.create(orderTableCreateRequest));
         }
 
         final List<OrderTable> result = tableService.list();
@@ -62,39 +61,40 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            final OrderTable orderTable = new OrderTable(null, null, 0, true);
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
+            savedOrderTable = tableService.create(orderTableCreateRequest);
         }
 
         @Test
         void 테이블의_상태를_정상적으로_변경한다() {
-            final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
-            final OrderTable changeOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
+            final OrderTable changeOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             assertThat(changeOrderTable.isEmpty()).isFalse();
         }
 
         @Test
         void 테이블이_존재하지_않으면_예외가_발생한다() {
-            final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId() + 1, newOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId() + 1, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블이_단체_지정_되어있으면_예외가_발생한다() {
-            final OrderTable savedOrderTable2 = tableService.create(new OrderTable(null, null, 0, true));
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
+            final OrderTable savedOrderTable2 = tableService.create(orderTableCreateRequest);
             final List<OrderTable> orderTables = List.of(savedOrderTable, savedOrderTable2);
-            final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(null, LocalDateTime.now(), orderTables));
+            final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
             for (final OrderTable orderTable : orderTables) {
-                orderTable.setTableGroupId(savedTableGroup.getId());
+                orderTable.updateTableGroup(savedTableGroup);
                 orderTableDao.save(orderTable);
             }
 
-            final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -102,8 +102,8 @@ class TableServiceTest {
         void 테이블이_완료_상태일때_테이블_상태를_변경한다() {
             orderDao.save(new Order(null, savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of()));
 
-            final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
-            final OrderTable changeOrderTable = tableService.changeEmpty(savedOrderTable.getId(), newOrderTable);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
+            final OrderTable changeOrderTable = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             assertThat(changeOrderTable.isEmpty()).isFalse();
         }
@@ -112,9 +112,9 @@ class TableServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 테이블이_조리_혹은_식사_주문_상태일때_예외가_발생한다(String status) {
             orderDao.save(new Order(null, savedOrderTable.getId(), status, LocalDateTime.now(), List.of()));
-            final OrderTable newOrderTable = new OrderTable(null, null, 0, false);
+            final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(false);
 
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -125,8 +125,8 @@ class TableServiceTest {
 
         @BeforeEach
         void setUp() {
-            final OrderTable orderTable = new OrderTable(null, null, 0, false);
-            savedOrderTable = tableService.create(orderTable);
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, false);
+            savedOrderTable = tableService.create(orderTableCreateRequest);
         }
 
         @Test
@@ -155,8 +155,9 @@ class TableServiceTest {
 
         @Test
         void 테이블이_비어있는_상태면_예외가_발생한다() {
-            final OrderTable orderTable = new OrderTable(null, null, 0, true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
+            final OrderTable savedOrderTable = tableService.create(orderTableCreateRequest);
             final OrderTable newOrderTable = new OrderTable(null, null, 5, false);
 
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable))

@@ -91,7 +91,7 @@ class OrderServiceTest {
 
         @Test
         void 비어있는_상태의_테이블에_주문이_등록되면_예외가_발생한다() {
-            savedOrderTable.setEmpty(true);
+            savedOrderTable.changeEmpty(true);
             orderTableDao.save(savedOrderTable);
 
             final Order order = new Order(null, savedOrderTable.getId(), null, null, orderLineItems);
