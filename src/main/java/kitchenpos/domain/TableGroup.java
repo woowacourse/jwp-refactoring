@@ -14,6 +14,8 @@ import org.springframework.data.annotation.CreatedDate;
 @Entity
 public class TableGroup {
 
+    private static final int MINIMUM_ORDER_TABLE_SIZE = 2;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

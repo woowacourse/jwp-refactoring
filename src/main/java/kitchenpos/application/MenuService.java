@@ -35,12 +35,16 @@ public class MenuService {
     public Menu create(final MenuCreateRequest request) {
         final BigDecimal price = request.getPrice();
 
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("해당하는 메뉴 그룹이 존재하지 않습니다."));
+        final MenuGroup menuGroup = findMenuGroupBy(request.getMenuGroupId());
 
         final List<MenuProduct> menuProducts = getMenuProducts(request.getMenuProducts(), price);
         final Menu menu = new Menu(menuGroup, menuProducts, request.getName(), price);
         return menuRepository.save(menu);
+    }
+
+    private MenuGroup findMenuGroupBy(final Long menuGroupId) {
+        return menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 메뉴 그룹이 존재하지 않습니다."));
     }
 
     private List<MenuProduct> getMenuProducts(
@@ -51,8 +55,7 @@ public class MenuService {
         BigDecimal amountSum = BigDecimal.ZERO;
 
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당하는 상품이 존재하지 않습니다."));
+            final Product product = findProductBy(menuProductRequest.getProductId());
 
             final MenuProduct menuProduct = new MenuProduct(null, product, menuProductRequest.getQuantity());
             amountSum = menuProduct.calculateAmount();
@@ -61,6 +64,11 @@ public class MenuService {
 
         validateMenuPrice(price, amountSum);
         return menuProducts;
+    }
+
+    private Product findProductBy(final Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 상품이 존재하지 않습니다."));
     }
 
     private void validateMenuPrice(final BigDecimal price, final BigDecimal sum) {

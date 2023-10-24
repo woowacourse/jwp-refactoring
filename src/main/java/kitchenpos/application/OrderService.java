@@ -45,8 +45,7 @@ public class OrderService {
         final List<Menu> savedMenus = menuRepository.findAllByIdIn(menuIds);
         final List<OrderLineItem> orderLineItems = getOrderLineItems(savedMenus, orderLineItemRequests);
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문 테이블이 존재하지 않습니다."));
+        final OrderTable orderTable = findOrderTableBy(request.getOrderTableId());
         orderTable.validateEmptyTable();
 
         final Order newOrder = new Order(orderLineItems, orderTable, OrderStatus.COOKING);
@@ -70,18 +69,27 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    private OrderTable findOrderTableBy(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문 테이블이 존재하지 않습니다."));
+    }
+
     public List<Order> list() {
         return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
+        final Order savedOrder = findOrderBy(orderId);
 
         final OrderStatus orderStatus = request.getOrderStatus();
         savedOrder.changeOrderStatus(orderStatus);
 
         return orderRepository.save(savedOrder);
+    }
+
+    private Order findOrderBy(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
     }
 }
