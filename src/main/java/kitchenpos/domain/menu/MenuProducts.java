@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.common.Money;
+import kitchenpos.domain.common.Quantity;
 import kitchenpos.domain.product.Product;
 
 import javax.persistence.CascadeType;
@@ -32,7 +33,7 @@ public class MenuProducts {
             throw new IllegalArgumentException(PRODUCTS_SIZE_AND_QUANTITIES_SIZE_ARE_DIFFERENT_ERROR_MESSAGE);
         }
         return new MenuProducts(IntStream.range(0, products.size())
-                .mapToObj(i -> MenuProduct.of(products.get(i), quantities.get(i)))
+                .mapToObj(i -> MenuProduct.of(products.get(i), Quantity.of(quantities.get(i))))
                 .collect(Collectors.toList()));
     }
 
@@ -46,9 +47,14 @@ public class MenuProducts {
 
     public Money calculateSum() {
         return items.stream()
-                .map(MenuProduct::getProduct)
-                .map(Product::getPrice)
+                .map(this::multiplyPriceByQuantity)
                 .reduce(Money.ZERO, Money::add);
+    }
+
+    private Money multiplyPriceByQuantity(final MenuProduct menuProduct) {
+        final Money price = menuProduct.getProduct().getPrice();
+        final long quantity = menuProduct.getQuantity().getQuantity();
+        return price.multiply(quantity);
     }
 
     public int size() {

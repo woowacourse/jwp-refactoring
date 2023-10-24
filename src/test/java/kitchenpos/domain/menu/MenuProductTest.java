@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.DomainTest;
+import kitchenpos.domain.common.Quantity;
 import kitchenpos.domain.product.Product;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class MenuProductTest extends DomainTest {
         final long quantity = -1L;
 
         // when & then
-        assertThatThrownBy(() -> MenuProduct.of(product, quantity))
+        assertThatThrownBy(() -> MenuProduct.of(product, Quantity.of(quantity)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(MenuProduct.PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
     }
@@ -27,7 +28,7 @@ class MenuProductTest extends DomainTest {
         final long quantity = 0L;
 
         // when & then
-        assertThatThrownBy(() -> MenuProduct.of(product, quantity))
+        assertThatThrownBy(() -> MenuProduct.of(product, Quantity.of(quantity)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(MenuProduct.PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
     }
@@ -39,7 +40,7 @@ class MenuProductTest extends DomainTest {
         final long quantity = 1L;
 
         // when
-        final MenuProduct menuProduct = MenuProduct.of(product, quantity);
+        final MenuProduct menuProduct = MenuProduct.of(product, Quantity.of(quantity));
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {

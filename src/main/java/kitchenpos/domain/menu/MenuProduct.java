@@ -1,7 +1,9 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.common.Quantity;
 import kitchenpos.domain.product.Product;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,26 +25,20 @@ public class MenuProduct {
     @JoinColumn(name = "product_id")
     @NotNull
     private Product product;
+    @Embedded
     @NotNull
-    private long quantity;
+    private Quantity quantity;
 
     protected MenuProduct() {
     }
 
-    private MenuProduct(final Long seq, final Product product, final long quantity) {
+    private MenuProduct(final Long seq, final Product product, final Quantity quantity) {
         this.seq = seq;
         this.product = product;
-        validateQuantity(quantity);
         this.quantity = quantity;
     }
 
-    private static void validateQuantity(final long quantity) {
-        if (quantity <= 0) {
-            throw new IllegalArgumentException(PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
-        }
-    }
-
-    public static MenuProduct of(final Product product, final long quantity) {
+    public static MenuProduct of(final Product product, final Quantity quantity) {
         return new MenuProduct(null, product, quantity);
     }
 
@@ -58,7 +54,7 @@ public class MenuProduct {
         return product;
     }
 
-    public long getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 }
