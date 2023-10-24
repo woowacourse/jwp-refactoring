@@ -13,7 +13,7 @@ public class TableGroupCreateRequest {
 
     public List<Long> getOrderTableIds() {
         return orderTables.stream()
-                .map(SimpleIdRequest::getId)
-                .collect(Collectors.toList());
+                          .map(SimpleIdRequest::getId)
+                          .collect(Collectors.toList());
     }
 }

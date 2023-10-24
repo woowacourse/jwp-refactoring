@@ -22,12 +22,4 @@ public class MenuProductCreateRequest {
     public Long getQuantity() {
         return quantity;
     }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
 }
