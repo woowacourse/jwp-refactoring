@@ -40,7 +40,7 @@ class MenuProductRepositoryTest {
     void 메뉴_아이디를_통해_메뉴_상품_목록을_조회한다() {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-        final Product product = productRepository.save(ProductFixture.상품_생성());
+        final Product product = productRepository.save(ProductFixture.상품_엔티티_생성());
         final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, List.of(product)));
 
         // when

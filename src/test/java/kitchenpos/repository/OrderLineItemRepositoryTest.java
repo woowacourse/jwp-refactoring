@@ -53,7 +53,7 @@ class OrderLineItemRepositoryTest {
     @BeforeEach
     void setUp() {
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-        final Product product = productRepository.save(ProductFixture.상품_생성());
+        final Product product = productRepository.save(ProductFixture.상품_엔티티_생성());
         menus = menuRepository.saveAll(MenuFixture.메뉴_엔티티들_생성(3, menuGroup, List.of(product)));
         final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
         order = orderRepository.save(OrderFixture.조리_상태의_주문_생성(orderTable, menus.get(0)));

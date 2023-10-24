@@ -4,6 +4,8 @@ import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.product.ProductRequest;
+import kitchenpos.ui.dto.product.ProductResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -37,10 +39,10 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void 상품을_등록한다() {
             // given
-            final Product product = ProductFixture.상품_생성();
+            final ProductRequest productRequest = ProductFixture.상품_요청_dto_생성();
 
             // when
-            final Product actual = productService.create(product);
+            final ProductResponse actual = productService.create(productRequest);
 
             // then
             assertThat(actual.getId()).isPositive();
@@ -50,7 +52,7 @@ class ProductServiceTest extends ServiceTestConfig {
         @NullSource
         void 상품_등록시_가격이_null이라면_예외를_반환한다(BigDecimal price) {
             // given
-            final Product product = new Product(ProductFixture.상품명, price);
+            final ProductRequest product = new ProductRequest(ProductFixture.상품명, price);
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -61,7 +63,7 @@ class ProductServiceTest extends ServiceTestConfig {
         void 상품_등록시_가격이_음수라면_예외를_반환한다() {
             // given
             final BigDecimal negative_price = BigDecimal.valueOf(-10_000);
-            final Product product = new Product(ProductFixture.상품명, negative_price);
+            final ProductRequest product = new ProductRequest(ProductFixture.상품명, negative_price);
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
@@ -75,17 +77,17 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void 상품_목록을_조회한다() {
             // given
-            final List<Product> products = productRepository.saveAll(ProductFixture.상품들_생성(3));
+            final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(3));
 
             // when
-            final List<Product> actual = productService.list();
+            final List<ProductResponse> actual = productService.list();
 
             // then
             SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(actual).hasSize(3);
-                softAssertions.assertThat(actual.get(0)).isEqualTo(products.get(0));
-                softAssertions.assertThat(actual.get(1)).isEqualTo(products.get(1));
-                softAssertions.assertThat(actual.get(2)).isEqualTo(products.get(2));
+                softAssertions.assertThat(actual.get(0).getId()).isEqualTo(products.get(0).getId());
+                softAssertions.assertThat(actual.get(1).getId()).isEqualTo(products.get(1).getId());
+                softAssertions.assertThat(actual.get(2).getId()).isEqualTo(products.get(2).getId());
             });
         }
     }

@@ -73,7 +73,7 @@ class OrderServiceTest extends ServiceTestConfig {
         void setUp() {
             orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
             menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-            products = productRepository.saveAll(ProductFixture.상품들_생성(2));
+            products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
         }
 
@@ -127,7 +127,7 @@ class OrderServiceTest extends ServiceTestConfig {
             // given
             final List<OrderTable> orderTable = orderTableRepository.saveAll(OrderTableFixture.주문_테이블들_생성(2));
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-            final List<Product> products = productRepository.saveAll(ProductFixture.상품들_생성(2));
+            final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
             final List<Order> order = orderRepository.saveAll(OrderFixture.조리_상태의_주문들_생성(orderTable, menu));
 
@@ -155,7 +155,7 @@ class OrderServiceTest extends ServiceTestConfig {
         void setUp() {
             orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-            final List<Product> products = productRepository.saveAll(ProductFixture.상품들_생성(2));
+            final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
         }
 

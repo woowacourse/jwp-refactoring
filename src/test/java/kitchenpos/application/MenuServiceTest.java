@@ -66,7 +66,7 @@ class MenuServiceTest extends ServiceTestConfig {
         @BeforeEach
         void setUp() {
             menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-            products = productRepository.saveAll(ProductFixture.상품들_생성(2));
+            products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
             final MenuProduct menuProduct1 = menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(0), menu));
             final MenuProduct menuProduct2 = menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(1), menu));
@@ -153,7 +153,7 @@ class MenuServiceTest extends ServiceTestConfig {
         @BeforeEach
         void setUp() {
             menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
-            products = productRepository.saveAll(ProductFixture.상품들_생성(2));
+            products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
         }
 
         @Test
