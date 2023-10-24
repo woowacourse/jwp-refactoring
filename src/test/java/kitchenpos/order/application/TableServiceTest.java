@@ -113,7 +113,7 @@ class TableServiceTest {
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(orderTable.getId(), orderLineItems, orderValidator);
         order.changeOrderStatus(orderStatus);
 
         orderRepository.save(order);
@@ -135,7 +135,7 @@ class TableServiceTest {
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(orderTable.getId(), orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         orderRepository.save(order);
@@ -159,7 +159,7 @@ class TableServiceTest {
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(orderTable.getId(), orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -179,7 +179,7 @@ class TableServiceTest {
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(orderTable.getId(), orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -199,7 +199,7 @@ class TableServiceTest {
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(orderTable.getId(), orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -220,7 +220,7 @@ class TableServiceTest {
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(orderTable.getId(), orderLineItems, orderValidator);
         orderRepository.save(order);
 
         assertThat(orderTable.getNumberOfGuests()).isZero();

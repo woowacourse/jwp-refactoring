@@ -102,7 +102,7 @@ class OrderServiceTest {
         //when then
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("ID에 해당하는 주문 테이블이 존재하지 않습니다.");
+                .hasMessage("ID에 해당하는 주문 테이블을 찾을 수 없습니다.");
     }
 
     @DisplayName("주문을 한 테이블이 주문할 수 없는(empty) 경우, 생성할 수 없다.")
@@ -220,7 +220,7 @@ class OrderServiceTest {
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(savedOrderTable, orderLineItems, orderValidator);
+        Order order = Order.create(savedOrderTable.getId(), orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         Long savedOrderId = orderRepository.save(order).getId();
@@ -239,7 +239,7 @@ class OrderServiceTest {
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(savedOrderTable, orderLineItems, orderValidator);
+        Order order = Order.create(savedOrderTable.getId(), orderLineItems, orderValidator);
 
         Long savedOrderId = orderRepository.save(order).getId();
 

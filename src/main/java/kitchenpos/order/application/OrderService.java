@@ -10,14 +10,15 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.request.OrderCreationRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
 import kitchenpos.order.dto.response.OrderLineItemResponse;
 import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.dto.response.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +46,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(OrderCreationRequest request) {
         OrderLineItems orderLineItems = createOrderLineItems(request.getOrderLineItemRequests());
-        OrderTable orderTable = findOrderTableById(request.getOrderTableId());
-        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        Order order = Order.create(request.getOrderTableId(), orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -61,24 +61,35 @@ public class OrderService {
         return OrderLineItems.from(orderLineItems);
     }
 
-    private OrderTable findOrderTableById(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 주문 테이블이 존재하지 않습니다."));
+    private OrderResponse mapToOrderResponse(Order order) {
+        List<OrderLineItemResponse> orderLineItemResponses = mapToOrderLineItemResponses(order);
+        TableResponse tableResponse = mapToTableResponse(order);
+
+        return OrderResponse.from(order, tableResponse, orderLineItemResponses);
     }
 
-    private OrderResponse mapToOrderResponse(Order order) {
-        List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems()
+    private List<OrderLineItemResponse> mapToOrderLineItemResponses(Order order) {
+        return order.getOrderLineItems()
                 .stream()
                 .map(this::mapToOrderLineItemResponse)
                 .collect(Collectors.toList());
-
-        return OrderResponse.from(order, orderLineItemResponses);
     }
 
     private OrderLineItemResponse mapToOrderLineItemResponse(OrderLineItem orderLineItem) {
         Menu menu = findMenuById(orderLineItem.getMenuId());
 
         return OrderLineItemResponse.from(orderLineItem, menu);
+    }
+
+    private TableResponse mapToTableResponse(Order order) {
+        OrderTable orderTable = findOrderTableById(order.getOrderTableId());
+
+        return TableResponse.from(orderTable);
+    }
+
+    private OrderTable findOrderTableById(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 주문 테이블이 존재하지 않습니다."));
     }
 
     private Menu findMenuById(Long menuId) {

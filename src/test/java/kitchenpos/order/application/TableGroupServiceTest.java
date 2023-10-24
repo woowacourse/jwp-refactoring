@@ -190,7 +190,7 @@ class TableGroupServiceTest {
 
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(savedOrderTable1, orderLineItems, orderValidator);
+        Order order = Order.create(savedOrderTable1.getId(), orderLineItems, orderValidator);
         order.changeOrderStatus(status);
 
         orderRepository.save(order);
@@ -220,7 +220,7 @@ class TableGroupServiceTest {
 
         Menu menu = saveMenu();
         OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
-        Order order = Order.create(savedOrderTable1, orderLineItems, orderValidator);
+        Order order = Order.create(savedOrderTable1.getId(), orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         savedOrderTable1.changeEmpty(true);

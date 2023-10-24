@@ -1,17 +1,25 @@
 package kitchenpos.order.domain;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
 
     private final MenuRepository menuRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderValidator(MenuRepository menuRepository) {
+    public OrderValidator(
+            MenuRepository menuRepository,
+            OrderTableRepository orderTableRepository
+    ) {
         this.menuRepository = menuRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public void validateOrderLineItems(OrderLineItems orderLineItems) {
@@ -27,6 +35,19 @@ public class OrderValidator {
                 .stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
+    }
+
+    public void validateOrderTable(Long orderTableId) {
+        OrderTable orderTable = findOrderTable(orderTableId);
+
+        if (Boolean.TRUE.equals(orderTable.isEmpty())) {
+            throw new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다.");
+        }
+    }
+
+    private OrderTable findOrderTable(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new NoSuchElementException("ID에 해당하는 주문 테이블을 찾을 수 없습니다."));
     }
 
 }

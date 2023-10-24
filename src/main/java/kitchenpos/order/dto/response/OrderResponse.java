@@ -24,11 +24,15 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(Order order, List<OrderLineItemResponse> orderLineItems) {
+    public static OrderResponse from(
+            Order order,
+            TableResponse tableResponse,
+            List<OrderLineItemResponse> orderLineItems
+    ) {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderStatus(),
-                TableResponse.from(order.getOrderTable()),
+                tableResponse,
                 orderLineItems
         );
     }

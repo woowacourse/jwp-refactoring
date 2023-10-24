@@ -10,10 +10,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.table.domain.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -29,9 +26,8 @@ public class Order {
     @NotNull
     private OrderStatus orderStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @NotNull
+    private Long orderTableId;
 
     @Embedded
     private OrderLineItems orderLineItems;
@@ -45,30 +41,27 @@ public class Order {
 
     private Order(
             OrderStatus orderStatus,
-            OrderTable orderTable,
+            Long orderTableId,
             OrderLineItems orderLineItems,
             OrderValidator orderValidator
     ) {
-        validate(orderTable, orderLineItems);
+        validate(orderTableId, orderLineItems);
         orderValidator.validateOrderLineItems(orderLineItems);
+        orderValidator.validateOrderTable(orderTableId);
 
         this.orderStatus = orderStatus;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }
 
-    private void validate(OrderTable orderTable, OrderLineItems orderLineItems) {
-        validateOrderTable(orderTable);
+    private void validate(Long orderTableId, OrderLineItems orderLineItems) {
+        validateOrderTable(orderTableId);
         validateOrderLineItems(orderLineItems);
     }
 
-    private void validateOrderTable(OrderTable orderTable) {
-        if (orderTable == null) {
+    private void validateOrderTable(Long orderTableId) {
+        if (orderTableId == null) {
             throw new NullPointerException("주문 테이블은 null일 수 없습니다.");
-        }
-
-        if (Boolean.TRUE.equals(orderTable.isEmpty())) {
-            throw new IllegalArgumentException("주문할 수 없는 상태의 테이블이 존재합니다.");
         }
     }
 
@@ -79,11 +72,11 @@ public class Order {
     }
 
     public static Order create(
-            OrderTable orderTable,
+            Long orderTableId,
             OrderLineItems orderLineItems,
             OrderValidator orderValidator
     ) {
-        return new Order(OrderStatus.COOKING, orderTable, orderLineItems, orderValidator);
+        return new Order(OrderStatus.COOKING, orderTableId, orderLineItems, orderValidator);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -102,8 +95,8 @@ public class Order {
         return orderStatus;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
