@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,9 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import org.springframework.data.annotation.CreatedDate;
 
 @Table(name = "orders")
 @Entity
@@ -29,23 +27,25 @@ public class Order {
     private OrderTable orderTable;
 
     @Enumerated(value = EnumType.STRING)
-    private OrderStatus orderStatus;
-    
+    private OrderStatus orderStatus = OrderStatus.COOKING;
+
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+    public Order(final OrderTable orderTable, final LocalDateTime orderedTime) {
+        validateOrderTable(orderTable);
         this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            addOrderLineItem(orderLineItem);
+    }
+
+    private void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블에는 주문을 넣을 수 없습니다.");
         }
     }
 
@@ -53,31 +53,25 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final OrderStatus orderStatus) {
+    public void updateOrderStatus(final OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
+            throw new IllegalArgumentException("이미 계산 완료되었으면 주문 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
-        if (orderLineItems.contains(orderLineItem)) {
-            return;
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.updateOrder(this);
         }
-        orderLineItems.add(orderLineItem);
-        orderLineItem.setOrder(this);
+        this.orderLineItems = OrderLineItems.from(orderLineItems);
+    }
+
+    public boolean isCompleted() {
+        return OrderStatus.COMPLETION.equals(orderStatus);
     }
 }

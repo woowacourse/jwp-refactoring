@@ -28,15 +28,9 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-
-    public MenuProduct(final Menu menu, final Product product, final long quantity) {
-        this.menu = menu;
+    public MenuProduct(final Product product, final long quantity) {
         this.product = product;
         this.quantity = quantity;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Product getProduct() {
@@ -47,7 +41,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public void setMenu(final Menu menu) {
+    public void updateMenu(final Menu menu) {
         this.menu = menu;
     }
 }

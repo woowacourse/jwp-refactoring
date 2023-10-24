@@ -1,13 +1,12 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
@@ -18,40 +17,30 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
+    @Embedded
+    private OrderTables orderTables;
 
     public TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
-        for (OrderTable orderTable : orderTables) {
-            addOrderTable(orderTable);
-        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void updateOrderTables(List<OrderTable> orderTables) {
+        this.orderTables = OrderTables.from(orderTables);
+        this.orderTables.group(this);
     }
 
-    public void addOrderTable(OrderTable orderTable) {
-        if (orderTables.contains(orderTable)) {
-            return;
-        }
-        orderTables.add(orderTable);
-        orderTable.setTableGroup(this);
+    public void ungroup() {
+        orderTables.ungroup();
     }
 }

@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -14,16 +17,11 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+@Transactional(readOnly = true)
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
@@ -43,68 +41,44 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderCreateRequest request) {
-        final List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
+        final Order order = new Order(
+                findOrderTableById(request.getOrderTableId()),
+                LocalDateTime.now()
+        );
+        order.updateOrderLineItems(extractOrderLineItems(request.getOrderLineItems()));
+        return orderRepository.save(order);
+    }
 
-        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new IllegalArgumentException("최소 하나의 메뉴를 포함해야합니다.");
-        }
-
-        final List<Long> menuIds = orderLineItemDtos.stream()
-                .map(OrderLineItemDto::getMenuId)
+    private List<OrderLineItem> extractOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+                .map(it -> new OrderLineItem(findMenuById(it.getMenuId()), it.getQuantity()))
                 .collect(Collectors.toList());
+        return orderLineItemRepository.saveAll(orderLineItems);
+    }
 
-        if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("등로되지 않은 메뉴가 포함되어있습니다.");
-        }
+    private Menu findMenuById(final long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
+    }
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+    private OrderTable findOrderTableById(final long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 넣을 수 없습니다.");
-        }
-
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
-        final Order savedOrder = orderRepository.save(order);
-
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            final Menu menu = menuRepository.findById(orderLineItemDto.getMenuId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
-            final OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemDto.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order order = findOrderById(orderId);
+        order.updateOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
+        return orderRepository.save(order);
+    }
 
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus);
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
-        return savedOrder;
+    private Order findOrderById(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
     }
 }
