@@ -26,19 +26,20 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    public TableGroup(final List<OrderTable> orderTables, final LocalDateTime createdDate) {
-        this(null, orderTables, createdDate);
+    public static TableGroup of(final List<OrderTable> orderTables, final LocalDateTime createdDate) {
+        validateCanGroup(orderTables);
+        final var tableGroup = new TableGroup(null, orderTables, createdDate);
+        orderTables.forEach(orderTable -> orderTable.group(tableGroup));
+        return tableGroup;
     }
 
     public TableGroup(final Long id, final List<OrderTable> orderTables, final LocalDateTime createdDate) {
         this.id = id;
-        validateCanGroup(orderTables);
-        orderTables.forEach(orderTable -> orderTable.group(this));
         this.orderTables = orderTables;
         this.createdDate = createdDate;
     }
 
-    private void validateCanGroup(final List<OrderTable> orderTables) {
+    private static void validateCanGroup(final List<OrderTable> orderTables) {
         if (orderTables.size() <= 1) {
             throw new IllegalArgumentException("그룹화할 테이블은 2개 이상이어야 합니다.");
         }
@@ -60,23 +61,11 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

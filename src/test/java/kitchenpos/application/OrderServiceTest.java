@@ -131,7 +131,7 @@ class OrderServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                    () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                     () -> assertThat(savedOrder.getOrderLineItems()).hasSize(1)
             );
         }
@@ -198,7 +198,7 @@ class OrderServiceTest {
             final var savedOrder = orderService.changeOrderStatus(order.getId(), nextOrder);
 
             // then
-            assertThat(savedOrder.getOrderStatus()).isEqualTo(next);
+            assertThat(savedOrder.getOrderStatus()).isEqualTo(next.name());
         }
     }
 }

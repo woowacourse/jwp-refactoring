@@ -10,6 +10,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.dao.fakedao.InMemoryOrderTableDao;
 import kitchenpos.dao.fakedao.InMemoryTableGroupDao;
 import kitchenpos.domain.OrderTableFactory;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.EntityNotFoundException;
 import kitchenpos.ui.request.SimpleIdRequest;
 import kitchenpos.ui.request.TableGroupCreateRequest;
@@ -52,8 +53,7 @@ class TableGroupServiceTest {
         void 단체_지정에_속한_테이블이_등록되지_않은_테이블일_경우_예외가_발생한다() {
             // given
             final var tableOne = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, true));
-            final var tableTwo = OrderTableFactory.createOrderTableOf(0, true);
-            tableTwo.setId(Long.MAX_VALUE);
+            final var tableTwo = new OrderTable(Long.MAX_VALUE, null, 0, true);
             final var tableGroup = new TableGroupCreateRequest(List.of(
                     new SimpleIdRequest(tableOne.getId()),
                     new SimpleIdRequest(tableTwo.getId())));

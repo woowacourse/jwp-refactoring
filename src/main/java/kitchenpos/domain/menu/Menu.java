@@ -68,23 +68,19 @@ public class Menu {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name.getValue();
-    }
-
-    public void setName(final String name) {
-        this.name = new MenuName(name);
     }
 
     public BigDecimal getPrice() {
         return price.getValue();
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = new MenuPrice(price);
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

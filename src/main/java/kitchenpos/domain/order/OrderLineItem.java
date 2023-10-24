@@ -42,6 +42,22 @@ public class OrderLineItem {
         this.quantity = new OrderLineItemQuantity(quantity);
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Long getQuantity() {
+        return quantity.getValue();
+    }
+
     public void setOrder(final Order order) {
         this.order = order;
     }

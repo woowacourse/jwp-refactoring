@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -69,7 +69,7 @@ class ProductIntegrationTest extends IntegrationTest {
             final var request = new ProductCreateRequest("상품명", new BigDecimal("1000.00"));
 
             //when
-            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, Product.class);
+            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, ProductResponse.class);
 
             //then
             final var body = response.getBody();
@@ -92,7 +92,7 @@ class ProductIntegrationTest extends IntegrationTest {
             restTemplate.postForEntity("http://localhost:" + port + "/api/products", request, ProductCreateRequest.class);
 
             //when
-            final var response = restTemplate.getForEntity("http://localhost:" + port + "/api/products", Product[].class);
+            final var response = restTemplate.getForEntity("http://localhost:" + port + "/api/products", ProductResponse[].class);
 
             //then
             final var body = response.getBody();

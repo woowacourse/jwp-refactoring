@@ -10,6 +10,7 @@ import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.exception.EntityNotFoundException;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         final var menuGroup = menuGroupDao.findById(request.getMenuGroupId())
                                           .orElseThrow(EntityNotFoundException::new);
 
@@ -40,7 +41,7 @@ public class MenuService {
                                         .collect(Collectors.toList());
 
         final var menu = new Menu(request.getName(), request.getPrice(), menuProducts, menuGroup);
-        return menuDao.save(menu);
+        return MenuResponse.from(menuDao.save(menu));
     }
 
     private MenuProduct crateMenuProductByRequest(final MenuProductCreateRequest menuProductCreateRequest) {
@@ -50,7 +51,9 @@ public class MenuService {
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
-        return menuDao.findAll();
+    public List<MenuResponse> list() {
+        return menuDao.findAll().stream()
+                      .map(MenuResponse::from)
+                      .collect(Collectors.toList());
     }
 }

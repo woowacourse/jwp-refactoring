@@ -8,6 +8,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.EntityNotFoundException;
 import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +24,15 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
-        final List<OrderTable> savedOrderTables = findAllByIds(request.getOrderTableIds());
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        final List<OrderTable> savedOrderTables = findAllOrderTablesByIds(request.getOrderTableIds());
 
-        final TableGroup tableGroup = new TableGroup(savedOrderTables, LocalDateTime.now());
+        final TableGroup tableGroup = TableGroup.of(savedOrderTables, LocalDateTime.now());
 
-        return tableGroupDao.save(tableGroup);
+        return TableGroupResponse.from(tableGroupDao.save(tableGroup));
     }
 
-    private List<OrderTable> findAllByIds(final List<Long> ids) {
+    private List<OrderTable> findAllOrderTablesByIds(final List<Long> ids) {
         final var orderTables = orderTableDao.findAllByIdIn(ids);
 
         if (orderTables.size() != ids.size()) {

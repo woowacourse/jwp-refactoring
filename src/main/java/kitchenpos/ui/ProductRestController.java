@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +22,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(
+    public ResponseEntity<ProductResponse> create(
             @Valid @RequestBody final ProductCreateRequest request
     ) {
         final var response = productService.create(request);
@@ -30,7 +30,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductResponse>> list() {
         final var response = productService.list();
         return ResponseEntity.ok(response);
     }

@@ -12,12 +12,12 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menuproduct.MenuProduct;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +56,13 @@ public class OrderIntegrationTest extends IntegrationTest {
             );
 
             // when
-            final var response = restTemplate.postForEntity("/api/orders", request, Order.class);
+            final var response = restTemplate.postForEntity("/api/orders", request, OrderResponse.class);
 
             // then
             assertAll(
                     () -> assertThat(response.getBody().getId()).isNotNull(),
-                    () -> assertThat(response.getBody().getOrderTable().getId()).isEqualTo(request.getOrderTableId()),
-                    () -> assertThat(response.getBody().getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                    () -> assertThat(response.getBody().getOrderTableId()).isEqualTo(request.getOrderTableId()),
+                    () -> assertThat(response.getBody().getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                     () -> assertThat(response.getBody().getOrderLineItems()).hasSize(1)
             );
         }

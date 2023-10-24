@@ -60,7 +60,7 @@ class TableServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(saved.isEmpty()).isTrue(),
+                    () -> assertThat(saved.getEmpty()).isTrue(),
                     () -> assertThat(saved.getNumberOfGuests()).isZero()
             );
         }
@@ -76,7 +76,7 @@ class TableServiceTest {
 
             // then
             assertAll(
-                    () -> assertThat(saved.isEmpty()).isFalse(),
+                    () -> assertThat(saved.getEmpty()).isFalse(),
                     () -> assertThat(saved.getNumberOfGuests()).isZero()
             );
         }
@@ -128,7 +128,7 @@ class TableServiceTest {
             final var savedTable = fakeOrderTableDao.save(table);
             final var table2 = OrderTableFactory.createOrderTableOf(0, true);
             final var savedTable2 = fakeOrderTableDao.save(table2);
-            final var tableGroup = new TableGroup(List.of(savedTable, savedTable2), LocalDateTime.now());
+            final var tableGroup = TableGroup.of(List.of(savedTable, savedTable2), LocalDateTime.now());
 
             final var tableService = new TableService(fakeOrderTableDao);
 
@@ -156,7 +156,7 @@ class TableServiceTest {
             final var changed = tableService.changeEmpty(savedTable.getId(), request);
 
             // then
-            assertThat(changed.isEmpty()).isNotEqualTo(previousState);
+            assertThat(changed.getEmpty()).isNotEqualTo(previousState);
         }
 
         @Test
@@ -175,7 +175,7 @@ class TableServiceTest {
             final var changed = tableService.changeEmpty(savedTable.getId(), request);
 
             // then
-            assertThat(changed.isEmpty()).isNotEqualTo(previousState);
+            assertThat(changed.getEmpty()).isNotEqualTo(previousState);
         }
     }
 

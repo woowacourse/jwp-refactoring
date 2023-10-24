@@ -95,14 +95,6 @@ public class OrderTable {
         return !isEmpty();
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public void group(final TableGroup tableGroup) {
         changeEmpty(false);
         this.tableGroup = tableGroup;
@@ -118,11 +110,19 @@ public class OrderTable {
         }
     }
 
+    public Boolean isEmpty() {
+        return empty;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public Integer getNumberOfGuests() {
         return numberOfGuests.getValue();
     }
 
-    public Boolean isEmpty() {
-        return empty;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 }

@@ -15,6 +15,7 @@ import kitchenpos.exception.EntityNotFoundException;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import kitchenpos.ui.request.OrderStatusChangeRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
                                                           .map(this::createOrderLineItem)
                                                           .collect(Collectors.toList());
@@ -45,7 +46,7 @@ public class OrderService {
                                                    .orElseThrow(EntityNotFoundException::new);
 
         final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
-        return orderDao.save(order);
+        return OrderResponse.from(orderDao.save(order));
     }
 
     private OrderLineItem createOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
@@ -59,17 +60,19 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> list() {
-        return orderDao.findAll();
+    public List<OrderResponse> list() {
+        return orderDao.findAll().stream()
+                       .map(OrderResponse::from)
+                       .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
         final Order order = orderDao.findById(orderId)
                                     .orElseThrow(EntityNotFoundException::new);
         final var orderStatus = OrderStatus.valueOf(request.getOrderStatus());
 
         order.changeStatusTo(orderStatus);
-        return order;
+        return OrderResponse.from(order);
     }
 }

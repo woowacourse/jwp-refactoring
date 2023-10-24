@@ -105,6 +105,10 @@ public class Order {
         return orderStatus;
     }
 
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }

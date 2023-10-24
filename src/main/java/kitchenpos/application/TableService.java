@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.EntityNotFoundException;
 import kitchenpos.ui.request.OrderTableChangeEmptyRequest;
 import kitchenpos.ui.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.request.OrderTableCreateRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,31 +22,34 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest request) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         final var orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return orderTableDao.save(orderTable);
+        return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    @Transactional(readOnly = true)
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll().stream()
+                            .map(OrderTableResponse::from)
+                            .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final var orderTable = findById(orderTableId);
 
         orderTable.changeEmpty(request.isEmpty());
 
-        return orderTableDao.save(orderTable);
+        return OrderTableResponse.from(orderTableDao.save(orderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestsRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuestsRequest request) {
         final var orderTable = findById(orderTableId);
 
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return orderTable;
+        return OrderTableResponse.from(orderTable);
     }
 
     private OrderTable findById(final Long orderTableId) {

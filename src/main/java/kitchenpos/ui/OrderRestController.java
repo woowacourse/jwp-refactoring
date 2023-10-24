@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.order.Order;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderStatusChangeRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +25,7 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(
+    public ResponseEntity<OrderResponse> create(
             @Valid @RequestBody final OrderCreateRequest request
     ) {
         final var response = orderService.create(request);
@@ -34,13 +34,13 @@ public class OrderRestController {
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<OrderResponse>> list() {
         final var response = orderService.list();
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
             @Valid @RequestBody final OrderStatusChangeRequest request
     ) {

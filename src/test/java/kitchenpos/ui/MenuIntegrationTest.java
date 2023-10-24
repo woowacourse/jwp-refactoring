@@ -8,10 +8,10 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuFactory;
 import kitchenpos.domain.ProductFactory;
-import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -155,7 +155,7 @@ class MenuIntegrationTest extends IntegrationTest {
             final var menu = MenuFactory.createMenuRequestOf("메뉴화 된 후라이드 치킨", BigDecimal.valueOf(1000), savedMenuGroup.getId(), menuProductCreateRequest);
 
             // when
-            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/menus", menu, Menu.class);
+            final var response = restTemplate.postForEntity("http://localhost:" + port + "/api/menus", menu, MenuResponse.class);
 
             // then
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -171,7 +171,7 @@ class MenuIntegrationTest extends IntegrationTest {
             final var savedMenu = saveMenu();
 
             // when
-            final var response = restTemplate.getForEntity("http://localhost:" + port + "/api/menus", Menu[].class);
+            final var response = restTemplate.getForEntity("http://localhost:" + port + "/api/menus", MenuResponse[].class);
 
             // then
             assertAll(
@@ -182,7 +182,7 @@ class MenuIntegrationTest extends IntegrationTest {
         }
     }
 
-    private Menu saveMenu() {
+    private MenuResponse saveMenu() {
         final var menuGroup = new MenuGroup("메뉴그룹1");
         final var savedMenuGroup = menuGroupDao.save(menuGroup);
 
@@ -192,7 +192,7 @@ class MenuIntegrationTest extends IntegrationTest {
         final var menuProductCreateRequest = new MenuProductCreateRequest(saveProduct.getId(), 1L);
         final var menu = MenuFactory.createMenuRequestOf("메뉴화 된 후라이드 치킨", BigDecimal.valueOf(1000), savedMenuGroup.getId(), menuProductCreateRequest);
 
-        final var menuResponseEntity = restTemplate.postForEntity("http://localhost:" + port + "/api/menus", menu, Menu.class);
+        final var menuResponseEntity = restTemplate.postForEntity("http://localhost:" + port + "/api/menus", menu, MenuResponse.class);
         return menuResponseEntity.getBody();
     }
 }
