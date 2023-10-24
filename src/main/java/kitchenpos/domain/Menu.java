@@ -29,4 +29,41 @@ public class Menu {
     private String name;
 
     private BigDecimal price;
+
+    public Menu() {
+    }
+
+    public Menu(
+            final MenuGroup menuGroup,
+            final String name,
+            final BigDecimal price
+    ) {
+        this.menuGroup = menuGroup;
+        this.name = name;
+        this.price = price;
+    }
+
+    public void setMenuProducts(final List<MenuProduct> savedMenuProducts) {
+        this.menuProducts = savedMenuProducts;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
 }
