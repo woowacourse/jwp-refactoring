@@ -7,6 +7,7 @@ import kitchenpos.common.annotation.ServiceTest;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.presentation.dto.CreateMenuGroupRequest;
 import kitchenpos.support.TestSupporter;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,28 +21,36 @@ class MenuGroupServiceTest {
     @Autowired
     private TestSupporter testSupporter;
 
-    @Test
-    void 메뉴_그룹을_생성한다() {
-        // given
-        final CreateMenuGroupRequest request = new CreateMenuGroupRequest("name");
+    @Nested
+    class 메뉴_그룹_생성 {
 
-        // when
-        final MenuGroup menuGroup = menuGroupService.create(request);
+        @Test
+        void 메뉴_그룹을_생성한다() {
+            // given
+            final CreateMenuGroupRequest request = new CreateMenuGroupRequest("name");
 
-        // then
-        assertThat(menuGroup.getName()).isEqualTo(request.getName());
+            // when
+            final MenuGroup menuGroup = menuGroupService.create(request);
+
+            // then
+            assertThat(menuGroup.getName()).isEqualTo(request.getName());
+        }
     }
 
-    @Test
-    void 메뉴_그룹에_대해_전체_조회한다() {
-        // given
-        final MenuGroup menuGroup = testSupporter.createMenuGroup();
+    @Nested
+    class 메뉴_그룹_조회 {
 
-        // when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        @Test
+        void 메뉴_그룹에_대해_전체_조회한다() {
+            // given
+            final MenuGroup menuGroup = testSupporter.createMenuGroup();
 
-        // then
-        assertThat(menuGroups.get(0)).usingRecursiveComparison()
-                                     .isEqualTo(menuGroup);
+            // when
+            final List<MenuGroup> menuGroups = menuGroupService.list();
+
+            // then
+            assertThat(menuGroups.get(0)).usingRecursiveComparison()
+                                         .isEqualTo(menuGroup);
+        }
     }
 }
