@@ -17,11 +17,6 @@ public class ProductDto {
         productDto.setPrice(product.getPrice());
         return productDto;
     }
-
-    public Product toEntity() {
-        return new Product(id, name, price);
-    }
-
     public Long getId() {
         return id;
     }

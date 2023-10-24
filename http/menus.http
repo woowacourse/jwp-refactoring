@@ -1,5 +1,5 @@
 ###
-POST {{host}}/api/menuDtos
+POST {{host}}/api/menus
 Content-Type: application/json
 
 {
@@ -15,6 +15,6 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/menuDtos
+GET {{host}}/api/menus
 
 ###
