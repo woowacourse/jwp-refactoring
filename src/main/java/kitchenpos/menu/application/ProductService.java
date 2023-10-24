@@ -2,8 +2,8 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.dto.ProductCreateRequest;
-import kitchenpos.menu.application.dto.ProductQueryResponse;
+import kitchenpos.menu.application.dto.request.ProductCreateRequest;
+import kitchenpos.menu.application.dto.response.ProductQueryResponse;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.menu.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;

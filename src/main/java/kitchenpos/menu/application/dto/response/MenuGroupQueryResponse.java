@@ -1,4 +1,4 @@
-package kitchenpos.menu.application.dto;
+package kitchenpos.menu.application.dto.response;
 
 import kitchenpos.menu.domain.MenuGroup;
 

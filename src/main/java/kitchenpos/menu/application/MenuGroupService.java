@@ -2,8 +2,8 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.application.dto.MenuGroupCreateRequest;
-import kitchenpos.menu.application.dto.MenuGroupQueryResponse;
+import kitchenpos.menu.application.dto.request.MenuGroupCreateRequest;
+import kitchenpos.menu.application.dto.response.MenuGroupQueryResponse;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.persistence.MenuGroupRepositoryImpl;
 import org.springframework.stereotype.Service;
