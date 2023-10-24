@@ -34,7 +34,7 @@ class ProductServiceTest extends ProductServiceFixture {
         void 상품을_등록한다() {
             given(productDao.save(any())).willReturn(등록한_상품);
 
-            final Product actual = productService.create(등록_요청한_상품);
+            final Product actual = productService.create(등록_요청_상품_dto);
 
             assertThat(actual).isEqualTo(등록한_상품);
         }
