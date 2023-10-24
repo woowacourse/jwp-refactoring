@@ -1,5 +1,6 @@
 package kitchenpos.domain.order;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ public class TableGroup {
     @Id
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     @Embedded

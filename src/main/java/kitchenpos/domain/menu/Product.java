@@ -2,6 +2,7 @@ package kitchenpos.domain.menu;
 
 import kitchenpos.domain.common.Price;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ public class Product {
     @Id
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Embedded

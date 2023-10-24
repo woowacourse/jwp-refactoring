@@ -1,5 +1,6 @@
 package kitchenpos.domain.order;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -29,6 +30,7 @@ public class Order {
     @Enumerated(STRING)
     private OrderStatus orderStatus;
 
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
 
     @Embedded

@@ -1,5 +1,6 @@
 package kitchenpos.domain.menu;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +13,7 @@ public class MenuGroup {
     @Id
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     protected MenuGroup() {
