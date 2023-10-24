@@ -12,7 +12,7 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        this(null, null, orderTables);
+        this(null, LocalDateTime.now(), orderTables);
     }
 
     public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {

@@ -15,6 +15,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,10 +49,10 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_그룹을_생성한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(dummyTables);
+            final TableGroupRequest request = new TableGroupRequest(dummyTables);
 
             // when
-            final TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+            final TableGroup createdTableGroup = tableGroupService.create(request);
 
             // then
             assertSoftly(
@@ -71,20 +72,20 @@ class TableGroupServiceTest {
         @Test
         void 주문_테이블_그룹이_비어있으면_예외가_발생한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(Collections.emptyList());
+            final TableGroupRequest request = new TableGroupRequest(Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 포함된_주문_테이블이_2개미만이면_예외가_발생한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0)));
+            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTables.get(0)));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -93,20 +94,20 @@ class TableGroupServiceTest {
             // given
             final long nonExistTableId = 99L;
             final OrderTable invalidTable = new OrderTable(nonExistTableId, 1L, 5, true);
-            final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0), invalidTable));
+            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTables.get(0), invalidTable));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 중복인_주문_테이블이_포함되어_있으면_예외가_발생한다() {
             // given
-            final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0), dummyTables.get(0)));
+            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTables.get(0), dummyTables.get(0)));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -115,11 +116,10 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = new OrderTable();
             invalidTable.setEmpty(false);
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
-            relationTablesWithTableGroup(tableGroup, List.of(dummyTables.get(0), invalidTable));
+            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTables.get(0), invalidTable));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -129,10 +129,10 @@ class TableGroupServiceTest {
             final TableGroup otherTableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             final OrderTable invalidTable = new OrderTable();
             relationTablesWithTableGroup(otherTableGroup, List.of(invalidTable));
-            final TableGroup tableGroup = new TableGroup(List.of(dummyTables.get(0), invalidTable));
+            final TableGroupRequest request = new TableGroupRequest(List.of(dummyTables.get(0), invalidTable));
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
