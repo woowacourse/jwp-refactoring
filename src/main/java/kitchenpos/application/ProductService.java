@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;

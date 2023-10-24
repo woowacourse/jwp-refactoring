@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
