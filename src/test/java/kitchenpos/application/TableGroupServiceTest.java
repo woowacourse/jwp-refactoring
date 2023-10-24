@@ -1,18 +1,24 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.dto.CreateTableGroupCommand;
+import kitchenpos.application.dto.CreateTableGroupCommand.TableInGroup;
+import kitchenpos.application.dto.domain.TableGroupDto;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptyList;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableGroupServiceTest extends ServiceTest {
 
@@ -25,102 +31,111 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 테이블_그룹을_생성할_수_있다() {
             //given
-            TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(테이블_생성(), 테이블_생성()));
+            Long 아이디1 = 빈_테이블_생성().getId();
+            Long 아이디2 = 빈_테이블_생성().getId();
+            CreateTableGroupCommand 커맨드 = new CreateTableGroupCommand(
+                    List.of(new TableInGroup(아이디1), new TableInGroup(아이디2)));
 
             //when
-            TableGroup 생성된_테이블그룹 = tableGroupService.create(테이블그룹);
+            TableGroupDto 생성된_테이블그룹 = tableGroupService.create(커맨드);
 
             //then
-            assertThat(생성된_테이블그룹.getId()).isNotNull();
-        }
+            TableGroup 조회 = tableGroupRepository.getById(생성된_테이블그룹.getId());
+            List<OrderTable> 테이블그룹으로_조회 = orderTableRepository.findAllByTableGroupId(생성된_테이블그룹.getId());
+            assertAll(
+                    () -> Assertions.assertThat(조회.getOrderTables())
+                            .extracting("id")
+                            .contains(아이디1, 아이디2),
+                    () -> assertThat(테이블그룹으로_조회).extracting("id")
+                            .contains(아이디1, 아이디2)
+            );
 
-        @Test
-        void 테이블이_2개_미만이면_예외가_발생한다() {
-            //given
-            TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(emptyList());
-
-            //expect
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블이_존재하지_않으면_예외가_발생한다() {
             //given
-            TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(테이블_생성(), new OrderTable()));
+            TableInGroup 존재하지_않는_테이블 = new TableInGroup(null);
+            CreateTableGroupCommand 커맨드 = new CreateTableGroupCommand(
+                    List.of(new TableInGroup(1L), 존재하지_않는_테이블));
 
             //expect
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
+            assertThatThrownBy(() -> tableGroupService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 이미_그룹에_속한_테이블이_있으면_에외가_발생한다() {
             //given
-            OrderTable 테이블 = 테이블_생성();
-            TableGroup 그룹 = new TableGroup();
-            그룹.setOrderTables(List.of(테이블, 테이블_생성()));
-            tableGroupService.create(그룹);
-
-            TableGroup 새_그룹 = new TableGroup();
-            새_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
+            OrderTable 테이블 = 그룹에_속한_테이블_생성();
+            CreateTableGroupCommand 커맨드 = new CreateTableGroupCommand(
+                    List.of(new TableInGroup(테이블.getId()), new TableInGroup(빈_테이블_생성().getId()))
+            );
 
             //expect
-            assertThatThrownBy(() -> tableGroupService.create(새_그룹))
+            assertThatThrownBy(() -> tableGroupService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        private OrderTable 그룹에_속한_테이블_생성() {
+            OrderTable 테이블 = 빈_테이블_생성();
+            CreateTableGroupCommand 커맨드 = new CreateTableGroupCommand(
+                    List.of(new TableInGroup(테이블.getId()), new TableInGroup(빈_테이블_생성().getId()))
+            );
+
+            tableGroupService.create(커맨드);
+            return orderTableRepository.getById(테이블.getId());
         }
 
     }
 
-    private OrderTable 테이블_생성() {
-        final var 테이블 = new OrderTable();
-        테이블.setEmpty(true);
-        테이블.setNumberOfGuests(4);
-        return orderTableDao.save(테이블);
+    private OrderTable 빈_테이블_생성() {
+        final var 테이블 = new OrderTable(0, true);
+        return orderTableRepository.save(테이블);
     }
 
     @Nested
     class 테이블_그룹_해제 {
+
         @Test
         void 성공() {
             //given
+            OrderTable 테이블 = 빈_테이블_생성();
+
+            OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
+            Order 주문 = new Order(null, 테이블.getId(), COMPLETION, now(), List.of(주문_항목));
+            orderRepository.save(주문);
+
             TableGroup 테이블_그룹 = new TableGroup();
-            OrderTable 테이블 = 테이블_생성();
-            Order 주문 = new Order();
-            주문.setOrderTableId(테이블.getId());
-            주문.setOrderStatus(OrderStatus.COMPLETION.name());
-            주문.setOrderedTime(now());
-            orderDao.save(주문);
-            테이블_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
-            TableGroup 생성된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+            테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
+            TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
 
             //when
             tableGroupService.ungroup(생성된_테이블_그룹.getId());
 
             //then
-            assertThat(orderTableDao.findById(테이블.getId()).get().getTableGroupId()).isNull();
+            assertThat(orderTableRepository.getById(테이블.getId()).getTableGroupId()).isNull();
         }
 
         @Test
         void COMPLETION이_아닌_주문이_있으면_예외가_발생한다() {
             //given
+            OrderTable 테이블 = 빈_테이블_생성();
+
+            OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
+            Order 주문 = new Order(null, 테이블.getId(), COOKING, now(), List.of(주문_항목));
+            orderRepository.save(주문);
+
             TableGroup 테이블_그룹 = new TableGroup();
-            OrderTable 테이블 = 테이블_생성();
-            Order 주문 = new Order();
-            주문.setOrderTableId(테이블.getId());
-            주문.setOrderStatus(OrderStatus.COOKING.name());
-            주문.setOrderedTime(now());
-            orderDao.save(주문);
-            테이블_그룹.setOrderTables(List.of(테이블, 테이블_생성()));
-            TableGroup 생성된_테이블_그룹 = tableGroupService.create(테이블_그룹);
+            TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
+            테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
+            orderTableRepository.save(테이블);
 
             //expect
             assertThatThrownBy(() -> tableGroupService.ungroup(생성된_테이블_그룹.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
     }
 
 }

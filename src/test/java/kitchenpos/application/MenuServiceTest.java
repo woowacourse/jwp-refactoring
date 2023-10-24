@@ -3,15 +3,19 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import org.assertj.core.api.Assertions;
+import kitchenpos.application.dto.CreateMenuCommand;
+import kitchenpos.application.dto.CreateMenuCommand.CreateMenuProductCommand;
+import kitchenpos.application.dto.domain.MenuDto;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,126 +27,148 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Nested
     class 메뉴_생성 {
 
-        @ParameterizedTest
-        @ValueSource(longs = {-100, -1})
-        void 가격은_음수일_수_없다(long price) {
+        @Test
+        void 가격은_음수일_수_없다() {
             //given
-            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
 
-            Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(메뉴_그룹.getId());
-            메뉴.setPrice(BigDecimal.valueOf(price));
-            메뉴.setMenuProducts(상품_만들기());
+            BigDecimal 음수_가격 = BigDecimal.valueOf(-1);
+            List<CreateMenuProductCommand> 상품_요청들 = 상품_요청_만들기();
+
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", 음수_가격, 메뉴_그룹.getId(), 상품_요청들);
 
             //expect
-            assertThatThrownBy(() -> menuService.create(메뉴))
+            assertThatThrownBy(() -> menuService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 가격은_null일_수_없다() {
             //given
-            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
-
-            Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(메뉴_그룹.getId());
-            메뉴.setPrice(null);
-            메뉴.setMenuProducts(상품_만들기());
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", null, 메뉴_그룹.getId(), 상품_요청_만들기());
 
             //expect
-            assertThatThrownBy(() -> menuService.create(메뉴))
+            assertThatThrownBy(() -> menuService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 그룹이_존재하지_않으면_예외가_발생한다() {
             //given
-            Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(1000000000000000L);
-            List<MenuProduct> 상품 = 상품_만들기();
-            메뉴.setMenuProducts(상품);
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
+            jdbcTemplate.update("DELETE FROM menu_group WHERE id = ?", ps -> ps.setLong(1, 메뉴_그룹.getId()));
+
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(1_000), 메뉴_그룹.getId(), 상품_요청_만들기());
 
             //expect
-            assertThatThrownBy(() -> menuService.create(메뉴))
+            assertThatThrownBy(() -> menuService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴에_속하는_상품이_없으면_예외가_발생한다() {
             //given
-            Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(메뉴_그룹_생성().getId());
-            메뉴.setPrice(BigDecimal.valueOf(1000));
-            메뉴.setMenuProducts(emptyList());
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(1_000), 메뉴_그룹_만들기().getId(),
+                    emptyList());
 
             //expect
-            assertThatThrownBy(() -> menuService.create(메뉴))
+            assertThatThrownBy(() -> menuService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @ParameterizedTest
+        @ValueSource(longs = {0, 1})
+        void 메뉴가격이_상품가격합_이하여야한다(Long subtrahend) {
+            //given
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
+            final var 존재하는_상품_목록 = productRepository.findAll().subList(0, 2);
+            final long 가격_합 = 메뉴_상품가격합_구하기(존재하는_상품_목록);
+
+            final var 상품_요청_목록 = 존재하는_상품_목록.stream()
+                    .map(product -> new CreateMenuProductCommand(product.getId(), 1))
+                    .collect(Collectors.toList());
+
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(가격_합 - subtrahend), 메뉴_그룹.getId(),
+                    상품_요청_목록);
+
+            //when
+            MenuDto 생성된_메뉴 = menuService.create(커맨드);
+
+            //then
+            assertThat(생성된_메뉴.getId()).isNotNull();
         }
 
         @Test
-        void 가격합이_동일하지_않은경우_예외가_발생한다() {
+        void 메뉴가격이_상품가격합보다_큰_경우_예외가_발생한다() {
             //given
-            MenuGroup 메뉴_그룹 = 메뉴_그룹_생성();
-            Menu 메뉴 = new Menu();
-            메뉴.setMenuGroupId(메뉴_그룹.getId());
-            long 가격_합 = 메뉴_가격_상품가격합이랑_다르게_만들기(메뉴);
+            MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
 
-            메뉴.setPrice(BigDecimal.valueOf(가격_합 + 1));
+            final var 존재하는_상품_목록 = productRepository.findAll().subList(0, 2);
+            final long 가격_합 = 메뉴_상품가격합_구하기(존재하는_상품_목록);
+
+            final var 상품_요청_목록 = 존재하는_상품_목록.stream()
+                    .map(product -> new CreateMenuProductCommand(product.getId(), 1))
+                    .collect(Collectors.toList());
+
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(가격_합 + 1), 메뉴_그룹.getId(),
+                    상품_요청_목록);
+
             //expect
-            assertThatThrownBy(() -> menuService.create(메뉴))
+            assertThatThrownBy(() -> menuService.create(커맨드))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        private long 메뉴_가격_상품가격합이랑_다르게_만들기(final Menu 메뉴) {
-            var 존재하는_상품_목록 = productDao.findAll().subList(0, 2);
-            List<MenuProduct> 메뉴상품_목록 = 존재하는_상품_목록.stream()
-                    .map(product -> {
-                        MenuProduct 메뉴_상품 = new MenuProduct();
-                        메뉴_상품.setProductId(product.getId());
-                        return 메뉴_상품;
-                    }).collect(Collectors.toList());
-            메뉴.setMenuProducts(메뉴상품_목록);
-            long 가격_합 = 존재하는_상품_목록.stream()
-                    .mapToLong(product -> product.getPrice().longValue())
+        private long 메뉴_상품가격합_구하기(final List<Product> 상품_목록) {
+            long 가격_합 = 상품_목록.stream()
+                    .mapToLong(product -> product.getPrice().getValue().longValue())
                     .sum();
             return 가격_합;
         }
 
     }
 
-    private MenuGroup 메뉴_그룹_생성() {
-        MenuGroup 저장할_그룹 = new MenuGroup();
-        저장할_그룹.setName("메뉴그룹");
-        return menuGroupDao.save(저장할_그룹);
+    private MenuGroup 메뉴_그룹_만들기() {
+        MenuGroup 저장할_그룹 = new MenuGroup("메뉴그룹");
+        return menuGroupRepository.save(저장할_그룹);
     }
 
     private List<MenuProduct> 상품_만들기() {
-        var 상품_아이디 = productDao.findAll().get(0).getId();
-        MenuProduct 메뉴_상품 = new MenuProduct();
-        메뉴_상품.setProductId(상품_아이디);
+        var 상품_아이디 = productRepository.findAll().get(0).getId();
+        MenuProduct 메뉴_상품 = new MenuProduct(null, null, 상품_아이디, 1L);
+        return List.of(메뉴_상품);
+    }
+
+    private List<CreateMenuProductCommand> 상품_요청_만들기() {
+        final var 상품_아이디 = productRepository.findAll().get(0).getId();
+        final var 메뉴_상품 = new CreateMenuProductCommand(상품_아이디, 1);
         return List.of(메뉴_상품);
     }
 
     @Nested
     class 메뉴_목록_조회 {
+
         @Test
         void 메뉴_목록을_조회할_수_있다() {
             //given
-            List<Long> 모든_메뉴_아이디 = menuDao.findAll().stream()
+            List<Long> 모든_메뉴_아이디 = menuRepository.findAll().stream()
                     .map(Menu::getId)
                     .collect(Collectors.toList());
 
             //when
-            List<Menu> 메뉴_목록 = menuService.list();
+            List<MenuDto> 메뉴_목록 = menuService.list();
 
             //then
-            assertThat(메뉴_목록).extracting(Menu::getId)
+            assertThat(메뉴_목록).extracting(MenuDto::getId)
                     .containsAll(모든_메뉴_아이디);
         }
+
     }
 
 }

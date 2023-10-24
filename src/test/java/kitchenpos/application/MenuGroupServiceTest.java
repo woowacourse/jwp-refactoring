@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.CreateMenuGroupCommand;
+import kitchenpos.application.dto.domain.MenuGroupDto;
+import kitchenpos.domain.menugroup.MenuGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,31 +21,30 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void 메뉴_그룹을_생성할_수_있다() {
         //given
-        MenuGroup 메뉴_그룹 = new MenuGroup();
-        메뉴_그룹.setName("메뉴그룹");
+        CreateMenuGroupCommand 커맨드 = new CreateMenuGroupCommand("메뉴그룹");
 
         //when
-        MenuGroup 생성된_메뉴그룹 = menuGroupService.create(메뉴_그룹);
+        final MenuGroupDto 생성된_메뉴그룹 = menuGroupService.create(커맨드);
 
         //then
         assertAll(
                 () -> assertThat(생성된_메뉴그룹.getId()).isNotNull(),
-                () -> assertThat(생성된_메뉴그룹.getName()).isEqualTo(메뉴_그룹.getName())
+                () -> assertThat(생성된_메뉴그룹.getName()).isEqualTo(커맨드.getName())
         );
     }
 
     @Test
     void 메뉴_그룹_리스트를_조회할_수있다() {
         //given
-        List<Long> 모든_그룹_아이디 = menuGroupDao.findAll().stream()
+        List<Long> 모든_그룹_아이디 = menuGroupRepository.findAll().stream()
                 .map(MenuGroup::getId)
                 .collect(Collectors.toList());
 
         //when
-        List<MenuGroup> 메뉴_그룹_리스트 = menuGroupService.list();
+        final List<MenuGroupDto> 메뉴_그룹_리스트 = menuGroupService.list();
 
         //then
-        assertThat(메뉴_그룹_리스트).extracting(MenuGroup::getId)
+        assertThat(메뉴_그룹_리스트).extracting(MenuGroupDto::getId)
                 .containsAll(모든_그룹_아이디);
     }
 }

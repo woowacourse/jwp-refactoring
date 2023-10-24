@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.CreateProductCommand;
+import kitchenpos.application.dto.domain.ProductDto;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,30 +28,26 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 상품을_생성할_수_있다() {
             //given
-            Product 상품 = new Product();
-            상품.setName("상품명");
-            상품.setPrice(BigDecimal.valueOf(1000));
+            CreateProductCommand 상품_생성_요청 = new CreateProductCommand("상품명", BigDecimal.valueOf(1000));
 
             //when
-            Product 생성된_상품 = productService.create(상품);
+            ProductDto 생성된_상품 = productService.create(상품_생성_요청);
 
             //then
             assertAll(
                     () -> assertThat(생성된_상품.getId()).isNotNull(),
-                    () -> assertThat(생성된_상품.getName()).isEqualTo(상품.getName()),
-                    () -> assertThat(생성된_상품.getPrice().compareTo(상품.getPrice())).isEqualTo(0)
+                    () -> assertThat(생성된_상품.getName()).isEqualTo(생성된_상품.getName()),
+                    () -> assertThat(생성된_상품.getPrice().compareTo(생성된_상품.getPrice())).isEqualTo(0)
             );
         }
 
         @Test
         void 상품가격이_null이면_예외가_발생한다() {
             //given
-            Product 상품 = new Product();
-            상품.setName("상품명");
-            상품.setPrice(null);
+            CreateProductCommand 상품_생성_요청 = new CreateProductCommand("상품명", null);
 
             //expect
-            assertThatThrownBy(() -> productService.create(상품))
+            assertThatThrownBy(() -> productService.create(상품_생성_요청))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -57,12 +55,10 @@ class ProductServiceTest extends ServiceTest {
         @ValueSource(longs = {-1, -1000})
         void 상품가격이_음수이면_예외가_발생한다(Long price) {
             //given
-            Product 상품 = new Product();
-            상품.setName("상품명");
-            상품.setPrice(BigDecimal.valueOf(price));
+            CreateProductCommand 상품_생성_요청 = new CreateProductCommand("상품명", BigDecimal.valueOf(price));
 
             //expect
-            assertThatThrownBy(() -> productService.create(상품))
+            assertThatThrownBy(() -> productService.create(상품_생성_요청))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -70,15 +66,15 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void 상품_리스트를_조회할_수_있다() {
         //given
-        List<Long> allProductIds = productDao.findAll().stream()
+        List<Long> allProductIds = productRepository.findAll().stream()
                 .map(Product::getId)
                 .collect(toList());
 
         //when
-        List<Product> products = productService.list();
+        List<ProductDto> products = productService.list();
 
         //then
-        assertThat(products).extracting(Product::getId)
+        assertThat(products).extracting(ProductDto::getId)
                 .containsAll(allProductIds);
     }
 
