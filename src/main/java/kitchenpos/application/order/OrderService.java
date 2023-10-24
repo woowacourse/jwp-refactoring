@@ -2,6 +2,7 @@ package kitchenpos.application.order;
 
 import kitchenpos.application.order.request.OrderCreateRequest;
 import kitchenpos.application.order.request.OrderLineItemCreateRequest;
+import kitchenpos.application.order.request.OrderUpdateRequest;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.order.OrderLineItemRepository;
@@ -104,7 +105,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(Long orderId, OrderUpdateRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -112,7 +113,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);

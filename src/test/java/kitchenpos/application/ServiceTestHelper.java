@@ -9,6 +9,7 @@ import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
 import kitchenpos.application.order.request.OrderCreateRequest;
 import kitchenpos.application.order.request.OrderLineItemCreateRequest;
+import kitchenpos.application.order.request.OrderUpdateRequest;
 import kitchenpos.application.order.request.TableCreateRequest;
 import kitchenpos.application.order.request.TableUpdateRequest;
 import kitchenpos.application.product.ProductService;
@@ -207,12 +208,12 @@ public abstract class ServiceTestHelper {
     }
 
     public Order 주문_식사_상태로_변경(Order order) {
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        return orderService.changeOrderStatus(order.getId(), order);
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(OrderStatus.MEAL.name());
+        return orderService.changeOrderStatus(order.getId(), orderUpdateRequest);
     }
 
     public Order 주문_완료_상태로_변경(Order order) {
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        return orderService.changeOrderStatus(order.getId(), order);
+        OrderUpdateRequest orderUpdateRequest = new OrderUpdateRequest(OrderStatus.COMPLETION.name());
+        return orderService.changeOrderStatus(order.getId(), orderUpdateRequest);
     }
 }
