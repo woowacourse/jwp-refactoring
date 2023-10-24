@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
@@ -17,6 +18,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.MenuException.NotExistsProductException;
+import kitchenpos.domain.exception.MenuException.PriceMoreThanProductsException;
 import kitchenpos.domain.exception.MenuGroupException.NotExistsMenuGroupException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -52,12 +54,9 @@ class MenuServiceTest {
         product1 = Product.of("kong", BigDecimal.valueOf(1000));
         product2 = Product.of("wuga", BigDecimal.valueOf(5000));
 
-        MenuProduct menuProduct1 = new MenuProduct(product1, 10);
-        MenuProduct menuProduct2 = new MenuProduct(product2, 3);
-
         menuGroup = MenuGroup.from("menuGroup1");
 
-        this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup, List.of(menuProduct1, menuProduct2));
+        this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup);
     }
 
     @Test
@@ -87,6 +86,19 @@ class MenuServiceTest {
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(NotExistsProductException.class);
+    }
+
+    @Test
+    @DisplayName("메뉴의 가격이 메뉴 상품의 가격 총합보다 더 크면 예외가 발생한다.")
+    void create_fail_price() {
+        when(menuGroupRepository.getById(1L)).thenReturn(menuGroup);
+        when(productRepository.findAllById(anyList())).thenReturn(Collections.emptyList());
+
+        List<MenuProductRequest> menuProductRequests = new ArrayList<>();
+        MenuRequest menuRequest = new MenuRequest("kong", BigDecimal.valueOf(1000000), 1L, menuProductRequests);
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
+                .isInstanceOf(PriceMoreThanProductsException.class);
     }
 
     @Test

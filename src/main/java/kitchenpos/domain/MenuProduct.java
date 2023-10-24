@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 @Entity
 public class MenuProduct {
@@ -18,24 +16,21 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "menu_id")
     @JsonIgnore
     private Menu menu;
-    @OneToOne
-    private Product product;
+    @Column(name = "product_id")
+    private Long productId;
     @Column
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Product product, final long quantity) {
-        this.product = product;
+    public MenuProduct(final Menu menu, final Long productId, final long quantity) {
+        this.menu = menu;
+        this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public BigDecimal getMenuProductPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {
@@ -52,11 +47,7 @@ public class MenuProduct {
     }
 
     public Long getProductId() {
-        return product.getId();
-    }
-
-    public Product getProduct() {
-        return product;
+        return productId;
     }
 
     public long getQuantity() {
