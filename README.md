@@ -79,7 +79,7 @@
 - [ ] DTO 도입
 - [ ] OrderService create 메서드 추출
 - [ ] OrderService의 changeOrderStatus 검증로직 메서드 분리하여 메서드명으로 의도 표현
-- [ ] 도메인 패키지 양방향 참조 끊기
+- [x] 도메인 패키지 양방향 참조 끊기
 
 ## 용어 사전
 

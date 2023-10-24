@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.product.Product;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,5 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain;
 
-import kitchenpos.domain.order_line_item.OrderLineItem;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Embeddable;

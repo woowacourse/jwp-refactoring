@@ -1,9 +1,9 @@
 package support.fixture;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu_group.MenuGroup;
-import kitchenpos.domain.menu_product.MenuProduct;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 
 import java.math.BigDecimal;
 import java.util.Collections;

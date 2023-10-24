@@ -1,6 +1,4 @@
-package kitchenpos.domain.menu;
-
-import kitchenpos.domain.menu_product.MenuProduct;
+package kitchenpos.domain;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;

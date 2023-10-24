@@ -1,11 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu_group.MenuGroup;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order_line_item.OrderLineItem;
-import kitchenpos.domain.order_table.OrderTable;
+import kitchenpos.domain.*;
 import kitchenpos.domain.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

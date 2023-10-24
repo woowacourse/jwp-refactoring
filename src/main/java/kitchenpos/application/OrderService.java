@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItems;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order_table.OrderTable;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItems;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;

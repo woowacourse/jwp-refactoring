@@ -1,8 +1,8 @@
 package support.fixture;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order_line_item.OrderLineItem;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemBuilder {
 
