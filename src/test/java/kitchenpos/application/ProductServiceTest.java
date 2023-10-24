@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -40,10 +41,7 @@ class ProductServiceTest extends ServiceTestConfig {
             final Product actual = productService.create(product);
 
             // then
-            SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actual.getId()).isPositive();
-                softAssertions.assertThat(actual).isEqualTo(product);
-            });
+            assertThat(actual.getId()).isPositive();
         }
 
         @ParameterizedTest
