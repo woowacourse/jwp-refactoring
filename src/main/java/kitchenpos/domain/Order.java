@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -17,9 +19,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Table(name = "orders")
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
 
     @Id
@@ -27,16 +31,18 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
+    @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
 
     protected Order() {

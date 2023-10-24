@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,12 +24,13 @@ public class Menu {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id")
+    @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
+    @Column(nullable = false)
     private String name;
 
     @Embedded

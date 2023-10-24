@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,13 +19,14 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(nullable = false)
     private long quantity;
 
     protected MenuProduct() {

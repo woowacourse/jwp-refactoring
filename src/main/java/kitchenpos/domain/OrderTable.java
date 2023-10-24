@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,10 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(nullable = false)
     private boolean empty;
 
     protected OrderTable() {

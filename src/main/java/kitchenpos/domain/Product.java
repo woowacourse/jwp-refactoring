@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Embedded
