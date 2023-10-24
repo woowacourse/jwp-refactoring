@@ -90,17 +90,11 @@ public class ControllerTest {
         OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
         return new Order(
                 id,
-                new OrderTable(1L, 테이블_그룹(), 0, false),
+                1L,
                 OrderStatus.MEAL,
                 null,
                 new OrderLineItems(List.of(orderLineItem))
         );
-    }
-
-    protected TableGroup 테이블_그룹() {
-        OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
-        OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
-        return new TableGroup(List.of(orderTable1, orderTable2));
     }
 
     protected TableGroup 테이블_그룹(Long id) {

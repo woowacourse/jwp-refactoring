@@ -13,7 +13,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         return findById(id).orElseThrow(() -> new OrderException(ORDER_NOT_FOUND));
     }
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
+    List<Order> findAllByOrderTableIdIn(List<Long> orderTableIds);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
+    List<Order> findAllByOrderTableId(Long orderTableId);
 }

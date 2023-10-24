@@ -6,7 +6,6 @@ import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static kitchenpos.exception.order.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -15,10 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.order.OrderException;
 
 @Entity
@@ -29,9 +25,7 @@ public class Order {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Column(nullable = false)
     @Enumerated(STRING)
@@ -46,29 +40,22 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, OrderLineItems orderLineItems) {
-        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+    public Order(Long orderTableId, OrderStatus orderStatus, OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(
             Long id,
-            OrderTable orderTable,
+            Long orderTableId,
             OrderStatus orderStatus,
             LocalDateTime orderedTime,
             OrderLineItems orderLineItems
     ) {
-        validate(orderTable);
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    private void validate(OrderTable orderTable) {
-        if (orderTable.empty()) {
-            throw new OrderException(ORDER_TABLE_CAN_NOT_EMPTY);
-        }
     }
 
     public boolean isCookingOrMeal() {
@@ -86,8 +73,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable orderTable() {
-        return orderTable;
+    public Long orderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus orderStatus() {

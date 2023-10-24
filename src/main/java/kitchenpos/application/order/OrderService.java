@@ -14,32 +14,33 @@ import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.order.OrderedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
+    private final ApplicationEventPublisher publisher;
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
+            ApplicationEventPublisher publisher,
             MenuRepository menuRepository,
-            OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository
+            OrderRepository orderRepository
     ) {
+        this.publisher = publisher;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public CreateOrderResponse create(CreateOrderCommand command) {
-        OrderTable orderTable = orderTableRepository.getById(command.orderTableId());
-        Order order = new Order(orderTable, OrderStatus.COOKING, getOrderLineItems(command.orderLineItemCommands()));
+        Long orderTableId = command.orderTableId();
+        publisher.publishEvent(new OrderedEvent(orderTableId));
+        Order order = new Order(orderTableId, OrderStatus.COOKING, getOrderLineItems(command.orderLineItemCommands()));
         return CreateOrderResponse.from(orderRepository.save(order));
     }
 

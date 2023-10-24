@@ -36,7 +36,7 @@ public class CreateOrderResponse {
     public static CreateOrderResponse from(Order order) {
         return new CreateOrderResponse(
                 order.id(),
-                order.orderTable().id(),
+                order.orderTableId(),
                 order.orderStatus().name(),
                 order.orderedTime(),
                 order.orderLineItems().items().stream()

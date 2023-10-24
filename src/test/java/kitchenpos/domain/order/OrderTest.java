@@ -4,13 +4,11 @@ import static kitchenpos.domain.order.OrderFixture.계산완료된_주문;
 import static kitchenpos.domain.order.OrderFixture.조리중인_주문;
 import static kitchenpos.exception.order.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
 import static kitchenpos.exception.order.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
-import static kitchenpos.exception.order.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.BaseException;
 import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;
@@ -18,27 +16,10 @@ import org.junit.jupiter.api.Test;
 class OrderTest {
 
     @Test
-    void 주문테이블이_비어있으면_예외가_발생한다() {
-        // given
-        OrderTable orderTable = new OrderTable(0, true);
-
-        // when
-        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                new Order(orderTable, null, null)
-        ).exceptionType();
-
-        // then
-        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_EMPTY);
-    }
-
-    @Test
     void 주문항목이_비어있으면_예외가_발생한다() {
-        // given
-        OrderTable orderTable = new OrderTable(0, false);
-
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                new Order(orderTable, null, new OrderLineItems(List.of()))
+                new Order(1L, null, new OrderLineItems(List.of()))
         ).exceptionType();
 
         // then
@@ -48,11 +29,10 @@ class OrderTest {
     @Test
     void 주문테이블이_비어있지않고_주문항목이_비어있지않으면_예외가_발생하지_않는다() {
         // given
-        OrderTable orderTable = new OrderTable(0, false);
         OrderLineItem orderLineItem = new OrderLineItem(null, 0);
 
         // when & then
-        assertThatCode(() -> new Order(orderTable, null, new OrderLineItems(List.of(
+        assertThatCode(() -> new Order(1L, null, new OrderLineItems(List.of(
                 orderLineItem
         )))).doesNotThrowAnyException();
     }

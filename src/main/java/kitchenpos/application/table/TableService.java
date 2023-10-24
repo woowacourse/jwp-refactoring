@@ -11,15 +11,19 @@ import kitchenpos.application.table.dto.CreateOrderTableResponse;
 import kitchenpos.application.table.dto.SearchOrderTableResponse;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableEmptyChangedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
+    private final ApplicationEventPublisher publisher;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderTableRepository orderTableRepository) {
+    public TableService(ApplicationEventPublisher publisher, OrderTableRepository orderTableRepository) {
+        this.publisher = publisher;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -38,6 +42,7 @@ public class TableService {
     @Transactional
     public ChangeOrderTableEmptyResponse changeEmpty(ChangeOrderTableEmptyCommand command) {
         OrderTable orderTable = orderTableRepository.getById(command.id());
+        publisher.publishEvent(new TableEmptyChangedEvent(orderTable.id()));
         orderTable.changeEmpty(command.empty());
         return ChangeOrderTableEmptyResponse.from(orderTableRepository.save(orderTable));
     }

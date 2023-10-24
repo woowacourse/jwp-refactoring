@@ -36,7 +36,7 @@ public class SearchOrderResponse {
     public static SearchOrderResponse from(Order order) {
         return new SearchOrderResponse(
                 order.id(),
-                order.orderTable().id(),
+                order.orderTableId(),
                 order.orderStatus().name(),
                 order.orderedTime(),
                 order.orderLineItems().items().stream()

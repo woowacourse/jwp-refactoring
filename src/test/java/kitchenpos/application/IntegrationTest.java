@@ -6,6 +6,9 @@ import kitchenpos.application.menu.MenuGroupService;
 import kitchenpos.application.menu.MenuService;
 import kitchenpos.application.menu.ProductService;
 import kitchenpos.application.order.OrderService;
+import kitchenpos.application.order.TableEmptyChangedEventListener;
+import kitchenpos.application.order.TableUngroupedEventListener;
+import kitchenpos.application.table.OrderedEventListener;
 import kitchenpos.application.table.TableGroupService;
 import kitchenpos.application.table.TableService;
 import kitchenpos.domain.menu.Menu;
@@ -73,6 +76,15 @@ public class IntegrationTest {
     @Autowired
     protected ProductRepository productRepository;
 
+    @Autowired
+    protected TableEmptyChangedEventListener tableEmptyChangedEventListener;
+
+    @Autowired
+    protected OrderedEventListener orderedEventListener;
+
+    @Autowired
+    protected TableUngroupedEventListener tableUngroupedEventListener;
+
     protected Price 가격(long 가격) {
         return new Price(BigDecimal.valueOf(가격));
     }
@@ -102,7 +114,7 @@ public class IntegrationTest {
     }
 
     protected Order 주문(OrderTable 주문테이블, OrderStatus 주문상태, OrderLineItem... 주문항목) {
-        return new Order(주문테이블, 주문상태, 주문항목들(주문항목));
+        return new Order(주문테이블.id(), 주문상태, 주문항목들(주문항목));
     }
 
     protected OrderLineItems 주문항목들(OrderLineItem... 주문항목) {

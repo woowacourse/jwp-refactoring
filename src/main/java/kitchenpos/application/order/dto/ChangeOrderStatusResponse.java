@@ -36,7 +36,7 @@ public class ChangeOrderStatusResponse {
     public static ChangeOrderStatusResponse from(Order order) {
         return new ChangeOrderStatusResponse(
                 order.id(),
-                order.orderTable().id(),
+                order.orderTableId(),
                 order.orderStatus().name(),
                 order.orderedTime(),
                 order.orderLineItems().items().stream()
