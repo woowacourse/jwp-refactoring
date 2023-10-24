@@ -7,17 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
+import javax.persistence.EntityManager;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.request.MenuCreationRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menugroup.dto.response.MenuGroupResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -35,6 +35,9 @@ import org.springframework.transaction.annotation.Transactional;
 class MenuServiceTest {
 
     @Autowired
+    private EntityManager em;
+
+    @Autowired
     private MenuService menuService;
 
     @Autowired
@@ -45,9 +48,6 @@ class MenuServiceTest {
 
     @Autowired
     private MenuRepository menuRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private MenuValidator menuValidator;
@@ -152,7 +152,9 @@ class MenuServiceTest {
         //then
         Menu findMenu = menuRepository.findById(response.getId()).get();
         MenuResponse expectedMenu = MenuResponse.from(findMenu, MenuGroupResponse.from(menuGroup));
-        List<MenuProduct> findMenuProducts = menuProductRepository.findAll();
+        List<MenuProduct> findMenuProducts =
+                em.createQuery("SELECT m FROM MenuProduct m", MenuProduct.class)
+                        .getResultList();
 
         assertAll(
                 () -> assertThat(response).usingRecursiveComparison()
