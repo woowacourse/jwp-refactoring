@@ -42,6 +42,7 @@ public class OrderTable {
 
     public void changeEmpty(boolean empty) {
         if (empty) {
+            validateTableGroupIsNull();
             this.numberOfGuests = 0;
         }
 

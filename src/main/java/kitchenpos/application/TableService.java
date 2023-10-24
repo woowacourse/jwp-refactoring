@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
@@ -10,10 +12,6 @@ import kitchenpos.dto.request.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -53,10 +51,8 @@ public class TableService {
 
     private void validateStatusWhenUpdateEmptyToTrue(OrderTableUpdateEmptyRequest request, OrderTable orderTable) {
         if (request.isEmpty()) {
-            orderTable.validateTableGroupIsNull();
-
-            Optional<Order> orderOfOrderTable = orderRepository.findByOrderTable(orderTable);
-            orderOfOrderTable.ifPresent(Order::validateOrderStatusIsCompletion);
+            orderRepository.findByOrderTable(orderTable)
+                    .ifPresent(Order::validateOrderStatusIsCompletion);
         }
     }
 

@@ -24,7 +24,7 @@ class OrderTableTest {
 
     @Test
     void 테이블_상태를_빈_테이블로_변경한다() {
-        OrderTable 주문_테이블 = 새로운_주문_테이블(new TableGroup(), 3, false);
+        OrderTable 주문_테이블 = 새로운_주문_테이블(null, 3, false);
 
         주문_테이블.changeEmpty(true);
 

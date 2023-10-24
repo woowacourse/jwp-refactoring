@@ -42,7 +42,6 @@ public class TableGroupService {
         TableGroup tableGroup = new TableGroup(orderTables);
 
         tableGroupRepository.save(tableGroup);
-        orderTableRepository.saveAll(orderTables);
 
         return TableGroupResponse.from(tableGroup);
     }
