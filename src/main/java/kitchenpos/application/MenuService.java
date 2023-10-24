@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -40,32 +39,38 @@ public class MenuService {
     public Menu create(final MenuCreateRequest request) {
         final BigDecimal price = request.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 메뉴 그룹이 존재하지 않습니다."));
 
+        final List<MenuProduct> menuProducts = getMenuProducts(request.getMenuProducts(), price);
+        final Menu menu = new Menu(menuGroup, menuProducts, request.getName(), price);
+        return menuRepository.save(menu);
+    }
+
+    private List<MenuProduct> getMenuProducts(
+            final List<MenuProductRequest> menuProductRequests,
+            final BigDecimal price
+    ) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
-        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal amountSum = BigDecimal.ZERO;
 
-        final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
+                    .orElseThrow(() -> new IllegalArgumentException("해당하는 상품이 존재하지 않습니다."));
 
             final MenuProduct menuProduct = new MenuProduct(null, product, menuProductRequest.getQuantity());
+            amountSum = menuProduct.calculateAmount();
             menuProducts.add(menuProduct);
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuPrice(price, amountSum);
+        return menuProducts;
+    }
 
-        final Menu menu = new Menu(menuGroup, menuProducts, request.getName(), price);
-        return menuRepository.save(menu);
+    private void validateMenuPrice(final BigDecimal price, final BigDecimal sum) {
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 금액(가격 * 수량)의 합보다 클 수 없습니다.");
+        }
     }
 
     public List<Menu> list() {

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Menu {
@@ -28,7 +30,9 @@ public class Menu {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
 
     protected Menu() {
     }
@@ -41,7 +45,7 @@ public class Menu {
     ) {
         this.menuGroup = menuGroup;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
 
         for (final MenuProduct menuProduct : menuProducts) {
             addMenuProduct(menuProduct);
@@ -74,20 +78,8 @@ public class Menu {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public void setMenuGroup(final MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
@@ -98,15 +90,7 @@ public class Menu {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+        return price.getValue();
     }
 }

@@ -69,19 +69,20 @@ class MenuServiceTest {
         }
 
         @Test
-        @DisplayName("가격이 빈 값이면 예외가 발생한다.")
+        @DisplayName("메뉴 그룹을 찾을 수 없는 경우 예외가 발생한다.")
         void throwsExceptionWhenPriceIsNull() {
             // given
             final Product product = new Product("후라이드치킨", new BigDecimal("15000.00"));
             productRepository.save(product);
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
+            menuGroupRepository.save(new MenuGroup("치킨"));
             final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 1);
-            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", null,
-                    savedMenuGroup.getId(), List.of(menuProductRequest));
+            final MenuCreateRequest request = new MenuCreateRequest("후라이드치킨", new BigDecimal("15000.00"),
+                    2L, List.of(menuProductRequest));
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("해당하는 메뉴 그룹이 존재하지 않습니다.");
         }
 
         @ParameterizedTest
@@ -98,7 +99,8 @@ class MenuServiceTest {
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("가격은 0보다 작을 수 없습니다.");
         }
 
         @Test
@@ -112,7 +114,8 @@ class MenuServiceTest {
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("해당하는 상품이 존재하지 않습니다.");
         }
 
         @Test
@@ -128,7 +131,8 @@ class MenuServiceTest {
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("메뉴의 가격은 금액(가격 * 수량)의 합보다 클 수 없습니다.");
         }
     }
 
