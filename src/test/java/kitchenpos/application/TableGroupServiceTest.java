@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.common.ServiceTestConfig;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
@@ -38,7 +37,7 @@ class TableGroupServiceTest extends ServiceTestConfig {
     TableGroupService tableGroupService;
 
     @Autowired
-    OrderDao orderDao;
+    OrderRepository orderRepository;
 
     @Autowired
     OrderTableRepository orderTableRepository;
@@ -54,9 +53,6 @@ class TableGroupServiceTest extends ServiceTestConfig {
 
     @Autowired
     MenuRepository menuRepository;
-
-    @Autowired
-    OrderRepository orderRepository;
 
     @Test
     void 단체_지정을_등록한다() {

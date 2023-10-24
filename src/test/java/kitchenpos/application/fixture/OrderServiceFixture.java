@@ -40,17 +40,17 @@ public class OrderServiceFixture {
         빈_주문_테이블.setId(2L);
 
         저장된_주문 = new Order(주문_테이블, 주문_상태, LocalDateTime.now());
-        저장된_주문.addOrderLineItems(주문_항목들);
+        저장된_주문.updateOrderLineItems(주문_항목들);
         저장된_주문.setId(1L);
         저장된_주문1 = 저장된_주문;
         저장된_주문2 = new Order(주문_테이블, 주문_상태, LocalDateTime.now());
-        저장된_주문2.addOrderLineItems(주문_항목들);
+        저장된_주문2.updateOrderLineItems(주문_항목들);
         저장된_주문.setId(2L);
         식사_상태의_저장된_주문 = new Order(주문_테이블, OrderStatus.MEAL.name(), LocalDateTime.now());
-        식사_상태의_저장된_주문.addOrderLineItems(주문_항목들);
+        식사_상태의_저장된_주문.updateOrderLineItems(주문_항목들);
         식사_상태의_저장된_주문.setId(저장된_주문.getId());
         계산_상태의_저장된_주문 = new Order(주문_테이블, OrderStatus.COMPLETION.name(), LocalDateTime.now());
-        계산_상태의_저장된_주문.addOrderLineItems(주문_항목들);
+        계산_상태의_저장된_주문.updateOrderLineItems(주문_항목들);
         계산_상태의_저장된_주문.setId(저장된_주문.getId());
 
         저장된_주문들 = List.of(저장된_주문1, 저장된_주문2);

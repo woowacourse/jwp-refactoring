@@ -78,7 +78,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 }
