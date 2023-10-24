@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.support.TestFixtureFactory.새로운_메뉴;
 import static kitchenpos.support.TestFixtureFactory.새로운_메뉴_그룹;
@@ -14,14 +15,22 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderException;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableException;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderUpdateRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +39,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 class OrderServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderService orderService;
@@ -44,94 +56,107 @@ class OrderServiceTest {
     private MenuGroup 메뉴_그룹;
     private Menu 메뉴;
     private OrderTable 주문_테이블;
-    private OrderLineItem 주문_항목;
 
     @BeforeEach
     void setUp() {
-        메뉴_그룹 = menuGroupDao.save(새로운_메뉴_그룹("메뉴 그룹"));
-        메뉴 = menuDao.save(새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), null));
-        주문_테이블 = orderTableDao.save(새로운_주문_테이블(null, 1, false));
-        주문_항목 = 새로운_주문_항목(null, 메뉴.getId(), 1);
+        메뉴_그룹 = menuGroupRepository.save(새로운_메뉴_그룹(null, "메뉴 그룹"));
+        메뉴 = menuRepository.save(새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹));
+        주문_테이블 = orderTableRepository.save(새로운_주문_테이블(null, 1, false));
     }
 
     @Test
     void 주문을_등록한다() {
-        Order 주문 = 새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목));
-
-        Order 등록된_주문 = orderService.create(주문);
+        OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1);
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of(주문_항목_생성_요청));
+        OrderResponse 등록된_주문_응답 = orderService.create(주문_생성_요청);
 
         assertSoftly(softly -> {
-            softly.assertThat(등록된_주문.getId()).isNotNull();
-            softly.assertThat(등록된_주문).usingRecursiveComparison()
+            softly.assertThat(등록된_주문_응답.getId()).isNotNull();
+            softly.assertThat(등록된_주문_응답.getOrderLineItems().get(0).getMenu()).usingRecursiveComparison()
                     .ignoringFields("id", "orderLineItems")
-                    .isEqualTo(주문);
-            softly.assertThat(등록된_주문.getOrderLineItems()).hasSize(1)
-                    .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
-                    .containsOnly(주문_항목);
+                    .isEqualTo(MenuResponse.from(메뉴));
+            softly.assertThat(등록된_주문_응답.getOrderLineItems().get(0).getQuantity()).isEqualTo(1);
+            softly.assertThat(등록된_주문_응답.getOrderStatus()).isEqualTo(COOKING.name());
+            softly.assertThat(등록된_주문_응답.getOrderTableResponse())
+                    .usingRecursiveComparison()
+                    .ignoringFields("id")
+                    .isEqualTo(OrderTableResponse.from(주문_테이블));
         });
     }
 
     @Test
     void 주문_항목이_없으면_등록할_수_없다() {
-        Order 주문 = 새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of());
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of());
 
-        assertThatThrownBy(() -> orderService.create(주문))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+                .isInstanceOf(OrderException.class)
+                .hasMessage("주문 항목이 없습니다.");
     }
 
     @Test
     void 생성하려는_주문이_속한_주문_테이블이_존재하지_않으면_예외를_반환한다() {
-        Order 주문 = 새로운_주문(Long.MIN_VALUE, null, LocalDateTime.now(), List.of(주문_항목));
+        OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1);
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(Long.MIN_VALUE, List.of(주문_항목_생성_요청));
 
-        assertThatThrownBy(() -> orderService.create(주문))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+                .isInstanceOf(OrderTableException.class)
+                .hasMessage("해당하는 주문 테이블이 없습니다.");
     }
 
     @Test
     void 빈_테이블이_등록될_수_없다() {
-        Long 빈_테이블_ID = orderTableDao.save(새로운_주문_테이블(null, 1, true)).getId();
-        Order 빈_테이블이_포함된_주문 = 새로운_주문(빈_테이블_ID, null, LocalDateTime.now(), List.of(주문_항목));
+        Long 빈_테이블_ID = orderTableRepository.save(새로운_주문_테이블(null, 1, true)).getId();
+        OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1);
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(빈_테이블_ID, List.of(주문_항목_생성_요청));
 
-        assertThatThrownBy(() -> orderService.create(빈_테이블이_포함된_주문))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+                .isInstanceOf(OrderException.class)
+                .hasMessage("빈 테이블을 등록할 수 없습니다.");
     }
 
     @Test
     void 주문_목록을_조회한다() {
-        Order 주문1 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
-        Order 주문2 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
+        Order 주문1 = orderRepository.save(새로운_주문(주문_테이블, COOKING, LocalDateTime.now(), List.of(새로운_주문_항목(메뉴, 1))));
+        Order 주문2 = orderRepository.save(새로운_주문(주문_테이블, COOKING, LocalDateTime.now(), List.of(새로운_주문_항목(메뉴, 1))));
 
-        List<Order> 주문_목록 = orderService.list();
+        List<OrderResponse> 주문_응답_목록 = orderService.readAll();
 
-        assertThat(주문_목록).hasSize(2)
+        assertThat(주문_응답_목록).hasSize(2)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("orderLineItems")
-                .containsExactly(주문1, 주문2);
+                .containsExactly(OrderResponse.from(주문1), OrderResponse.from(주문2));
     }
 
     @Test
     void 주문_상태를_변경할_수_있다() {
-        Order 주문 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
-        주문.setOrderStatus(MEAL.name());
+        OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1);
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of(주문_항목_생성_요청));
+        OrderResponse 등록된_주문_응답 = orderService.create(주문_생성_요청);
+        OrderUpdateRequest 주문_상태_변경_요청 = new OrderUpdateRequest(MEAL.name());
+        OrderResponse 주문_상태_변경_응답 = orderService.updateOrderStatus(등록된_주문_응답.getId(), 주문_상태_변경_요청);
 
-        Order 변경된_주문 = orderService.changeOrderStatus(주문.getId(), 주문);
-
-        assertThat(변경된_주문.getOrderStatus()).isEqualTo(MEAL.name());
+        assertThat(주문_상태_변경_응답.getOrderStatus()).isEqualTo(MEAL.name());
     }
 
     @Test
     void 존재하지_않는_주문의_상태를_변경할_수_없다() {
-        assertThatThrownBy(() -> orderService.changeOrderStatus(Long.MIN_VALUE, null))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.updateOrderStatus(Long.MIN_VALUE, null))
+                .isInstanceOf(OrderException.class)
+                .hasMessage("해당하는 주문이 존재하지 않습니다.");
     }
 
     @Test
     void 완료된_주문의_상태를_변경할_수_없다() {
-        Order 주문 = orderService.create(새로운_주문(주문_테이블.getId(), null, LocalDateTime.now(), List.of(주문_항목)));
-        주문.setOrderStatus(COMPLETION.name());
-        orderService.changeOrderStatus(주문.getId(), 주문);
+        OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1);
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of(주문_항목_생성_요청));
+        OrderResponse 등록된_주문_응답 = orderService.create(주문_생성_요청);
+        OrderUpdateRequest 주문_상태_변경_요청 = new OrderUpdateRequest(COMPLETION.name());
+        OrderResponse 주문_상태_변경_응답 = orderService.updateOrderStatus(등록된_주문_응답.getId(), 주문_상태_변경_요청);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(주문.getId(), 주문))
-                .isInstanceOf(IllegalArgumentException.class);
+        OrderUpdateRequest 완료된_주문_상태_변경_요청 = new OrderUpdateRequest(MEAL.name());
+
+        assertThatThrownBy(() -> orderService.updateOrderStatus(주문_상태_변경_응답.getId(), 완료된_주문_상태_변경_요청))
+                .isInstanceOf(OrderException.class)
+                .hasMessage("이미 완료된 주문입니다.");
     }
 
 }
