@@ -18,6 +18,7 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.ui.MenuRestController;
+import kitchenpos.value.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ class MenuRestControllerTest {
                 1L,
                 List.of()
         );
-        final Menu menu = getObject(Menu.class,1L,"test",BigDecimal.ZERO,new MenuGroup(1L),List.of());
+        final Menu menu = getObject(Menu.class,1L,"test",new Price(BigDecimal.ZERO),new MenuGroup(1L),List.of());
 
         when(menuService.create(any()))
                 .thenReturn(MenuResponse.from(menu));
