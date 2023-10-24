@@ -5,6 +5,8 @@ import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.TableService;
+import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
+import kitchenpos.domain.order.service.dto.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +21,7 @@ import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -48,13 +51,21 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_만들_수_있다() {
             // given
-            final OrderTable orderTable = new OrderTable(6, false);
+            final OrderTableCreateRequest request = new OrderTableCreateRequest(6, false);
+            final OrderTable spyOrderTable = spy(new OrderTable(null, request.getNumberOfGuests(), request.getEmpty()));
+            given(orderTableRepository.save(any(OrderTable.class))).willReturn(spyOrderTable);
+            final long savedId = 1L;
+            given(spyOrderTable.getId()).willReturn(savedId);
 
             // when
-            tableService.create(orderTable);
+            final OrderTableResponse actual = tableService.create(request);
 
             // then
-            verify(orderTableRepository, only()).save(orderTable);
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests()),
+                    () -> assertThat(actual.getEmpty()).isEqualTo(request.getEmpty())
+            );
         }
     }
 
