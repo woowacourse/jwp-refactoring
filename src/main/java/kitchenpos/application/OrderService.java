@@ -45,7 +45,7 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         validateEmpty(orderTable);
-        return OrderResponse.toResponse(orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems.getOrderLineItems())));
+        return OrderResponse.toResponse(orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)));
     }
 
     private void validateEmpty(OrderTable orderTable) {

@@ -22,16 +22,17 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse toResponse(Order order){
+    public static OrderResponse toResponse(Order order) {
         return new OrderResponse(
                 order.getId(),
                 OrderTableResponse.toResponse(order.getOrderTable()),
                 order.getOrderStatus().toString(),
                 order.getOrderedTime(),
-                order.getOrderLineItems().stream()
+                order.getOrderLineItems().getOrderLineItems()
+                        .stream()
                         .map(OrderLineItemResponse::toResponse)
                         .collect(Collectors.toList())
-                );
+        );
     }
 
     public Long getId() {
