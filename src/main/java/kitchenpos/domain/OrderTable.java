@@ -49,12 +49,6 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void validateEmptyTable() {
-        if (!empty || Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateNumberOfGuestsOverZero() {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();

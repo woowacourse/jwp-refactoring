@@ -25,18 +25,26 @@ public class TableGroup {
         this.orderTables = new ArrayList<>();
     }
 
+    public TableGroup(final Long id,
+                      final LocalDateTime createdDate,
+                      final List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
     public static TableGroup create(final List<OrderTable> orderTables) {
-        validate(orderTables);
+        validateOrderTables(orderTables);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroup.addOrderTables(orderTables);
         return tableGroup;
     }
 
-    private static void validate(final List<OrderTable> orderTables) {
+    private static void validateOrderTables(final List<OrderTable> orderTables) {
         validateNotEmptyOrderTables(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.validateEmptyTable();
+            validateEmptyTable(orderTable);
         }
     }
 
@@ -46,12 +54,10 @@ public class TableGroup {
         }
     }
 
-    public TableGroup(final Long id,
-                      final LocalDateTime createdDate,
-                      final List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
+    private static void validateEmptyTable(final OrderTable orderTable) {
+        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void addOrderTables(final List<OrderTable> orderTables) {
