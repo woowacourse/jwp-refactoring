@@ -58,6 +58,15 @@ public class OrderTable {
         return empty;
     }
 
+    public void setTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void unGroup() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
     @Override
     public String toString() {
         return "OrderTable{" +

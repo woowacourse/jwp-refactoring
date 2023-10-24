@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,6 +37,11 @@ public class TableGroup {
 
     public TableGroup(List<OrderTable> orderTables) {
         this(null, null, orderTables);
+    }
+
+    public void addOrderTable(OrderTable orderTable) {
+        orderTable.setTableGroup(this);
+        orderTables.add(orderTable);
     }
 
     public Long getId() {
