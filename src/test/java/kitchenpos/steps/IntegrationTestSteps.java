@@ -9,6 +9,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,30 @@ public class IntegrationTestSteps {
                       .put(ORDER_TABLE_API + "/" + tableId + "/empty")
                       .then().log().all()
                       .extract().as(OrderTable.class);
+    }
+
+    public void createOrder(Order order) {
+        ExtractableResponse<Response> response = given().log().all()
+                                                        .contentType(ContentType.JSON)
+                                                        .body(order)
+                                                        .when()
+                                                        .post("/api/orders")
+                                                        .then().log().all()
+                                                        .extract();
+
+        sharedContext.setResponse(response);
+    }
+
+    public void changeOrderStatus(Long orderId, Order changed) {
+        ExtractableResponse<Response> response = given().log().all()
+                                                        .contentType(ContentType.JSON)
+                                                        .body(changed)
+                                                        .when()
+                                                        .put("/api/orders/" + orderId + "/order-status")
+                                                        .then().log().all()
+                                                        .extract();
+
+        sharedContext.setResponse(response);
     }
 }
 
