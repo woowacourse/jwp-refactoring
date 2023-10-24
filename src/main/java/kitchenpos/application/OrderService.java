@@ -8,7 +8,6 @@ import kitchenpos.domain.exception.NotExistMenuException;
 import kitchenpos.domain.exception.NotExistOrderException;
 import kitchenpos.domain.exception.NotExistOrderTable;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -24,17 +23,13 @@ public class OrderService {
     
     private final OrderTableRepository orderTableRepository;
     
-    private final OrderLineItemRepository orderLineItemRepository;
-    
     private final OrderRepository orderRepository;
     
     public OrderService(final MenuRepository menuRepository,
                         final OrderTableRepository orderTableRepository,
-                        final OrderLineItemRepository orderLineItemRepository,
                         final OrderRepository orderRepository) {
         this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderRepository = orderRepository;
     }
     

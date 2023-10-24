@@ -78,7 +78,7 @@ public class Order {
                                            .map(Menu::getId)
                                            .collect(Collectors.toList());
         Set<Long> notDuplicatedMenuIds = new HashSet<>(menuIds);
-        if (!notDuplicatedMenuIds.containsAll(menuIds)) {
+        if (notDuplicatedMenuIds.size() != menuIds.size()) {
             throw new InvalidOrderException("같은 메뉴에 대한 주문 항목이 있을 수 없습니다");
         }
     }
