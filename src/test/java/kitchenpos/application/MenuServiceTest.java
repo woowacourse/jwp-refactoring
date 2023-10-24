@@ -4,9 +4,9 @@ import kitchenpos.application.fixture.MenuServiceFixture;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -45,7 +45,7 @@ class MenuServiceTest extends MenuServiceFixture {
     MenuProductDao menuProductDao;
 
     @Mock
-    ProductDao productDao;
+    ProductRepository productDao;
 
     @Test
     void 메뉴를_등록한다() {

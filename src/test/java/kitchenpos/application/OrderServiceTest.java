@@ -57,7 +57,8 @@ class OrderServiceTest extends OrderServiceFixture {
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(주문_항목들.get(0))
                                                               .willReturn(주문_항목들.get(1));
 
-        final Order order = new Order(주문_테이블.getId(), 주문_상태, LocalDateTime.now(), 주문_항목들);
+        final Order order = new Order(주문_테이블, 주문_상태, LocalDateTime.now());
+        order.addOrderLineItems(주문_항목들);
 
         // when
         final Order actual = orderService.create(order);
@@ -76,7 +77,8 @@ class OrderServiceTest extends OrderServiceFixture {
         // given
         given(menuDao.countByIdIn(anyList())).willReturn(주문_항목_수와_다른_개수);
 
-        final Order order = new Order(주문_테이블.getId(), 주문_상태, LocalDateTime.now(), 주문_항목들);
+        final Order order = new Order(주문_테이블, 주문_상태, LocalDateTime.now());
+        order.addOrderLineItems(주문_항목들);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))
@@ -89,7 +91,8 @@ class OrderServiceTest extends OrderServiceFixture {
         given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(주문_항목들.size()));
         given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        final Order order = new Order(존재하지_않는_주문_테이블_아이디, 주문_상태, LocalDateTime.now(), 주문_항목들);
+        final Order order = new Order(null, 주문_상태, LocalDateTime.now());
+        order.addOrderLineItems(주문_항목들);
 
         // when & then
         assertThatThrownBy(() -> orderService.create(order))

@@ -42,7 +42,7 @@ public class TableServiceFixture {
         empty가_거짓인_주문_테이블 = new OrderTable(3, false);
         단체_지정_아이디가_있는_주문_테이블 = new OrderTable(3, false);
         단체_지정_아이디가_있는_주문_테이블.setId(5L);
-        단체_지정_아이디가_있는_주문_테이블.setTableGroupId(1L);
+        단체_지정_아이디가_있는_주문_테이블.updateTableGroup(null);
         방문자수가_4인_저장된_주문_테이블 = 저장된_주문_테이블;
         방문자수가_2인_저장된_주문_테이블 = new OrderTable(2, false);
         단체_지정_아이디가_있는_주문_테이블.setId(1L);
