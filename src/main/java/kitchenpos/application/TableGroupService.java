@@ -12,7 +12,6 @@ import kitchenpos.request.TableGroupUnitDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,30 +40,30 @@ public class TableGroupService {
 
         TableGroup savedTableGroup = tableGroupDao.save(TableGroup.from(savedOrderTables));
         savedTableGroup.assignTables(savedOrderTables);
-        for (OrderTable orderTable : savedTableGroup.getOrderTables()) {
-            orderTableDao.save(orderTable);
-        }
+        saveAllTables(savedTableGroup.getOrderTables());
 
         return savedTableGroup;
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+    private void saveAllTables(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
             orderTableDao.save(orderTable);
+        }
+    }
+
+    @Transactional
+    public void ungroup(Long tableGroupId) {
+        OrderTables orderTables = new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
+        validateOrderStatus(orderTables);
+        orderTables.ungroup();
+        saveAllTables(orderTables.getOrderTables());
+    }
+
+    private void validateOrderStatus(OrderTables orderTables) {
+        List<Long> orderTableIds = orderTables.getIds();
+        List<String> invalidOrderStatusToUngroup = List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, invalidOrderStatusToUngroup)) {
+            throw new IllegalArgumentException();
         }
     }
 }

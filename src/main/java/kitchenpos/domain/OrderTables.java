@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderTables {
 
@@ -24,6 +25,13 @@ public class OrderTables {
         }
     }
 
+    public void ungroup() {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroupId(null);
+            orderTable.setEmpty(false);
+        }
+    }
+
     public int size() {
         return orderTables.size();
     }
@@ -31,4 +39,11 @@ public class OrderTables {
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
+
+    public List<Long> getIds() {
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
+
 }
