@@ -1,13 +1,12 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menuGroup;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 
 @Entity
-public class Product {
+public class MenuGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,19 +14,16 @@ public class Product {
 
     private String name;
 
-    private Price price;
-
-    protected Product() {
+    protected MenuGroup() {
     }
 
-    public Product(final String name, final Price price) {
-        this(null, name, price);
+    public MenuGroup(String name) {
+        this(null, name);
     }
 
-    public Product(final Long id, final String name, final Price price) {
+    private MenuGroup(final Long id, final String name) {
         this.id = id;
         this.name = name;
-        this.price = price;
     }
 
     public Long getId() {
@@ -38,7 +34,4 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getPrice();
-    }
 }

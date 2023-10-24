@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.product.Product;
 import kitchenpos.exception.menuProductException.InvalidMenuProductsPriceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

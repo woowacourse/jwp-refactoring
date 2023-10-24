@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
+
+import kitchenpos.domain.product.Product;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

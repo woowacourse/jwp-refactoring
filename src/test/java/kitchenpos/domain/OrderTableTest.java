@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.tableGroup.TableGroup;
 import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

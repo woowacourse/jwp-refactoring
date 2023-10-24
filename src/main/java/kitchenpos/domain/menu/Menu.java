@@ -1,4 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
+
+import kitchenpos.domain.Price;
+import kitchenpos.domain.menuGroup.MenuGroup;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

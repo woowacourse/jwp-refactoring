@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.orderException.IllegalOrderStatusException;
 
 import javax.persistence.Embedded;

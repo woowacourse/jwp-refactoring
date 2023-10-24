@@ -1,14 +1,14 @@
-package kitchenpos.application;
+package kitchenpos.application.menu;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menuGroup.MenuGroup;
+import kitchenpos.domain.menuGroup.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.menuGroupException.MenuGroupNotFoundException;

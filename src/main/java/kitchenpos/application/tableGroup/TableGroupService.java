@@ -1,12 +1,12 @@
-package kitchenpos.application;
+package kitchenpos.application.tableGroup;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.tableGroup.TableGroup;
+import kitchenpos.domain.tableGroup.TableGroupRepository;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;

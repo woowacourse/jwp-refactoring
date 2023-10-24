@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
 import kitchenpos.exception.orderTableException.InvalidOrderTableException;

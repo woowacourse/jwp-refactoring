@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import kitchenpos.exception.orderLineItemException.InvalidOrderLineItemException;
 import org.springframework.util.CollectionUtils;

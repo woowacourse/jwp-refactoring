@@ -1,4 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.tableGroup;
+
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

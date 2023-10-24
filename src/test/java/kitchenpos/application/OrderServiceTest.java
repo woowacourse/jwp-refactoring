@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.order.OrderService;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menuGroup.MenuGroup;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
@@ -19,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

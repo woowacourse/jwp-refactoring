@@ -1,11 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
 import kitchenpos.exception.orderTableException.InvalidOrderTableException;
-import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.Table;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
