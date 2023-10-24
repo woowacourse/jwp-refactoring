@@ -1,17 +1,16 @@
 package kitchenpos.supports;
 
 import java.math.BigDecimal;
-import java.util.List;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 
 public class MenuFixture {
 
     private Long id = null;
     private String name = "기본 메뉴";
-    private BigDecimal price = new BigDecimal(10_000);
-    private Long menuGroupId = 1L;
-    private List<MenuProduct> menuProducts;
+    private Price price = new Price(new BigDecimal(10_000));
+    private MenuGroup menuGroup = MenuGroupFixture.fixture().build();
 
     private MenuFixture() {
     }
@@ -31,7 +30,7 @@ public class MenuFixture {
     }
 
     public MenuFixture price(BigDecimal price) {
-        this.price = price;
+        this.price = new Price(price);
         return this;
     }
 
@@ -39,23 +38,12 @@ public class MenuFixture {
         return price(new BigDecimal(price));
     }
 
-    public MenuFixture menuGroupId(Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-        return this;
-    }
-
-    public MenuFixture menuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public MenuFixture menuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
         return this;
     }
 
     public Menu build() {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(id, name, price, menuGroup);
     }
 }
