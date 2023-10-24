@@ -53,6 +53,10 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다.");
+        }
+
         if (isEmpty()) {
             throw new IllegalArgumentException("테이블이 비어있으면 손님 수를 변경할 수 없습니다.");
         }

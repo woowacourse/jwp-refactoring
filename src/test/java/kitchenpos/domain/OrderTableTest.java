@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class OrderTableTest {
 
     @Test
-    @DisplayName("테이블을 그룹화하면 테이블은 비어있지 않은 상태가 된다.")
+    @DisplayName("테이블을 그룹화하면 테이블은 비어있지 않은 상태가 된다")
     void groupBy() {
         // given
         final TableGroup tableGroup = new TableGroup();
@@ -25,7 +25,7 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블을 그룹화할 때 테이블이 비어있지 않으면 예외가 발생한다.")
+    @DisplayName("테이블을 그룹화할 때 테이블이 비어있지 않으면 예외가 발생한다")
     void groupBy_notEmpty() {
         // given
         final TableGroup tableGroup = new TableGroup();
@@ -38,7 +38,7 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블을 그룹화할 때 테이블 그룹이 없다면 예외가 발생한다.")
+    @DisplayName("테이블을 그룹화할 때 테이블 그룹이 없다면 예외가 발생한다")
     void groupBy_nullTableGroup() {
         // given
         final OrderTable orderTable = new OrderTable(5, false);
@@ -50,7 +50,7 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블의 손님 수를 변경할 때 테이블이 비어 있다면 변경할 수 없다.")
+    @DisplayName("테이블의 손님 수를 변경할 때 손님 수가 음수이면 안 된다")
     void changeNumberOfGuests_emptyTable() {
         // given
         final OrderTable 두명_테이블 = new OrderTable(2, true);
@@ -62,7 +62,20 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블이 그룹화되어 있다면 변경할 수 없다.")
+    @DisplayName("테이블의 손님 수를 변경할 때 테이블이 비어 있다면 변경할 수 없다")
+    void changeNumberOfGuests_negativeNumberOfGuests() {
+        // given
+        final OrderTable 두명_테이블 = new OrderTable(2, true);
+        final int invalidNumberOfGuests = -1;
+
+        // when & then
+        assertThatThrownBy(() -> 두명_테이블.changeNumberOfGuests(invalidNumberOfGuests))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("손님 수는 음수일 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블이 그룹화되어 있다면 변경할 수 없다")
     void changeEmpty_groupedTable() {
         // given
         final OrderTable 두명_테이블 = new OrderTable(2, true);
