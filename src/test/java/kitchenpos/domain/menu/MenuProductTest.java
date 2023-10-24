@@ -21,8 +21,8 @@ class MenuProductTest {
     @ParameterizedTest
     @CsvSource(value = {"1:2:2", "2:0:0", "100:20:2000"}, delimiter = ':')
     void 가격_조회시_상품과_가격을_제대로_계산하는지_확인한다(int price, int quantity, int expected) {
-        final Product product = new Product(1L, Name.from("name"), Price.from(new BigDecimal(price)));
-        final MenuProduct menuProduct = MenuProduct.from(product, quantity);
+        final Product product = new Product(1L, Name.create("name"), Price.create(new BigDecimal(price)));
+        final MenuProduct menuProduct = MenuProduct.create(product, quantity);
 
         assertThat(menuProduct.getPrice()).isEqualByComparingTo(new BigDecimal(expected));
     }

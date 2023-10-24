@@ -18,7 +18,7 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuProducts from(final List<MenuProduct> menuProducts) {
+    public static MenuProducts create(final List<MenuProduct> menuProducts) {
         return new MenuProducts(menuProducts);
     }
 

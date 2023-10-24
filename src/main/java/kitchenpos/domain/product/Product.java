@@ -16,8 +16,8 @@ public class Product {
     @Embedded
     private Price price;
 
-    public static Product from(final String name, final BigDecimal price) {
-        return new Product(Name.from(name), Price.from(price));
+    public static Product create(final String name, final BigDecimal price) {
+        return new Product(Name.create(name), Price.create(price));
     }
 
     protected Product(){}

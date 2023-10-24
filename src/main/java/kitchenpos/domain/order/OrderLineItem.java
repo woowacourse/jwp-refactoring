@@ -39,8 +39,8 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public static OrderLineItem from(final Menu menu, final long quantity, final Order order) {
-        return new OrderLineItem(order, menu, Quantity.from(quantity));
+    public static OrderLineItem create(final Menu menu, final long quantity, final Order order) {
+        return new OrderLineItem(order, menu, Quantity.create(quantity));
     }
 
     public Long getSeq() {

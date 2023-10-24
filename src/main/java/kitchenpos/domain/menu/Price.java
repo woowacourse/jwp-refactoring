@@ -25,7 +25,7 @@ public class Price {
         this.price = price;
     }
 
-    public static Price from(final BigDecimal price) {
+    public static Price create(final BigDecimal price) {
         validateNotNull(price);
         validateBound(price);
         validateScale(price);

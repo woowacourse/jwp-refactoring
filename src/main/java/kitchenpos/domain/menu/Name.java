@@ -22,7 +22,7 @@ public class Name {
         this.name = name;
     }
 
-    public static Name from(final String name) {
+    public static Name create(final String name) {
         validateNotNull(name);
         validateBlank(name);
         validateLength(name);

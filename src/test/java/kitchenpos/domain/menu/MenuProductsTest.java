@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -21,11 +20,11 @@ class MenuProductsTest {
 
     @Test
     void 메뉴에_속한_상품들의_가격_총합을_제대로_계산하는지_확인한다() {
-        final MenuProduct 가격_45_상품 = MenuProduct.from(new Product(1L, Name.from("name"), Price.from(new BigDecimal(15))), 3);
-        final MenuProduct 가격_0_상품 = MenuProduct.from(new Product(1L, Name.from("name"), Price.from(new BigDecimal(15))), 0);
-        final MenuProduct 가격_70_상품 = MenuProduct.from(new Product(1L, Name.from("name"), Price.from(new BigDecimal(10))), 7);
+        final MenuProduct 가격_45_상품 = MenuProduct.create(new Product(1L, Name.create("name"), Price.create(new BigDecimal(15))), 3);
+        final MenuProduct 가격_0_상품 = MenuProduct.create(new Product(1L, Name.create("name"), Price.create(new BigDecimal(15))), 0);
+        final MenuProduct 가격_70_상품 = MenuProduct.create(new Product(1L, Name.create("name"), Price.create(new BigDecimal(10))), 7);
 
-        final MenuProducts menuProducts = MenuProducts.from(List.of(가격_45_상품, 가격_0_상품, 가격_70_상품));
+        final MenuProducts menuProducts = MenuProducts.create(List.of(가격_45_상품, 가격_0_상품, 가격_70_상품));
 
         assertThat(menuProducts.getPrice()).isEqualByComparingTo(new BigDecimal(115));
     }

@@ -43,13 +43,13 @@ public class Menu {
         this(null, name, price, menuGroup, menuProducts);
     }
 
-    public static Menu from(final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+    public static Menu create(final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
         validateMenuPriceIsNotNull(price);
         validateMenuProductsPrice(price, menuProducts);
 
         return new Menu(
-                Name.from(name),
-                Price.from(price),
+                Name.create(name),
+                Price.create(price),
                 menuGroup,
                 menuProducts
         );

@@ -24,8 +24,8 @@ public class MenuGroup {
         this.name = name;
     }
 
-    public static MenuGroup from(final String name){
-        return new MenuGroup(Name.from(name));
+    public static MenuGroup create(final String name){
+        return new MenuGroup(Name.create(name));
     }
 
     public Long getId() {

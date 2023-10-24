@@ -29,8 +29,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct from(final Product product, final long quantity){
-        return new MenuProduct(product, Quantity.from(quantity));
+    public static MenuProduct create(final Product product, final long quantity){
+        return new MenuProduct(product, Quantity.create(quantity));
     }
 
     public MenuProduct(final Long seq, final Menu menu, final Product product, final Quantity quantity) {

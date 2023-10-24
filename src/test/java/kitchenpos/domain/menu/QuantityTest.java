@@ -16,7 +16,7 @@ class QuantityTest {
 
     @Test
     void 개수는_음수일수_없다() {
-        assertThatThrownBy(() -> Quantity.from(-1))
+        assertThatThrownBy(() -> Quantity.create(-1))
                 .isExactlyInstanceOf(KitchenposException.class)
                 .hasMessage(MENU_QUANTITY_OUT_OF_BOUNCE.getMessage());
     }

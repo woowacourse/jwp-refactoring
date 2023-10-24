@@ -20,7 +20,7 @@ public class Quantity {
         this.quantity = quantity;
     }
 
-    public static Quantity from(final long quantity) {
+    public static Quantity create(final long quantity) {
         validateBound(quantity);
         return new Quantity(quantity);
     }

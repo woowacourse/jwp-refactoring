@@ -18,7 +18,7 @@ class PriceTest {
 
     @Test
     void 상품_가격은_음수일수_없다() {
-        assertThatThrownBy(() -> Price.from(new BigDecimal(-1)))
+        assertThatThrownBy(() -> Price.create(new BigDecimal(-1)))
                 .isExactlyInstanceOf(KitchenposException.class)
                 .hasMessage(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE.getMessage());
     }
@@ -26,14 +26,14 @@ class PriceTest {
     @Test
     void 상품_가격이_int의_최대값보다_클_수_없다() {
         final long outOfIntBound = ((long) Integer.MAX_VALUE + 1);
-        assertThatThrownBy(() -> Price.from(new BigDecimal(outOfIntBound)))
+        assertThatThrownBy(() -> Price.create(new BigDecimal(outOfIntBound)))
                 .isExactlyInstanceOf(KitchenposException.class)
                 .hasMessage(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE.getMessage());
     }
 
     @Test
     void 상품_가격이_소수점_셋째짜리이상은_만들_수_없다() {
-        assertThatThrownBy(() -> Price.from(new BigDecimal(3.333)))
+        assertThatThrownBy(() -> Price.create(new BigDecimal(3.333)))
                 .isExactlyInstanceOf(KitchenposException.class)
                 .hasMessage(PRODUCT_PRICE_LENGTH_OUT_OF_BOUNCE.getMessage());
     }

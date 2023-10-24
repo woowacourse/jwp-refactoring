@@ -38,9 +38,9 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
         final MenuGroup menuGroup = findMenuGroup(menuRequest);
-        final MenuProducts menuProducts = MenuProducts.from(findMenuProducts(menuRequest));
+        final MenuProducts menuProducts = MenuProducts.create(findMenuProducts(menuRequest));
 
-        final Menu menu = Menu.from(
+        final Menu menu = Menu.create(
                 menuRequest.getName(),
                 menuRequest.getPrice(),
                 menuGroup,
@@ -62,7 +62,7 @@ public class MenuService {
                 .map(menuProductRequest -> {
                     Product product = productRepository.findById(menuProductRequest.getProductId())
                             .orElseThrow(() -> new KitchenposException(PRODUCT_NOT_FOUND));
-                    return MenuProduct.from(product, menuProductRequest.getQuantity());
+                    return MenuProduct.create(product, menuProductRequest.getQuantity());
                 })
                 .collect(Collectors.toList());
     }
