@@ -41,6 +41,10 @@ public class MenuProduct {
         return product;
     }
 
+    public Price evaluateTotal() {
+        return product.getPrice().multiply(quantity);
+    }
+
     public long getQuantity() {
         return quantity;
     }
