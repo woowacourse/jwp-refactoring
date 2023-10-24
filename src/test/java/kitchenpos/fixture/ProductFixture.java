@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 import java.math.BigDecimal;
 

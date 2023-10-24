@@ -8,7 +8,7 @@ import kitchenpos.application.dto.request.CreateMenuGroupRequest;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.application.dto.response.MenuResponse;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 
 import java.math.BigDecimal;
 import java.util.List;

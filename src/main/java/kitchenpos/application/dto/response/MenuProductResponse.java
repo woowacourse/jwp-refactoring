@@ -1,7 +1,7 @@
 package kitchenpos.application.dto.response;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Menu;
 
 import java.util.List;
 import java.util.stream.Collectors;

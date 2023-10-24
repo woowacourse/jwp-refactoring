@@ -2,8 +2,8 @@ package kitchenpos.fixture;
 
 import kitchenpos.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.application.dto.response.CreateTableGroupResponse;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

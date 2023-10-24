@@ -2,7 +2,7 @@ package kitchenpos.fixture;
 
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.response.MenuProductResponse;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 
 import static kitchenpos.fixture.ProductFixture.PRODUCT;
 

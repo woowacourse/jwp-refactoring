@@ -98,20 +98,11 @@
 
 ## 요구사항
 
-### 서비스 경량화
+### 검증 로직 분리
 
-- [ ] MenuGroupService
-- [ ] MenuService
-- [ ] OrderService
-- [ ] ProductService
-- [ ] TableGroupService
-- [ ] TableService
-
-### 인수테스트 작성
-
-- [ ] menu-groups
-- [ ] menus
-- [ ] orders
-- [x] products
-- [ ] table-groups
-- [x] tables
+- [ ] menu
+- [x] menugroup
+- [ ] order
+- [ ] product
+- [ ] table
+- [ ] tablegroup

@@ -6,7 +6,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.application.dto.request.CreateMenuGroupRequest;
 import kitchenpos.application.dto.response.CreateMenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuGroupFixture {
