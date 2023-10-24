@@ -16,15 +16,15 @@ public class MenuProductCreateRequest {
         this.quantity = quantity;
     }
 
+    public MenuProduct toMenuProduct(Product product) {
+        return MenuProduct.of(product, quantity);
+    }
+
     public Long getProductId() {
         return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public MenuProduct toMenuProduct(Product product) {
-        return MenuProduct.of(product, quantity);
     }
 }

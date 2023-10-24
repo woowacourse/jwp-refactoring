@@ -1,8 +1,6 @@
 package kitchenpos.domain;
 
 import static java.math.BigDecimal.ZERO;
-import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
@@ -13,8 +11,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import kitchenpos.vo.Money;
 
 @Entity
@@ -35,11 +31,10 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(cascade = PERSIST, fetch = EAGER)
-    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
-    public Menu(Long id, String name, Money price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Money price, Long menuGroupId, MenuProducts menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -47,7 +42,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(String name, Money price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(String name, Money price, Long menuGroupId, MenuProducts menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
@@ -58,16 +53,12 @@ public class Menu {
             String name,
             BigDecimal price,
             Long menuGroupId,
-            List<MenuProduct> menuProducts
+            List<MenuProduct> products
     ) {
         validatePrice(price);
         Money priceAmount = Money.valueOf(price);
-
-        Money menuProductTotalPrice = menuProducts.stream()
-                .map(MenuProduct::calculateTotalPrice)
-                .reduce(Money.ZERO, Money::add);
-
-        validateMenuProductTotalPrice(priceAmount, menuProductTotalPrice);
+        MenuProducts menuProducts = MenuProducts.from(products);
+        validateMenuProductTotalPrice(priceAmount, menuProducts.calculateMenuProductsTotalPrice());
         return new Menu(name, priceAmount, menuGroupId, menuProducts);
     }
 
@@ -104,10 +95,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        return menuProducts.getMenuProducts();
     }
 }
