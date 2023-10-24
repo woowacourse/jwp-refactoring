@@ -4,9 +4,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 
 public class MenuFixture {
+
+    public static MenuProductRequest CHICKEN_MENU_PRODUCT_REQUEST = new MenuProductRequest(
+            1L,
+            1L
+    );
 
     public static MenuProduct CHICKEN_MENU_PRODUCT = new MenuProduct(
             1L,
@@ -53,6 +59,6 @@ public class MenuFixture {
             "치킨 세트",
             BigDecimal.valueOf(10000),
             1L,
-            List.of(CHICKEN_MENU_PRODUCT)
+            List.of(CHICKEN_MENU_PRODUCT_REQUEST)
     );
 }

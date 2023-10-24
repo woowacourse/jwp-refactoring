@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
@@ -28,12 +29,20 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest request) {
+        final List<MenuProduct> menuProducts = createMenuProductsByMenuRequest(request);
         final Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(),
-                request.getMenuProducts());
+                menuProducts);
         menuValidator.validate(menu);
         final Menu savedMenu = menuDao.save(menu);
-        savedMenu.setMenuProducts(saveMenuProducts(savedMenu.getId(), request.getMenuProducts()));
+        savedMenu.setMenuProducts(saveMenuProducts(savedMenu.getId(), menuProducts));
         return savedMenu;
+    }
+
+    private List<MenuProduct> createMenuProductsByMenuRequest(final MenuRequest request) {
+        return request.getMenuProducts().stream()
+                .map(menuProductRequest -> new MenuProduct(menuProductRequest.getProductId(),
+                        menuProductRequest.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     private List<MenuProduct> saveMenuProducts(final Long menuId, final List<MenuProduct> menuProducts) {

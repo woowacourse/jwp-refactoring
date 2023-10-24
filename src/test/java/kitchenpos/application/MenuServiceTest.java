@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.fixture.MenuFixture.CHICKEN_MENU_PRODUCT;
+import static kitchenpos.fixture.MenuFixture.CHICKEN_MENU_PRODUCT_REQUEST;
 import static kitchenpos.fixture.MenuFixture.CHICKEN_SET_MENU_REQUEST;
 import static kitchenpos.fixture.MenuFixture.createChickenSetMenuById;
 import static kitchenpos.fixture.MenuGroupFixture.createChickenSetMenuGroupById;
@@ -14,6 +15,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -61,7 +63,7 @@ class MenuServiceTest {
                     "메뉴",
                     null,
                     1L,
-                    List.of(CHICKEN_MENU_PRODUCT)
+                    List.of(CHICKEN_MENU_PRODUCT_REQUEST)
             );
 
             // when & then
@@ -75,7 +77,7 @@ class MenuServiceTest {
                     "메뉴",
                     BigDecimal.valueOf(-100),
                     1L,
-                    List.of(CHICKEN_MENU_PRODUCT)
+                    List.of(CHICKEN_MENU_PRODUCT_REQUEST)
             );
 
             // when & then
@@ -90,7 +92,7 @@ class MenuServiceTest {
                     "메뉴",
                     BigDecimal.valueOf(10000),
                     nonExistMenuGroupId,
-                    List.of(CHICKEN_MENU_PRODUCT)
+                    List.of(CHICKEN_MENU_PRODUCT_REQUEST)
             );
 
             // when & then
@@ -101,12 +103,12 @@ class MenuServiceTest {
         void 메뉴의_상품이_존재하지_않으면_예외가_발생한다() {
             // given
             final long nonExistProductId = 99L;
-            final MenuProduct invalidMenuProduct = new MenuProduct(1L, 1L, nonExistProductId, 1);
+            final MenuProductRequest invalidMenuProductRequest = new MenuProductRequest(nonExistProductId, 1L);
             final MenuRequest invalidMenuRequest = new MenuRequest(
                     "메뉴",
                     BigDecimal.valueOf(10000),
                     1L,
-                    List.of(invalidMenuProduct)
+                    List.of(invalidMenuProductRequest)
             );
 
             // when & then
@@ -120,7 +122,7 @@ class MenuServiceTest {
                     "메뉴",
                     BigDecimal.valueOf(99999),
                     1L,
-                    List.of(CHICKEN_MENU_PRODUCT)
+                    List.of(CHICKEN_MENU_PRODUCT_REQUEST)
             );
 
             // when & then
