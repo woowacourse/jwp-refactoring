@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -47,18 +46,13 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                                                    .map(OrderTable::getId)
-                                                    .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
+                orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
-            orderTableRepository.save(orderTable);
         }
     }
 }
