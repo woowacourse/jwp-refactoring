@@ -42,8 +42,8 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, null, 10, true),
-                        new OrderTableRequest(2L, null, 10, true)
+                        new OrderTableRequest(1L, 10, true),
+                        new OrderTableRequest(2L, 10, true)
                 )
         );
         final TableGroupResponse created = tableGroupService.create(tableGroupRequest);
@@ -56,7 +56,7 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, null, 10, true)
+                        new OrderTableRequest(1L, 10, true)
                 )
         );
 
@@ -78,8 +78,8 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, null, 10, true),
-                        new OrderTableRequest(1000L, null, 10, true)
+                        new OrderTableRequest(1L, 10, true),
+                        new OrderTableRequest(1000L, 10, true)
                 )
         );
 
@@ -91,8 +91,8 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, null, 10, true),
-                        new OrderTableRequest(10L, null, 10, false)
+                        new OrderTableRequest(1L, 10, true),
+                        new OrderTableRequest(10L, 10, false)
                 )
         );
 

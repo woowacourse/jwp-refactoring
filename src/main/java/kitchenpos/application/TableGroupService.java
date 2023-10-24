@@ -5,6 +5,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.validator.TableGroupValidator;
+import kitchenpos.ui.request.OrderTableIdRequest;
 import kitchenpos.ui.request.OrderTableRequest;
 import kitchenpos.ui.request.TableGroupRequest;
 import kitchenpos.ui.response.TableGroupResponse;
@@ -39,7 +40,7 @@ public class TableGroupService {
     private List<OrderTable> findOrderTables(final TableGroupRequest tableGroupRequest) {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTables()
                 .stream()
-                .map(OrderTableRequest::getId)
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateExistAllOrderTables(orderTableIds, findOrderTables);

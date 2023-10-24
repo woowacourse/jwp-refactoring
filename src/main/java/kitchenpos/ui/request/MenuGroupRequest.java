@@ -3,16 +3,10 @@ package kitchenpos.ui.request;
 import java.util.Objects;
 
 public class MenuGroupRequest {
-    private final Long id;
     private final String name;
 
-    public MenuGroupRequest(final Long id, final String name) {
-        this.id = id;
+    public MenuGroupRequest(final String name) {
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -24,18 +18,17 @@ public class MenuGroupRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final MenuGroupRequest that = (MenuGroupRequest) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+        return Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(name);
     }
 
     @Override
     public String toString() {
         return "MenuGroupRequest{" +
-                "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }

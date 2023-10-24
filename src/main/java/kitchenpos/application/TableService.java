@@ -17,22 +17,16 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
     private final OrderTableValidator orderTableValidator;
 
     public TableService(final OrderTableRepository orderTableRepository,
-                        final TableGroupRepository tableGroupRepository,
                         final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupRepository = tableGroupRepository;
         this.orderTableValidator = orderTableValidator;
     }
 
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
-        final TableGroup tableGroup = tableGroupRepository.findById(orderTableRequest.getTableGroupId())
-                .orElseThrow(IllegalArgumentException::new);
         final OrderTable orderTable = new OrderTable(
-                tableGroup,
                 orderTableRequest.getNumberOfGuests(),
                 orderTableRequest.isEmpty()
         );

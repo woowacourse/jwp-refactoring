@@ -61,8 +61,7 @@ public class TableGroup {
     }
 
     public void addOrderTable(final OrderTable orderTable) {
-        orderTable.setEmpty(false);
-        orderTable.dependOn(this);
+        orderTable.groupedBy(this);
         orderTables.add(orderTable);
     }
 

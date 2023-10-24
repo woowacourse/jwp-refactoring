@@ -17,6 +17,11 @@ public class OrderTable {
     public OrderTable() {
     }
 
+    public OrderTable(final int numberOfGuests,
+                      final boolean empty) {
+        this(null, numberOfGuests, empty);
+    }
+
     public OrderTable(final TableGroup tableGroup,
                       final int numberOfGuests,
                       final boolean empty) {
@@ -33,8 +38,9 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void dependOn(final TableGroup tableGroup) {
+    public void groupedBy(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+        this.empty = false;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
