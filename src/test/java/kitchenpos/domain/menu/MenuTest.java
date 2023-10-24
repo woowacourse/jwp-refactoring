@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.exception.InvalidMenuPriceException;
 import kitchenpos.domain.exception.InvalidMenuProductException;

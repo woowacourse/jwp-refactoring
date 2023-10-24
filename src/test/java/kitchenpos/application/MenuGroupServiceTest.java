@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import kitchenpos.config.IntegrationTest;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.exception.InvalidNameException;
 import kitchenpos.ui.dto.request.CreateMenuGroupRequest;
 import org.junit.jupiter.api.Test;

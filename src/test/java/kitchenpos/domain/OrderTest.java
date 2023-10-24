@@ -12,6 +12,7 @@ import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

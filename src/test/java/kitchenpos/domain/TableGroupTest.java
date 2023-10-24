@@ -11,6 +11,7 @@ import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
 import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

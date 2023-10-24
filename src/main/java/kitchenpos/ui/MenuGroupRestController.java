@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.ui.dto.request.CreateMenuGroupRequest;
 import kitchenpos.ui.dto.response.CreateMenuGroupResponse;
 import kitchenpos.ui.dto.response.ReadMenuGroupResponse;
