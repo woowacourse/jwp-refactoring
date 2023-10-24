@@ -22,7 +22,7 @@ public class ProductService {
         return ProductResponse.from(productRepository.save(product));
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public List<ProductResponse> list() {
+        return ProductResponse.from(productRepository.findAll());
     }
 }

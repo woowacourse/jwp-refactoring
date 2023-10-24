@@ -4,12 +4,12 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.ProductStep.PRODUCT_CREATE_REQUEST_스키야키;
@@ -32,7 +32,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getObject("", Product.class))
+                    () -> assertThat(response.jsonPath().getObject("", ProductResponse.class))
                             .usingRecursiveComparison()
                             .ignoringFields("id", "price")
                             .isEqualTo(product),
@@ -53,23 +53,19 @@ class ProductAcceptanceTest extends AcceptanceTest {
             }
 
             final ExtractableResponse<Response> response = 상품_조회_요청();
-            final List<Product> result = response.jsonPath().getList("", Product.class);
-
-            final List<Product> products = requests.stream()
-                    .map(ProductCreateRequest::toProduct)
-                    .collect(Collectors.toList());
+            final List<ProductResponse> result = response.jsonPath().getList("", ProductResponse.class);
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                    () -> assertThat(result.size()).isEqualTo(products.size()),
+                    () -> assertThat(result.size()).isEqualTo(requests.size()),
                     () -> assertThat(result.get(0))
                             .usingRecursiveComparison()
                             .ignoringFields("id", "price")
-                            .isEqualTo(products.get(0)),
+                            .isEqualTo(requests.get(0)),
                     () -> assertThat(result.get(1))
                             .usingRecursiveComparison()
                             .ignoringFields("id", "price")
-                            .isEqualTo(products.get(1))
+                            .isEqualTo(requests.get(1))
             );
         }
     }
