@@ -2,25 +2,36 @@ package kitchenpos.menu.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class MenuTest {
+
+
+    @Mock
+    private MenuValidator menuValidator;
 
     @Test
     @DisplayName("메뉴 금액이 null인 경우, 생성할 수 없다.")
     void createMenuFailTest_ByPriceIsNull() {
         //given
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
 
         //when then
-        assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts("TestMenu", null, menuGroup))
+        assertThatThrownBy(() -> Menu.create("TestMenu", null, menuGroup, menuProducts, menuValidator))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("메뉴 금액은 null일 수 없습니다.");
     }
@@ -31,9 +42,10 @@ class MenuTest {
         //given
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
         BigDecimal menuPrice = BigDecimal.valueOf(price);
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
 
         //when then
-        assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts("TestMenu", menuPrice, menuGroup))
+        assertThatThrownBy(() -> Menu.create("TestMenu", menuPrice, menuGroup, menuProducts, menuValidator))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 금액은 0원 이상이어야 합니다.");
     }
@@ -43,8 +55,10 @@ class MenuTest {
     void createMenuFailTest_ByMenuGroupIsNull() {
         //given
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
+
         //when then
-        assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts("TestMenu", menuPrice, null))
+        assertThatThrownBy(() -> Menu.create("TestMenu", menuPrice, null, menuProducts, menuValidator))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("메뉴 그룹은 null일 수 없습니다.");
     }
@@ -55,9 +69,10 @@ class MenuTest {
         //given
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
 
         //when then
-        assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts(null, menuPrice, menuGroup))
+        assertThatThrownBy(() -> Menu.create(null, menuPrice, menuGroup, menuProducts, menuValidator))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("메뉴 이름은 null일 수 없습니다.");
     }
@@ -69,9 +84,10 @@ class MenuTest {
         String menuName = "";
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
 
         //when then
-        assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts(menuName, menuPrice, menuGroup))
+        assertThatThrownBy(() -> Menu.create(menuName, menuPrice, menuGroup, menuProducts, menuValidator))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 이름의 길이는 1글자 이상, 255글자 이하여야 합니다.");
     }
@@ -83,9 +99,10 @@ class MenuTest {
         String menuName = "a".repeat(256);
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
 
         //when then
-        assertThatThrownBy(() -> Menu.createWithEmptyMenuProducts(menuName, menuPrice, menuGroup))
+        assertThatThrownBy(() -> Menu.create(menuName, menuPrice, menuGroup, menuProducts, menuValidator))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴 이름의 길이는 1글자 이상, 255글자 이하여야 합니다.");
     }
@@ -97,9 +114,10 @@ class MenuTest {
         String menuName = "TestMenuName";
         BigDecimal menuPrice = BigDecimal.valueOf(1000);
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
+        MenuProducts menuProducts = MenuProducts.from(List.of(MenuProduct.create(1L, 1L)));
 
         //when then
-        assertDoesNotThrow(() -> Menu.createWithEmptyMenuProducts(menuName, menuPrice, menuGroup));
+        assertDoesNotThrow(() -> Menu.create(menuName, menuPrice, menuGroup, menuProducts, menuValidator));
     }
 
 }

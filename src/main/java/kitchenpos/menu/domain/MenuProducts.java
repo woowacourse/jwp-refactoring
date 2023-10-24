@@ -1,16 +1,17 @@
 package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected MenuProducts() {
@@ -32,21 +33,12 @@ public class MenuProducts {
         }
     }
 
-    public BigDecimal getTotalPriceOfMenuProducts() {
-        double totalPrice = menuProducts.stream()
-                .mapToDouble(menuProduct -> menuProduct.getMenuProductPrice().doubleValue())
-                .sum();
-
-        return BigDecimal.valueOf(totalPrice);
-    }
-
-    public void add(MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
-    }
-
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public int size() {
+        return menuProducts.size();
     }
 
 }

@@ -1,14 +1,10 @@
 package kitchenpos.menu.domain;
 
 import com.sun.istack.NotNull;
-import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct {
@@ -19,46 +15,25 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
-
     @NotNull
     private Long quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @NotNull
+    private Long productId;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(
-            Menu menu,
-            Long quantity,
-            Product product
-    ) {
-        this.menu = menu;
+    private MenuProduct(Long quantity, Long productId) {
         this.quantity = quantity;
-        this.product = product;
+        this.productId = productId;
     }
 
-    public static MenuProduct create(
-            Menu menu,
-            Long quantity,
-            Product product
-    ) {
-        validateMenu(menu);
+    public static MenuProduct create(Long quantity, Long productId) {
         validateQuantity(quantity);
-        validateProduct(product);
+        validateProduct(productId);
 
-        return new MenuProduct(menu, quantity, product);
-    }
-
-    private static void validateMenu(Menu menu) {
-        if (menu == null) {
-            throw new NullPointerException("메뉴는 null일 수 없습니다.");
-        }
+        return new MenuProduct(quantity, productId);
     }
 
     private static void validateQuantity(Long quantity) {
@@ -70,32 +45,21 @@ public class MenuProduct {
         }
     }
 
-    private static void validateProduct(Product product) {
-        if (product == null) {
+    private static void validateProduct(Long productId) {
+        if (productId == null) {
             throw new NullPointerException("상품은 null일 수 없습니다.");
         }
     }
-
-    public BigDecimal getMenuProductPrice() {
-        double price = product.getPrice().doubleValue();
-
-        return BigDecimal.valueOf(price * quantity);
-    }
-
+    
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Long getQuantity() {
         return quantity;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
-
 }

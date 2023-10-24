@@ -6,24 +6,25 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTableRepository;
-import kitchenpos.order.application.TableGroupService;
-import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.order.domain.TableGroupRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.product.domain.Product;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.domain.TableGroupRepository;
 import kitchenpos.order.dto.request.OrderTableRequest;
 import kitchenpos.order.dto.request.TableGroupCreationRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,6 +60,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuValidator menuValidator;
 
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
@@ -247,21 +251,21 @@ class TableGroupServiceTest {
 
     private Menu saveMenu() {
         MenuGroup menuGroup = saveMenuGroup();
-        Menu menu = Menu.createWithEmptyMenuProducts("TestMenu", BigDecimal.TEN, menuGroup);
-        MenuProduct menuProduct = createMenuProduct(menu, saveProduct());
-        menu.addMenuProduct(menuProduct);
+        Product product = saveProduct();
+        MenuProducts menuProducts = MenuProducts.from(List.of(createMenuProduct(product)));
+        Menu menu = Menu.create("TestMenu", BigDecimal.TEN, menuGroup, menuProducts, menuValidator);
 
         return menuRepository.save(menu);
     }
 
-    private MenuGroup saveMenuGroup(){
+    private MenuGroup saveMenuGroup() {
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
 
         return menuGroupRepository.save(menuGroup);
     }
 
-    private MenuProduct createMenuProduct(Menu menu, Product product) {
-        return MenuProduct.create(menu, 1L, product);
+    private MenuProduct createMenuProduct(Product product) {
+        return MenuProduct.create(1L, product.getId());
     }
 
     private Product saveProduct() {

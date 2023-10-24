@@ -7,18 +7,19 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProductRepository;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.request.MenuCreationRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,11 @@ class MenuServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
+    @Autowired
+    private MenuValidator menuValidator;
+
     private MenuGroup menuGroup;
+
 
     @BeforeEach
     void setUp() {
@@ -146,7 +151,7 @@ class MenuServiceTest {
         //then
         Menu findMenu = menuRepository.findById(response.getId()).get();
         MenuResponse expectedMenu = MenuResponse.from(findMenu);
-        List<MenuProduct> findMenuProducts = menuProductRepository.findAllByMenuId(findMenu.getId());
+        List<MenuProduct> findMenuProducts = menuProductRepository.findAll();
 
         assertAll(
                 () -> assertThat(response).usingRecursiveComparison()
@@ -156,7 +161,7 @@ class MenuServiceTest {
                         .isEqualByComparingTo(expectedMenu.getPrice()),
                 () -> assertThat(findMenuProducts).usingRecursiveComparison()
                         .ignoringFields("seq")
-                        .isEqualTo(List.of(MenuProduct.create(findMenu, 1L, product)))
+                        .isEqualTo(List.of(MenuProduct.create(1L, product.getId())))
         );
     }
 
@@ -167,10 +172,8 @@ class MenuServiceTest {
         int price = 10000;
         Product product = saveProductAmountOf(price);
         MenuGroup menuGroup = saveMenuGroup();
-
-        Menu menu = Menu.createWithEmptyMenuProducts("TestMenu", BigDecimal.valueOf(price), menuGroup);
-        MenuProduct menuProduct = createMenuProduct(menu, product);
-        menu.addMenuProduct(menuProduct);
+        MenuProducts menuProducts = MenuProducts.from(List.of(createMenuProduct(product)));
+        Menu menu = Menu.create("TestMenu", BigDecimal.valueOf(price), menuGroup, menuProducts, menuValidator);
 
         menuRepository.save(menu);
 
@@ -199,8 +202,8 @@ class MenuServiceTest {
         return productRepository.save(product);
     }
 
-    private MenuProduct createMenuProduct(Menu menu, Product savedProduct) {
-        return MenuProduct.create(menu, 1L, savedProduct);
+    private MenuProduct createMenuProduct(Product product) {
+        return MenuProduct.create(1L, product.getId());
     }
 
 }

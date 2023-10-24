@@ -7,22 +7,26 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.OrderLineItemRepository;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.dto.request.OrderCreationRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
-import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +56,12 @@ class OrderServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuValidator menuValidator;
 
     @DisplayName("주문 하려는 메뉴가 존재하지 않을 경우, 생성할 수 없다.")
     @Test
@@ -242,8 +252,10 @@ class OrderServiceTest {
 
     private Menu saveMenu() {
         MenuGroup savedMenuGroup = saveMenuGroup();
+        Product product = saveProduct();
+        MenuProducts menuProducts = MenuProducts.from(List.of(createMenuProduct(product)));
 
-        Menu menu = Menu.createWithEmptyMenuProducts("TestMenu", BigDecimal.valueOf(10000), savedMenuGroup);
+        Menu menu = Menu.create("TestMenu", BigDecimal.TEN, savedMenuGroup, menuProducts, menuValidator);
 
         return menuRepository.save(menu);
     }
@@ -252,6 +264,16 @@ class OrderServiceTest {
         MenuGroup menuGroup = MenuGroup.from("TestMenuGroup");
 
         return menuGroupRepository.save(menuGroup);
+    }
+
+    private Product saveProduct() {
+        Product product = Product.create("TestProduct", BigDecimal.TEN);
+
+        return productRepository.save(product);
+    }
+
+    private MenuProduct createMenuProduct(Product product) {
+        return MenuProduct.create(1L, product.getId());
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {

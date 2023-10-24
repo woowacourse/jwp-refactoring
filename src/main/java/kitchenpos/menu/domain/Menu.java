@@ -1,7 +1,6 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -30,6 +29,7 @@ public class Menu {
     @Column(nullable = false, precision = 19, scale = 2)
     @NotNull
     private BigDecimal price;
+
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
@@ -44,23 +44,35 @@ public class Menu {
             String name,
             BigDecimal price,
             MenuGroup menuGroup,
-            MenuProducts menuProducts
+            MenuProducts menuProducts,
+            MenuValidator menuValidator
     ) {
+        validate(name, price, menuGroup);
+        menuValidator.validateMenuProducts(menuProducts, price);
+
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
-    public static Menu createWithEmptyMenuProducts(String name, BigDecimal price, MenuGroup menuGroup) {
+    private void validate(String name, BigDecimal price, MenuGroup menuGroup) {
         validateName(name);
         validatePrice(price);
         validateMenuGroup(menuGroup);
-
-        return new Menu(name, price, menuGroup, MenuProducts.from(new ArrayList<>()));
     }
 
-    private static void validateName(String name) {
+    public static Menu create(
+            String name,
+            BigDecimal price,
+            MenuGroup menuGroup,
+            MenuProducts menuProducts,
+            MenuValidator menuValidator
+    ) {
+        return new Menu(name, price, menuGroup, menuProducts, menuValidator);
+    }
+
+    private void validateName(String name) {
         if (name == null) {
             throw new NullPointerException("메뉴 이름은 null일 수 없습니다.");
         }
@@ -69,7 +81,7 @@ public class Menu {
         }
     }
 
-    private static void validatePrice(BigDecimal price) {
+    private void validatePrice(BigDecimal price) {
         if (price == null) {
             throw new NullPointerException("메뉴 금액은 null일 수 없습니다.");
         }
@@ -78,25 +90,9 @@ public class Menu {
         }
     }
 
-    private static void validateMenuGroup(MenuGroup menuGroup) {
+    private void validateMenuGroup(MenuGroup menuGroup) {
         if (menuGroup == null) {
             throw new NullPointerException("메뉴 그룹은 null일 수 없습니다.");
-        }
-    }
-
-    public void addMenuProduct(MenuProduct menuProduct) {
-        validateMenuProduct(menuProduct);
-
-        menuProducts.add(menuProduct);
-    }
-
-    private void validateMenuProduct(MenuProduct menuProduct) {
-        BigDecimal menuProductPrice = menuProduct.getMenuProductPrice();
-        BigDecimal totalPriceOfMenuProducts = menuProducts.getTotalPriceOfMenuProducts();
-        BigDecimal sum = menuProductPrice.add(totalPriceOfMenuProducts);
-
-        if (price.doubleValue() > sum.doubleValue()) {
-            throw new IllegalArgumentException("메뉴 금액의 합계는 각 상품들의 합계보다 클 수 없습니다.");
         }
     }
 
