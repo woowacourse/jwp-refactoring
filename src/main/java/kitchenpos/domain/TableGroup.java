@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import kitchenpos.domain.exception.InvalidTableGroupException;
 import kitchenpos.domain.exception.InvalidTableGroupUngroupException;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class TableGroup {
     

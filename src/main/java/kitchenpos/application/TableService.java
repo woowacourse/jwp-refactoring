@@ -35,7 +35,7 @@ public class TableService {
     @Transactional
     public OrderTable create(final OrderTableCreateRequest request) {
         final TableGroup tableGroup = tableGroupRepository.findById(request.getTableGroupId())
-                                                          .orElseGet(null);
+                                                          .orElseGet(()->null);
         final OrderTable orderTable = new OrderTable(tableGroup,
                 request.getNumberOfGuests(),
                 request.isEmpty());
