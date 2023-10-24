@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -16,9 +17,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
 
 @Table(name = "orders")
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Order {
 
@@ -39,40 +42,17 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+
+    public Order(OrderTable orderTable, OrderStatus orderStatus) {
         validateOrderTable(orderTable);
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-    }
-
-    public Order() {
     }
 
     private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -86,22 +66,6 @@ public class Order {
         }
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
         this.orderLineItems = orderLineItems;
@@ -112,4 +76,25 @@ public class Order {
             throw new IllegalArgumentException();
         }
     }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
 }

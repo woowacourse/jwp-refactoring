@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -40,45 +39,6 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public Menu() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Price getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = new Price(price);
-    }
-
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
-    }
-
-    public void setMenuGroup(MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
     public void addMenuProducts(final List<MenuProduct> menuProducts) {
         validateSum(menuProducts);
         this.menuProducts = new ArrayList<>(menuProducts);
@@ -92,5 +52,25 @@ public class Menu {
         if (price.isGreaterThan(sum)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

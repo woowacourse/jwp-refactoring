@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +49,9 @@ public class OrderService {
         OrderTable orderTable = jpaOrderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable, OrderStatus.COOKING);
+
+        final Order savedOrder = jpaOrderRepository.save(order);
 
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineRequest orderLineRequest : orderLineRequests) {
@@ -59,29 +60,23 @@ public class OrderService {
             }
             Menu menu = jpaMenuRepository.findById(orderLineRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            orderLineItems.add(new OrderLineItem(order, menu, orderLineRequest.getQuantity()));
+            orderLineItems.add(new OrderLineItem(savedOrder, menu, orderLineRequest.getQuantity()));
         }
 
-        order.setOrderLineItems(orderLineItems);
+        savedOrder.setOrderLineItems(orderLineItems);
 
-        final Order savedOrder = jpaOrderRepository.save(order);
-
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(savedOrder);
-            savedOrderLineItems.add(jpaOrderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+//        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+//        for (final OrderLineItem orderLineItem : orderLineItems) {
+//            orderLineItem.setOrder(savedOrder);
+//            savedOrderLineItems.add(jpaOrderLineItemRepository.save(orderLineItem));
+//        }
+//        savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return new OrderResponse(savedOrder);
     }
 
     public List<OrderResponse> list() {
         final List<Order> orders = jpaOrderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(jpaOrderLineItemRepository.findAllByOrderId(order.getId()));
-        }
 
         return orders.stream()
                 .map(OrderResponse::new)

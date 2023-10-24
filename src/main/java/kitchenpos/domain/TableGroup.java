@@ -28,26 +28,6 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
     public void setOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
@@ -62,16 +42,28 @@ public class TableGroup {
                 throw new IllegalArgumentException();
             }
 
-            savedOrderTable.setEmpty(false);
+            savedOrderTable.setTableGroup(this);
+            savedOrderTable.changeEmpty(false);
         }
-
         this.orderTables = orderTables;
     }
 
-    public List<OrderTable> ungroup() {
+    public void ungroup() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
+        this.orderTables = null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 

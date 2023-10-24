@@ -41,20 +41,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = jpaOrderTableRepository.findAllByIdIn(orderTableIds);
 
         if (savedOrderTables.size() != orderTableIds.size()) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException();
         }
 
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(savedOrderTables);
-
         final TableGroup savedTableGroup = jpaTableGroupRepository.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            jpaOrderTableRepository.save(savedOrderTable);
-        }
-
+        savedTableGroup.setOrderTables(savedOrderTables);
         return new TableGroupResponse(tableGroup);
     }
 

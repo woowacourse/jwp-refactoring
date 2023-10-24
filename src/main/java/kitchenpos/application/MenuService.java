@@ -49,20 +49,17 @@ public class MenuService {
 
         List<MenuProductRequest> menuProductRequests = request.getMenuProductRequests();
 
+        Menu savedMenu = jpaMenuRepository.save(menu);
+
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
             Product product = jpaProductRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            menuProducts.add(new MenuProduct(menu, product, menuProductRequest.getQuantity()));
+            menuProducts.add(new MenuProduct(savedMenu, product, menuProductRequest.getQuantity()));
         }
-
-        menu.addMenuProducts(menuProducts);
-
-        final Menu savedMenu = jpaMenuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(savedMenu);
             savedMenuProducts.add(jpaMenuProductRepository.save(menuProduct));
         }
         savedMenu.addMenuProducts(savedMenuProducts);

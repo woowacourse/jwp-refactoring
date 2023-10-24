@@ -5,7 +5,6 @@ import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ class OrderTest {
         OrderTable orderTable = new OrderTable(true);
 
         // when, then
-        assertThatThrownBy(() -> new Order(orderTable, COOKING, LocalDateTime.now()))
+        assertThatThrownBy(() -> new Order(orderTable, COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -25,7 +24,7 @@ class OrderTest {
     void 주문항목이_비어있는_경우_예외가_발생한다() {
         // given
         OrderTable orderTable = new OrderTable(false);
-        Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable, COOKING);
 
         // when, then
         assertThatThrownBy(() -> order.setOrderLineItems(null))
@@ -38,7 +37,7 @@ class OrderTest {
         void 주문_상태를_변경한다() {
             // given
             OrderTable orderTable = new OrderTable(false);
-            Order order = new Order(orderTable, COOKING, LocalDateTime.now());
+            Order order = new Order(orderTable, COOKING);
 
             // when
             order.changeOrderStatus(OrderStatus.COMPLETION);
@@ -51,7 +50,7 @@ class OrderTest {
         void 계산완료_상태인_경우_예외가_발생한다() {
             // given
             OrderTable orderTable = new OrderTable(false);
-            Order order = new Order(orderTable, COMPLETION, LocalDateTime.now());
+            Order order = new Order(orderTable, COMPLETION);
 
             // when, then
             assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))

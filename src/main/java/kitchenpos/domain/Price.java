@@ -11,6 +11,7 @@ public class Price {
     private BigDecimal value;
 
     public Price() {
+        this.value = BigDecimal.ZERO;
     }
 
     public Price(BigDecimal value) {

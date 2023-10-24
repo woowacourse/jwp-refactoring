@@ -17,6 +17,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,32 +51,22 @@ public class Fixtures {
     JpaTableGroupRepository jpaTableGroupRepository;
 
     public Menu 메뉴_저장(MenuGroup menuGroup, String name, Long price) {
-        Menu menu = new Menu();
-        menu.setMenuGroup(menuGroup);
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
+        Menu menu = new Menu(name, new Price(BigDecimal.valueOf(price)), menuGroup);
         return jpaMenuRepository.save(menu);
     }
 
     public MenuGroup 메뉴_그룹_저장(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        MenuGroup menuGroup = new MenuGroup(name);
         return jpaMenuGroupRepository.save(menuGroup);
     }
 
     public MenuProduct 메뉴_상품_저장(Menu menu, Product product, Long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenu(menu);
-        menuProduct.setProduct(product);
-        menuProduct.setQuantity(quantity);
+        MenuProduct menuProduct = new MenuProduct(menu, product, quantity);
         return jpaMenuProductRepository.save(menuProduct);
     }
 
     public Order 주문_저장(OrderTable orderTable, OrderStatus orderStatus) {
-        Order order = new Order();
-        order.setOrderTable(orderTable);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = new Order(orderTable, orderStatus);
         return jpaOrderRepository.save(order);
     }
 
@@ -89,45 +80,32 @@ public class Fixtures {
     }
 
     public OrderTable 빈_테이블_저장() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(true);
         return jpaOrderTableRepository.save(orderTable);
     }
 
     public OrderTable 주문_테이블_저장(TableGroup tableGroup, boolean isEmpty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroup(tableGroup);
-        orderTable.setEmpty(isEmpty);
+        OrderTable orderTable = new OrderTable(tableGroup, 0, isEmpty);
         return jpaOrderTableRepository.save(orderTable);
     }
 
     public OrderTable 주문_테이블_저장(TableGroup tableGroup, boolean isEmpty, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroup(tableGroup);
-        orderTable.setEmpty(isEmpty);
-        orderTable.setNumberOfGuests(numberOfGuests);
+        OrderTable orderTable = new OrderTable(tableGroup, numberOfGuests, isEmpty);
         return jpaOrderTableRepository.save(orderTable);
     }
 
     public OrderLineItem 주문_항목_저장(Order order, Menu menu, Long quantity, Long seq) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrder(order);
-        orderLineItem.setMenu(menu);
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setSeq(seq);
+        OrderLineItem orderLineItem = new OrderLineItem(order, menu, quantity);
         return jpaOrderLineItemRepository.save(orderLineItem);
     }
 
     public Product 상품_저장(String name, Long price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
+        Product product = new Product(name, new Price(BigDecimal.valueOf(price)));
         return jpaProductRepository.save(product);
     }
 
     public TableGroup 단체_지정_저장() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
         return jpaTableGroupRepository.save(tableGroup);
     }
 

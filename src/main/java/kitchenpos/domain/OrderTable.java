@@ -34,11 +34,12 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public OrderTable(int numberOfGuests, boolean isEmpty) {
-        this(null, numberOfGuests, isEmpty);
+    public OrderTable() {
+        this(null, 0, false);
     }
 
-    public OrderTable() {
+    public OrderTable(int numberOfGuests, boolean isEmpty) {
+        this(null, numberOfGuests, isEmpty);
     }
 
     public OrderTable(boolean isEmpty) {
@@ -47,10 +48,6 @@ public class OrderTable {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public TableGroup getTableGroup() {
@@ -62,10 +59,6 @@ public class OrderTable {
             return null;
         }
         return tableGroup.getId();
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -83,12 +76,15 @@ public class OrderTable {
         }
     }
 
-    public boolean isEmpty() {
-        return isEmpty;
+    public void setTableGroup(TableGroup tableGroup) {
+        if (this.tableGroup != null || this.isEmpty == false) {
+            throw new IllegalArgumentException();
+        }
+        this.tableGroup = tableGroup;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.isEmpty = empty;
+    public boolean isEmpty() {
+        return isEmpty;
     }
 
     public void ungroup() {
@@ -97,7 +93,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean isEmpty) {
-        if (Objects.nonNull(tableGroup)) {
+        if (isEmpty == true && Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
         }
         this.isEmpty = isEmpty;
