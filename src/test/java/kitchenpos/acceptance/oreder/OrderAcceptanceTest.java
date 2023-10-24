@@ -19,7 +19,6 @@ import static kitchenpos.acceptance.table.TableAcceptanceSteps.테이블_등록�
 import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static kitchenpos.order.domain.OrderStatus.COOKING;
 import static kitchenpos.order.domain.OrderStatus.MEAL;
-import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,7 +26,6 @@ import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.MenuProductSnapShot;
 import kitchenpos.order.domain.MenuSnapShot;
 import kitchenpos.product.domain.Product;

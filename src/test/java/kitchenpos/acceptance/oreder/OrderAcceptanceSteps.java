@@ -10,7 +10,6 @@ import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemInfo;
 import kitchenpos.order.application.dto.OrderResponse;
