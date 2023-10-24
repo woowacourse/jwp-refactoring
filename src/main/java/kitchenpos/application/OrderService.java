@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
@@ -40,7 +39,19 @@ public class OrderService {
     @Transactional
     public Long create(final OrderRequest request) {
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItemRequests();
+        validateMenus(orderLineItemRequests);
 
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+
+        orderTable.checkEmptyIsFalse();
+
+        final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING.name()));
+        saveOrderLineItem(orderLineItemRequests, savedOrder);
+        return savedOrder.getId();
+    }
+
+    private void validateMenus(final List<OrderLineItemRequest> orderLineItemRequests) {
         final List<Long> menuIds = orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
@@ -48,15 +59,9 @@ public class OrderService {
         if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("상품이 존재하지 않습니다.");
         }
+    }
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블의 상태가 비어있습니다.");
-        }
-        final Order savedOrder = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING.name()));
-
+    private void saveOrderLineItem(final List<OrderLineItemRequest> orderLineItemRequests, final Order savedOrder) {
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             final OrderLineItem updatedOrderLineItem = new OrderLineItem(
                     savedOrder,
@@ -65,8 +70,6 @@ public class OrderService {
             );
             savedOrder.addOrderLineItem(orderLineItemRepository.save(updatedOrderLineItem));
         }
-
-        return savedOrder.getId();
     }
 
     public List<OrderResponse> list() {
@@ -81,13 +84,8 @@ public class OrderService {
         final Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
-            throw new IllegalArgumentException("이미 완료된 주문입니다.");
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        final Order updatedOrder = new Order(order.getId(), order.getOrderTableId(), orderStatus.name());
-        final Order savedOrder = orderRepository.save(updatedOrder);
+        order.changeOrderStatus(request.getOrderStatus());
+        final Order savedOrder = orderRepository.save(order);
 
         return OrderResponse.from(savedOrder);
     }

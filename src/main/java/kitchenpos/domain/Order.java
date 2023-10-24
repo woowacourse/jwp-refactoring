@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -45,6 +46,17 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
+    }
+
+    public void changeOrderStatus(final String statusName) {
+        checkStatusNotCompletion();
+        this.orderStatus = OrderStatus.valueOf(statusName).name();
+    }
+
+    private void checkStatusNotCompletion() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+        }
     }
 
     public Long getId() {
