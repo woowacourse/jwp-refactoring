@@ -1,12 +1,15 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.domain.Product;
-import org.junit.jupiter.api.Disabled;
+import kitchenpos.domain.common.Money;
+import kitchenpos.domain.common.Name;
+import kitchenpos.dto.product.CreateProductRequest;
+import kitchenpos.dto.product.ListProductResponse;
+import kitchenpos.dto.product.ProductResponse;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ProductServiceTest extends ApplicationIntegrationTest {
@@ -15,42 +18,30 @@ class ProductServiceTest extends ApplicationIntegrationTest {
     void create_product() {
         //given
         final String name = "후라이드";
-        final BigDecimal price = BigDecimal.valueOf(1600000, 2);
-        final Product product = new Product(name, price);
-
+        final long price = 16000L;
+        final CreateProductRequest createProductRequest = CreateProductRequest.of(name, price);
         //when
-        final Product createdProduct = productService.create(product);
+        final ProductResponse createdProduct = productService.create(createProductRequest);
 
         //then
-        assertThat(createdProduct)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(product);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(createdProduct.getId()).isNotNull();
+            softAssertions.assertThat(createdProduct.getName()).isEqualTo(name);
+            softAssertions.assertThat(createdProduct.getPrice()).isEqualTo(price);
+        });
     }
 
     @Test
-    @Disabled
     void cannot_create_product_with_empty_name() {
         //given
         final String name = null;
         final BigDecimal price = BigDecimal.valueOf(16000.00);
-        final Product product = new Product(name, price);
+        CreateProductRequest createProductRequest = CreateProductRequest.of(name, price.longValue());
 
         //when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void cannot_create_product_with_null_price() {
-        //given
-        final String name = "후라이드";
-        final BigDecimal price = null;
-        final Product product = new Product(name, price);
-
-        //when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(createProductRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Name.NAME_IS_NOT_PROVIDED_ERROR_MESSAGE);
     }
 
     @Test
@@ -58,26 +49,28 @@ class ProductServiceTest extends ApplicationIntegrationTest {
         //given
         final String name = "후라이드";
         final BigDecimal price = BigDecimal.valueOf(-16000.00);
-        final Product product = new Product(name, price);
+        CreateProductRequest createProductRequest = CreateProductRequest.of(name, price.longValue());
 
         //when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(createProductRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Money.AMOUNT_CANNOT_BE_BELOW_ZERO_ERROR_MESSAGE);
     }
 
     @Test
     void list_products() {
         //given
-        final Product product1 = productService.create(new Product("후라이드", BigDecimal.valueOf(16000)));
-        final Product product2 = productService.create(new Product("양념치킨", BigDecimal.valueOf(16000)));
+        final ProductResponse product1 = productService.create(CreateProductRequest.of("후라이드", BigDecimal.valueOf(16000).longValue()));
+        final ProductResponse product2 = productService.create(CreateProductRequest.of("양념치킨", BigDecimal.valueOf(16000).longValue()));
 
         //when
-        final Iterable<Product> products = productService.list();
+        final ListProductResponse result = productService.list();
 
         //then
-        assertThat(products)
-                .hasSize(2)
-                .extracting("id")
-                .containsExactlyInAnyOrder(product1.getId(), product2.getId());
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(result.getProducts()).hasSize(2);
+            softAssertions.assertThat(result.getProducts()).extracting("name").containsExactly(product1.getName(), product2.getName());
+            softAssertions.assertThat(result.getProducts()).extracting("price").containsExactly(product1.getPrice(), product2.getPrice());
+        });
     }
 }

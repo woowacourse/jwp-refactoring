@@ -35,7 +35,8 @@ class MenuProductsTest extends DomainTest {
 
         // when & then
         assertThatThrownBy(() -> MenuProducts.from(products, quantities))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(MenuProducts.PRODUCTS_SIZE_AND_QUANTITIES_SIZE_ARE_DIFFERENT_ERROR_MESSAGE);
     }
 
 }

@@ -3,25 +3,18 @@ package kitchenpos.domain.common;
 import kitchenpos.domain.DomainTest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class NameTest extends DomainTest {
-    @Test
-    void throw_when_name_is_null() {
-        // given
-        String name = null;
-
-        // when & then
-        assertThrows(IllegalArgumentException.class, () -> Name.of(name));
-    }
-
     @Test
     void throw_when_name_is_empty() {
         // given
         String name = "";
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> Name.of(name));
+        assertThatThrownBy(() -> Name.of(name))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Name.NAME_IS_NOT_PROVIDED_ERROR_MESSAGE);
     }
 
     @Test
@@ -30,7 +23,9 @@ class NameTest extends DomainTest {
         String name = " ";
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> Name.of(name));
+        assertThatThrownBy(() -> Name.of(name))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Name.NAME_IS_NOT_PROVIDED_ERROR_MESSAGE);
     }
 
     @Test
@@ -39,7 +34,9 @@ class NameTest extends DomainTest {
         String name = "a".repeat(256);
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> Name.of(name));
+        assertThatThrownBy(() -> Name.of(name))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Name.NAME_CANNOT_EXCEED_255_ERROR_MESSAGE);
     }
 
     @Test
@@ -48,7 +45,9 @@ class NameTest extends DomainTest {
         String name = "a!@#$%^&*()_+-=[]{}\\|;':\",./<>?";
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> Name.of(name));
+        assertThatThrownBy(() -> Name.of(name))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Name.NAME_IS_IN_SPECIAL_CHARACTOR_ERROR_MESSAGE);
     }
 
     @Test
@@ -57,7 +56,9 @@ class NameTest extends DomainTest {
         String name = "1234567890";
 
         // when & then
-        assertThrows(IllegalArgumentException.class, () -> Name.of(name));
+        assertThatThrownBy(() -> Name.of(name))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Name.NAME_CANNOT_CONTAIN_ONLY_NUMBER_ERROR_MESSAGE);
     }
 
 }

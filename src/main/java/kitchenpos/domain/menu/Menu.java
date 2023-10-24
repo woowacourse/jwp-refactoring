@@ -13,6 +13,10 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class Menu {
+    public static final int MIN_MENU_PRODUCTS_SIZE = 1;
+    public static final String MINIMUM_MENU_PRODUCTS_SIZE_ERROR_MESSAGE = "메뉴에는 1개 이상의 상품이 포함되어야 합니다.";
+    public static final String MENU_PRICE_IS_BIGGER_THAN_SUM_ERROR_MESSAGE = "메뉴의 가격은 상품의 가격 합보다 클 수 없습니다.";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +38,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+        validateMenuProductsSize(menuProducts);
         validateMenuPrice(price, menuProducts.calculateSum());
         this.menuProducts = menuProducts;
     }
@@ -46,10 +51,15 @@ public class Menu {
         return new Menu(null, Name.of(name), Money.valueOf(price), menuGroup, menuProducts);
     }
 
+    private void validateMenuProductsSize(final MenuProducts menuProducts) {
+        if (menuProducts.size() < MIN_MENU_PRODUCTS_SIZE) {
+            throw new IllegalArgumentException(MINIMUM_MENU_PRODUCTS_SIZE_ERROR_MESSAGE);
+        }
+    }
 
     private static void validateMenuPrice(final Money price, final Money sum) {
         if (price.isBiggerThan(sum)) {
-            throw new IllegalArgumentException("메뉴의 가격은 상품의 가격보다 클 수 없습니다.");
+            throw new IllegalArgumentException(MENU_PRICE_IS_BIGGER_THAN_SUM_ERROR_MESSAGE);
         }
     }
 

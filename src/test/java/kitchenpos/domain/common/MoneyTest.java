@@ -56,7 +56,8 @@ class MoneyTest extends DomainTest {
         // when & then
         assertThatThrownBy(
                 () -> Money.valueOf(negativeAmount)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Money.AMOUNT_CANNOT_BE_BELOW_ZERO_ERROR_MESSAGE);
     }
 
     @Test
@@ -67,7 +68,8 @@ class MoneyTest extends DomainTest {
         // when & then
         assertThatThrownBy(
                 () -> Money.valueOf(amountWithMoreThanTwoDecimalPlaces)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Money.AMOUNT_IS_NOT_IN_SCALE_TWO_ERROR_MESSAGE);
     }
 
     @Test
@@ -78,6 +80,7 @@ class MoneyTest extends DomainTest {
         // when & then
         assertThatThrownBy(
                 () -> Money.valueOf(amountExceedingMaximumAmount)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Money.AMOUNT_EXCEEDS_OEVR_MAX_AMOUNT_ERROR_MESSAGE);
     }
 }

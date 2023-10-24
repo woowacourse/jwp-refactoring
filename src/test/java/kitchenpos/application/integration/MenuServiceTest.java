@@ -1,141 +1,131 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Money;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.dto.menu.CreateMenuGroupRequest;
+import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.dto.menu.MenuGroupResponse;
+import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.dto.product.CreateProductRequest;
+import kitchenpos.dto.product.ProductResponse;
+import kitchenpos.exception.menu.MenuGroupNotFoundException;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MenuServiceTest extends ApplicationIntegrationTest {
-    private MenuGroup menuGroup;
+    private MenuGroupResponse menuGroup;
 
-    private MenuProduct menuProduct1;
-    private MenuProduct menuProduct2;
+    private MenuProductRequest menuProduct1;
+    private MenuProductRequest menuProduct2;
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupService.create(new MenuGroup("치킨"));
-        final Product product1 = productService.create(new Product("후라이드", BigDecimal.valueOf(16000)));
-        final Product product2 = productService.create(new Product("양념치킨", BigDecimal.valueOf(16000)));
-        menuProduct1 = new MenuProduct(null, product1.getId(), 1);
-        menuProduct2 = new MenuProduct(null, product2.getId(), 1);
+        menuGroup = menuGroupService.create(CreateMenuGroupRequest.of("치킨"));
+        final ProductResponse product1 = productService.create(CreateProductRequest.of("후라이드", BigDecimal.valueOf(16000).longValue()));
+        final ProductResponse product2 = productService.create(CreateProductRequest.of("양념치킨", BigDecimal.valueOf(16000).longValue()));
+        menuProduct1 = MenuProductRequest.of(product1.getId(), 1);
+        menuProduct2 = MenuProductRequest.of(product2.getId(), 1);
     }
 
     @Test
     void create_menu() {
         //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = Money.valueOf(BigDecimal.valueOf(1600000, 2));
-        final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
+        final List<MenuProductRequest> menuProducts = List.of(menuProduct1, menuProduct2);
+        final Long price = 16000L;
+
+        final CreateMenuRequest createMenuRequest = CreateMenuRequest.of("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when
-        final Menu createdMenu = menuService.create(menu);
+        final MenuResponse createdMenu = menuService.create(createMenuRequest);
 
         //then
-        assertThat(createdMenu)
-                .usingRecursiveComparison()
-                .ignoringFields("id", "menuProducts.seq")
-                .isEqualTo(menu);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(createdMenu.getId()).isNotNull();
+            softAssertions.assertThat(createdMenu.getName()).isEqualTo(createMenuRequest.getName());
+            softAssertions.assertThat(createdMenu.getPrice()).isEqualTo(createMenuRequest.getPrice());
+            softAssertions.assertThat(createdMenu.getMenuGroupId()).isEqualTo(createMenuRequest.getMenuGroupId());
+            softAssertions.assertThat(createdMenu.getMenuProducts().getItems()).hasSize(2);
+        });
+
     }
 
     @Test
-    @Disabled
     void cannot_create_menu_with_empty_name() {
         //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
-        final Menu menu = new Menu(null, price, menuGroup.getId(), menuProducts);
+        final List<MenuProductRequest> menuProducts = List.of(menuProduct1, menuProduct2);
+        final Long price = 16000L;
+
+        final CreateMenuRequest createMenuRequest = CreateMenuRequest.of(null, price, menuGroup.getId(), menuProducts);
 
         //when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void cannot_create_menu_with_empty_price() {
-        //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = null;
-        final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
-
-        //when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void cannot_create_menu_with_negative_price() {
         //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = Money.valueOf(BigDecimal.valueOf(-16000.00));
-        final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
+        final List<MenuProductRequest> menuProducts = List.of(menuProduct1, menuProduct2);
+        final Long price = -16000L;
+
+        final CreateMenuRequest createMenuRequest = CreateMenuRequest.of("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when & then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
 
-    @Test
-    void cannot_create_menu_with_empty_menu_group_id() {
-        //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
-        final Menu menu = new Menu("후라이드", price, null, menuProducts);
-
-        //when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void cannot_create_menu_with_invalid_menu_group_id() {
         //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
-        final Menu menu = new Menu("후라이드", price, 100L, menuProducts);
+        final List<MenuProductRequest> menuProducts = List.of(menuProduct1, menuProduct2);
+        final Long price = 16000L;
+
+        final CreateMenuRequest createMenuRequest = CreateMenuRequest.of("후라이드", price, 100L, menuProducts);
 
         //when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
+                .isInstanceOf(MenuGroupNotFoundException.class);
+
     }
 
     @Test
-    @Disabled
     void cannot_create_menu_with_empty_menu_products() {
         //given
-        final List<MenuProduct> menuProducts = null;
-        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
-        final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
+        final List<MenuProductRequest> menuProducts = List.of();
+        final Long price = 16000L;
+
+        final CreateMenuRequest createMenuRequest = CreateMenuRequest.of("후라이드", price, menuGroup.getId(), menuProducts);
 
         //when & then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Menu.MINIMUM_MENU_PRODUCTS_SIZE_ERROR_MESSAGE);
+    }
+
+    @Test
+    void throw_when_menu_price_over_sum_of_menu_products_price() {
+        //given
+        final List<MenuProductRequest> menuProducts = List.of(menuProduct1, menuProduct2);
+        final Long price = 100000L;
+
+        final CreateMenuRequest createMenuRequest = CreateMenuRequest.of("후라이드", price, menuGroup.getId(), menuProducts);
+
+        //when & then
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(Menu.MENU_PRICE_IS_BIGGER_THAN_SUM_ERROR_MESSAGE);
     }
 
     @Test
     void list_menus() {
-        //given
-        final List<MenuProduct> menuProducts = List.of(menuProduct1, menuProduct2);
-        final Money price = Money.valueOf(BigDecimal.valueOf(16000.00));
-        final Menu menu = new Menu("후라이드", price, menuGroup.getId(), menuProducts);
-        final Menu createdMenu = menuService.create(menu);
 
-        //when
-        final List<Menu> menus = menuService.list();
-
-        //then
-        assertThat(menus)
-                .hasSize(1)
-                .extracting("id")
-                .containsExactlyInAnyOrder(createdMenu.getId());
     }
 }

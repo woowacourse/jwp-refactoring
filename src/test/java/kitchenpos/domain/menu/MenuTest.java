@@ -27,8 +27,8 @@ class MenuTest extends DomainTest {
         //then
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(actual).isNotNull();
-            softly.assertThat(actual.getName().getValue()).isEqualTo("후라이드");
-            softly.assertThat(actual.getPrice().getAmount()).isEqualTo(BigDecimal.valueOf(16_000L));
+            softly.assertThat(actual.getName().getName()).isEqualTo("후라이드");
+            softly.assertThat(actual.getPrice().getPrice()).isEqualTo(BigDecimal.valueOf(16_000L));
             softly.assertThat(actual.getMenuGroup())
                     .usingRecursiveComparison()
                     .ignoringFields("id")

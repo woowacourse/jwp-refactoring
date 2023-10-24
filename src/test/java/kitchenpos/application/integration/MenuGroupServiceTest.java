@@ -1,8 +1,8 @@
 package kitchenpos.application.integration;
 
 import kitchenpos.dto.menu.CreateMenuGroupRequest;
-import kitchenpos.dto.menu.CreateMenuGroupResponse;
 import kitchenpos.dto.menu.ListMenuGroupResponse;
+import kitchenpos.dto.menu.MenuGroupResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class MenuGroupServiceTest extends ApplicationIntegrationTest {
         //given
         final CreateMenuGroupRequest menuGroup = CreateMenuGroupRequest.of("치킨");
         //when
-        final CreateMenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroup);
 
         //then
         assertThat(createdMenuGroup.getName()).isEqualTo(menuGroup.getName());
@@ -26,7 +26,7 @@ class MenuGroupServiceTest extends ApplicationIntegrationTest {
         //given
         final int originalSize = menuGroupService.list().getMenuGroups().size();
         final CreateMenuGroupRequest menuGroup = CreateMenuGroupRequest.of("치킨");
-        final CreateMenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroup);
 
         //when
         final ListMenuGroupResponse foundMenuGroups = menuGroupService.list();
