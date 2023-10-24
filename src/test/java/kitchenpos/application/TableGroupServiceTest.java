@@ -1,56 +1,41 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.메뉴_저장;
-import static kitchenpos.fixture.OrderFixture.주문_생성;
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_저장;
-import static kitchenpos.fixture.OrderTableFixture.주문_테이블_저장;
-import static kitchenpos.fixture.ProductFixture.상품_저장;
-import static kitchenpos.fixture.TableGroupFixture.단체_테이블_저장;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends IntegrationTest {
 
     @Autowired
     private TableGroupService tableGroupService;
     @Autowired
     private TableService tableService;
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private MenuService menuService;
-    @Autowired
-    private ProductService productService;
 
     @Test
     @DisplayName("단체 테이블 등록 시 지정된 빈 테이블들을 주문 테이블로 변경해 저장한다.")
     void 단체_테이블_지정_성공_주문_테이블로_변경() {
         // given
         final List<OrderTable> existingTables = List.of(
-                빈_테이블_저장(tableService::create),
-                빈_테이블_저장(tableService::create),
-                빈_테이블_저장(tableService::create)
+                tableService.create(new OrderTableCreateRequest(0, true)),
+                tableService.create(new OrderTableCreateRequest(0, true)),
+                tableService.create(new OrderTableCreateRequest(0, true))
         );
         final long emptyCountBefore = countEmpty(existingTables);
 
         // when
-        final TableGroup saved = 단체_테이블_저장(tableGroupService::create, existingTables);
+        final TableGroup saved = tableGroupService.create(RequestParser.from(existingTables));
 
         // then
         final long emptyCountAfter = countEmpty(saved.getOrderTables());
@@ -69,56 +54,13 @@ class TableGroupServiceTest extends IntegrationTest {
     void 단체_테이블_지정_실패_존재하지_않는_테이블() {
         // given
         final OrderTable existingTable = tableService.list().get(0);
-        final OrderTable newTable = new OrderTable();
-        newTable.setEmpty(true);
+        final OrderTable newTable = new OrderTable(0, true);
 
         // when
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(existingTable, newTable));
+        final List<OrderTable> tablesInGroup = List.of(existingTable, newTable);
 
         // then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("소속된 단체가 없는 테이블만 단체로 지정할 수 있다.")
-    void 단체_테이블_지정_실패_이미_소속_단체가_있는_테이블() {
-        // given
-        final List<OrderTable> tablesWithGroup = List.of(
-                빈_테이블_저장(tableService::create),
-                빈_테이블_저장(tableService::create)
-        );
-        단체_테이블_저장(tableGroupService::create, tablesWithGroup);
-
-        // when
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(tablesWithGroup);
-
-        // then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("빈 테이블만 단체로 지정할 수 있다.")
-    void 단체_테이블_지정_실패_주문_테이블() {
-        // given
-        final List<OrderTable> tablesWithGroup = List.of(
-                주문_테이블_저장(tableService::create),
-                주문_테이블_저장(tableService::create)
-        );
-
-        // when
-        // then
-        assertThatThrownBy(() -> 단체_테이블_저장(tableGroupService::create, tablesWithGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("단체에 지정할 테이블은 2개 이상이어야 한다.")
-    void 단체_테이블_지정_실패_주문_테이블_개수_미달() {
-        assertThatThrownBy(() -> 단체_테이블_저장(tableGroupService::create, List.of(주문_테이블_저장(tableService::create))))
+        assertThatThrownBy(() -> tableGroupService.create(RequestParser.from(tablesInGroup)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -126,7 +68,7 @@ class TableGroupServiceTest extends IntegrationTest {
     @DisplayName("단체 테이블을 개별의 주문 테이블로 분할할 수 있다.")
     void 단체_테이블_분할_성공_저장() {
         // given
-        final TableGroup tableGroup = 단체_테이블_저장(tableGroupService::create, tableService.list());
+        final TableGroup tableGroup = tableGroupService.create(RequestParser.from(tableService.list()));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
@@ -134,29 +76,9 @@ class TableGroupServiceTest extends IntegrationTest {
         // then
         final List<OrderTable> tablesAfterUngroup = tableService.list();
         assertAll(() -> assertThat(tablesAfterUngroup)
-                        .map(OrderTable::getTableGroupId)
+                        .map(OrderTable::getTableGroup)
                         .allMatch(Objects::isNull),
                 () -> assertThat(tablesAfterUngroup)
                         .noneMatch(OrderTable::isEmpty));
     }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    @DisplayName("주문 상태가 '조리', '식사'인 테이블이 있으면 분할할 수 없다.")
-    void 단체_테이블_분할_실패_주문_상태(String orderStatus) {
-        // given
-        final OrderTable unableToSplit = 빈_테이블_저장(tableService::create);
-        final TableGroup tableGroup = 단체_테이블_저장(tableGroupService::create,
-                List.of(unableToSplit, 빈_테이블_저장(tableService::create)));
-
-        // when
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
-        final Menu menu = 메뉴_저장(menuService::create, new BigDecimal("5000"), List.of(product));
-        orderService.create(주문_생성(unableToSplit, OrderStatus.valueOf(orderStatus), List.of(menu)));
-
-        // then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
 }

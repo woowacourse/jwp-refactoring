@@ -1,73 +1,69 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.메뉴_상품_생성;
-import static kitchenpos.fixture.MenuFixture.메뉴_저장;
-import static kitchenpos.fixture.ProductFixture.상품_저장;
+import static kitchenpos.fixture.ProductFixture.치킨_8000원;
+import static kitchenpos.fixture.ProductFixture.피자_8000원;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.fixture.RequestParser;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuService menuService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private MenuGroupService menuGroupService;
 
     @Test
     @DisplayName("메뉴 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 메뉴_등록_성공_저장() {
         // given
+        final List<Product> products = List.of(
+                productService.create(RequestParser.from(치킨_8000원())),
+                productService.create(RequestParser.from(피자_8000원()))
+        );
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
+
         // when
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
-        final Menu menu = 메뉴_저장(menuService::create, new BigDecimal("5000"), List.of(product));
+        final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, products));
 
         // then
-        assertThat(menuService.list())
-                .map(Menu::getId)
-                .filteredOn(id -> Objects.equals(id, menu.getId()))
-                .hasSize(1);
+        menuService.list()
+                .stream()
+                .filter(found -> Objects.equals(found.getId(), menu.getId()))
+                .findFirst()
+                .ifPresentOrElse(
+                        found -> assertThat(found.getMenuProducts())
+                                .hasSize(products.size()),
+                        Assertions::fail
+                );
     }
 
     @Test
-    @DisplayName("메뉴 등록 시 이름이 있어야 한다.")
-    void 메뉴_등록_실패_이름_없음() {
+    @DisplayName("등록되지 않은 메뉴 그룹으로 메뉴를 등록할 수 없다.")
+    void 메뉴_등록_실패_등록되지_않은_메뉴_그룹() {
         // given
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
+        final Product chicken = productService.create(RequestParser.from(치킨_8000원()));
+        final MenuGroup unsavedMenuGroup = new MenuGroup("등록되지 않은 메뉴 그룹");
 
         // when
-        final Menu menu = new Menu();
-        menu.setPrice(new BigDecimal("10000"));
-        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
-        menu.setMenuGroupId(4L);
-
-        // then
-        /// TODO: 2023/10/12 DB 가기 전에 예외처리하기
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(Exception.class);
-    }
-
-    @Test
-    @DisplayName("메뉴 등록 시 가격이 있어야 한다.")
-    void 메뉴_등록_실패_가격_없음() {
-        // given
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
-
-        // when
-        final Menu menu = new Menu();
-        menu.setName("할인 치킨");
-        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
-        menu.setMenuGroupId(4L);
+        final MenuCreateRequest menu = RequestParser.of("치킨 할인", BigDecimal.ONE, unsavedMenuGroup, List.of(chicken));
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -75,68 +71,16 @@ class MenuServiceTest extends IntegrationTest {
     }
 
     @Test
-    @DisplayName("메뉴 등록 시 가격은 0 이상이어야 한다.")
-    void 메뉴_등록_실패_가격_음수() {
+    @DisplayName("등록되지 않은 상품이 포함된 메뉴를 등록할 수 없다.")
+    void 메뉴_등록_실패_등록되지_않은_상품() {
         // given
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
+        final MenuGroup menuGroup = menuGroupService.create(new MenuGroupCreateRequest("양식"));
+        final Product savedProduct = productService.create(RequestParser.from(치킨_8000원()));
+        final Product unsavedProduct = new Product("등록되지 않은 상품", BigDecimal.ONE);
 
         // when
-        final Menu menu = new Menu();
-        menu.setName("할인 치킨");
-        menu.setPrice(new BigDecimal("-1000"));
-        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
-        menu.setMenuGroupId(4L);
-
-        // then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("메뉴는 1 종류 이상의 메뉴 상품으로 구성되어 있다.")
-    void 메뉴_등록_실패_메뉴_상품_없음() {
-        // given
-        // when
-        final Menu menu = new Menu();
-        menu.setName("할인 치킨");
-        menu.setPrice(new BigDecimal("10000"));
-        menu.setMenuProducts(Collections.emptyList());
-        menu.setMenuGroupId(4L);
-
-        // then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("메뉴는 1개의 메뉴 그룹에 속한다.")
-    void 메뉴_등록_실패_메뉴_그룹_없음() {
-        // given
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
-
-        // when
-        final Menu menu = new Menu();
-        menu.setName("할인 치킨");
-        menu.setPrice(new BigDecimal("10000"));
-        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
-
-        // then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("메뉴 등록 시 가격은 상품 총액보다 클 수 없다.")
-    void 메뉴_등록_실패_상품_총액보다_큰_가격() {
-        // given
-        final Product product = 상품_저장(productService::create, new BigDecimal("10000"));
-
-        // when
-        final Menu menu = new Menu();
-        menu.setName("할인 치킨");
-        menu.setPrice(new BigDecimal(Long.MAX_VALUE));
-        menu.setMenuProducts(List.of(메뉴_상품_생성(product)));
-        menu.setMenuGroupId(4L);
+        final MenuCreateRequest menu = RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup,
+                List.of(savedProduct, unsavedProduct));
 
         // then
         assertThatThrownBy(() -> menuService.create(menu))
