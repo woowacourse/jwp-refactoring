@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.OrderTableCreateRequest;
+import kitchenpos.application.dto.request.OrderTableUpdateRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.persistence.OrderRepository;
@@ -44,7 +46,8 @@ class TableServiceTest {
                 .thenReturn(savedOrderTable);
 
         // when
-        final OrderTable result = tableService.create(new OrderTable(0, false));
+        final OrderTableCreateRequest request = new OrderTableCreateRequest(0, false);
+        final OrderTable result = tableService.create(request);
 
         // then
         assertAll(
@@ -69,7 +72,7 @@ class TableServiceTest {
     @Nested
     class 주문_테이블_상태_변경 {
         @Test
-        void 주문_테이블의_빈_상태를_변경한다 () {
+        void 주문_테이블의_빈_상태를_변경한다() {
             // given
             final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
 
@@ -81,16 +84,15 @@ class TableServiceTest {
                     .thenReturn(savedOrderTable);
 
             // when
-            final OrderTable orderTable = new OrderTable(0, false);
-
-            final OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), orderTable);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(null, false);
+            final OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
             assertThat(result.isEmpty()).isFalse();
         }
 
         @Test
-        void 주문_테이블의_빈_상태를_변경할_때_주문_테이블이_어떤_테이블_그룹에_속해_있을_때_실패한다 () {
+        void 주문_테이블의_빈_상태를_변경할_때_주문_테이블이_어떤_테이블_그룹에_속해_있을_때_실패한다() {
             // given
             final TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
             final OrderTable savedOrderTable = new OrderTable(1L, tableGroup, 0, true);
@@ -98,13 +100,16 @@ class TableServiceTest {
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
 
-            // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable(0, false)))
+            // when
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(null, false);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        void 주문_테이블의_빈_상태를_변경할_때_주문_테이블의_주문_상태가_COOKING이나_MEAL이면_실패한다 () {
+        void 주문_테이블의_빈_상태를_변경할_때_주문_테이블의_주문_상태가_COOKING이나_MEAL이면_실패한다() {
             // given
             final OrderTable savedOrderTable = new OrderTable(1L, null, 0, false);
 
@@ -113,8 +118,11 @@ class TableServiceTest {
             when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
-            // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable(0, true)))
+            // when
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(null, false);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -132,8 +140,8 @@ class TableServiceTest {
                     .thenReturn(savedOrderTable);
 
             // when
-            final OrderTable orderTable = new OrderTable(1, false);
-            final OrderTable result = tableService.changeNumberOfGuests(1L, orderTable);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(1, null);
+            final OrderTable result = tableService.changeNumberOfGuests(1L, request);
 
             // then
             assertThat(result.getNumberOfGuests()).isEqualTo(1);
@@ -142,10 +150,10 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_사용자_수를_변경할_때_전달받은_사용자_수가_0보다_작으면_실패한다() {
             // given
-            final OrderTable orderTable = new OrderTable(1L, null, -1, false);
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(-1, null);
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -157,9 +165,10 @@ class TableServiceTest {
 
             // when
             final Long notExistTableId = 1L;
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(1, null);
 
             // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistTableId, new OrderTable(1, false)))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistTableId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -170,8 +179,11 @@ class TableServiceTest {
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
 
-            // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, new OrderTable(1, false)))
+            // when
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(1, null);
+
+            // then
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
