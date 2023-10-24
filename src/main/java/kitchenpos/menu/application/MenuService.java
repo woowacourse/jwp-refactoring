@@ -1,11 +1,9 @@
 package kitchenpos.menu.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.request.MenuCreateRequest;
 import kitchenpos.menu.application.dto.request.MenuProductCreateRequest;
-import kitchenpos.menu.application.dto.response.MenuProductQueryResponse;
 import kitchenpos.menu.application.dto.response.MenuQueryResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.Price;
@@ -42,12 +40,7 @@ public class MenuService {
 
     final Menu savedMenu = menuRepository.save(menu);
 
-    final List<MenuProductQueryResponse> menuProductQueryResponses =
-        savedMenu.getMenuProducts().stream()
-            .map(MenuProductQueryResponse::from)
-            .collect(Collectors.toList());
-
-    return MenuQueryResponse.of(savedMenu, menuProductQueryResponses);
+    return MenuQueryResponse.from(savedMenu);
   }
 
   private void validateMenuRequest(
@@ -81,18 +74,8 @@ public class MenuService {
   }
 
   public List<MenuQueryResponse> list() {
-    final List<Menu> menus = menuRepository.findAll();
-    final List<MenuQueryResponse> savedMenus = new ArrayList<>();
-    for (final Menu menu : menus) {
-      final List<MenuProductQueryResponse> savedMenuProducts =
-          menu.getMenuProducts()
-              .stream()
-              .map(MenuProductQueryResponse::from)
-              .collect(Collectors.toList());
-
-      savedMenus.add(MenuQueryResponse.of(menu, savedMenuProducts)
-      );
-    }
-    return savedMenus;
+    return menuRepository.findAll().stream()
+        .map(MenuQueryResponse::from)
+        .collect(Collectors.toList());
   }
 }
