@@ -3,10 +3,8 @@ package kitchenpos.domain.menu.service;
 import kitchenpos.domain.common.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
-import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
 import kitchenpos.domain.menu.service.dto.MenuResponse;
@@ -24,12 +22,10 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
 
-    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository, final MenuProductRepository menuProductRepository) {
+    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
@@ -42,17 +38,7 @@ public class MenuService {
         final Menu menu = new Menu(request.getName(), price, savedMenuGroup, new MenuProducts());
 
         final Menu savedMenu = menuRepository.save(menu);
-        addMenuProducts(request.getMenuProductIds(), savedMenu);
-
         return MenuResponse.toDto(savedMenu);
-    }
-
-    private void addMenuProducts(final List<Long> menuProductIds, final Menu menu) {
-        final MenuProducts menuProducts = new MenuProducts();
-        final List<MenuProduct> savedMenuProducts = menuProductRepository.fetchAllById(menuProductIds);
-        menuProducts.addAll(savedMenuProducts);
-
-        menu.addMenuProducts(menuProducts);
     }
 
     public List<MenuResponse> list() {

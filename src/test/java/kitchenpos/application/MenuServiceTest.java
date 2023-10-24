@@ -3,9 +3,9 @@ package kitchenpos.application;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
-import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.service.MenuService;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.only;
@@ -51,9 +51,6 @@ class MenuServiceTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
 
-    @Mock
-    private MenuProductRepository menuProductRepository;
-
     @Nested
     class Create {
 
@@ -62,13 +59,16 @@ class MenuServiceTest {
             // given
             final Product noodle = noodle();
             final Product potato = potato();
-            final MenuProduct wooDong = menuProduct(noodle, 1);
-            final MenuProduct frenchFries = menuProduct(potato, 1);
             final MenuGroup menuGroup = western();
-            final Menu expected = spy(menu("우동세트", BigDecimal.valueOf(9000), menuGroup, List.of(wooDong, frenchFries)));
+            final Menu expected = spy(menu("우동세트", BigDecimal.valueOf(9000), menuGroup, new ArrayList<>()));
+
+            final MenuProducts menuProducts = new MenuProducts();
+            final MenuProduct wooDong = menuProduct(expected, noodle, 1);
+            final MenuProduct frenchFries = menuProduct(expected, potato, 1);
+            menuProducts.addAll(List.of(wooDong, frenchFries));
+            expected.addMenuProducts(menuProducts);
 
             given(menuGroupRepository.findById(anyLong())).willReturn(Optional.ofNullable(menuGroup));
-            given(menuProductRepository.fetchAllById(anyList())).willReturn(List.of(wooDong, frenchFries));
             given(menuRepository.save(any(Menu.class))).willReturn(expected);
             final long savedId = 1L;
             given(expected.getId()).willReturn(savedId);
