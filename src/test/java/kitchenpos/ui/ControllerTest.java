@@ -87,7 +87,7 @@ public class ControllerTest {
     }
 
     protected Order 식사중인_주문(Long id) {
-        OrderLineItem orderLineItem = new OrderLineItem(메뉴(1L), 1);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
         return new Order(
                 id,
                 1L,

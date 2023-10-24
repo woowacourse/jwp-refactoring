@@ -122,7 +122,7 @@ public class IntegrationTest {
     }
 
     protected OrderLineItem 주문항목(Menu 메뉴, long 수량) {
-        return new OrderLineItem(메뉴, 수량);
+        return new OrderLineItem(메뉴.id(), 수량);
     }
 
     protected TableGroup 테이블그룹(OrderTable... 주문테이블) {
