@@ -36,6 +36,27 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeEmpty(final boolean empty) {
+        validateNoTableGroup();
+        this.empty = empty;
+    }
+
+    private void validateNoTableGroup() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("테이블 그룹은 비어있어야 합니다.");
+        }
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("방문한 손님 수는 음수가 될 수 없습니다.");
+        }
+        if (empty) {
+            throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -57,10 +78,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup getTableGroup() {
         return tableGroup;
     }
@@ -73,15 +90,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

@@ -28,7 +28,7 @@ public class TableGroup {
 
     public TableGroup(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setEmpty(false);
+            orderTable.changeEmpty(false);
             addOrderTable(orderTable);
         }
     }

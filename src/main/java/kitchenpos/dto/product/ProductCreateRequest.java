@@ -16,7 +16,7 @@ public class ProductCreateRequest {
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 빈 값일 수 없습니다.");
         }
     }
 

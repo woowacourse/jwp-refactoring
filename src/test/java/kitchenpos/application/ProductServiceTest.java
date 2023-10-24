@@ -60,7 +60,8 @@ class ProductServiceTest {
 
             // when, then
             assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("가격은 0보다 작을 수 없습니다.");
         }
     }
 
