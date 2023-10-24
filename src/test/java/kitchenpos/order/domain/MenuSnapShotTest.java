@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
@@ -36,7 +37,18 @@ class MenuSnapShotTest {
         );
 
         // when
-        MenuSnapShot snapShot = MenuSnapShot.from(menu);
+        MenuSnapShot snapShot = new MenuSnapShot(
+                menuGroup.getName(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getMenuProducts()
+                        .stream()
+                        .map(it -> new MenuProductSnapShot(
+                                it.getProduct().getName(),
+                                it.getProduct().getPrice(),
+                                it.getQuantity())
+                        ).collect(Collectors.toList())
+        );
 
         // then
         ReflectionTestUtils.setField(menu, "name", "변경된 이름");

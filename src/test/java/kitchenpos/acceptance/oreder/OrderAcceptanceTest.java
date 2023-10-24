@@ -26,6 +26,7 @@ import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.MenuProductSnapShot;
 import kitchenpos.order.domain.MenuSnapShot;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,22 @@ public class OrderAcceptanceTest {
             세트_상품_메뉴_그룹,
             List.of(new MenuProduct(상품1, 2),
                     new MenuProduct(상품2, 3)
+            )
+    );
+
+    private final MenuSnapShot 말랑_메뉴_1_스냅샷 = new MenuSnapShot(
+            세트_상품_메뉴_그룹.getName(),
+            "말랑 메뉴",
+            BigDecimal.valueOf(1_000),
+            List.of(new MenuProductSnapShot(상품1.getName(), 상품1.getPrice(), 2))
+    );
+    private final MenuSnapShot 말랑_메뉴_2_스냅샷 = new MenuSnapShot(
+            세트_상품_메뉴_그룹.getName(),
+            "말랑 메뉴 2",
+            BigDecimal.valueOf(20_000),
+            List.of(
+                    new MenuProductSnapShot(상품1.getName(), 상품1.getPrice(), 2),
+                    new MenuProductSnapShot(상품2.getName(), 상품2.getPrice(), 3)
             )
     );
 
@@ -165,8 +182,8 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     조회_응답,
                     주문(주문_ID, 테이블_1_ID, MEAL,
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_1), 2),
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_2), 1)
+                            주문_항목(말랑_메뉴_1_스냅샷, 2),
+                            주문_항목(말랑_메뉴_2_스냅샷, 1)
                     )
             );
         }
@@ -189,8 +206,8 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     조회_응답,
                     주문(주문_ID, 테이블_1_ID, COMPLETION,
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_1), 2),
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_2), 1)
+                            주문_항목(말랑_메뉴_1_스냅샷, 2),
+                            주문_항목(말랑_메뉴_2_스냅샷, 1)
                     )
             );
         }
@@ -224,12 +241,12 @@ public class OrderAcceptanceTest {
             주문_조회_결과를_검증한다(
                     응답,
                     주문(주문1_ID, 테이블_1_ID, COOKING,
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_1), 2),
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_2), 1)
+                            주문_항목(말랑_메뉴_1_스냅샷, 2),
+                            주문_항목(말랑_메뉴_2_스냅샷, 1)
                     ),
                     주문(주문2_ID, 테이블_2_ID, COOKING,
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_1), 3),
-                            주문_항목(MenuSnapShot.from(말랑_메뉴_2), 2)
+                            주문_항목(말랑_메뉴_1_스냅샷, 3),
+                            주문_항목(말랑_메뉴_2_스냅샷, 2)
                     )
             );
         }

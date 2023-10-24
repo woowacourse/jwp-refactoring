@@ -7,14 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.MenuProductSnapShot;
+import kitchenpos.order.domain.MenuSnapShot;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderException;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -27,11 +25,13 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTest {
 
-    private final Menu menu = new Menu(
+    private final MenuSnapShot menuSnapshot = new MenuSnapShot(
+            "메뉴그룹",
             "말랑",
             BigDecimal.valueOf(20),
-            new MenuGroup("메뉴그룹"),
-            List.of(new MenuProduct(new Product("말", BigDecimal.valueOf(10)), 2))
+            List.of(
+                    new MenuProductSnapShot("상품", BigDecimal.valueOf(10), 2)
+            )
     );
 
     @Nested
@@ -56,7 +56,7 @@ class OrderTest {
                     new Order(
                             new OrderTable(1, true),
                             List.of(
-                                    new OrderLineItem(menu, 10)
+                                    new OrderLineItem(menuSnapshot, 10)
                             ))
             ).isInstanceOf(OrderException.class)
                     .hasMessage("비어있는 테이블에서는 주문할 수 없습니다.");
@@ -69,7 +69,7 @@ class OrderTest {
                     new Order(
                             new OrderTable(1, false),
                             List.of(
-                                    new OrderLineItem(menu, 10)
+                                    new OrderLineItem(menuSnapshot, 10)
                             ))
             );
         }
@@ -84,7 +84,7 @@ class OrderTest {
             Order order = new Order(
                     new OrderTable(1, false),
                     List.of(
-                            new OrderLineItem(menu, 10)
+                            new OrderLineItem(menuSnapshot, 10)
                     ));
 
             // when
@@ -100,7 +100,7 @@ class OrderTest {
             Order order = new Order(
                     new OrderTable(1, false),
                     List.of(
-                            new OrderLineItem(menu, 10)
+                            new OrderLineItem(menuSnapshot, 10)
                     ));
             order.setOrderStatus(COMPLETION.name());
 

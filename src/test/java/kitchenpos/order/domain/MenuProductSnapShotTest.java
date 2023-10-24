@@ -23,7 +23,11 @@ class MenuProductSnapShotTest {
         MenuProduct menuProduct = new MenuProduct(product, 2L);
 
         // when
-        MenuProductSnapShot snapShot = MenuProductSnapShot.from(menuProduct);
+        MenuProductSnapShot snapShot = new MenuProductSnapShot(
+                product.getName(),
+                product.getPrice(),
+                menuProduct.getQuantity()
+        );
 
         // then
         ReflectionTestUtils.setField(product, "name", "변경된 상품1 이름");

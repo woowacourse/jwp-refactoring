@@ -6,7 +6,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -23,8 +22,8 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, long quantity) {
-        this.menuSnapShot = MenuSnapShot.from(menu);
+    public OrderLineItem(MenuSnapShot snapShot, long quantity) {
+        this.menuSnapShot = snapShot;
         this.quantity = quantity;
     }
 

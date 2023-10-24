@@ -2,13 +2,11 @@ package kitchenpos.order.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import kitchenpos.menu.domain.Menu;
 
 @Embeddable
 public class MenuSnapShot {
@@ -29,17 +27,6 @@ public class MenuSnapShot {
         this.name = name;
         this.price = price;
         this.menuProducts = menuProducts;
-    }
-
-    public static MenuSnapShot from(Menu menu) {
-        return new MenuSnapShot(
-                menu.getMenuGroup().getName(),
-                menu.getName(),
-                menu.getPrice(),
-                menu.getMenuProducts().stream()
-                        .map(MenuProductSnapShot::from)
-                        .collect(Collectors.toList())
-        );
     }
 
     public String getMenuGroupName() {

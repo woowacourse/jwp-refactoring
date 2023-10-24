@@ -7,13 +7,11 @@ import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.MenuProductSnapShot;
+import kitchenpos.order.domain.MenuSnapShot;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -26,11 +24,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTableTest {
 
-    private final Menu menu = new Menu(
+    private final MenuSnapShot menuSnapshot = new MenuSnapShot(
+            "메뉴그룹",
             "말랑",
             BigDecimal.valueOf(20),
-            new MenuGroup("메뉴그룹"),
-            List.of(new MenuProduct(new Product("말", BigDecimal.valueOf(10)), 2))
+            List.of(
+                    new MenuProductSnapShot("상품", BigDecimal.valueOf(10), 2)
+            )
     );
 
     @Nested
@@ -54,7 +54,7 @@ class OrderTableTest {
             // given
             OrderTable orderTable = new OrderTable(10, false);
             ReflectionTestUtils.setField(orderTable, "id", 2L);
-            new Order(orderTable, List.of(new OrderLineItem(menu, 10)));
+            new Order(orderTable, List.of(new OrderLineItem(menuSnapshot, 10)));
 
             // when & then
             assertThatThrownBy(() ->
@@ -68,7 +68,7 @@ class OrderTableTest {
             // given
             OrderTable completeOrderTable = new OrderTable(10, false);
             ReflectionTestUtils.setField(completeOrderTable, "id", 2L);
-            new Order(completeOrderTable, List.of(new OrderLineItem(menu, 10)))
+            new Order(completeOrderTable, List.of(new OrderLineItem(menuSnapshot, 10)))
                     .setOrderStatus(OrderStatus.COMPLETION.name());
 
             OrderTable notInGroupTable = new OrderTable(10, false);
@@ -121,7 +121,7 @@ class OrderTableTest {
             // given
             OrderTable orderTable = new OrderTable(10, false);
             ReflectionTestUtils.setField(orderTable, "id", 2L);
-            new Order(orderTable, List.of(new OrderLineItem(menu, 10)));
+            new Order(orderTable, List.of(new OrderLineItem(menuSnapshot, 10)));
 
             // when & then
             assertThatThrownBy(() ->
