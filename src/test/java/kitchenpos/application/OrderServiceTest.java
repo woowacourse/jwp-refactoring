@@ -41,8 +41,7 @@ class OrderServiceTest {
                 new OrderLineItemRequest(2L, 2)
         ));
         OrderTable orderTable = mock(OrderTable.class);
-
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
+        given(orderTableRepository.getById(anyLong())).willReturn(orderTable);
         given(menuRepository.countByIdIn(anyList())).willReturn(2L);
         given(orderRepository.save(any(Order.class))).willReturn(new Order());
 
@@ -50,7 +49,6 @@ class OrderServiceTest {
         Long result = orderService.create(request);
 
         // then
-        verify(orderTableRepository).findById(1L);
         verify(menuRepository).countByIdIn(anyList());
         verify(orderRepository).save(any(Order.class));
     }
@@ -77,7 +75,7 @@ class OrderServiceTest {
         String orderStatusName = "COOKING";
         Order savedOrder = mock(Order.class);
 
-        given(orderRepository.findById(anyLong())).willReturn(Optional.of(savedOrder));
+        given(orderRepository.getById(anyLong())).willReturn(savedOrder);
 
         // when
         OrderResponse result = orderService.changeOrderStatus(orderId, orderStatusName);
@@ -85,6 +83,5 @@ class OrderServiceTest {
         // then
         assertNotNull(result);
         verify(savedOrder).updateOrderStatus(OrderStatus.from(orderStatusName));
-        verify(orderRepository).findById(orderId);
     }
 }
