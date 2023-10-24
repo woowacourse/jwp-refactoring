@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -11,8 +12,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
+import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -27,12 +28,14 @@ public class Order {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
-    private String orderStatus;
+
+    @Enumerated(STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    private Order(final Long id, final OrderTable orderTable, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    private Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
@@ -41,7 +44,7 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(final OrderTable orderTable, final String orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
@@ -52,10 +55,6 @@ public class Order {
     }
 
     public Order() {
-    }
-
-    public boolean canChangeOrderStatus() {
-        return !Objects.equals(orderStatus, OrderStatus.COMPLETION.name());
     }
 
     public Long getId() {
@@ -70,12 +69,19 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (!canChangeOrderStatus()) {
+            throw new IllegalStateException("[ERROR] 이미 완료된 주문은 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
+    }
+
+    private boolean canChangeOrderStatus() {
+        return orderStatus != OrderStatus.COMPLETION;
     }
 
     public LocalDateTime getOrderedTime() {

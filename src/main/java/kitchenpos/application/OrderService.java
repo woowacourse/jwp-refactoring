@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +60,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -85,19 +86,8 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateOrderStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (!savedOrder.canChangeOrderStatus()) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
+                .orElseThrow(NoSuchElementException::new);
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
         return OrderResponse.from(savedOrder);
     }
 }
