@@ -1,6 +1,6 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.application.event.OrderCreateEvent;
+import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
@@ -18,8 +18,8 @@ public class OrderTableEventListener {
     }
 
     @EventListener
-    public void validateOrderTable(final OrderCreateEvent orderCreateEvent) {
-        final Long orderTableId = orderCreateEvent.getOrderTableId();
+    public void validateOrderTable(final OrderCreateValidationEvent orderCreateValidationEvent) {
+        final Long orderTableId = orderCreateValidationEvent.getOrderTableId();
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderTableException::new);
 

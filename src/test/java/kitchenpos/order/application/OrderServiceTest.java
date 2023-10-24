@@ -28,7 +28,7 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemsResponse;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
-import kitchenpos.order.application.event.OrderCreateEvent;
+import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
@@ -116,7 +116,7 @@ class OrderServiceTest extends ServiceTest {
             orderService.create(orderCreateRequest);
 
             // then
-            assertThat(applicationEvents.stream(OrderCreateEvent.class).count()).isEqualTo(1);
+            assertThat(applicationEvents.stream(OrderCreateValidationEvent.class).count()).isEqualTo(1);
         }
     }
 

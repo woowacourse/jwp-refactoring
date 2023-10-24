@@ -12,7 +12,7 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
-import kitchenpos.order.application.event.OrderCreateEvent;
+import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
@@ -41,11 +41,12 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         final Long orderTableId = request.getOrderTableId();
+        eventPublisher.publishEvent(new OrderCreateValidationEvent(orderTableId));
+
         final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
         final Order savedOrder = orderRepository.save(order);
         associateOrderLineItem(orderLineItemRequests, savedOrder);
 
-        eventPublisher.publishEvent(new OrderCreateEvent(orderTableId));
         return OrderResponse.from(savedOrder);
     }
 

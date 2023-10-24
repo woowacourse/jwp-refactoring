@@ -4,7 +4,7 @@ import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.order.application.event.OrderCreateEvent;
+import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
@@ -31,10 +31,10 @@ class OrderTableEventListenerTest extends ServiceTest {
         void throws_notExistOrderTable() {
             // given
             final Long notExistOrderTableId = -1L;
-            final OrderCreateEvent orderCreateEvent = new OrderCreateEvent(notExistOrderTableId);
+            final OrderCreateValidationEvent orderCreateValidationEvent = new OrderCreateValidationEvent(notExistOrderTableId);
 
             // when & then
-            assertThatThrownBy(() -> orderTableEventListener.validateOrderTable(orderCreateEvent))
+            assertThatThrownBy(() -> orderTableEventListener.validateOrderTable(orderCreateValidationEvent))
                     .isInstanceOf(OrderTableException.NotFoundOrderTableException.class)
                     .hasMessage("[ERROR] 해당하는 OrderTable이 존재하지 않습니다.");
         }
@@ -45,10 +45,10 @@ class OrderTableEventListenerTest extends ServiceTest {
             // given
             final OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, true);
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-            final OrderCreateEvent orderCreateEvent = new OrderCreateEvent(savedOrderTable.getId());
+            final OrderCreateValidationEvent orderCreateValidationEvent = new OrderCreateValidationEvent(savedOrderTable.getId());
 
             // when & then
-            assertThatThrownBy(() -> orderTableEventListener.validateOrderTable(orderCreateEvent))
+            assertThatThrownBy(() -> orderTableEventListener.validateOrderTable(orderCreateValidationEvent))
                     .isInstanceOf(OrderException.CannotOrderStateByOrderTableEmptyException.class)
                     .hasMessage("[ERROR] 주문 테이블이 비어있는 상태일 때 주문할 수 없습니다.");
         }
