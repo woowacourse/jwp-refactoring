@@ -24,7 +24,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.product.Price;
-import kitchenpos.ui.request.OrderLineItemsRequest;
+import kitchenpos.application.request.OrderLineItemsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
