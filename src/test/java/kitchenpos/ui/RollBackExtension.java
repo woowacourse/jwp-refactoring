@@ -29,14 +29,13 @@ public class RollBackExtension implements AfterEachCallback {
         try {
             entityManager.clear();
             truncate(entityManager);
-
-            txManager.commit(transactionStatus);
         } catch (Exception e) {
             if (!transactionStatus.isCompleted()) {
                 txManager.rollback(transactionStatus);
             }
             throw e;
         }
+        txManager.commit(transactionStatus);
     }
 
     private void truncate(EntityManager entityManager) {
