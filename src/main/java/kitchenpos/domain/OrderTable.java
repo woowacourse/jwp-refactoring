@@ -68,6 +68,18 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public boolean canBeGroup() {
+        return !empty || Objects.nonNull(tableGroup);
+    }
+
+    public void registerGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void leaveGroup() {
+        tableGroup = null;
+    }
+
     public Long getId() {
         return id;
     }

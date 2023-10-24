@@ -36,7 +36,6 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         checkOrderStatusInTableGroup(orderTableId);
-
         orderTable.changeEmpty(request.getEmpty());
         return orderTableRepository.save(orderTable);
     }
