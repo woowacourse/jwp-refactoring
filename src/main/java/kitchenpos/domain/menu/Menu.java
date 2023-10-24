@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import kitchenpos.domain.menugroup.MenuGroup;
+
 @Entity
 public class Menu {
 

@@ -1,10 +1,12 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItems {
 

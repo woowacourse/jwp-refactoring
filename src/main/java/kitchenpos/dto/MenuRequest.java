@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 
 public class MenuRequest {
     private String name;

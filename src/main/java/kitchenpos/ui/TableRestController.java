@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.ChangeEmptyRequest;
 import kitchenpos.dto.ChangeNumberOfGuestRequest;
 import kitchenpos.dto.OrderTableRequest;

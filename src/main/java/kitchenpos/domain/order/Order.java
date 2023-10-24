@@ -1,6 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import kitchenpos.domain.table.OrderTable;
 
 @Entity(name = "orders")
 public class Order {
