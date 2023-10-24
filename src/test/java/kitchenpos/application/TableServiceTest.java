@@ -1,18 +1,20 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.Fixture;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.request.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.orderException.IllegalOrderStatusException;
+import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
+import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,28 +25,23 @@ class TableServiceTest extends ServiceBaseTest {
 
     @Autowired
     protected TableService tableService;
-
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = Fixture.orderTable(null, 3, false);
-    }
+    @Autowired
+    protected TableGroupService tableGroupService;
 
     @Test
     @DisplayName("비어있는 주문 테이블을 생성할 수 있다.")
     void create() {
         //given
-        final OrderTable orderTable = Fixture.orderTable(null, 3, true);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(3, true);
 
         //when
-        final OrderTable createdOrderTable = tableService.create(orderTable);
+        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
 
         //then
         assertAll(
-                () -> assertThat(createdOrderTable).isNotNull(),
-                () -> assertThat(createdOrderTable.isEmpty()).isTrue(),
-                () -> assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests())
+                () -> assertThat(orderTableResponse).isNotNull(),
+                () -> assertThat(orderTableResponse.isEmpty()).isTrue(),
+                () -> assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(orderTableRequest.getNumberOfGuest())
         );
     }
 
@@ -52,115 +49,95 @@ class TableServiceTest extends ServiceBaseTest {
     @DisplayName("주문 테이블을 조회할 수 있다.")
     void list() {
         //given
-        tableService.create(Fixture.orderTable(null, 3, false));
-        tableService.create(Fixture.orderTable(null, 3, false));
+        tableService.create(new OrderTableRequest(3, false));
+        tableService.create(new OrderTableRequest(3, false));
 
         //when
-        final List<OrderTable> orderTables = tableService.list();
+        final List<OrderTableResponse> orderTableResponses = tableService.list();
 
         //then
-        assertThat(orderTables).hasSize(2);
+        assertThat(orderTableResponses).hasSize(2);
     }
 
     @Test
     @DisplayName("주문 테이블을 빈 상태로 변경할 수 있다.")
     void changeEmpty() {
         //given
-        final OrderTable orderTable = tableService.create(Fixture.orderTable(null, 3, false));
-        orderTable.setEmpty(true);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(3, false);
+        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
+        final OrderTableRequest orderTableRequest2 = new OrderTableRequest(3, true);
 
         //when
-        final OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
+        final OrderTableResponse response = tableService.changeEmpty(orderTableResponse.getId(), orderTableRequest2);
 
         //then
-        assertThat(changedOrderTable.isEmpty()).isTrue();
+        assertThat(response.isEmpty()).isTrue();
     }
 
     @Test
     @DisplayName("주문 테이블은 존재해야한다.")
     void changeEmptyValidOrderTable() {
         //when&then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("빈상태로 변경시 orderTable의 테이블 그룹 아이디가 null이 아니면 안된다.")
-    void changeEmptyValidTableGroupId() {
-        //given
-        final OrderTable savedOrderTable1 = orderTableDao.save(Fixture.orderTable(null, 10, true));
-        final OrderTable savedOrderTable2 = orderTableDao.save(Fixture.orderTable(null, 5, true));
-        final TableGroup savedTableGroup = tableGroupDao.save(Fixture.orderTableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2)));
-        final OrderTable savedOrderTable = orderTableDao.save(Fixture.orderTable(savedTableGroup.getId(), 10, true));
-
-        //when&then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(999L, null))
+                .isInstanceOf(OrderTableNotFoundException.class)
+                .hasMessage("OrderTable을 찾을 수 없습니다.");
     }
 
     @ParameterizedTest(name = "주문 테이블이 요리, 식사 상태이면 안된다.")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmptyValidStatus(final OrderStatus orderStatus) {
-        //given
-        final OrderTable orderTable = tableService.create(Fixture.orderTable(null, 10, true));
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        final Order order = Fixture.order(null, savedOrderTable.getId(), LocalDateTime.now(), null);
-        order.setOrderStatus(orderStatus.name());
-        orderDao.save(order);
+        // given
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 2, false));
+        final Order order = new Order(orderTable, null);
+        order.changeOrderStatus(orderStatus);
+        orderRepository.save(order);
 
-        //when&then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        OrderTableRequest request = new OrderTableRequest(3, false);
+
+        // when, then
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
+                .isInstanceOf(IllegalOrderStatusException.class)
+                .hasMessage("잘못된 주문 상태입니다.");
     }
 
     @Test
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     void changeNumberOfGuests() {
         //given
-        orderTable.setNumberOfGuests(10);
-        final OrderTable savedOrderTable = tableService.create(orderTable);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(10, true);
+        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
+        final OrderTableRequest changedOrderTableRequest = new OrderTableRequest(1, true);
 
         //when
-        final OrderTable changedOrderTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable);
+        final OrderTableResponse changedOrderTableResponse = tableService.changeNumberOfGuests(orderTableResponse.getId(), changedOrderTableRequest);
 
         //then
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
+        assertThat(changedOrderTableResponse.getNumberOfGuests()).isEqualTo(changedOrderTableRequest.getNumberOfGuest());
     }
 
     @Test
     @DisplayName("주문 테이블의 손님 수는 0 이상이어야 한다.")
     void changeNumberOfGuestsOverZero() {
         //given
-        orderTable.setNumberOfGuests(-1);
-        tableService.create(orderTable);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(10, true);
+        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
+        final OrderTableRequest changedOrderTableRequest = new OrderTableRequest(-1, true);
 
         //when&then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableResponse.getId(), changedOrderTableRequest))
+                .isInstanceOf(IllegalOrderTableGuestNumberException.class)
+                .hasMessage("잘못된 주문 테이블 게스트 숫자 설정입니다.");
     }
 
     @Test
     @DisplayName("주문 테이블은 존재해야 한다.")
     void changeNumberOfGuestValidOrderTable() {
         //given
-        orderTable.setNumberOfGuests(0);
-        tableService.create(orderTable);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(10, true);
 
         //when&then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("게스트 숫자 변경 시 OrderTable은 비어있으면 안된다.")
-    void changeNumberOfGuestValidEmptySavedOrderTable() {
-        //given
-        final OrderTable orderTable = tableService.create(Fixture.orderTable(null, 10, true));
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        this.orderTable.setNumberOfGuests(0);
-
-        //when&then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(999L, orderTableRequest))
+                .isInstanceOf(OrderTableNotFoundException.class)
+                .hasMessage("OrderTable을 찾을 수 없습니다.");
     }
 }

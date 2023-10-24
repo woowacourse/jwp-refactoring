@@ -1,15 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.Fixture;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.InvalidPriceException;
+import kitchenpos.exception.menuProductException.InvalidMenuProductsPriceException;
+import kitchenpos.exception.menuGroupException.MenuGroupNotFoundException;
+import kitchenpos.exception.productException.ProductNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,92 +26,99 @@ class MenuServiceTest extends ServiceBaseTest {
     @Autowired
     protected MenuService menuService;
 
-    private MenuGroup menuGroup;
-    private Product product;
-    private MenuProduct menuProduct;
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = menuGroupDao.save(Fixture.menuGroup("메뉴 그룹"));
-        product = productDao.save(Fixture.product("상품", 1000));
-        menuProduct = Fixture.menuProduct(null, product.getId(), 3L);
-    }
-
     @Test
     @DisplayName("메뉴를 생성할 수 있다.")
     void create() {
-        //given
-        final Menu menu = Fixture.menu("메뉴1", 1000, menuGroup.getId(), List.of(menuProduct));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
+        final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(9999), menuGroup.getId(),
+                List.of(new MenuProductRequest(product.getId(), 1L)));
 
         //when
-        final Menu createdMenu = menuService.create(menu);
+        final MenuResponse menuResponse = menuService.create(request);
 
         //then
         assertAll(
-                () -> assertThat(createdMenu.getId()).isNotNull(),
-                () -> assertThat(createdMenu.getName()).isEqualTo(menu.getName())
+                () -> assertThat(menuResponse.getId()).isNotNull(),
+                () -> assertThat(menuResponse.getName()).isEqualTo(request.getName())
         );
     }
 
     @Test
-    @DisplayName("메뉴 가격은 0원 이상이다.")
+    @DisplayName("메뉴 가격은 0원 미만이면 예외가 발생한다.")
     void menuPriceOverZero() {
         //given
-        final Menu menu = Fixture.menu("메뉴1", -1, menuGroup.getId(), List.of(menuProduct));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
+        final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(-1), menuGroup.getId(),
+                List.of(new MenuProductRequest(product.getId(), 1L)));
 
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(InvalidPriceException.class)
+                .hasMessage("잘못된 가격입니다.");
     }
 
     @Test
     @DisplayName("메뉴는 존재하는 메뉴 그룹에 속해있어야 한다.")
     void menuBelongToValidMenuGroup() {
         //given
-        final Menu menu = Fixture.menu("메뉴1", 0, 999L, List.of(menuProduct));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
+        final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(100), 999L,
+                List.of(new MenuProductRequest(product.getId(), 1L)));
 
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(MenuGroupNotFoundException.class)
+                .hasMessage("MenuGroup을 찾을 수 없습니다.");
     }
 
     @Test
     @DisplayName("메뉴는 존재하는 상품만 가져야 한다.")
     void menuHasValidMenu() {
         //given
-        final MenuProduct menuProduct1 = Fixture.menuProduct(null, 999L, 999L);
-        final Menu menu = Fixture.menu("메뉴1", 0, menuGroup.getId(), List.of(menuProduct1));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(999), menuGroup.getId(),
+                List.of(new MenuProductRequest(999L, 1L)));
 
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessage("상품을 찾을 수 없습니다.");
     }
 
     @Test
     @DisplayName("메뉴의 가격은 상품의 합계 이하이다.")
     void menuPriceSameOrOverThanProductsPrices() {
         //given
-        final Menu menu = Fixture.menu("메뉴1", 5000, menuGroup.getId(), List.of(menuProduct));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
+        final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(999999), menuGroup.getId(),
+                List.of(new MenuProductRequest(product.getId(), 1L)));
 
         //when&then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request))
+                .isInstanceOf(InvalidMenuProductsPriceException.class)
+                .hasMessage("메뉴의 가격은 메뉴 상품 가격 합 이하여야 합니다.");
     }
 
     @Test
     @DisplayName("메뉴 목록을 조회할 수 있다.")
     void list() {
         //given
-        final Menu menu = Fixture.menu("메뉴1", 1000, menuGroup.getId(), List.of(menuProduct));
-        final Menu savedMenu = menuService.create(menu);
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Product product = productRepository.save(new Product("메뉴 1", new Price(new BigDecimal(10000))));
+        final MenuRequest request = new MenuRequest("메뉴 1", new BigDecimal(9999), menuGroup.getId(),
+                List.of(new MenuProductRequest(product.getId(), 1L)));
+        menuService.create(request);
 
         //when
-        final List<Menu> menus = menuService.list();
+        final List<MenuResponse> menuResponses = menuService.list();
 
         //then
         assertAll(
-                () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menus.get(0).getName()).isEqualTo(savedMenu.getName())
+                () -> assertThat(menuResponses).hasSize(1),
+                () -> assertThat(menuResponses.get(0).getName()).isEqualTo(request.getName())
         );
     }
 }
