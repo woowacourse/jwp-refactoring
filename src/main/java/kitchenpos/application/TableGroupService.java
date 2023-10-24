@@ -58,6 +58,8 @@ public class TableGroupService {
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
+
+        orderTables.forEach(OrderTable::ungroup);
     }
 
 }

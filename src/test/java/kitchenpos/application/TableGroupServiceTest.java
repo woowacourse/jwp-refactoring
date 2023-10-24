@@ -107,8 +107,8 @@ class TableGroupServiceTest extends ServiceTest {
             orderRepository.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup();
-            테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
             TableGroup 생성된_테이블_그룹 = tableGroupRepository.save(테이블_그룹);
+            생성된_테이블_그룹.changeOrderTables(List.of(테이블, 빈_테이블_생성()));
 
             //when
             tableGroupService.ungroup(생성된_테이블_그룹.getId());
