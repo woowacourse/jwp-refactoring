@@ -48,13 +48,21 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        validateEmptyTable();
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("방문한 손님 수는 음수가 될 수 없습니다.");
         }
+    }
+
+    private void validateEmptyTable() {
         if (empty) {
             throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
         }
-        this.numberOfGuests = numberOfGuests;
     }
 
     @Override

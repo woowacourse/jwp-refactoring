@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Product {
@@ -24,15 +25,8 @@ public class Product {
     }
 
     public Product(final String name, final BigDecimal price) {
-        validatePrice(price);
         this.name = name;
         this.price = new Price(price);
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격은 0보다 작을 수 없습니다.");
-        }
     }
 
     @Override
