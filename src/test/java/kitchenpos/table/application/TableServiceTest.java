@@ -6,6 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
+import kitchenpos.common.dto.request.TableEmptyUpdateRequest;
+import kitchenpos.common.dto.request.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.common.dto.response.TableResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
@@ -23,9 +26,7 @@ import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.common.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.common.dto.request.TableNumberOfGuestsUpdateRequest;
-import kitchenpos.common.dto.response.TableResponse;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.tablegroup.domain.GroupedTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
@@ -35,6 +36,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -71,6 +73,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderValidator orderValidator;
+
+    @Mock
+    private OrderTableValidator mockedOrderTableValidator;
 
     @DisplayName("기존에 주문이 없었던 테이블인 경우, 주문 상태를 변경할 수 없다.")
     @Test
@@ -206,7 +211,7 @@ class TableServiceTest {
 
         orderRepository.save(order);
 
-        orderTable.changeEmpty(true);
+        orderTable.changeEmpty(true, mockedOrderTableValidator);
 
         //when then
         TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(10);

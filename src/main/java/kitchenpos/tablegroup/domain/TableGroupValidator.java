@@ -20,10 +20,8 @@ public class TableGroupValidator {
 
     public void validateUnableUngrouping(List<OrderTable> orderTables) {
         List<Long> orderTableIds = extractOrderTableIds(orderTables);
-        boolean unableUngrouping =
-                orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, UNCHANGEABLE_STATUS);
 
-        if (unableUngrouping) {
+        if (isUnableUngrouping(orderTableIds)) {
             throw new IllegalArgumentException("주문이 완료되지 않은 상태의 테이블이 존재합니다.");
         }
     }
@@ -32,6 +30,10 @@ public class TableGroupValidator {
         return orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isUnableUngrouping(List<Long> orderTableIds) {
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, UNCHANGEABLE_STATUS);
     }
 
 }

@@ -64,8 +64,9 @@ public class OrderTable {
         }
     }
 
-    public void changeEmpty(Boolean empty) {
+    public void changeEmpty(Boolean empty, OrderTableValidator orderTableValidator) {
         validateChangeableEmpty();
+        orderTableValidator.validateChangeableEmpty(id);
 
         this.empty = empty;
     }

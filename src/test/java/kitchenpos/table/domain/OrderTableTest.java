@@ -8,10 +8,14 @@ import kitchenpos.tablegroup.domain.GroupedTables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class OrderTableTest {
+
+    @Mock
+    private OrderTableValidator orderTableValidator;
 
     @DisplayName("테이블에 방문한 손님 수는 0 이상이어야 한다.")
     @Test
@@ -43,7 +47,7 @@ class OrderTableTest {
         groupedTables.group(1L);
 
         //when then
-        assertThatThrownBy(() -> orderTable1.changeEmpty(Boolean.FALSE))
+        assertThatThrownBy(() -> orderTable1.changeEmpty(Boolean.FALSE, orderTableValidator))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("다른 그룹에 속해있으므로, 주문 상태를 변경할 수 없습니다.");
     }
@@ -65,7 +69,7 @@ class OrderTableTest {
         OrderTable orderTable = OrderTable.create(0, Boolean.FALSE);
 
         //when then
-        assertDoesNotThrow(() -> orderTable.changeEmpty(Boolean.TRUE));
+        assertDoesNotThrow(() -> orderTable.changeEmpty(Boolean.TRUE, orderTableValidator));
     }
 
 }

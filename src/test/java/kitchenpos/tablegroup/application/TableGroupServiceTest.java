@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.dto.request.OrderTableRequest;
+import kitchenpos.common.dto.request.TableGroupCreationRequest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
@@ -23,16 +25,16 @@ import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.common.dto.request.OrderTableRequest;
+import kitchenpos.table.domain.OrderTableValidator;
 import kitchenpos.tablegroup.domain.GroupedTables;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.common.dto.request.TableGroupCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -69,6 +71,12 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderValidator orderValidator;
+
+    @Autowired
+    private OrderTableValidator orderTableValidator;
+
+    @Mock
+    private OrderTableValidator mockedOrderTableValidator;
 
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
@@ -176,8 +184,8 @@ class TableGroupServiceTest {
 
         orderRepository.save(order);
 
-        savedOrderTable1.changeEmpty(true);
-        savedOrderTable2.changeEmpty(true);
+        savedOrderTable1.changeEmpty(true, mockedOrderTableValidator);
+        savedOrderTable2.changeEmpty(true, mockedOrderTableValidator);
 
         List<OrderTableRequest> orderTableRequests = List.of(
                 new OrderTableRequest(savedOrderTable1.getId()),
@@ -204,8 +212,8 @@ class TableGroupServiceTest {
         Order order = Order.create(savedOrderTable1.getId(), orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
-        savedOrderTable1.changeEmpty(true);
-        savedOrderTable2.changeEmpty(true);
+        savedOrderTable1.changeEmpty(true, orderTableValidator);
+        savedOrderTable2.changeEmpty(true, orderTableValidator);
 
         orderRepository.save(order);
 

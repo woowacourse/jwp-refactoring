@@ -4,14 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.common.dto.request.TableCreationRequest;
 import kitchenpos.common.dto.request.TableEmptyUpdateRequest;
 import kitchenpos.common.dto.request.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.common.dto.response.TableResponse;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,16 @@ public class TableService {
 
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public TableService(OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
+    public TableService(
+            OrderTableRepository orderTableRepository,
+            OrderRepository orderRepository,
+            OrderTableValidator orderTableValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -48,8 +55,7 @@ public class TableService {
         OrderTable orderTable = findOrderTableById(orderTableId);
 
         validateChangeableEmpty(orderTableId);
-
-        orderTable.changeEmpty(request.getEmpty());
+        orderTable.changeEmpty(request.getEmpty(), orderTableValidator);
 
         return TableResponse.from(orderTable);
     }
