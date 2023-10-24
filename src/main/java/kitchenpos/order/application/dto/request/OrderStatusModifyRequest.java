@@ -4,16 +4,16 @@ import kitchenpos.order.domain.OrderStatus;
 
 public class OrderStatusModifyRequest {
 
-  private OrderStatus orderStatus;
+    private OrderStatus orderStatus;
 
-  public OrderStatusModifyRequest() {
-  }
+    public OrderStatusModifyRequest() {
+    }
 
-  public OrderStatusModifyRequest(final OrderStatus orderStatus) {
-    this.orderStatus = orderStatus;
-  }
+    public OrderStatusModifyRequest(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 
-  public OrderStatus getOrderStatus() {
-    return orderStatus;
-  }
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
 }

@@ -1,35 +1,36 @@
 package kitchenpos.table.application.entity;
 
-import java.time.LocalDateTime;
 import kitchenpos.table.domain.OrderTables;
 import kitchenpos.table.domain.TableGroup;
 
+import java.time.LocalDateTime;
+
 public class TableGroupEntity {
 
-  private Long id;
-  private LocalDateTime createdDate;
+    private Long id;
+    private LocalDateTime createdDate;
 
-  public TableGroupEntity(final Long id, final LocalDateTime createdDate) {
-    this.id = id;
-    this.createdDate = createdDate;
-  }
+    public TableGroupEntity(final Long id, final LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+    }
 
-  public TableGroupEntity() {
-  }
-  
-  public static TableGroupEntity from(final TableGroup tableGroup) {
-    return new TableGroupEntity(tableGroup.getId(), tableGroup.getCreatedDate());
-  }
+    public TableGroupEntity() {
+    }
 
-  public TableGroup toTableGroup(final OrderTables orderTables) {
-    return new TableGroup(id, createdDate, orderTables);
-  }
+    public static TableGroupEntity from(final TableGroup tableGroup) {
+        return new TableGroupEntity(tableGroup.getId(), tableGroup.getCreatedDate());
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public TableGroup toTableGroup(final OrderTables orderTables) {
+        return new TableGroup(id, createdDate, orderTables);
+    }
 
-  public LocalDateTime getCreatedDate() {
-    return createdDate;
-  }
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
 }

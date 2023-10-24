@@ -4,20 +4,20 @@ import kitchenpos.menu.domain.MenuGroup;
 
 public class MenuGroupCreateRequest {
 
-  private String name;
+    private String name;
 
-  public MenuGroupCreateRequest(final String name) {
-    this.name = name;
-  }
+    public MenuGroupCreateRequest(final String name) {
+        this.name = name;
+    }
 
-  public MenuGroupCreateRequest() {
-  }
+    public MenuGroupCreateRequest() {
+    }
+ 
+    public MenuGroup toMenuGroup() {
+        return new MenuGroup(name);
+    }
 
-  public MenuGroup toMenuGroup() {
-    return new MenuGroup(name);
-  }
-
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 }

@@ -1,14 +1,15 @@
 package kitchenpos.menu.persistence;
 
+import kitchenpos.menu.application.entity.ProductEntity;
+
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.application.entity.ProductEntity;
 
 public interface ProductDao {
 
-  ProductEntity save(ProductEntity entity);
+    ProductEntity save(ProductEntity entity);
 
-  Optional<ProductEntity> findById(Long id);
+    Optional<ProductEntity> findById(Long id);
 
-  List<ProductEntity> findAll();
+    List<ProductEntity> findAll();
 }

@@ -1,13 +1,14 @@
 package kitchenpos.menu.domain.repository;
 
-import java.util.List;
 import kitchenpos.menu.domain.MenuGroup;
+
+import java.util.List;
 
 public interface MenuGroupRepository {
 
-  MenuGroup save(final MenuGroup entity);
+    MenuGroup save(final MenuGroup entity);
 
-  boolean existsById(final Long id);
+    boolean existsById(final Long id);
 
-  List<MenuGroup> findAll();
+    List<MenuGroup> findAll();
 }

@@ -1,14 +1,15 @@
 package kitchenpos.menu.domain.repository;
 
+import kitchenpos.menu.domain.Product;
+
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.domain.Product;
 
 public interface ProductRepository {
 
-  Product save(final Product entity);
+    Product save(final Product entity);
 
-  Optional<Product> findById(final Long id);
+    Optional<Product> findById(final Long id);
 
-  List<Product> findAll();
+    List<Product> findAll();
 }

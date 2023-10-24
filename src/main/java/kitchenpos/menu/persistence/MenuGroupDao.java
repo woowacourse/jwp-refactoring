@@ -1,16 +1,17 @@
 package kitchenpos.menu.persistence;
 
+import kitchenpos.menu.application.entity.MenuGroupEntity;
+
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.application.entity.MenuGroupEntity;
 
 public interface MenuGroupDao {
 
-  MenuGroupEntity save(MenuGroupEntity entity);
+    MenuGroupEntity save(MenuGroupEntity entity);
 
-  Optional<MenuGroupEntity> findById(Long id);
+    Optional<MenuGroupEntity> findById(Long id);
 
-  List<MenuGroupEntity> findAll();
+    List<MenuGroupEntity> findAll();
 
-  boolean existsById(Long id);
+    boolean existsById(Long id);
 }

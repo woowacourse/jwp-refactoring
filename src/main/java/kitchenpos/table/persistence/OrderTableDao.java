@@ -1,18 +1,19 @@
 package kitchenpos.table.persistence;
 
+import kitchenpos.table.application.entity.OrderTableEntity;
+
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.table.application.entity.OrderTableEntity;
 
 public interface OrderTableDao {
 
-  OrderTableEntity save(OrderTableEntity entity);
+    OrderTableEntity save(OrderTableEntity entity);
 
-  Optional<OrderTableEntity> findById(Long id);
+    Optional<OrderTableEntity> findById(Long id);
 
-  List<OrderTableEntity> findAll();
+    List<OrderTableEntity> findAll();
 
-  List<OrderTableEntity> findAllByIdIn(List<Long> ids);
+    List<OrderTableEntity> findAllByIdIn(List<Long> ids);
 
-  List<OrderTableEntity> findAllByTableGroupId(Long tableGroupId);
+    List<OrderTableEntity> findAllByTableGroupId(Long tableGroupId);
 }

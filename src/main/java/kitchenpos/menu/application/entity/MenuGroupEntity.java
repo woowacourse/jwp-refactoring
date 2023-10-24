@@ -4,30 +4,30 @@ import kitchenpos.menu.domain.MenuGroup;
 
 public class MenuGroupEntity {
 
-  private Long id;
-  private String name;
+    private Long id;
+    private String name;
 
-  public MenuGroupEntity(final Long id, final String name) {
-    this.id = id;
-    this.name = name;
-  }
+    public MenuGroupEntity(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+ 
+    public MenuGroupEntity() {
+    }
 
-  public MenuGroupEntity() {
-  }
+    public static MenuGroupEntity from(final MenuGroup menuGroup) {
+        return new MenuGroupEntity(menuGroup.getId(), menuGroup.getName());
+    }
 
-  public static MenuGroupEntity from(final MenuGroup menuGroup) {
-    return new MenuGroupEntity(menuGroup.getId(), menuGroup.getName());
-  }
+    public MenuGroup toMenuGroup() {
+        return new MenuGroup(id, name);
+    }
 
-  public MenuGroup toMenuGroup() {
-    return new MenuGroup(id, name);
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public Long getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 }

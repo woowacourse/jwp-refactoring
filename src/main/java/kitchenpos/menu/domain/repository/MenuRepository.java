@@ -1,13 +1,14 @@
 package kitchenpos.menu.domain.repository;
 
-import java.util.List;
 import kitchenpos.menu.domain.Menu;
+
+import java.util.List;
 
 public interface MenuRepository {
 
-  Menu save(final Menu entity);
+    Menu save(final Menu entity);
 
-  List<Menu> findAll();
+    List<Menu> findAll();
 
-  long countByIdIn(final List<Long> ids);
+    long countByIdIn(final List<Long> ids);
 }

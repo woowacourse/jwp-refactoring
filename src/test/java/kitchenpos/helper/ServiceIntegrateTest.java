@@ -1,7 +1,8 @@
 package kitchenpos.helper;
 
-import javax.transaction.Transactional;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.transaction.Transactional;
 
 @SpringBootTest
 @Transactional
