@@ -34,6 +34,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public boolean isEmpty() {
+        return empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -52,14 +56,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests.getValue();
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     @Override

@@ -44,7 +44,7 @@ public class TableGroupService {
     private static void validateOrderTablesIsExist(final TableGroupRequest request,
                                                    final List<OrderTable> savedOrderTables) {
         if (savedOrderTables.size() != request.getOrderTableIds().size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 주문 테이블이 포함되어 있습니다.");
         }
     }
 
@@ -61,20 +61,24 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        validateOrderTablesForUnGroup(orderTables);
+        orderTables.forEach(this::unbindTableFromGroup);
+    }
 
+    private void validateOrderTablesForUnGroup(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리중 or 식사중인 주문이 포함되어 있습니다.");
         }
+    }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.changeEmpty(false);
-            orderTableDao.save(orderTable);
-        }
+    private void unbindTableFromGroup(final OrderTable orderTable) {
+        orderTable.setTableGroupId(null);
+        orderTable.changeEmpty(false);
+        orderTableDao.save(orderTable);
     }
 }
