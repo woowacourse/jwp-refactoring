@@ -46,11 +46,7 @@ class TableRestControllerTest {
     void create() throws Exception {
         // given
         final CreateOrderTableRequest request = getObject(CreateOrderTableRequest.class, 1);
-        final OrderTable orderTable = OrderTable.builder()
-                .id(1L)
-                .numberOfGuests(new NumberOfGuests(1))
-                .empty(false)
-                .build();
+        final OrderTable orderTable = getObject(OrderTable.class,1L,new NumberOfGuests(1),false);
 
         when(tableService.create(any()))
                 .thenReturn(OrderTableResponse.from(orderTable));
@@ -84,11 +80,7 @@ class TableRestControllerTest {
     void changeEmpty() throws Exception {
         // given
         final ChangeEmptyRequest request = getObject(ChangeEmptyRequest.class, true);
-        final OrderTable orderTable = OrderTable.builder()
-                .id(1L)
-                .numberOfGuests(new NumberOfGuests(1))
-                .empty(true)
-                .build();
+        final OrderTable orderTable = getObject(OrderTable.class,1L,new NumberOfGuests(1),true);
 
         when(tableService.changeEmpty(any(), any()))
                 .thenReturn(OrderTableResponse.from(orderTable));
@@ -108,11 +100,7 @@ class TableRestControllerTest {
     void changeNumberOfGuests() throws Exception {
         // given
         final ChangeNumberOfGuestsRequest request = getObject(ChangeNumberOfGuestsRequest.class, 2);
-        final OrderTable orderTable = OrderTable.builder()
-                .id(1L)
-                .numberOfGuests(new NumberOfGuests(2))
-                .empty(true)
-                .build();
+        final OrderTable orderTable = getObject(OrderTable.class,1L,new NumberOfGuests(2),true);
 
         when(tableService.changeNumberOfGuests(any(), any()))
                 .thenReturn(OrderTableResponse.from(orderTable));

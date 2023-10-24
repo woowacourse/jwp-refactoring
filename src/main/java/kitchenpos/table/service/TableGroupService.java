@@ -2,9 +2,7 @@ package kitchenpos.table.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.exception.EmptyTableException;
 import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.table.domain.OrderTable;
@@ -53,16 +51,14 @@ public class TableGroupService {
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new EmptyTableException("비어있지 않거나 테이블 그룹이 형성된 테이블은 테이블을 형성할 수 없습니다.");
-            }
+            savedOrderTable.validateEmptyAndGroup();
         }
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable orderTable:savedOrderTables){
+        for (final OrderTable orderTable : savedOrderTables) {
             orderTable.group(savedTableGroup.getId());
         }
 
@@ -79,13 +75,7 @@ public class TableGroupService {
         publisher.publishEvent(new OrderStatusValidateByIdsEvent(orderTableIds));
 
         for (final OrderTable orderTable : orderTables) {
-            final OrderTable ungroupTable = OrderTable.builder()
-                    .id(orderTable.getId())
-                    .numberOfGuests(orderTable.getNumberOfGuests())
-                    .empty(false)
-                    .build();
-
-            orderTableRepository.save(ungroupTable);
+            orderTable.unGroup();
         }
     }
 }

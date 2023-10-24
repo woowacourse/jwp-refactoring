@@ -2,11 +2,13 @@ package kitchenpos.table.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import kitchenpos.exception.EmptyTableException;
 import kitchenpos.value.NumberOfGuests;
 
 @Entity
@@ -27,21 +29,33 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    private OrderTable(Builder builder) {
-        this.id = builder.id;
-        this.tableGroupId = builder.tableGroupId;
-        this.numberOfGuests = builder.numberOfGuests;
-        this.empty = builder.empty;
+    public OrderTable(NumberOfGuests numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = false;
+    }
+
+    public void changeNumberOfGuests(final NumberOfGuests numberOfGuests){
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void changeEmpty(final Boolean empty){
+        this.empty = empty;
     }
 
     public void group(final Long tableGroupId){
         this.tableGroupId = tableGroupId;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void unGroup(){
+        this.tableGroupId = null;
     }
 
+
+    public void validateEmptyAndGroup(){
+        if(!empty|| Objects.nonNull(tableGroupId)){
+            throw new EmptyTableException("비어있지 않거나 테이블 그룹이 형성된 테이블은 테이블을 형성할 수 없습니다.");
+        }
+    }
     public Long getId() {
         return id;
     }
@@ -60,36 +74,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public static class Builder {
-        private Long id;
-        private Long tableGroupId;
-        private NumberOfGuests numberOfGuests;
-        private boolean empty;
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder tableGroup(Long tableGroupId) {
-            this.tableGroupId = tableGroupId;
-            return this;
-        }
-
-        public Builder numberOfGuests(NumberOfGuests numberOfGuests) {
-            this.numberOfGuests = numberOfGuests;
-            return this;
-        }
-
-        public Builder empty(boolean empty) {
-            this.empty = empty;
-            return this;
-        }
-
-        public OrderTable build() {
-            return new OrderTable(this);
-        }
     }
 }

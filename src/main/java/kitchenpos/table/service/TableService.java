@@ -31,10 +31,7 @@ public class TableService {
     }
 
     public OrderTableResponse create(final CreateOrderTableRequest request) {
-        final OrderTable orderTable = OrderTable.builder()
-                .numberOfGuests(new NumberOfGuests(request.getNumberOfGuests()))
-                .build();
-
+        final OrderTable orderTable = new OrderTable(new NumberOfGuests(request.getNumberOfGuests()));
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return OrderTableResponse.from(savedOrderTable);
     }
@@ -57,15 +54,9 @@ public class TableService {
 
         publisher.publishEvent(new OrderStatusValidateByIdEvent(savedOrderTable.getId()));
 
-        final OrderTable orderTable = OrderTable.builder()
-                .id(orderTableId)
-                .numberOfGuests(savedOrderTable.getNumberOfGuests())
-                .empty(request.getEmpty())
-                .build();
+        savedOrderTable.changeEmpty(request.getEmpty());
 
-        final OrderTable updatedOrderTable = orderTableRepository.save(orderTable);
-
-        return OrderTableResponse.from(updatedOrderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
@@ -78,10 +69,8 @@ public class TableService {
             throw new EmptyListException("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
         }
 
-        final OrderTable orderTable = OrderTable.builder()
-                .id(orderTableId)
-                .numberOfGuests(numberOfGuests)
-                .build();
-        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
+
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 }
