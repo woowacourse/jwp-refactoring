@@ -41,7 +41,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private void validateNoTableGroup() {
+    public void validateNoTableGroup() {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("테이블 그룹은 비어있어야 합니다.");
         }

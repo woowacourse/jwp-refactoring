@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -14,7 +13,6 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -36,24 +34,17 @@ public class TableGroupService {
     public TableGroup create(final TableGroupCreateRequest request) {
         final List<OrderTableRequest> orderTableRequests = request.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException();
+        if (orderTableRequests.size() < 2) {
+            throw new IllegalArgumentException("주문 테이블은 2개 이상이어야 합니다.");
         }
 
         final List<Long> orderTableIds = orderTableRequests.stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableRequests.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
+            throw new IllegalArgumentException("요청한 주문 테이블 수와 저장된 주문 테이블의 수가 다릅니다.");
         }
 
         final TableGroup newTableGroup = new TableGroup(savedOrderTables);

@@ -48,11 +48,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 정상적으로 생성한다.")
     void create() {
         // given
-        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
-        final OrderTable orderTable = new OrderTable(null, orderTableCreateRequest.getNumberOfGuests(),
-                orderTableCreateRequest.isEmpty());
-        final TableGroup tableGroup = new TableGroup(List.of(orderTable));
-        tableGroupRepository.save(tableGroup);
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, true);
 
         // when
         final OrderTable savedOrderTable = tableService.create(orderTableCreateRequest);
@@ -61,7 +57,7 @@ class TableServiceTest {
         assertAll(
                 () -> assertThat(savedOrderTable.getId()).isEqualTo(1L),
                 () -> assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(2),
-                () -> assertThat(savedOrderTable.isEmpty()).isFalse()
+                () -> assertThat(savedOrderTable.isEmpty()).isTrue()
         );
     }
 
@@ -128,10 +124,10 @@ class TableServiceTest {
         @DisplayName("테이블 그룹이 빈 값이 아니면 예외가 발생한다.")
         void throwsExceptionWhenTableGroupIdIsNoTNull() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 2, false);
-            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-            final TableGroup tableGroup = new TableGroup(List.of(orderTable));
+            final TableGroup tableGroup = new TableGroup(new ArrayList<>());
             tableGroupRepository.save(tableGroup);
+            final OrderTable orderTable = new OrderTable(tableGroup, 2, false);
+            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
             final OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(true);
 
             // when, then

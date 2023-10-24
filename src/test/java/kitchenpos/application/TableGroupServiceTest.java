@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -68,23 +67,6 @@ class TableGroupServiceTest {
             assertThat(savedTableGroup.getOrderTables()).hasSize(2);
         }
 
-        @ParameterizedTest
-        @NullAndEmptySource
-        @DisplayName("테이블 그룹의 주문 테이블이 빈 값이거나 컬렉션이 비어있는 경우 예외가 발생한다.")
-        void throwExceptionWhenTableGroupIsNullOrEmpty(List<OrderTableRequest> orderTables) {
-            // given
-            final OrderTable orderTableA = new OrderTable(null, 2, true);
-            final OrderTable orderTableB = new OrderTable(null, 3, true);
-            orderTableRepository.save(orderTableA);
-            orderTableRepository.save(orderTableB);
-
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables);
-
-            // when, then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @Test
         @DisplayName("테이블 그룹의 주문 테이블의 개수가 2개보다 작은 경우 예외가 발생한다.")
         void throwExceptionWhenTableGroupCountIsUnderTwo() {
@@ -97,7 +79,8 @@ class TableGroupServiceTest {
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블은 2개 이상이어야 합니다.");
         }
 
         @Test
@@ -106,26 +89,28 @@ class TableGroupServiceTest {
             // given
             final OrderTable orderTableA = new OrderTable(null, 2, true);
             final OrderTable orderTableB = new OrderTable(null, 3, true);
+            final OrderTable orderTableC = new OrderTable(null, 4, true);
             orderTableRepository.save(orderTableA);
-            orderTableRepository.save(orderTableB);
+            orderTableRepository.save(orderTableC);
 
-            final OrderTableRequest orderTableRequest = new OrderTableRequest(orderTableA.getId());
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(orderTableRequest));
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(orderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(orderTableB.getId());
+            final TableGroupCreateRequest request =
+                    new TableGroupCreateRequest(List.of(orderTableRequestA, orderTableRequestB));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("요청한 주문 테이블 수와 저장된 주문 테이블의 수가 다릅니다.");
         }
 
         @Test
-        @DisplayName("주문 테이블이 빈 테이블이 아닌 경우 예외가 발생한다.")
+        @DisplayName("주문 테이블이 비어있지 않은 경우 예외가 발생한다.")
         void throwExceptionWhenOrderTableIsNotEmpty() {
             final OrderTable orderTableA = new OrderTable(null, 2, false);
             final OrderTable orderTableB = new OrderTable(null, 3, true);
             orderTableRepository.save(orderTableA);
             orderTableRepository.save(orderTableB);
-
-            final List<OrderTable> orderTables = List.of(orderTableA, orderTableB);
 
             final OrderTableRequest orderTableRequestA = new OrderTableRequest(orderTableA.getId());
             final OrderTableRequest orderTableRequestB = new OrderTableRequest(orderTableB.getId());
@@ -134,8 +119,31 @@ class TableGroupServiceTest {
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블은 비어있어야 합니다.");
         }
+
+        @Test
+        @DisplayName("테이블 그룹이 빈 값이 아닌 경우 예외가 발생한다.")
+        void throwExceptionWhenTableGroupIsNonNull() {
+            final TableGroup tableGroup = new TableGroup(new ArrayList<>());
+            tableGroupRepository.save(tableGroup);
+            final OrderTable orderTableA = new OrderTable(tableGroup, 2, true);
+            final OrderTable orderTableB = new OrderTable(null, 3, true);
+            orderTableRepository.save(orderTableA);
+            orderTableRepository.save(orderTableB);
+
+            final OrderTableRequest orderTableRequestA = new OrderTableRequest(orderTableA.getId());
+            final OrderTableRequest orderTableRequestB = new OrderTableRequest(orderTableB.getId());
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(orderTableRequestA, orderTableRequestB));
+
+            // when, then
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("테이블 그룹은 비어있어야 합니다.");
+        }
+
 
         @Test
         @DisplayName("주문 테이블의 테이블 그룹 ID가 이미 있는 경우 예외가 발생한다.")
@@ -149,12 +157,10 @@ class TableGroupServiceTest {
             final OrderTable savedOrderTableA = orderTableRepository.save(orderTableA);
             final OrderTable savedOrderTableB = orderTableRepository.save(orderTableB);
 
-            final List<OrderTable> orderTables = List.of(savedOrderTableA, savedOrderTableB);
-
             final OrderTableRequest orderTableRequestA = new OrderTableRequest(savedOrderTableA.getId());
             final OrderTableRequest orderTableRequestB = new OrderTableRequest(savedOrderTableB.getId());
-            final TableGroupCreateRequest request = new TableGroupCreateRequest(
-                    List.of(orderTableRequestA, orderTableRequestB));
+            final TableGroupCreateRequest request =
+                    new TableGroupCreateRequest(List.of(orderTableRequestA, orderTableRequestB));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(request))

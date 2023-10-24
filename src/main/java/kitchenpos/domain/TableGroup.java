@@ -27,9 +27,23 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeEmpty(false);
             addOrderTable(orderTable);
+        }
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            validateEmptyOrderTable(orderTable);
+            orderTable.validateNoTableGroup();
+        }
+    }
+
+    private void validateEmptyOrderTable(final OrderTable orderTable) {
+        if (!orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블은 비어있어야 합니다.");
         }
     }
 
@@ -42,23 +56,7 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }
