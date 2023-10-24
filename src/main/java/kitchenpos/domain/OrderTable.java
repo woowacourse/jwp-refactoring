@@ -38,6 +38,11 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void group(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }

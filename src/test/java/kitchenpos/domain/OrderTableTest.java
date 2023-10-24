@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderTableTest {
 
@@ -66,6 +67,23 @@ class OrderTableTest {
         // when, then
         assertThatThrownBy(() -> emptyOrderTable.changeNumberOfGuests(6))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 테이블을 그룹으로 묶는다.")
+    @Test
+    void group() {
+        // given
+        Long tableGroupId = 5L;
+        OrderTable orderTable = new OrderTable();
+
+        // when
+        orderTable.group(tableGroupId);
+
+        // then
+        assertAll(
+                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroupId),
+                () -> assertThat(orderTable.isEmpty()).isFalse()
+        );
     }
 
 }

@@ -12,7 +12,7 @@ public class TableGroup {
         this(id, createdDate, null);
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this(null, createdDate, orderTables);
     }
 
@@ -20,6 +20,26 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public static TableGroup from(List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTable(orderTable);
+        }
+        return new TableGroup(LocalDateTime.now(), orderTables);
+    }
+
+    private static void validateOrderTable(OrderTable orderTable) {
+        if (!orderTable.isEmpty() || orderTable.getTableGroupId() != null) {
+            throw new IllegalArgumentException("비어 있지 않거나, 이미 그룹으로 지정된 테이블은 단체로 지정할 수 없습니다.");
+        }
+    }
+
+    public void assignTables(List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+        for (OrderTable orderTable : this.orderTables) {
+            orderTable.group(this.id);
+        }
     }
 
     public Long getId() {
