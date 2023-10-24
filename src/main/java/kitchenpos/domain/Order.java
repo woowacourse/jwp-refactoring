@@ -71,6 +71,14 @@ public class Order {
         return id;
     }
 
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
