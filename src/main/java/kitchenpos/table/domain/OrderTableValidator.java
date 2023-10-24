@@ -21,10 +21,10 @@ public class OrderTableValidator {
         if (Objects.nonNull(orderTable.getTableGroup())) {
             throw new OrderTableException("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
         }
-        validateNotCookingOrMealOrder(orderTable, "조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
+        validateUngroup(orderTable, "조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
     }
 
-    public void validateNotCookingOrMealOrder(OrderTable orderTable, String errorMessage) {
+    public void validateUngroup(OrderTable orderTable, String errorMessage) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTable.getId(),
                 List.of(COOKING.name(), MEAL.name()))
@@ -32,5 +32,4 @@ public class OrderTableValidator {
             throw new OrderTableException(errorMessage);
         }
     }
-
 }

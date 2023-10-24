@@ -46,7 +46,7 @@ public class OrderTable {
     }
 
     public void ungroup(OrderTableValidator orderTableValidator) {
-        orderTableValidator.validateNotCookingOrMealOrder(this, "조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
+        orderTableValidator.validateUngroup(this, "조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
         this.tableGroup = null;
     }
 
