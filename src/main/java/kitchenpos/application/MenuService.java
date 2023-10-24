@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
@@ -20,16 +19,14 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
-    private final MenuProductRepository menuProductRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository, final MenuProductRepository menuProductRepository) {
+            final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
-        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
