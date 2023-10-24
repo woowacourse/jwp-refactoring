@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1_NAME;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1_PRICE;
@@ -6,7 +6,6 @@ import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1_REQUEST;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductCreateRequest;
 import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.product.domain.Product;

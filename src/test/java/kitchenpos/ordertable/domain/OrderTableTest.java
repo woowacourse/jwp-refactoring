@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.ordertable.domain;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;

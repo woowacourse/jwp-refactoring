@@ -1,12 +1,10 @@
-package kitchenpos.repository;
+package kitchenpos.ordertable.domain;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1;
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;

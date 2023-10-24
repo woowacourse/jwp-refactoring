@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_CHANGE_EMPTY_REQUEST;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_CHANGE_GUEST_REQUEST;
@@ -14,7 +14,6 @@ import kitchenpos.common.fixtures.OrderTableFixtures;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeGuestRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;

@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_NAME;
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_PRICE;
@@ -23,7 +23,6 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderChangeStatusRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemsResponse;

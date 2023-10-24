@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_REQUEST;
 import static kitchenpos.common.fixtures.MenuGroupFixtures.MENU_GROUP1;
@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menugroup.domain.MenuGroupRepository;

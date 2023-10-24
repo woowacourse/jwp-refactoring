@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.menu.domain;
 
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_NAME;
 import static kitchenpos.common.fixtures.MenuFixtures.MENU1_PRICE;
@@ -10,9 +10,6 @@ import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
