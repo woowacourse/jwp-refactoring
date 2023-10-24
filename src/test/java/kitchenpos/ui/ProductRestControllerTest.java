@@ -102,12 +102,12 @@ class ProductRestControllerTest {
     @DisplayName("상품 목록을 반환할 수 있다.")
     @Test
     void list() throws Exception {
+        // given
         final List<ProductResponse> productResponses = List.of(
                 ProductResponse.from(new Product("후라이드 치킨", new Price(BigDecimal.valueOf(17000)))),
                 ProductResponse.from(new Product("양념 치킨", new Price(BigDecimal.valueOf(18000))
                 )));
 
-        // given
         given(productService.list())
                 .willReturn(productResponses);
 
