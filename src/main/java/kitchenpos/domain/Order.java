@@ -88,12 +88,12 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Order order = (Order) o;
-        return Objects.equals(id, order.id) && Objects.equals(orderStatus, order.orderStatus) && Objects.equals(orderedTime, order.orderedTime);
+        return Objects.equals(id, order.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderStatus, orderedTime);
+        return Objects.hash(id);
     }
 
     @Override
