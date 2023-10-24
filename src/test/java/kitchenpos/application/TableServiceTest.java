@@ -8,6 +8,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.Fixtures;
+import kitchenpos.ui.dto.request.OrderTableRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,12 +28,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블을_등록한다() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(0);
+        OrderTableRequest request = new OrderTableRequest(0, false);
 
         // when
-        OrderTable result = tableService.create(orderTable);
+        OrderTableResponse result = tableService.create(request);
 
         // then
         assertThat(result.getId()).isNotNull();
@@ -45,7 +45,7 @@ class TableServiceTest extends ServiceTest {
         fixtures.주문_테이블_저장();
 
         // when
-        List<OrderTable> results = tableService.list();
+        List<OrderTableResponse> results = tableService.list();
 
         // then
         assertThat(results).hasSize(1);

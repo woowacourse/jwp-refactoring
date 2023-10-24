@@ -3,10 +3,13 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.JpaOrderRepository;
 import kitchenpos.dao.JpaOrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.request.OrderTableRequest;
+import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,15 +27,18 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroup(null);
-
-        return jpaOrderTableRepository.save(orderTable);
+    public OrderTableResponse create(final OrderTableRequest request) {
+        OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
+        OrderTable savedOrderTable = jpaOrderTableRepository.save(orderTable);
+        return new OrderTableResponse(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return jpaOrderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        List<OrderTable> orderTables = jpaOrderTableRepository.findAll();
+
+        return orderTables.stream()
+                .map(OrderTableResponse::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional

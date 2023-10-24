@@ -33,6 +33,10 @@ public class OrderTable {
         this.isEmpty = isEmpty;
     }
 
+    public OrderTable(int numberOfGuests, boolean isEmpty) {
+        this(null, numberOfGuests, isEmpty);
+    }
+
     public OrderTable() {
     }
 
