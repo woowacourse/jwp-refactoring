@@ -106,18 +106,6 @@ class TableGroupServiceTest {
         }
 
         @Test
-        void 주문_테이블이_비어있으면_예외가_발생한다() {
-            // given
-            final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
-                    Collections.emptyList()
-            );
-
-            // expected
-            assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 주문_테이블의_개수가_2미만이면_예외가_발생한다() {
             // given
             final TableGroupCreateRequest 테이블_그룹_요청값 = new TableGroupCreateRequest(
@@ -126,7 +114,8 @@ class TableGroupServiceTest {
 
             // expected
             assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("2개 이상의 주문 테이블을 그룹으로 만들 수 있습니다.");
         }
 
         @Test
@@ -140,7 +129,8 @@ class TableGroupServiceTest {
 
             // expected
             assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("주문 테이블의 정보가 올바르지 않습니다.");
         }
 
         @Test
@@ -154,7 +144,8 @@ class TableGroupServiceTest {
 
             // expected
             assertThatThrownBy(() -> tableGroupService.create(테이블_그룹_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("주문 테이블이 비어있지 않습니다.");
         }
 
         @Test

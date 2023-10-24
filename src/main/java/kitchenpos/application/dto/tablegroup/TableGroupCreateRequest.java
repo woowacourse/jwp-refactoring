@@ -1,6 +1,7 @@
 package kitchenpos.application.dto.tablegroup;
 
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class TableGroupCreateRequest {
 
@@ -10,7 +11,14 @@ public class TableGroupCreateRequest {
     }
 
     public TableGroupCreateRequest(final List<OrderTableRequest> orderTables) {
+        validate(orderTables);
         this.orderTables = orderTables;
+    }
+
+    private void validate(final List<OrderTableRequest> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables)) {
+            throw new IllegalArgumentException("주문 테이블을 입력해주세요");
+        }
     }
 
     public List<OrderTableRequest> getOrderTables() {

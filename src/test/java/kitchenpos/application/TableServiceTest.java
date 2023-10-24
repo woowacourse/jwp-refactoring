@@ -139,11 +139,11 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_이미_테이블_그룹에_속해있으면_예외가_발생한다() {
             // given
-            final OrderTableCreateResponse 저장된_주문_테이블1 = tableService.create(new OrderTableCreateRequest(2, false));
-            final OrderTableCreateResponse 저장된_주문_테이블2 = tableService.create(new OrderTableCreateRequest(3, false));
+            final OrderTableCreateResponse 저장된_주문_테이블1 = tableService.create(new OrderTableCreateRequest(2, true));
+            final OrderTableCreateResponse 저장된_주문_테이블2 = tableService.create(new OrderTableCreateRequest(3, true));
 
-            final OrderTable 주문_테이블1 = new OrderTable(저장된_주문_테이블1.getId(), null, 2, false);
-            final OrderTable 주문_테이블2 = new OrderTable(저장된_주문_테이블2.getId(), null, 3, false);
+            final OrderTable 주문_테이블1 = new OrderTable(저장된_주문_테이블1.getId(), null, 2, true);
+            final OrderTable 주문_테이블2 = new OrderTable(저장된_주문_테이블2.getId(), null, 3, true);
             final TableGroup 테이블_그룹 = 테이블_그룹(null, null, List.of(주문_테이블1, 주문_테이블2));
 
             tableGroupRepository.save(테이블_그룹);
