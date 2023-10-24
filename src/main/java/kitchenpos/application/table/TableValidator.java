@@ -16,8 +16,8 @@ public class TableValidator {
         this.orderRepository = orderRepository;
     }
 
-    public void validateOrderStatus(final Long orderId) {
-        final List<Order> orders = orderRepository.findByOrderByOrderTableId(orderId);
+    public void validateOrderStatus(final Long tableId) {
+        final List<Order> orders = orderRepository.findByOrderByOrderTableId(tableId);
         final boolean containsNotCompletionOrder = orders.stream()
                 .anyMatch(Order::isNotCompletionStatus);
         if (containsNotCompletionOrder) {

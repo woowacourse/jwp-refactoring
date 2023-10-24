@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import kitchenpos.domain.order.Order;
-
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o "
@@ -17,6 +15,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o "
             + "FROM orders o "
-            + "WHERE o.orderTable.tableGroup.id = :tableGroupId")
+            + "WHERE o.orderTable.tableGroupId = :tableGroupId")
     List<Order> findByOrderByTableGroupId(@Param("tableGroupId") final Long tableGroupId);
 }

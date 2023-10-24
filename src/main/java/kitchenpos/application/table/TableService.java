@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+import kitchenpos.application.tablegroup.GroupingEvent;
+import kitchenpos.application.tablegroup.UngroupingEvent;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.ChangeEmptyRequest;
@@ -40,6 +44,24 @@ public class TableService {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
         savedOrderTable.updateEmptyStatus(request.isEmpty(), tableValidator);
         return savedOrderTable;
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void group(final GroupingEvent groupingEvent) {
+        final List<Long> ids = groupingEvent.getTableIds();
+        final List<OrderTable> orderTables = orderTableRepository.findAllById(ids);
+
+        if (orderTables.size() != ids.size()) {
+            throw new IllegalArgumentException("유효하지 않은 OrderTable을 포함하고 있습니다.");
+        }
+
+        orderTables.forEach(orderTable -> orderTable.group(groupingEvent.getTableGroupId()));
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    public void ungroup(final UngroupingEvent ungroupingEvent) {
+        final List<OrderTable> tables = orderTableRepository.findAllByGroupId(ungroupingEvent.getTableGroupId());
+        tables.forEach(table -> table.ungroup(tableValidator));
     }
 
     private OrderTable getOrderTable(final Long orderTableId) {

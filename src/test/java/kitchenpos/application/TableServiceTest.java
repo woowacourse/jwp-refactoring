@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.application.table.TableService;
+import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
@@ -64,7 +65,7 @@ class TableServiceTest extends BaseServiceTest {
         assertSoftly(softly -> {
             softly.assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
             softly.assertThat(createdOrderTable.isEmpty()).isTrue();
-            softly.assertThat(createdOrderTable.getTableGroup()).isNull();
+            softly.assertThat(createdOrderTable.getTableGroupId()).isNull();
             softly.assertThat(createdOrderTable.getId()).isNotNull();
         });
     }

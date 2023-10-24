@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.application.table.TableService;
+import kitchenpos.application.tablegroup.TableGroupService;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
@@ -65,11 +67,15 @@ class TableGroupServiceTest extends BaseServiceTest{
             final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
 
             //then
+            final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+            final List<OrderTable> tables = orderTableRepository.findAllById(orderTableIds);
+            final boolean match = tables.stream()
+                    .map(OrderTable::getTableGroupId)
+                    .anyMatch(groupId -> !groupId.equals(savedTableGroup.getId()));
+
             assertSoftly(softAssertions -> {
-                assertThat(savedTableGroup.getOrderTables().get(0).getTableGroup().getId()).isEqualTo(savedTableGroup.getId());
-                assertThat(savedTableGroup.getOrderTables().get(1).getTableGroup().getId()).isEqualTo(savedTableGroup.getId());
-                assertThat(savedTableGroup.getOrderTables()).hasSize(2);
                 assertThat(savedTableGroup.getId()).isNotNull();
+                assertThat(match).isFalse();
             });
         }
 
@@ -154,22 +160,24 @@ class TableGroupServiceTest extends BaseServiceTest{
         void unGroupTables() {
             //given
             final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
-            final List<OrderTable> orderTables = savedTableGroup.getOrderTables();
-            final Long id1 = orderTables.get(0).getId();
-            final Long id2 = orderTables.get(1).getId();
+            final List<Long> tableIds = orderTableRepository.findAllByGroupId(savedTableGroup.getId())
+                    .stream()
+                    .map(OrderTable::getId)
+                    .collect(Collectors.toList());
 
             //when
             tableGroupService.ungroup(savedTableGroup.getId());
 
+
             //then
-            final OrderTable orderTable1 = orderTableRepository.findById(id1).get();
-            final OrderTable orderTable2 = orderTableRepository.findById(id2).get();
+            final OrderTable orderTable1 = orderTableRepository.findById(tableIds.get(0)).get();
+            final OrderTable orderTable2 = orderTableRepository.findById(tableIds.get(1)).get();
 
             assertSoftly(softAssertions -> {
                 assertThat(orderTable1.isEmpty()).isFalse();
                 assertThat(orderTable2.isEmpty()).isFalse();
-                assertThat(orderTable1.getTableGroup()).isNull();
-                assertThat(orderTable2.getTableGroup()).isNull();
+                assertThat(orderTable1.getTableGroupId()).isNull();
+                assertThat(orderTable2.getTableGroupId()).isNull();
             });
         }
 
@@ -179,8 +187,12 @@ class TableGroupServiceTest extends BaseServiceTest{
         void unGroupWithInvalidStatusTable(final String status) {
             //given
             final TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
-            final OrderTable orderTable = savedTableGroup.getOrderTables().get(0);
 
+            final List<Long> tableIds = orderTableRepository.findAllByGroupId(savedTableGroup.getId())
+                    .stream()
+                    .map(OrderTable::getId)
+                    .collect(Collectors.toList());
+            final OrderTable orderTable = orderTableRepository.findById(tableIds.get(0)).get();
             final Order order = new Order(orderTable, null);
             orderRepository.save(order);
 

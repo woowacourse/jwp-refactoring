@@ -1,16 +1,14 @@
 package kitchenpos.domain.table;
 
-import java.util.Objects;
+import static java.util.Objects.nonNull;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import kitchenpos.application.table.TableValidator;
-import kitchenpos.domain.tablegroup.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -20,8 +18,7 @@ public class OrderTable {
     private Long id;
 
     @JoinColumn(name = "table_group_id")
-    @ManyToOne
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
@@ -35,19 +32,19 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    public OrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public void updateEmptyStatus(final boolean empty, final TableValidator tableValidator) {
-        if (Objects.nonNull(tableGroup)) {
+        if (nonNull(tableGroupId)) {
             throw new IllegalArgumentException("그룹화 된 테이블은 못비워용");
         }
         tableValidator.validateOrderStatus(this.id);
@@ -67,14 +64,17 @@ public class OrderTable {
     }
 
 
-    public void changeGroup(final TableGroup tableGroup) {
+    public void group(final Long tableGroup) {
+        if (!empty || nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("비어있지 않거나, 이미 그룹화된 테이블을 포함하고 있습니다.");
+        }
         this.empty = false;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroup;
     }
 
-    public void ungroup() {
-        tableGroup.remove(this);
-        this.tableGroup = null;
+    public void ungroup(final TableValidator tableValidator) {
+        tableValidator.validateOrderStatus(this.id);
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -82,8 +82,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -93,5 +93,4 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
-
 }
