@@ -37,19 +37,20 @@ public class TableService {
     }
 
     public void changeEmpty(final Long orderTableId, final boolean isEmpty) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateTableGroupIsNonNull();
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        checkOrderExistsWithStatus(orderTableId);
         savedOrderTable.updateEmpty(isEmpty);
     }
 
+    private void checkOrderExistsWithStatus(final Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public void changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable orderTable = orderTableRepository.getById(orderTableId);
         orderTable.validateNumberOfGuests();
         orderTable.validateIsEmpty();
         orderTable.updateNumberOfGuests(numberOfGuests);
