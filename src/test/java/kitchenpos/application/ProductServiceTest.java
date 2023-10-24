@@ -6,10 +6,11 @@ import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1_REQUEST;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.domain.product.Product;
-import kitchenpos.dto.product.ProductCreateRequest;
-import kitchenpos.dto.product.ProductResponse;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

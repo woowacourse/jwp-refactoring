@@ -3,8 +3,8 @@ package kitchenpos.common.fixtures;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT1;
 import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2;
 
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuProductRequest;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductFixtures {
 

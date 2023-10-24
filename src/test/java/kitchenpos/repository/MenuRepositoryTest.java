@@ -10,10 +10,13 @@ import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.product.Product;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

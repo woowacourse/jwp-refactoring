@@ -2,7 +2,8 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.exception.OrderException;
+import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.order.exception.OrderException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

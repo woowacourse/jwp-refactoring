@@ -1,9 +1,9 @@
 package kitchenpos.common.fixtures;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.table.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.table.OrderTableChangeGuestRequest;
-import kitchenpos.dto.table.OrderTableCreateRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableChangeGuestRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
 
 public class OrderTableFixtures {
 

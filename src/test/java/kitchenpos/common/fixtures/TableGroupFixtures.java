@@ -1,9 +1,9 @@
 package kitchenpos.common.fixtures;
 
 import java.util.List;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.table.OrderTableFindRequest;
-import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
+import kitchenpos.ordertable.application.dto.OrderTableFindRequest;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableGroupFixtures {
 

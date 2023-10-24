@@ -8,7 +8,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

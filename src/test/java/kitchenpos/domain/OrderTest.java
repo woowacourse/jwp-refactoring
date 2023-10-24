@@ -3,7 +3,10 @@ package kitchenpos.domain;
 import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.exception.OrderException;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.exception.OrderException;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -4,8 +4,10 @@ import static kitchenpos.common.fixtures.OrderTableFixtures.ORDER_TABLE1_NUMBER_
 import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.exception.TableGroupException;
-import kitchenpos.exception.TableGroupException.CannotCreateTableGroupStateException;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroupValidator;
+import kitchenpos.tablegroup.exception.TableGroupException;
+import kitchenpos.tablegroup.exception.TableGroupException.CannotCreateTableGroupStateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

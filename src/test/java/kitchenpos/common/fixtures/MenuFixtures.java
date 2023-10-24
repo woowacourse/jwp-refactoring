@@ -8,9 +8,9 @@ import static kitchenpos.common.fixtures.ProductFixtures.PRODUCT2_PRICE;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.dto.menu.MenuCreateRequest;
-import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.menu.application.dto.MenuCreateRequest;
+import kitchenpos.menu.application.dto.MenuProductRequest;
+import kitchenpos.menu.domain.Menu;
 
 public class MenuFixtures {
 

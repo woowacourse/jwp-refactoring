@@ -5,8 +5,10 @@ import static kitchenpos.common.fixtures.TableGroupFixtures.TABLE_GROUP1;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
