@@ -52,7 +52,8 @@ public class TableService {
     }
 
     private void validateOrderStatus(Long orderTableId) {
-        Order order = orderRepository.findByOrderTableId(orderTableId);
+        Order order = orderRepository.findByOrderTableId(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
         if (order == null) {
             return;
         }

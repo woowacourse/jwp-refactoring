@@ -3,7 +3,6 @@ package kitchenpos.domain.order;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ public class Order {
     private final List<OrderLineItem> orderLineItems;
 
     private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        validate(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -28,17 +26,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validate(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+    public Order changeOrderStatus(OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION == this.orderStatus) {
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
         }
-    }
-
-    public Order updateOrderLineItems(List<OrderLineItem> savedOrderLineItems) {
-        return new Order(id, orderTableId, orderStatus, orderedTime, savedOrderLineItems);
-    }
-
-    public Order updateStatus(OrderStatus orderStatus) {
         return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 

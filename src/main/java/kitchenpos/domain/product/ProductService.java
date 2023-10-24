@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
     private final ProductRepository productRepository;
 
@@ -20,8 +21,7 @@ public class ProductService {
     @Transactional
     public CreateProductResponse create(final CreateProductRequest request) {
         Product product = ProductMapper.toProduct(request);
-        Product entity = productRepository.save(product);
-        return CreateProductResponse.from(entity);
+        return CreateProductResponse.from(productRepository.save(product));
     }
 
     public List<ProductResponse> list() {

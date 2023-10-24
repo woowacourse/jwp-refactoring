@@ -3,79 +3,35 @@ package kitchenpos.domain.order;
 import kitchenpos.application.dto.request.CreateOrderRequest;
 import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.application.dto.response.CreateOrderResponse;
-import kitchenpos.application.dto.response.OrderLineItemResponse;
 import kitchenpos.application.dto.response.OrderResponse;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static kitchenpos.application.dto.request.CreateOrderRequest.CreateOrderLineItem;
-
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderMapper orderMapper;
-    private final OrderLineItemMapper orderLineItemMapper;
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final OrderMapper orderMapper,
-            final OrderLineItemMapper orderLineItemMapper,
-            final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
+            final OrderValidator orderValidator) {
         this.orderMapper = orderMapper;
-        this.orderLineItemMapper = orderLineItemMapper;
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public CreateOrderResponse create(final CreateOrderRequest request) {
-        final OrderTable entity = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (entity.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItems());
-        final Order order = orderMapper.toOrder(request, orderLineItems);
-        final Order savedOrder = orderRepository.save(order);
-
-        return CreateOrderResponse.of(
-                savedOrder.updateOrderLineItems(orderLineItems),
-                orderLineItems.stream()
-                        .map(OrderLineItemResponse::from)
-                        .collect(Collectors.toList())
-        );
-    }
-
-    private List<OrderLineItem> getOrderLineItems(List<CreateOrderLineItem> orderLineItems) {
-        validateOrderLineItems(orderLineItems);
-        return orderLineItems.stream()
-                .map(orderLineItemMapper::toOrderLineItem)
-                .collect(Collectors.toList());
-    }
-
-    private void validateOrderLineItems(List<CreateOrderLineItem> createOrderLineItems) {
-        List<Long> menuIds = createOrderLineItems.stream()
-                .map(CreateOrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (createOrderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        final Order order = orderMapper.toOrder(request);
+        orderValidator.validate(order);
+        return CreateOrderResponse.from(orderRepository.save(order));
     }
 
     public List<OrderResponse> list() {
@@ -86,18 +42,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final UpdateOrderStatusRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        Order updated = savedOrder.updateStatus(orderStatus);
-
-        orderRepository.save(updated);
-
-        return OrderResponse.from(updated.updateOrderLineItems(savedOrder.getOrderLineItems()));
+        final Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
+        Order updated = order.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
+        return OrderResponse.from(orderRepository.save(updated));
     }
 }

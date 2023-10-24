@@ -75,7 +75,8 @@ public class TableGroupService {
     }
 
     private void validateOrderTable(OrderTable orderTable) {
-        Order order = orderRepository.findByOrderTableId(orderTable.getId());
+        Order order = orderRepository.findByOrderTableId(orderTable.getId())
+                .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
         if (order.getOrderStatus() == OrderStatus.COOKING || order.getOrderStatus() == OrderStatus.MEAL) {
             throw new IllegalArgumentException();
         }
