@@ -1,37 +1,29 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.util.Collections;
+import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
-@ExtendWith(MockitoExtension.class)
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class TableServiceTest {
+class TableServiceTest extends ServiceTest {
 
-    @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @InjectMocks
+    @Autowired
     private TableService tableService;
 
     @Nested
@@ -40,16 +32,17 @@ class TableServiceTest {
         @Test
         void 테이블을_등록할_수_있다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.save(any()))
-                    .willReturn(orderTable);
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            final var request = OrderTableFixture.테이블요청_생성(orderTable);
 
             // when
-            final var actual = tableService.create(orderTable);
+            final var actual = tableService.create(request);
 
             // then
+            final var expected = OrderTableResponse.toResponse(orderTable);
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+                    .ignoringFields("id")
+                    .isEqualTo(expected);
         }
     }
 
@@ -59,16 +52,16 @@ class TableServiceTest {
         @Test
         void 테이블_목록을_조회할_수_있다() {
             // given
-            final var orderTable = Collections.singletonList(OrderTableFixture.주문테이블_1명());
-            given(orderTableDao.findAll())
-                    .willReturn(orderTable);
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
 
             // when
             final var actual = tableService.list();
 
             // then
+            final var expected = Collections.singletonList(OrderTableResponse.toResponse(savedOrderTable));
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(orderTable);
+                    .isEqualTo(expected);
         }
     }
 
@@ -78,18 +71,13 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_빈_테이블로_변경할_수_있다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
-                    .willReturn(false);
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
 
-            final var expected = OrderTableFixture.빈테이블_1명();
-            given(orderTableDao.save(any()))
-                    .willReturn(expected);
+            final var request = OrderTableFixture.테이블요청_empty_수정_생성(true);
 
             // when
-            final var actual = tableService.changeEmpty(orderTable.getId(), orderTable);
+            final var actual = tableService.changeEmpty(savedOrderTable.getId(), request);
 
             // then
             assertThat(actual.isEmpty()).isTrue();
@@ -98,42 +86,60 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.empty());
+            final var orderTable = OrderTableFixture.주문테이블_INVALID();
+            final var request = OrderTableFixture.테이블요청_empty_수정_생성(true);
 
             // when & then
             final var id = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(id, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 단체_지정되어_있는_테이블이면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            orderTable.setTableGroupId(1L);
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(orderTable));
+            final var orderTable1 = OrderTableFixture.빈테이블_1명();
+            final var orderTable2 = OrderTableFixture.빈테이블_1명();
+            final var savedOrderTables = 복수_주문테이블_저장(orderTable1, orderTable2);
+
+            final var tableGroup = TableGroupFixture.단체지정_여러_테이블(savedOrderTables);
+            단일_단체지정_저장(tableGroup);
+
+            final var request = OrderTableFixture.테이블요청_empty_수정_생성(true);
 
             // when & then
-            final var id = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(id, orderTable))
+            final var id = orderTable1.getId();
+            assertThatThrownBy(() -> tableService.changeEmpty(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_상태가_조리_또는_식사면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
-                    .willReturn(true);
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
+
+            final var menuGroup = MenuGroupFixture.메뉴그룹_신메뉴();
+            final var savedMenuGroup = 단일_메뉴그룹_저장(menuGroup);
+
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
+
+            final var menuProduct1 = MenuProductFixture.메뉴상품_생성(product1, 2L);
+            final var menuProduct2 = MenuProductFixture.메뉴상품_생성(product2, 1L);
+            final var menu = MenuFixture.메뉴_망고치킨_17000원(savedMenuGroup, menuProduct1, menuProduct2);
+            final var savedMenu = 단일_메뉴_저장(menu);
+
+            final var orderLineItem = OrderLineItemFixture.주문항목_망고치킨_2개(savedMenu);
+            final var order = 단일_주문_저장(savedOrderTable, orderLineItem);
+            order.changeOrderStatus(MEAL);
+
+            final var request = OrderTableFixture.테이블요청_empty_수정_생성(true);
 
             // when & then
             final var id = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeEmpty(id, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -144,44 +150,46 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_방문한_손님_수를_변경할_수_있다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(orderTable));
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
 
-            final var expected = OrderTableFixture.주문테이블_5명();
-            given(orderTableDao.save(any()))
-                    .willReturn(expected);
+            final var changedNumberOfGuests = 10;
+            final var request = OrderTableFixture.테이블요청_손님수_수정_생성(changedNumberOfGuests);
 
             // when
-            final var actual = tableService.changeNumberOfGuests(orderTable.getId(), expected);
+            final var actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
             // then
-            assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(expected);
+            assertThat(actual.getNumberOfGuests()).usingRecursiveComparison()
+                    .isEqualTo(changedNumberOfGuests);
         }
 
         @Test
         void 방문한_손님_수가_0보다_작으면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            orderTable.setNumberOfGuests(-1);
+            final var orderTable = OrderTableFixture.주문테이블_N명(1);
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
+
+            final var changedNumberOfGuests = -1;
+            final var request = OrderTableFixture.테이블요청_손님수_수정_생성(changedNumberOfGuests);
 
             // when & then
-            final var id = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, orderTable))
+            final var id = savedOrderTable.getId();
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final var orderTable = OrderTableFixture.주문테이블_1명();
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.empty());
+            final var orderTable = OrderTableFixture.주문테이블_INVALID();
+
+            final var changedNumberOfGuests = 10;
+            final var request = OrderTableFixture.테이블요청_손님수_수정_생성(changedNumberOfGuests);
 
             // when & then
             final var id = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, orderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -189,12 +197,14 @@ class TableServiceTest {
         void 빈_테이블이면_예외가_발생한다() {
             // given
             final var orderTable = OrderTableFixture.빈테이블_1명();
-            given(orderTableDao.findById(any()))
-                    .willReturn(Optional.of(orderTable));
+            final var savedOrderTable = 단일_주문테이블_저장(orderTable);
+
+            final var changedNumberOfGuests = 10;
+            final var request = OrderTableFixture.테이블요청_손님수_수정_생성(changedNumberOfGuests);
 
             // when & then
-            final var id = orderTable.getId();
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, orderTable))
+            final var id = savedOrderTable.getId();
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(id, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

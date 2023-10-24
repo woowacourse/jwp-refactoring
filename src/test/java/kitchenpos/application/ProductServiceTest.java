@@ -1,33 +1,22 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.fixture.ProductFixture;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+import java.util.List;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.fixture.ProductFixture;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class ProductServiceTest {
+@DisplayNameGeneration(ReplaceUnderscores.class)
+class ProductServiceTest extends ServiceTest {
 
-    @Mock
-    private ProductDao productDao;
-
-    @InjectMocks
+    @Autowired
     private ProductService productService;
 
     @Nested
@@ -37,25 +26,25 @@ class ProductServiceTest {
         void 상품을_등록할_수_있다() {
             // given
             final var product = ProductFixture.상품_망고_1000원();
-            given(productDao.save(any()))
-                    .willReturn(product);
+            final var request = ProductFixture.상품요청_생성(product);
 
             // when
-            final var actual = productService.create(product);
+            final var actual = productService.create(request);
 
             // then
+            final var expected = ProductResponse.toResponse(ProductFixture.상품_망고_1000원());
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(product);
+                    .ignoringFields("id")
+                    .isEqualTo(expected);
         }
 
         @Test
         void 상품의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            final var product = ProductFixture.상품_망고_1000원();
-            product.setPrice(BigDecimal.valueOf(-1));
+            final var request = ProductFixture.상품요청_생성("INVALID", -1);
 
             // when & then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -66,16 +55,18 @@ class ProductServiceTest {
         @Test
         void 상품_목록을_조회할_수_있다() {
             // given
-            final var products = List.of(ProductFixture.상품_망고_1000원(), ProductFixture.상품_치킨_15000원());
-            given(productDao.findAll())
-                    .willReturn(products);
+            final var product1 = ProductFixture.상품_망고_1000원();
+            final var product2 = ProductFixture.상품_치킨_15000원();
+            복수_상품_저장(product1, product2);
 
             // when
             final var actual = productService.list();
 
             // then
+            final var expected = List.of(ProductResponse.toResponse(product1), ProductResponse.toResponse(product2));
             assertThat(actual).usingRecursiveComparison()
-                    .isEqualTo(products);
+                    .ignoringFields("id")
+                    .isEqualTo(expected);
         }
     }
 }

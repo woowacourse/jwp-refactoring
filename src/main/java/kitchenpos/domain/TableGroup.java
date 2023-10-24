@@ -1,34 +1,81 @@
 package kitchenpos.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.GenerationType.IDENTITY;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
+
+@Entity
 public class TableGroup {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private LocalDateTime createdDate = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "tableGroup", cascade = PERSIST)
+    private List<OrderTable> orderTables = new ArrayList<>();
+
+    protected TableGroup() {
+    }
+
+    public TableGroup(final List<OrderTable> orderTables) {
+        validate(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            addOrderTable(orderTable);
+        }
+    }
+
+    private void validate(final List<OrderTable> orderTables) {
+        validateSize(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            validateOrderTableEmpty(orderTable);
+            validateGrouped(orderTable);
+        }
+    }
+
+    private void validateGrouped(final OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderTableEmpty(final OrderTable orderTable) {
+        if (!orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateSize(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void addOrderTable(final OrderTable orderTable) {
+        this.orderTables.add(orderTable);
+        if (orderTable.getTableGroup() != this) {
+            orderTable.changeTableGroup(this);
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

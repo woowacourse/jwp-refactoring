@@ -1,44 +1,39 @@
 package kitchenpos.fixture;
 
+import java.util.List;
+import kitchenpos.application.dto.request.TableCreateRequest;
+import kitchenpos.application.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.application.dto.request.TableUpdateNumberOfGuestsRequest;
 import kitchenpos.domain.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderTableFixture {
 
-    public static OrderTable 주문테이블_1명() {
-        final var orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
-        return orderTable;
+    public static OrderTable 주문테이블_N명(final int numberOfGuests) {
+        return new OrderTable(numberOfGuests, false);
     }
 
     public static OrderTable 빈테이블_1명() {
-        final var orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(true);
-        return orderTable;
-    }
-
-    public static OrderTable 주문테이블_5명() {
-        final var orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
-        orderTable.setEmpty(false);
-        return orderTable;
-    }
-
-    public static OrderTable 주문테이블_2명_id_1() {
-        final var orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
-        return orderTable;
+        return new OrderTable(1, true);
     }
 
     public static OrderTable 빈테이블_1명_단체지정() {
-        final var orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(true);
-        orderTable.setTableGroupId(1L);
-        return orderTable;
+        return new OrderTable(TableGroupFixture.단체지정_여러_테이블(List.of(빈테이블_1명(), 빈테이블_1명())), 1, true);
+    }
+
+    public static OrderTable 주문테이블_INVALID() {
+        return new OrderTable(999999L, null, 2, false);
+    }
+
+    public static TableCreateRequest 테이블요청_생성(final OrderTable orderTable) {
+        return new TableCreateRequest(orderTable.getNumberOfGuests(), orderTable.isEmpty());
+    }
+
+    public static TableUpdateNumberOfGuestsRequest 테이블요청_손님수_수정_생성(final int numberOfGuests) {
+        return new TableUpdateNumberOfGuestsRequest(numberOfGuests);
+    }
+
+    public static TableUpdateEmptyRequest 테이블요청_empty_수정_생성(final boolean empty) {
+        return new TableUpdateEmptyRequest(empty);
     }
 }
