@@ -124,7 +124,7 @@ class TableGroupServiceTest {
             final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
 
             assertThat(orderTables)
-                    .extracting(OrderTable::getEmpty)
+                    .extracting(OrderTable::isEmpty)
                     .containsExactly(false, false);
         }
     }

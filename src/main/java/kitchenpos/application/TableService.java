@@ -70,7 +70,7 @@ public class TableService {
     public OrderTable changeNumberOfGuests(final Long orderTableId,
                                            final OrderTableChangeNumberOfGuestsRequest request) {
         final OrderTable savedOrderTable = findOrderTableById(orderTableId);
-        if (savedOrderTable.getEmpty()) {
+        if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());

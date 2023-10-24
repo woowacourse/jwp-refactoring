@@ -104,7 +104,7 @@ class TableServiceTest {
                     tableService.changeEmpty(orderTable.getId(), orderTableChangeEmptyRequest(OrderTable.EMPTY));
 
             //then
-            assertThat(changedOrderTable.getEmpty()).isTrue();
+            assertThat(changedOrderTable.isEmpty()).isTrue();
         }
     }
 

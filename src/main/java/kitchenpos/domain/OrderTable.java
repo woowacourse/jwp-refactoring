@@ -64,7 +64,7 @@ public class OrderTable {
         return numberOfGuests.getCount();
     }
 
-    public boolean getEmpty() {
+    public boolean isEmpty() {
         return empty;
     }
 

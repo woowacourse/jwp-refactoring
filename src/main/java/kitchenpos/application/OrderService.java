@@ -71,7 +71,7 @@ public class OrderService {
     }
 
     private void validateOrderTableNotEmpty(final OrderTable orderTable) {
-        if (orderTable.getEmpty()) {
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
