@@ -12,26 +12,25 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
+import kitchenpos.order.application.event.OrderCreateEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.exception.OrderException;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.ordertable.exception.OrderTableException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository,
-                        final OrderTableRepository orderTableRepository) {
+                        final ApplicationEventPublisher eventPublisher) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -42,10 +41,10 @@ public class OrderService {
                 .collect(Collectors.toList());
         OrderValidator.validateOrderLineItemSize(orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(OrderTableException.NotFoundOrderTableException::new);
+        final Long orderTableId = request.getOrderTableId();
+        eventPublisher.publishEvent(new OrderCreateEvent(orderTableId));
 
-        final Order order = Order.from(orderTable);
+        final Order order = Order.from(orderTableId);
         final Order savedOrder = orderRepository.save(order);
         associateOrderLineItem(orderLineItemRequests, savedOrder);
 

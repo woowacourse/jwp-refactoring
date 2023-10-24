@@ -9,18 +9,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.exception.OrderException;
-import kitchenpos.ordertable.domain.OrderTable;
 
 @Entity
 @Table(name = "orders")
@@ -30,9 +26,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -45,22 +40,15 @@ public class Order {
     protected Order() {
     }
 
-    private Order(final OrderTable orderTable, final OrderStatus orderStatus,
+    private Order(final Long orderTableId, final OrderStatus orderStatus,
                   final LocalDateTime orderedTime) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public static Order from(final OrderTable orderTable) {
-        validateOrderTable(orderTable);
-        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
-    }
-
-    private static void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new OrderException.CannotOrderStateByOrderTableEmptyException();
-        }
+    public static Order from(final Long orderTableId) {
+        return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void changeStatus(final OrderStatus orderStatus) {
@@ -83,8 +71,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

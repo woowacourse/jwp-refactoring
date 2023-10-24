@@ -125,7 +125,7 @@ class OrderTableServiceTest extends ServiceTest {
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable);
 
-            final Order order = Order.from(savedOrderTable1);
+            final Order order = Order.from(savedOrderTable1.getId());
             order.changeStatus(OrderStatus.MEAL);
             orderRepository.save(order);
 

@@ -30,13 +30,13 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemsResponse;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
+import kitchenpos.order.application.event.OrderCreateEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.ordertable.exception.OrderTableException;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
@@ -96,7 +96,7 @@ class OrderServiceTest extends ServiceTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
-                softly.assertThat(response.getOrderTable().getId()).isNotNull();
+                softly.assertThat(response.getOrderTableId()).isNotNull();
                 softly.assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
                 softly.assertThat(response.getOrderedTime()).isNotNull();
                 softly.assertThat(response.getOrderLineItems()).isNotNull();
@@ -104,8 +104,8 @@ class OrderServiceTest extends ServiceTest {
         }
 
         @Test
-        @DisplayName("주문 테이블 ID에 해당하는 주문 테이블이 존재하지 않으면 예외가 발생한다.")
-        void throws_notFoundOrderTable() {
+        @DisplayName("주문 생성 이벤트가 발행된다.")
+        void publishOrderCreateEvent() {
             // given
             final OrderCreateRequest orderCreateRequest = ORDER1_CREATE_REQUEST();
             final MenuGroup menuGroup = new MenuGroup(MENU_GROUP1_NAME);
@@ -115,11 +115,13 @@ class OrderServiceTest extends ServiceTest {
             final MenuProduct menuProduct1 = new MenuProduct(savedProduct1, MENU_PRODUCT1_QUANTITY);
             final MenuProduct menuProduct2 = new MenuProduct(savedProduct2, MENU_PRODUCT2_QUANTITY);
             menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
+            orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
 
-            // when & then
-            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                    .isInstanceOf(OrderTableException.NotFoundOrderTableException.class)
-                    .hasMessage("[ERROR] 해당하는 OrderTable이 존재하지 않습니다.");
+            // when
+            orderService.create(orderCreateRequest);
+
+            // then
+            assertThat(applicationEvents.stream(OrderCreateEvent.class).count()).isEqualTo(1);
         }
     }
 
@@ -142,7 +144,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable);
+            Order order = Order.from(savedOrderTable.getId());
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
@@ -183,7 +185,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable);
+            Order order = Order.from(savedOrderTable.getId());
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
@@ -214,7 +216,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable);
+            Order order = Order.from(savedOrderTable.getId());
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
             orderLineItem.confirmOrder(order);
@@ -243,7 +245,7 @@ class OrderServiceTest extends ServiceTest {
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
-            Order order = Order.from(savedOrderTable);
+            Order order = Order.from(savedOrderTable.getId());
             order.changeStatus(OrderStatus.COMPLETION);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);

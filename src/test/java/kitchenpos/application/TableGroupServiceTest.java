@@ -112,13 +112,13 @@ class TableGroupServiceTest extends ServiceTest {
 
             final TableGroup tableGroup = TABLE_GROUP1();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-            
+
             orderTable1.updateTableGroupId(savedTableGroup.getId());
             orderTable2.updateTableGroupId(savedTableGroup.getId());
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 
-            final Order order = Order.from(savedOrderTable1);
+            final Order order = Order.from(savedOrderTable1.getId());
             order.changeStatus(OrderStatus.MEAL);
             orderRepository.save(order);
 
