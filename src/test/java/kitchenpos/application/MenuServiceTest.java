@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ class MenuServiceTest {
         // Given
         MenuCreateRequest createRequest = new MenuCreateRequest(
                 "메뉴1",
-                new BigDecimal("15.0"),
+                new BigDecimal("80000.00"),
                 menuGroupRepository.findAll().get(0).getId(),
                 createMenuProductRequests()
         );
@@ -56,7 +57,7 @@ class MenuServiceTest {
         // Then
         assertThat(createdMenuId).isNotNull();
         assertThat(menuRepository.findById(createdMenuId).get().getName()).isEqualTo("메뉴1");
-        assertThat(menuRepository.findById(createdMenuId).get().getPrice()).isEqualTo(new BigDecimal("15.0"));
+        assertThat(menuRepository.findById(createdMenuId).get().getPrice()).isEqualTo(new BigDecimal("80000.00"));
     }
 
     @Test
@@ -72,7 +73,8 @@ class MenuServiceTest {
 
         // When & Then
         assertThatThrownBy(() -> menuService.create(createRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidDataAccessApiUsageException.class)
+                .hasCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -97,7 +99,7 @@ class MenuServiceTest {
         // Given
         MenuCreateRequest createRequest = new MenuCreateRequest(
                 "메뉴1",
-                new BigDecimal("15.0"),
+                new BigDecimal("80000.00"),
                 menuGroupRepository.findAll().get(0).getId(),
                 createMenuProductRequests()
         );
@@ -110,7 +112,7 @@ class MenuServiceTest {
         MenuResponse menuResponse = menus.get(6);
         assertThat(menus).hasSize(7);
         assertThat(menuResponse.getName()).isEqualTo("메뉴1");
-        assertThat(menuResponse.getPrice()).isEqualTo(new BigDecimal("15.0"));
+        assertThat(menuResponse.getPrice()).isEqualTo(new BigDecimal("80000.00"));
     }
 
     private List<MenuProductRequest> createMenuProductRequests() {

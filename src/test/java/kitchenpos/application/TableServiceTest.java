@@ -27,11 +27,6 @@ class TableServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
-    @BeforeEach
-    public void setUp() {
-        // 필요한 초기화 작업 수행
-    }
-
     @Test
     @DisplayName("테이블을 생성한다.")
     void createTable() {

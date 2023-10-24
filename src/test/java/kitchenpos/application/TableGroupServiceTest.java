@@ -24,7 +24,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
-
     @InjectMocks
     private TableGroupService tableGroupService;
     @Mock

@@ -16,7 +16,7 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    private MenuGroup(final Long id, final String name) {
+    public MenuGroup(final Long id, final String name) {
         this.id = id;
         this.name = name;
     }
