@@ -58,11 +58,11 @@ public class MenuService {
             menuProducts.add(new MenuProduct(menu, product, menuProductDto.getQuantity()));
         }
 
-        checkMenuProcutsPrice(menuProducts, menu.getPrice());
+        checkMenuProductsPrice(menuProducts, menu.getPrice());
         return menuProducts;
     }
 
-    private void checkMenuProcutsPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
+    private void checkMenuProductsPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = menuProduct.getProduct();

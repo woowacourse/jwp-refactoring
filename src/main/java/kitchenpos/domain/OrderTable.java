@@ -69,7 +69,7 @@ public class OrderTable {
     }
 
     public boolean canBeGroup() {
-        return !empty || Objects.nonNull(tableGroup);
+        return empty && Objects.isNull(tableGroup);
     }
 
     public void registerGroup(final TableGroup tableGroup) {

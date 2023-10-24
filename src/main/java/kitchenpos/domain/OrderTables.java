@@ -22,7 +22,7 @@ public class OrderTables {
 
     private void validate(final List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            if (orderTable.canBeGroup()) {
+            if (!orderTable.canBeGroup()) {
                 throw new IllegalArgumentException();
             }
         }
@@ -32,12 +32,6 @@ public class OrderTables {
         return orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-    }
-
-    public void registerGroup(final TableGroup tableGroup) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.registerGroup(tableGroup);
-        }
     }
 
     public void leaveGroup() {

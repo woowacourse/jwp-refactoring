@@ -31,7 +31,6 @@ public class TableGroup {
 
     public TableGroup(final Long id, final OrderTables orderTables) {
         this.id = id;
-        orderTables.registerGroup(this);
         this.orderTables = orderTables;
     }
 

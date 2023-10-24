@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.OrderTableDto;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
@@ -13,7 +14,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,55 +30,52 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final List<OrderTableDto> request) {
+        checkRequestOrderTableSize(request);
+        final List<OrderTable> savedOrderTables = findOrderTables(request);
+        checkSavedOrderTablesHasSameSizeWithRequest(request, savedOrderTables);
+
+        final OrderTables orderTables = new OrderTables(savedOrderTables);
+        final TableGroup tableGroup = new TableGroup(orderTables);
+        return tableGroupRepository.save(tableGroup);
+    }
+
+    private static void checkRequestOrderTableSize(final List<OrderTableDto> request) {
         if (CollectionUtils.isEmpty(request) || request.size() < 2) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private List<OrderTable> findOrderTables(List<OrderTableDto> request) {
         final List<Long> orderTableIds = request.stream()
                 .map(OrderTableDto::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        return orderTableRepository.findAllByIdIn(orderTableIds);
+    }
 
+    private static void checkSavedOrderTablesHasSameSizeWithRequest(List<OrderTableDto> request, List<OrderTable> savedOrderTables) {
         if (request.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            final OrderTable updatedOrderTable = new OrderTable(savedOrderTable.getId(), savedTableGroup, savedOrderTable.getNumberOfGuests(), false);
-            orderTableRepository.save(updatedOrderTable);
-        }
-
-        return savedTableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final TableGroup savedTableGroup = tableGroupRepository.findById(tableGroupId)
+        final TableGroup tableGroup = findTableGroupById(tableGroupId);
+        validateOrderStatusInTableGroup(tableGroup.getTableIdsInGroup());
+        tableGroup.ungroup();
+        tableGroupRepository.save(tableGroup);
+    }
+
+    private TableGroup findTableGroupById(final Long tableGroupId) {
+        return tableGroupRepository.findByIdWithOrderTables(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
 
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(savedTableGroup);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
+    private void validateOrderStatusInTableGroup(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            final OrderTable updatedOrderTable = new OrderTable(orderTable.getId(), null, orderTable.getNumberOfGuests(), false);
-            orderTableRepository.save(updatedOrderTable);
         }
     }
 }

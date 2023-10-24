@@ -65,8 +65,6 @@ class OrderTablesTest {
         final OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
         final OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
         final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-        final TableGroup tableGroup = new TableGroup();
-        orderTables.registerGroup(tableGroup);
 
         // when
         orderTables.leaveGroup();
