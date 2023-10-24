@@ -28,7 +28,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    @Embedded.Nullable
+    @Embedded.Empty
     public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }

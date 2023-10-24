@@ -9,10 +9,10 @@ public class Product {
     @Id
     private Long id;
 
-    @Embedded.Nullable
+    @Embedded.Empty
     private Name name;
 
-    @Embedded.Nullable
+    @Embedded.Empty
     private Price price;
 
     public Product(final Long id, final Name name, final Price price) {

@@ -10,7 +10,7 @@ public class Menu {
     @Id
     private Long id;
     private String name;
-    @Embedded.Nullable
+    @Embedded.Empty
     private Price price;
     private Long menuGroupId;
     @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
