@@ -2,7 +2,9 @@ package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Component;
@@ -11,9 +13,14 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
 
     private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuValidator(ProductRepository productRepository) {
+    public MenuValidator(
+            ProductRepository productRepository,
+            MenuGroupRepository menuGroupRepository
+    ) {
         this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     public void validateMenuProducts(MenuProducts menuProducts, BigDecimal menuPrice) {
@@ -56,4 +63,11 @@ public class MenuValidator {
         return productPrice * productQuantity;
     }
 
+    public void validateMenuGroup(Long menuGroupId) {
+        if (menuGroupRepository.existsById(menuGroupId)) {
+            return;
+        }
+
+        throw new NoSuchElementException("ID에 해당하는 메뉴 그룹이 존재하지 않습니다.");
+    }
 }

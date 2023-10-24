@@ -262,7 +262,7 @@ class TableServiceTest {
         MenuGroup menuGroup = saveMenuGroup();
         Product product = saveProduct();
         MenuProducts menuProducts = MenuProducts.from(List.of(createMenuProduct(product)));
-        Menu menu = Menu.create("TestMenu", BigDecimal.TEN, menuGroup, menuProducts, menuValidator);
+        Menu menu = Menu.create("TestMenu", BigDecimal.TEN, menuGroup.getId(), menuProducts, menuValidator);
 
         return menuRepository.save(menu);
     }

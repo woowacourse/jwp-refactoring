@@ -8,10 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menugroup.domain.MenuGroup;
 
 @Entity
 public class Menu {
@@ -31,9 +28,8 @@ public class Menu {
     @NotNull
     private BigDecimal price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @NotNull
+    private Long menuGroupId;
 
     @Embedded
     private MenuProducts menuProducts;
@@ -44,33 +40,34 @@ public class Menu {
     private Menu(
             String name,
             BigDecimal price,
-            MenuGroup menuGroup,
+            Long menuGroupId,
             MenuProducts menuProducts,
             MenuValidator menuValidator
     ) {
-        validate(name, price, menuGroup);
+        validate(name, price, menuGroupId);
         menuValidator.validateMenuProducts(menuProducts, price);
+        menuValidator.validateMenuGroup(menuGroupId);
 
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
-    private void validate(String name, BigDecimal price, MenuGroup menuGroup) {
+    private void validate(String name, BigDecimal price, Long menuGroupId) {
         validateName(name);
         validatePrice(price);
-        validateMenuGroup(menuGroup);
+        validateMenuGroup(menuGroupId);
     }
 
     public static Menu create(
             String name,
             BigDecimal price,
-            MenuGroup menuGroup,
+            Long menuGroupId,
             MenuProducts menuProducts,
             MenuValidator menuValidator
     ) {
-        return new Menu(name, price, menuGroup, menuProducts, menuValidator);
+        return new Menu(name, price, menuGroupId, menuProducts, menuValidator);
     }
 
     private void validateName(String name) {
@@ -91,8 +88,8 @@ public class Menu {
         }
     }
 
-    private void validateMenuGroup(MenuGroup menuGroup) {
-        if (menuGroup == null) {
+    private void validateMenuGroup(Long menuGroupId) {
+        if (menuGroupId == null) {
             throw new NullPointerException("메뉴 그룹은 null일 수 없습니다.");
         }
     }
@@ -109,8 +106,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

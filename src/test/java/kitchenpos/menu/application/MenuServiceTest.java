@@ -18,6 +18,7 @@ import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.menu.dto.request.MenuCreationRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.menugroup.dto.response.MenuGroupResponse;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,7 +151,7 @@ class MenuServiceTest {
 
         //then
         Menu findMenu = menuRepository.findById(response.getId()).get();
-        MenuResponse expectedMenu = MenuResponse.from(findMenu);
+        MenuResponse expectedMenu = MenuResponse.from(findMenu, MenuGroupResponse.from(menuGroup));
         List<MenuProduct> findMenuProducts = menuProductRepository.findAll();
 
         assertAll(
@@ -171,9 +172,8 @@ class MenuServiceTest {
         //given
         int price = 10000;
         Product product = saveProductAmountOf(price);
-        MenuGroup menuGroup = saveMenuGroup();
         MenuProducts menuProducts = MenuProducts.from(List.of(createMenuProduct(product)));
-        Menu menu = Menu.create("TestMenu", BigDecimal.valueOf(price), menuGroup, menuProducts, menuValidator);
+        Menu menu = Menu.create("TestMenu", BigDecimal.valueOf(price), menuGroup.getId(), menuProducts, menuValidator);
 
         menuRepository.save(menu);
 
@@ -181,7 +181,7 @@ class MenuServiceTest {
         List<MenuResponse> responses = menuService.list();
 
         //then
-        MenuResponse expected = MenuResponse.from(menu);
+        MenuResponse expected = MenuResponse.from(menu, MenuGroupResponse.from(menuGroup));
 
         assertThat(responses).usingRecursiveComparison()
                 .ignoringFields("price")

@@ -10,12 +10,12 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
@@ -183,7 +183,6 @@ class OrderServiceTest {
         OrderResponse response = orderService.create(request);
 
         //when
-        Order savedOrder = orderRepository.findById(response.getId()).get();
         OrderLineItem expectedOrderLineItem = OrderLineItem.create(menu.getId(), 1L);
 
         List<OrderLineItem> orderLineItems =
@@ -253,11 +252,11 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu() {
-        MenuGroup savedMenuGroup = saveMenuGroup();
+        MenuGroup menuGroup = saveMenuGroup();
         Product product = saveProduct();
         MenuProducts menuProducts = MenuProducts.from(List.of(createMenuProduct(product)));
 
-        Menu menu = Menu.create("TestMenu", BigDecimal.TEN, savedMenuGroup, menuProducts, menuValidator);
+        Menu menu = Menu.create("TestMenu", BigDecimal.TEN, menuGroup.getId(), menuProducts, menuValidator);
 
         return menuRepository.save(menu);
     }

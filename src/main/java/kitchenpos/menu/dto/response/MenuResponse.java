@@ -23,12 +23,12 @@ public class MenuResponse {
         this.menuGroups = menuGroups;
     }
 
-    public static MenuResponse from(Menu menu) {
+    public static MenuResponse from(Menu menu, MenuGroupResponse menuGroupResponse) {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
-                MenuGroupResponse.from(menu.getMenuGroup())
+                menuGroupResponse
         );
     }
 
