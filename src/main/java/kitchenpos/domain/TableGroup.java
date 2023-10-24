@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class TableGroup {
 
@@ -64,4 +67,12 @@ public class TableGroup {
 
         this.orderTables = orderTables;
     }
+
+    public List<OrderTable> ungroup() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+        return orderTables;
+    }
+
 }

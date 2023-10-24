@@ -5,7 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
+import kitchenpos.dao.JpaOrderTableRepository;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.Fixtures;
 import kitchenpos.ui.dto.request.TableGroupRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
@@ -21,6 +25,12 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
     TableGroupService tableGroupService;
+
+    @Autowired
+    EntityManager entityManager;
+
+    @Autowired
+    JpaOrderTableRepository jpaOrderTableRepository;
 
     @Nested
     class 단체_지정_등록 {
@@ -64,42 +74,46 @@ class TableGroupServiceTest extends ServiceTest {
 
     }
 
-//    @Nested
-//    class 단체_지정_헤제 {
-//        @Test
-//        void 단체_지정을_헤제한다() {
-//            // given
-//            OrderTable orderTableA = fixtures.빈_테이블_저장();
-//            OrderTable orderTableB = fixtures.빈_테이블_저장();
-//
-//            TableGroup tableGroup = new TableGroup();
-//            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
-//            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-//
-//            // when
-//            tableGroupService.ungroup(savedTableGroup.getId());
-//
-//            // then
-//            assertThat(orderTableA.getTableGroup()).isNull();
-//            assertThat(orderTableB.getTableGroup()).isNull();
-//        }
-//
-//        @Test
-//        void 주문_테이블_상태가_계산완료가_아닌_경우_예외가_발생한다() {
-//            // given
-//            OrderTable orderTableA = fixtures.빈_테이블_저장();
-//            OrderTable orderTableB = fixtures.빈_테이블_저장();
-//
-//            fixtures.주문_저장(orderTableA, OrderStatus.COOKING);
-//            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
-//
-//            TableGroup tableGroup = new TableGroup();
-//            tableGroup.setOrderTables(List.of(orderTableA, orderTableB));
-//            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-//
-//            // when
-//            assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-//                    .isInstanceOf(IllegalArgumentException.class);
-//        }
-//    }
+    @Nested
+    class 단체_지정_헤제 {
+        @Test
+        void 단체_지정을_헤제한다() {
+            // given
+            TableGroup tableGroup = fixtures.단체_지정_저장();
+            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup, true);
+            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup, true);
+
+            fixtures.주문_저장(orderTableA, OrderStatus.COMPLETION);
+            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
+
+            entityManager.clear();
+
+            // when
+            tableGroupService.ungroup(tableGroup.getId());
+
+            // then
+            List<OrderTable> orderTables = jpaOrderTableRepository.findAllByIdIn(
+                    List.of(orderTableA.getId(), orderTableB.getId())
+            );
+            assertThat(orderTables.get(0).getTableGroup()).isNull();
+            assertThat(orderTables.get(1).getTableGroup()).isNull();
+        }
+
+        @Test
+        void 주문_테이블_상태가_계산완료가_아닌_경우_예외가_발생한다() {
+            // given
+            TableGroup tableGroup = fixtures.단체_지정_저장();
+            OrderTable orderTableA = fixtures.주문_테이블_저장(tableGroup, true);
+            OrderTable orderTableB = fixtures.주문_테이블_저장(tableGroup, true);
+
+            fixtures.주문_저장(orderTableA, OrderStatus.COOKING);
+            fixtures.주문_저장(orderTableB, OrderStatus.COMPLETION);
+
+            entityManager.clear();
+
+            // when
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }

@@ -63,9 +63,7 @@ public class TableGroupService {
         TableGroup tableGroup = jpaTableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        final List<OrderTable> orderTables = jpaOrderTableRepository.findAllByTableGroup(tableGroup);
-
-        final List<Long> orderTableIds = orderTables.stream()
+        final List<Long> orderTableIds = tableGroup.getOrderTables().stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
@@ -74,10 +72,6 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
-            jpaOrderTableRepository.save(orderTable);
-        }
+        tableGroup.ungroup();
     }
 }

@@ -78,4 +78,10 @@ public class OrderTable {
     public void setEmpty(final boolean empty) {
         this.isEmpty = empty;
     }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.isEmpty = false;
+    }
+
 }
