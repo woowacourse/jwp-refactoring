@@ -4,17 +4,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.GroupedTables;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class OrderTableTest {
 
     @DisplayName("테이블에 방문한 손님 수는 0 이상이어야 한다.")
     @Test
     void createOrderTableFailTest_ByNumberOfGuestsIsLessThanZero() {
-        assertThatThrownBy(() -> OrderTable.createWithoutTableGroup(-1, Boolean.TRUE))
+        assertThatThrownBy(() -> OrderTable.create(-1, Boolean.TRUE))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블에 방문한 손님 수는 0 이상이어야 합니다.");
     }
@@ -23,7 +25,7 @@ class OrderTableTest {
     @Test
     void changeNumberOfGuestsFailTest_ByEmpty() {
         //given
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.TRUE);
+        OrderTable orderTable = OrderTable.create(0, Boolean.TRUE);
 
         //when then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(1000))
@@ -35,9 +37,10 @@ class OrderTableTest {
     @Test
     void changeEmptyFailTest_ByExistsGroupedTable() {
         //given
-        OrderTable orderTable1 = OrderTable.createWithoutTableGroup(0, Boolean.TRUE);
-        OrderTable orderTable2 = OrderTable.createWithoutTableGroup(0, Boolean.TRUE);
-        TableGroup tableGroup = TableGroup.createWithGrouping(List.of(orderTable1, orderTable2));
+        OrderTable orderTable1 = OrderTable.create(0, Boolean.TRUE);
+        OrderTable orderTable2 = OrderTable.create(0, Boolean.TRUE);
+        GroupedTables groupedTables = GroupedTables.createForGrouping(List.of(orderTable1, orderTable2));
+        groupedTables.group(1L);
 
         //when then
         assertThatThrownBy(() -> orderTable1.changeEmpty(Boolean.FALSE))
@@ -49,7 +52,7 @@ class OrderTableTest {
     @Test
     void changeNumberOfGuestsSuccessTest() {
         //given
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.FALSE);
+        OrderTable orderTable = OrderTable.create(0, Boolean.FALSE);
 
         //when then
         assertDoesNotThrow(() -> orderTable.changeNumberOfGuests(1000));
@@ -59,7 +62,7 @@ class OrderTableTest {
     @Test
     void changeEmptySuccessTest() {
         //given
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.FALSE);
+        OrderTable orderTable = OrderTable.create(0, Boolean.FALSE);
 
         //when then
         assertDoesNotThrow(() -> orderTable.changeEmpty(Boolean.TRUE));

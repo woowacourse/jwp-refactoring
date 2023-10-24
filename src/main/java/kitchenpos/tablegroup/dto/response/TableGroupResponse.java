@@ -1,8 +1,8 @@
 package kitchenpos.tablegroup.dto.response;
 
 import java.util.List;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.dto.response.TableResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 public class TableGroupResponse {
 
@@ -14,10 +14,10 @@ public class TableGroupResponse {
         this.tableResponses = tableResponses;
     }
 
-    public static TableGroupResponse from(TableGroup tableGroup) {
+    public static TableGroupResponse from(TableGroup tableGroup, List<TableResponse> tableResponses) {
         return new TableGroupResponse(
                 tableGroup.getId(),
-                TableResponse.from(tableGroup.getOrderTables())
+                tableResponses
         );
     }
 

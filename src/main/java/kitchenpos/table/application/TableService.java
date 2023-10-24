@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.request.TableCreationRequest;
 import kitchenpos.table.dto.request.TableEmptyUpdateRequest;
 import kitchenpos.table.dto.request.TableNumberOfGuestsUpdateRequest;
@@ -29,7 +29,7 @@ public class TableService {
 
     @Transactional
     public TableResponse create(TableCreationRequest request) {
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(request.getNumberOfGuests(), request.getEmpty());
+        OrderTable orderTable = OrderTable.create(request.getNumberOfGuests(), request.getEmpty());
 
         orderTableRepository.save(orderTable);
 

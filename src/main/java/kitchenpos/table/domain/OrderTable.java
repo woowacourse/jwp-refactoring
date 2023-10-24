@@ -4,10 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -18,9 +15,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @NotNull
     private Integer numberOfGuests;
@@ -31,36 +26,28 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    private OrderTable(
-            TableGroup tableGroup,
-            Integer numberOfGuests,
-            Boolean empty
-    ) {
-        this.tableGroup = tableGroup;
+    private OrderTable(Integer numberOfGuests, Boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+        validateEmpty(empty);
+
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public static OrderTable createWithoutTableGroup(
-            Integer numberOfGuests,
-            Boolean empty
-    ) {
-        validateNumberOfGuests(numberOfGuests);
-        validateEmpty(empty);
-
-        return new OrderTable(null, numberOfGuests, empty);
-    }
-
-    private static void validateNumberOfGuests(Integer numberOfGuests) {
+    private void validateNumberOfGuests(Integer numberOfGuests) {
         if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
             throw new IllegalArgumentException("테이블에 방문한 손님 수는 0 이상이어야 합니다.");
         }
     }
 
-    private static void validateEmpty(Boolean empty) {
+    private void validateEmpty(Boolean empty) {
         if (empty == null) {
             throw new NullPointerException("empty는 null일 수 없습니다.");
         }
+    }
+
+    public static OrderTable create(Integer numberOfGuests, Boolean empty) {
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public void changeNumberOfGuests(Integer numberOfGuests) {
@@ -89,30 +76,26 @@ public class OrderTable {
         }
     }
 
-    public void group(TableGroup tableGroup) {
+    public void group(Long tableGroupId) {
         if (isGrouped()) {
             throw new IllegalArgumentException("이미 다른 그룹에 속한 테이블입니다.");
         }
 
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.empty = Boolean.FALSE;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = Boolean.FALSE;
     }
 
     public boolean isGrouped() {
-        return tableGroup != null;
+        return tableGroupId != null;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
     }
 
     public Integer getNumberOfGuests() {
@@ -123,12 +106,8 @@ public class OrderTable {
         return empty;
     }
 
-    public Long getTableGroupIdOrNull() {
-        if (isGrouped()) {
-            return tableGroup.getId();
-        }
-
-        return null;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
 }

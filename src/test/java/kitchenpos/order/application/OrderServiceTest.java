@@ -278,7 +278,7 @@ class OrderServiceTest {
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, empty);
+        OrderTable orderTable = OrderTable.create(0, empty);
 
         return orderTableRepository.save(orderTable);
     }

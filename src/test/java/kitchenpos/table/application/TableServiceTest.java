@@ -7,28 +7,28 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.application.TableService;
+import kitchenpos.order.domain.OrderValidator;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.table.dto.request.TableEmptyUpdateRequest;
 import kitchenpos.table.dto.request.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.table.dto.response.TableResponse;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.tablegroup.domain.GroupedTables;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -94,8 +94,11 @@ class TableServiceTest {
         OrderTable orderTable1 = saveOrderTableForEmpty(true);
         OrderTable orderTable2 = saveOrderTableForEmpty(true);
 
-        TableGroup tableGroup = TableGroup.createWithGrouping(List.of(orderTable1, orderTable2));
+        TableGroup tableGroup = TableGroup.create();
         tableGroupRepository.save(tableGroup);
+
+        GroupedTables groupedTables = GroupedTables.createForGrouping(List.of(orderTable1, orderTable2));
+        groupedTables.group(tableGroup.getId());
 
         //when then
         TableEmptyUpdateRequest request = new TableEmptyUpdateRequest(Boolean.FALSE);
@@ -240,7 +243,7 @@ class TableServiceTest {
     @Test
     void listSuccessTest() {
         //given
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(10, Boolean.TRUE);
+        OrderTable orderTable = OrderTable.create(10, Boolean.TRUE);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
@@ -253,7 +256,7 @@ class TableServiceTest {
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, empty);
+        OrderTable orderTable = OrderTable.create(0, empty);
 
         return orderTableRepository.save(orderTable);
     }

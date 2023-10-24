@@ -7,27 +7,27 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.tablegroup.application.TableGroupService;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.table.dto.request.OrderTableRequest;
-import kitchenpos.tablegroup.dto.request.TableGroupCreationRequest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.dto.request.OrderTableRequest;
+import kitchenpos.tablegroup.domain.GroupedTables;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.tablegroup.dto.request.TableGroupCreationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -85,28 +85,6 @@ class TableGroupServiceTest {
                 .hasMessage("그룹화 할 테이블 개수는 2 이상이어야 합니다");
     }
 
-    @DisplayName("주문 테이블이 존재하지 않으면, 주문 테이블 그룹을 생성할 수 없다.")
-    @Test
-    void createFailTest_ByOrderTableIsNotExists() {
-        //given
-        Long invalidId1 = 99L;
-        Long invalidId2 = 100L;
-
-        List<OrderTableRequest> orderTableRequests = List.of(
-                new OrderTableRequest(invalidId1),
-                new OrderTableRequest(invalidId2)
-        );
-        TableGroupCreationRequest request = new TableGroupCreationRequest(orderTableRequests);
-
-        assertThat(orderTableRepository.findById(invalidId1)).isEmpty();
-        assertThat(orderTableRepository.findById(invalidId2)).isEmpty();
-
-        //when then
-        assertThatThrownBy(() -> tableGroupService.create(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 주문 테이블이 존재합니다.");
-    }
-
     @DisplayName("주문이 가능한 테이블이 존재하면(Not Empty), 주문 테이블 그룹을 생성할 수 없다.")
     @Test
     void createFailTest_ByTableGroupContainsNotEmptyOrderTable() {
@@ -132,9 +110,12 @@ class TableGroupServiceTest {
         //given
         OrderTable savedOrderTable1 = saveOrderTableForEmpty(true);
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(true);
-        TableGroup tableGroup = TableGroup.createWithGrouping(List.of(savedOrderTable1, savedOrderTable2));
-
+        TableGroup tableGroup = TableGroup.create();
         tableGroupRepository.save(tableGroup);
+
+        GroupedTables groupedTables =
+                GroupedTables.createForGrouping(List.of(savedOrderTable1, savedOrderTable2));
+        groupedTables.group(tableGroup.getId());
 
         OrderTable newOrderTable = saveOrderTableForEmpty(true);
 
@@ -174,8 +155,7 @@ class TableGroupServiceTest {
                 () -> assertThat(findTableGroup.getId()).isNotNull(),
                 () -> assertThat(findTableGroup.getCreatedDate()).isNotNull(),
                 () -> assertThat(orderTables)
-                        .extractingResultOf("getTableGroup")
-                        .extractingResultOf("getId")
+                        .extractingResultOf("getTableGroupId")
                         .containsExactly(findTableGroup.getId(), findTableGroup.getId()),
                 () -> assertThat(orderTables)
                         .extractingResultOf("isEmpty")
@@ -248,7 +228,7 @@ class TableGroupServiceTest {
     }
 
     private OrderTable saveOrderTableForEmpty(boolean empty) {
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, empty);
+        OrderTable orderTable = OrderTable.create(0, empty);
 
         return orderTableRepository.save(orderTable);
     }
