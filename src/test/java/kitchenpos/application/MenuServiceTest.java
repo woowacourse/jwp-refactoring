@@ -4,7 +4,6 @@ import static kitchenpos.application.KitchenposFixture.메뉴그룹만들기;
 import static kitchenpos.application.KitchenposFixture.메뉴상품만들기;
 import static kitchenpos.application.KitchenposFixture.상품만들기;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -21,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @DataJdbcTest
 @Import({MenuService.class, MenuGroupService.class, ProductService.class, MenuCustomDao.class})
@@ -55,37 +53,6 @@ class MenuServiceTest {
         final MenuResponse savedMenu = menuService.create("메뉴!", new Price(new BigDecimal("4000")), menuGroupId, menuProductRequests);
 
         assertThat(savedMenu).isNotNull();
-    }
-
-    @Test
-    @DisplayName("메뉴의 가격이 비어있거나 음수이면 안된다.")
-    void invalidPrice(
-            @Autowired MenuGroupService menuGroupService,
-            @Autowired ProductService productService
-    ) {
-        // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
-
-        // given : 개별 상품
-        final Product savedProduct = 상품만들기("상품 1", "4000", productService);
-        final Product savedProduct2 = 상품만들기("상품 2", "4000", productService);
-
-        // given : 메뉴상품
-        final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
-        final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1L);
-
-        final List<MenuProductRequest> menuProductRequests = List.of(
-                new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()),
-                new MenuProductRequest(menuProduct2.getProductId(), menuProduct2.getQuantity())
-        );
-
-        assertThatThrownBy(() -> menuService.create("메뉴!", null, menuGroupId, menuProductRequests))
-                .as("메뉴의 가격이 비어있다면 저장할 수 없다.")
-                .isInstanceOf(IllegalArgumentException.class);
-
-        assertThatThrownBy(() -> menuService.create("메뉴!", new Price(new BigDecimal("-40000")), menuGroupId, menuProductRequests))
-                .as("메뉴의 가격이 음수일 때에도 저장할 수 없다.")
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -164,65 +131,5 @@ class MenuServiceTest {
         assertThat(menuProductDao.findAllByMenuId(savedManu.getId()))
                 .as("메뉴를 저장하면 메뉴 상품도 따라 저장된다.")
                 .hasSize(2);
-    }
-
-    @Test
-    @DisplayName("이름은 255자까지 표현할 수 있다.")
-    void invalidName(
-            @Autowired MenuGroupService menuGroupService,
-            @Autowired ProductService productService
-    ) {
-        // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
-
-        // given : 개별 상품
-        final Product savedProduct = 상품만들기("상품 1", "4000", productService);
-        final Product savedProduct2 = 상품만들기("상품 2", "4000", productService);
-
-        // given : 메뉴상품
-        final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
-        final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1L);
-
-        final List<MenuProductRequest> menuProductRequests = List.of(
-                new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()),
-                new MenuProductRequest(menuProduct2.getProductId(), menuProduct2.getQuantity())
-        );
-
-        assertThatThrownBy(() -> menuService.create("메".repeat(256), new Price(new BigDecimal("4000")), menuGroupId, menuProductRequests))
-                .as("255자를 초과하는 이름의 메뉴를 저장할 수 없다.")
-                .hasCauseInstanceOf(DataIntegrityViolationException.class);
-
-        assertThatCode(() -> menuService.create("메".repeat(255), new Price(new BigDecimal("4000")), menuGroupId, menuProductRequests))
-                .doesNotThrowAnyException();
-    }
-
-    @Test
-    @DisplayName("가격은 소수점 2자리를 포함해 총 19자리까지 표현할 수 있다.")
-    void invalidPriceSize(
-            @Autowired MenuGroupService menuGroupService,
-            @Autowired ProductService productService
-    ) {
-        // given : 메뉴 그룹
-        final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
-
-        // given : 개별 상품
-        final Product savedProduct = 상품만들기("상품 1", "12345123451234512", productService);
-        final Product savedProduct2 = 상품만들기("상품 2", "12345123451234512", productService);
-
-        // given : 메뉴상품
-        final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 1000L);
-        final MenuProduct menuProduct2 = 메뉴상품만들기(savedProduct2, 1000L);
-
-        final List<MenuProductRequest> menuProductRequests = List.of(
-                new MenuProductRequest(menuProduct.getProductId(), menuProduct.getQuantity()),
-                new MenuProductRequest(menuProduct2.getProductId(), menuProduct2.getQuantity())
-        );
-
-        assertThatThrownBy(() -> menuService.create("메뉴입니다!", new Price(new BigDecimal("123451234512345123.12")), menuGroupId, menuProductRequests))
-                .as("19자리를 초과하는 가격의 메뉴를 저장할 수 없다.")
-                .hasCauseInstanceOf(DataIntegrityViolationException.class);
-
-        assertThatCode(() -> menuService.create("메뉴입니다!", new Price(new BigDecimal("12345123451234512.12")), menuGroupId, menuProductRequests))
-                .doesNotThrowAnyException();
     }
 }

@@ -7,6 +7,10 @@ import java.util.Objects;
 import org.springframework.data.relational.core.mapping.Column;
 
 public class Price implements Serializable {
+
+    public static final int MAX_PRICE_SCALE = 2;
+    public static final int MAX_PRICE_PRECISION = 19;
+
     @JsonProperty("price")
     @Column("PRICE")
     private final BigDecimal value;
@@ -15,6 +19,11 @@ public class Price implements Serializable {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
+
+        if (value.scale() > MAX_PRICE_SCALE || value.precision() > MAX_PRICE_PRECISION) {
+            throw new IllegalArgumentException();
+        }
+
         this.value = value;
     }
 
