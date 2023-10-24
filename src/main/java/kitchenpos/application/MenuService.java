@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -36,7 +37,7 @@ public class MenuService {
                 .findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         List<MenuProduct> menuProducts = getMenuProducts(menuRequest);
-        return MenuResponse.toResponse(menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts)));
+        return MenuResponse.toResponse(menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, new MenuProducts(menuProducts))));
     }
 
     private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
