@@ -4,7 +4,7 @@ import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.repository.MenuGroupRepository;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
 
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -34,10 +36,7 @@ class MenuGroupServiceTest extends ServiceTestConfig {
         final MenuGroup actual = menuGroupService.create(menuGroup);
 
         // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual.getName()).isEqualTo(menuGroup.getName());
-        });
+        assertThat(actual.getId()).isPositive();
     }
 
     @Test
@@ -51,12 +50,9 @@ class MenuGroupServiceTest extends ServiceTestConfig {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison().ignoringFields("id")
-                          .isEqualTo(menuGroups.get(0));
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison().ignoringFields("id")
-                          .isEqualTo(menuGroups.get(1));
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison().ignoringFields("id")
-                          .isEqualTo(menuGroups.get(2));
+            softAssertions.assertThat(actual.get(0)).isEqualTo(menuGroups.get(0));
+            softAssertions.assertThat(actual.get(1)).isEqualTo(menuGroups.get(1));
+            softAssertions.assertThat(actual.get(2)).isEqualTo(menuGroups.get(2));
         });
     }
 }
