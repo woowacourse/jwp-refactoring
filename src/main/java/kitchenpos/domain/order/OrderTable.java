@@ -56,6 +56,9 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalStateException(String.format("비어 있는 상태에서 게스트 숫자를 변경할 수 없습니다. 주문 테이블 상태 = %s, 변경하려는 게스트의 수 = %s", empty, numberOfGuests));
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

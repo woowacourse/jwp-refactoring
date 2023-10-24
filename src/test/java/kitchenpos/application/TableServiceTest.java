@@ -9,6 +9,7 @@ import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.TableService;
 import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderTableResponse;
+import kitchenpos.domain.order.service.dto.OrderTableUpdateGuestsRequest;
 import kitchenpos.domain.order.service.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import java.util.Optional;
 
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -124,27 +126,21 @@ class TableServiceTest {
         @Test
         void 게스트의_수를_변경할_수_있다() {
             // given
-            final OrderTable chnagedOrderTable = new OrderTable(5, false);
-
             final OrderTable expected = spy(new OrderTable(1, false));
             final long orderTableId = 1L;
             given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(expected));
 
             // when
-            final OrderTable actual = tableService.changeNumberOfGuests(orderTableId, chnagedOrderTable);
-
-            // then
-            assertThat(actual.getNumberOfGuests()).isEqualTo(5);
+            final OrderTableUpdateGuestsRequest request = new OrderTableUpdateGuestsRequest(5);
+            assertThatCode(() -> tableService.changeNumberOfGuests(orderTableId, request))
+                    .doesNotThrowAnyException();
         }
 
         @Test
         void 게스트의_수가_0이면_예외가_발생한다() {
-            // given
-            final OrderTable target = spy(new OrderTable(5, false));
-
             // when, then
             final long orderTableId = 1L;
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, target))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, new OrderTableUpdateGuestsRequest(0)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -156,8 +152,8 @@ class TableServiceTest {
             given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(target));
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, target))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, new OrderTableUpdateGuestsRequest(3)))
+                    .isInstanceOf(IllegalStateException.class);
         }
     }
 }

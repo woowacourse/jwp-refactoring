@@ -6,6 +6,7 @@ import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderTableResponse;
+import kitchenpos.domain.order.service.dto.OrderTableUpdateGuestsRequest;
 import kitchenpos.domain.order.service.dto.OrderTableUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,28 +56,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = getNumberOfGuests(orderTable);
-
+    public void changeNumberOfGuests(final Long orderTableId, final OrderTableUpdateGuestsRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException(String.format("OrderTable 의 식별자로 OrderTable을 찾을 수 없습니다. 식별자 = %s", orderTableId)));
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
-
-        return savedOrderTable;
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
     }
 
-    private int getNumberOfGuests(final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return numberOfGuests;
-    }
 }

@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/tables/1/number-of-guests
+PATCH {{host}}/api/tables/1/number-of-guests
 Content-Type: application/json
 
 {
