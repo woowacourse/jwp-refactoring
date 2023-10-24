@@ -41,7 +41,7 @@ class MenuProductRepositoryTest {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
         final Product product = productRepository.save(ProductFixture.상품_생성());
-        final Menu menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, List.of(product)));
+        final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, List.of(product)));
 
         // when
         final List<MenuProduct> actual = menuProductRepository.findAllByMenuId(menu.getId());

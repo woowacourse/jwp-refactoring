@@ -37,7 +37,7 @@ class MenuRepositoryTest {
         final Long unsavedId = 999L;
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
         final Product product = productRepository.save(ProductFixture.상품_생성());
-        final List<Menu> menus = menuRepository.saveAll(MenuFixture.메뉴들_생성(4, menuGroup, List.of(product)));
+        final List<Menu> menus = menuRepository.saveAll(MenuFixture.메뉴_엔티티들_생성(4, menuGroup, List.of(product)));
 
         final List<Long> ids = List.of(unsavedId, menus.get(0).getId(), menus.get(1).getId(), menus.get(2).getId());
 

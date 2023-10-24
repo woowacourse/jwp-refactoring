@@ -50,9 +50,6 @@ public class MenuProduct {
         this.menu = menu;
     }
 
-    public void updateMenuId(final Long menuId) {
-    }
-
     public Product getProduct() {
         return product;
     }

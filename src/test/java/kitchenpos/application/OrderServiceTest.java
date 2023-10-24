@@ -74,7 +74,7 @@ class OrderServiceTest extends ServiceTestConfig {
             orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
             menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
             products = productRepository.saveAll(ProductFixture.상품들_생성(2));
-            menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, products));
+            menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
         }
 
         @Test
@@ -99,7 +99,7 @@ class OrderServiceTest extends ServiceTestConfig {
             // given
             final Order order = OrderFixture.조리_상태의_주문_생성(orderTable, menu);
             final OrderLineItem usavedOrderLineItem =
-                    OrderLineItemFixture.주문_상품_생성(order, MenuFixture.메뉴_생성(menuGroup, products));
+                    OrderLineItemFixture.주문_상품_생성(order, MenuFixture.메뉴_엔티티_생성(menuGroup, products));
             order.updateOrderLineItems(List.of(usavedOrderLineItem));
 
             // when & then
@@ -128,7 +128,7 @@ class OrderServiceTest extends ServiceTestConfig {
             final List<OrderTable> orderTable = orderTableRepository.saveAll(OrderTableFixture.주문_테이블들_생성(2));
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품들_생성(2));
-            final Menu menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, products));
+            final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
             final List<Order> order = orderRepository.saveAll(OrderFixture.조리_상태의_주문들_생성(orderTable, menu));
 
             // when
@@ -156,7 +156,7 @@ class OrderServiceTest extends ServiceTestConfig {
             orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품들_생성(2));
-            menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, products));
+            menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
         }
 
         @Test

@@ -4,6 +4,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.menu.MenuProductDto;
+import kitchenpos.ui.dto.menu.MenuRequest;
 import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
@@ -17,28 +19,28 @@ public class MenuFixture {
     public static final String 메뉴명 = "메뉴";
     private static final long DEFAULT_QUANTITY = 1L;
 
-    private static Menu 메뉴_생성(final MenuGroup menuGroup, final List<Product> products, @Nullable final Integer number) {
+    private static Menu 메뉴_엔티티_생성(final MenuGroup menuGroup, final List<Product> products, @Nullable final Integer number) {
         String 메뉴_이름 = 메뉴명;
         if (number != null) {
             메뉴_이름 += number.toString();
         }
 
         final Menu 메뉴 = new Menu(메뉴_이름, 메뉴_가격_계산(products), menuGroup);
-        final List<MenuProduct> 메뉴_상품들 = 메뉴_상품들_생성(products, 메뉴);
+        final List<MenuProduct> 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products, 메뉴);
         메뉴.updateMenuProducts(메뉴_상품들);
 
         return 메뉴;
     }
 
-    public static Menu 메뉴_생성(final MenuGroup menuGroup, final List<Product> products) {
-        return 메뉴_생성(menuGroup, products, null);
+    public static Menu 메뉴_엔티티_생성(final MenuGroup menuGroup, final List<Product> products) {
+        return 메뉴_엔티티_생성(menuGroup, products, null);
     }
 
-    public static List<Menu> 메뉴들_생성(final int count, final MenuGroup menuGroup, final List<Product> products) {
+    public static List<Menu> 메뉴_엔티티들_생성(final int count, final MenuGroup menuGroup, final List<Product> products) {
         final List<Menu> 메뉴들 = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            메뉴들.add(메뉴_생성(menuGroup, products, i));
+            메뉴들.add(메뉴_엔티티_생성(menuGroup, products, i));
         }
 
         return 메뉴들;
@@ -53,16 +55,38 @@ public class MenuFixture {
         return sum;
     }
 
-    private static List<MenuProduct> 메뉴_상품들_생성(final List<Product> products, final Menu menu) {
+    private static List<MenuProduct> 메뉴_상품_엔티티들_생성(final List<Product> products, final Menu menu) {
         return products.stream()
-                       .map(product -> 메뉴_상품_생성(product, menu))
+                       .map(product -> 메뉴_상품_엔티티_생성(product, menu))
                        .collect(Collectors.toList());
     }
 
-    private static MenuProduct 메뉴_상품_생성(final Product product, final Menu menu) {
+    private static MenuProduct 메뉴_상품_엔티티_생성(final Product product, final Menu menu) {
         final MenuProduct menuProduct = new MenuProduct(product, DEFAULT_QUANTITY);
         menuProduct.updateMenu(menu);
 
         return menuProduct;
+    }
+
+    private static MenuRequest 메뉴_요청_dto_생성(final MenuGroup menuGroup, final List<Product> products, @Nullable final Integer number) {
+        String 메뉴_이름 = 메뉴명;
+        if (number != null) {
+            메뉴_이름 += number.toString();
+        }
+
+        final List<MenuProductDto> 메뉴_상품_요청_dto들 = 메뉴_상품_요청_dto들로_변환(products);
+        final MenuRequest 메뉴_요청 = new MenuRequest(메뉴_이름, 메뉴_가격_계산(products), menuGroup.getId(), 메뉴_상품_요청_dto들);
+
+        return 메뉴_요청;
+    }
+
+    public static MenuRequest 메뉴_요청_dto_생성(final MenuGroup menuGroup, final List<Product> products) {
+        return 메뉴_요청_dto_생성(menuGroup, products, null);
+    }
+
+    private static List<MenuProductDto> 메뉴_상품_요청_dto들로_변환(final List<Product> products) {
+        return products.stream()
+                       .map(product -> new MenuProductDto(product.getId(), DEFAULT_QUANTITY))
+                       .collect(Collectors.toList());
     }
 }
