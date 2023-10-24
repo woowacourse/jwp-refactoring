@@ -23,6 +23,15 @@ public class OrderEntity {
   public OrderEntity() {
   }
 
+  public static OrderEntity from(final Order order) {
+    return new OrderEntity(order.getId(), order.getOrderTableId(),
+        order.getOrderStatus().name(), order.getOrderedTime());
+  }
+
+  public Order toOrder() {
+    return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime);
+  }
+
   public Long getId() {
     return id;
   }
@@ -39,12 +48,4 @@ public class OrderEntity {
     return orderedTime;
   }
 
-  public static OrderEntity from(final Order order) {
-    return new OrderEntity(order.getId(), order.getOrderTableId(),
-        order.getOrderStatus().name(), order.getOrderedTime());
-  }
-
-  public Order toOrder() {
-    return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus), orderedTime);
-  }
 }

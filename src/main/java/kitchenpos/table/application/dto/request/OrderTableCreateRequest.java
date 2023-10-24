@@ -16,15 +16,15 @@ public class OrderTableCreateRequest {
   public OrderTableCreateRequest() {
   }
 
+  public OrderTable toOrderTable() {
+    return new OrderTable(new NumberOfGuests(numberOfGuests), empty);
+  }
+
   public int getNumberOfGuests() {
     return numberOfGuests;
   }
 
   public boolean isEmpty() {
     return empty;
-  }
-
-  public OrderTable toOrderTable() {
-    return new OrderTable(new NumberOfGuests(numberOfGuests), empty);
   }
 }

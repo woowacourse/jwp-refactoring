@@ -13,11 +13,11 @@ public class MenuGroupCreateRequest {
   public MenuGroupCreateRequest() {
   }
 
-  public String getName() {
-    return name;
-  }
-
   public MenuGroup toMenuGroup() {
     return new MenuGroup(name);
+  }
+
+  public String getName() {
+    return name;
   }
 }

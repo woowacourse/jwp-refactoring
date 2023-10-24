@@ -25,6 +25,12 @@ public class MenuQueryResponse {
   public MenuQueryResponse() {
   }
 
+  public static MenuQueryResponse of(final Menu menu,
+      final List<MenuProductQueryResponse> menuProducts) {
+    return new MenuQueryResponse(menu.getId(), menu.getName(),
+        menu.getPrice().getValue(), menu.getMenuGroupId(), menuProducts);
+  }
+
   public Long getId() {
     return id;
   }
@@ -45,9 +51,4 @@ public class MenuQueryResponse {
     return menuProducts;
   }
 
-  public static MenuQueryResponse of(final Menu menu,
-      final List<MenuProductQueryResponse> menuProducts) {
-    return new MenuQueryResponse(menu.getId(), menu.getName(),
-        menu.getPrice().getValue(), menu.getMenuGroupId(), menuProducts);
-  }
 }

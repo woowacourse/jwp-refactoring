@@ -20,6 +20,13 @@ public class TableGroupQueryResponse {
   public TableGroupQueryResponse() {
   }
 
+  public static TableGroupQueryResponse from(final TableGroup tableGroup) {
+    final List<OrderTableQueryResponse> orderTables = OrderTableQueryResponse.from(
+        tableGroup.getOrderTables());
+    return new TableGroupQueryResponse(tableGroup.getId(), tableGroup.getCreatedDate(),
+        orderTables);
+  }
+
   public Long getId() {
     return id;
   }
@@ -30,12 +37,5 @@ public class TableGroupQueryResponse {
 
   public List<OrderTableQueryResponse> getOrderTables() {
     return orderTables;
-  }
-
-  public static TableGroupQueryResponse from(final TableGroup tableGroup) {
-    final List<OrderTableQueryResponse> orderTables = OrderTableQueryResponse.from(
-        tableGroup.getOrderTables());
-    return new TableGroupQueryResponse(tableGroup.getId(), tableGroup.getCreatedDate(),
-        orderTables);
   }
 }

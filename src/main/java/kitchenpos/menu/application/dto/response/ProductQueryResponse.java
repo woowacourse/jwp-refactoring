@@ -18,6 +18,11 @@ public class ProductQueryResponse {
   public ProductQueryResponse() {
   }
 
+  public static ProductQueryResponse from(final Product product) {
+    return new ProductQueryResponse(product.getId(), product.getName(),
+        product.getPrice().getValue());
+  }
+
   public Long getId() {
     return id;
   }
@@ -30,8 +35,4 @@ public class ProductQueryResponse {
     return price;
   }
 
-  public static ProductQueryResponse of(final Product product) {
-    return new ProductQueryResponse(product.getId(), product.getName(),
-        product.getPrice().getValue());
-  }
 }

@@ -17,15 +17,15 @@ public class ProductCreateRequest {
   public ProductCreateRequest() {
   }
 
+  public Product toProduct() {
+    return new Product(name, new Price(price));
+  }
+
   public String getName() {
     return name;
   }
 
   public BigDecimal getPrice() {
     return price;
-  }
-
-  public Product toProduct() {
-    return new Product(name, new Price(price));
   }
 }

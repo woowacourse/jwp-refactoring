@@ -19,6 +19,15 @@ public class ProductEntity {
   public ProductEntity() {
   }
 
+  public static ProductEntity from(final Product product) {
+    return new ProductEntity(product.getId(), product.getName(),
+        product.getPrice().getValue());
+  }
+
+  public Product toProduct() {
+    return new Product(id, name, new Price(price));
+  }
+
   public Long getId() {
     return id;
   }
@@ -29,14 +38,5 @@ public class ProductEntity {
 
   public BigDecimal getPrice() {
     return price;
-  }
-
-  public static ProductEntity from(final Product product) {
-    return new ProductEntity(product.getId(), product.getName(),
-        product.getPrice().getValue());
-  }
-
-  public Product toProduct() {
-    return new Product(id, name, new Price(price));
   }
 }

@@ -21,6 +21,20 @@ public class OrderTableEntity {
   public OrderTableEntity() {
   }
 
+  public static OrderTableEntity from(final OrderTable orderTable) {
+    return new OrderTableEntity(orderTable.getId(), orderTable.getTableGroupId(),
+        orderTable.getNumberOfGuests().getValue(), orderTable.isEmpty());
+  }
+
+  public static OrderTableEntity of(final OrderTable orderTable, final boolean empty) {
+    return new OrderTableEntity(orderTable.getId(), orderTable.getTableGroupId(),
+        orderTable.getNumberOfGuests().getValue(), empty);
+  }
+
+  public OrderTable toOrderTable() {
+    return new OrderTable(id, tableGroupId, new NumberOfGuests(numberOfGuests), empty);
+  }
+
   public Long getId() {
     return id;
   }
@@ -35,19 +49,5 @@ public class OrderTableEntity {
 
   public boolean isEmpty() {
     return empty;
-  }
-
-  public static OrderTableEntity from(final OrderTable orderTable) {
-    return new OrderTableEntity(orderTable.getId(), orderTable.getTableGroupId(),
-        orderTable.getNumberOfGuests().getValue(), orderTable.isEmpty());
-  }
-
-  public static OrderTableEntity of(final OrderTable orderTable, final boolean empty) {
-    return new OrderTableEntity(orderTable.getId(), orderTable.getTableGroupId(),
-        orderTable.getNumberOfGuests().getValue(), empty);
-  }
-
-  public OrderTable toOrderTable() {
-    return new OrderTable(id, tableGroupId, new NumberOfGuests(numberOfGuests), empty);
   }
 }

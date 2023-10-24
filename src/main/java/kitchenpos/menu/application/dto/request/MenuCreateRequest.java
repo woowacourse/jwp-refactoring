@@ -24,6 +24,17 @@ public class MenuCreateRequest {
   public MenuCreateRequest() {
   }
 
+  public Menu toMenu() {
+    return new Menu(
+        name,
+        new Price(price),
+        menuGroupId,
+        menuProducts.stream()
+            .map(MenuProductCreateRequest::toMenuProduct)
+            .collect(Collectors.toList())
+    );
+  }
+
   public String getName() {
     return name;
   }
@@ -40,14 +51,5 @@ public class MenuCreateRequest {
     return menuProducts;
   }
 
-  public Menu toMenu() {
-    return new Menu(
-        name,
-        new Price(price),
-        menuGroupId,
-        menuProducts.stream()
-            .map(MenuProductCreateRequest::toMenuProduct)
-            .collect(Collectors.toList())
-    );
-  }
+
 }

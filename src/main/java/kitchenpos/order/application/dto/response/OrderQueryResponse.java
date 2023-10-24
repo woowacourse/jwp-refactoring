@@ -26,6 +26,18 @@ public class OrderQueryResponse {
   public OrderQueryResponse() {
   }
 
+  public static OrderQueryResponse from(final Order order) {
+    final List<OrderLineItemQueryResponse> orderLineItemQueryResponses
+        = order.getOrderLineItems().getOrderLineItems()
+        .stream()
+        .map(OrderLineItemQueryResponse::from)
+        .collect(Collectors.toList());
+
+    return new OrderQueryResponse(order.getId(), order.getOrderTableId(),
+        order.getOrderStatus().name(),
+        order.getOrderedTime(), orderLineItemQueryResponses);
+  }
+
   public Long getId() {
     return id;
   }
@@ -44,17 +56,5 @@ public class OrderQueryResponse {
 
   public List<OrderLineItemQueryResponse> getOrderLineItems() {
     return orderLineItems;
-  }
-
-  public static OrderQueryResponse from(final Order order) {
-    final List<OrderLineItemQueryResponse> orderLineItemQueryResponses
-        = order.getOrderLineItems().getOrderLineItems()
-        .stream()
-        .map(OrderLineItemQueryResponse::from)
-        .collect(Collectors.toList());
-
-    return new OrderQueryResponse(order.getId(), order.getOrderTableId(),
-        order.getOrderStatus().name(),
-        order.getOrderedTime(), orderLineItemQueryResponses);
   }
 }

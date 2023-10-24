@@ -15,19 +15,19 @@ public class MenuGroupEntity {
   public MenuGroupEntity() {
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
   public static MenuGroupEntity from(final MenuGroup menuGroup) {
     return new MenuGroupEntity(menuGroup.getId(), menuGroup.getName());
   }
 
   public MenuGroup toMenuGroup() {
     return new MenuGroup(id, name);
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public String getName() {
+    return name;
   }
 }

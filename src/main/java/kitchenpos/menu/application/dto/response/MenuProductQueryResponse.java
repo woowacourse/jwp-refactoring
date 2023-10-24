@@ -17,6 +17,11 @@ public class MenuProductQueryResponse {
     this.quantity = quantity;
   }
 
+  public static MenuProductQueryResponse from(final MenuProduct menuProduct) {
+    return new MenuProductQueryResponse(menuProduct.getSeq(), menuProduct.getMenuId(),
+        menuProduct.getProductId(), menuProduct.getQuantity());
+  }
+
   public MenuProductQueryResponse() {
   }
 
@@ -36,8 +41,4 @@ public class MenuProductQueryResponse {
     return quantity;
   }
 
-  public static MenuProductQueryResponse from(final MenuProduct menuProduct) {
-    return new MenuProductQueryResponse(menuProduct.getSeq(), menuProduct.getMenuId(),
-        menuProduct.getProductId(), menuProduct.getQuantity());
-  }
 }

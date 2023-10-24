@@ -16,6 +16,14 @@ public class TableGroupEntity {
 
   public TableGroupEntity() {
   }
+  
+  public static TableGroupEntity from(final TableGroup tableGroup) {
+    return new TableGroupEntity(tableGroup.getId(), tableGroup.getCreatedDate());
+  }
+
+  public TableGroup toTableGroup(final OrderTables orderTables) {
+    return new TableGroup(id, createdDate, orderTables);
+  }
 
   public Long getId() {
     return id;
@@ -23,17 +31,5 @@ public class TableGroupEntity {
 
   public LocalDateTime getCreatedDate() {
     return createdDate;
-  }
-
-  public static TableGroupEntity from(final TableGroup tableGroup) {
-    return new TableGroupEntity(tableGroup.getId(), tableGroup.getCreatedDate());
-  }
-
-  public TableGroup toTableGroup() {
-    return new TableGroup(id, createdDate);
-  }
-
-  public TableGroup toTableGroup(final OrderTables orderTables) {
-    return new TableGroup(id, createdDate, orderTables);
   }
 }

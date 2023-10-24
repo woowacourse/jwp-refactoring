@@ -15,15 +15,15 @@ public class OrderLineItemCreateRequest {
   public OrderLineItemCreateRequest() {
   }
 
+  public OrderLineItem toOrderLineItem() {
+    return new OrderLineItem(menuId, quantity);
+  }
+
   public Long getMenuId() {
     return menuId;
   }
 
   public long getQuantity() {
     return quantity;
-  }
-
-  public OrderLineItem toOrderLineItem() {
-    return new OrderLineItem(menuId, quantity);
   }
 }

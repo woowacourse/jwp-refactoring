@@ -16,6 +16,10 @@ public class MenuGroupQueryResponse {
   public MenuGroupQueryResponse() {
   }
 
+  public static MenuGroupQueryResponse from(final MenuGroup menuGroup) {
+    return new MenuGroupQueryResponse(menuGroup.getId(), menuGroup.getName());
+  }
+
   public Long getId() {
     return id;
   }
@@ -24,7 +28,4 @@ public class MenuGroupQueryResponse {
     return name;
   }
 
-  public static MenuGroupQueryResponse from(final MenuGroup menuGroup) {
-    return new MenuGroupQueryResponse(menuGroup.getId(), menuGroup.getName());
-  }
 }

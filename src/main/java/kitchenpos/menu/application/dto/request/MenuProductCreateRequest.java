@@ -14,6 +14,10 @@ public class MenuProductCreateRequest {
 
   public MenuProductCreateRequest() {
   }
+  
+  public MenuProduct toMenuProduct() {
+    return new MenuProduct(productId, quantity);
+  }
 
   public Long getProductId() {
     return productId;
@@ -21,9 +25,5 @@ public class MenuProductCreateRequest {
 
   public long getQuantity() {
     return quantity;
-  }
-
-  public MenuProduct toMenuProduct() {
-    return new MenuProduct(productId, quantity);
   }
 }

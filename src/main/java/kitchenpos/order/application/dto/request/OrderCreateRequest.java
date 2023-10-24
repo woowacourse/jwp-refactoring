@@ -20,14 +20,6 @@ public class OrderCreateRequest {
   public OrderCreateRequest() {
   }
 
-  public Long getOrderTableId() {
-    return orderTableId;
-  }
-
-  public List<OrderLineItemCreateRequest> getOrderLineItems() {
-    return orderLineItems;
-  }
-
   public Order toOrder() {
     return new Order(
         orderTableId,
@@ -38,4 +30,13 @@ public class OrderCreateRequest {
         )
     );
   }
+
+  public Long getOrderTableId() {
+    return orderTableId;
+  }
+
+  public List<OrderLineItemCreateRequest> getOrderLineItems() {
+    return orderLineItems;
+  }
+
 }

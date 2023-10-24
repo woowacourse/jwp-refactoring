@@ -24,6 +24,19 @@ public class MenuEntity {
   public MenuEntity() {
   }
 
+  public static MenuEntity from(final Menu menu) {
+    return new MenuEntity(menu.getId(), menu.getName(), menu.getPrice().getValue(),
+        menu.getMenuGroupId());
+  }
+
+  public Menu toMenu() {
+    return new Menu(id, name, new Price(price), menuGroupId);
+  }
+
+  public Menu toMenu(final List<MenuProduct> menuProducts) {
+    return new Menu(id, name, new Price(price), menuGroupId, menuProducts);
+  }
+
   public Long getId() {
     return id;
   }
@@ -40,16 +53,4 @@ public class MenuEntity {
     return menuGroupId;
   }
 
-  public static MenuEntity from(final Menu menu) {
-    return new MenuEntity(menu.getId(), menu.getName(), menu.getPrice().getValue(),
-        menu.getMenuGroupId());
-  }
-
-  public Menu toMenu() {
-    return new Menu(id, name, new Price(price), menuGroupId);
-  }
-
-  public Menu toMenu(final List<MenuProduct> menuProducts) {
-    return new Menu(id, name, new Price(price), menuGroupId, menuProducts);
-  }
 }

@@ -13,14 +13,14 @@ public class TableGroupCreateRequest {
     this.orderTables = orderTables;
   }
 
+  public TableGroup toTableGroup(final OrderTables orderTables) {
+    return new TableGroup(LocalDateTime.now(), orderTables);
+  }
+
   public TableGroupCreateRequest() {
   }
 
   public List<OrderTableReferenceRequest> getOrderTables() {
     return orderTables;
-  }
-
-  public TableGroup toTableGroup(final OrderTables orderTables) {
-    return new TableGroup(LocalDateTime.now(), orderTables);
   }
 }

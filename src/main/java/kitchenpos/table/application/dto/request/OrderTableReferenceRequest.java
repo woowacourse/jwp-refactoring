@@ -1,7 +1,5 @@
 package kitchenpos.table.application.dto.request;
 
-import kitchenpos.table.domain.OrderTable;
-
 public class OrderTableReferenceRequest {
 
   private Long id;
@@ -15,9 +13,5 @@ public class OrderTableReferenceRequest {
 
   public Long getId() {
     return id;
-  }
-
-  public OrderTable toOrderTable() {
-    return new OrderTable(id);
   }
 }
