@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Transactional(readOnly = true)
 public class TableService {
@@ -33,8 +35,10 @@ public class TableService {
         return OrderTableResponse.toDto(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResponse::toDto)
+                .collect(toList());
     }
 
     @Transactional
