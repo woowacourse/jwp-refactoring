@@ -1,7 +1,5 @@
 package kitchenpos.ui.request;
 
-import kitchenpos.domain.MenuGroup;
-
 import java.util.Objects;
 
 public class MenuGroupRequest {
@@ -11,13 +9,6 @@ public class MenuGroupRequest {
     public MenuGroupRequest(final Long id, final String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public MenuGroup convert() {
-        return new MenuGroup(
-                id,
-                name
-        );
     }
 
     public Long getId() {
