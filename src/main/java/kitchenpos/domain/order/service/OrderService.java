@@ -2,8 +2,8 @@ package kitchenpos.domain.order.service;
 
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
@@ -11,6 +11,7 @@ import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.dto.OrderCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderLineItemCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderResponse;
+import kitchenpos.domain.order.service.dto.OrderUpateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,14 +62,10 @@ public class OrderService {
                 .collect(toList());
     }
 
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public void changeOrderStatus(final Long orderId, final OrderUpateRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Order 식별자로 Order를 찾을 수 없습니다. 식별자 = %s", orderId)));
 
-        savedOrder.changeOrderStatus(order.getOrderStatus());
-        final List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
-        savedOrder.addAllOrderLineItems(OrderLineItems.from(orderLineItems));
-
-        return savedOrder;
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
     }
 }

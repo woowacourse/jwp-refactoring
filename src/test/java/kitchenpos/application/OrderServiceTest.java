@@ -17,6 +17,7 @@ import kitchenpos.domain.order.service.OrderService;
 import kitchenpos.domain.order.service.dto.OrderCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderLineItemCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderResponse;
+import kitchenpos.domain.order.service.dto.OrderUpateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ import static kitchenpos.application.fixture.ProductFixture.product;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -209,14 +211,13 @@ class OrderServiceTest {
 
             final Order order = order(validedOrderStatus, now(), orderLineItems);
             given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(order));
-            given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(orderLineItems);
 
             // when
-            final Order expected = order(COMPLETION, now(), orderLineItems);
-            final Order actual = orderService.changeOrderStatus(orderId, expected);
+            final OrderUpateRequest request = new OrderUpateRequest(COOKING.name());
 
             // then
-            assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
+            assertThatCode(() -> orderService.changeOrderStatus(orderId, request))
+                    .doesNotThrowAnyException();
         }
 
         @Test
@@ -229,8 +230,11 @@ class OrderServiceTest {
             final Order actual = spy(order(expected.getOrderStatus(), expected.getOrderedTime(), new ArrayList<>()));
             given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(actual));
 
-            // when, then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, expected))
+            // when
+            final OrderUpateRequest request = new OrderUpateRequest(COMPLETION.name());
+
+            // then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

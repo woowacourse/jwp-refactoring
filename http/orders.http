@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PATCH {{host}}/api/orders/1/order-status
 Content-Type: application/json
 
 {
