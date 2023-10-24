@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.dto.OrderStatus;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderTableDto;
 import kitchenpos.dto.TableGroupDto;
 import org.springframework.stereotype.Service;
