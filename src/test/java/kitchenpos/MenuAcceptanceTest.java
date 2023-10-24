@@ -3,9 +3,9 @@ package kitchenpos;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import kitchenpos.ui.response.MenuResponse;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void 메뉴를_생성한다() {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(
                     MENU_CREATE_REQUEST_스키야키(
@@ -52,7 +52,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 메뉴는_반드시_메뉴_그룹에_속해야_한다() {
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final ExtractableResponse<Response> response = 메뉴_생성_요청(
                     MENU_CREATE_REQUEST_스키야키(
@@ -68,7 +68,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void 메뉴의_가격은_메뉴에_속하는_상품_곱하기_수량의_합_이하여야_한다() {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 2L);
             final BigDecimal inappropriatePrice = product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())).add(BigDecimal.TEN);
@@ -88,7 +88,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void 메뉴를_조회한다() {
         final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-        final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+        final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
         final MenuResponse menu = 메뉴_생성_요청하고_메뉴_반환(
                 MENU_CREATE_REQUEST_스키야키(

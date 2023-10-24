@@ -5,6 +5,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 
 import java.math.BigDecimal;
 
@@ -29,9 +30,9 @@ public class ProductStep {
         );
     }
 
-    public static Product 상품_생성_요청하고_상품_반환(final ProductCreateRequest request) {
+    public static ProductResponse 상품_생성_요청하고_상품_반환(final ProductCreateRequest request) {
         final ExtractableResponse<Response> response = 상품_생성_요청(request);
-        return response.jsonPath().getObject("", Product.class);
+        return response.jsonPath().getObject("", ProductResponse.class);
     }
 
     public static Long 상품_생성_요청하고_아이디_반환(final ProductCreateRequest request) {

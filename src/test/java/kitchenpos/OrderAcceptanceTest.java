@@ -11,6 +11,7 @@ import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
 import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.response.OrderResponse;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블());
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -89,7 +90,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -114,7 +115,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void 주문을_생성하려면_주문하는_테이블이_존재해야_한다() {
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -140,7 +141,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         void 주문을_조회한다() {
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -178,7 +179,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
@@ -209,7 +210,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroup menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
-            final Product product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
             final Long menuId = 메뉴_생성_요청하고_아이디_반환(
                     MENU_CREATE_REQUEST_스키야키(
