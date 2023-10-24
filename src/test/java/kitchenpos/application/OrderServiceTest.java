@@ -17,7 +17,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -35,9 +34,6 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
-
-    @Mock
-    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
