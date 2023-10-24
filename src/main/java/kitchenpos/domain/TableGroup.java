@@ -31,11 +31,6 @@ public class TableGroup {
         this.id = id;
     }
 
-    public TableGroup(final Long id, final List<OrderTable> orderTables) {
-        this.id = id;
-        this.orderTables = orderTables;
-    }
-
     public Long getId() {
         return id;
     }

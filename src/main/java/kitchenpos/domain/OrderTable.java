@@ -47,6 +47,13 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void checkEmptyAndTableGroups() {
+        if (!this.empty) {
+            throw new IllegalArgumentException("테이블의 상태가 비어 있지 않습니다.");
+        }
+        checkTableGroupsEmpty();
+    }
+
     public void checkTableGroupsEmpty() {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException("할당된 그룹이 존재합니다.");
@@ -57,6 +64,15 @@ public class OrderTable {
         if (this.empty) {
             throw new IllegalArgumentException("테이블의 상태가 비어 있습니다.");
         }
+    }
+
+    public void addGroup(final TableGroup group) {
+        checkTableGroupsEmpty();
+        this.tableGroup = group;
+    }
+
+    public void unGroup() {
+        this.tableGroup = null;
     }
 
     public void changeNumberOfGuests(final int number) {
