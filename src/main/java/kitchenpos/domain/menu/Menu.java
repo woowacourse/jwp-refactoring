@@ -3,6 +3,7 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Menu {
     private Long id;
@@ -18,15 +19,22 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public static Menu of(String name, Long price, Long menuGroupId) {
-        return new Menu(null, name, createBigDecimal(price), menuGroupId);
+    public static Menu of(String name, BigDecimal price, Long menuGroupId, BigDecimal sum) {
+        validatePrice(price);
+        validateSum(price, sum);
+        return new Menu(null, name, price, menuGroupId);
     }
 
-    private static BigDecimal createBigDecimal(Long price) {
-        if (price == null) {
-            return null;
+    private static void validateSum(BigDecimal price, BigDecimal sum) {
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
         }
-        return BigDecimal.valueOf(price);
+    }
+
+    private static void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void addProduct(Long productId, long quantity) {

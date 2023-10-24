@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -38,15 +37,7 @@ public class MenuService {
 
     @Transactional
     public Menu create(MenuCreateRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroupExistence(request);
 
         List<MenuProductRequest> menuProducts = request.getMenuProducts();
 
@@ -57,11 +48,7 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        Menu menu = mapToMenu(request, menuProducts);
+        Menu menu = mapToMenu(request, sum, menuProducts);
 
         final Menu savedMenu = menuRepository.save(menu);
 
@@ -76,6 +63,12 @@ public class MenuService {
         return savedMenu;
     }
 
+    private void validateMenuGroupExistence(MenuCreateRequest request) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private MenuProduct mapToMenuProduct(MenuProductRequest menuProductRequest, Long menuId) {
         return new MenuProduct(
                 menuId,
@@ -83,8 +76,8 @@ public class MenuService {
                 menuProductRequest.getQuantity());
     }
 
-    private Menu mapToMenu(MenuCreateRequest request, List<MenuProductRequest> menuProducts) {
-        final Menu menu = Menu.of(request.getName(), request.getPrice().longValue(), request.getMenuGroupId());
+    private Menu mapToMenu(MenuCreateRequest request, BigDecimal sum, List<MenuProductRequest> menuProducts) {
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(),sum );
         for (final MenuProductRequest menuProduct : menuProducts) {
             menu.addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
         }
