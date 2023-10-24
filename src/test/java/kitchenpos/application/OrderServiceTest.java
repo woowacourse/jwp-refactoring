@@ -3,9 +3,9 @@ package kitchenpos.application;
 import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;

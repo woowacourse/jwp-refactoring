@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
 import kitchenpos.ui.dto.OrderTableResponse;

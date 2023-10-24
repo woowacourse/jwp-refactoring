@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuCreateRequest;

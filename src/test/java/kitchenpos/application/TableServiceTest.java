@@ -1,18 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
-import kitchenpos.ui.dto.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

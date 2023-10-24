@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -10,7 +10,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     default Order getById(final Long id) {
         return findById(id).orElseThrow(IllegalArgumentException::new);
     }
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
+    boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,final List<OrderStatus> orderStatuses);
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
+    boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,final List<OrderStatus> orderStatuses);
 }
