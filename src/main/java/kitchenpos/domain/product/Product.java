@@ -34,7 +34,6 @@ public class Product {
     }
 
     private void validatePrice(final BigDecimal price) {
-        System.out.println(price);
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("유효한 금액이 아님");
         }

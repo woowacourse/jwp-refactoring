@@ -27,8 +27,6 @@ public class MenuRequest {
         this.menuProductRequests = menuProductRequests;
     }
 
-
-
     public String getName() {
         return name;
     }
@@ -43,13 +41,5 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProductRequests() {
         return menuProductRequests;
-    }
-
-    public Menu toMenu(final MenuGroup menuGroup, final Map<Long, Product> products) {
-        final List<MenuProduct> menuProducts = menuProductRequests.stream()
-                .map(request -> new MenuProduct(products.get(request.getProductId()), request.getQuantity()))
-                .collect(Collectors.toList());
-        return new Menu(name, price, menuGroup, new MenuProducts(menuProducts));
-
     }
 }

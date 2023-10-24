@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuMapper;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuRepository;
@@ -21,32 +22,22 @@ import kitchenpos.dto.MenuRequest;
 @Transactional(readOnly = true)
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
+    private final MenuMapper menuMapper;
 
     public MenuService(
             final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
+            final MenuValidator menuValidator,
+            final MenuMapper menuMapper
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
+        this.menuMapper = menuMapper;
     }
 
     @Transactional
     public Menu create(final MenuRequest request) {
-
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("없는 메뉴 그룹이네요"));
-
-        final List<Long> productIds = request.getMenuProductRequests().stream()
-                .map(MenuProductRequest::getProductId)
-                .collect(Collectors.toList());
-
-        final Map<Long, Product> products = productRepository.findAllById(productIds).stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
-        final Menu menu = request.toMenu(menuGroup, products);
+        final Menu menu = menuMapper.toMenu(request, menuValidator);
         return menuRepository.save(menu);
     }
 

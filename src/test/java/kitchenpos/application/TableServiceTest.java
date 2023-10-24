@@ -120,10 +120,10 @@ class TableServiceTest extends BaseServiceTest {
             final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("분식"));
             final Product productD = productRepository.save(new Product("떡볶이", BigDecimal.TEN));
 
-            final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD, 2));
+            final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD.getId(), 2));
 
             final Menu menu = menuRepository.save(
-                    new Menu("떡순튀", BigDecimal.valueOf(20), menuGroup, new MenuProducts(menuProducts))
+                    new Menu("떡순튀", BigDecimal.valueOf(20), menuGroup.getId(), new MenuProducts(menuProducts))
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(),2));
             final Order order = new Order(savedTable, new OrderLineItems(orderLineItems));

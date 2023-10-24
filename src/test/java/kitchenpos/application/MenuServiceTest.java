@@ -68,7 +68,7 @@ class MenuServiceTest extends BaseServiceTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(createdMenu.getPrice()).isEqualByComparingTo(menuRequest.getPrice());
-                softly.assertThat(createdMenu.getMenuGroup().getId()).isEqualTo(menuRequest.getMenuGroupId());
+                softly.assertThat(createdMenu.getMenuGroupId()).isEqualTo(menuRequest.getMenuGroupId());
                 softly.assertThat(createdMenu.getMenuProducts().getMenuProducts().size())
                         .isEqualTo(menuRequest.getMenuProductRequests().size());
             });

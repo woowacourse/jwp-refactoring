@@ -57,10 +57,10 @@ class OrderServiceTest extends BaseServiceTest {
         final MenuGroup boonsik = menuGroupRepository.save(new MenuGroup("분식"));
         final Product productD = productRepository.save(new Product("떡볶이", BigDecimal.TEN));
 
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD, 2));
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(productD.getId(), 2));
 
         final Menu menu = menuRepository.save(
-                new Menu("떡순튀", BigDecimal.valueOf(20), boonsik, new MenuProducts(menuProducts)));
+                new Menu("떡순튀", BigDecimal.valueOf(20), boonsik.getId(), new MenuProducts(menuProducts)));
         orderTable = tableService.create(new OrderTableRequest(4, false));
         orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1);
         orderRequest = new OrderRequest(orderTable.getId(), List.of(orderLineItemRequest));
