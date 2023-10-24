@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
@@ -10,6 +11,7 @@ import kitchenpos.dto.order.OrderLineItemResponse;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -29,6 +31,9 @@ class OrderServiceTest {
 
     @Autowired
     private DataCleaner dataCleaner;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -51,8 +56,9 @@ class OrderServiceTest {
     @Test
     void create_order() {
         // given
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
-        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, 1L));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId()));
 
         final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(),
             List.of(new OrderLineItemRequest(savedMenu.getId(), 3)));
@@ -93,8 +99,9 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_wrong_orderLineItem_count() {
         // given
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
-        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, 1L));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId()));
         final List<OrderLineItemRequest> duplicatedContainMenu = List.of(
             new OrderLineItemRequest(savedMenu.getId(), 3),
             new OrderLineItemRequest(savedMenu.getId(), 3));
@@ -112,7 +119,8 @@ class OrderServiceTest {
     void create_order_fail_with_not_found_orderTable() {
         // given
         final Long wrongOrderTableId = 0L;
-        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, 1L));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId()));
 
         final OrderRequest wrongOrderRequest = new OrderRequest(wrongOrderTableId,
             List.of(new OrderLineItemRequest(savedMenu.getId(), 3)));
@@ -143,8 +151,10 @@ class OrderServiceTest {
     @Test
     void find_all_order() {
         // given
-        orderRepository.save(new Order(1L));
-        orderRepository.save(new Order(2L));
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, false));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, false));
+        orderRepository.save(new Order(orderTable1.getId()));
+        orderRepository.save(new Order(orderTable2.getId()));
 
         // when
         final List<OrderResponse> result = orderService.list();
@@ -157,7 +167,8 @@ class OrderServiceTest {
     @Test
     void change_order_status() {
         // given
-        final Order order = new Order(1L);
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
+        final Order order = new Order(orderTable.getId());
         orderRepository.save(order);
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
 
@@ -188,7 +199,8 @@ class OrderServiceTest {
     @Test
     void change_order_fail_with_completion_order() {
         // given
-        final Order order = new Order(1L);
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
+        final Order order = new Order(orderTable.getId());
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 
