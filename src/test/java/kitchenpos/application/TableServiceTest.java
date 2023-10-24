@@ -24,7 +24,7 @@ import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.ordertable.repository.OrderTableRepository;
 import kitchenpos.domain.product.repository.ProductRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableNumberOfGuestsRequest;

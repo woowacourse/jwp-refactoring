@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.tablegroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,17 +26,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TableGroupTest {
-
-    /*
-    final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product, 1);
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
-        final OrderTable orderTable1 = new OrderTable(0, true);
-        final OrderTable orderTable2 = new OrderTable(0, true);
-        final OrderStatus orderStatus = OrderStatus.COMPLETION;
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
-     */
 
     @Test
     void 생성자는_유효한_데이터를_전달하면_tableGroup를_초기화한다() {
