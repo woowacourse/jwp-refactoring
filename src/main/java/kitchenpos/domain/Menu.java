@@ -4,6 +4,7 @@ import kitchenpos.domain.exception.InvalidMenuPriceException;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,17 +24,19 @@ public class Menu {
     private MenuGroup menuGroup;
     
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
     
     public static Menu of(final String name,
                           final BigDecimal menuPrice,
                           final MenuGroup menuGroup,
                           final List<MenuProduct> menuProducts) {
-        return new Menu(name,
+        Menu menu = new Menu(name,
                 new MenuPrice(menuPrice),
                 menuGroup,
                 menuProducts
         );
+        menu.putMenuInMenuProducts();
+        return menu;
     }
     
     public Menu(final String name,
@@ -54,25 +57,21 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-        putMenuInMenuProducts();
     }
     
-    private static void validate(final MenuPrice menuPrice,
+    private void validate(final MenuPrice menuPrice,
                                  final List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        menuProducts.stream()
+        BigDecimal sum = menuProducts.stream()
                     .map(MenuProduct::getProductPrice)
                     .map(ProductPrice::getPrice)
-                    .forEach(sum::add);
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (menuPrice.getPrice().compareTo(sum) > 0) {
-            throw new InvalidMenuPriceException("메뉴의 가격은 메뉴 상품 가격의 합보다 클 수 없습니다");
+            throw new InvalidMenuPriceException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다");
         }
     }
     
-    private void putMenuInMenuProducts() {
-        this.menuProducts.forEach(menuProduct -> new MenuProduct(this,
-                menuProduct.getProduct(),
-                menuProduct.getQuantity()));
+    public void putMenuInMenuProducts() {
+        this.menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
     }
     
     public Long getId() {
