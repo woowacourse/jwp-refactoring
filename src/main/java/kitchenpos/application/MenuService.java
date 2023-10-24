@@ -35,6 +35,11 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository
                 .findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
+        List<MenuProduct> menuProducts = getMenuProducts(menuRequest);
+        return MenuResponse.toResponse(menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts)));
+    }
+
+    private List<MenuProduct> getMenuProducts(MenuRequest menuRequest) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             Product product = productRepository
@@ -43,7 +48,7 @@ public class MenuService {
             MenuProduct menuProduct = new MenuProduct(product, menuProductRequest.getQuantity());
             menuProducts.add(menuProduct);
         }
-        return MenuResponse.toResponse(menuRepository.save(new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts)));
+        return menuProducts;
     }
 
     public List<MenuResponse> list() {
