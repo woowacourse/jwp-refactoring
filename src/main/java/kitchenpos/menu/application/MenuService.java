@@ -1,5 +1,6 @@
 package kitchenpos.menu.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
@@ -40,7 +41,7 @@ public class MenuService {
         final Menu menu = new Menu(request.getName(),
                                    price,
                                    menuGroup,
-                                   null);
+                                   new ArrayList<>());
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                                                       .map(menuProductRequest -> convertFromDto(menuProductRequest, menu))
                                                       .collect(Collectors.toList());
