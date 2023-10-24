@@ -1,14 +1,7 @@
 package kitchenpos.application.config;
 
 import kitchenpos.common.DataTestExecutionListener;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.config.JpaConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -16,113 +9,90 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.NumberOfGuests;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestExecutionListeners;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
-@JdbcTest
-@Import(DaoConfig.class)
+@DataJpaTest
+@Import(JpaConfig.class)
 @TestExecutionListeners(value = DataTestExecutionListener.class, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class ServiceTestConfig {
 
-    @Autowired
-    protected ProductDao productDao;
+    @PersistenceContext
+    protected EntityManager em;
 
     @Autowired
-    protected MenuProductDao menuProductDao;
+    protected ProductRepository productRepository;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderLineItemDao orderLineItemDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
-
-    @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
 
     protected Product saveProduct() {
-        final Product product = new Product();
-        product.setName("여우 상품");
-        product.setPrice(BigDecimal.valueOf(10000));
-        return productDao.save(product);
+        final Product product = new Product("여우가 좋아하는 피자", new Price(BigDecimal.valueOf(10000)));
+        return productRepository.save(product);
     }
 
     protected MenuGroup saveMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴 그룹");
-        return menuGroupDao.save(menuGroup);
+        final MenuGroup menuGroup = new MenuGroup("여우가 좋아하는 메뉴 그룹");
+        return menuGroupRepository.save(menuGroup);
     }
 
-    protected Menu saveMenu(final MenuGroup menuGroup) {
-        final Menu menu = new Menu();
-        menu.setName("메뉴 이름");
-        menu.setPrice(BigDecimal.valueOf(2000));
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setMenuProducts(new ArrayList<>());
-        return menuDao.save(menu);
-    }
-
-    // TODO: 사용하지 않으면 삭제
-    protected MenuProduct saveMenuProduct(final Product product, final Menu menu) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2L);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setMenuId(menu.getId());
-        return menuProductDao.save(menuProduct);
+    protected Menu saveMenu(final MenuGroup menuGroup, final Product product) {
+        final Menu menu = new Menu("여우 메뉴", new Price(BigDecimal.valueOf(2000)), menuGroup);
+        menu.addMenuProducts(List.of(new MenuProduct(2L, menu, product)));
+        return menuRepository.save(menu);
     }
 
     protected Order saveOrder(final OrderTable orderTable) {
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now().minusMinutes(10));
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(new ArrayList<>());
-        return orderDao.save(order);
+        final Order order = new Order(OrderStatus.COOKING, orderTable);
+        final Menu menu = saveMenu(saveMenuGroup(), saveProduct());
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, order, menu);
+        order.addOrderLineItems(List.of(orderLineItem));
+        return orderRepository.save(order);
     }
 
-    protected OrderTable saveOrderTable(final TableGroup tableGroup) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
-        orderTable.setTableGroupId(tableGroup.getId());
-        return orderTableDao.save(orderTable);
+    protected OrderTable saveOccupiedOrderTable() {
+        return orderTableRepository.save(new OrderTable(new NumberOfGuests(2), false));
     }
 
-    protected OrderTable saveOrderTable() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
-        return orderTableDao.save(orderTable);
+    protected OrderTable saveEmptyOrderTable() {
+        return orderTableRepository.save(new OrderTable(new NumberOfGuests(2), true));
     }
 
-    protected TableGroup saveTableGroup() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now().minusMinutes(30));
-        return tableGroupDao.save(tableGroup);
-    }
-
-    // TODO: 사용하지 않으면 삭제
-    protected OrderLineItem saveOrderLineItem(final Order order, final Menu menu) {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(1L);
-        orderLineItem.setOrderId(order.getId());
-        orderLineItem.setMenuId(menu.getId());
-        return orderLineItemDao.save(orderLineItem);
+    protected TableGroup saveTableGroup(List<OrderTable> orderTables) {
+        final TableGroup tableGroup = new TableGroup(new OrderTables(orderTables));
+        // TODO: em 사용해보기, setter 제거
+        orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
+        return tableGroupRepository.save(tableGroup);
     }
 }

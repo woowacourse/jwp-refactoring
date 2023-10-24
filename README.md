@@ -1,7 +1,5 @@
 # 키친포스
 
-## 요구 사항
-
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
@@ -19,3 +17,122 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+## 규칙
+### 테스트 규칙
+- Api 테스트는 클라이언트와의 요청, 응답을 검증하는 mock 테스트이다.
+
+### 요청, 응답 DTO 규칙
+- 요청과 응답 DTO는 ui 패키지에 위치한다.
+- 클라이언트 <-> controller 간의 요청과 응답으로 간주한다.
+- 만약 controller <-> service 간의 DTO가 필요하면 application 패키지에 DTO를 생성한다.
+
+## API 수정 사항
+_23/10/19_
+### `GET /api/menus` 
+API 응답에 menuProducts 안에 불필요한 menuId 제거
+#### 변경 전
+
+
+#### 변경 후
+
+<br>
+
+### `POST /api/table-groups` 
+API 요청에 id를 객체로 감싸놓은 것을 언박싱
+#### 변경 전
+```json
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+```
+#### 변경 후
+```json
+{
+  "orderTableIds": [1, 2]
+}
+```
+
+<br>
+
+### `GET /api/orders`
+API 응답에 orderLineItems 안에 불필요한 orderId 제거
+#### 변경 전
+```json
+{
+    "id": 1,
+    "orderStatus": "COOKING",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1,
+            "orderId": 1
+        }
+    ]
+}
+```
+
+#### 변경 후
+```json
+{
+    "id": 1,
+    "orderStatus": "COOKING",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1
+        }
+    ]
+}
+```
+<br>
+
+### `PUT /api/orders/{id}/order-status`
+API 응답에 orderLineItems 안에 불필요한 orderId 제거
+#### 변경 전
+```json
+{
+    "id": 1,
+    "orderStatus": "MEAL",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1,
+            "orderId": 1
+        }
+    ]
+}
+```
+
+#### 변경 후
+```json
+{
+    "id": 1,
+    "orderStatus": "MEAL",
+    "orderedTime": "2023-10-20T10:41:07.998694",
+    "orderTableId": 1,
+    "orderLineItems": [
+        {
+            "seq": 1,
+            "quantity": 1,
+            "menuId": 1
+        }
+    ]
+}
+```

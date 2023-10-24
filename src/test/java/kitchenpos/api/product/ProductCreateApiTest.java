@@ -2,10 +2,15 @@ package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.math.BigDecimal;
+
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,23 +23,18 @@ class ProductCreateApiTest extends ApiTestConfig {
     @Test
     void createProduct() throws Exception {
         // given
-        final String request = "{\n" +
-                "  \"name\": \"강정치킨\",\n" +
-                "  \"price\": 17000\n" +
-                "}";
+        final ProductCreateRequest request = new ProductCreateRequest("강정치킨", BigDecimal.valueOf(17000));
 
         // when
-        // FIXME: domain -> dto 로 변경
-        final Long expectedId = 1L;
-        final Product expectedProduct = new Product();
-        expectedProduct.setId(expectedId);
-        when(productService.create(any(Product.class))).thenReturn(expectedProduct);
+        final Product product = new Product(request.getName(), new Price(request.getPrice()));
+        final ProductResponse response = new ProductResponse(1L, product.getName(), product.getPrice().getValue());
+        when(productService.create(eq(request))).thenReturn(response);
 
         // then
         mockMvc.perform(post("/api/products")
                         .contentType(APPLICATION_JSON_VALUE)
-                        .content(request))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(redirectedUrl(String.format("/api/products/%d", expectedId)));
+                .andExpect(redirectedUrl(String.format("/api/products/%d", response.getId())));
     }
 }

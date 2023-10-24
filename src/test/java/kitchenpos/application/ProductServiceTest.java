@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,7 +21,7 @@ class ProductServiceTest extends ServiceTestConfig {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("상품 생성")
@@ -29,30 +31,26 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void success() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(BigDecimal.valueOf(10000));
+            final ProductCreateRequest request = new ProductCreateRequest("상품이름", BigDecimal.valueOf(10000));
 
             // when
-            final Product actual = productService.create(productInput);
+            final ProductResponse actual = productService.create(request);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getName()).isEqualTo(productInput.getName());
-                softly.assertThat(actual.getPrice().compareTo(productInput.getPrice())).isZero();
+                softly.assertThat(actual.getName()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice().compareTo(request.getPrice())).isZero();
             });
         }
 
-        @DisplayName("가격이 null 이면 실패한다.")
+        @DisplayName("가격이 입력하지 않으면 실패한다.")
         @Test
         void fail_if_price_is_null() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(null);
+            final ProductCreateRequest request = new ProductCreateRequest("상품이름", null);
 
             // then
-            assertThatThrownBy(() -> productService.create(productInput))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -60,12 +58,10 @@ class ProductServiceTest extends ServiceTestConfig {
         @Test
         void fail_if_price_under_zero() {
             // given
-            final Product productInput = new Product();
-            productInput.setName("여우곰탕");
-            productInput.setPrice(BigDecimal.valueOf(-1));
+            final ProductCreateRequest request = new ProductCreateRequest("상품이름", BigDecimal.valueOf(-1));
 
             // then
-            assertThatThrownBy(() -> productService.create(productInput))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -80,13 +76,12 @@ class ProductServiceTest extends ServiceTestConfig {
             final Product savedProduct = saveProduct();
 
             // when
-            final List<Product> actual = productService.list();
+            final List<ProductResponse> actual = productService.list();
 
             // then
-            // FIXME: equals&hashcode 적용
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
-//                softly.assertThat(actual).containsExactly(savedProduct);
+                softly.assertThat(actual.get(0).getId()).isEqualTo(savedProduct.getId());
             });
         }
     }

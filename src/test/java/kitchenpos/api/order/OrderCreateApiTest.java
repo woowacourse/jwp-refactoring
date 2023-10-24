@@ -1,11 +1,18 @@
 package kitchenpos.api.order;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,28 +25,28 @@ class OrderCreateApiTest extends ApiTestConfig {
     @Test
     void createOrder() throws Exception {
         // given
-        final String request = "{\n" +
-                "  \"orderTableId\": 1,\n" +
-                "  \"orderLineItems\": [\n" +
-                "    {\n" +
-                "      \"menuId\": 1,\n" +
-                "      \"quantity\": 1\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
+        final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 1L);
+        final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(orderLineItemCreateRequest));
 
         // when
-        // FIXME: domain -> dto 로 변경
-        final Long expectedId = 1L;
-        final Order expectedOrder = new Order();
-        expectedOrder.setId(expectedId);
-        when(orderService.create(any(Order.class))).thenReturn(expectedOrder);
+        final OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(
+                1L,
+                orderLineItemCreateRequest.getQuantity(),
+                orderLineItemCreateRequest.getMenuId()
+        );
+        final OrderResponse response = new OrderResponse(
+                1L,
+                OrderStatus.MEAL,
+                LocalDateTime.now(),
+                request.getOrderTableId(),
+                List.of(orderLineItemResponse));
+        when(orderService.create(eq(request))).thenReturn(response);
 
         // then
         mockMvc.perform(post("/api/orders")
                         .contentType(APPLICATION_JSON_VALUE)
-                        .content(request))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(redirectedUrl(String.format("/api/orders/%d", expectedId)));
+                .andExpect(redirectedUrl(String.format("/api/orders/%d", response.getId())));
     }
 }
