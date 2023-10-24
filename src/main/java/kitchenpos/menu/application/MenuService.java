@@ -51,8 +51,8 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), Collections.emptyList()));
 
         for (final MenuCreateRequest.MenuProductCreate menuProductCreate : request.getMenuProductCreates()) {
-            final MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(savedMenu, productRepository.findById(menuProductCreate.getProductId()).orElseThrow(IllegalAccessError::new), menuProductCreate.getQuantity()));
-            savedMenu.addMenuProduct(menuProduct);
+            final Product product = productRepository.findById(menuProductCreate.getProductId()).orElseThrow(IllegalAccessError::new);
+            savedMenu.addMenuProduct(new MenuProduct(product.getId(), menuProductCreate.getQuantity()));
         }
 
         return savedMenu.getId();

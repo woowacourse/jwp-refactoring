@@ -84,13 +84,12 @@ class MenuTest {
             final Menu menu = new Menu(menuName, price, menuGroupId, menuProducts);
 
             final Product product = new Product("name", new BigDecimal(100));
-            final MenuProduct menuProduct = new MenuProduct(null, product, 3);
+            final MenuProduct menuProduct = new MenuProduct(product.getId(), 3);
             //when
             menu.addMenuProduct(menuProduct);
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(menuProduct.getMenu()).isEqualTo(menu);
                 softly.assertThat(menu.getMenuProducts().size()).isEqualTo(1);
             });
         }
