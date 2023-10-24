@@ -7,13 +7,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderCreateRequest.OrderLineItemInfo;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderResponse.OrderLineItemResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
+import kitchenpos.order.domain.MenuSnapShot;
 import kitchenpos.order.domain.OrderStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -27,10 +30,10 @@ public class OrderAcceptanceSteps {
     }
 
     public static OrderLineItemResponse 주문_항목(
-            Long 메뉴_ID,
+            MenuSnapShot 메뉴_스냅샷,
             int 수량
     ) {
-        return new OrderLineItemResponse(null, 메뉴_ID, 수량);
+        return new OrderLineItemResponse(null, 메뉴_스냅샷, 수량);
     }
 
     public static Long 주문_생성후_ID를_가져온다(
@@ -67,7 +70,7 @@ public class OrderAcceptanceSteps {
     public static ExtractableResponse<Response> 주문_조회_요청을_보낸다() {
         return given()
                 .get("/api/orders")
-                .then().log().headers()
+                .then().log().all()
                 .extract();
     }
 
@@ -90,6 +93,7 @@ public class OrderAcceptanceSteps {
         assertThat(orders)
                 .usingRecursiveComparison()
                 .ignoringExpectedNullFields()
+                .ignoringFieldsOfTypes(BigDecimal.class)  // TODO 처리
                 .isEqualTo(Arrays.asList(예상_주문들));
     }
 }

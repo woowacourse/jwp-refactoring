@@ -41,7 +41,7 @@ public class MenuAcceptanceSteps {
         return new MenuCreateRequest(메뉴_이름, new BigDecimal(메뉴_가격), 메뉴_그룹_ID, Arrays.asList(상품들));
     }
 
-    public static MenuProductInfo 메뉴에_속한_상품(Long 상품_ID, int 수량) {
+    public static MenuProductInfo 메뉴에_속한_상품(Long 상품_ID, long 수량) {
         return new MenuProductInfo(상품_ID, 수량);
     }
 
