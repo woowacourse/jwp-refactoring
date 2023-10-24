@@ -1,5 +1,6 @@
-package kitchenpos.order.application;
+package kitchenpos.order.application.listner;
 
+import kitchenpos.order.application.OrderRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.exception.OrderException;
 import kitchenpos.order.domain.exception.OrderExceptionType;
