@@ -30,7 +30,6 @@ public class TableService {
     @Transactional
     public OrderTableDto create(final OrderTableDto orderTableDto) {
         final OrderTable orderTable = new OrderTable(
-            null,
             orderTableDto.getNumberOfGuests(),
             orderTableDto.getEmpty()
         );

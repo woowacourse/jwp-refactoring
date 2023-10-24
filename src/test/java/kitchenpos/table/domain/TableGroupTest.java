@@ -29,8 +29,8 @@ class TableGroupTest {
     @Test
     @DisplayName("파라미터로 넘어온 orderTable이 비어있지 않다면 예외처리한다.")
     void throwExceptionOrderTableIsNotEmpty() {
-        final OrderTable validTable = new OrderTable(null, 5, true);
-        final OrderTable invalidTable = new OrderTable(null, 5, false);
+        final OrderTable validTable = new OrderTable(5, true);
+        final OrderTable invalidTable = new OrderTable(5, false);
 
         assertThatThrownBy(() -> new TableGroup(now(), List.of(invalidTable, validTable)))
             .isInstanceOf(TableGroupException.class)
@@ -42,7 +42,7 @@ class TableGroupTest {
     void throwExceptionOrderTableIsAlreadyGrouped() {
         final TableGroup mockTableGroup = Mockito.mock(TableGroup.class);
         final OrderTable invalidTable = new OrderTable(mockTableGroup, 5, true);
-        final OrderTable validTable = new OrderTable(null, 5, true);
+        final OrderTable validTable = new OrderTable(5, true);
 
         assertThatThrownBy(() -> new TableGroup(now(), List.of(invalidTable, validTable)))
             .isInstanceOf(TableGroupException.class)

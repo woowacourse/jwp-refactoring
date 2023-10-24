@@ -19,7 +19,7 @@ class OrderTableTest {
     @Test
     @DisplayName("OrderTable의 numberOfGuest가 0이하면 예외처리한다.")
     void validateNumberOfGuest() {
-        assertThatThrownBy(() -> new OrderTable(null, -1, true))
+        assertThatThrownBy(() -> new OrderTable(-1, true))
             .isInstanceOf(OrderTableException.class)
             .hasMessage(NUMBER_OF_GUEST_LOWER_THAN_ZERO.getMessage());
     }
@@ -31,7 +31,7 @@ class OrderTableTest {
         @Test
         @DisplayName("정상적으로 변경하는 경우")
         void success() {
-            final OrderTable orderTable = new OrderTable(null, 0, true);
+            final OrderTable orderTable = new OrderTable(0, true);
 
             orderTable.changeEmpty(false);
 
