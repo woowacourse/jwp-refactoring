@@ -1,23 +1,17 @@
 package kitchenpos.order.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.order.domain.MenuProductSnapShot;
-import kitchenpos.order.domain.MenuSnapShot;
+import kitchenpos.order.domain.MenuSnapShotCreator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderValidator;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,39 +19,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderValidator orderValidator;
-    private final ProductRepository productRepository;
-    private final MenuRepository menuRepository;
+    private final MenuSnapShotCreator menuSnapShotCreator;
     private final OrderRepository orderRepository;
+    private final MenuRepository menuRepository;
 
     public OrderService(
             OrderValidator orderValidator,
-            ProductRepository productRepository,
-            MenuRepository menuRepository,
-            OrderRepository orderRepository
-    ) {
+            MenuSnapShotCreator menuSnapShotCreator,
+            OrderRepository orderRepository,
+            MenuRepository menuRepository) {
         this.orderValidator = orderValidator;
-        this.productRepository = productRepository;
-        this.menuRepository = menuRepository;
+        this.menuSnapShotCreator = menuSnapShotCreator;
         this.orderRepository = orderRepository;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                .map(it -> {
-                    Menu menu = menuRepository.getById(it.getMenuId());
-                    List<MenuProductSnapShot> productSnapShots = new ArrayList<>();
-                    for (MenuProduct menuProduct : menu.getMenuProducts()) {
-                        Product product = productRepository.getById(menuProduct.getProductId());
-                        MenuProductSnapShot snapShot = new MenuProductSnapShot(product.getName(), product.getPrice(),
-                                menuProduct.getQuantity());
-                        productSnapShots.add(snapShot);
-                    }
-                    MenuSnapShot snapShot = new MenuSnapShot(menu.getMenuGroup().getName(), menu.getName(),
-                            menu.getPrice(), productSnapShots);
-                    return new OrderLineItem(snapShot, it.getQuantity());
-                })
-                .collect(Collectors.toList());
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems()
+                .stream()
+                .map(it ->
+                        menuSnapShotCreator.create(
+                                menuRepository.getById(it.getMenuId()), it.getQuantity()
+                        )).collect(Collectors.toList());
         return OrderResponse.from(orderRepository.save(
                 new Order(request.getOrderTableId(), orderLineItems, orderValidator)
         ));
