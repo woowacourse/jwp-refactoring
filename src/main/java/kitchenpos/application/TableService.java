@@ -5,13 +5,13 @@ import static kitchenpos.domain.OrderStatus.MEAL;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.OrderTableCreateRequest;
 import kitchenpos.dto.table.OrderTableIsEmptyUpdateRequest;
 import kitchenpos.dto.table.OrderTableNumberOfGuestsUpdateRequest;
 import kitchenpos.dto.table.OrderTableResponse;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

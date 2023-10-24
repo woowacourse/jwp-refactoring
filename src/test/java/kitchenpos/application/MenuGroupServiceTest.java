@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.MenuGroupServiceTest.MenuGroupRequestFixture.메뉴_그룹_생성_요청;
-import static kitchenpos.common.fixture.MenuGroupFixture.메뉴_그룹;
+import static kitchenpos.domain.menu.MenuGroupFixture.메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.common.ServiceTest;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.dto.menu.MenuGroupCreateRequest;
 import kitchenpos.dto.menu.MenuGroupResponse;
-import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

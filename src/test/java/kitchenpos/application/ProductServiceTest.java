@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.ProductServiceTest.ProductRequestFixture.상품_생성_요청;
-import static kitchenpos.common.fixture.ProductFixture.상품;
+import static kitchenpos.domain.product.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.dto.product.ProductResponse;
-import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

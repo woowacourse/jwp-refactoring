@@ -1,7 +1,7 @@
 package kitchenpos.dto.table;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 
 public class OrderTableCreateRequest {
 
@@ -27,6 +27,6 @@ public class OrderTableCreateRequest {
     }
 
     public OrderTable toOrderTableWithoutGroup() {
-        return new OrderTable(null, null, numberOfGuests, isEmpty);
+        return OrderTable.of(numberOfGuests, isEmpty);
     }
 }

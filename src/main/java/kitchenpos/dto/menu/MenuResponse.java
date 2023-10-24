@@ -3,7 +3,7 @@ package kitchenpos.dto.menu;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 
 public class MenuResponse {
 
