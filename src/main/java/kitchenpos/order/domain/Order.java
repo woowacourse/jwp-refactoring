@@ -12,12 +12,9 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.order.domain.type.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 
 @Entity
 @Table(name = "orders")
@@ -27,9 +24,8 @@ public class Order {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(nullable = false)
+    private Long orderTableId;
 
     @Column(nullable = false)
     @Enumerated(value = STRING)
@@ -38,7 +34,7 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = LAZY, cascade = ALL)
+    @OneToMany(mappedBy = "orderId", fetch = LAZY, cascade = ALL)
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
@@ -46,9 +42,7 @@ public class Order {
 
     private Order(Builder builder) {
         this.id = builder.id;
-        this.orderTable = OrderTable.builder()
-                .id(builder.orderTableId)
-                .build();
+        this.orderTableId = builder.orderTableId;
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
         this.orderLineItems = builder.orderLineItems;
@@ -63,7 +57,7 @@ public class Order {
     }
 
     public Long getOrderTable() {
-        return orderTable.getId();
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

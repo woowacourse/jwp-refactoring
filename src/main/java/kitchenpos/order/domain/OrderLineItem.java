@@ -7,8 +7,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.value.Quantity;
 import kitchenpos.order.dto.OrderLineItemsDto;
 
@@ -19,9 +17,8 @@ public class OrderLineItem {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column(nullable = false)
+    private Long orderId;
 
     @Column(nullable = false)
     private Long menuId;
@@ -34,7 +31,7 @@ public class OrderLineItem {
 
     public OrderLineItem(Long seq, Long orderId, Long menuId, Quantity quantity) {
         this.seq = seq;
-        this.order = Order.builder().id(orderId).build();
+        this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
     }
@@ -53,7 +50,7 @@ public class OrderLineItem {
     }
 
     public Long getOrderId() {
-        return order.getId();
+        return orderId;
     }
 
     public Long getMenuId() {
