@@ -1,6 +1,8 @@
 package kitchenpos.integration;
 
 import kitchenpos.application.dto.OrderTableDto;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
@@ -68,5 +70,10 @@ class TableGroupIntegrationTest extends IntegrationTest {
     private ResponseEntity<OrderTable> createTable(HttpEntity<OrderTable> request) {
         return testRestTemplate
                 .postForEntity("/api/tables", request, OrderTable.class);
+    }
+
+    private void changeOrderStatus(final Long orderId) {
+        final HttpEntity<OrderStatus> updateRequest = new HttpEntity<>(OrderStatus.COOKING);
+        testRestTemplate.exchange("/api/orders/" + orderId + "/order-status", HttpMethod.PUT, updateRequest, Order.class);
     }
 }
