@@ -60,7 +60,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu menu = request.toEntity(savedMenuGroup, menuProducts);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), savedMenuGroup);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {

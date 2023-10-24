@@ -31,13 +31,6 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
-    }
-
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
         this.name = name;
         this.price = price;
