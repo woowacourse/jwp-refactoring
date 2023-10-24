@@ -24,11 +24,11 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(Long orderTableId, boolean changedStatus) {
+    public OrderTable changeEmpty(Long orderTableId, Boolean changeEmptyStatus) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
         orderTableValidator.validateChangeEmpty(orderTableId);
-        savedOrderTable.changeEmpty(changedStatus);
+        savedOrderTable.changeEmpty(changeEmptyStatus);
         return orderTableRepository.save(savedOrderTable);
     }
 

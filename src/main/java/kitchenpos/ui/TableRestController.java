@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.application.OrderTableService;
+import kitchenpos.table.request.ChangeEmptyRequest;
+import kitchenpos.table.request.ChangeNumberOfGuestsRequest;
 import kitchenpos.table.request.OrderTableCreateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,13 +39,13 @@ public class TableRestController {
     }
 
     @PutMapping("/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(@PathVariable Long orderTableId, @RequestBody boolean changedStatus) {
-        return ResponseEntity.ok().body(orderTableService.changeEmpty(orderTableId, changedStatus));
+    public ResponseEntity<OrderTable> changeEmpty(@PathVariable Long orderTableId, @RequestBody ChangeEmptyRequest request) {
+        return ResponseEntity.ok().body(orderTableService.changeEmpty(orderTableId, request.getEmpty()));
     }
 
     @PutMapping("/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTable> changeNumberOfGuests(@PathVariable Long orderTableId,
-                                                           @RequestBody int numberOfGuests) {
-        return ResponseEntity.ok().body(orderTableService.changeNumberOfGuests(orderTableId, numberOfGuests));
+                                                           @RequestBody ChangeNumberOfGuestsRequest request) {
+        return ResponseEntity.ok().body(orderTableService.changeNumberOfGuests(orderTableId, request.getNumberOfGuests()));
     }
 }
