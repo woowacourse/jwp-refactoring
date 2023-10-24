@@ -7,9 +7,6 @@ import java.math.BigDecimal;
 public class ProductFixtures {
 
     public static Product PIZZA() {
-        final Product pizza = new Product();
-        pizza.setName("피자");
-        pizza.setPrice(BigDecimal.valueOf(20000));
-        return pizza;
+        return new Product("피자", BigDecimal.valueOf(20000));
     }
 }
