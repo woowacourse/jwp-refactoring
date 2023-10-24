@@ -39,15 +39,13 @@ class OrderServiceTest extends ServiceTest {
 
     private Menu menu;
 
-    private MenuGroup menuGroup;
-
     @BeforeEach
     void setUp() {
-        OrderTable newOrderTable = OrderTable.of(null, 10, false);
+        OrderTable newOrderTable = new OrderTable(null, 10, false);
         orderTable = orderTableRepository.save(newOrderTable);
-        menuGroup = menuGroupRepository.save(MenuGroup.from("후라이드 세트"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
         Product product = productRepository.save(Product.of("후라이드", 15_000L));
-        Menu newMenu = Menu.of("치킨", 15_000L, menuGroup, List.of(MenuProduct.of(product, 1)));
+        Menu newMenu = Menu.of("치킨", 15_000L, menuGroup, List.of(new MenuProduct(null, product, 1L)));
         menu = menuRepository.save(newMenu);
     }
 
@@ -113,7 +111,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문_테이블이_비어_있으면_예외_발생() {
             // given
-            OrderTable newOrderTable = OrderTable.of(null, 10, true);
+            OrderTable newOrderTable = new OrderTable(null, 10, true);
             OrderTable orderTable = orderTableRepository.save(newOrderTable);
 
             OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
@@ -179,7 +177,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_상태가_COMPLETION이면_예외_발생() {
             // given
-            Order order = Order.of(orderTable, COMPLETION.name(), LocalDateTime.now());
+            Order order = new Order(orderTable, COMPLETION.name(), LocalDateTime.now(), null);
             Order savedOrder = orderRepository.save(order);
 
             OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);

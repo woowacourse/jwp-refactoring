@@ -44,11 +44,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    /**
-     * 음.............id 로 변환하고 하나씩 찾는 것 보다 효율적인 방법은 없나..........
-     * in으로 한번에 찾으면 없는걸 검증하기 어려븜.. 따로 처리 해줘야함...
-     */
-    // TODO: 2023/10/23
     public OrderResponse create(
             final OrderCreateRequest request
     ) {
@@ -64,7 +59,6 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    // TODO: 2023/10/23 로직 분리
     private Order saveOrder(
             final OrderCreateRequest request
     ) {
@@ -86,7 +80,6 @@ public class OrderService {
         }
     }
 
-    // TODO: 2023/10/23 로직 분리
     private void saveOrderLineItems(
             final List<OrderLineItemRequest> orderLineItems,
             final Order savedOrder
@@ -95,7 +88,7 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItem : orderLineItems) {
             Menu menu = menuRepository.findById(orderLineItem.getMenuId())
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu입니다."));
-            savedOrderLineItems.add(orderLineItemRepository.save(OrderLineItem.of(savedOrder, menu, orderLineItem.getQuantity())));
+            savedOrderLineItems.add(orderLineItemRepository.save(new OrderLineItem(savedOrder, menu, orderLineItem.getQuantity())));
         }
         savedOrder.updateOrderLineItems(savedOrderLineItems);
     }

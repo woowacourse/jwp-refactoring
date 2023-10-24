@@ -21,12 +21,14 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    public Product() {
+    protected Product() {
     }
 
-    protected Product(final Long id,
-                      final String name,
-                      final BigDecimal price) {
+    private Product(
+            final Long id,
+            final String name,
+            final BigDecimal price
+    ) {
         validatePrice(price);
         this.id = id;
         this.name = name;
@@ -41,15 +43,9 @@ public class Product {
         return new Product(null, name, BigDecimal.valueOf(price));
     }
 
-    public static Product of(final Long id,
-                             final String name,
-                             final BigDecimal price) {
-        return new Product(id, name, price);
-    }
-
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품의 가격은 null이거나 음수일 수 없습니다.");
         }
     }
 

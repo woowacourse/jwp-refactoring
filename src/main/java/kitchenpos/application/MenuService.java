@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -10,7 +9,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
-import kitchenpos.dto.menu.MenuProductCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.mapper.MenuMapper;
 import kitchenpos.repository.MenuGroupRepository;
@@ -41,36 +39,32 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    // TODO: 2023/10/23 로직 분리
     public MenuResponse create(
             final MenuCreateRequest request
     ) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu group 입니다."));
-        final Menu menu = MenuMapper.toMenu(request, menuGroup);
 
         final List<MenuProduct> menuProducts = convertToMenuProducts(request);
+        final Menu menu = MenuMapper.toMenu(request, menuGroup);
         final BigDecimal sum = calculateSumByMenuProducts(menuProducts);
         validateMenuPrice(menu, sum);
-
         final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu, menuProducts);
         return MenuMapper.toMenuResponse(savedMenu, savedMenuProducts);
     }
 
-    // TODO: 2023/10/23 로직 분리
     private List<MenuProduct> convertToMenuProducts(
             final MenuCreateRequest menuRequest
     ) {
-        final List<MenuProductCreateRequest> requests = menuRequest.getMenuProducts();
-        final ArrayList<MenuProduct> menuProducts = new ArrayList<>();
-        for (final MenuProductCreateRequest request : requests) {
-            final Product product = productRepository.findById(request.getProductId())
-                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 product 입니다."));
-            menuProducts.add(MenuProduct.of(product, request.getQuantity()));
-        }
-        return menuProducts;
+        return menuRequest.getMenuProducts().stream()
+                .map(request -> {
+                    final Product product = productRepository.findById(request.getProductId())
+                            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 product 입니다."));
+                    return new MenuProduct(null, product, request.getQuantity());
+                })
+                .collect(Collectors.toList());
     }
 
     private BigDecimal calculateSumByMenuProducts(
@@ -90,14 +84,13 @@ public class MenuService {
         }
     }
 
-    // TODO: 2023/10/23 로직 다시 생각해보기
     private List<MenuProduct> saveMenuProducts(
             final Menu menu,
             final List<MenuProduct> menuProducts
     ) {
         return menuProducts.stream()
                 .map(menuProduct -> menuProductRepository.save(
-                        MenuProduct.of(menu, menuProduct.getProduct(), menuProduct.getQuantity())
+                        new MenuProduct(menu, menuProduct.getProduct(), menuProduct.getQuantity())
                 ))
                 .collect(Collectors.toList());
     }

@@ -16,7 +16,6 @@ public class OrderTableMapper {
     ) {
         return new OrderTable(
                 null,
-                null,
                 tableCreateRequest.getNumberOfGuests(),
                 tableCreateRequest.isEmpty()
         );

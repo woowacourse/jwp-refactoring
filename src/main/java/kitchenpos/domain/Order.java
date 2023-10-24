@@ -37,11 +37,13 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final Long id,
-                  final OrderTable orderTable,
-                  final String orderStatus,
-                  final LocalDateTime orderedTime,
-                  final List<OrderLineItem> orderLineItems) {
+    private Order(
+            final Long id,
+            final OrderTable orderTable,
+            final String orderStatus,
+            final LocalDateTime orderedTime,
+            final List<OrderLineItem> orderLineItems
+    ) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -49,17 +51,13 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order of(final OrderTable orderTable,
-                           final String orderStatus,
-                           final LocalDateTime orderedTime,
-                           final List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderTable, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public static Order of(final OrderTable orderTable,
-                           final String orderStatus,
-                           final LocalDateTime orderedTime) {
-        return new Order(null, orderTable, orderStatus, orderedTime, null);
+    public Order(
+            final OrderTable orderTable,
+            final String orderStatus,
+            final LocalDateTime orderedTime,
+            final List<OrderLineItem> orderLineItems
+    ) {
+        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {

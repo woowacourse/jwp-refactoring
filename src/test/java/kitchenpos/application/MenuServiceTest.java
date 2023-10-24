@@ -34,7 +34,7 @@ class MenuServiceTest extends ServiceTest {
     void setUp() {
         Product newProduct = Product.of("치킨", 18_000L);
 
-        MenuGroup newMenuGroup = MenuGroup.from("튀김류");
+        MenuGroup newMenuGroup = new MenuGroup("튀김류");
 
         product = productRepository.save(newProduct);
         menuGroup = menuGroupRepository.save(newMenuGroup);

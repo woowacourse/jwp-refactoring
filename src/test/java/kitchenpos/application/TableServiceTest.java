@@ -75,7 +75,7 @@ class TableServiceTest extends ServiceTest {
 
         @Test
         void 정상_요청() {
-            OrderTable orderTable = OrderTable.of(null, 0, true);
+            OrderTable orderTable = new OrderTable(null, 0, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
@@ -102,12 +102,14 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 테이블_그룹이_있는_테이블_상태_변경_시_예외_발생() {
             // given
-            TableGroup newTableGroup = TableGroup.of(LocalDateTime.now());
-
-            TableGroup tableGroup = tableGroupRepository.save(newTableGroup);
-
-            OrderTable orderTable = OrderTable.of(tableGroup, 10, false);
+            OrderTable orderTable = new OrderTable(null, 10, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+            OrderTable orderTable2 = new OrderTable(null, 10, true);
+            OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+
+            TableGroup newTableGroup = new TableGroup(LocalDateTime.now(), List.of(savedOrderTable, savedOrderTable2));
+            TableGroup savedTableGroup = tableGroupRepository.save(newTableGroup);
+            savedOrderTable.updateTableGroup(savedTableGroup);
 
             TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
 
@@ -121,7 +123,7 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(strings = {"MEAL", "COOKING"})
         void 상태_변경할_테이블_주문의_상태가_COMPLETION인_경우_예외_발생(final OrderStatus status) {
             // given
-            OrderTable orderTable = OrderTable.of(null, 0, true);
+            OrderTable orderTable = new OrderTable(null, 0, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
             Order order = createOrder(savedOrderTable, status);
             orderRepository.save(order);
@@ -141,7 +143,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            OrderTable orderTable = OrderTable.of(null, 0, false);
+            OrderTable orderTable = new OrderTable(null, 0, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(10);
@@ -163,7 +165,7 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(ints = {-1, -100, -1000})
         void 변경할_인원수가_0미만이면_예외_발생(int numberOfGuests) {
             // given
-            OrderTable orderTable = OrderTable.of(null, 0, false);
+            OrderTable orderTable = new OrderTable(null, 0, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(numberOfGuests);
@@ -189,7 +191,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 비어있는_테이블_인원수_변경_시_예외_발생() {
             // given
-            OrderTable orderTable = OrderTable.of(null, 0, true);
+            OrderTable orderTable = new OrderTable(null, 0, true);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             TableUpdateNumberOfGuestsRequest request = new TableUpdateNumberOfGuestsRequest(10);
@@ -203,6 +205,6 @@ class TableServiceTest extends ServiceTest {
 
     private Order createOrder(final OrderTable orderTable,
                               final OrderStatus status) {
-        return Order.of(orderTable, status.name(), LocalDateTime.now());
+        return new Order(orderTable, status.name(), LocalDateTime.now(), null);
     }
 }

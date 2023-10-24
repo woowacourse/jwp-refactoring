@@ -21,7 +21,6 @@ public class OrderMapper {
             final LocalDateTime orderedTime
             ) {
         return new Order(
-                null,
                 orderTable,
                 status.name(),
                 orderedTime,

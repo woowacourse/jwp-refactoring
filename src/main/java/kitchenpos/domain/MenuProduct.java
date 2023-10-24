@@ -30,25 +30,24 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long seq,
-                       final Menu menu,
-                       final Product product,
-                       final Long quantity) {
+    private MenuProduct(
+            final Long seq,
+            final Menu menu,
+            final Product product,
+            final Long quantity
+    ) {
         this.seq = seq;
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }
 
-    public static MenuProduct of(final Menu menu,
-                                 final Product product,
-                                 final long quantity) {
-        return new MenuProduct(null, menu, product, quantity);
-    }
-
-    public static MenuProduct of(final Product product,
-                                 final long quantity) {
-        return new MenuProduct(null, null, product, quantity);
+    public MenuProduct(
+            final Menu menu,
+            final Product product,
+            final Long quantity
+    ) {
+        this(null, menu, product, quantity);
     }
 
     public BigDecimal getTotalPrice() {

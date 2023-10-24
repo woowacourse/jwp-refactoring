@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -16,13 +15,11 @@ import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Transactional
 @Service
 public class TableGroupService {
 
-    public static final int MIN_ORDER_TABLE_SIZE = 2;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -41,35 +38,20 @@ public class TableGroupService {
             final TableGroupCreateRequest tableGroupCreateRequest
     ) {
         final TableGroup tableGroup = saveTableGroup(tableGroupCreateRequest);
-        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
-            orderTable.updateTableGroup(tableGroup);
-        }
+        tableGroup.updateTableGroupInOrderTable();
+
         return TableGroupMapper.toTableGroupResponse(tableGroup);
     }
 
-    // TODO: 2023/10/23 로직 분리
     private TableGroup saveTableGroup(
             final TableGroupCreateRequest tableGroupCreateRequest
     ) {
         final List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateOrderTableSize(orderTables, orderTableIds);
-        validateNumberOfOrderTable(orderTables);
-        validateOrderTableStatus(orderTables);
 
         final TableGroup tableGroup = TableGroupMapper.toTableGroup(LocalDateTime.now(), orderTables);
         return tableGroupRepository.save(tableGroup);
-    }
-
-    // TODO: 2023/10/23 뎁스
-    private void validateOrderTableStatus(
-            final List<OrderTable> savedOrderTables
-    ) {
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException("orderTable 은 비어있어야 하고, 소속된 table group이 없어야 합니다.");
-            }
-        }
     }
 
     private void validateOrderTableSize(
@@ -78,14 +60,6 @@ public class TableGroupService {
     ) {
         if (orderTables.size() != orderTableIds.size()) {
             throw new NoSuchElementException("존재하지 order table 입니다.");
-        }
-    }
-
-    private void validateNumberOfOrderTable(
-            final List<OrderTable> orderTables
-    ) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_ORDER_TABLE_SIZE) {
-            throw new IllegalArgumentException("order table 수는 2 이상이어야 합니다.");
         }
     }
 

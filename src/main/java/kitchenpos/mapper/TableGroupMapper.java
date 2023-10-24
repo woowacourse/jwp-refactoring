@@ -16,7 +16,6 @@ public class TableGroupMapper {
             final List<OrderTable> orderTables
     ) {
         return new TableGroup(
-                null,
                 createdDate,
                 orderTables
         );

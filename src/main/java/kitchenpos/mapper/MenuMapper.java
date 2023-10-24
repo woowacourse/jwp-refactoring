@@ -13,7 +13,10 @@ public class MenuMapper {
     private MenuMapper() {
     }
 
-    public static Menu toMenu(final MenuCreateRequest request, final MenuGroup menuGroup) {
+    public static Menu toMenu(
+            final MenuCreateRequest request,
+            final MenuGroup menuGroup
+    ) {
         return Menu.of(
                 request.getName(),
                 request.getPrice(),
@@ -21,7 +24,10 @@ public class MenuMapper {
         );
     }
 
-    public static MenuResponse toMenuResponse(final Menu menu, final List<MenuProduct> menuProducts) {
+    public static MenuResponse toMenuResponse(
+            final Menu menu,
+            final List<MenuProduct> menuProducts
+    ) {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
@@ -31,7 +37,9 @@ public class MenuMapper {
         );
     }
 
-    public static List<MenuResponse> toMenuResponses(final List<Menu> menus) {
+    public static List<MenuResponse> toMenuResponses(
+            final List<Menu> menus
+    ) {
         return menus.stream()
                 .map(menu -> toMenuResponse(menu, menu.getMenuProducts()))
                 .collect(Collectors.toList());

@@ -29,20 +29,24 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long seq,
-                          final Order order,
-                          final Menu menu,
-                          final long quantity) {
+    private OrderLineItem(
+            final Long seq,
+            final Order order,
+            final Menu menu,
+            final long quantity
+    ) {
         this.seq = seq;
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem of(final Order order,
-                                   final Menu menu,
-                                   final long quantity) {
-        return new OrderLineItem(null, order, menu, quantity);
+    public OrderLineItem(
+            final Order order,
+            final Menu menu,
+            final long quantity
+    ) {
+        this(null, order, menu, quantity);
     }
 
     public Long getSeq() {

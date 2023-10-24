@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import kitchenpos.ServiceTest;
 import kitchenpos.domain.Order;
@@ -36,8 +37,8 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = OrderTable.of(null, 10, true);
-        OrderTable orderTable2 = OrderTable.of(null, 15, true);
+        OrderTable orderTable1 = new OrderTable(null, 10, true);
+        OrderTable orderTable2 = new OrderTable(null, 15, true);
         savedOrderTable1 = orderTableRepository.save(orderTable1);
         savedOrderTable2 = orderTableRepository.save(orderTable2);
     }
@@ -92,7 +93,7 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 요청의_주문_테이블이_비어있지_않으면_예외_발생() {
             // given
-            OrderTable orderTable = OrderTable.of(null, 15, false);
+            OrderTable orderTable = new OrderTable(null, 15, false);
             orderTable = orderTableRepository.save(orderTable);
             TableGroupCreateRequest request = createTableGroup(
                     new SingleOrderTableCreateRequest(orderTable.getId()),
@@ -108,11 +109,12 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 주문_테이블에_그룹이_이미_존재하면_예외_발생() {
             // given
-            TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.of(LocalDateTime.now()));
-            OrderTable orderTable1 = OrderTable.of(savedTableGroup, 10, true);
-            OrderTable orderTable2 = OrderTable.of(savedTableGroup, 15, true);
+            OrderTable orderTable1 = new OrderTable(null, 10, true);
+            OrderTable orderTable2 = new OrderTable(null, 15, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+            TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2)));
+            savedOrderTable1.updateTableGroup(savedTableGroup);
 
             TableGroupCreateRequest request = createTableGroup(
                     new SingleOrderTableCreateRequest(savedOrderTable1.getId()),
@@ -169,6 +171,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     private Order createOrder(final OrderTable orderTable,
                               final OrderStatus status) {
-        return Order.of(orderTable, status.name(), LocalDateTime.now());
+        return new Order(orderTable, status.name(), LocalDateTime.now(), null);
     }
 }
