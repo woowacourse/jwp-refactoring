@@ -6,9 +6,7 @@ import kitchenpos.ui.request.ProductCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -21,13 +19,8 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductCreateRequest productCreateRequest) {
-        final BigDecimal price = productCreateRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         Product product = new Product(productCreateRequest.getName(), productCreateRequest.getPrice());
+        product.validatePrice();
 
         return productRepository.save(product);
     }
