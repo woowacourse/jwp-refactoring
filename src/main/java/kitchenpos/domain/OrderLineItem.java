@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import kitchenpos.domain.menu.Menu;
 
 @Entity
 public class OrderLineItem {

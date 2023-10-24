@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.InvalidMenuPriceException;
 import kitchenpos.domain.exception.InvalidMenuProductException;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -31,8 +33,8 @@ class MenuProductsTest {
 
         // then
         assertAll(
-                () -> assertThat(actual.getMenuProducts()).hasSize(1),
-                () -> assertThat(actual.getMenuProducts().get(0).getMenu()).isEqualTo(menu)
+                () -> assertThat(actual.getValues()).hasSize(1),
+                () -> assertThat(actual.getValues().get(0).getMenu()).isEqualTo(menu)
         );
     }
 

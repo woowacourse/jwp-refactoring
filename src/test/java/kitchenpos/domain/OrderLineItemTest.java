@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,6 @@ class OrderLineItemTest {
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
 
         // when & then
-        assertThatCode(() -> new OrderLineItem(menu, 1L));
+        assertThatCode(() -> new OrderLineItem(menu, 1L)).doesNotThrowAnyException();
     }
 }

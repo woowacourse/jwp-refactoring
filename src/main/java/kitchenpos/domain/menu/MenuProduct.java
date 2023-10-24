@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.util.Objects;
 import javax.persistence.Embedded;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.common.Price;
 import kitchenpos.domain.common.Quantity;
 

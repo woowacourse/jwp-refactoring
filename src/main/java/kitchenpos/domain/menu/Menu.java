@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.common.Name;
 import kitchenpos.domain.common.Price;
 
@@ -80,7 +81,7 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts.getMenuProducts();
+        return menuProducts.getValues();
     }
 
     @Override

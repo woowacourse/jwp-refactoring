@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.InvalidMenuPriceException;
 import kitchenpos.domain.exception.InvalidMenuProductException;
 import org.junit.jupiter.api.DisplayNameGeneration;

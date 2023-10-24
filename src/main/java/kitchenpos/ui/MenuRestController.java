@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.ui.dto.request.CreateMenuRequest;
 import kitchenpos.ui.dto.response.CreateMenuResponse;
 import kitchenpos.ui.dto.response.ReadMenuResponse;

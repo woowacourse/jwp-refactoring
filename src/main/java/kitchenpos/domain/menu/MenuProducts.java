@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +13,13 @@ import kitchenpos.domain.exception.InvalidMenuProductException;
 public class MenuProducts {
 
     @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProduct> values = new ArrayList<>();
 
     protected MenuProducts() {
     }
 
-    private MenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    private MenuProducts(final List<MenuProduct> values) {
+        this.values = values;
     }
 
     public static MenuProducts of(final Menu menu, final List<MenuProduct> menuProducts) {
@@ -56,7 +56,7 @@ public class MenuProducts {
         }
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public List<MenuProduct> getValues() {
+        return values;
     }
 }

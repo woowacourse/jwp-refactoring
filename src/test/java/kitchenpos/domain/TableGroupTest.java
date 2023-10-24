@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
 import kitchenpos.domain.exception.InvalidOrderTableSizeException;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
