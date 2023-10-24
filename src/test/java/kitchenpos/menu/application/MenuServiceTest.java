@@ -66,7 +66,8 @@ class MenuServiceTest {
                                                                           List.of(menuProductRequest));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class)
+                                                                       .hasMessage("가격은 음수일 수 없습니다.");
     }
 
     @Test
@@ -81,7 +82,8 @@ class MenuServiceTest {
                                                                           List.of(menuProductRequest));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class)
+                                                                       .hasMessage("메뉴 그룹이 존재하지 않습니다.");
     }
 
     @Test
@@ -96,7 +98,8 @@ class MenuServiceTest {
                                                                           List.of(menuProductRequest));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class)
+                                                                       .hasMessage("상품이 존재하지 않습니다.");
     }
 
     @Test
@@ -111,6 +114,7 @@ class MenuServiceTest {
                                                                           List.of(menuProductRequest));
 
         // when & then
-        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(createMenuRequest)).isInstanceOf(IllegalArgumentException.class)
+                                                                       .hasMessage("메뉴의 가격은 메뉴 상품들의 총 가격보다 클 수 없습니다.");
     }
 }

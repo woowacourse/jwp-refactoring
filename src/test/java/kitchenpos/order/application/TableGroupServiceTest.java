@@ -75,7 +75,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블 그룹을 만들기 위해선, 적어도 2개 이상의 주문 테이블이 필요합니다.");
     }
 
     @Test
@@ -90,7 +91,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 빈 상태여야 합니다.");
     }
 
     @ParameterizedTest(name = "주문 상태가 {0}일때 예외가 발생한다.")
@@ -112,6 +114,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("현재 진행중인 주문이 존재하여, 테이블 그룹을 해제할 수 없습니다.");
     }
 }

@@ -88,7 +88,8 @@ class OrderTableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderTableService.changeEmpty(orderTable.getId(), changeEmptyRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("진행중인 주문이 있어, 주문 테이블의 상태를 변경할 수 없습니다.");
     }
 
     @Test
@@ -99,7 +100,8 @@ class OrderTableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("방문 손님 수는 음수가 될 수 없습니다.");
     }
 
     @Test
@@ -110,6 +112,7 @@ class OrderTableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈 상태의 주문 테이블에서는 방문 손님 수를 변경할 수 없습니다.");
     }
 }

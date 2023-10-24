@@ -46,7 +46,8 @@ class ProductServiceTest {
         final CreateProductRequest request = new CreateProductRequest("name", price);
 
         // when & then
-        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class)
+                                                                .hasMessage("가격은 음수일 수 없습니다.");
     }
 
     @Test

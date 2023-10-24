@@ -81,7 +81,8 @@ class OrderServiceTest {
                                                                                      orderLineItemRequest2));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(createOrderRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(createOrderRequest)).isInstanceOf(IllegalArgumentException.class)
+                                                                         .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -96,7 +97,8 @@ class OrderServiceTest {
                                                                                      orderLineItemRequest2));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(createOrderRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(createOrderRequest)).isInstanceOf(IllegalArgumentException.class)
+                                                                         .hasMessage("빈 상태의 주문 테이블에서는 주문할 수 없습니다.");
     }
 
     @Test
@@ -107,7 +109,8 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, changeOrderStatusRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문이 존재하지 않습니다.");
     }
 
     @Test
@@ -119,6 +122,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeOrderStatusRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 완료된 주문의 상태는 변경할 수 없습니다.");
     }
 }
