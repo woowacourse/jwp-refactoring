@@ -33,7 +33,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final OrderTables orderTables = getOrderTables(request.getOrderTableId());
+        final OrderTables orderTables = getOrderTables(request.getOrderTables());
         final TableGroup tableGroup = TableGroup.forSave();
         tableGroupRepository.save(tableGroup);
         for (final OrderTable orderTable : orderTables.getOrderTables()) {

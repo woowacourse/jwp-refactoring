@@ -9,6 +9,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableResponse;
+import kitchenpos.dto.table.OrderTableIdRequest;
 import kitchenpos.dto.table.TableGroupRequest;
 import kitchenpos.dto.table.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
@@ -61,7 +62,9 @@ class TableGroupServiceTest {
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
 
-        final TableGroupRequest request = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
+        final TableGroupRequest request = new TableGroupRequest(List.of(
+            new OrderTableIdRequest(orderTable1.getId()),
+            new OrderTableIdRequest(orderTable2.getId())));
 
         // when
         final TableGroupResponse result = tableGroupService.create(request);
@@ -79,7 +82,7 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블 그룹의 테이블 개수가 1개 혹은 0개이면 주문 테이블 그룹을 생성할 수 없다.")
     @MethodSource("getOrderTable")
     @ParameterizedTest
-    void create_tableGroup_fail_with_table_cont_0_or_1(final List<Long> orderTableIds) {
+    void create_tableGroup_fail_with_table_cont_0_or_1(final List<OrderTableIdRequest> orderTableIds) {
         // given
         final TableGroupRequest wrongRequest = new TableGroupRequest(orderTableIds);
 
@@ -92,7 +95,7 @@ class TableGroupServiceTest {
     private static Stream<Arguments> getOrderTable() {
         return Stream.of(
             Arguments.of(Collections.emptyList()),
-            Arguments.of(List.of(1L))
+            Arguments.of(List.of(new OrderTableIdRequest(1L)))
         );
     }
 
@@ -101,7 +104,9 @@ class TableGroupServiceTest {
     void create_tableGroup_fail_with_different_count_of_orderTable() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(5));
-        final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(orderTable.getId(), orderTable.getId()));
+        final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(
+            new OrderTableIdRequest(2L),
+            new OrderTableIdRequest(5L)));
 
         // when
         // then
@@ -115,7 +120,9 @@ class TableGroupServiceTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
-        final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
+        final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(
+            new OrderTableIdRequest(orderTable1.getId()),
+            new OrderTableIdRequest(orderTable2.getId())));
 
         // when
         // then
@@ -132,7 +139,9 @@ class TableGroupServiceTest {
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
         otherTableGroup.addOrderTable(orderTable1);
 
-        final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(orderTable1.getId(), orderTable2.getId()));
+        final TableGroupRequest wrongRequest = new TableGroupRequest(List.of(
+            new OrderTableIdRequest(orderTable1.getId()),
+            new OrderTableIdRequest(orderTable2.getId())));
 
         // when
         // then
