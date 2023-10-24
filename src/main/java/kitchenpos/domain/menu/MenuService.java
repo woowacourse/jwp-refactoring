@@ -1,8 +1,8 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.application.dto.request.CreateMenuRequest;
-import kitchenpos.application.dto.response.CreateMenuResponse;
-import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.response.CreateMenuResponse;
+import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

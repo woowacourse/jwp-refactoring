@@ -1,55 +1,55 @@
-package kitchenpos.application.dto.response;
+package kitchenpos.dto.response;
 
 import kitchenpos.domain.product.Product;
 
-public class ProductResponse {
+public class CreateProductResponse {
     private final Long id;
     private final String name;
     private final String price;
 
-    private ProductResponse(Long id, String name, String price) {
+    private CreateProductResponse(Long id, String name, String price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public static ProductResponse from(final Product product) {
-        return ProductResponse.builder()
+    public static CreateProductResponse from(final Product product) {
+        return CreateProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice().toString())
                 .build();
     }
 
-    public static ProductResponseBuilder builder() {
-        return new ProductResponseBuilder();
+    public static CreateProductResponseBuilder builder() {
+        return new CreateProductResponseBuilder();
     }
 
-    public static final class ProductResponseBuilder {
+    public static final class CreateProductResponseBuilder {
         private Long id;
         private String name;
         private String price;
 
-        private ProductResponseBuilder() {
+        private CreateProductResponseBuilder() {
         }
 
-        public ProductResponseBuilder id(Long id) {
+        public CreateProductResponseBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public ProductResponseBuilder name(String name) {
+        public CreateProductResponseBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public ProductResponseBuilder price(String price) {
+        public CreateProductResponseBuilder price(String price) {
             this.price = price;
             return this;
         }
 
-        public ProductResponse build() {
-            return new ProductResponse(id, name, price);
+        public CreateProductResponse build() {
+            return new CreateProductResponse(id, name, price);
         }
     }
 

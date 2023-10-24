@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.application.dto.request.CreateTableGroupRequest;
-import kitchenpos.application.dto.response.CreateTableGroupResponse;
+import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.response.CreateTableGroupResponse;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.tablegroup.TableGroup;
 
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.application.dto.request.CreateTableGroupRequest.CreateOrderTable;
+import static kitchenpos.dto.request.CreateTableGroupRequest.CreateOrderTable;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 
 @SuppressWarnings("NonAsciiCharacters")

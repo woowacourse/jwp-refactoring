@@ -4,11 +4,11 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.CreateOrderRequest;
 
 import java.util.List;
 
-import static kitchenpos.application.dto.request.CreateOrderRequest.CreateOrderLineItem;
+import static kitchenpos.dto.request.CreateOrderRequest.CreateOrderLineItem;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {

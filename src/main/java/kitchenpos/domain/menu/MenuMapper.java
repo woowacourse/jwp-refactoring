@@ -1,6 +1,6 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.application.dto.request.CreateMenuRequest;
+import kitchenpos.dto.request.CreateMenuRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

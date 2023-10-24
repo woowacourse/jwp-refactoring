@@ -4,11 +4,11 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.CreateOrderTableRequest;
-import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
-import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
-import kitchenpos.application.dto.response.CreateOrderTableResponse;
-import kitchenpos.application.dto.response.OrderTableResponse;
+import kitchenpos.dto.request.CreateOrderTableRequest;
+import kitchenpos.dto.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.dto.request.UpdateOrderTableGuestsRequest;
+import kitchenpos.dto.response.CreateOrderTableResponse;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.domain.table.OrderTable;
 
 @SuppressWarnings("NonAsciiCharacters")

@@ -1,22 +1,21 @@
-package kitchenpos.application.dto.response;
+package kitchenpos.dto.response;
 
 import kitchenpos.domain.table.OrderTable;
 
-public class CreateOrderTableResponse {
+public class OrderTableResponse {
     private final Long id;
     private final Long tableGroupId;
     private final int numberOfGuests;
     private final boolean empty;
 
-    private CreateOrderTableResponse(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    private OrderTableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-
-    public static CreateOrderTableResponse from(final OrderTable orderTable) {
+    public static OrderTableResponse from(final OrderTable orderTable) {
         return builder()
                 .id(orderTable.getId())
                 .numberOfGuests(orderTable.getNumberOfGuests())
@@ -24,41 +23,41 @@ public class CreateOrderTableResponse {
                 .build();
     }
 
-    public static CreateOrderTableResponseBuilder builder() {
-        return new CreateOrderTableResponseBuilder();
+    public static OrderTableResponseBuilder builder() {
+        return new OrderTableResponseBuilder();
     }
 
-    public static final class CreateOrderTableResponseBuilder {
+    public static final class OrderTableResponseBuilder {
         private Long id;
         private Long tableGroupId;
         private int numberOfGuests;
         private boolean empty;
 
-        private CreateOrderTableResponseBuilder() {
+        private OrderTableResponseBuilder() {
         }
 
-        public CreateOrderTableResponseBuilder id(Long id) {
+        public OrderTableResponseBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public CreateOrderTableResponseBuilder tableGroupId(Long tableGroupId) {
+        public OrderTableResponseBuilder tableGroupId(Long tableGroupId) {
             this.tableGroupId = tableGroupId;
             return this;
         }
 
-        public CreateOrderTableResponseBuilder numberOfGuests(int numberOfGuests) {
+        public OrderTableResponseBuilder numberOfGuests(int numberOfGuests) {
             this.numberOfGuests = numberOfGuests;
             return this;
         }
 
-        public CreateOrderTableResponseBuilder empty(boolean empty) {
+        public OrderTableResponseBuilder empty(boolean empty) {
             this.empty = empty;
             return this;
         }
 
-        public CreateOrderTableResponse build() {
-            return new CreateOrderTableResponse(id, tableGroupId, numberOfGuests, empty);
+        public OrderTableResponse build() {
+            return new OrderTableResponse(id, tableGroupId, numberOfGuests, empty);
         }
     }
 

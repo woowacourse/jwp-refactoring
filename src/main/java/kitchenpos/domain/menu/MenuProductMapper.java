@@ -1,6 +1,6 @@
 package kitchenpos.domain.menu;
 
-import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuProductRequest;
 import org.springframework.stereotype.Component;
 
 @Component

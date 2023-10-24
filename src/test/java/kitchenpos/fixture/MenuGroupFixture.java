@@ -4,8 +4,8 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.CreateMenuGroupRequest;
-import kitchenpos.application.dto.response.CreateMenuGroupResponse;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.response.CreateMenuGroupResponse;
 import kitchenpos.domain.menugroup.MenuGroup;
 
 @SuppressWarnings("NonAsciiCharacters")

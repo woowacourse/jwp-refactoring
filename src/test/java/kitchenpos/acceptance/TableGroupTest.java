@@ -5,7 +5,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.Acceptance;
-import kitchenpos.application.dto.request.CreateOrderTableRequest;
+import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

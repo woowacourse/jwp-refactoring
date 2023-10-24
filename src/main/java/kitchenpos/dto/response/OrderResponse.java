@@ -1,4 +1,4 @@
-package kitchenpos.application.dto.response;
+package kitchenpos.dto.response;
 
 import kitchenpos.domain.order.Order;
 
@@ -6,22 +6,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CreateOrderResponse {
+public class OrderResponse {
     private final Long id;
     private final Long orderTableId;
     private final String orderStatus;
-    private final LocalDateTime orderedTime;
+    private final String orderedTime;
     private final List<OrderLineItemResponse> orderLineItems;
 
-    private CreateOrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
+    private OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+        this.orderedTime = orderedTime.toString();
         this.orderLineItems = orderLineItems;
     }
 
-    public static CreateOrderResponse from(Order order) {
+    public static OrderResponse from(Order order) {
         return builder()
                 .id(order.getId())
                 .orderTableId(order.getOrderTableId())
@@ -33,47 +33,47 @@ public class CreateOrderResponse {
                 .build();
     }
 
-    public static CreateOrderResponseBuilder builder() {
-        return new CreateOrderResponseBuilder();
+    public static OrderResponseBuilder builder() {
+        return new OrderResponseBuilder();
     }
 
-    public static final class CreateOrderResponseBuilder {
+    public static final class OrderResponseBuilder {
         private Long id;
         private Long orderTableId;
         private String orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItemResponse> orderLineItems;
 
-        private CreateOrderResponseBuilder() {
+        private OrderResponseBuilder() {
         }
 
-        public CreateOrderResponseBuilder id(Long id) {
+        public OrderResponseBuilder id(Long id) {
             this.id = id;
             return this;
         }
 
-        public CreateOrderResponseBuilder orderTableId(Long orderTableId) {
+        public OrderResponseBuilder orderTableId(Long orderTableId) {
             this.orderTableId = orderTableId;
             return this;
         }
 
-        public CreateOrderResponseBuilder orderStatus(String orderStatus) {
+        public OrderResponseBuilder orderStatus(String orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }
 
-        public CreateOrderResponseBuilder orderedTime(LocalDateTime orderedTime) {
+        public OrderResponseBuilder orderedTime(LocalDateTime orderedTime) {
             this.orderedTime = orderedTime;
             return this;
         }
 
-        public CreateOrderResponseBuilder orderLineItems(List<OrderLineItemResponse> orderLineItems) {
+        public OrderResponseBuilder orderLineItems(List<OrderLineItemResponse> orderLineItems) {
             this.orderLineItems = orderLineItems;
             return this;
         }
 
-        public CreateOrderResponse build() {
-            return new CreateOrderResponse(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+        public OrderResponse build() {
+            return new OrderResponse(id, orderTableId, orderStatus, orderedTime, orderLineItems);
         }
     }
 
@@ -89,7 +89,7 @@ public class CreateOrderResponse {
         return orderStatus;
     }
 
-    public LocalDateTime getOrderedTime() {
+    public String getOrderedTime() {
         return orderedTime;
     }
 

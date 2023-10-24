@@ -4,10 +4,10 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.CreateMenuGroupRequest;
-import kitchenpos.application.dto.request.CreateMenuRequest;
-import kitchenpos.application.dto.response.CreateMenuResponse;
-import kitchenpos.application.dto.response.MenuResponse;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.response.CreateMenuResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.domain.menu.Menu;
 
 import java.math.BigDecimal;

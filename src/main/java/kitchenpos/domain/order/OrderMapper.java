@@ -1,6 +1,6 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.CreateOrderRequest;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

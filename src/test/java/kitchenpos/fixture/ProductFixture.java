@@ -4,9 +4,9 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.application.dto.request.CreateProductRequest;
-import kitchenpos.application.dto.response.CreateProductResponse;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.dto.request.CreateProductRequest;
+import kitchenpos.dto.response.CreateProductResponse;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.domain.product.Product;
 
 import java.math.BigDecimal;
