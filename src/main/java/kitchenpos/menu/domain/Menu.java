@@ -73,8 +73,8 @@ public class Menu {
     }
 
     public void validateMenuPrice() {
-        if (this.price.compareTo(this.menuProducts.totalPrice()) > 0) {
-            throw new IllegalArgumentException();
+        if (this.price.compareTo(this.menuProducts.totalPrice()) != 0) {
+            throw new IllegalArgumentException("가격이 잘못되었습니다.");
         }
     }
 
