@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.presentation.dto.ChangeEmptyRequest;
 import kitchenpos.order.presentation.dto.ChangeNumberOfGuestsRequest;
@@ -63,7 +62,7 @@ class OrderTableServiceTest {
 
         // when
         final OrderTable actual = orderTableService.changeEmpty(orderTable.getId(),
-                                                                     changeEmptyRequest);
+                                                                changeEmptyRequest);
 
         // then
         assertThat(actual.isEmpty()).isTrue();
@@ -77,7 +76,7 @@ class OrderTableServiceTest {
 
         // when
         final OrderTable actual = orderTableService.changeNumberOfGuests(orderTable.getId(),
-                                                                              changeNumberOfGuestsRequest);
+                                                                         changeNumberOfGuestsRequest);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(100);

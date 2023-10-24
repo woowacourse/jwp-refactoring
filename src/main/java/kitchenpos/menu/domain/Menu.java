@@ -63,9 +63,9 @@ public class Menu {
 
     private void validateMenuProducts(final List<MenuProduct> menuProducts) {
         final BigDecimal sum = menuProducts.stream()
-                                             .map(MenuProduct::calculatePrice)
-                                             .reduce(BigDecimal::add)
-                                             .orElseThrow(() -> new IllegalArgumentException("메뉴 상품의 가격 계산 중 오류가 발생했습니다."));
+                                           .map(MenuProduct::calculatePrice)
+                                           .reduce(BigDecimal::add)
+                                           .orElseThrow(() -> new IllegalArgumentException("메뉴 상품의 가격 계산 중 오류가 발생했습니다."));
         if (price.getValue().compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품들의 총 가격보다 클 수 없습니다.");
         }
