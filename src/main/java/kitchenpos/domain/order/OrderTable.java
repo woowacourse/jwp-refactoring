@@ -17,6 +17,12 @@ public class OrderTable {
         return new OrderTable(null, null, numberOfGuests, empty);
     }
 
+    public void validateEmptiness() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }

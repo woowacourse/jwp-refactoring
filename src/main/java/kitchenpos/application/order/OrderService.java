@@ -43,28 +43,16 @@ public class OrderService {
     @Transactional
     public Order create(OrderCreateRequest request) {
         List<OrderLineItemCreateRequest> orderLineItems = request.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
+        long menuCounts = menuRepository.countByIdIn(menuIds);
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
+        orderTable.validateEmptiness();
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        Order order = mapToOrder(request, orderTable);
-
+        Order order = mapToOrder(request, menuCounts);
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
@@ -78,19 +66,32 @@ public class OrderService {
         return savedOrder;
     }
 
-    private OrderLineItem mapToOrderLineItem(OrderLineItemCreateRequest orderLineItem, Long orderId) {
+    private Order mapToOrder(OrderCreateRequest request, long menuCounts) {
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+                .map(this::mapToOrderLineItem)
+                .collect(Collectors.toList());
+
+        return Order.of(
+                request.getOrderTableId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                orderLineItems,
+                menuCounts
+        );
+    }
+
+    private OrderLineItem mapToOrderLineItem(OrderLineItemCreateRequest orderLineItem) {
         return OrderLineItem.of(
-                orderId,
                 orderLineItem.getMenuId(),
                 orderLineItem.getQuantity()
         );
     }
 
-    private Order mapToOrder(OrderCreateRequest request, OrderTable orderTable) {
-        return Order.of(
-                request.getOrderTableId(),
-                OrderStatus.COOKING.name(),
-                LocalDateTime.now()
+    private OrderLineItem mapToOrderLineItem(OrderLineItemCreateRequest orderLineItem, Long orderId) {
+        return OrderLineItem.of(
+                orderId,
+                orderLineItem.getMenuId(),
+                orderLineItem.getQuantity()
         );
     }
 

@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +20,22 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order of(Long orderTableId, String orderStatus, LocalDateTime localDateTime) {
+    public static Order of(Long orderTableId, String orderStatus, LocalDateTime localDateTime, List<OrderLineItem> orderLineItems, long menuCounts) {
+        validateOrderLineItemEmpty(orderLineItems);
+        validateOrderLineItemSize(orderLineItems, menuCounts);
         return new Order(null, orderTableId, orderStatus, localDateTime);
     }
 
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
+    private static void validateOrderLineItemEmpty(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateOrderLineItemSize(List<OrderLineItem> orderLineItems, long menuCounts) {
+        if (orderLineItems.size() != menuCounts) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

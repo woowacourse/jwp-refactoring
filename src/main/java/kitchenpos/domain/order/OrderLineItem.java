@@ -13,6 +13,10 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public static OrderLineItem of(Long menuId, long quantity) {
+        return new OrderLineItem(null,null, menuId, quantity);
+    }
+
     public static OrderLineItem of(Long orderId, Long menuId, long quantity) {
         return new OrderLineItem(null, orderId, menuId, quantity);
     }
