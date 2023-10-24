@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import static kitchenpos.fixture.ProductFixture.CHICKEN;
-import static kitchenpos.fixture.ProductFixture.CHICKEN_NON_ID;
+import static kitchenpos.fixture.ProductFixture.CHICKEN_REQUEST;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,7 +40,7 @@ class ProductRestControllerTest {
         // when & then
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(CHICKEN_NON_ID)))
+                        .content(objectMapper.writeValueAsString(CHICKEN_REQUEST)))
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrl("/api/products/1"));
     }

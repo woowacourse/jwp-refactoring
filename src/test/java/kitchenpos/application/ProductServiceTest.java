@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.ProductFixture.CHICKEN;
 import static kitchenpos.fixture.ProductFixture.CHICKEN_NON_ID;
+import static kitchenpos.fixture.ProductFixture.CHICKEN_REQUEST;
 import static kitchenpos.fixture.ProductFixture.COKE_NON_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +25,7 @@ class ProductServiceTest {
     @Test
     void create_메서드는_상품을_생성한다() {
         // when
-        final Product createdProduct = productService.create(CHICKEN_NON_ID);
+        final Product createdProduct = productService.create(CHICKEN_REQUEST);
 
         // then
         assertThat(createdProduct)
