@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.persistence.ProductRepository;
 import org.junit.jupiter.api.Nested;
@@ -37,8 +38,8 @@ class ProductServiceTest {
                     .thenReturn(savedProduct);
 
             // when
-            final Product product = new Product("상품", BigDecimal.valueOf(1000));
-            final Product result = productService.create(product);
+            final ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(1000));
+            final Product result = productService.create(request);
 
             // then
             assertThat(result).isEqualTo(savedProduct);
@@ -47,20 +48,20 @@ class ProductServiceTest {
         @Test
         void 상품을_생성할_때_가격이_없으면_실패한다() {
             // given
-            final Product product = new Product("상품", null);
+            final ProductCreateRequest request = new ProductCreateRequest("상품", null);
 
             // when, then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 상품을_생성할_때_가격이_0보다_작으면_실패한다() {
             // given
-            final Product product = new Product("상품", BigDecimal.valueOf(-1000));
+            final ProductCreateRequest request = new ProductCreateRequest("상품", BigDecimal.valueOf(-1000L));
 
             // when, then
-            assertThatThrownBy(() -> productService.create(product))
+            assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

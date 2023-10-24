@@ -2,10 +2,10 @@ package kitchenpos.application.dto;
 
 public class MenuProductDto {
 
-    Long productId;
-    Long quantity;
+    final Long productId;
+    final Long quantity;
 
-    public MenuProductDto(Long productId, Long quantity) {
+    public MenuProductDto(final Long productId, final Long quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
@@ -14,15 +14,7 @@ public class MenuProductDto {
         return productId;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
     public Long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
     }
 }
