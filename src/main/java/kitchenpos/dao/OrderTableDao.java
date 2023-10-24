@@ -1,18 +1,18 @@
 package kitchenpos.dao;
 
-import kitchenpos.dto.OrderTableDto;
-
+import kitchenpos.domain.OrderTable;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.Repository;
 
-public interface OrderTableDao {
-    OrderTableDto save(OrderTableDto entity);
+public interface OrderTableDao extends Repository<OrderTable, Long> {
+    OrderTable save(OrderTable entity);
 
-    Optional<OrderTableDto> findById(Long id);
+    Optional<OrderTable> findById(Long id);
 
-    List<OrderTableDto> findAll();
+    List<OrderTable> findAll();
 
-    List<OrderTableDto> findAllByIdIn(List<Long> ids);
+    List<OrderTable> findAllByIdIn(List<Long> ids);
 
-    List<OrderTableDto> findAllByTableGroupId(Long tableGroupId);
+    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

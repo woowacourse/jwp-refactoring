@@ -1,13 +1,29 @@
 package kitchenpos.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.domain.TableGroup;
 
 public class TableGroupDto {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTableDto> orderTableDtos;
+
+    public static TableGroupDto from(TableGroup entity) {
+        List<OrderTableDto> orderTableDtos = entity.getOrderTables()
+                                                   .stream()
+                                                   .map(OrderTableDto::from)
+                                                   .collect(toList());
+        TableGroupDto tableGroupDto = new TableGroupDto();
+        tableGroupDto.setId(entity.getId());
+        tableGroupDto.setCreatedDate(entity.getCreatedDate());
+        tableGroupDto.setOrderTables(orderTableDtos);
+        return tableGroupDto;
+    }
 
     public Long getId() {
         return id;

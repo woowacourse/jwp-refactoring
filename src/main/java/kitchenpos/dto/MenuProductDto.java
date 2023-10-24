@@ -1,12 +1,22 @@
 package kitchenpos.dto;
 
 import java.util.Objects;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuProductDto {
     private Long seq;
     private Long menuId;
     private Long productId;
     private long quantity;
+
+    public static MenuProductDto from(MenuProduct entity) {
+        MenuProductDto menuProductDto = new MenuProductDto();
+        menuProductDto.setSeq(entity.getSeq());
+        menuProductDto.setMenuId(entity.getMenu().getId());
+        menuProductDto.setProductId(entity.getProduct().getId());
+        menuProductDto.setQuantity(entity.getQuantity());
+        return menuProductDto;
+    }
 
     public Long getSeq() {
         return seq;

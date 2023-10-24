@@ -31,7 +31,7 @@ public enum MenuFixture {
         menuDto.setName("후라이드치킨");
         menuDto.setPrice(BigDecimal.valueOf(0L));
         menuDto.setMenuGroupId(1L);
-        menuDto.setMenuProducts(List.of(MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toDto()));
+        menuDto.setMenuProductDtos(List.of(MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toDto()));
         consumer.accept(menuDto);
         return menuDto;
     }
@@ -42,7 +42,7 @@ public enum MenuFixture {
         menuDto.setName(name);
         menuDto.setPrice(price);
         menuDto.setMenuGroupId(menuGroupId);
-        menuDto.setMenuProducts(menuProductDtos);
+        menuDto.setMenuProductDtos(menuProductDtos);
         return menuDto;
     }
 }

@@ -97,10 +97,10 @@ class MenuIntegrationTest extends IntegrationTest {
             MenuProductDto menuProductDto = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toDto();
 
             MenuDto menuDto1 = MenuFixture.computeDefaultMenuDto(arg ->
-                arg.setMenuProducts(List.of(menuProductDto))
+                arg.setMenuProductDtos(List.of(menuProductDto))
             );
             MenuDto menuDto2 = MenuFixture.computeDefaultMenuDto(arg ->
-                arg.setMenuProducts(List.of(menuProductDto))
+                arg.setMenuProductDtos(List.of(menuProductDto))
             );
 
             // when

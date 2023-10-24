@@ -1,15 +1,35 @@
 package kitchenpos.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.domain.Order;
 
 public class OrderDto {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemDto> orderLineItemDtos;
+
+    public static OrderDto from(Order entity) {
+        List<OrderLineItemDto> orderLineItemDtos = entity.getOrderLineItems()
+                                                         .stream()
+                                                         .map(OrderLineItemDto::from)
+                                                         .collect(toList());
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(entity.getId());
+        orderDto.setOrderTableId(entity.getOrderTable().getId());
+        orderDto.setOrderStatus(entity.getOrderStatus().name());
+        orderDto.setOrderedTime(entity.getOrderedTime());
+        orderDto.setOrderLineItemDtos(orderLineItemDtos);
+        return orderDto;
+    }
+
+
 
     public Long getId() {
         return id;
@@ -43,11 +63,11 @@ public class OrderDto {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItemDto> getOrderLineItems() {
+    public List<OrderLineItemDto> getOrderLineItemDtos() {
         return orderLineItemDtos;
     }
 
-    public void setOrderLineItems(final List<OrderLineItemDto> orderLineItemDtos) {
+    public void setOrderLineItemDtos(final List<OrderLineItemDto> orderLineItemDtos) {
         this.orderLineItemDtos = orderLineItemDtos;
     }
 

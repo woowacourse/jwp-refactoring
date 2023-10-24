@@ -1,12 +1,28 @@
 package kitchenpos.dto;
 
 import java.util.Objects;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableDto {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    public static OrderTableDto from(OrderTable entity) {
+        OrderTableDto orderTableDto = new OrderTableDto();
+        orderTableDto.setId(entity.getId());
+        TableGroup tableGroup = entity.getTableGroup();
+        if (tableGroup == null) {
+            orderTableDto.setTableGroupId(null);
+        } else {
+            orderTableDto.setTableGroupId(tableGroup.getId());
+        }
+        orderTableDto.setNumberOfGuests(entity.getNumberOfGuests());
+        orderTableDto.setEmpty(entity.isEmpty());
+        return orderTableDto;
+    }
 
     public Long getId() {
         return id;

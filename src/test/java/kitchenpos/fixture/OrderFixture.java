@@ -31,7 +31,7 @@ public enum OrderFixture {
         orderDto.setOrderTableId(1L);
         orderDto.setOrderStatus("COOKING");
         orderDto.setOrderedTime(null);
-        orderDto.setOrderLineItems(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toDto()));
+        orderDto.setOrderLineItemDtos(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toDto()));
         consumer.accept(orderDto);
         return orderDto;
     }
@@ -42,7 +42,7 @@ public enum OrderFixture {
         orderDto.setOrderTableId(orderTableId);
         orderDto.setOrderStatus(orderStatus);
         orderDto.setOrderedTime(null);
-        orderDto.setOrderLineItems(orderLineItemDtos);
+        orderDto.setOrderLineItemDtos(orderLineItemDtos);
         return orderDto;
     }
 

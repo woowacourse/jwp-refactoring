@@ -1,15 +1,34 @@
 package kitchenpos.dto;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import kitchenpos.domain.Menu;
 
 public class MenuDto {
+
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProductDto> menuProductDtos;
+
+    public static MenuDto from(Menu entity) {
+        List<MenuProductDto> menuProductDtos = entity.getMenuProducts()
+                                                     .stream()
+                                                     .map(MenuProductDto::from)
+                                                     .collect(toList());
+
+        MenuDto menuDto = new MenuDto();
+        menuDto.setId(entity.getId());
+        menuDto.setName(entity.getName());
+        menuDto.setPrice(entity.getPrice());
+        menuDto.setMenuGroupId(entity.getMenuGroup().getId());
+        menuDto.setMenuProductDtos(menuProductDtos);
+        return menuDto;
+    }
 
     public Long getId() {
         return id;
@@ -43,11 +62,11 @@ public class MenuDto {
         this.menuGroupId = menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public List<MenuProductDto> getMenuProductDtos() {
         return menuProductDtos;
     }
 
-    public void setMenuProducts(final List<MenuProductDto> menuProductDtos) {
+    public void setMenuProductDtos(final List<MenuProductDto> menuProductDtos) {
         this.menuProductDtos = menuProductDtos;
     }
 

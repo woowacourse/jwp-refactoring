@@ -1,10 +1,18 @@
 package kitchenpos.dto;
 
 import java.util.Objects;
+import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupDto {
     private Long id;
     private String name;
+
+    public static MenuGroupDto from(MenuGroup entity) {
+        MenuGroupDto menuGroupDto = new MenuGroupDto();
+        menuGroupDto.setId(entity.getId());
+        menuGroupDto.setName(entity.getName());
+        return menuGroupDto;
+    }
 
     public Long getId() {
         return id;

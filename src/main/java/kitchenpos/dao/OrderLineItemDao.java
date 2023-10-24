@@ -1,16 +1,16 @@
 package kitchenpos.dao;
 
-import kitchenpos.dto.OrderLineItemDto;
-
+import kitchenpos.domain.OrderLineItem;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.Repository;
 
-public interface OrderLineItemDao {
-    OrderLineItemDto save(OrderLineItemDto entity);
+public interface OrderLineItemDao extends Repository<OrderLineItem, Long> {
+    OrderLineItem save(OrderLineItem entity);
 
-    Optional<OrderLineItemDto> findById(Long id);
+    Optional<OrderLineItem> findById(Long id);
 
-    List<OrderLineItemDto> findAll();
+    List<OrderLineItem> findAll();
 
-    List<OrderLineItemDto> findAllByOrderId(Long orderId);
+    List<OrderLineItem> findAllByOrderId(Long orderId);
 }

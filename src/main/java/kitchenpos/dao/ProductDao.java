@@ -1,14 +1,14 @@
 package kitchenpos.dao;
 
-import kitchenpos.dto.ProductDto;
-
+import kitchenpos.domain.Product;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.Repository;
 
-public interface ProductDao {
-    ProductDto save(ProductDto entity);
+public interface ProductDao extends Repository<Product, Long> {
+    Product save(Product entity);
 
-    Optional<ProductDto> findById(Long id);
+    Optional<Product> findById(Long id);
 
-    List<ProductDto> findAll();
+    List<Product> findAll();
 }

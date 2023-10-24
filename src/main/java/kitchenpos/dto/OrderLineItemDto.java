@@ -1,12 +1,22 @@
 package kitchenpos.dto;
 
 import java.util.Objects;
+import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemDto {
     private Long seq;
     private Long orderId;
     private Long menuId;
     private long quantity;
+
+    public static OrderLineItemDto from(final OrderLineItem entity) {
+        final OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
+        orderLineItemDto.setSeq(entity.getSeq());
+        orderLineItemDto.setOrderId(entity.getOrder().getId());
+        orderLineItemDto.setMenuId(entity.getMenu().getId());
+        orderLineItemDto.setQuantity(entity.getQuantity());
+        return orderLineItemDto;
+    }
 
     public Long getSeq() {
         return seq;

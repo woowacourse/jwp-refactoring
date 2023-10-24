@@ -2,11 +2,25 @@ package kitchenpos.dto;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import kitchenpos.domain.Product;
 
 public class ProductDto {
+
     private Long id;
     private String name;
     private BigDecimal price;
+
+    public static ProductDto from(Product product) {
+        ProductDto productDto = new ProductDto();
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        productDto.setPrice(product.getPrice());
+        return productDto;
+    }
+
+    public Product toEntity() {
+        return new Product(id, name, price);
+    }
 
     public Long getId() {
         return id;

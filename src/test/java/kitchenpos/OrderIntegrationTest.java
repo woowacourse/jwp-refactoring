@@ -43,7 +43,7 @@ class OrderIntegrationTest extends IntegrationTest {
             () -> assertThat(actual.getOrderTableId()).isEqualTo(expected.getOrderTableId()),
             () -> assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus()),
             () -> assertThat(actual.getOrderedTime()).isNotNull(),
-            () -> assertThat(actual.getOrderLineItems()).isEqualTo(expected.getOrderLineItems())
+            () -> assertThat(actual.getOrderLineItemDtos()).isEqualTo(expected.getOrderLineItemDtos())
         );
     }
 
