@@ -71,6 +71,7 @@ public class OrderTable {
 
     public void ungroup() {
         this.tableGroup = null;
+        this.empty = false;
     }
 
     @Override

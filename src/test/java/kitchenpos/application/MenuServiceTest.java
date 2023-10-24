@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuProductRequest;
@@ -143,12 +143,14 @@ class MenuServiceTest {
         final Product productA = new Product("후라이드치킨", new BigDecimal("15000.00"));
         productRepository.save(productA);
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-        final Menu menuA = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드치킨", new BigDecimal("15000.00"));
+        final MenuProduct menuProductA = new MenuProduct(null, productA, 1);
+        final Menu menuA = Menu.of(savedMenuGroup, List.of(menuProductA), "후라이드치킨", new BigDecimal("15000.00"));
         menuRepository.save(menuA);
 
         final Product productB = new Product("양념치킨", new BigDecimal("17000.00"));
         productRepository.save(productB);
-        final Menu menuB = new Menu(savedMenuGroup, new ArrayList<>(), "양념치킨", new BigDecimal("17000.00"));
+        final MenuProduct menuProductB = new MenuProduct(null, productB, 1);
+        final Menu menuB = Menu.of(savedMenuGroup, List.of(menuProductB), "양념치킨", new BigDecimal("17000.00"));
         menuRepository.save(menuB);
 
         // when

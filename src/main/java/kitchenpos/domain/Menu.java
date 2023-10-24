@@ -39,7 +39,7 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(
+    private Menu(
             final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts,
             final String name,
@@ -49,8 +49,31 @@ public class Menu {
         this.name = name;
         this.price = new Price(price);
 
+        BigDecimal amountSum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
+            amountSum = amountSum.add(menuProduct.calculateAmount());
             addMenuProduct(menuProduct);
+        }
+        validateMenuPrice(price, amountSum);
+    }
+
+    public static Menu of(
+            final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts,
+            final String name,
+            final BigDecimal price
+    ) {
+        BigDecimal amountSum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            amountSum = amountSum.add(menuProduct.calculateAmount());
+        }
+        validateMenuPrice(price, amountSum);
+        return new Menu(menuGroup, menuProducts, name, price);
+    }
+
+    private static void validateMenuPrice(final BigDecimal price, final BigDecimal sum) {
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 금액(가격 * 수량)의 합보다 클 수 없습니다.");
         }
     }
 
