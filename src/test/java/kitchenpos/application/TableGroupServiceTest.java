@@ -9,7 +9,7 @@ import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

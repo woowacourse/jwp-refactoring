@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
