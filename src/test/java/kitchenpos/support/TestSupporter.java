@@ -1,94 +1,113 @@
-//package kitchenpos.support;
-//
-//import static kitchenpos.fixtures.MenuFixture.MENU;
-//import static kitchenpos.fixtures.MenuGroupFixture.MENU_GROUP;
-//import static kitchenpos.fixtures.MenuProductFixture.MENU_PRODUCT;
-//import static kitchenpos.fixtures.OrderFixture.ORDER;
-//import static kitchenpos.fixtures.OrderLineItemFixture.ORDER_LINE_ITEM;
-//import static kitchenpos.fixtures.OrderTableFixture.ORDER_TABLE;
-//import static kitchenpos.fixtures.ProductFixture.PRODUCT;
-//import static kitchenpos.fixtures.TableGroupFixture.TABLE_GROUP;
-//
-//import java.util.List;
-//import kitchenpos.application.MenuGroupService;
-//import kitchenpos.application.MenuService;
-//import kitchenpos.application.OrderService;
-//import kitchenpos.application.ProductService;
-//import kitchenpos.application.TableGroupService;
-//import kitchenpos.application.TableService;
-//import kitchenpos.domain.Menu;
-//import kitchenpos.domain.MenuGroup;
-//import kitchenpos.domain.MenuProduct;
-//import kitchenpos.domain.Order;
-//import kitchenpos.domain.OrderLineItem;
-//import kitchenpos.domain.OrderTable;
-//import kitchenpos.domain.Product;
-//import kitchenpos.domain.TableGroup;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Component;
-//
-//@Component
-//public class TestSupporter {
-//
-//    @Autowired
-//    private MenuGroupService menuGroupService;
-//
-//    @Autowired
-//    private MenuService menuService;
-//
-//    @Autowired
-//    private OrderService orderService;
-//
-//    @Autowired
-//    private ProductService productService;
-//
-//    @Autowired
-//    private TableGroupService tableGroupService;
-//
-//    @Autowired
-//    private TableService tableService;
-//
-//    public Product createProduct() {
-//        final Product product = PRODUCT();
-//        return productService.create(product);
-//    }
-//
-//    public MenuGroup createMenuGroup() {
-//        final MenuGroup menuGroup = MENU_GROUP();
-//        return menuGroupService.create(menuGroup);
-//    }
-//
-//    public Menu createMenu() {
-//        final Product product = createProduct();
-//        final MenuGroup menuGroup = createMenuGroup();
-//        final MenuProduct menuProduct = MENU_PRODUCT(product, 10L);
-//        final Menu menu = MENU(menuGroup, List.of(menuProduct));
-//        return menuService.create(menu);
-//    }
-//
-//    public Order createOrder() {
-//        final Menu menu = createMenu();
-//        final OrderLineItem orderLineItem = ORDER_LINE_ITEM(menu, 10L);
-//        final OrderTable orderTable = createOrderTable(false);
-//        final Order order = ORDER(List.of(orderLineItem), orderTable);
-//        return orderService.create(order);
-//    }
-//
-//    public Order createOrder(final OrderTable orderTable) {
-//        final Menu menu = createMenu();
-//        final OrderLineItem orderLineItem = ORDER_LINE_ITEM(menu, 10L);
-//        final Order order = ORDER(List.of(orderLineItem), orderTable);
-//        return orderService.create(order);
-//    }
-//
-//    public OrderTable createOrderTable(final boolean empty) {
-//        final OrderTable orderTable = ORDER_TABLE();
-//        orderTable.setEmpty(empty);
-//        return tableService.create(orderTable);
-//    }
-//
-//    public TableGroup createTableGroup(final List<OrderTable> orderTables) {
-//        final TableGroup tableGroup = TABLE_GROUP(orderTables);
-//        return tableGroupService.create(tableGroup);
-//    }
-//}
+package kitchenpos.support;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.domain.TableGroupRepository;
+import kitchenpos.product.domain.Price;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class TestSupporter {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    public Product createProduct() {
+        final Product product = new Product("name", 10_000);
+        return productRepository.save(product);
+    }
+
+    public MenuGroup createMenuGroup() {
+        final MenuGroup menuGroup = new MenuGroup("name");
+        return menuGroupRepository.save(menuGroup);
+    }
+
+    public Menu createMenu() {
+        final Menu menu = new Menu("name",
+                                   Price.from(50_000),
+                                   createMenuGroup(),
+                                   null);
+        final List<MenuProduct> menuProducts = List.of(new MenuProduct(5,
+                                                                       menu,
+                                                                       createProduct()));
+        menu.addMenuProducts(menuProducts);
+        return menuRepository.save(menu);
+    }
+
+    public OrderTable createOrderTable() {
+        final OrderTable orderTable = new OrderTable(null,
+                                                     0,
+                                                     false);
+        return orderTableRepository.save(orderTable);
+    }
+
+    public OrderTable createOrderTable(final boolean empty) {
+        final OrderTable orderTable = new OrderTable(null,
+                                                     0,
+                                                     empty);
+        return orderTableRepository.save(orderTable);
+    }
+
+    public Order createOrder() {
+        final OrderTable orderTable = createOrderTable();
+        final Menu menu = createMenu();
+        final Order order = new Order(orderTable,
+                                      OrderStatus.COOKING,
+                                      LocalDateTime.now(),
+                                      new ArrayList<>());
+        final OrderLineItem orderLineItem = new OrderLineItem(order, menu, 1);
+        order.addOrderLineItems(List.of(orderLineItem));
+        return orderRepository.save(order);
+    }
+
+    public Order createOrder(final OrderTable orderTable) {
+        final Menu menu = createMenu();
+        final Order order = new Order(orderTable,
+                                      OrderStatus.COOKING,
+                                      LocalDateTime.now(),
+                                      new ArrayList<>());
+        final OrderLineItem orderLineItem = new OrderLineItem(order, menu, 1);
+        order.addOrderLineItems(List.of(orderLineItem));
+        return orderRepository.save(order);
+    }
+
+    public TableGroup createTableGroup() {
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(),
+                                                     new ArrayList<>());
+        final OrderTable orderTable1 = new OrderTable(null, 0, true);
+        final OrderTable orderTable2 = new OrderTable(null, 0, true);
+        tableGroup.addOrderTables(List.of(orderTable1, orderTable2));
+        return tableGroupRepository.save(tableGroup);
+    }
+}

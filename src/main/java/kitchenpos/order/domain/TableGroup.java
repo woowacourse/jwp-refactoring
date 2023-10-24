@@ -40,6 +40,7 @@ public class TableGroup {
 
     public void addOrderTables(final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
+        orderTables.forEach(orderTable -> orderTable.group(this));
         this.orderTables = orderTables;
     }
 

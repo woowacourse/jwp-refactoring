@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.presentation.dto.CreateMenuGroupRequest;
-import kitchenpos.support.NewTestSupporter;
+import kitchenpos.support.TestSupporter;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private NewTestSupporter newTestSupporter;
+    private TestSupporter testSupporter;
 
     @Test
     void 메뉴_그룹을_생성한다() {
@@ -40,7 +40,7 @@ class MenuGroupServiceTest {
     @Test
     void 메뉴_그룹에_대해_전체_조회한다() {
         // given
-        final MenuGroup menuGroup = newTestSupporter.createMenuGroup();
+        final MenuGroup menuGroup = testSupporter.createMenuGroup();
 
         // when
         final List<MenuGroup> menuGroups = menuGroupService.list();

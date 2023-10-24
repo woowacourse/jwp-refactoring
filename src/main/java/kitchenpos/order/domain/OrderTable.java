@@ -62,6 +62,10 @@ public class OrderTable {
         }
     }
 
+    public void group(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     public void ungroup() {
         this.tableGroup = null;
         this.empty = false;

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.presentation.dto.CreateProductRequest;
-import kitchenpos.support.NewTestSupporter;
+import kitchenpos.support.TestSupporter;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private NewTestSupporter newTestSupporter;
+    private TestSupporter testSupporter;
 
     @Test
     void 상품을_생성한다() {
@@ -57,7 +57,7 @@ class ProductServiceTest {
     @Test
     void 상품에_대해_전체_조회한다() {
         // given
-        final Product product = newTestSupporter.createProduct();
+        final Product product = testSupporter.createProduct();
 
         // when
         final List<Product> products = productService.list();
