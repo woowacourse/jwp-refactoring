@@ -1,63 +1,72 @@
 package kitchenpos.application;
 
-import kitchenpos.application.fixture.MenuServiceFixture;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class MenuServiceTest extends MenuServiceFixture {
+class MenuServiceTest {
 
     @InjectMocks
     MenuService menuService;
 
-    @Mock
-    MenuDao menuDao;
+    @Autowired
+    MenuRepository menuRepository;
 
-    @Mock
+    @Autowired
     MenuGroupDao menuGroupDao;
 
-    @Mock
+    @Autowired
     MenuProductDao menuProductDao;
 
-    @Mock
+    @Autowired
     ProductRepository productDao;
+
+    private MenuGroup menuGroup;
+    private List<Product> products;
+    private Menu menu;
+    private List<MenuProduct> menuProducts;
+
+    @BeforeEach
+    void setUp() {
+        menuGroup = menuGroupDao.save(MenuGroupFixture.메뉴_그룹_생성());
+        products = productDao.saveAll(ProductFixture.상품들_생성(2));
+        menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, products));
+        final MenuProduct menuProduct1 = menuProductDao.save(MenuProductFixture.메뉴_상품_생성(products.get(0), menu));
+        final MenuProduct menuProduct2 = menuProductDao.save(MenuProductFixture.메뉴_상품_생성(products.get(1), menu));
+        menuProducts = List.of(menuProduct1, menuProduct2);
+    }
 
     @Test
     void 메뉴를_등록한다() {
         // given
-        given(menuGroupDao.existsById(anyLong())).willReturn(true);
-        given(productDao.findById(anyLong())).willReturn(Optional.ofNullable(상품1))
-                                             .willReturn(Optional.ofNullable(상품2));
-        given(menuDao.save(any(Menu.class))).willReturn(저장된_메뉴);
-        given(menuProductDao.save(any(MenuProduct.class))).willReturn(메뉴_상품1)
-                                                          .willReturn(메뉴_상품2);
-
-        final Menu menu = new Menu(메뉴_이름, 메뉴_가격, 메뉴_그룹_아이디, 메뉴_상품들);
+        final Menu menu = MenuFixture.메뉴_생성(menuGroup, products);
 
         // when
         final Menu actual = menuService.create(menu);
@@ -67,7 +76,7 @@ class MenuServiceTest extends MenuServiceFixture {
             softAssertions.assertThat(actual.getId()).isPositive();
             softAssertions.assertThat(actual).usingRecursiveComparison()
                           .ignoringFields("id")
-                          .isEqualTo(저장된_메뉴);
+                          .isEqualTo(menu);
         });
     }
 
@@ -75,7 +84,7 @@ class MenuServiceTest extends MenuServiceFixture {
     @NullSource
     void 가격이_null이라면_예외를_반환한다(BigDecimal price) {
         // given
-        final Menu menu = new Menu(메뉴_이름, price, 메뉴_그룹_아이디, 메뉴_상품들);
+        final Menu menu = new Menu(MenuFixture.메뉴명, price, menuGroup, menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -85,7 +94,8 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 가격이_음수라면_예외를_반환한다() {
         // given
-        final Menu menu = new Menu(메뉴_이름, 메뉴_가격이_음수, 메뉴_그룹_아이디, 메뉴_상품들);
+        final BigDecimal negative_price = BigDecimal.valueOf(-10_000);
+        final Menu menu = new Menu(MenuFixture.메뉴명, negative_price, menuGroup, menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -95,9 +105,8 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 존재하지_않는_메뉴_그룹이라면_예외를_반환한다() {
         // given
-        given(menuGroupDao.existsById(anyLong())).willReturn(false);
-
-        final Menu menu = new Menu(메뉴_이름, 메뉴_가격, 존재하지_않는_메뉴_그룹_아이디, 메뉴_상품들);
+        final MenuGroup unsavedMenuGroup = MenuGroupFixture.메뉴_그룹_생성();
+        final Menu menu = new Menu(MenuFixture.메뉴명, BigDecimal.valueOf(10_000), unsavedMenuGroup, menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -107,10 +116,8 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 존재하지_않는_상품이라면_예외를_반환한다() {
         // given
-        given(menuGroupDao.existsById(anyLong())).willReturn(true);
-        given(productDao.findById(anyLong())).willReturn(Optional.empty());
-
-        final Menu menu = new Menu(메뉴_이름, 메뉴_가격, 메뉴_그룹_아이디, 존재하지_않는_상품_가진_메뉴_상품들);
+        final List<MenuProduct> unsavedMenuProducts = MenuProductFixture.메뉴_상품들_생성(products, menu);
+        final Menu menu = new Menu(MenuFixture.메뉴명, BigDecimal.valueOf(10_000), menuGroup, unsavedMenuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -118,13 +125,10 @@ class MenuServiceTest extends MenuServiceFixture {
     }
 
     @Test
-    void 상품들의_값보디_메뉴의_가격이_더_크다면_예외를_반환한다() {
+    void 상품들의_값보다_메뉴의_가격이_더_크다면_예외를_반환한다() {
         // given
-        given(menuGroupDao.existsById(anyLong())).willReturn(true);
-        given(productDao.findById(anyLong())).willReturn(Optional.ofNullable(상품1))
-                                             .willReturn(Optional.ofNullable(상품2));
-
-        final Menu menu = new Menu(메뉴_이름, 상품_합보다_큰_메뉴_가격, 메뉴_그룹_아이디, 메뉴_상품들);
+        final BigDecimal priceMoreThanProductsPrice = BigDecimal.valueOf(Integer.MAX_VALUE);
+        final Menu menu = new Menu(MenuFixture.메뉴명, priceMoreThanProductsPrice, menuGroup, menuProducts);
 
         // when & then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -134,7 +138,7 @@ class MenuServiceTest extends MenuServiceFixture {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        given(menuService.list()).willReturn(저장된_메뉴들);
+        final List<Menu> menus = MenuFixture.메뉴들_생성(3, menuGroup, products);
 
         // when
         final List<Menu> actual = menuService.list();
@@ -143,9 +147,11 @@ class MenuServiceTest extends MenuServiceFixture {
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
             softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
-                          .isEqualTo(저장된_메뉴1);
+                          .isEqualTo(menus.get(0));
             softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
-                          .isEqualTo(저장된_메뉴2);
+                          .isEqualTo(menus.get(1));
+            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
+                          .isEqualTo(menus.get(2));
         });
     }
 }

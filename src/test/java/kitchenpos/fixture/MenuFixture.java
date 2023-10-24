@@ -14,10 +14,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {
 
+    public static final String 메뉴명 = "메뉴";
     private static final long DEFAULT_QUANTITY = 1L;
 
     private static Menu 메뉴_생성(final MenuGroup menuGroup, final List<Product> products, @Nullable final Integer number) {
-        String 메뉴_이름 = "메뉴";
+        String 메뉴_이름 = 메뉴명;
         if (number != null) {
             메뉴_이름 += number.toString();
         }

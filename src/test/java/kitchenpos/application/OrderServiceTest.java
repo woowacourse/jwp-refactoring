@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
 import kitchenpos.application.fixture.OrderServiceFixture;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import org.assertj.core.api.SoftAssertions;
+import kitchenpos.repository.MenuRepository;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class OrderServiceTest extends OrderServiceFixture {
     OrderService orderService;
 
     @Mock
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Mock
     OrderDao orderDao;
@@ -51,7 +51,7 @@ class OrderServiceTest extends OrderServiceFixture {
     @Test
     void 주문을_등록한다() {
         // given
-        given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(주문_항목들.size()));
+        given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(주문_항목들.size()));
         given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(주문_테이블));
         given(orderDao.save(any(Order.class))).willReturn(저장된_주문);
         given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(주문_항목들.get(0))
@@ -75,7 +75,7 @@ class OrderServiceTest extends OrderServiceFixture {
     @Test
     void 주문_등록시_저장된_메뉴의_개수가_다르다면_예외를_반환한다() {
         // given
-        given(menuDao.countByIdIn(anyList())).willReturn(주문_항목_수와_다른_개수);
+        given(menuRepository.countByIdIn(anyList())).willReturn(주문_항목_수와_다른_개수);
 
         final Order order = new Order(주문_테이블, 주문_상태, LocalDateTime.now());
         order.addOrderLineItems(주문_항목들);
@@ -88,7 +88,7 @@ class OrderServiceTest extends OrderServiceFixture {
     @Test
     void 주문_등록시_저장되지_않은_주문_테이블을_갖는다면_예외를_반환한다() {
         // given
-        given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(주문_항목들.size()));
+        given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(주문_항목들.size()));
         given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
 
         final Order order = new Order(null, 주문_상태, LocalDateTime.now());
