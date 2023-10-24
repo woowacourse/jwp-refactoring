@@ -48,6 +48,7 @@ public class OrderTable {
         if (isNotEmpty() || this.tableGroup != null) {
             throw new IllegalArgumentException("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
         }
+
         this.tableGroup = tableGroup;
         full();
     }

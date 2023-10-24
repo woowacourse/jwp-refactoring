@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 public class TableGroupService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -27,6 +28,16 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final CreateTableGroupRequest request) {
+        final List<OrderTable> savedOrderTables = validateRequestAndProcessOrderTables(request);
+
+        final TableGroup tableGroup = new TableGroup();
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        savedTableGroup.initOrderTables(savedOrderTables);
+
+        return savedTableGroup;
+    }
+
+    private List<OrderTable> validateRequestAndProcessOrderTables(final CreateTableGroupRequest request) {
         final List<Long> orderTableIds = request.getOrderTableIds();
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
@@ -34,12 +45,7 @@ public class TableGroupService {
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException("그룹화를 요청한 테이블 중에 존재하지 않는 테이블이 포함되어 있습니다.");
         }
-
-        final TableGroup tableGroup = new TableGroup();
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedTableGroup.initOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return savedOrderTables;
     }
 
     @Transactional

@@ -111,6 +111,22 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴를 등록할 때 상품이 유효한 상품이 아니라면 예외가 발생한다.")
+    void create_invalidProduct() {
+        // given
+        final Long invalidProductId = -999L;
+        final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+
+        final CreateMenuProductRequest invalidMenuProductRequest = new CreateMenuProductRequest(invalidProductId, 2l);
+        final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(invalidMenuProductRequest));
+
+        // when & then
+        assertThatThrownBy(() -> menuService.create(invalidMenu))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 상품입니다.");
+    }
+
+    @Test
     @DisplayName("메뉴를 등록할 때 상품의 가격 합이 메뉴의 가격보다 작으면 예외가 발생한다.")
     void create_invalidPrice_moreThanSum() {
         // given

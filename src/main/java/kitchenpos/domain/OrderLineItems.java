@@ -16,20 +16,28 @@ public class OrderLineItems {
     }
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
+
+        this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (orderLineItems.isEmpty()) {
             throw new IllegalArgumentException("주문 항목이 비어있습니다.");
         }
 
+        validateDuplicateMenu(orderLineItems);
+    }
+
+    private void validateDuplicateMenu(final List<OrderLineItem> orderLineItems) {
         final long menuCount = orderLineItems.stream()
-                                            .map(OrderLineItem::getMenu)
-                                            .distinct()
-                                            .count();
+                                             .map(OrderLineItem::getMenu)
+                                             .distinct()
+                                             .count();
 
         if (menuCount != orderLineItems.size()) {
             throw new IllegalArgumentException("주문 항목의 메뉴는 중복될 수 없습니다.");
         }
-
-        this.orderLineItems = orderLineItems;
     }
 
     public void add(final OrderLineItem orderLineItem) {

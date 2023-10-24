@@ -20,6 +20,7 @@ import java.util.List;
 
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -36,27 +37,37 @@ public class OrderService {
 
     @Transactional
     public Order create(final CreateOrderRequest request) {
-        final List<CreateOrderLineItemRequest> createOrderLineItemRequests = request.getOrderLineItems();
-        if (createOrderLineItemRequests.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
-        }
-
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (final CreateOrderLineItemRequest createOrderLineItemRequest : createOrderLineItemRequests) {
-            final Menu findMenu = menuRepository.findById(createOrderLineItemRequest.getMenuId())
-                                                .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
-            final OrderLineItem orderLineItem = new OrderLineItem(findMenu, createOrderLineItemRequest.getQuantity());
-            orderLineItems.add(orderLineItem);
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                                                          .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+        final OrderTable orderTable = validateRequestAndProcessOrderTable(request);
+        final List<OrderLineItem> orderLineItems = processOrderLineItems(request);
 
         final Order order = Order.createNewOrder(orderTable);
         final Order savedOrder = orderRepository.save(order);
         savedOrder.addOrderLineItems(new OrderLineItems(orderLineItems));
 
         return savedOrder;
+    }
+
+    private OrderTable validateRequestAndProcessOrderTable(final CreateOrderRequest request) {
+        final List<CreateOrderLineItemRequest> createOrderLineItemRequests = request.getOrderLineItems();
+        if (createOrderLineItemRequests.isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
+        }
+
+        return orderTableRepository.findById(request.getOrderTableId())
+                                   .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+    }
+
+    private List<OrderLineItem> processOrderLineItems(final CreateOrderRequest request) {
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (final CreateOrderLineItemRequest createOrderLineItemRequest : request.getOrderLineItems()) {
+            final Menu findMenu = menuRepository.findById(createOrderLineItemRequest.getMenuId())
+                                                .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
+
+            final OrderLineItem orderLineItem = new OrderLineItem(findMenu, createOrderLineItemRequest.getQuantity());
+            orderLineItems.add(orderLineItem);
+        }
+
+        return orderLineItems;
     }
 
     public List<Order> list() {
