@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.request.TableUpdateEmptyRequest;
@@ -11,7 +10,6 @@ import kitchenpos.ui.response.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +26,6 @@ public class TableService {
     @Transactional
     public TableResponse create(final TableCreateRequest request) {
         final OrderTable orderTable = request.toOrderTable();
-        orderTable.setId(null);
         orderTable.setTableGroupId(null);
 
         return TableResponse.from(orderTableRepository.save(orderTable));
@@ -47,18 +44,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        if (request.getEmpty()) {
-            savedOrderTable.empty();
-        }
-        if (!request.getEmpty()) {
-            savedOrderTable.notEmpty();
-        }
-
+        savedOrderTable.changeEmpty(request.getEmpty());
         return TableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
