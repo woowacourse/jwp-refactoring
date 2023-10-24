@@ -1,0 +1,83 @@
+package kitchenpos.order.domain;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import kitchenpos.menu.domain.Menu;
+
+@Entity
+public class OrderLineItem {
+
+    private static final int MIN_QUANTITY = 1;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seq;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_id", nullable = false)
+    private Menu menu;
+
+    @NotNull
+    private Long quantity;
+
+    protected OrderLineItem() {
+    }
+
+    public OrderLineItem(Order order, Menu menu, Long quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public static OrderLineItem create(Order order, Menu menu, Long quantity) {
+        validateOrder(order);
+        validateMenu(menu);
+        validateQuantity(quantity);
+
+        return new OrderLineItem(order, menu, quantity);
+    }
+
+    private static void validateOrder(Order order) {
+        if (order == null) {
+            throw new NullPointerException("주문은 null일 수 없습니다.");
+        }
+    }
+
+    private static void validateMenu(Menu menu) {
+        if (menu == null) {
+            throw new NullPointerException("주문 메뉴는 null일 수 없습니다.");
+        }
+    }
+
+    private static void validateQuantity(Long quantity) {
+        if (quantity < MIN_QUANTITY) {
+            throw new IllegalArgumentException("주문 메뉴의 수량은 1개 이상어이야 합니다.");
+        }
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+}
