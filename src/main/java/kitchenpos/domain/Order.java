@@ -40,6 +40,10 @@ public class Order extends BaseCreateTimeEntity {
     }
 
     public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블에는 주문을 생성할 수 없습니다.");
+        }
+
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
     }
@@ -51,8 +55,12 @@ public class Order extends BaseCreateTimeEntity {
         }
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void changeOrderStatus(final OrderStatus newOrderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("완료된 주문의 상태를 변경할 수 없습니다.");
+        }
+
+        this.orderStatus = newOrderStatus;
     }
 
     public Long getId() {

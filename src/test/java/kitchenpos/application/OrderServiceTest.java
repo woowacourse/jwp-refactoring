@@ -95,7 +95,8 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목이 비어있습니다.");
     }
 
     @Test
@@ -111,7 +112,8 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 항목의 메뉴는 중복될 수 없습니다.");
     }
 
     @Test
@@ -124,7 +126,8 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 테이블이 존재하지 않습니다.");
     }
 
     @Test
@@ -139,7 +142,8 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈 테이블에는 주문을 생성할 수 없습니다.");
     }
 
     @Test
@@ -200,6 +204,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.changeOrderStatus(완료된_주문.getId(), order))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("완료된 주문의 상태를 변경할 수 없습니다.");
     }
 }

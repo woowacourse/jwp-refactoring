@@ -125,7 +125,7 @@ class TableServiceTest {
     @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블의 주문이 조리중이거나 식사중이면 예외가 발생한다")
     void changeEmpty_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
-        final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
+        final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
         orderRepository.save(new Order(두명_테이블, orderStatus));
 
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
