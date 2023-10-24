@@ -75,11 +75,11 @@ public class Order {
         return orderLineItems;
     }
 
-    public boolean isAlreadyCompletion(){
+    public boolean isAlreadyCompletion() {
         return this.orderStatus == OrderStatus.COMPLETION;
     }
 
-    public boolean isNotAlreadyCompletion(){
+    public boolean isNotAlreadyCompletion() {
         return !isAlreadyCompletion();
     }
 

@@ -6,10 +6,6 @@ import static kitchenpos.table.domain.exception.TableGroupExceptionType.TABLE_GR
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.application.OrderRepository;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.exception.OrderException;
-import kitchenpos.order.domain.exception.OrderExceptionType;
 import kitchenpos.table.application.dto.OrderTableDto;
 import kitchenpos.table.application.dto.TableGroupDto;
 import kitchenpos.table.domain.OrderTable;
@@ -17,20 +13,23 @@ import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.domain.exception.TableGroupException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository,
+    public TableGroupService(
+        final ApplicationEventPublisher eventPublisher,
         final OrderTableRepository orderTableRepository,
-        final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+        final TableGroupRepository tableGroupRepository
+    ) {
+        this.eventPublisher = eventPublisher;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -79,13 +78,6 @@ public class TableGroupService {
             .map(OrderTable::getId)
             .collect(Collectors.toList());
 
-        final boolean orderStatusIsNotCompletion = orderRepository
-            .findByOrderTableIdIn(orderTableIds)
-            .stream()
-            .anyMatch(Order::isNotAlreadyCompletion);
-
-        if (orderStatusIsNotCompletion) {
-            throw new OrderException(OrderExceptionType.ORDER_IS_NOT_COMPLETION);
-        }
+        eventPublisher.publishEvent(new TableGroupUnGroupValidationEvent(orderTableIds));
     }
 }
