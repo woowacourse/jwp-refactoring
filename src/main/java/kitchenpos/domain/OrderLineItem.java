@@ -1,6 +1,12 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -8,7 +14,7 @@ public class OrderLineItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long seq;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -24,18 +30,14 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Long id,
-                         final Order order,
-                         final Menu menu,
+    public OrderLineItem(final Menu menu,
                          final long quantity) {
-        this.id = id;
-        this.order = order;
         this.menu = menu;
         this.quantity = quantity;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSeq() {
+        return seq;
     }
 
     public Order getOrder() {
@@ -50,16 +52,20 @@ public class OrderLineItem {
         return quantity;
     }
 
+    public void setOrder(final Order order) {
+        this.order = order;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final OrderLineItem that = (OrderLineItem) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(seq, that.seq);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(seq);
     }
 }

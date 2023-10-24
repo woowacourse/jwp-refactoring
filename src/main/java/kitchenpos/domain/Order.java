@@ -1,11 +1,15 @@
 package kitchenpos.domain;
 
-import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -16,34 +20,48 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "order_table_id")
-    private OrderTable orderTableId;
+    private OrderTable orderTable;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
+
+    @Embedded
+    private OrderLineItems orderLineItems = new OrderLineItems();
 
     protected Order() {
     }
 
-    public Order(final Long id,
-                 final OrderTable orderTableId,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTableId = orderTableId;
+    public Order(final OrderTable orderTable,
+                 final List<OrderLineItem> orderLineItems) {
+        this.orderTable = orderTable;
+        orderTable.placeOrder(this);
+        this.orderStatus = COOKING;
+        this.orderedTime = LocalDateTime.now();
+        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (!orderStatus.isInProgress()) {
+            throw new IllegalArgumentException("조리가 끝난 주문은 상태를 변경할 수 없습니다.");
+        }
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+    }
+
+    public boolean isInProgress() {
+        return orderStatus.isInProgress();
     }
 
     public Long getId() {
         return id;
     }
 
-    public OrderTable getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public OrderStatus getOrderStatus() {
@@ -52,6 +70,10 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public OrderLineItems getOrderLineItems() {
+        return orderLineItems;
     }
 
     @Override

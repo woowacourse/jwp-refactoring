@@ -1,14 +1,15 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class TableGroup {
 
@@ -19,13 +20,22 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    protected TableGroup() {
+    @OneToMany(mappedBy = "tableGroup")
+    private List<OrderTable> orderTables = new ArrayList<>();
+
+    public TableGroup() {
     }
 
-    public TableGroup(final Long id,
-                      final LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
+    public void addOrderTables(List<OrderTable> orderTables) {
+        validateOrderTablesSize(orderTables);
+        orderTables.forEach(orderTable -> orderTable.group(this));
+        this.orderTables = orderTables;
+    }
+
+    private void validateOrderTablesSize(final List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException("단체에 속한 테이블은 최소 2개 이상이어야 합니다.");
+        }
     }
 
     public Long getId() {
@@ -34,6 +44,10 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 
     @Override

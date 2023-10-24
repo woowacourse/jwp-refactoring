@@ -1,8 +1,18 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import kitchenpos.domain.vo.MenuName;
+import kitchenpos.domain.vo.Price;
 
 @Entity
 public class Menu {
@@ -11,24 +21,27 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Embedded
+    private MenuName name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
+    @Embedded
+    private MenuProducts menuProducts = new MenuProducts();
+
     protected Menu() {
     }
 
-    public Menu(final Long id,
-                final String name,
+    public Menu(final String name,
                 final BigDecimal price,
                 final MenuGroup menuGroup) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
+        this.name = MenuName.from(name);
+        this.price = Price.from(price);
         this.menuGroup = menuGroup;
     }
 
@@ -36,16 +49,24 @@ public class Menu {
         return id;
     }
 
-    public String getName() {
+    public MenuName getName() {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
+    }
+
+    public MenuProducts getMenuProducts() {
+        return menuProducts;
+    }
+
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
     }
 
     @Override

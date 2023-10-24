@@ -1,67 +1,44 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixtures.domain.MenuGroupFixture.createMenuGroupRequest;
+import static kitchenpos.TestFixtureFactory.새로운_메뉴_그룹;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupService menuGroupService;
 
-    @DisplayName("create 메소드는")
-    @Nested
-    class CreateMethod {
+    @Test
+    void 메뉴_그룹을_등록한다() {
+        final MenuGroupCreateRequest 메뉴_그룹_생성_요청 = new MenuGroupCreateRequest("메뉴 그룹");
 
-        @DisplayName("메뉴 그룹을 생성한다.")
-        @Test
-        void Should_CreateMenuGroup() {
-            // given
-            final MenuGroup menuGroup = createMenuGroupRequest();
+        final MenuGroup menuGroup = menuGroupService.create(메뉴_그룹_생성_요청);
 
-            // when
-            final MenuGroup actual = menuGroupService.create(menuGroup);
-
-            // then
-            assertAll(() -> {
-                assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(menuGroup.getName());
-            });
-        }
+        assertSoftly(softly -> {
+            softly.assertThat(menuGroup.getId()).isNotNull();
+            softly.assertThat(menuGroup.getName()).isEqualTo("메뉴 그룹");
+        });
     }
 
-    @DisplayName("list 메소드는")
-    @Nested
-    class ListMethod {
-        @DisplayName("생성된 메뉴 그룹 목록을 조회한다.")
-        @Test
-        void Should_ReturnMenuGroupList() {
-            // given
-            final MenuGroup menuGroup1 = createMenuGroup("분식");
-            final MenuGroup menuGroup2 = createMenuGroup("한식");
-            final MenuGroup menuGroup3 = createMenuGroup("중식");
+    @Test
+    void 메뉴_그룹들을_조회한다() {
+        final MenuGroup 메뉴_그룹1 = menuGroupRepository.save(새로운_메뉴_그룹("메뉴 그룹1"));
+        final MenuGroup 메뉴_그룹2 = menuGroupRepository.save(새로운_메뉴_그룹("메뉴 그룹2"));
 
-            menuGroupDao.save(menuGroup1);
-            menuGroupDao.save(menuGroup2);
-            menuGroupDao.save(menuGroup3);
+        final List<MenuGroup> menuGroups = menuGroupService.findAll();
 
-            // when
-            final List<MenuGroup> actual = menuGroupService.list();
-
-            // then
-            assertThat(actual).hasSize(3);}
+        assertThat(menuGroups).hasSize(2);
     }
 }

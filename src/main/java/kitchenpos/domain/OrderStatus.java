@@ -6,4 +6,8 @@ public enum OrderStatus {
     MEAL,
     COMPLETION,
     ;
+
+    public boolean isInProgress() {
+        return this == MEAL || this == COOKING;
+    }
 }
