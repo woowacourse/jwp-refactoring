@@ -31,7 +31,7 @@ public class MenuDto {
     public static MenuDto from(final Menu savedMenu) {
         final List<MenuProductDto> menuProductDtos = savedMenu.getMenuProducts()
             .stream()
-            .map(MenuProductDto::from)
+            .map(menuProduct -> MenuProductDto.from(menuProduct, savedMenu.getId()))
             .collect(toUnmodifiableList());
         return new MenuDto(
             savedMenu.getId(),

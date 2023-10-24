@@ -10,6 +10,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.product.domain.Product;
 import kitchenpos.vo.Price;
@@ -28,7 +29,11 @@ public class Menu {
 
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(
+        name = "menu_id",
+        updatable = false, nullable = false
+    )
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -66,7 +71,7 @@ public class Menu {
     ) {
         products.stream()
             .map(product ->
-                new MenuProduct(this, product.getId(), productIdQuantityMap.get(product.getId()))
+                new MenuProduct(product.getId(), productIdQuantityMap.get(product.getId()))
             )
             .forEach(menuProducts::add);
     }

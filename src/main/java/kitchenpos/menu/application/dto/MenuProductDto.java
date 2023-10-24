@@ -17,10 +17,10 @@ public class MenuProductDto {
         this.quantity = quantity;
     }
 
-    public static MenuProductDto from(final MenuProduct menuProduct) {
+    public static MenuProductDto from(final MenuProduct menuProduct, final Long menuId) {
         return new MenuProductDto(
             menuProduct.getSeq(),
-            menuProduct.getMenu().getId(),
+            menuId,
             menuProduct.getProductId(),
             menuProduct.getQuantity()
         );
