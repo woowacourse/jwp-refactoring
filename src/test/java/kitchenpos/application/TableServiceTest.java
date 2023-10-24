@@ -6,9 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.fixtures.Fixtures;
-import kitchenpos.ui.dto.request.OrderRequest;
 import kitchenpos.ui.dto.request.OrderTableRequest;
 import kitchenpos.ui.dto.response.OrderTableResponse;
 import org.junit.jupiter.api.Nested;
@@ -103,11 +101,10 @@ class TableServiceTest extends ServiceTest {
             // given
             OrderTable orderTable = fixtures.주문_테이블_저장();
 
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setNumberOfGuests(2);
+            OrderTableRequest request = new OrderTableRequest(2, null);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable);
+            OrderTableResponse result = tableService.changeNumberOfGuests(orderTable.getId(), request);
 
             // then
             assertThat(result.getId()).isEqualTo(orderTable.getId());
@@ -115,46 +112,15 @@ class TableServiceTest extends ServiceTest {
         }
 
         @Test
-        void 방문한_손님_수가_음수인_경우_예외가_발생한다() {
-            // given
-            OrderTable orderTable = fixtures.주문_테이블_저장();
-
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setNumberOfGuests(-1);
-
-            // when, then
-            assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 존재하지_않는_주문_테이블을_설정하는_경우_예외가_발생한다() {
             // given
-            OrderTable orderTable = new OrderTable();
-            orderTable.setId(-1L);
-
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setNumberOfGuests(2);
+            OrderTableRequest request = new OrderTableRequest(2, null);
 
             // when, then
             assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
+                    () -> tableService.changeNumberOfGuests(-1L, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 빈_테이블인_경우_예외가_발생한다() {
-            // given
-            OrderTable orderTable = fixtures.빈_테이블_저장();
-
-            OrderTable newOrderTable = new OrderTable();
-            newOrderTable.setNumberOfGuests(2);
-
-            // when, then
-            assertThatThrownBy(
-                    () -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
     }
 }

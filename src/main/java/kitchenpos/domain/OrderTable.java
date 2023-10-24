@@ -30,8 +30,8 @@ public class OrderTable {
 
     public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
         this.isEmpty = isEmpty;
+        this.numberOfGuests = numberOfGuests;
     }
 
     public OrderTable(int numberOfGuests, boolean isEmpty) {
@@ -73,7 +73,14 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0 || this.isEmpty == true) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean isEmpty() {
