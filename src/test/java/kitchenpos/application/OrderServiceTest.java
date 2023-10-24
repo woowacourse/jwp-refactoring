@@ -10,16 +10,23 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.exception.InvalidOrderException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -41,12 +48,19 @@ class OrderServiceTest {
     private MenuDao menuDao;
 
     @Autowired
+    private MenuProductDao menuProductDao;
+
+    @Autowired
     private MenuGroupDao menuGroupDao;
 
     @Autowired
     private OrderDao orderDao;
 
+    @Autowired
+    private ProductDao productDao;
+
     private Menu menu;
+    private MenuProduct menuProduct;
     private MenuGroup menuGroup;
     private TableGroup tableGroup;
     private OrderTable orderTable;
@@ -54,7 +68,10 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-        menu = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(), null));
+        final Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menu = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
+                List.of(new MenuProduct(null, null, product.getId(), 1))));
+        menuProduct = menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 6, false));
     }
@@ -64,13 +81,10 @@ class OrderServiceTest {
         @Test
         void 주문을_생성한다() {
             // given
-            final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1);
-            final Menu menu2 = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(), null));
-            final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu2.getId(), 1);
-            final Order order = new Order(
+            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    null,
-                    List.of(orderLineItem1)
+                    List.of(orderLineItem)
             );
 
             // when
@@ -80,8 +94,8 @@ class OrderServiceTest {
             final Order expected = new Order(
                     1L,
                     orderTable.getId(),
-                    OrderStatus.COOKING.name(),
-                    List.of(orderLineItem1, orderLineItem2)
+                    OrderStatus.MEAL.name(),
+                    List.of(orderLineItem)
             );
 
             assertSoftly(
@@ -98,15 +112,14 @@ class OrderServiceTest {
         @Test
         void 주문_항목이_비어있으면_예외가_발생한다() {
             // given
-            final Order order = new Order(
+            final OrderRequest orderRequest = new OrderRequest(
                     orderTable.getId(),
-                    null,
                     Collections.emptyList()
             );
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(InvalidOrderException.class);
         }
 
         @Test
@@ -114,9 +127,8 @@ class OrderServiceTest {
             // given
             final long nonExistMenuId = 99L;
             final OrderLineItem orderLineItem = new OrderLineItem(null, nonExistMenuId, 1);
-            final Order order = new Order(
+            final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    null,
                     List.of(orderLineItem)
             );
 
@@ -130,9 +142,8 @@ class OrderServiceTest {
             // given
             final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1);
             final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu.getId(), 2);
-            final Order order = new Order(
+            final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    null,
                     List.of(orderLineItem1, orderLineItem2)
             );
 
@@ -146,9 +157,8 @@ class OrderServiceTest {
             // given
             final long nonExistTableId = 99L;
             final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-            final Order order = new Order(
+            final OrderRequest order = new OrderRequest(
                     nonExistTableId,
-                    null,
                     List.of(orderLineItem)
             );
 
@@ -163,9 +173,8 @@ class OrderServiceTest {
             final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
             orderTable.setEmpty(true);
             orderTableDao.save(orderTable);
-            final Order order = new Order(
+            final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    null,
                     List.of(orderLineItem)
             );
 
@@ -179,14 +188,12 @@ class OrderServiceTest {
     void list_메서드는_모든_주문을_조회한다() {
         // given
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-        final Order order1 = new Order(
+        final OrderRequest order1 = new OrderRequest(
                 orderTable.getId(),
-                null,
                 List.of(orderLineItem)
         );
-        final Order order2 = new Order(
+        final OrderRequest order2 = new OrderRequest(
                 orderTable.getId(),
-                null,
                 List.of(orderLineItem)
         );
         final Order createdOrder1 = orderService.create(order1);
@@ -207,16 +214,15 @@ class OrderServiceTest {
         void 주문_상태를_변경한다() {
             // given
             final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-            final Order order = new Order(
+            final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    null,
                     List.of(orderLineItem)
             );
             final Order createdOrder = orderService.create(order);
 
             // when
-            order.setOrderStatus(OrderStatus.MEAL.name());
-            final Order actual = orderService.changeOrderStatus(createdOrder.getId(), order);
+            final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("MEAL");
+            final Order actual = orderService.changeOrderStatus(createdOrder.getId(), orderStatusChangeRequest);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -233,25 +239,27 @@ class OrderServiceTest {
             );
 
             // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(uncreatedOrder.getId(), uncreatedOrder))
+            final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("MEAL");
+            assertThatThrownBy(() -> orderService.changeOrderStatus(uncreatedOrder.getId(), orderStatusChangeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 계산이_완료된_주문의_상태를_변경하면_예외가_발생한다() {
             // given
+            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
             final Order order = new Order(
                     orderTable.getId(),
                     OrderStatus.COMPLETION.name(),
                     LocalDateTime.now(),
-                    Collections.emptyList()
+                    List.of(orderLineItem)
             );
             final Order completedOrder = orderDao.save(order);
 
             // when & then
-            completedOrder.setOrderStatus(OrderStatus.MEAL.name());
-            assertThatThrownBy(() -> orderService.changeOrderStatus(completedOrder.getId(), completedOrder))
-                    .isInstanceOf(IllegalArgumentException.class);
+            final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("MEAL");
+            assertThatThrownBy(() -> orderService.changeOrderStatus(completedOrder.getId(), orderStatusChangeRequest))
+                    .isInstanceOf(InvalidOrderException.class);
         }
     }
 }

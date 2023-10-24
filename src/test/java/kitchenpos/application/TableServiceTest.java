@@ -12,6 +12,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -106,7 +107,7 @@ class TableServiceTest {
             // given
             final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
             final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-                    List.of());
+                    List.of(new OrderLineItem(null, 1L, 1)));
             orderDao.save(order);
 
             // when & then
@@ -118,7 +119,8 @@ class TableServiceTest {
         void 주문_테이블의_주문_상태가_식사중이라면_예외가_발생한다() {
             // given
             final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
-            final Order order = new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), List.of());
+            final Order order = new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
+                    List.of(new OrderLineItem(null, 1L, 1)));
             orderDao.save(order);
 
             // when & then

@@ -11,6 +11,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -170,7 +171,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableDao.save(new OrderTable(null, 0, false));
             orderDao.save(new Order(invalidTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
-                    Collections.emptyList()));
+                    List.of(new OrderLineItem(null, 1L, 1))));
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             relationTablesWithTableGroup(tableGroup, List.of(dummyTables.get(0), invalidTable));
 
@@ -184,7 +185,7 @@ class TableGroupServiceTest {
             // given
             final OrderTable invalidTable = orderTableDao.save(new OrderTable(null, 0, false));
             orderDao.save(new Order(invalidTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
-                    Collections.emptyList()));
+                    List.of(new OrderLineItem(null, 1L, 1))));
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Collections.emptyList());
             relationTablesWithTableGroup(tableGroup, List.of(dummyTables.get(0), invalidTable));
 

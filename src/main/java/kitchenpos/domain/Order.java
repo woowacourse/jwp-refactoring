@@ -14,8 +14,12 @@ public class Order {
     public Order() {
     }
 
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+    }
+
     public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderLineItems);
+        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(final Long id, final Long orderTableId, final String orderStatus,
@@ -49,6 +53,13 @@ public class Order {
         if (orderLineItems.isEmpty()) {
             throw new InvalidOrderException("주문 항목 리스트는 비어있을 수 없습니다.");
         }
+    }
+
+    public void changeStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION.name())) {
+            throw new InvalidOrderException("주문 상태가 \"계산 완료\"이면 주문 상태를 변경할 수 없습니다.");
+        }
+        this.orderStatus = orderStatus.name();
     }
 
     public Long getId() {
