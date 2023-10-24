@@ -35,17 +35,7 @@ public class OrderTable {
             final int numberOfGuests,
             final boolean empty
     ) {
-        this(null, tableGroup, numberOfGuests, empty);
-    }
-
-    public OrderTable(
-            final Long id,
-            final TableGroup tableGroup,
-            final int numberOfGuests,
-            final boolean empty
-    ) {
         validateNumberOfGuests(numberOfGuests);
-        this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;

@@ -9,13 +9,13 @@ public class OrderChangeStatusRequest {
     private final Long orderTableId;
     private final String orderStatus;
     private final LocalDateTime orderedTime;
-    private final List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItemRequest> orderLineItems;
 
     public OrderChangeStatusRequest(
             final Long orderTableId,
             final String orderStatus,
             final LocalDateTime orderedTime,
-            final List<OrderLineItem> orderLineItems) {
+            final List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -34,7 +34,7 @@ public class OrderChangeStatusRequest {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
 }

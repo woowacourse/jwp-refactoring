@@ -48,7 +48,7 @@ class MenuGroupServiceTest extends ServiceTest {
         @Test
         void 메뉴_그룹이_하나_이상_존재하면_메뉴_그룹_목록을_반환한다() {
             // given
-            final var menuGroup = menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
 
             final var expected = List.of(MenuGroupResponse.toResponse(menuGroup));
 

@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,8 +39,12 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
-                final List<MenuProduct> menuProducts) {
+    public Menu(
+            final String name,
+            final BigDecimal price,
+            final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts
+    ) {
         this(null, name, price, menuGroup, menuProducts);
     }
 
@@ -55,7 +60,7 @@ public class Menu {
         this.name = name;
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
+        this.menuProducts = appendMenuProducts(menuProducts);
     }
 
     private void validateMenuPriceSum(final BigDecimal price, final List<MenuProduct> menuProducts) {
@@ -65,6 +70,15 @@ public class Menu {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("[ERROR] 총 금액이 각 상품의 합보다 큽니다.");
         }
+    }
+
+    private List<MenuProduct> appendMenuProducts(final List<MenuProduct> menuProducts) {
+        final List<MenuProduct> returnMenuProducts = new ArrayList<>();
+        for (final MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(this);
+            returnMenuProducts.add(menuProduct);
+        }
+        return returnMenuProducts;
     }
 
     public Long getId() {

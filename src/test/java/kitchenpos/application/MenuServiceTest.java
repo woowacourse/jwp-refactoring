@@ -12,6 +12,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,17 +26,17 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴를_생성하다() {
             // given
-            productDao.save(new Product("상품_이름1", BigDecimal.valueOf(1000)));
-            productDao.save(new Product("상품_이름2", BigDecimal.valueOf(200)));
-            menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
-            menuDao.save(new Menu("메뉴_이름", BigDecimal.valueOf(11000L), 1L, Collections.emptyList()));
-            final var menuProduct1 = menuProductDao.save(new MenuProduct(1L, 1L, 10));
-            final var menuProduct2 = menuProductDao.save(new MenuProduct(1L, 2L, 5));
-            final var request = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(11000L), 1L,
-                    List.of(menuProduct1, menuProduct2));
+            menuGroupRepository.save(new MenuGroup("메뉴_그룹"));
+            final var product1 = productRepository.save(new Product("상품_이름1", BigDecimal.valueOf(1000)));
+            final var product2 = productRepository.save(new Product("상품_이름2", BigDecimal.valueOf(200)));
+
+            final var menuProductRequest1 = new MenuProductRequest(product1.getId(), 10L);
+            final var menuProductRequest2 = new MenuProductRequest(product2.getId(), 5L);
+            final var menuCreateRequest= new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(5600), 1L,
+                    List.of(menuProductRequest1, menuProductRequest2));
 
             // when
-            final var actual = menuService.create(request);
+            final var actual = menuService.create(menuCreateRequest);
 
             // then
             assertThat(actual.getId()).isExactlyInstanceOf(Long.class);
@@ -57,51 +58,16 @@ class MenuServiceTest extends ServiceTest {
         }
 
         @Test
-        void 가격이_존재하지_않으면_에러를_반환한다() {
-            // given
-            menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
-            final var request = new MenuCreateRequest("메뉴_이름", null, 1L, Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(NullPointerException.class);
-        }
-
-        @Test
-        void 가격이_0보다_작으면_에러를_반환한다() {
-            // given
-            menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
-            final var request = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(-1000), 1L, Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 금액이 없거나, 음수입니다.");
-        }
-
-        @Test
         void 존재하지_않는_상품을_사용하면_에러를_반환한다() {
             // given
-            menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menuProduct1 = new MenuProduct(1L, 1L, 10);
-            final var request = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L, List.of(menuProduct1));
+            menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menuProductRequest = new MenuProductRequest(999L, 1L);
+            final var menuCreateRequest = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L, List.of(menuProductRequest));
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(request))
+            assertThatThrownBy(() -> menuService.create(menuCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 존재하지 않는 상품입니다.");
-        }
-
-        @Test
-        void 메뉴의_총_가격이_각_상품의_합보다_크면_에러를_반환한다() {
-            // given
-            menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
-            final var request = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList());
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 총 금액이 각 상품의 합보다 큽니다.");
         }
     }
 
@@ -120,8 +86,8 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 메뉴가_하나_이상_존재하면_메뉴_목록을_반환한다() {
             // given
-            menuGroupDao.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menu = menuDao.save(new Menu("메뉴_이름", BigDecimal.valueOf(1000), 1L, Collections.emptyList()));
+            final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
+            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var response = MenuResponse.toResponse(menu);
             final var expected = List.of(response);
 

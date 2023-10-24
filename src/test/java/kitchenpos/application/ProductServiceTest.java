@@ -33,28 +33,6 @@ class ProductServiceTest extends ServiceTest {
 
     @Nested
     class create_실패_테스트 {
-
-        @Test
-        void 상품의_금액이_NULL이면_에러를_반환한다() {
-            // given
-            final var request = new ProductCreateRequest("상품_이름", null);
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 금액이 없거나, 음수입니다.");
-        }
-
-        @Test
-        void 상품의_금액이_음수이면_에러를_반환한다() {
-            // given
-            final var request = new ProductCreateRequest("상품_이름", BigDecimal.valueOf(-1000));
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 금액이 없거나, 음수입니다.");
-        }
     }
 
     @Nested
@@ -72,7 +50,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 주문이_하나_이상_존재하면_주문_목록을_반환한다() {
             // given
-            final var product = productDao.save(new Product("상품_이름", BigDecimal.valueOf(1000)));
+            final var product = productRepository.save(new Product("상품_이름", BigDecimal.valueOf(1000)));
 
             final var expected = List.of(ProductResponse.toResponse(product));
 

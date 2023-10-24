@@ -89,8 +89,7 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
         final Order findOrder = findOrder(orderId);
         findOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        final Order savedOrder = orderRepository.save(findOrder);
-        return OrderResponse.toResponse(savedOrder);
+        return OrderResponse.toResponse(orderRepository.save(findOrder));
     }
 
     private Order findOrder(final Long orderId) {

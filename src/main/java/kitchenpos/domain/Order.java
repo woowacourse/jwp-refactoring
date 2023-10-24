@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 import org.springframework.util.CollectionUtils;
 
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -44,22 +45,11 @@ public class Order {
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
-        this(null, orderTable, orderStatus.name(), orderedTime, orderLineItems);
-    }
-
-    public Order(
-            final Long id,
-            final OrderTable orderTable,
-            final String orderStatus,
-            final LocalDateTime orderedTime,
-            final List<OrderLineItem> orderLineItems
-    ) {
         validate(orderTable, orderLineItems);
-        this.id = id;
         this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
+        this.orderStatus = orderStatus.name();
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = appendOrderLineItems(orderLineItems);
     }
 
     private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
@@ -77,6 +67,15 @@ public class Order {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("[ERROR] 주문 항목이 비어있습니다.");
         }
+    }
+
+    private List<OrderLineItem> appendOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        final List<OrderLineItem> returnOrderLineItems = new ArrayList<>();
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.setOrder(this);
+            returnOrderLineItems.add(orderLineItem);
+        }
+        return returnOrderLineItems;
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

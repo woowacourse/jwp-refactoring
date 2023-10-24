@@ -14,7 +14,7 @@ public class Price {
     protected Price() {
     }
 
-    public Price(final BigDecimal price) {
+    private Price(final BigDecimal price) {
         this.price = price;
     }
 
