@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 public class TableGroup {
 
     private static final int MINIMUM_ORDER_TABLES_SIZE = 2;
+
     private Long id;
     private LocalDateTime createdDate;
     private final List<OrderTable> orderTables = new ArrayList<>();

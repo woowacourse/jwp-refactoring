@@ -3,6 +3,7 @@ package kitchenpos.domain;
 public class OrderTableGuestCount {
 
     private static final int MINIMUM_GUEST_COUNT = 0;
+
     private final int count;
 
     public OrderTableGuestCount(final int count) {
