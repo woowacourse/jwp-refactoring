@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -17,7 +18,7 @@ public class OrderLineItem extends BaseDate {
     @GeneratedValue(strategy = IDENTITY)
     private Long seq;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
     private Long menuId;
@@ -43,5 +44,17 @@ public class OrderLineItem extends BaseDate {
 
     public Long getMenuId() {
         return menuId;
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 }
