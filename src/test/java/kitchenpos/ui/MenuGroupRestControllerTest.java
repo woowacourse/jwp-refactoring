@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static kitchenpos.fixture.MenuGroupFixture.CHICKEN_SET;
-import static kitchenpos.fixture.MenuGroupFixture.CHICKEN_SET_NON_ID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +40,7 @@ class MenuGroupRestControllerTest {
         // when & then
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(CHICKEN_SET_NON_ID)))
+                        .content(objectMapper.writeValueAsString(new MenuGroupRequest("치킨세트"))))
                 .andExpect(status().isCreated())
                 .andExpect(redirectedUrl("/api/menu-groups/1"));
     }

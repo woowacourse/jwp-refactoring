@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +23,7 @@ class MenuGroupServiceTest {
     @Test
     void create_메서드는_메뉴_그룹을_생성한다() {
         // when
-        final MenuGroup response = menuGroupService.create(CHICKEN_SET_NON_ID);
+        final MenuGroup response = menuGroupService.create(new MenuGroupRequest("치킨세트"));
 
         // then
         assertThat(response)
