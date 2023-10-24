@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected OrderLineItems() {
@@ -26,10 +28,6 @@ public class OrderLineItems {
         return new OrderLineItems(orderLineItems);
     }
 
-    public static OrderLineItems createEmptyOrderLineItems() {
-        return new OrderLineItems();
-    }
-
     private static void validate(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 메뉴는 1개 이상 존재해야 합니다.");
@@ -42,6 +40,10 @@ public class OrderLineItems {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public int size() {
+        return orderLineItems.size();
     }
 
 }

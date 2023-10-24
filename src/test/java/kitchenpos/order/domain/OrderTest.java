@@ -4,34 +4,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Collections;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class OrderTest {
 
-    @DisplayName("주문 메뉴(내역)가 비어있을 경우, 생성할 수 없다.")
-    @Test
-    void createOrderFailTest_ByOrderLineItemIsEmpty() {
-        //given
-        OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.FALSE);
-
-        //when then
-        assertThatThrownBy(() -> Order.create(orderTable, Collections.emptyList()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 메뉴는 1개 이상 존재해야 합니다.");
-    }
+    @Mock
+    private OrderValidator orderValidator;
 
     @DisplayName("주문 테이블이 없을 경우, 생성할 수 없다.")
     @Test
     void createOrderFailTest_ByOrderTableIsNull() {
+        //given
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+
         //when then
-        assertThatThrownBy(() -> Order.createWithEmptyOrderLinItems(null))
+        assertThatThrownBy(() -> Order.create(null, orderLineItems, orderValidator))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessage("주문 테이블은 null일 수 없습니다.");
     }
@@ -41,9 +37,10 @@ class OrderTest {
     void createOrderFailTest_ByOrderTableIsEmpty() {
         //given
         OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.TRUE);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
 
         //when then
-        assertThatThrownBy(() -> Order.createWithEmptyOrderLinItems(orderTable))
+        assertThatThrownBy(() -> Order.create(orderTable, orderLineItems, orderValidator))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문할 수 없는 상태의 테이블이 존재합니다.");
     }
@@ -51,9 +48,13 @@ class OrderTest {
     @DisplayName("주문이 생성되면, COOKING 상태가 된다.")
     @Test
     void createOrderSuccessTest_HavingCookingStatus() {
-        //when
+        //given
         OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.FALSE);
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+
+        //when
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+
         //then
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
@@ -63,7 +64,8 @@ class OrderTest {
     void changeOrderStatusFailTest_ByOrderStatusIsCompletion() {
         //given
         OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.FALSE);
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         //when then
@@ -77,8 +79,9 @@ class OrderTest {
     void changeOrderStatusSuccessTest_ByOrderStatusIsNotCompletion(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = OrderTable.createWithoutTableGroup(0, Boolean.FALSE);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(OrderLineItem.create(1L, 1L)));
 
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
         order.changeOrderStatus(orderStatus);
 
         //when

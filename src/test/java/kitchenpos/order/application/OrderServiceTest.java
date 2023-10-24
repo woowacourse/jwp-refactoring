@@ -17,10 +17,12 @@ import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.dto.request.OrderCreationRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.request.OrderStatusUpdateRequest;
@@ -63,6 +65,9 @@ class OrderServiceTest {
     @Autowired
     private MenuValidator menuValidator;
 
+    @Autowired
+    private OrderValidator orderValidator;
+
     @DisplayName("주문 하려는 메뉴가 존재하지 않을 경우, 생성할 수 없다.")
     @Test
     void createFailTest_ByOrderLineItemIsNotExists() {
@@ -78,7 +83,7 @@ class OrderServiceTest {
         //when then
         assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 메뉴는 1개 이상 존재해야 합니다.");
+                .hasMessage("주문 상품에 존재하지 않는 메뉴가 존재합니다.");
     }
 
     @DisplayName("주문을 한 테이블이 존재하지 않을 경우, 생성할 수 없다.")
@@ -151,7 +156,7 @@ class OrderServiceTest {
 
         Optional<OrderLineItem> findOrderLineItemBeforeCreatingOrder = orderLineItemRepository.findAll()
                 .stream()
-                .filter(item -> item.getMenu().getId().equals(menu.getId()))
+                .filter(item -> item.getMenuId().equals(menu.getId()))
                 .findAny();
 
         assertThat(findOrderLineItemBeforeCreatingOrder).isEmpty();
@@ -162,7 +167,7 @@ class OrderServiceTest {
         //then
         Optional<OrderLineItem> findOrderLineItemAfterCreatingOrder = orderLineItemRepository.findAll()
                 .stream()
-                .filter(item -> item.getMenu().getId().equals(menu.getId()))
+                .filter(item -> item.getMenuId().equals(menu.getId()))
                 .findAny();
 
         assertThat(findOrderLineItemAfterCreatingOrder).isPresent();
@@ -181,9 +186,9 @@ class OrderServiceTest {
 
         //when
         Order savedOrder = orderRepository.findById(response.getId()).get();
-        OrderLineItem expectedOrderLineItem = OrderLineItem.create(savedOrder, menu, 1L);
+        OrderLineItem expectedOrderLineItem = OrderLineItem.create(menu.getId(), 1L);
 
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
 
         //then
         assertThat(orderLineItems).hasSize(1);
@@ -214,9 +219,8 @@ class OrderServiceTest {
         //given
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(order, menu);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(savedOrderTable, orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         Long savedOrderId = orderRepository.save(order).getId();
@@ -234,9 +238,8 @@ class OrderServiceTest {
         //given
         Menu menu = saveMenu();
         OrderTable savedOrderTable = saveOrderTableForEmpty(false);
-        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(order, menu);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(savedOrderTable, orderLineItems, orderValidator);
 
         Long savedOrderId = orderRepository.save(order).getId();
 
@@ -282,8 +285,8 @@ class OrderServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    private OrderLineItem createOrderLineItem(Order order, Menu menu) {
-        return OrderLineItem.create(order, menu, 1L);
+    private OrderLineItem createOrderLineItem(Menu menu) {
+        return OrderLineItem.create(menu.getId(), 1L);
     }
 
 }

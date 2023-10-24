@@ -1,8 +1,7 @@
 package kitchenpos.order.dto.response;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemResponse {
@@ -24,19 +23,13 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse from(OrderLineItem orderLineItem, Menu menu) {
         return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
-                orderLineItem.getMenu().getName(),
-                orderLineItem.getMenu().getPrice(),
+                menu.getName(),
+                menu.getPrice(),
                 orderLineItem.getQuantity()
         );
-    }
-
-    public static List<OrderLineItemResponse> from(List<OrderLineItem> orderLineItem) {
-        return orderLineItem.stream()
-                .map(OrderLineItemResponse::from)
-                .collect(Collectors.toList());
     }
 
     public Long getSeq() {
@@ -54,4 +47,5 @@ public class OrderLineItemResponse {
     public Long getQuantity() {
         return quantity;
     }
+
 }

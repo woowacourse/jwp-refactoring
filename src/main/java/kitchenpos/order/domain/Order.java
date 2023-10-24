@@ -45,27 +45,23 @@ public class Order {
     private Order(
             OrderStatus orderStatus,
             OrderTable orderTable,
-            OrderLineItems orderLineItems
+            OrderLineItems orderLineItems,
+            OrderValidator orderValidator
     ) {
+        validate(orderTable, orderLineItems);
+        orderValidator.validateOrderLineItems(orderLineItems);
+
         this.orderStatus = orderStatus;
         this.orderTable = orderTable;
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    private void validate(OrderTable orderTable, OrderLineItems orderLineItems) {
         validateOrderTable(orderTable);
-
-        return new Order(OrderStatus.COOKING, orderTable, OrderLineItems.from(orderLineItems));
+        validateOrderLineItems(orderLineItems);
     }
 
-    public static Order createWithEmptyOrderLinItems(OrderTable orderTable) {
-        validateOrderTable(orderTable);
-
-        return new Order(OrderStatus.COOKING, orderTable, OrderLineItems.createEmptyOrderLineItems());
-    }
-
-
-    private static void validateOrderTable(OrderTable orderTable) {
+    private void validateOrderTable(OrderTable orderTable) {
         if (orderTable == null) {
             throw new NullPointerException("주문 테이블은 null일 수 없습니다.");
         }
@@ -75,20 +71,26 @@ public class Order {
         }
     }
 
+    private void validateOrderLineItems(OrderLineItems orderLineItems) {
+        if (orderLineItems == null) {
+            throw new NullPointerException("주문 메뉴는 null일 수 없습니다.");
+        }
+    }
+
+    public static Order create(
+            OrderTable orderTable,
+            OrderLineItems orderLineItems,
+            OrderValidator orderValidator
+    ) {
+        return new Order(OrderStatus.COOKING, orderTable, orderLineItems, orderValidator);
+    }
+
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
             throw new IllegalArgumentException("Completion 상태일 경우, 주문 상태를 변경할 수 없습니다.");
         }
 
         this.orderStatus = orderStatus;
-    }
-
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
-    }
-
-    public void initializeOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = OrderLineItems.from(orderLineItems);
     }
 
     public Long getId() {

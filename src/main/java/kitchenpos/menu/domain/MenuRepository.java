@@ -1,10 +1,10 @@
 package kitchenpos.menu.domain;
 
-import java.util.Set;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    long countByIdIn(Set<Long> ids);
+    long countByIdIn(List<Long> ids);
 
 }

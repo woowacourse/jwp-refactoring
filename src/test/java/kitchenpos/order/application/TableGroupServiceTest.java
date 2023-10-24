@@ -15,10 +15,12 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.TableGroupRepository;
 import kitchenpos.order.dto.request.OrderTableRequest;
@@ -63,6 +65,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private MenuValidator menuValidator;
+
+    @Autowired
+    private OrderValidator orderValidator;
 
     @DisplayName("주문 테이블이 2개 미만이면, 주문 테이블 그룹을 생성할 수 없다.")
     @Test
@@ -184,9 +189,8 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(false);
 
         Menu menu = saveMenu();
-        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable1);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(savedOrderTable1, orderLineItems, orderValidator);
         order.changeOrderStatus(status);
 
         orderRepository.save(order);
@@ -215,9 +219,8 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable2 = saveOrderTableForEmpty(false);
 
         Menu menu = saveMenu();
-        Order order = Order.createWithEmptyOrderLinItems(savedOrderTable1);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(savedOrderTable1, orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         savedOrderTable1.changeEmpty(true);
@@ -274,8 +277,8 @@ class TableGroupServiceTest {
         return productRepository.save(product);
     }
 
-    private OrderLineItem createOrderLineItem(Menu menu, Order order) {
-        return OrderLineItem.create(order, menu, 1L);
+    private OrderLineItem createOrderLineItem(Menu menu) {
+        return OrderLineItem.create(menu.getId(), 1L);
     }
 
 }

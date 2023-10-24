@@ -15,10 +15,12 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.TableGroupRepository;
 import kitchenpos.order.dto.request.TableEmptyUpdateRequest;
@@ -66,6 +68,9 @@ class TableServiceTest {
     @Autowired
     private MenuValidator menuValidator;
 
+    @Autowired
+    private OrderValidator orderValidator;
+
     @DisplayName("기존에 주문이 없었던 테이블인 경우, 주문 상태를 변경할 수 없다.")
     @Test
     void changeEmptyFailTest_ByOrderTableIsNotExists() {
@@ -106,10 +111,9 @@ class TableServiceTest {
         //given
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
-
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
+        order.changeOrderStatus(orderStatus);
 
         orderRepository.save(order);
 
@@ -129,10 +133,8 @@ class TableServiceTest {
         //given
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
-
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         orderRepository.save(order);
@@ -155,10 +157,8 @@ class TableServiceTest {
         //given
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
-
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -177,10 +177,8 @@ class TableServiceTest {
         Long invalidId = 99L;
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
-
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -199,10 +197,8 @@ class TableServiceTest {
         //given
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
-
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
 
         orderRepository.save(order);
 
@@ -222,11 +218,8 @@ class TableServiceTest {
         //given
         OrderTable orderTable = saveOrderTableForEmpty(false);
         Menu menu = saveMenu();
-
-        Order order = Order.createWithEmptyOrderLinItems(orderTable);
-        OrderLineItem orderLineItem = createOrderLineItem(menu, order);
-        order.addOrderLineItem(orderLineItem);
-
+        OrderLineItems orderLineItems = OrderLineItems.from(List.of(createOrderLineItem(menu)));
+        Order order = Order.create(orderTable, orderLineItems, orderValidator);
         orderRepository.save(order);
 
         assertThat(orderTable.getNumberOfGuests()).isZero();
@@ -289,8 +282,8 @@ class TableServiceTest {
         return productRepository.save(product);
     }
 
-    private OrderLineItem createOrderLineItem(Menu menu, Order order) {
-        return OrderLineItem.create(order, menu, 1L);
+    private OrderLineItem createOrderLineItem(Menu menu) {
+        return OrderLineItem.create(menu.getId(), 1L);
     }
 
 

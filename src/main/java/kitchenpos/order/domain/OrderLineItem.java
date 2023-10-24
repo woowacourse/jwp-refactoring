@@ -4,10 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.menu.domain.Menu;
 
 @Entity
 public class OrderLineItem {
@@ -18,13 +15,8 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @NotNull
+    private Long menuId;
 
     @NotNull
     private Long quantity;
@@ -32,28 +24,20 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, Long quantity) {
-        this.order = order;
-        this.menu = menu;
+    private OrderLineItem(Long menuId, Long quantity) {
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem create(Order order, Menu menu, Long quantity) {
-        validateOrder(order);
-        validateMenu(menu);
+    public static OrderLineItem create(Long menuId, Long quantity) {
+        validateMenu(menuId);
         validateQuantity(quantity);
 
-        return new OrderLineItem(order, menu, quantity);
+        return new OrderLineItem(menuId, quantity);
     }
 
-    private static void validateOrder(Order order) {
-        if (order == null) {
-            throw new NullPointerException("주문은 null일 수 없습니다.");
-        }
-    }
-
-    private static void validateMenu(Menu menu) {
-        if (menu == null) {
+    private static void validateMenu(Long menuId) {
+        if (menuId == null) {
             throw new NullPointerException("주문 메뉴는 null일 수 없습니다.");
         }
     }
@@ -68,16 +52,11 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Long getQuantity() {
         return quantity;
     }
-
 }

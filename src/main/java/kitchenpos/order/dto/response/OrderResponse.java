@@ -23,12 +23,12 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse from(Order order) {
+    public static OrderResponse from(Order order, List<OrderLineItemResponse> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderStatus(),
                 TableResponse.from(order.getOrderTable()),
-                OrderLineItemResponse.from(order.getOrderLineItems())
+                orderLineItems
         );
     }
 
@@ -47,4 +47,5 @@ public class OrderResponse {
     public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
+    
 }
