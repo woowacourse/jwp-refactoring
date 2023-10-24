@@ -58,7 +58,7 @@ class OrderTableTest {
     void 테이블이_빈_상태면_테이블_손님_수를_변경할_수_없다() {
         //given
         int numberOfGuests = 4;
-        OrderTable 빈_신규_테이블 = OrderTableFixture.빈_신규_테이블();
+        OrderTable 빈_신규_테이블 = OrderTableFixture.빈_신규_테이블1();
 
         //when, then
         assertThatThrownBy(() -> 빈_신규_테이블.changeNumberOfGuests(numberOfGuests))

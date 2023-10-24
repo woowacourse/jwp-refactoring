@@ -40,7 +40,7 @@ public class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블();
+        빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블1();
         단일_조리_테이블 = OrderTableFixture.단일_조리_테이블();
         그룹핑된_식사_테이블 = OrderTableFixture.그룹핑된_식사_테이블();
     }

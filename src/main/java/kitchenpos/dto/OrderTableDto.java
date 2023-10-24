@@ -17,6 +17,10 @@ public class OrderTableDto {
         );
     }
 
+    public OrderTableDto(Long id) {
+        this(id, null, 0, false);
+    }
+
     public OrderTableDto(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
