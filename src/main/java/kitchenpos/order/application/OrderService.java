@@ -1,13 +1,16 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuName;
+import kitchenpos.menu.MenuPrice;
 import kitchenpos.menu.application.MenuRepository;
 import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderLineItemQuantity;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
-import kitchenpos.orderlineitem.OrderLineItem;
-import kitchenpos.orderlineitem.OrderLineItemQuantity;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.OrderTableRepository;
 import org.springframework.context.ApplicationEventPublisher;
@@ -42,7 +45,11 @@ public class OrderService {
         validateExistenceOfOrderLineItem(orderLineItemsDtos);
         final OrderTable orderTable = findOrderTable(request);
         final List<OrderLineItem> orderLineItems = orderLineItemsDtos.stream()
-                .map(m -> new OrderLineItem(m.getMenuId(), new OrderLineItemQuantity(m.getQuantity())))
+                .map(m -> {
+                    final Menu menu = menuRepository.findById(m.getMenuId())
+                            .orElseThrow(() -> new IllegalArgumentException("메뉴가 존재하지 않습니다."));
+                    return new OrderLineItem(new MenuName(menu.getName()), new MenuPrice(menu.getPrice()), new OrderLineItemQuantity(m.getQuantity()));
+                })
                 .collect(Collectors.toList());
 
         return orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));

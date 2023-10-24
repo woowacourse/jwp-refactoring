@@ -1,7 +1,5 @@
 package kitchenpos.order;
 
-import kitchenpos.orderlineitem.OrderLineItem;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

@@ -1,6 +1,6 @@
 package kitchenpos.menuproduct;
 
-import kitchenpos.orderlineitem.OrderLineItemQuantity;
+import kitchenpos.order.OrderLineItemQuantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

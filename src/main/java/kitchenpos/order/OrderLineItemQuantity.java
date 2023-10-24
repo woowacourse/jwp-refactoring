@@ -1,4 +1,4 @@
-package kitchenpos.orderlineitem;
+package kitchenpos.order;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;

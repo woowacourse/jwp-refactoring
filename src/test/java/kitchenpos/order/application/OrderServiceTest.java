@@ -1,14 +1,16 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuName;
+import kitchenpos.menu.MenuPrice;
 import kitchenpos.menu.application.MenuRepository;
 import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderLineItemQuantity;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
-import kitchenpos.orderlineitem.OrderLineItem;
-import kitchenpos.orderlineitem.OrderLineItemQuantity;
-import kitchenpos.orderlineitem.application.OrderLineItemRepository;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
@@ -23,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -125,8 +128,10 @@ class OrderServiceTest {
             final OrderTable orderTable = new OrderTable(new NumberOfGuests(0), Empty.EMPTY);
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
+            final Menu menu = new Menu(new MenuName("menuName"), new MenuPrice(BigDecimal.TEN), 1L);
             given(menuRepository.countByIdIn(any())).willReturn(3L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
+            given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
             given(orderRepository.save(any())).willReturn(order);
 
             // when
@@ -147,9 +152,9 @@ class OrderServiceTest {
     void list() {
         // given
         final List<OrderLineItem> orderLineItems = List.of(
-                new OrderLineItem(1L, new OrderLineItemQuantity(2)),
-                new OrderLineItem(2L, new OrderLineItemQuantity(3)),
-                new OrderLineItem(3L, new OrderLineItemQuantity(4))
+                new OrderLineItem(new MenuName("name1"), new MenuPrice(BigDecimal.valueOf(10)), new OrderLineItemQuantity(2)),
+                new OrderLineItem(new MenuName("name2"), new MenuPrice(BigDecimal.valueOf(20)), new OrderLineItemQuantity(3)),
+                new OrderLineItem(new MenuName("name3"), new MenuPrice(BigDecimal.valueOf(30)), new OrderLineItemQuantity(4))
         );
         final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
         given(orderRepository.findAll()).willReturn(List.of(order));

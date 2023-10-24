@@ -3,7 +3,6 @@ package kitchenpos.order.application;
 import kitchenpos.order.Order;
 import kitchenpos.order.application.request.OrderLineItemDto;
 import kitchenpos.order.application.request.OrderRequest;
-import kitchenpos.orderlineitem.application.OrderLineItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

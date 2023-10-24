@@ -1,4 +1,7 @@
-package kitchenpos.orderlineitem;
+package kitchenpos.order;
+
+import kitchenpos.menu.MenuName;
+import kitchenpos.menu.MenuPrice;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,18 +15,21 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-//    private Long orderId;
-    private Long menuId;
+    @Embedded
+    private MenuName name;
+    @Embedded
+    private MenuPrice price;
     @Embedded
     private OrderLineItemQuantity quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(
-                         final Long menuId,
+    public OrderLineItem(final MenuName name,
+                         final MenuPrice price,
                          final OrderLineItemQuantity quantity) {
-        this.menuId = menuId;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
     }
 
@@ -31,12 +37,16 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public MenuName getName() {
+        return name;
     }
 
-    public long getQuantity() {
-        return quantity.getQuantity();
+    public MenuPrice getPrice() {
+        return price;
+    }
+
+    public OrderLineItemQuantity getQuantity() {
+        return quantity;
     }
 
     @Override

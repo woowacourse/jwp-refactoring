@@ -1,6 +1,6 @@
-package kitchenpos.orderlineitem.application;
+package kitchenpos.order.application;
 
-import kitchenpos.orderlineitem.OrderLineItem;
+import kitchenpos.order.OrderLineItem;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
