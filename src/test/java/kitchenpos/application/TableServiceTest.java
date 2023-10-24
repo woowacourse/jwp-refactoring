@@ -54,7 +54,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_만들_수_있다() {
             // given
-            final OrderTableCreateRequest request = new OrderTableCreateRequest(6, false);
+            final OrderTableCreateRequest request = new OrderTableCreateRequest(6, true);
             final OrderTable spyOrderTable = spy(new OrderTable(null, request.getNumberOfGuests(), request.getEmpty()));
             given(orderTableRepository.save(any(OrderTable.class))).willReturn(spyOrderTable);
             final long savedId = 1L;
@@ -90,7 +90,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_비어있는_상태로_만들_수_있다() {
             // given
-            final OrderTable spyOrderTable = spy(new OrderTable(5, false));
+            final OrderTable spyOrderTable = spy(new OrderTable(5, true));
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
@@ -106,7 +106,7 @@ class TableServiceTest {
         @EnumSource(value = OrderStatus.class, names = {"MEAL","COOKING"})
         void 주문상태가_요리중이거나_식사중이면_예외가_발생한다(final OrderStatus orderStatus) {
             // given
-            final OrderTable spyOrderTable = spy(new OrderTable(5, false));
+            final OrderTable spyOrderTable = spy(new OrderTable(5, true));
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
@@ -126,7 +126,8 @@ class TableServiceTest {
         @Test
         void 게스트의_수를_변경할_수_있다() {
             // given
-            final OrderTable expected = spy(new OrderTable(1, false));
+            final OrderTable expected = spy(new OrderTable(1, true));
+            expected.changeEmpty(false);
             final long orderTableId = 1L;
             given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(expected));
 

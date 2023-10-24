@@ -7,14 +7,16 @@ import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.repository.TableGroupRepository;
+import kitchenpos.domain.order.service.dto.TableGroupCreateRequest;
+import kitchenpos.domain.order.service.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static java.time.LocalDateTime.now;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,43 +33,14 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final OrderTables orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        final List<Long> orderTableIds = request.getOrderTables();
+        final OrderTables orderTables = OrderTables.from(orderTableRepository.findAllByIdIn(orderTableIds));
 
-        if (
-                Objects.isNull(orderTables) ||
-                CollectionUtils.isEmpty(orderTables.getOrderTables()) ||
-                orderTables.size() < 2
-        ) {
-            throw new IllegalArgumentException();
-        }
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(now(), new OrderTables()));
+        savedTableGroup.addOrderTables(orderTables.getOrderTables());
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        savedTableGroup.addOrderTables(findOrderTables(orderTables));
-
-        return savedTableGroup;
-    }
-
-    private List<OrderTable> findOrderTables(final OrderTables orderTables) {
-        final List<Long> orderTableIds = orderTables.getOrderTables().stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTables.forEach(this::validateOrderTable);
-
-        return savedOrderTables;
-    }
-
-    private void validateOrderTable(final OrderTable savedOrderTable) {
-        if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
+        return TableGroupResponse.toDto(savedTableGroup);
     }
 
     @Transactional

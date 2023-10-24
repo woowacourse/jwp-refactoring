@@ -27,7 +27,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     @Test
     void existsByOrderTableIdAndOrderStatusIn() {
         // given
-        final OrderTable orderTable = createOrderTable(null, 10, false);
+        final OrderTable orderTable = createOrderTable(null, 10, true);
 
         final MenuGroup japanese = createMenuGroup("일식");
         final Menu wooDong = createMenu("우동", BigDecimal.valueOf(5000), japanese);
@@ -59,7 +59,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
     @Test
     void existsByOrderTableIdInAndOrderStatusIn() {
         // given
-        final OrderTable orderTable = createOrderTable(null, 10, false);
+        final OrderTable orderTable = createOrderTable(null, 10, true);
 
         final MenuGroup japanese = createMenuGroup("일식");
         final Menu wooDong = createMenu("우동", BigDecimal.valueOf(5000), japanese);

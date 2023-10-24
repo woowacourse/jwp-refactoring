@@ -19,8 +19,8 @@ class OrderTableRepositoryTest extends RepositoryTestConfig {
     @Test
     void findAllByIdIn() {
         // given
-        final OrderTable orderTable1 = createOrderTable(null, 4, false);
-        final OrderTable orderTable2 = createOrderTable(null, 5, false);
+        final OrderTable orderTable1 = createOrderTable(null, 4, true);
+        final OrderTable orderTable2 = createOrderTable(null, 5, true);
 
         em.flush();
         em.close();
@@ -36,8 +36,8 @@ class OrderTableRepositoryTest extends RepositoryTestConfig {
     void findAllByTableGroupId() {
         // given
         final TableGroup tableGroup = createTableGroup(LocalDateTime.now());
-        final OrderTable orderTable1 = createOrderTable(null, 4, false);
-        final OrderTable orderTable2 = createOrderTable(null, 5, false);
+        final OrderTable orderTable1 = createOrderTable(null, 4, true);
+        final OrderTable orderTable2 = createOrderTable(null, 5, true);
         orderTable1.changeGroup(tableGroup);
         orderTable2.changeGroup(tableGroup);
 

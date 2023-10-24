@@ -12,4 +12,11 @@ class OrderTableTest {
         assertThatThrownBy(() -> new OrderTable(new TableGroup(now(), new OrderTables()), 5, false))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void 저장된_주문_테이블이_비어있다면_실패한다() {
+        // when, then
+        assertThatThrownBy(() -> new OrderTable(3, false))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
