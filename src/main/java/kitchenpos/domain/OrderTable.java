@@ -5,7 +5,7 @@ import java.util.Objects;
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
-    private int numberOfGuests;
+    private NumberOfGuests numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
@@ -19,7 +19,18 @@ public class OrderTable {
     public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
+    }
+
+    public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
 
@@ -40,19 +51,15 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     @Override
