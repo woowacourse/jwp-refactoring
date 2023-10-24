@@ -149,4 +149,17 @@ class TableServiceTest extends IntegrationTestHelper {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeTableRequest))
                 .isInstanceOf(CannotChangeNumberOfGuestBecauseOfEmptyTableException.class);
     }
+
+    @Test
+    void 주문_테이블이_존재하는지_id로_확인한다() {
+        // given
+        OrderTableCreateRequest req = 주문_테이블_생성_요청(주문_테이블_생성(10, false));
+        OrderTable orderTable = tableService.create(req);
+
+        // when
+        boolean result = tableService.isExistById(orderTable.getId());
+
+        // then
+        assertThat(result).isTrue();
+    }
 }

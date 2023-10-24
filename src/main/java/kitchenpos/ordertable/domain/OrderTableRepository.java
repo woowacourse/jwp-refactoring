@@ -18,4 +18,6 @@ public interface OrderTableRepository extends Repository<OrderTable, Long> {
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 
     boolean existsByIdAndEmptyIsFalse(Long orderTableId);
+
+    boolean existsById(Long orderTableId);
 }

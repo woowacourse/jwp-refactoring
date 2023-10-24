@@ -1,6 +1,7 @@
 package kitchenpos.order.application;
 
 import kitchenpos.common.event.listener.MenuEventListener;
+import kitchenpos.common.event.listener.OrderTableEventListener;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderUpdateRequest;
@@ -10,10 +11,6 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderLineItemEmptyException;
 import kitchenpos.order.exception.OrderNotFoundException;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.ordertable.exception.OrderTableEmptyException;
-import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,48 +21,30 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final MenuEventListener menuEventListener;
+    private final OrderTableEventListener orderTableEventListener;
 
-    public OrderService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final MenuEventListener menuEventListener) {
+    public OrderService(final OrderRepository orderRepository, final MenuEventListener menuEventListener, final OrderTableEventListener orderTableEventListener) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
         this.menuEventListener = menuEventListener;
+        this.orderTableEventListener = orderTableEventListener;
     }
 
     @Transactional
     public Order create(final OrderCreateRequest req) {
-        // 1. 주문 품목이 비어 있다면 예외
         validateOrderLineItemsEmpty(req);
+        orderTableEventListener.validateOrderTable(req.getOrderTableId());
 
-        // 2. 주문 테이블이 없다면 예외
-        OrderTable orderTable = findOrderTable(req);
-
-        // 3. 주문 테이블이 비어있다면 예외
-        validateOrderTableEmpty(req);
-
-        // 4. OrderLineItem이랑 req가 같지 않는 경우 & 매핑
         List<OrderLineItem> orderLineItems = makeOrderLineItems(req.getOrderLineItems());
         validateOrderLineItemEmpty(req, orderLineItems);
 
-        Order order = Order.createDefault(orderTable.getId(), orderLineItems);
+        Order order = Order.createDefault(req.getOrderTableId(), orderLineItems);
         return orderRepository.save(order);
-    }
-
-    private OrderTable findOrderTable(final OrderCreateRequest req) {
-        return orderTableRepository.findById(req.getOrderTableId())
-                .orElseThrow(OrderTableNotFoundException::new);
     }
 
     private void validateOrderLineItemsEmpty(final OrderCreateRequest req) {
         if (req.getOrderLineItems().isEmpty()) {
             throw new OrderLineItemEmptyException();
-        }
-    }
-
-    private void validateOrderTableEmpty(final OrderCreateRequest req) {
-        if (!orderTableRepository.existsByIdAndEmptyIsFalse(req.getOrderTableId())) {
-            throw new OrderTableEmptyException();
         }
     }
 

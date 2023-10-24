@@ -74,4 +74,14 @@ public class TableService {
 
         return savedOrderTable;
     }
+
+    @Transactional(readOnly = true)
+    public boolean isExistById(final Long id) {
+        return orderTableRepository.existsById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isExistsByIdAndEmptyIsFalse(final Long id) {
+        return orderTableRepository.existsByIdAndEmptyIsFalse(id);
+    }
 }
