@@ -13,7 +13,7 @@ class OrderTableTest {
     void updateNumberOfGuests() {
         //given
         final NumberOfGuests before = DEFAULT_NUMBER_OF_GUESTS;
-        final NumberOfGuests after = new NumberOfGuests(4);
+        final NumberOfGuests after = NumberOfGuests.from(4);
         final OrderTable orderTable = new OrderTable(before, true);
 
         //when

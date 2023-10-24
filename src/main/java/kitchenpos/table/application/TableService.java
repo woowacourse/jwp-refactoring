@@ -70,7 +70,7 @@ public class TableService {
     @Transactional
     public OrderTableQueryResponse changeNumberOfGuests(final Long orderTableId,
                                                         final OrderTableNumberOfGuestModifyRequest request) {
-        final NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
+        final NumberOfGuests numberOfGuests = NumberOfGuests.from(request.getNumberOfGuests());
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         validateNotEmpty(savedOrderTable);
