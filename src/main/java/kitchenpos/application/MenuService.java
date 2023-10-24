@@ -43,13 +43,6 @@ public class MenuService {
         return menuRepository.save(menu).getId();
     }
 
-    @Transactional(readOnly = true)
-    public List<MenuResponse> findAll() {
-        return menuRepository.findAll().stream()
-                .map(MenuResponse::from)
-                .collect(Collectors.toList());
-    }
-
     private Map<Product, Integer> makeProductWithQuantity(
             final List<MenuProductRequest> menuProductRequests,
             final List<Product> products
@@ -62,6 +55,13 @@ public class MenuService {
                         product -> product,
                         product -> productIdToQuantity.get(product.getId())
                 ));
+    }
+
+    @Transactional(readOnly = true)
+    public List<MenuResponse> findAll() {
+        return menuRepository.findAll().stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 
     private static void validateAllFound(final List<Long> productIds, final List<Product> products) {
