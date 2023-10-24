@@ -26,7 +26,7 @@ public class OrderTableCreateRequest {
         return isEmpty;
     }
 
-    public OrderTable toEmptyOrderTable() {
+    public OrderTable toOrderTableWithoutGroup() {
         return new OrderTable(null, null, numberOfGuests, isEmpty);
     }
 }

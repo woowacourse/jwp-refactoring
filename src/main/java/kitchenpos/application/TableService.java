@@ -27,7 +27,7 @@ public class TableService {
     }
 
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        OrderTable orderTable = orderTableRepository.save(request.toEmptyOrderTable());
+        OrderTable orderTable = orderTableRepository.save(request.toOrderTableWithoutGroup());
         return OrderTableResponse.from(orderTable);
     }
 
