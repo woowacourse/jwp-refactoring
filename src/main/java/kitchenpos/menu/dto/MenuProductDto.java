@@ -4,10 +4,10 @@ import kitchenpos.menu.domain.MenuProduct;
 
 public class MenuProductDto {
 
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private Long quantity;
+    private final Long seq;
+    private final Long menuId;
+    private final Long productId;
+    private final Long quantity;
 
     private MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
         this.seq = seq;
@@ -19,7 +19,7 @@ public class MenuProductDto {
     public static MenuProductDto from(final MenuProduct menuProduct){
         return new MenuProductDto(
                 menuProduct.getSeq(),
-                menuProduct.getMenu(),
+                menuProduct.getMenuId(),
                 menuProduct.getProduct(),
                 menuProduct.getQuantity().getValue()
         );

@@ -30,7 +30,7 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(fetch = LAZY, mappedBy = "menu")
+    @OneToMany(fetch = LAZY, mappedBy = "menuId")
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
