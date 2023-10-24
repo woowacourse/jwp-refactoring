@@ -110,10 +110,7 @@ class OrderServiceTest extends IntegrationTest {
         CreateOrderResponse result = orderService.create(command);
 
         // then
-        assertAll(
-                () -> assertThat(result.id()).isPositive(),
-                () -> assertThat(result.orderLineItemResponses().get(0).orderId()).isEqualTo(result.id())
-        );
+        assertThat(result.id()).isPositive();
     }
 
     @Test

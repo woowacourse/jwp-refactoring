@@ -57,7 +57,6 @@ public class Order {
             OrderLineItems orderLineItems
     ) {
         validate(orderTable);
-        orderLineItems.setOrderToAll(this);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;

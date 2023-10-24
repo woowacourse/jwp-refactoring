@@ -6,6 +6,7 @@ import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_E
 
 import java.util.List;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.exception.OrderException;
 import org.springframework.util.CollectionUtils;
@@ -13,7 +14,8 @@ import org.springframework.util.CollectionUtils;
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order", cascade = ALL, fetch = EAGER)
+    @OneToMany(cascade = ALL, fetch = EAGER)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> items;
 
     protected OrderLineItems() {
@@ -28,10 +30,6 @@ public class OrderLineItems {
         if (CollectionUtils.isEmpty(items)) {
             throw new OrderException(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
         }
-    }
-
-    public void setOrderToAll(Order order) {
-        items.forEach(it -> it.setOrder(order));
     }
 
     public List<OrderLineItem> items() {
