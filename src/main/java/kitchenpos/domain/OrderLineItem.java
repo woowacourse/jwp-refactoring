@@ -57,4 +57,14 @@ public class OrderLineItem extends BaseDate {
     public long getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "OrderLineItem{" +
+                "seq=" + seq +
+                ", order=" + order +
+                ", menuId=" + menuId +
+                ", quantity=" + quantity +
+                '}';
+    }
 }
