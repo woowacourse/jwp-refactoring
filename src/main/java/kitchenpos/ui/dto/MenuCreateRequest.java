@@ -2,6 +2,7 @@ package kitchenpos.ui.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
@@ -23,6 +24,12 @@ public class MenuCreateRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public List<Long> extractIds() {
+        return menuProducts.stream()
+                .map(MenuProductRequest::getProductId)
+                .collect(Collectors.toList());
     }
 
     public String getName() {

@@ -35,19 +35,13 @@ public class MenuService {
 
     public Long create(final MenuCreateRequest request) {
         validateExistedMenuGroup(request);
-        final List<Long> productIds = extractIds(request.getMenuProducts());
+        final List<Long> productIds = request.extractIds();
         final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final List<Product> products = productRepository.findByIdIn(productIds);
         validateAllProductsFound(productIds, products);
         final Map<Product, Integer> productWithQuantity = makeProductWithQuantity(request.getMenuProducts(), products);
         final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup, productWithQuantity);
         return menuRepository.save(menu).getId();
-    }
-
-    private static List<Long> extractIds(final List<MenuProductRequest> menuCreateRequest) {
-        return menuCreateRequest.stream()
-                .map(MenuProductRequest::getProductId)
-                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
