@@ -7,7 +7,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,10 +35,8 @@ public class OrderService {
     }
 
     public Long create(final OrderCreateRequest request) {
-        final List<Long> menuIds = extractIds(request);
-        validateEqualsMenuCount(request, menuIds);
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        validateEqualsMenuCount(request);
+        final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         orderTable.validateIsEmpty();
         final Order order = Order.of(orderTable, COOKING, LocalDateTime.now());
         return orderRepository.save(order).getId();
@@ -54,22 +51,15 @@ public class OrderService {
     }
 
     public OrderResponse changeOrderStatus(final Long orderId, final String orderStatusName) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = orderRepository.getById(orderId);
         final OrderStatus orderStatus = OrderStatus.from(orderStatusName);
         savedOrder.updateOrderStatus(orderStatus);
         return OrderResponse.from(savedOrder);
     }
 
-    private void validateEqualsMenuCount(final OrderCreateRequest request, final List<Long> menuIds) {
-        if (request.getOrderLineItems().size() != menuRepository.countByIdIn(menuIds)) {
+    private void validateEqualsMenuCount(final OrderCreateRequest request) {
+        if (request.getOrderLineItems().size() != menuRepository.countByIdIn(request.extractOrderLineItemIds())) {
             throw new IllegalArgumentException();
         }
-    }
-
-    private static List<Long> extractIds(final OrderCreateRequest request) {
-        return request.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
     }
 }
