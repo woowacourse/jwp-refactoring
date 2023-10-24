@@ -57,10 +57,12 @@ class ProductServiceTest extends ServiceIntegrationTest {
                     .usingRecursiveComparison()
                     .ignoringFields("price")
                     .isEqualTo(product1);
+            softly.assertThat(result.get(0).getPrice()).isEqualByComparingTo(product1.getPrice());
             softly.assertThat(result.get(1))
                     .usingRecursiveComparison()
                     .ignoringFields("price")
                     .isEqualTo(product2);
+            softly.assertThat(result.get(0).getPrice()).isEqualByComparingTo(product2.getPrice());
         });
     }
 }

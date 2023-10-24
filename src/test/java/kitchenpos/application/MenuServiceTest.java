@@ -95,10 +95,12 @@ class MenuServiceTest extends ServiceIntegrationTest {
                     .usingRecursiveComparison()
                     .ignoringFields("price")
                     .isEqualTo(menu1);
+            softly.assertThat(result.get(0).getPrice()).isEqualByComparingTo(menu1.getPrice());
             softly.assertThat(result.get(1))
                     .usingRecursiveComparison()
                     .ignoringFields("price")
                     .isEqualTo(menu2);
+            softly.assertThat(result.get(1).getPrice()).isEqualByComparingTo(menu2.getPrice());
         });
     }
 }
