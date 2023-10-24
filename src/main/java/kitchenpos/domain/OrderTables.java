@@ -25,12 +25,12 @@ public class OrderTables {
         return orderTables.size() == size;
     }
 
-    public void changeToAllOccupied() {
-        validateEachStatus();
+    public void validateCanGroupAndChangeToOccupied() {
+        validateAllCanGroup();
         orderTables.forEach(OrderTable::changeToOccupied);
     }
 
-    private void validateEachStatus() {
+    private void validateAllCanGroup() {
         final long validatedCount = orderTables.stream()
                 .filter(OrderTable::canGroup)
                 .count();

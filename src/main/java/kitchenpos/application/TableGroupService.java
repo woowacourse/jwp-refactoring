@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @Service
@@ -39,7 +37,7 @@ public class TableGroupService {
         final List<OrderTable> orderTablesResult = orderTableRepository.findAllById(orderTableIds.getOrderTableIds());
         final OrderTables orderTables = new OrderTables(orderTablesResult);
         validateTableGroupInput(orderTableIds.getOrderTableIds(), orderTables);
-        orderTables.changeToAllOccupied();
+        orderTables.validateCanGroupAndChangeToOccupied();
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(orderTables));
         return TableGroupResponse.from(savedTableGroup);
     }
