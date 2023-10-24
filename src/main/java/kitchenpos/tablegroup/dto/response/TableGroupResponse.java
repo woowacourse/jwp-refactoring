@@ -1,7 +1,7 @@
-package kitchenpos.order.dto.response;
+package kitchenpos.tablegroup.dto.response;
 
 import java.util.List;
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.table.dto.response.TableResponse;
 
 public class TableGroupResponse {
