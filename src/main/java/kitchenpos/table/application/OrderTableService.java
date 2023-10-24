@@ -1,11 +1,11 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import java.util.List;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.order.OrderTable;
 import kitchenpos.order.persistence.OrderRepository;
-import kitchenpos.order.persistence.OrderTableRepository;
 import kitchenpos.order.request.OrderTableCreateRequest;
+import kitchenpos.table.OrderTable;
+import kitchenpos.table.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,6 +1,6 @@
-package kitchenpos.tablegroup.persistence;
+package kitchenpos.table.persistence;
 
-import kitchenpos.tablegroup.TableGroup;
+import kitchenpos.table.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {

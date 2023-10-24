@@ -1,8 +1,8 @@
-package kitchenpos.order.persistence;
+package kitchenpos.table.persistence;
 
 
 import java.util.List;
-import kitchenpos.order.OrderTable;
+import kitchenpos.table.OrderTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {

@@ -2,9 +2,9 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.order.OrderTable;
-import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.request.OrderTableCreateRequest;
+import kitchenpos.table.OrderTable;
+import kitchenpos.table.application.OrderTableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
