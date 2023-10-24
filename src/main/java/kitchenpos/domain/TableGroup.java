@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,21 +26,11 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
+        orderTables.forEach(OrderTable::validateCanJoinTableGroup);
         orderTables.forEach(it -> it.joinTableGroup(this));
 
         this.orderTables = orderTables;
         this.createdDate = LocalDateTime.now();
-    }
-
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        orderTables.forEach(this::validateOrderTable);
-    }
-
-    private void validateOrderTable(final OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Long getId() {

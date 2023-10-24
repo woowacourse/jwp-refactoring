@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,12 +20,12 @@ public class OrderTable {
 
     private Integer numberOfGuests;
 
-    private Boolean empty;
+    private boolean empty;
 
     public OrderTable() {
     }
 
-    private OrderTable(final Long id, final TableGroup tableGroup, final Integer numberOfGuests, final Boolean empty) {
+    private OrderTable(final Long id, final TableGroup tableGroup, final Integer numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -56,10 +55,16 @@ public class OrderTable {
     }
 
     public void changeEmpty(final Boolean empty) {
-        if (Objects.nonNull(this.tableGroup)) {
+        if (this.tableGroup != null) {
             throw new IllegalArgumentException();
         }
         this.empty = empty;
+    }
+
+    public void validateCanJoinTableGroup() {
+        if (!empty || tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
