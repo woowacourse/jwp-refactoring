@@ -23,6 +23,7 @@ public class Menu {
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
         validatePrice(price);
+        validateTotalMenuProductPrice(price, menuProducts);
 
         this.name = name;
         this.price = price;
@@ -35,6 +36,12 @@ public class Menu {
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateTotalMenuProductPrice(final BigDecimal price, final MenuProducts menuProducts) {
+        if (price.compareTo(menuProducts.calculateTotalPrice()) > 0) {
             throw new IllegalArgumentException();
         }
     }
@@ -57,9 +64,5 @@ public class Menu {
 
     public MenuProducts getMenuProducts() {
         return menuProducts;
-    }
-
-    public boolean isPriceGreaterThanTotalProductPrice() {
-        return price.compareTo(menuProducts.calculateTotalPrice()) > 0;
     }
 }

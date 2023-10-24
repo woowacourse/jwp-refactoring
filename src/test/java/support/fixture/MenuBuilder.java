@@ -20,7 +20,7 @@ public class MenuBuilder {
 
     public MenuBuilder() {
         this.name = "메뉴" + sequence;
-        this.price = BigDecimal.valueOf(1000L * sequence);
+        this.price = BigDecimal.ZERO;
         this.menuGroup = null;
         this.menuProducts = Collections.emptyList();
 
