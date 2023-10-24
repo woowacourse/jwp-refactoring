@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import kitchenpos.ui.dto.MenuProductDto;
 import org.springframework.stereotype.Service;
@@ -20,21 +20,21 @@ import java.util.Objects;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
+            final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -45,7 +45,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupDao.existsById(menuRequest.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
@@ -53,8 +53,8 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
-            final Product product = productDao.findById(menuProductDto.getProductId())
-                                              .orElseThrow(IllegalArgumentException::new);
+            final Product product = productRepository.findById(menuProductDto.getProductId())
+                                                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
             products.add(product);
         }
@@ -63,10 +63,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
-                                                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                                                       .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
         final Menu menu = new Menu(menuGroup, menuRequest.getName(), menuRequest.getPrice());
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
@@ -77,7 +77,7 @@ public class MenuService {
                                             .findFirst()
                                             .orElseThrow(() -> new IllegalArgumentException("잘못된 상품 아이디입니다."));
             final MenuProduct menuProduct = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -85,10 +85,10 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
         }
 
         return menus;
