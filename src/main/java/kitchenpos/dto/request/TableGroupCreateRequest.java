@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dto.IdForRequest;
 
 public class TableGroupCreateRequest {
-    
+
     private List<IdForRequest> orderTables;
 
     public TableGroupCreateRequest() {
@@ -13,6 +13,10 @@ public class TableGroupCreateRequest {
 
     public TableGroupCreateRequest(List<IdForRequest> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public List<IdForRequest> getOrderTables() {
+        return orderTables;
     }
 
     public List<Long> getOrderTableIds() {
