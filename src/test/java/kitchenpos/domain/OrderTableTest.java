@@ -32,4 +32,40 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("테이블의 손님 수를 변경한다.")
+    @Test
+    void changeNumberOfGuests() {
+        // given
+        int expected = 7;
+        OrderTable orderTable = new OrderTable(5, false);
+
+        // when
+        orderTable.changeNumberOfGuests(expected);
+
+        // then
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(expected);
+    }
+
+    @DisplayName("테이블의 손님 수를 0명 미만으로 변경하면 예외가 발생한다.")
+    @Test
+    void changeNumberOfGuests_LessThanZero_ExceptionThrown() {
+        // given
+        OrderTable orderTable = new OrderTable(5, false);
+
+        // when, then
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("비어 있는 테이블의 손님 수를 변경하면 예외가 발생한다.")
+    @Test
+    void changeNumberOfGuests_EmptyTable_ExceptionThrown() {
+        // given
+        OrderTable emptyOrderTable = new OrderTable(5, true);
+
+        // when, then
+        assertThatThrownBy(() -> emptyOrderTable.changeNumberOfGuests(6))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
 }
