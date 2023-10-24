@@ -5,6 +5,9 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static kitchenpos.domain.order.OrderStatus.*;
 
 public class Order {
     private Long id;
@@ -42,32 +45,27 @@ public class Order {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public void setOrderTableId(Long orderTableId) {
-        this.orderTableId = orderTableId;
     }
 
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(String orderStatus) {
+    public void changeOrderStatus(String orderStatus) {
+        validateOrderStatus();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateOrderStatus() {
+        if (isCompleted(orderStatus)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

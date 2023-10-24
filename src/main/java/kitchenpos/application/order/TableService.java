@@ -52,7 +52,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(updateRequest.isEmpty());
+        savedOrderTable.changeStatus(updateRequest.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
@@ -72,7 +72,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
     }

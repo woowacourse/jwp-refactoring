@@ -13,7 +13,6 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -107,20 +106,15 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(Long orderId, OrderUpdateRequest request) {
-        final Order savedOrder = orderDao.findById(orderId)
+        final Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        order.changeOrderStatus(request.getOrderStatus());
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        orderDao.save(order);
 
-        orderDao.save(savedOrder);
+        order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
-        return savedOrder;
+        return order;
     }
 }
