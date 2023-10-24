@@ -1,6 +1,5 @@
 package kitchenpos.table.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -8,8 +7,6 @@ import kitchenpos.common.dto.request.TableCreationRequest;
 import kitchenpos.common.dto.request.TableEmptyUpdateRequest;
 import kitchenpos.common.dto.request.TableNumberOfGuestsUpdateRequest;
 import kitchenpos.common.dto.response.TableResponse;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTableValidator;
@@ -21,16 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
     private final OrderTableValidator orderTableValidator;
 
     public TableService(
             OrderTableRepository orderTableRepository,
-            OrderRepository orderRepository,
             OrderTableValidator orderTableValidator
     ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
         this.orderTableValidator = orderTableValidator;
     }
 
@@ -54,7 +48,6 @@ public class TableService {
     public TableResponse changeEmpty(Long orderTableId, TableEmptyUpdateRequest request) {
         OrderTable orderTable = findOrderTableById(orderTableId);
 
-        validateChangeableEmpty(orderTableId);
         orderTable.changeEmpty(request.getEmpty(), orderTableValidator);
 
         return TableResponse.from(orderTable);
@@ -67,13 +60,6 @@ public class TableService {
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
         return TableResponse.from(orderTable);
-    }
-
-    private void validateChangeableEmpty(Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("Completion 상태가 아닌 주문 테이블은 주문 가능 여부를 변경할 수 없습니다.");
-        }
     }
 
     private OrderTable findOrderTableById(Long orderTableId) {
