@@ -6,7 +6,6 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Menu {
 
@@ -19,24 +18,11 @@ public class Menu {
     private final List<MenuProduct> menuProducts;
 
     private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    private void validate(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validPrice(BigDecimal price) {
-        if (this.price.compareTo(price) > 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public Menu updateMenuProducts(List<MenuProduct> savedMenuProducts) {
