@@ -26,7 +26,32 @@ public class Price {
         }
     }
 
+    public Price add(final Price target) {
+        return new Price(value.add(target.value));
+    }
+
+    public Price multiply(final BigDecimal multiplyValue) {
+        return new Price(value.multiply(multiplyValue));
+    }
+
+    public boolean isLargerThan(final Price target) {
+        return value.compareTo(target.value) > 0;
+    }
+
     public BigDecimal getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Price price = (Price) o;
+        return Objects.equals(value, price.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

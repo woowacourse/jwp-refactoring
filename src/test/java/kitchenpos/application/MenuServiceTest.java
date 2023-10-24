@@ -156,9 +156,7 @@ class MenuServiceTest {
         final Menu menu = getMenuFixture();
         final Menu savedMenu = menuDao.save(menu);
 
-        final MenuProduct testMenuProduct = getMenuProductFixture();
-        testMenuProduct.setMenuId(savedMenu.getId());
-        final MenuProduct savedMenuProduct = menuProductDao.save(testMenuProduct);
+        final MenuProduct savedMenuProduct = menuProductDao.save(new MenuProduct(savedMenu.getId(), 2, testProduct));
 
         savedMenu.setMenuProducts(List.of(savedMenuProduct));
         final MenuResponse expectedLastResponse = MenuResponse.from(savedMenu);
@@ -173,13 +171,6 @@ class MenuServiceTest {
             softly.assertThat(lastMenu).usingRecursiveComparison()
                     .isEqualTo(expectedLastResponse);
         });
-    }
-
-    private MenuProduct getMenuProductFixture() {
-        final MenuProduct requestMenuProduct = new MenuProduct();
-        requestMenuProduct.setProductId(testProduct.getId());
-        requestMenuProduct.setQuantity(2);
-        return requestMenuProduct;
     }
 
     private Menu getMenuFixture() {

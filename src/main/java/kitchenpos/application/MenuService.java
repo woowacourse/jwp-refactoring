@@ -9,6 +9,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,28 +42,14 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        final BigDecimal price = request.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        final Price menuPrice = new Price(request.getPrice());
 
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
         final List<MenuProductRequest> menuProducts = request.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductRequest menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPriceValue().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
 
         final Menu menu = new Menu();
         menu.setMenuGroupId(request.getMenuGroupId());
@@ -70,16 +58,23 @@ public class MenuService {
 
         final Menu savedMenu = menuDao.save(menu);
 
-        final Long menuId = savedMenu.getId();
+        Price sum = new Price(BigDecimal.ZERO);
+
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProductRequest menuProductRequest : menuProducts) {
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setMenuId(menuId);
-            menuProduct.setProductId(menuProductRequest.getProductId());
-            menuProduct.setQuantity(menuProductRequest.getQuantity());
+            final Product product = productDao.findById(menuProductRequest.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
+
+            final MenuProduct menuProduct = new MenuProduct(savedMenu.getId(), menuProductRequest.getQuantity(), product);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
+
+        if (menuPrice.isLargerThan(sum)) {
+            throw new IllegalArgumentException();
+        }
 
         return MenuResponse.from(savedMenu);
     }
