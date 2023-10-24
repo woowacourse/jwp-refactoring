@@ -1,8 +1,5 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-
 public class CreateMenuProductRequest {
 
     private Long productId;
@@ -22,9 +19,5 @@ public class CreateMenuProductRequest {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public MenuProduct toEntity(final Product product) {
-        return new MenuProduct(product, quantity);
     }
 }

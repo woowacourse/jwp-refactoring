@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -8,10 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -23,26 +22,33 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "menu_menu_group"))
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts = new MenuProducts();
 
     protected Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
         this.menuGroup = menuGroup;
     }
 
-    public void addMenuProducts(final List<MenuProduct> menuProducts) {
-        for (final MenuProduct menuProduct : menuProducts) {
+    public void addMenuProducts(final MenuProducts menuProducts) {
+        final BigDecimal menuProductsTotalPrice = menuProducts.calculateTotalPrice();
+        if (price == null || price.biggerThan(menuProductsTotalPrice)) {
+            throw new IllegalArgumentException("메뉴 가격은 메뉴를 구성하는 상품의 가격 합보다 작아야 합니다.");
+        }
+
+        for (final MenuProduct menuProduct : menuProducts.getMenuProducts()) {
             this.menuProducts.add(menuProduct);
             menuProduct.setMenu(this);
         }
@@ -54,18 +60,6 @@ public class Menu {
 
     public String getName() {
         return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 
     @Override

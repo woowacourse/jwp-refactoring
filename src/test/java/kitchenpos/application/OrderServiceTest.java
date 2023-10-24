@@ -13,6 +13,7 @@ import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.ui.dto.ChangeOrderStatusRequest;
 import kitchenpos.ui.dto.CreateOrderLineItemRequest;
 import kitchenpos.ui.dto.CreateOrderRequest;
@@ -25,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,7 +62,7 @@ class OrderServiceTest {
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2l);
         후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
-        후라이드_2개_메뉴.addMenuProducts(List.of(후라이드_2개));
+        후라이드_2개_메뉴.addMenuProducts(new MenuProducts(List.of(후라이드_2개)));
     }
 
     @Test

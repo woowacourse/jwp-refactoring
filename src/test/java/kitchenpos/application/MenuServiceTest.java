@@ -5,9 +5,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.ui.dto.CreateMenuProductRequest;
 import kitchenpos.ui.dto.CreateMenuRequest;
 import org.assertj.core.api.SoftAssertions;
@@ -71,7 +71,8 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidMenu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상이어야 합니다.");
     }
 
     @Test
@@ -88,7 +89,8 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidMenu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격은 0원 이상이어야 합니다.");
     }
 
     @Test
@@ -104,7 +106,8 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidMenu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 그룹이 존재하지 않습니다.");
     }
 
     @Test
@@ -120,7 +123,8 @@ class MenuServiceTest {
 
         // when & then
         assertThatThrownBy(() -> menuService.create(invalidMenu))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("메뉴 가격은 메뉴를 구성하는 상품의 가격 합보다 작아야 합니다.");
     }
 
     @Test
@@ -137,9 +141,9 @@ class MenuServiceTest {
 
         final Menu 후라이드_후라이드 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
 
-        후라이드_후라이드.addMenuProducts(List.of(후라이드_2개));
+        후라이드_후라이드.addMenuProducts(new MenuProducts(List.of(후라이드_2개)));
         final Menu 후라이드_양념치킨 = menuRepository.save(new Menu("후라이드+양념치킨", BigDecimal.valueOf(33000), 두마리메뉴));
-        후라이드_양념치킨.addMenuProducts(List.of(후라이드_1개, 양념치킨_1개));
+        후라이드_양념치킨.addMenuProducts(new MenuProducts(List.of(후라이드_1개, 양념치킨_1개)));
 
         // when
         final List<Menu> actual = menuService.list();

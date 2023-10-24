@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -12,10 +13,8 @@ import kitchenpos.ui.dto.CreateMenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -35,39 +34,19 @@ public class MenuService {
 
     @Transactional
     public Menu create(final CreateMenuRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final MenuGroup savedMenuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                                                            .orElseThrow(() -> new IllegalArgumentException());
+                                                            .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
 
-        final List<CreateMenuProductRequest> createMenuProductRequests = request.getMenuProducts();
         final List<MenuProduct> menuProducts = new ArrayList<>();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final CreateMenuProductRequest createMenuProductRequest : createMenuProductRequests) {
+        for (final CreateMenuProductRequest createMenuProductRequest : request.getMenuProducts()) {
             final Product product = productRepository.findById(createMenuProductRequest.getProductId())
                                                      .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(createMenuProductRequest.getQuantity())));
 
-            menuProducts.add(createMenuProductRequest.toEntity(product));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            menuProducts.add(new MenuProduct(product, createMenuProductRequest.getQuantity()));
         }
 
         final Menu menu = new Menu(request.getName(), request.getPrice(), savedMenuGroup);
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(menu);
-            savedMenuProducts.add(menuProduct);
-        }
-        menu.addMenuProducts(savedMenuProducts);
+        menu.addMenuProducts(new MenuProducts(menuProducts));
 
         return menuRepository.save(menu);
     }
