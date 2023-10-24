@@ -3,26 +3,45 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.entity.OrderLineItem;
+import kitchenpos.domain.value.Quantity;
+import kitchenpos.dto.request.order.ChangeOrderRequest;
+import kitchenpos.dto.request.order.CreateOrderRequest;
+import kitchenpos.dto.OrderLineItemsDto;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends ServiceTest {
 
+    @Autowired
+    private OrderService orderService;
+
     @DisplayName("주문을 생성한다")
     @Test
-    void create() {
+    void create()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // given
+        final int newOrderId = orderService.list().size() + 1;
+        final List<OrderLineItemsDto> dto = List.of(
+                OrderLineItemsDto.from(new OrderLineItem(1L, 1L, 1L, new Quantity(1L))),
+                OrderLineItemsDto.from(new OrderLineItem(2L, 2L, 2L, new Quantity(2L)))
+        );
+        final CreateOrderRequest request = ObjectCreator.getObject(CreateOrderRequest.class, 5L, dto);
         // when
-        final Order actual = createOrder(createOrderTable(null, 1, false), List.of(1L, 2L));
+        final OrderResponse actual = orderService.create(request);
 
         // then
-        assertThat(actual.getOrderLineItems()).hasSize(2);
+        assertThat(actual.getId()).isEqualTo(newOrderId);
     }
 
     @DisplayName("주문 생성에 실패한다")
@@ -30,58 +49,63 @@ class OrderServiceTest extends ServiceTest {
     @MethodSource("orderTableProvider")
     void create_Fail(
             final String name,
-            final boolean empty,
+            final Long id,
             final List<Long> products
     ) {
+
+
         // when
-        assertThatThrownBy(() -> createOrder(createOrderTable(null, 1, empty), products));
+        assertThatThrownBy(() -> orderService.create(createOrderRequest(id,products)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private CreateOrderRequest createOrderRequest(final Long id, final List<Long> products
+    ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        // given
+        final List<OrderLineItemsDto> dto = new ArrayList<>();
+        for (Long productId : products) {
+            dto.add(OrderLineItemsDto.from(new OrderLineItem(
+                                    productId,
+                                    productId,
+                                    productId,
+                                    new Quantity(productId)
+                            )
+                    )
+            );
+        }
+        return ObjectCreator.getObject(CreateOrderRequest.class, id, dto);
     }
 
     private static Stream<Arguments> orderTableProvider() {
         return Stream.of(
-                Arguments.of("상품이 없는", false, List.of()),
-                Arguments.of("메뉴에 없는 상품", false, List.of(-1L)),
-                Arguments.of("빈 테이블", true, List.of(1L))
+                Arguments.of("상품이 없는", 5L, List.of()),
+                Arguments.of("메뉴에 없는 상품", 5L, List.of(-1L)),
+                Arguments.of("빈 테이블", 1L, List.of(1L, 2L)),
+                Arguments.of("존재하지 않는", -1L, List.of(1L, 2L))
         );
-    }
-
-    @DisplayName("존재하지 않는 테이블 주문 시 실패한다")
-    @Test
-    void create_FailNoExistTable() {
-        // given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(-1L);
-        orderTable.setEmpty(false);
-
-        // when & then
-        assertThatThrownBy(() -> createOrder(orderTable, List.of(1L)));
     }
 
     @DisplayName("주문 목록을 조회한다")
     @Test
     void list() {
-        // given
-        orderService.create(createOrder(createOrderTable(null, 1, false), List.of(1L, 2L)));
-        orderService.create(createOrder(createOrderTable(null, 1, false), List.of(3L, 4L)));
+        // then
+        final List<OrderResponse> actual = orderService.list();
 
         // then
-        final List<Order> actual = orderService.list();
-
-        // then
-        assertThat(actual).isNotNull();
+        assertThat(actual).hasSize(2);
     }
 
     @DisplayName("주문 상태를 변경한다")
     @Test
-    void changeOrderStatus() {
+    void changeOrderStatus()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final Order order = orderService.create(createOrder(createOrderTable(null, 1, false), List.of(1L, 2L)));
-        order.setOrderStatus("COMPLETION");
+        final ChangeOrderRequest request = ObjectCreator.getObject(ChangeOrderRequest.class, "COMPLETION");
 
         // when
-        final Order actual = orderService.changeOrderStatus(order.getId(), order);
+        final OrderResponse actual = orderService.changeOrderStatus(1L, request);
 
         // then
-        assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus());
+        assertThat(actual.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 }

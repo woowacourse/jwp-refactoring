@@ -2,40 +2,41 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.menugroup.CreateMenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹을 생성한다")
     @Test
-    void create() {
+    void create()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
-
+        final int newMenuGroupId = menuGroupService.list().size() + 1;
+        final CreateMenuGroupRequest request = ObjectCreator.getObject(CreateMenuGroupRequest.class, "test");
         // when
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroupResponse actual = menuGroupService.create(request);
 
         // then
-        assertThat(actual.getName()).isEqualTo(menuGroup.getName());
+        assertThat(actual.getId()).isEqualTo(newMenuGroupId);
     }
 
     @DisplayName("메뉴 그룹 목록을 조회한다")
     @Test
     void list() {
         // given & when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups).isNotNull();
+        assertThat(menuGroups).hasSize(2);
     }
 }

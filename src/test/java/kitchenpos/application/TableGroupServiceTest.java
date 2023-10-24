@@ -4,27 +4,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.tablegroup.CreateTableGroupRequest;
+import kitchenpos.dto.request.tablegroup.OrderTableRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("테이블 그룹 테스트")
 class TableGroupServiceTest extends ServiceTest {
 
+    @Autowired
+    private TableService tableService;
+
+    @Autowired
+    private TableGroupService tableGroupService;
+
     @DisplayName("테이블 그룹을 생성한다")
     @Test
-    void create() {
+    void create()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTable orderTable1 = createOrderTable(null, 1, true);
-        final OrderTable orderTable2 = createOrderTable(null, 1, true);
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, 2L, 1L);
+        final CreateTableGroupRequest request = ObjectCreator.getObject(
+                CreateTableGroupRequest.class, 1L,
+                List.of(orderTableRequest1, orderTableRequest2)
+        );
 
         // when
-        final TableGroup actual = createTableGroup(List.of(orderTable1, orderTable2));
+        final TableGroupResponse actual = tableGroupService.create(request);
 
         // then
         assertThat(actual.getOrderTables()).hasSize(2);
@@ -32,64 +47,77 @@ class TableGroupServiceTest extends ServiceTest {
 
     @DisplayName("2개 미만의 테이블 그룹 생성에 실패한다")
     @Test
-    void create_Fail() {
+    void create_Fail()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTable orderTable = createOrderTable(null, 1, true);
+        final OrderTableRequest orderTableRequest = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final CreateTableGroupRequest tableGroupRequest = ObjectCreator.getObject(CreateTableGroupRequest.class, 1L,
+                List.of(orderTableRequest));
 
         // when & then
-        assertThatThrownBy(() -> createTableGroup(List.of(orderTable)))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블이 비어 있지 않을 경우 그룹생성에 실패한다")
     @Test
-    void create_FailEmptyTable() {
+    void create_FailEmptyTable()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         //
-        final OrderTable orderTable1 = createOrderTable(null, 3, true);
-        final OrderTable orderTable2 = createOrderTable(null, 3, false);
-
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, 5L, 1L);
+        final CreateTableGroupRequest tableGroup = ObjectCreator.getObject(
+                CreateTableGroupRequest.class, 1L,
+                List.of(orderTableRequest1, orderTableRequest2)
+        );
         // when
-        assertThatThrownBy(() -> createTableGroup(List.of(orderTable1, orderTable2)))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹을 해제한다")
     @Test
-    void ungroup() {
+    void ungroup()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTable orderTable1 = createOrderTable(null, 3, true);
-        final OrderTable orderTable2 = createOrderTable(null, 3, true);
-        final TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, 2L, 1L);
+        final CreateTableGroupRequest tableGroup = ObjectCreator.getObject(
+                CreateTableGroupRequest.class, 1L,
+                List.of(orderTableRequest1, orderTableRequest2)
+        );
+        final Long tableGroupId = tableGroupService.create(tableGroup).getId();
 
         // when
-        tableGroupService.ungroup(tableGroup.getId());
-        final List<OrderTable> actual = tableService.list();
+        tableGroupService.ungroup(tableGroupId);
+        final List<OrderTableResponse> actual = tableService.list();
 
         // then
         assertSoftly(
                 softly -> {
-                    softly.assertThat(actual.get(0).getTableGroupId()).isNull();
-                    softly.assertThat(actual.get(1).getTableGroupId()).isNull();
+                    actual.stream()
+                            .filter(orderTable -> orderTable.getId().equals(1L) || orderTable.getId().equals(2L))
+                            .forEach(orderTable -> softly.assertThat(orderTable.getTableGroupId()).isNull());
                 }
         );
     }
 
     @DisplayName("조리 중이거나 먹는 중인 테이블이면 그룹 해제에 실패한다")
-    @ParameterizedTest()
-    @ValueSource(strings = {"MEAL", "COOKING"})
-    void ungroup_FailNonExistTable(
-            final String state
-    ) {
+    @ParameterizedTest(name = "{0} 중인 테이블 상태 변경시 실패한다")
+    @MethodSource("statusAndIdProvider")
+    void ungroup_FailNonExistTable(final String name, final Long id, final Class exception)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         // given
-        final OrderTable orderTable1 = createOrderTable(null, 3, true);
-        final OrderTable orderTable2 = createOrderTable(null, 3, true);
-        final TableGroup tableGroup = createTableGroup(List.of(orderTable1, orderTable2));
-
-        final Order order = createOrder(orderTable1, List.of(1L, 2L));
-        order.setOrderStatus(state);
-        orderService.changeOrderStatus(order.getId(), order);
+        final OrderTableRequest orderTableRequest1 = ObjectCreator.getObject(OrderTableRequest.class, 1L, 1L);
+        final OrderTableRequest orderTableRequest2 = ObjectCreator.getObject(OrderTableRequest.class, id, 1L);
+        final CreateTableGroupRequest request = ObjectCreator.getObject(
+                CreateTableGroupRequest.class, 1L,
+                List.of(orderTableRequest1, orderTableRequest2)
+        );
+        final TableGroupResponse response = tableGroupService.create(request);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
+        assertThatThrownBy(() -> tableGroupService.ungroup(response.getId()))
+                .isInstanceOf(exception);
     }
 }
