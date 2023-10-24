@@ -19,7 +19,7 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup")

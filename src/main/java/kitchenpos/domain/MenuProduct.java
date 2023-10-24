@@ -24,7 +24,7 @@ public class MenuProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column
+    @Column(nullable = false)
     private long quantity;
 
     public MenuProduct() {

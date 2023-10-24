@@ -17,13 +17,13 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column
+    @Column(nullable = false)
     private BigDecimal price;
 
-    @Column
+    @Column(nullable = false)
     private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")

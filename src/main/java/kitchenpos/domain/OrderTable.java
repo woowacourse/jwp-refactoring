@@ -21,10 +21,10 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column
+    @Column(nullable = false)
     private int numberOfGuests;
 
-    @Column
+    @Column(nullable = false)
     private boolean empty;
 
     public OrderTable() {

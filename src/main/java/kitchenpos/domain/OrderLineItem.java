@@ -24,7 +24,7 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @Column
+    @Column(nullable = false)
     private long quantity;
 
 

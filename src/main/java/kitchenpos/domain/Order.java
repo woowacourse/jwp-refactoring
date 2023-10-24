@@ -24,10 +24,10 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @Column
+    @Column(nullable = false)
     private String orderStatus;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
