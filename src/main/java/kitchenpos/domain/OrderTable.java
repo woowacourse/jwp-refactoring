@@ -80,6 +80,10 @@ public class OrderTable {
         this.empty = false;
     }
     
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+    
     public Long getId() {
         return id;
     }
