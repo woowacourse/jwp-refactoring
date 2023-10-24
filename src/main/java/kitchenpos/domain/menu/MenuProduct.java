@@ -46,7 +46,6 @@ public class MenuProduct {
         this.quantity = new Quantity(quantity);
     }
 
-
     public void initMenu(final Menu menu) {
         this.menu = menu;
     }

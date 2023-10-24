@@ -170,7 +170,7 @@ class TableServiceTest {
                 "메뉴",
                 BigDecimal.TEN,
                 List.of(persistMenuProduct),
-                persistMenuGroup
+                persistMenuGroup.getId()
         );
 
         return menuRepository.save(menu);

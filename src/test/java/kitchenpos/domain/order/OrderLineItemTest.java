@@ -22,7 +22,7 @@ class OrderLineItemTest {
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Product product = new Product("상품", BigDecimal.TEN);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
+        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
 
         // when & then
         assertThatCode(() -> new OrderLineItem(menu, 1L)).doesNotThrowAnyException();

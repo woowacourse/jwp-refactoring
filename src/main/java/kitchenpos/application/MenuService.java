@@ -38,7 +38,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                                                        .orElseThrow(MenuGroupNotFoundException::new);
         final List<MenuProduct> menuProducts = findMenuProducts(request);
-        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuProducts, menuGroup);
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), menuProducts, menuGroup.getId());
 
         return menuRepository.save(menu);
     }

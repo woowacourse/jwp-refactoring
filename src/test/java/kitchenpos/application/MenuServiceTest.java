@@ -118,7 +118,7 @@ class MenuServiceTest {
                 persistProduct.name(),
                 1L
         );
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), persistMenuGroup);
+        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), persistMenuGroup.getId());
         final Menu expected = menuRepository.save(menu);
 
         // when

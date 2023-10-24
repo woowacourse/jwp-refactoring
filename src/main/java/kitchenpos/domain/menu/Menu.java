@@ -3,14 +3,12 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.common.Name;
 import kitchenpos.domain.common.Price;
 
@@ -27,9 +25,8 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
 
     @Embedded
     private MenuProducts menuProducts;
@@ -40,12 +37,12 @@ public class Menu {
     private Menu(
             final String name,
             final Price price,
-            final MenuGroup menuGroup,
+            final Long menuGroupId,
             final List<MenuProduct> menuProducts
     ) {
         this.name = new Name(name);
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = MenuProducts.of(this, menuProducts);
     }
 
@@ -53,11 +50,11 @@ public class Menu {
             final String name,
             final BigDecimal price,
             final List<MenuProduct> menuProducts,
-            final MenuGroup menuGroup
+            final Long menuGroupId
     ) {
         final Price menuPrice = new Price(price);
 
-        return new Menu(name, menuPrice, menuGroup, menuProducts);
+        return new Menu(name, menuPrice, menuGroupId, menuProducts);
     }
 
     public Price price() {
@@ -76,8 +73,8 @@ public class Menu {
         return price.getValue();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

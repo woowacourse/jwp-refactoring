@@ -26,7 +26,7 @@ class MenuTest {
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         // when & then
-        assertThatCode(() -> Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup))
+        assertThatCode(() -> Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId()))
                 .doesNotThrowAnyException();
     }
 
@@ -38,7 +38,7 @@ class MenuTest {
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         // when & then
-        assertThatThrownBy(() -> Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup))
+        assertThatThrownBy(() -> Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId()))
                 .isInstanceOf(InvalidMenuPriceException.class);
     }
 
@@ -48,7 +48,7 @@ class MenuTest {
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         // when & then
-        assertThatThrownBy(() -> Menu.of("메뉴", BigDecimal.TEN, Collections.emptyList(), menuGroup))
+        assertThatThrownBy(() -> Menu.of("메뉴", BigDecimal.TEN, Collections.emptyList(), menuGroup.getId()))
                 .isInstanceOf(InvalidMenuProductException.class);
     }
 }

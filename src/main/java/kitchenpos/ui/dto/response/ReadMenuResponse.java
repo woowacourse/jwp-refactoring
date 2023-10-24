@@ -17,7 +17,7 @@ public class ReadMenuResponse {
         this.id = menu.getId();
         this.name = menu.getName();
         this.price = menu.getPrice();
-        this.menuGroupId = menu.getMenuGroup().getId();
+        this.menuGroupId = menu.getMenuGroupId();
         this.menuProducts = convertReadMenuProductResponses(menu);
     }
 

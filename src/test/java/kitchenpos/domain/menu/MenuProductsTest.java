@@ -26,7 +26,7 @@ class MenuProductsTest {
         final Product product = new Product("상품", BigDecimal.TEN);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
+        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
 
         // when
         final MenuProducts actual = MenuProducts.of(menu, List.of(menuProduct));
@@ -45,7 +45,7 @@ class MenuProductsTest {
         final Product product = new Product("상품", BigDecimal.TEN);
         final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
+        final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
 
         // when & then
         assertThatThrownBy(() -> MenuProducts.of(menu, invalidMenuProducts))
@@ -59,7 +59,7 @@ class MenuProductsTest {
         final MenuProduct validMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 5L);
         final MenuProduct invalidMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
-        final Menu menu = Menu.of("메뉴", new BigDecimal("30"), List.of(validMenuProduct), menuGroup);
+        final Menu menu = Menu.of("메뉴", new BigDecimal("30"), List.of(validMenuProduct), menuGroup.getId());
 
         // when & then
         assertThatThrownBy(() -> MenuProducts.of(menu, List.of(invalidMenuProduct)))

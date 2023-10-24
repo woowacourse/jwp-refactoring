@@ -167,7 +167,7 @@ class OrderServiceTest {
                 "메뉴",
                 BigDecimal.TEN,
                 List.of(persistMenuProduct),
-                persistMenuGroup)
+                persistMenuGroup.getId())
         );
     }
 
