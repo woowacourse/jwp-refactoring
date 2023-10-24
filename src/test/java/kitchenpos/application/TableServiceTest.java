@@ -203,6 +203,6 @@ class TableServiceTest {
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage( "주문테이블이 비어있는 상태이면 손님 수를 변경할 수 없습니다.");
+            .hasMessage("주문테이블이 비어있는 상태이면 손님 수를 변경할 수 없습니다.");
     }
 }
