@@ -25,6 +25,7 @@ public class MenuGroupService {
         return new MenuGroupResponse(savedMenuGroup.getId(), savedMenuGroup.getName());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         List<MenuGroup> menuGroups = menuGroupRepository.findAll();
         return menuGroups.stream()

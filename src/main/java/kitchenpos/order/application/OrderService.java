@@ -58,6 +58,7 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         List<Order> orders = orderRepository.findAll();
 
