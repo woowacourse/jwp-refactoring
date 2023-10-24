@@ -3,19 +3,33 @@ package kitchenpos.domain.mapper;
 import kitchenpos.application.dto.request.CreateOrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderTableRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class OrderMapper {
-    private OrderMapper() {
+
+    private final OrderTableRepository orderTableRepository;
+
+    private OrderMapper(OrderTableRepository orderTableRepository) {
+        this.orderTableRepository = orderTableRepository;
     }
 
-    public static Order toOrder(CreateOrderRequest request, List<OrderLineItem> orderLineItems) {
+    public Order toOrder(CreateOrderRequest request, List<OrderLineItem> orderLineItems) {
         return Order.builder()
-                .orderTableId(request.getOrderTableId())
-                .orderStatus(request.getOrderStatus())
+                .orderTable(getOrderTable(request.getOrderTableId()))
+                .orderStatus(OrderStatus.valueOf(request.getOrderStatus()))
                 .orderedTime(request.getOrderedTime())
                 .orderLineItems(orderLineItems)
                 .build();
+    }
+
+    private OrderTable getOrderTable(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

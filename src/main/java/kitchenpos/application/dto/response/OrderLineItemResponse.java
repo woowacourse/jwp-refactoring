@@ -18,8 +18,7 @@ public class OrderLineItemResponse {
     public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
         return OrderLineItemResponse.builder()
                 .seq(orderLineItem.getSeq())
-                .orderId(orderLineItem.getOrderId())
-                .menuId(orderLineItem.getMenuId())
+                .menuId(orderLineItem.getMenu().getId())
                 .quantity(orderLineItem.getQuantity())
                 .build();
     }

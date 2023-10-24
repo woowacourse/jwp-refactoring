@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderTableTest {
 
-
     @Test
     void 주문_테이블_비어있는_정보_수정() {
         // given
@@ -22,19 +21,6 @@ class OrderTableTest {
         // when & then
         OrderTable updated = orderTable.updateEmpty(false);
         assertThat(updated.isEmpty()).isFalse();
-    }
-
-    @Test
-    void 주문_테이블_비어있는_정보_수정_시_테이블_그룹이_Null이_아니면_예외() {
-        // given
-        OrderTable orderTable = OrderTable.builder()
-                .tableGroupId(1L)
-                .empty(true)
-                .build();
-
-        // when & then
-        assertThatThrownBy(() -> orderTable.updateEmpty(false))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

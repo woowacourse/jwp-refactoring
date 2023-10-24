@@ -5,9 +5,9 @@ import kitchenpos.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.application.dto.request.UpdateOrderTableGuestsRequest;
 import kitchenpos.application.dto.response.CreateOrderTableResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -20,11 +20,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.fixture.OrderFixture.ORDER;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 import static kitchenpos.fixture.OrderTableFixture.REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -33,10 +35,10 @@ import static org.mockito.BDDMockito.given;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -49,7 +51,7 @@ class TableServiceTest {
             // given
             CreateOrderTableRequest request = REQUEST.주문_테이블_생성_요청_3명();
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableRepository.save(any(OrderTable.class)))
                     .willReturn(orderTable);
 
             // when
@@ -58,7 +60,6 @@ class TableServiceTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
-                softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
                 softly.assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
                 softly.assertThat(result.isEmpty()).isEqualTo(orderTable.isEmpty());
             });
@@ -72,7 +73,7 @@ class TableServiceTest {
         void 주문_테이블_목록을_조회한다() {
             // given
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
-            given(orderTableDao.findAll())
+            given(orderTableRepository.findAll())
                     .willReturn(List.of(orderTable));
 
             // when
@@ -96,9 +97,13 @@ class TableServiceTest {
             // given
             UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
             OrderTable orderTable = ORDER_TABLE.비어있는_테이블();
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any()))
+
+            given(orderRepository.findByOrderTableId(anyLong()))
+                    .willReturn(ORDER.주문_요청_계산_완료());
+
+            given(orderTableRepository.save(any()))
                     .willReturn(orderTable);
 
             // when
@@ -107,7 +112,6 @@ class TableServiceTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
-                softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
                 softly.assertThat(result.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
                 softly.assertThat(result.isEmpty()).isEqualTo(result.isEmpty());
             });
@@ -117,7 +121,7 @@ class TableServiceTest {
         void 테이블이_존재하지_않으면_예외() {
             // given
             UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.empty());
 
             // when & then
@@ -130,11 +134,13 @@ class TableServiceTest {
             // given
             UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
             OrderTable orderTable = OrderTable.builder()
-                    .tableGroupId(1L)
                     .empty(true)
                     .build();
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
+
+            given(orderRepository.findByOrderTableId(anyLong()))
+                    .willReturn(ORDER.주문_요청_조리중());
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
@@ -142,14 +148,29 @@ class TableServiceTest {
         }
 
         @Test
-        void 빈_테이블_상태를_변경할_때_주문_상태가_조리중_또는_식사중이면_예외() {
+        void 빈_테이블_상태를_변경할_때_주문_상태가_조리중_이면_예외() {
             // given
             UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
             OrderTable orderTable = ORDER_TABLE.비어있는_테이블();
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
-                    .willReturn(true);
+            given(orderRepository.findByOrderTableId(anyLong()))
+                    .willReturn(ORDER.주문_요청_조리중());
+
+            // when & then
+            assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 빈_테이블_상태를_변경할_때_주문_상태가_식사중_이면_예외() {
+            // given
+            UpdateOrderTableEmptyRequest request = REQUEST.주문_테이블_비움_요청();
+            OrderTable orderTable = ORDER_TABLE.비어있는_테이블();
+            given(orderTableRepository.findById(anyLong()))
+                    .willReturn(Optional.of(orderTable));
+            given(orderRepository.findByOrderTableId(anyLong()))
+                    .willReturn(ORDER.주문_요청_식사중());
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
@@ -165,9 +186,9 @@ class TableServiceTest {
             // given
             UpdateOrderTableGuestsRequest request = REQUEST.주문_테이블_인원_변경_요청(133);
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(false);
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                     .willReturn(Optional.of(orderTable));
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableRepository.save(any(OrderTable.class)))
                     .willReturn(orderTable.updateNumberOfGuests(133));
 
             // when
@@ -176,7 +197,6 @@ class TableServiceTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(result.getId()).isEqualTo(orderTable.getId());
-                softly.assertThat(result.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
                 softly.assertThat(result.getNumberOfGuests()).isEqualTo(result.getNumberOfGuests());
                 softly.assertThat(result.isEmpty()).isEqualTo(result.isEmpty());
             });
@@ -197,7 +217,7 @@ class TableServiceTest {
             // given
             UpdateOrderTableGuestsRequest request = REQUEST.주문_테이블_인원_변경_요청(33);
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1_비어있는가(true);
-            given(orderTableDao.findById(any()))
+            given(orderTableRepository.findById(any()))
                     .willReturn(Optional.of(orderTable));
 
             // when & then

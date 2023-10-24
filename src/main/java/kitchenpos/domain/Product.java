@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Product {
-
     @Id
     private final Long id;
     private final String name;

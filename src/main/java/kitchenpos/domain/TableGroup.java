@@ -1,11 +1,13 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroup {
+    @Id
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<OrderTable> orderTables;
@@ -20,6 +22,12 @@ public class TableGroup {
     private void validate(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
+        }
+
+        for (final OrderTable savedOrderTable : orderTables) {
+            if (!savedOrderTable.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
         }
     }
 

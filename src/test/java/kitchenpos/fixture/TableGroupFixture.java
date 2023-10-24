@@ -17,6 +17,14 @@ public class TableGroupFixture {
     }
 
     public static class TABLE_GROUP {
+        public static TableGroup 테이블_그룹_주문_테이블은(List<OrderTable> orderTables) {
+            return TableGroup.builder()
+                    .id(1L)
+                    .createdDate(LocalDateTime.of(2023, 4, 1, 0, 0, 0, 0))
+                    .orderTables(orderTables)
+                    .build();
+        }
+
         public static TableGroup 테이블_그룹() {
             OrderTable orderTable = ORDER_TABLE.주문_테이블_1();
             OrderTable orderTable2 = ORDER_TABLE.주문_테이블_2();

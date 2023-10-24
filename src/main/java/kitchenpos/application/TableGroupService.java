@@ -2,32 +2,33 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.application.dto.response.CreateTableGroupResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+    public TableGroupService(final OrderRepository orderRepository,
+                             final OrderTableRepository orderTableRepository,
+                             final TableGroupRepository tableGroupRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -37,55 +38,46 @@ public class TableGroupService {
                 .createdDate(LocalDateTime.now())
                 .orderTables(orderTableEntities)
                 .build();
-        final TableGroup entity = tableGroupDao.save(tableGroup);
-        final Long tableGroupId = entity.getId();
+        final TableGroup entity = tableGroupRepository.save(tableGroup);
 
-        List<OrderTable> orderTables = getFilledOrderTables(orderTableEntities, tableGroupId);
+        List<OrderTable> orderTables = getFilledOrderTables(orderTableEntities);
         TableGroup updated = entity.updateOrderTables(orderTables);
         return CreateTableGroupResponse.from(updated);
     }
 
-    private List<OrderTable> getFilledOrderTables(List<OrderTable> orderTableEntities, Long tableGroupId) {
+    private List<OrderTable> getFilledOrderTables(List<OrderTable> orderTableEntities) {
         return orderTableEntities.stream()
-                .map(savedOrderTable -> savedOrderTable.fillTable(tableGroupId))
-                .map(orderTableDao::save)
+                .map(OrderTable::fillTable)
+                .map(orderTableRepository::save)
                 .collect(Collectors.toList());
     }
 
     private List<OrderTable> getOrderTables(List<Long> orderTableIds) {
-        List<OrderTable> orderTables = orderTableIds.stream()
-                .map(orderTableDao::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-        validateOrderTables(orderTables);
-        return orderTables;
-    }
-
-    private static void validateOrderTables(List<OrderTable> orderTables) {
-        for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
+        List<OrderTable> orderTables = new ArrayList<>();
+        for (Long orderTableId : orderTableIds) {
+            OrderTable entity = orderTableRepository.findById(orderTableId)
+                    .orElseThrow(IllegalArgumentException::new);
+            orderTables.add(entity);
         }
+        return orderTables;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
+        for (final OrderTable orderTable : tableGroup.getOrderTables()) {
+            validateOrderTable(orderTable);
             OrderTable updated = orderTable.ungroup();
-            orderTableDao.save(updated);
+            orderTableRepository.save(updated);
+        }
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        Order order = orderRepository.findByOrderTableId(orderTable.getId());
+        if (order.getOrderStatus() == OrderStatus.COOKING || order.getOrderStatus() == OrderStatus.MEAL) {
+            throw new IllegalArgumentException();
         }
     }
 }

@@ -24,8 +24,8 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         return builder()
                 .id(order.getId())
-                .orderTableId(order.getOrderTableId())
-                .orderStatus(order.getOrderStatus())
+                .orderTableId(order.getOrderTable().getId())
+                .orderStatus(order.getOrderStatus().name())
                 .orderedTime(order.getOrderedTime())
                 .orderLineItems(order.getOrderLineItems().stream()
                         .map(OrderLineItemResponse::from)

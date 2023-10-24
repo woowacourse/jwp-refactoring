@@ -1,21 +1,23 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
+    @Id
     private final Long id;
-    private final Long orderTableId;
-    private final String orderStatus;
+    private final OrderTable orderTable;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private final List<OrderLineItem> orderLineItems;
 
-    private Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         validate(orderLineItems);
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -27,16 +29,12 @@ public class Order {
         }
     }
 
-    public Order updateOrder(Long orderTableId, String name, LocalDateTime now) {
-        return new Order(id, orderTableId, name, now, orderLineItems);
-    }
-
     public Order updateOrderLineItems(List<OrderLineItem> savedOrderLineItems) {
-        return new Order(id, orderTableId, orderStatus, orderedTime, savedOrderLineItems);
+        return new Order(id, orderTable, orderStatus, orderedTime, savedOrderLineItems);
     }
 
     public Order updateStatus(OrderStatus orderStatus) {
-        return new Order(id, orderTableId, orderStatus.name(), orderedTime, orderLineItems);
+        return new Order(id, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
     public static OrderBuilder builder() {
@@ -45,8 +43,8 @@ public class Order {
 
     public static final class OrderBuilder {
         private Long id;
-        private Long orderTableId;
-        private String orderStatus;
+        private OrderTable orderTable;
+        private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItem> orderLineItems;
 
@@ -58,12 +56,12 @@ public class Order {
             return this;
         }
 
-        public OrderBuilder orderTableId(Long orderTableId) {
-            this.orderTableId = orderTableId;
+        public OrderBuilder orderTable(OrderTable orderTable) {
+            this.orderTable = orderTable;
             return this;
         }
 
-        public OrderBuilder orderStatus(String orderStatus) {
+        public OrderBuilder orderStatus(OrderStatus orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }
@@ -79,7 +77,7 @@ public class Order {
         }
 
         public Order build() {
-            return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
+            return new Order(id, orderTable, orderStatus, orderedTime, orderLineItems);
         }
     }
 
@@ -87,11 +85,11 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

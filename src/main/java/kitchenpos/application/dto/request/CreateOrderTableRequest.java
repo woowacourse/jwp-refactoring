@@ -2,12 +2,15 @@ package kitchenpos.application.dto.request;
 
 public class CreateOrderTableRequest {
 
-    private Long id;
-    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
     private CreateOrderTableRequest() {
+    }
+
+    private CreateOrderTableRequest(int numberOfGuests, boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public static CreateOrderTableRequestBuilder builder() {
@@ -15,22 +18,11 @@ public class CreateOrderTableRequest {
     }
 
     public static final class CreateOrderTableRequestBuilder {
-        private Long id;
-        private Long tableGroupId;
+
         private int numberOfGuests;
         private boolean empty;
 
         private CreateOrderTableRequestBuilder() {
-        }
-
-        public CreateOrderTableRequestBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public CreateOrderTableRequestBuilder tableGroupId(Long tableGroupId) {
-            this.tableGroupId = tableGroupId;
-            return this;
         }
 
         public CreateOrderTableRequestBuilder numberOfGuests(int numberOfGuests) {
@@ -44,21 +36,8 @@ public class CreateOrderTableRequest {
         }
 
         public CreateOrderTableRequest build() {
-            CreateOrderTableRequest createOrderTableRequest = new CreateOrderTableRequest();
-            createOrderTableRequest.tableGroupId = this.tableGroupId;
-            createOrderTableRequest.numberOfGuests = this.numberOfGuests;
-            createOrderTableRequest.empty = this.empty;
-            createOrderTableRequest.id = this.id;
-            return createOrderTableRequest;
+            return new CreateOrderTableRequest(numberOfGuests, empty);
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

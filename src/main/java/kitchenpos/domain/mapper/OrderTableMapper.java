@@ -10,8 +10,6 @@ public class OrderTableMapper {
 
     public static OrderTable toOrderTable(CreateOrderTableRequest request) {
         return OrderTable.builder()
-                .id(request.getId())
-                .tableGroupId(request.getTableGroupId())
                 .numberOfGuests(request.getNumberOfGuests())
                 .empty(request.isEmpty())
                 .build();

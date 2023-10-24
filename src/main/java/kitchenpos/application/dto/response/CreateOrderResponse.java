@@ -23,8 +23,8 @@ public class CreateOrderResponse {
     public static CreateOrderResponse of(Order order, List<OrderLineItemResponse> orderLineItems) {
         return builder()
                 .id(order.getId())
-                .orderTableId(order.getOrderTableId())
-                .orderStatus(order.getOrderStatus())
+                .orderTableId(order.getOrderTable().getId())
+                .orderStatus(order.getOrderStatus().name())
                 .orderedTime(order.getOrderedTime())
                 .orderLineItems(orderLineItems)
                 .build();

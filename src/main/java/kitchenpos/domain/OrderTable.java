@@ -1,17 +1,16 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
+import org.springframework.data.annotation.Id;
 
 public class OrderTable {
+    @Id
     private final Long id;
-    private final Long tableGroupId;
     private final int numberOfGuests;
     private final boolean empty;
 
-    private OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    private OrderTable(Long id, int numberOfGuests, boolean empty) {
         validate(numberOfGuests);
         this.id = id;
-        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -26,10 +25,6 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
@@ -42,31 +37,27 @@ public class OrderTable {
         return new OrderTableBuilder();
     }
 
-    public OrderTable fillTable(Long tableGroupId) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, true);
+    public OrderTable fillTable() {
+        return new OrderTable(id, numberOfGuests, true);
     }
 
     public OrderTable ungroup() {
-        return new OrderTable(id, null, numberOfGuests, true);
+        return new OrderTable(id, numberOfGuests, true);
     }
 
     public OrderTable updateEmpty(boolean empty) {
-        if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
-        }
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return new OrderTable(id, numberOfGuests, empty);
     }
 
     public OrderTable updateNumberOfGuests(int numberOfGuests) {
         if (empty) {
             throw new IllegalArgumentException();
         }
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return new OrderTable(id, numberOfGuests, false);
     }
 
     public static final class OrderTableBuilder {
         private Long id;
-        private Long tableGroupId;
         private int numberOfGuests;
         private boolean empty;
 
@@ -75,11 +66,6 @@ public class OrderTable {
 
         public OrderTableBuilder id(Long id) {
             this.id = id;
-            return this;
-        }
-
-        public OrderTableBuilder tableGroupId(Long tableGroupId) {
-            this.tableGroupId = tableGroupId;
             return this;
         }
 
@@ -94,7 +80,7 @@ public class OrderTable {
         }
 
         public OrderTable build() {
-            return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+            return new OrderTable(id, numberOfGuests, empty);
         }
     }
 }

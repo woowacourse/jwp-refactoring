@@ -1,15 +1,16 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.Id;
+
 public class OrderLineItem {
+    @Id
     private final Long seq;
-    private final Long orderId;
-    private final Long menuId;
+    private final Menu menu;
     private final long quantity;
 
-    private OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    private OrderLineItem(Long seq, Menu menu, long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.menu = menu;
         this.quantity = quantity;
     }
 
@@ -17,12 +18,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
     public long getQuantity() {
@@ -33,14 +30,9 @@ public class OrderLineItem {
         return new OrderLineItemBuilder();
     }
 
-    public OrderLineItem updateOrderId(Long orderId) {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
-    }
-
     public static final class OrderLineItemBuilder {
         private Long seq;
-        private Long orderId;
-        private Long menuId;
+        private Menu menu;
         private long quantity;
 
         private OrderLineItemBuilder() {
@@ -51,13 +43,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public OrderLineItemBuilder orderId(Long orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
-        public OrderLineItemBuilder menuId(Long menuId) {
-            this.menuId = menuId;
+        public OrderLineItemBuilder menu(Menu menu) {
+            this.menu = menu;
             return this;
         }
 
@@ -67,7 +54,7 @@ public class OrderLineItem {
         }
 
         public OrderLineItem build() {
-            return new OrderLineItem(seq, orderId, menuId, quantity);
+            return new OrderLineItem(seq, menu, quantity);
         }
     }
 }

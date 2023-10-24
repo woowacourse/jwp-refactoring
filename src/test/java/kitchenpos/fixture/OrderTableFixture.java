@@ -16,8 +16,6 @@ public class OrderTableFixture {
     public static class REQUEST {
         public static CreateOrderTableRequest 주문_테이블_생성_요청_3명() {
             return CreateOrderTableRequest.builder()
-                    .id(1L)
-                    .tableGroupId(1L)
                     .numberOfGuests(3)
                     .empty(true)
                     .build();
@@ -63,7 +61,6 @@ public class OrderTableFixture {
         public static OrderTable 주문_테이블_1() {
             return OrderTable.builder()
                     .id(1L)
-                    .tableGroupId(1L)
                     .numberOfGuests(3)
                     .empty(false)
                     .build();
@@ -72,7 +69,6 @@ public class OrderTableFixture {
         public static OrderTable 주문_테이블_1_비어있는가(boolean empty) {
             return OrderTable.builder()
                     .id(1L)
-                    .tableGroupId(empty ? null : 1L)
                     .numberOfGuests(empty ? 0 : 3)
                     .empty(empty)
                     .build();
@@ -88,7 +84,6 @@ public class OrderTableFixture {
         public static OrderTable 주문_테이블_2() {
             return OrderTable.builder()
                     .id(2L)
-                    .tableGroupId(1L)
                     .numberOfGuests(3)
                     .empty(true)
                     .build();

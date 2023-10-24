@@ -2,17 +2,20 @@ package kitchenpos.application;
 
 import kitchenpos.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.application.dto.response.CreateTableGroupResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,12 +24,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.fixture.OrderFixture.ORDER;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 import static kitchenpos.fixture.TableGroupFixture.REQUEST;
 import static kitchenpos.fixture.TableGroupFixture.TABLE_GROUP;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 
@@ -36,13 +41,13 @@ import static org.mockito.BDDMockito.given;
 class TableGroupServiceTest {
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -55,16 +60,15 @@ class TableGroupServiceTest {
             // given
             CreateTableGroupRequest request = REQUEST.주문_테이블_그룹_생성_요청();
             TableGroup tableGroup = TABLE_GROUP.테이블_그룹();
-            given(tableGroupDao.save(any(TableGroup.class)))
+            given(tableGroupRepository.save(any(TableGroup.class)))
                     .willReturn(tableGroup);
 
-            given(orderTableDao.findById(anyLong()))
+            given(orderTableRepository.findById(anyLong()))
                     .willReturn(Optional.of(ORDER_TABLE.비어있는_테이블()));
 
-            given(orderTableDao.save(any(OrderTable.class)))
+            given(orderTableRepository.save(any(OrderTable.class)))
                     .willReturn(OrderTable.builder()
                             .id(1L)
-                            .tableGroupId(tableGroup.getId())
                             .empty(true)
                             .build());
 
@@ -130,8 +134,16 @@ class TableGroupServiceTest {
         void 테이블_그룹을_제거한다() {
             // given
             Long tableGroupId = 1L;
-            given(orderTableDao.findAllByTableGroupId(anyLong()))
-                    .willReturn(List.of());
+
+            given(tableGroupRepository.findById(anyLong()))
+                    .willReturn(Optional.of(TABLE_GROUP.테이블_그룹_주문_테이블은(List.of(
+                            ORDER_TABLE.주문_테이블_1_비어있는가(true),
+                            ORDER_TABLE.주문_테이블_1_비어있는가(true),
+                            ORDER_TABLE.주문_테이블_1_비어있는가(true)
+                    ))));
+
+            given(orderRepository.findByOrderTableId(anyLong()))
+                    .willReturn(ORDER.주문_요청_계산_완료());
 
             // when
             tableGroupService.ungroup(tableGroupId);
@@ -140,15 +152,20 @@ class TableGroupServiceTest {
             assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupId));
         }
 
-        @Test
-        void 주문_테이블이_조리중_또는_식사중이면_예외() {
+        @ParameterizedTest
+        @CsvSource(value = {"COOKING", "MEAL"}, delimiter = ',')
+        void 주문_테이블이_조리중_또는_식사중이면_예외(OrderStatus orderStatus) {
             // given
             Long tableGroupId = 1L;
-            given(orderTableDao.findAllByTableGroupId(anyLong()))
-                    .willReturn(List.of(OrderTable.builder().build()));
+            given(tableGroupRepository.findById(anyLong()))
+                    .willReturn(Optional.of(TABLE_GROUP.테이블_그룹_주문_테이블은(List.of(
+                            ORDER_TABLE.주문_테이블_1_비어있는가(true),
+                            ORDER_TABLE.주문_테이블_1_비어있는가(true),
+                            ORDER_TABLE.주문_테이블_1_비어있는가(true)
+                    ))));
 
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                    .willReturn(true);
+            given(orderRepository.findByOrderTableId(anyLong()))
+                    .willReturn(ORDER.주문_요청_현재상태는(orderStatus));
 
             // when & then
             Assertions.assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
