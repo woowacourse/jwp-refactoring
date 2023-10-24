@@ -10,6 +10,9 @@ public class CreateMenuRequest {
     private Long menuGroupId;
     private List<MenuProductDto> menuProducts;
 
+    private CreateMenuRequest() {
+    }
+
     public String getName() {
         return name;
     }

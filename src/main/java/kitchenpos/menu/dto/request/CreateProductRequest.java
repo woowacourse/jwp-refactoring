@@ -7,7 +7,7 @@ public class CreateProductRequest {
     private String name;
     private BigDecimal price;
 
-    public CreateProductRequest() {
+    private CreateProductRequest() {
     }
 
     public String getName() {

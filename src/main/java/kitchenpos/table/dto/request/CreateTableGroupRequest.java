@@ -7,6 +7,9 @@ public class CreateTableGroupRequest {
     private Long id;
     private List<OrderTableRequest> orderTables;
 
+    private CreateTableGroupRequest() {
+    }
+
     public Long getId() {
         return id;
     }

@@ -29,33 +29,34 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(NumberOfGuests numberOfGuests) {
+    public OrderTable(final NumberOfGuests numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
         this.empty = false;
     }
 
-    public void changeNumberOfGuests(final NumberOfGuests numberOfGuests){
+    public void changeNumberOfGuests(final NumberOfGuests numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void changeEmpty(final Boolean empty){
+    public void changeEmpty(final Boolean empty) {
         this.empty = empty;
     }
 
-    public void group(final Long tableGroupId){
+    public void group(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
-    public void unGroup(){
+    public void unGroup() {
         this.tableGroupId = null;
     }
 
 
-    public void validateEmptyAndGroup(){
-        if(!empty|| Objects.nonNull(tableGroupId)){
+    public void validateEmptyAndGroup() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
             throw new EmptyTableException("비어있지 않거나 테이블 그룹이 형성된 테이블은 테이블을 형성할 수 없습니다.");
         }
     }
+
     public Long getId() {
         return id;
     }
@@ -68,7 +69,7 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public int getNumberOfGuestsValue(){
+    public int getNumberOfGuestsValue() {
         return numberOfGuests.getNumberOfGuests();
     }
 

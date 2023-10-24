@@ -1,16 +1,12 @@
 package kitchenpos.table.domain;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
@@ -29,12 +25,12 @@ public class TableGroup {
         return id;
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate) {
+    public TableGroup(final Long id, final LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
     }
 
-    public TableGroup(LocalDateTime createdDate) {
+    public TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 

@@ -1,7 +1,7 @@
 package kitchenpos.exception;
 
-public class NoSuchDataException extends RuntimeException{
-    public NoSuchDataException(String message) {
+public class NoSuchDataException extends RuntimeException {
+    public NoSuchDataException(final String message) {
         super(message);
     }
 }

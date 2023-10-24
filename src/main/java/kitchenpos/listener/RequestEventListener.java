@@ -14,7 +14,7 @@ import org.springframework.util.CollectionUtils;
 public class RequestEventListener {
 
     @EventListener
-    public void validateCreateTableGroupRequest(final CreateTableGroupRequest request){
+    public void validateCreateTableGroupRequest(final CreateTableGroupRequest request) {
         final List<OrderTableRequest> orderTables = request.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
@@ -23,7 +23,7 @@ public class RequestEventListener {
     }
 
     @EventListener
-    public void validateCreateOrderRequest(final CreateOrderRequest request){
+    public void validateCreateOrderRequest(final CreateOrderRequest request) {
         if (CollectionUtils.isEmpty(request.getOrderLineItems())) {
             throw new EmptyListException("아이템이 비어있습니다.");
         }

@@ -3,10 +3,10 @@ package kitchenpos.menu.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.value.Price;
 import kitchenpos.menu.dto.request.CreateProductRequest;
 import kitchenpos.menu.dto.response.ProductResponse;
 import kitchenpos.menu.repository.ProductRepository;
+import kitchenpos.value.Price;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(final ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 

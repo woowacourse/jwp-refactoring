@@ -11,7 +11,7 @@ public class OrderStatusEventListener {
 
     private final OrderRepository orderRepository;
 
-    public OrderStatusEventListener(OrderRepository orderRepository) {
+    public OrderStatusEventListener(final OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

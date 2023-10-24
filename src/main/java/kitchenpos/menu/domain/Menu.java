@@ -38,21 +38,32 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(
+            final String name,
+            final Price price,
+            final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts
+    ) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
-    public Menu(Long id, String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this(name,price,menuGroup,menuProducts);
+    public Menu(
+            final Long id,
+            final String name,
+            final Price price,
+            final MenuGroup menuGroup,
+            final List<MenuProduct> menuProducts
+    ) {
+        this(name, price, menuGroup, menuProducts);
         this.id = id;
         this.menuProducts = menuProducts;
     }
 
-    public static Menu of(final Menu menu, final List<MenuProduct> menuProducts){
-        return new Menu(menu.id,menu.name,menu.price,menu.menuGroup,menuProducts);
+    public static Menu of(final Menu menu, final List<MenuProduct> menuProducts) {
+        return new Menu(menu.id, menu.name, menu.price, menu.menuGroup, menuProducts);
     }
 
     public Long getId() {
@@ -67,7 +78,7 @@ public class Menu {
         return price;
     }
 
-    public BigDecimal getPriceValue(){
+    public BigDecimal getPriceValue() {
         return price.getPrice();
     }
 

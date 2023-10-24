@@ -49,34 +49,43 @@ public class Order {
         }
     }
 
-    public void validateIsComplete(){
-        if(orderStatus.equals(COMPLETION)){
+    public void validateIsComplete() {
+        if (orderStatus.equals(COMPLETION)) {
             throw new InvalidOrderStateException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");
         }
     }
 
-    private Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    private Order(
+            final Long orderTableId,
+            final OrderStatus orderStatus,
+            final LocalDateTime orderedTime
+    ) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
-        this(orderTableId,orderStatus,orderedTime);
+    public Order(
+            final Long id,
+            final Long orderTableId,
+            final OrderStatus orderStatus,
+            final LocalDateTime orderedTime,
+            final List<OrderLineItem> orderLineItems
+    ) {
+        this(orderTableId, orderStatus, orderedTime);
         this.id = id;
         this.orderLineItems = orderLineItems;
     }
 
-    public static Order from(final Long orderTableId){
-        return new Order(orderTableId,COOKING,LocalDateTime.now());
+    public static Order from(final Long orderTableId) {
+        return new Order(orderTableId, COOKING, LocalDateTime.now());
     }
 
-    public static Order of(final Order order, final List<OrderLineItem> orderLineItems){
-        return new Order(order.id,order.orderTableId,order.orderStatus,order.getOrderedTime(),orderLineItems);
+    public static Order of(final Order order, final List<OrderLineItem> orderLineItems) {
+        return new Order(order.id, order.orderTableId, order.orderStatus, order.getOrderedTime(), orderLineItems);
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus){
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

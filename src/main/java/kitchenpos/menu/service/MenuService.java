@@ -29,8 +29,12 @@ public class MenuService {
     private final ProductRepository productRepository;
 
 
-    public MenuService(MenuRepository menuRepository, MenuGroupRepository menuGroupRepository,
-                       MenuProductRepository menuProductRepository, ProductRepository productRepository) {
+    public MenuService(
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
+            final ProductRepository productRepository
+    ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
@@ -50,7 +54,7 @@ public class MenuService {
         final List<Product> products = productRepository.findAllById(productIds);
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(dto -> MenuProduct.of(dto,products))
+                .map(dto -> MenuProduct.of(dto, products))
                 .collect(Collectors.toList());
 
         BigDecimal sum = BigDecimal.ZERO;

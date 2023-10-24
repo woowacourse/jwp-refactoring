@@ -9,14 +9,14 @@ public class MenuProductDto {
     private final Long productId;
     private final Long quantity;
 
-    private MenuProductDto(Long seq, Long menuId, Long productId, Long quantity) {
+    private MenuProductDto(final Long seq, final Long menuId, final Long productId, final Long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public static MenuProductDto from(final MenuProduct menuProduct){
+    public static MenuProductDto from(final MenuProduct menuProduct) {
         return new MenuProductDto(
                 menuProduct.getSeq(),
                 menuProduct.getMenuId(),

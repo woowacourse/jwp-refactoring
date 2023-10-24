@@ -1,9 +1,9 @@
 package kitchenpos.table.ui;
 
 import java.net.URI;
-import kitchenpos.table.service.TableGroupService;
 import kitchenpos.table.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.response.TableGroupResponse;
+import kitchenpos.table.service.TableGroupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TableGroupRestController {
+
     private final TableGroupService tableGroupService;
 
     public TableGroupRestController(final TableGroupService tableGroupService) {

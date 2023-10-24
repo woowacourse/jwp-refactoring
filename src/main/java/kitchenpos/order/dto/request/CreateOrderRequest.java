@@ -5,8 +5,11 @@ import kitchenpos.order.dto.OrderLineItemsDto;
 
 public class CreateOrderRequest {
 
-    private Long  orderTableId;
+    private Long orderTableId;
     private List<OrderLineItemsDto> orderLineItems;
+
+    private CreateOrderRequest() {
+    }
 
     public Long getOrderTableId() {
         return orderTableId;

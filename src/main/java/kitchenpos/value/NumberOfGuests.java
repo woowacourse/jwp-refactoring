@@ -10,7 +10,7 @@ public class NumberOfGuests {
     @Column(name = "number_of_guests", nullable = false)
     private int numberOfGuests;
 
-    public NumberOfGuests(int numberOfGuests) {
+    public NumberOfGuests(final int numberOfGuests) {
         validate(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
     }

@@ -20,11 +20,11 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
-    public MenuGroup(Long id) {
+    public MenuGroup(final Long id) {
         this.id = id;
     }
 
-    public MenuGroup(String name) {
+    public MenuGroup(final String name) {
         this.name = name;
     }
 

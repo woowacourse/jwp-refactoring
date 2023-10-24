@@ -26,11 +26,11 @@ public class Product {
     protected Product() {
     }
 
-    public Product(Long id) {
+    public Product(final Long id) {
         this.id = id;
     }
 
-    public Product(String name, Price price) {
+    public Product(final String name, final Price price) {
         this.name = name;
         this.price = price;
     }
@@ -47,7 +47,7 @@ public class Product {
         return price;
     }
 
-    public BigDecimal getPriceValue(){
+    public BigDecimal getPriceValue() {
         return price.getPrice();
     }
 }

@@ -13,8 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.exception.NoSuchDataException;
-import kitchenpos.value.Quantity;
 import kitchenpos.menu.dto.MenuProductDto;
+import kitchenpos.value.Quantity;
 
 @Entity
 public class MenuProduct {
@@ -36,18 +36,23 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Long menuId, Product product, Quantity quantity) {
+    public MenuProduct(
+            final Long seq,
+            final Long menuId,
+            final Product product,
+            final Quantity quantity
+    ) {
         this.seq = seq;
         this.menuId = menuId;
         this.product = product;
         this.quantity = quantity;
     }
 
-    public static MenuProduct of(final MenuProductDto dto, final List<Product> products){
+    public static MenuProduct of(final MenuProductDto dto, final List<Product> products) {
         final Product product = products.stream()
                 .filter(pr -> pr.getId().equals(dto.getMenuId()))
                 .findFirst()
-                .orElseThrow(()->new NoSuchDataException("해당하는 id의 상품이 없습니다."));
+                .orElseThrow(() -> new NoSuchDataException("해당하는 id의 상품이 없습니다."));
         return new MenuProduct(
                 dto.getSeq(),
                 dto.getMenuId(),
@@ -56,7 +61,7 @@ public class MenuProduct {
         );
     }
 
-    public BigDecimal calculateTotal(){
+    public BigDecimal calculateTotal() {
         return product.getPrice().multiply(quantity);
     }
 
@@ -72,7 +77,7 @@ public class MenuProduct {
         return product;
     }
 
-    public Long getProductId(){
+    public Long getProductId() {
         return product.getId();
     }
 

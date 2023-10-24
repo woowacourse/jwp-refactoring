@@ -25,7 +25,10 @@ public class TableService {
     private final OrderTableRepository orderTableRepository;
     private final ApplicationEventPublisher publisher;
 
-    public TableService(OrderTableRepository orderTableRepository, ApplicationEventPublisher publisher) {
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            final ApplicationEventPublisher publisher
+    ) {
         this.orderTableRepository = orderTableRepository;
         this.publisher = publisher;
     }
