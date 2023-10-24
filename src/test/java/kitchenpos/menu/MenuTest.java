@@ -33,27 +33,31 @@ class MenuTest {
 
         @Test
         void 메뉴가_메뉴_그룹에_속하지_않는다면_예외() {
-            // when & then
-            assertThatThrownBy(() -> new Menu(
+            // given
+            Menu menu = new Menu(
                     "말랑메뉴",
                     BigDecimal.valueOf(1000),
                     null,
-                    List.of(new MenuProduct(1L, 2L)),
-                    menuValidator
-            )).isInstanceOf(MenuException.class)
+                    List.of(new MenuProduct(1L, 2L))
+            );
+
+            // when & then
+            assertThatThrownBy(() -> menu.register(menuValidator)).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴는 메뉴 그룹에 속해야 합니다.");
         }
 
         @Test
         void 메뉴에_속한_상품이_없으면_예외() {
-            // when & then
-            assertThatThrownBy(() -> new Menu(
+            // given
+            Menu menu = new Menu(
                     "말랑메뉴",
                     BigDecimal.valueOf(1000),
                     new MenuGroup("메뉴그룹 1"),
-                    List.of(),
-                    menuValidator
-            )).isInstanceOf(MenuException.class)
+                    List.of()
+            );
+
+            // when & then
+            assertThatThrownBy(() -> menu.register(menuValidator)).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴에는 최소 1개의 상품이 속해야 합니다.");
         }
 
@@ -62,15 +66,15 @@ class MenuTest {
             // given
             given(productRepository.getById(1L))
                     .willReturn(new Product("말랑", BigDecimal.valueOf(1000)));
-
-            // when & then
-            assertThatThrownBy(() -> new Menu(
+            Menu menu = new Menu(
                     "말랑메뉴",
                     BigDecimal.valueOf(-1),
                     new MenuGroup("메뉴그룹 1"),
-                    List.of(new MenuProduct(1L, 2L)),
-                    menuValidator
-            )).isInstanceOf(MenuException.class)
+                    List.of(new MenuProduct(1L, 2L))
+            );
+
+            // when & then
+            assertThatThrownBy(() -> menu.register(menuValidator)).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴의 가격은 0원 이상이어야 합니다.");
         }
 
@@ -79,15 +83,15 @@ class MenuTest {
             // given
             given(productRepository.getById(1L))
                     .willReturn(new Product("말랑", BigDecimal.valueOf(1000)));
-
-            // when & then
-            assertThatThrownBy(() -> new Menu(
+            Menu menu = new Menu(
                     "말랑메뉴",
                     BigDecimal.valueOf(2001),
                     new MenuGroup("메뉴그룹 1"),
-                    List.of(new MenuProduct(1L, 2L)),
-                    menuValidator
-            )).isInstanceOf(MenuException.class)
+                    List.of(new MenuProduct(1L, 2L))
+            );
+
+            // when & then
+            assertThatThrownBy(() -> menu.register(menuValidator)).isInstanceOf(MenuException.class)
                     .hasMessage("메뉴의 가격은 메뉴에 포함된 상품들의 합 이하여야 합니다.");
         }
 
@@ -96,15 +100,15 @@ class MenuTest {
             // given
             given(productRepository.getById(1L))
                     .willReturn(new Product("말랑", BigDecimal.valueOf(1000)));
-
-            // when & then
-            assertDoesNotThrow(() -> new Menu(
+            Menu menu = new Menu(
                     "말랑메뉴",
                     BigDecimal.valueOf(200),
                     new MenuGroup("메뉴그룹 1"),
-                    List.of(new MenuProduct(1L, 2L)),
-                    menuValidator
-            ));
+                    List.of(new MenuProduct(1L, 2L))
+            );
+
+            // when & then
+            assertDoesNotThrow(() -> menu.register(menuValidator));
         }
     }
 }

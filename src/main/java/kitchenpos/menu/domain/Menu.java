@@ -36,14 +36,16 @@ public class Menu {
     public Menu(String name,
                 BigDecimal price,
                 MenuGroup menuGroup,
-                List<MenuProduct> menuProducts,
-                MenuValidator menuValidator
+                List<MenuProduct> menuProducts
     ) {
-        menuValidator.validateCreate(price, menuGroup, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    public void register(MenuValidator menuValidator) {
+        menuValidator.validateRegister(this);
     }
 
     public Long getId() {

@@ -39,9 +39,9 @@ public class MenuService {
                 request.getName(),
                 request.getPrice(),
                 menuGroupRepository.getById(request.getMenuGroupId()),
-                menuProducts,
-                menuValidator
+                menuProducts
         );
+        menu.register(menuValidator);
         return MenuResponse.from(menuRepository.save(menu));
     }
 

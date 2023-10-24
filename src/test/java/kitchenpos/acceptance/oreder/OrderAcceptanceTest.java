@@ -40,7 +40,6 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderAcceptanceTest {
 
-    private final MenuValidator menuValidator = mock(MenuValidator.class);
     private final Product 상품1 = new Product("상품1", BigDecimal.valueOf(10_000));
     private final Product 상품2 = new Product("상품2", BigDecimal.valueOf(20_000));
     private final MenuGroup 세트_상품_메뉴_그룹 = new MenuGroup("세트 상품");
@@ -66,8 +65,7 @@ public class OrderAcceptanceTest {
                 "말랑 메뉴",
                 BigDecimal.valueOf(1_000),
                 세트_상품_메뉴_그룹,
-                List.of(new MenuProduct(상품1_ID, 2)),
-                menuValidator
+                List.of(new MenuProduct(상품1_ID, 2))
         );
         말랑_메뉴_2 = new Menu(
                 "말랑 메뉴 2",
@@ -75,8 +73,7 @@ public class OrderAcceptanceTest {
                 세트_상품_메뉴_그룹,
                 List.of(new MenuProduct(상품1_ID, 2),
                         new MenuProduct(상품2_ID, 3)
-                ),
-                menuValidator
+                )
         );
 
         말랑_메뉴_1_스냅샷 = new MenuSnapShot(
