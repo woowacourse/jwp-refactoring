@@ -39,7 +39,7 @@ public class OrderService {
         final OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
         final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItemRequests());
         
-        final Order order = new Order(orderTable,
+        final Order order = Order.of(orderTable,
                 orderStatus,
                 orderLineItems);
         return orderRepository.save(order);

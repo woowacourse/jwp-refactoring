@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import kitchenpos.domain.exception.InvalidOrderChangeException;
 import kitchenpos.domain.exception.InvalidOrderException;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity(name = "orders")
 public class Order {
     
@@ -33,24 +35,31 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
     
+    public static Order of(final OrderTable orderTable,
+                           final OrderStatus orderStatus,
+                           final List<OrderLineItem> orderLineItems) {
+        Order order = new Order(orderTable,
+                orderStatus,
+                orderLineItems);
+        order.putOrderInOrderLineItems();
+        return order;
+    }
+    
     public Order(final OrderTable orderTable,
                  final OrderStatus orderStatus,
                  final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, null, orderLineItems);
+        this(null, orderTable, orderStatus, orderLineItems);
     }
     
     public Order(final Long id,
                  final OrderTable orderTable,
                  final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         validate(orderTable, orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-        putOrderInOrderLineItems();
     }
     
     private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
@@ -84,13 +93,11 @@ public class Order {
     }
     
     private void putOrderInOrderLineItems() {
-        this.orderLineItems.forEach(orderLineItem -> new OrderLineItem(this,
-                orderLineItem.getMenu(),
-                orderLineItem.getQuantity()));
+        this.orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
     }
     
     public void changeOrderStatus(final OrderStatus orderStatus) {
-        if(Objects.equals(OrderStatus.COMPLETION.name(),this.orderStatus)) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new InvalidOrderChangeException("이미 종료된 주문입니다");
         }
         this.orderStatus = orderStatus;
