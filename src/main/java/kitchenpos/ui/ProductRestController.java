@@ -16,12 +16,12 @@ import java.net.URI;
 public class ProductRestController {
     private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
+    public ProductRestController(ProductService productService) {
         this.productService = productService;
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductResponse> create(@RequestBody final ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = productService.create(productRequest);
         URI uri = URI.create("/api/products/" + productResponse.getId());
         return ResponseEntity.created(uri)

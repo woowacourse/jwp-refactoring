@@ -18,13 +18,13 @@ public class TableService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest orderTableRequest) {
+    public OrderTable create(OrderTableRequest orderTableRequest) {
 
         OrderTable orderTable = new OrderTable(orderTableRequest.getNumberOfGuest(), orderTableRequest.isEmpty());
 
@@ -36,8 +36,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final ChangeEmptyRequest changeEmptyRequest) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+    public OrderTable changeEmpty(Long orderTableId, ChangeEmptyRequest changeEmptyRequest) {
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.hasTableGroup()) {
@@ -54,8 +54,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest changeNumberOfGuestsRequest) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+    public OrderTable changeNumberOfGuests(Long orderTableId, ChangeNumberOfGuestsRequest changeNumberOfGuestsRequest) {
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {

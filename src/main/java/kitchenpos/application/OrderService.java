@@ -28,10 +28,10 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+            MenuRepository menuRepository,
+            OrderRepository orderRepository,
+            OrderLineItemRepository orderLineItemRepository,
+            OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -40,7 +40,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest orderRequest) {
+    public Order create(OrderRequest orderRequest) {
         OrderTable orderTable = getOrderTable(orderRequest);
 
         if (orderTable.isEmpty()) {
@@ -68,7 +68,7 @@ public class OrderService {
     }
 
     private void setOrderLineItems(List<OrderLineItemRequest> orderLineItemsRequest, Order savedOrder) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemsRequest) {
             Menu savedMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
@@ -83,8 +83,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest changeOrderStatusRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    public Order changeOrderStatus(Long orderId, ChangeOrderStatusRequest changeOrderStatusRequest) {
+        Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 주문은 주문 상태를 바꿀 수 없습니다."));
         if (savedOrder.isCompletionStatus()) {
             throw new IllegalArgumentException("완료 상태의 주문은 상태 변경이 불가능합니다.");

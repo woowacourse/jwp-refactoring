@@ -17,14 +17,14 @@ import java.util.List;
 public class MenuRestController {
     private final MenuService menuService;
 
-    public MenuRestController(final MenuService menuService) {
+    public MenuRestController(MenuService menuService) {
         this.menuService = menuService;
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<MenuResponse> create(@RequestBody final MenuRequest menuRequest) {
+    public ResponseEntity<MenuResponse> create(@RequestBody MenuRequest menuRequest) {
         MenuResponse menuResponse = menuService.create(menuRequest);
-        final URI uri = URI.create("/api/menus/" + menuResponse.getId());
+        URI uri = URI.create("/api/menus/" + menuResponse.getId());
         return ResponseEntity.created(uri)
                 .body(menuResponse)
                 ;

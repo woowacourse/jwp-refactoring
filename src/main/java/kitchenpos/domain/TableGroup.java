@@ -14,6 +14,7 @@ import java.util.List;
 @Entity
 public class TableGroup {
     public static final int MIN_SIZE_OF_ORDER_TABLES = 2;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,7 +49,7 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,7 +57,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -64,7 +65,7 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void setOrderTables(List<OrderTable> orderTables) {
         this.orderTables = orderTables;
     }
 }

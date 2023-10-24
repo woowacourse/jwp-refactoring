@@ -21,7 +21,7 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
@@ -49,13 +49,13 @@ public class TableGroupService {
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
+    public void ungroup(Long tableGroupId) {
 
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
         List<OrderTable> orderTables = tableGroup.getOrderTables();
 
-        final List<Long> orderTableIds = orderTables.stream()
+        List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
@@ -64,7 +64,7 @@ public class TableGroupService {
             throw new IllegalArgumentException("조리 중이거나 식사 중인 주문 그룹을 해제할 수 없습니다.");
         }
 
-        for (final OrderTable orderTable : orderTables) {
+        for (OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
             orderTable.setEmpty(false);
         }
