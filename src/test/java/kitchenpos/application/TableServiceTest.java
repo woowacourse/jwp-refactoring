@@ -117,7 +117,6 @@ class TableServiceTest extends ServiceTest {
             final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
             TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             testFixtureBuilder.buildTableGroup(tableGroup);
-            orderTables.forEach(orderTable -> testFixtureBuilder.buildOrderTable(orderTable));
 
             // when & then
             final Long orderTableId = orderTable1.getId();

@@ -71,8 +71,8 @@ class TableGroupTest {
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(tableGroup.getOrderTables().get(0).getTableGroup()).isNull();
-                softly.assertThat(tableGroup.getOrderTables().get(1).getTableGroup()).isNull();
+                softly.assertThat(tableGroup.getOrderTables().get(0).getTableGroupId()).isNull();
+                softly.assertThat(tableGroup.getOrderTables().get(1).getTableGroupId()).isNull();
             });
         }
     }

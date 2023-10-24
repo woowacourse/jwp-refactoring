@@ -49,12 +49,12 @@ class OrderTableTest {
             final OrderTable orderTable = new OrderTable(null, guests, empty);
 
             //when
-            orderTable.settingTableGroup(afterTableGroup);
+            orderTable.joinTableGroupById(afterTableGroup.getId());
 
             //then
             assertSoftly(softly -> {
                 softly.assertThat(orderTable.getId()).isNull();
-                softly.assertThat(orderTable.getTableGroup()).isEqualTo(afterTableGroup);
+                softly.assertThat(orderTable.getTableGroupId()).isEqualTo(afterTableGroup.getId());
                 softly.assertThat(orderTable.getNumberOfGuests()).isEqualTo(guests);
                 softly.assertThat(orderTable.isEmpty()).isEqualTo(empty);
             });
