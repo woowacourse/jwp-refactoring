@@ -1,8 +1,6 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.exception.MenuNotFoundException;
+import kitchenpos.common.event.listener.MenuEventListener;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderUpdateRequest;
@@ -25,14 +23,14 @@ import java.util.List;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final MenuEventListener menuEventListener;
 
-    public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+    public OrderService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final MenuEventListener menuEventListener) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.menuEventListener = menuEventListener;
     }
 
     @Transactional
@@ -75,17 +73,11 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         orderLineItemRequests.forEach(orderLineItemRequest -> {
-            Menu menu = findMenu(orderLineItemRequest);
-            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
-            orderLineItems.add(orderLineItem);
+            menuEventListener.validateMenuExist(orderLineItemRequest.getMenuId());
+            orderLineItems.add(orderLineItemRequest.toDomain());
         });
 
         return orderLineItems;
-    }
-
-    private Menu findMenu(final OrderLineItemCreateRequest orderLineItemReq) {
-        return menuRepository.findById(orderLineItemReq.getMenuId())
-                .orElseThrow(MenuNotFoundException::new);
     }
 
     private void validateOrderLineItemEmpty(final OrderCreateRequest req, final List<OrderLineItem> orderLineItems) {

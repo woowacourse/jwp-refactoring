@@ -1,5 +1,7 @@
-package kitchenpos.common.event;
+package kitchenpos.common.event.listener;
 
+import kitchenpos.common.event.message.ValidatorProductBeing;
+import kitchenpos.common.event.message.ValidatorProductPrice;
 import kitchenpos.product.application.ProductService;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

@@ -126,4 +126,17 @@ class MenuServiceTest extends IntegrationTestHelper {
         // then
         assertThat(result).hasSize(1);
     }
+
+    @Test
+    void 메뉴가_존재하는지_확인한다() {
+        // given
+        MenuCreateRequest req = 메뉴_생성_요청("상품", 10000L, menuGroup, List.of(menuProduct));
+        Menu menu = menuService.create(req);
+
+        // when
+        boolean result = menuService.isExistMenuById(menu.getId());
+
+        // then
+        assertThat(result).isTrue();
+    }
 }

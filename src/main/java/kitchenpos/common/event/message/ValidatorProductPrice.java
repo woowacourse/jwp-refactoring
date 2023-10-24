@@ -1,4 +1,4 @@
-package kitchenpos.common.event;
+package kitchenpos.common.event.message;
 
 import java.util.List;
 

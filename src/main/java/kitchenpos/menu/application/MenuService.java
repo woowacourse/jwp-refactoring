@@ -1,7 +1,7 @@
 package kitchenpos.menu.application;
 
-import kitchenpos.common.event.ValidatorProductBeing;
-import kitchenpos.common.event.ValidatorProductPrice;
+import kitchenpos.common.event.message.ValidatorProductBeing;
+import kitchenpos.common.event.message.ValidatorProductPrice;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuProductCreateRequest;
 import kitchenpos.menu.domain.Menu;
@@ -59,5 +59,10 @@ public class MenuService {
     @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isExistMenuById(final Long id) {
+        return menuRepository.existsById(id);
     }
 }
