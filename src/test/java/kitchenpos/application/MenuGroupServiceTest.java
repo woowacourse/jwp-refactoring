@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.persistence.MenuGroupRepository;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class MenuGroupServiceTest {
                 .thenReturn(savedMenuGroup);
 
         // when
-        final MenuGroup result = menuGroupService.create(new MenuGroup("신메뉴"));
+        final MenuGroup result = menuGroupService.create(new MenuGroupCreateRequest("신메뉴"));
         final MenuGroup expect = new MenuGroup(1L, "신메뉴");
 
         // then
