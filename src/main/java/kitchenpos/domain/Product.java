@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,12 +17,14 @@ public class Product {
     private Long id;
 
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
 
     protected Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
+    public Product(final String name, final Price price) {
         this.name = name;
         this.price = price;
     }
@@ -32,7 +37,11 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
+    }
+
+    public BigDecimal getPriceValue() {
+        return price.getValue();
     }
 }

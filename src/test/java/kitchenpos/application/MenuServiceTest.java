@@ -70,7 +70,7 @@ class MenuServiceTest {
         void success() {
             // given
             final MenuCreateRequest request = new MenuCreateRequest(MENU_NAME,
-                    testProduct.getPrice().multiply(BigDecimal.valueOf(2)),
+                    testProduct.getPriceValue().multiply(BigDecimal.valueOf(2)),
                     testMenuGroup.getId(),
                     List.of(new MenuCreateRequest.MenuProductRequest(testProduct.getId(), 2L)));
 
@@ -91,7 +91,7 @@ class MenuServiceTest {
         void throwExceptionWithWrongMenuGroupId() {
             // given
             final MenuCreateRequest request = new MenuCreateRequest(MENU_NAME,
-                    testProduct.getPrice().multiply(BigDecimal.valueOf(2)),
+                    testProduct.getPriceValue().multiply(BigDecimal.valueOf(2)),
                     WRONG_ID,
                     List.of(new MenuCreateRequest.MenuProductRequest(testProduct.getId(), 2L)));
 
@@ -138,7 +138,7 @@ class MenuServiceTest {
         void throwExceptionWhenPriceIsOverProductPriceSum() {
             //given
             final MenuCreateRequest request = new MenuCreateRequest(MENU_NAME,
-                    testProduct.getPrice().multiply(BigDecimal.valueOf(2)).add(BigDecimal.ONE),
+                    testProduct.getPriceValue().multiply(BigDecimal.valueOf(2)).add(BigDecimal.ONE),
                     testMenuGroup.getId(),
                     List.of(new MenuCreateRequest.MenuProductRequest(testProduct.getId(), 2L)));
 
