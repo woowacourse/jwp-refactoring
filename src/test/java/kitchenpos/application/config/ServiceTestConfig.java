@@ -9,6 +9,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.NumberOfGuests;
@@ -27,6 +28,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @DataJpaTest
@@ -88,7 +90,7 @@ public class ServiceTestConfig {
     }
 
     protected TableGroup saveTableGroup(List<OrderTable> orderTables) {
-        final TableGroup tableGroup = new TableGroup(orderTables);
+        final TableGroup tableGroup = new TableGroup(new OrderTables(orderTables));
         // TODO: em 사용해보기, setter 제거
         orderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
         return tableGroupRepository.save(tableGroup);

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -35,30 +36,19 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest orderTableIds) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllById(orderTableIds.getOrderTableIds());
+        final List<OrderTable> orderTablesResult = orderTableRepository.findAllById(orderTableIds.getOrderTableIds());
+        final OrderTables orderTables = new OrderTables(orderTablesResult);
         validateTableGroupInput(orderTableIds.getOrderTableIds(), orderTables);
-        validateOrderTablesStatus(orderTables);
-        orderTables.forEach(OrderTable::changeToOccupied);
+        orderTables.changeToAllOccupied();
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(orderTables));
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    private void validateTableGroupInput(final List<Long> idsInput, final List<OrderTable> savedOrderTables) {
+    private void validateTableGroupInput(final List<Long> idsInput, final OrderTables savedOrderTables) {
         if (CollectionUtils.isEmpty(idsInput) || idsInput.size() < 2) {
             throw new IllegalArgumentException();
         }
-        if (idsInput.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    // TODO: 일급 컬렉션 만들자.
-    private void validateOrderTablesStatus(final List<OrderTable> orderTables) {
-        final long validatedCount = orderTables.stream()
-                .filter(OrderTable::isEmpty)
-                .filter(orderTable -> Objects.isNull(orderTable.getTableGroup()))
-                .count();
-        if (validatedCount != orderTables.size()) {
+        if (!savedOrderTables.hasSizeOf(idsInput.size())) {
             throw new IllegalArgumentException();
         }
     }
@@ -66,20 +56,10 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findMandatoryById(tableGroupId);
-        final List<OrderTable> orderTables = orderTableRepository.findByTableGroup(tableGroup);
-        validateMealCompletion(orderTables);
-        orderTables.forEach(OrderTable::ungroup);
-        orderTableRepository.saveAll(orderTables);
-    }
-
-    // TODO: 일급 컬렉션 만들자.
-    private void validateMealCompletion(final List<OrderTable> orderTables) {
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toUnmodifiableList());
-        final Long completionMealCount = orderRepository.countCompletionOrderByOrderTableIds(orderTableIds);
-        if (orderTables.size() != completionMealCount) {
-            throw new IllegalArgumentException();
-        }
+        final List<OrderTable> orderTablesResult = orderTableRepository.findByTableGroup(tableGroup);
+        final OrderTables orderTables = new OrderTables(orderTablesResult);
+        final Long completionOrderCount = orderRepository.countCompletionOrderByOrderTableIds(orderTables.getIds());
+        orderTables.validateSizeAndUngroup(completionOrderCount.intValue());
+        orderTableRepository.saveAll(orderTables.getOrderTables());
     }
 }

@@ -65,6 +65,10 @@ public class OrderTable {
         empty = false;
     }
 
+    public boolean canGroup() {
+        return tableGroup == null && empty;
+    }
+
     public void changeEmpty(final boolean empty) {
         validateTableGroupNull();
         this.empty = empty;
