@@ -25,6 +25,10 @@ public class Price {
         }
     }
 
+    public int compareTo(final BigDecimal other) {
+        return value.compareTo(other);
+    }
+
     public BigDecimal getValue() {
         return value;
     }

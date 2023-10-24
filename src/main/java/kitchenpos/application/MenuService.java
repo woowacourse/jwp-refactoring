@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -41,7 +42,7 @@ public class MenuService {
                         new MenuProduct(getProductBy(menuProductRequest), menuProductRequest.getQuantity()))
                 .collect(Collectors.toUnmodifiableList());
 
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, new MenuProducts(menuProducts));
         menuRepository.save(menu);
 
         return MenuResponse.of(menu);
