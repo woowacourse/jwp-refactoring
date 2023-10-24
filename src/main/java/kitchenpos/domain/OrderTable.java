@@ -34,6 +34,14 @@ public class OrderTable {
         this(null, tableGroup, numberOfGuests, empty);
     }
 
+    public void changeEmpty(Boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuest(Integer numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
