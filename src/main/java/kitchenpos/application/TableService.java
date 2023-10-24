@@ -41,12 +41,12 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("단체 지정이 되어있는 경우 먼저 단체 지정을 해제해야합니다.");
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리, 식사 상태일 때는 빈 테이블로 변경할 수 없습니다.");
         }
 
         savedOrderTable.setEmpty(request.isEmpty());
@@ -59,14 +59,14 @@ public class TableService {
         final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("손님의 수는 최소 한명이어야합니다.");
         }
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블은 손님 수를 변경할 수 없습니다.");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);

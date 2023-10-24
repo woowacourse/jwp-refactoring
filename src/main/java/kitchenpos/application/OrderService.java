@@ -46,7 +46,7 @@ public class OrderService {
         final List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("최소 하나의 메뉴를 포함해야합니다.");
         }
 
         final List<Long> menuIds = orderLineItemDtos.stream()
@@ -54,14 +54,14 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("등로되지 않은 메뉴가 포함되어있습니다.");
         }
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블에는 주문을 넣을 수 없습니다.");
         }
 
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), null);
