@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +18,7 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate = LocalDateTime.now();
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public TableGroup() {
