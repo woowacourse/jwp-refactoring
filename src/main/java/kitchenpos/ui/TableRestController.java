@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.OrderTableRequest;
 import kitchenpos.ui.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +34,14 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponse> changeEmpty(@PathVariable final Long orderTableId,
-                                                  @RequestBody final OrderTableRequest orderTableRequest) {
+                                                          @RequestBody final OrderTableRequest orderTableRequest) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, orderTableRequest));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId,
-                                                           @RequestBody final OrderTableRequest orderTableRequest) {
+                                                                   @RequestBody final OrderTableRequest orderTableRequest) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, orderTableRequest));
     }

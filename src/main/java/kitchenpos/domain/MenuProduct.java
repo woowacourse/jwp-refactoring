@@ -16,7 +16,8 @@ public class MenuProduct {
     private Product product;
     private long quantity;
 
-    protected MenuProduct() {}
+    protected MenuProduct() {
+    }
 
     public MenuProduct(final Menu menu,
                        final Product product,
@@ -35,7 +36,7 @@ public class MenuProduct {
     }
 
     public BigDecimal calculateTotalPrice() {
-       return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {

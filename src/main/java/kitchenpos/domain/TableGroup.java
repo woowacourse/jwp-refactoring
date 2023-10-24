@@ -17,7 +17,8 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
-    protected TableGroup() {}
+    protected TableGroup() {
+    }
 
     private TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;

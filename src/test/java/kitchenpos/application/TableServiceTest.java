@@ -3,7 +3,6 @@ package kitchenpos.application;
 import fixture.OrderBuilder;
 import fixture.OrderTableBuilder;
 import fixture.TableGroupBuilder;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -37,7 +36,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_저장한다() {
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(null,1L, 10, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1L, 10, false);
 
         final OrderTableResponse created = tableService.create(orderTableRequest);
 
@@ -68,7 +67,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹에_속한_상태로_빈_테이블로_바꾸면_예외를_발생한다() {
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(null,null, 10, true);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, null, 10, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(9L, orderTableRequest)).isInstanceOf(IllegalArgumentException.class);
     }
