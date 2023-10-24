@@ -7,6 +7,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import kitchenpos.vo.Quantity;
 
 @Entity
 public class OrderLineItem {

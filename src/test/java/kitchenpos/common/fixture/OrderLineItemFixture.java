@@ -1,7 +1,7 @@
 package kitchenpos.common.fixture;
 
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.Quantity;
+import kitchenpos.vo.Quantity;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderLineItemFixture {

@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Money;
+import kitchenpos.vo.Money;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class MenuFixture {

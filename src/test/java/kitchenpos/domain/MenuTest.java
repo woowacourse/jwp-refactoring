@@ -51,7 +51,7 @@ class MenuTest {
                     )
             )
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("가격은 0 미만일 수 없습니다.");
+                    .hasMessage("메뉴 가격은 0 미만일 수 없습니다.");
         }
 
         @Test

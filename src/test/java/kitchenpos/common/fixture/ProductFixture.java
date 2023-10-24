@@ -2,8 +2,8 @@ package kitchenpos.common.fixture;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
+import kitchenpos.vo.Money;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class ProductFixture {

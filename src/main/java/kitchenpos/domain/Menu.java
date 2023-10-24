@@ -1,11 +1,13 @@
 package kitchenpos.domain;
 
+import static java.math.BigDecimal.ZERO;
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,9 +15,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.vo.Money;
 
 @Entity
 public class Menu {
+
+    private static final int MINIMUM_VALUE = 0;
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -55,17 +60,24 @@ public class Menu {
             Long menuGroupId,
             List<MenuProduct> menuProducts
     ) {
+        validatePrice(price);
         Money priceAmount = Money.valueOf(price);
 
-        BigDecimal menuProductTotalPrice = menuProducts.stream()
+        Money menuProductTotalPrice = menuProducts.stream()
                 .map(MenuProduct::calculateTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(Money.ZERO, Money::add);
 
         validateMenuProductTotalPrice(priceAmount, menuProductTotalPrice);
         return new Menu(name, priceAmount, menuGroupId, menuProducts);
     }
 
-    private static void validateMenuProductTotalPrice(Money price, BigDecimal menuProductTotalPrice) {
+    private static void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(ZERO) < MINIMUM_VALUE) {
+            throw new IllegalArgumentException("메뉴 가격은 " + MINIMUM_VALUE + " 미만일 수 없습니다.");
+        }
+    }
+
+    private static void validateMenuProductTotalPrice(Money price, Money menuProductTotalPrice) {
         if (price.isGreaterThan(menuProductTotalPrice)) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 총액을 초과할 수 없습니다.");
         }

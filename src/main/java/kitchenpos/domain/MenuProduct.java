@@ -3,13 +3,14 @@ package kitchenpos.domain;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.math.BigDecimal;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.vo.Money;
+import kitchenpos.vo.Quantity;
 
 @Entity
 public class MenuProduct {
@@ -42,7 +43,7 @@ public class MenuProduct {
         return new MenuProduct(product, Quantity.valueOf(quantity));
     }
 
-    public BigDecimal calculateTotalPrice() {
+    public Money calculateTotalPrice() {
         return product.calculateTotalPrice(quantity);
     }
 
