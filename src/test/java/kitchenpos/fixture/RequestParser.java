@@ -7,6 +7,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.IdForRequest;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
@@ -21,8 +22,9 @@ public class RequestParser {
     }
 
     public static TableGroupCreateRequest from(final List<OrderTable> entities) {
-        final List<Long> ids = entities.stream()
+        final List<IdForRequest> ids = entities.stream()
                 .map(OrderTable::getId)
+                .map(IdForRequest::new)
                 .collect(Collectors.toList());
         return new TableGroupCreateRequest(ids);
     }
