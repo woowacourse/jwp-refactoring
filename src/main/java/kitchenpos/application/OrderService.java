@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
@@ -30,11 +31,19 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
-        final Order order = new Order(orderRequest.getOrderTableId(), orderRequest.getOrderLineItems());
+        final List<OrderLineItem> orderLineItems = createOrderLineItemsByOrderRequest(orderRequest);
+        final Order order = new Order(orderRequest.getOrderTableId(), orderLineItems);
         orderValidator.validate(order);
         final Order savedOrder = orderDao.save(order);
-        savedOrder.setOrderLineItems(saveOrderLineItems(savedOrder.getId(), orderRequest.getOrderLineItems()));
+        savedOrder.setOrderLineItems(saveOrderLineItems(savedOrder.getId(), orderLineItems));
         return savedOrder;
+    }
+
+    private static List<OrderLineItem> createOrderLineItemsByOrderRequest(final OrderRequest orderRequest) {
+        return orderRequest.getOrderLineItems().stream()
+                .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(),
+                        orderLineItemRequest.getQuantity()))
+                .collect(Collectors.toList());
     }
 
     private List<OrderLineItem> saveOrderLineItems(final Long orderId, final List<OrderLineItem> orderLineItems) {

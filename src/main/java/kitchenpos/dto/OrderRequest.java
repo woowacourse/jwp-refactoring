@@ -1,13 +1,12 @@
 package kitchenpos.dto;
 
 import java.util.List;
-import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
     private final Long orderTableId;
-    private final List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItemRequest> orderLineItems;
 
-    public OrderRequest(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public OrderRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }
@@ -16,7 +15,7 @@ public class OrderRequest {
         return orderTableId;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
 }

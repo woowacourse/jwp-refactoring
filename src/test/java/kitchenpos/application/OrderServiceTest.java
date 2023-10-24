@@ -24,6 +24,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
 import kitchenpos.exception.InvalidOrderException;
@@ -60,7 +61,6 @@ class OrderServiceTest {
     private ProductDao productDao;
 
     private Menu menu;
-    private MenuProduct menuProduct;
     private MenuGroup menuGroup;
     private TableGroup tableGroup;
     private OrderTable orderTable;
@@ -71,7 +71,7 @@ class OrderServiceTest {
         final Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
         menu = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
                 List.of(new MenuProduct(null, null, product.getId(), 1))));
-        menuProduct = menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
+        menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
         orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 6, false));
     }
@@ -81,16 +81,17 @@ class OrderServiceTest {
         @Test
         void 주문을_생성한다() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    List.of(orderLineItem)
+                    List.of(orderLineItemRequest)
             );
 
             // when
             final Order createdOrder = orderService.create(order);
 
             // then
+            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
             final Order expected = new Order(
                     1L,
                     orderTable.getId(),
@@ -126,10 +127,10 @@ class OrderServiceTest {
         void 주문_항목에_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
             // given
             final long nonExistMenuId = 99L;
-            final OrderLineItem orderLineItem = new OrderLineItem(null, nonExistMenuId, 1);
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(nonExistMenuId, 1L);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    List.of(orderLineItem)
+                    List.of(orderLineItemRequest)
             );
 
             // when & then
@@ -140,11 +141,11 @@ class OrderServiceTest {
         @Test
         void 주문_항목의_메뉴가_중복되면_예외가_발생한다() {
             // given
-            final OrderLineItem orderLineItem1 = new OrderLineItem(null, menu.getId(), 1);
-            final OrderLineItem orderLineItem2 = new OrderLineItem(null, menu.getId(), 2);
+            final OrderLineItemRequest orderLineItemRequest1 = new OrderLineItemRequest(menu.getId(), 1L);
+            final OrderLineItemRequest orderLineItemRequest2 = new OrderLineItemRequest(menu.getId(), 2L);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    List.of(orderLineItem1, orderLineItem2)
+                    List.of(orderLineItemRequest1, orderLineItemRequest2)
             );
 
             // when & then
@@ -156,10 +157,10 @@ class OrderServiceTest {
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
             final long nonExistTableId = 99L;
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             final OrderRequest order = new OrderRequest(
                     nonExistTableId,
-                    List.of(orderLineItem)
+                    List.of(orderLineItemRequest)
             );
 
             // when & then
@@ -170,12 +171,12 @@ class OrderServiceTest {
         @Test
         void 테이블이_주문_불가능_상태인_경우_예외가_발생한다() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             orderTable.changeEmpty(true);
             orderTableDao.save(orderTable);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    List.of(orderLineItem)
+                    List.of(orderLineItemRequest)
             );
 
             // when & then
@@ -187,14 +188,14 @@ class OrderServiceTest {
     @Test
     void list_메서드는_모든_주문을_조회한다() {
         // given
-        final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
         final OrderRequest order1 = new OrderRequest(
                 orderTable.getId(),
-                List.of(orderLineItem)
+                List.of(orderLineItemRequest)
         );
         final OrderRequest order2 = new OrderRequest(
                 orderTable.getId(),
-                List.of(orderLineItem)
+                List.of(orderLineItemRequest)
         );
         final Order createdOrder1 = orderService.create(order1);
         final Order createdOrder2 = orderService.create(order2);
@@ -213,10 +214,10 @@ class OrderServiceTest {
         @Test
         void 주문_상태를_변경한다() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
-                    List.of(orderLineItem)
+                    List.of(orderLineItemRequest)
             );
             final Order createdOrder = orderService.create(order);
 

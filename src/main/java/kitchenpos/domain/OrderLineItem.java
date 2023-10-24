@@ -9,6 +9,10 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, null, menuId, quantity);
+    }
+
     public OrderLineItem(final Long orderId, final Long menuId, final long quantity) {
         this(null, orderId, menuId, quantity);
     }
