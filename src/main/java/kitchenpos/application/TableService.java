@@ -35,15 +35,16 @@ public class TableService {
     public OrderTable changeEmpty(Long orderTableId, boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        validateOrderStatus(orderTableId);
+        savedOrderTable.changeEmpty(isEmpty);
+        return orderTableDao.save(savedOrderTable);
+    }
 
+    private void validateOrderStatus(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.changeEmpty(isEmpty);
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
