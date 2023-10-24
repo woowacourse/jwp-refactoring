@@ -33,7 +33,11 @@ public class Order {
     private LocalDateTime orderedTime = LocalDateTime.now();
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"), nullable = false)
+    @JoinColumn(
+            name = "order_id",
+            foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"),
+            nullable = false, updatable = false
+    )
     private List<OrderLineItem> orderLineItems;
 
     public Order() {

@@ -32,7 +32,11 @@ public class Menu {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
     private MenuGroup menuGroup;
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"), nullable = false)
+    @JoinColumn(
+            name = "menu_id",
+            foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"),
+            nullable = false, updatable = false
+    )
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
