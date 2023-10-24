@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.domain.*;
 import kitchenpos.persistence.MenuRepository;
@@ -165,7 +166,7 @@ class OrderServiceTest {
                     .thenReturn(updatedOrder);
 
             // when
-            final Order result = orderService.changeOrderStatus(1L, OrderStatus.COMPLETION);
+            final Order result = orderService.changeOrderStatus(1L, new OrderStatusDto("COMPLETION"));
 
             // then
             assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
@@ -178,7 +179,7 @@ class OrderServiceTest {
                     .thenReturn(Optional.empty());
 
             // when, then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, OrderStatus.COMPLETION))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderStatusDto("COMPLETION")))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -192,7 +193,7 @@ class OrderServiceTest {
                     .thenReturn(Optional.of(savedOrder));
 
             // when, then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, OrderStatus.COMPLETION))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new OrderStatusDto("COMPLETION")))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

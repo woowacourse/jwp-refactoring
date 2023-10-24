@@ -1,6 +1,7 @@
 package kitchenpos.integration;
 
 import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
@@ -84,7 +85,8 @@ class OrderIntegrationTest extends IntegrationTest {
                 .getId();
 
         // 수정 주문 요청
-        final HttpEntity<OrderStatus> updateRequest = new HttpEntity<>(OrderStatus.COOKING);
+        final OrderStatusDto statusRequest = new OrderStatusDto("COOKING");
+        final HttpEntity<OrderStatusDto> updateRequest = new HttpEntity<>(statusRequest);
 
         // when
         final ResponseEntity<Order> response = testRestTemplate

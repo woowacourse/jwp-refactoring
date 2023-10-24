@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.OrderStatusDto;
 import kitchenpos.application.dto.request.OrderCreateRequest;
 import kitchenpos.domain.*;
 import kitchenpos.persistence.MenuRepository;
@@ -80,7 +81,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusDto status) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -88,7 +89,8 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order updatedOrder = new Order(savedOrder.getId(), savedOrder.getOrderTable(), orderStatus, savedOrder.getOrderedTime());
+        final Order updatedOrder = new Order(savedOrder.getId(), savedOrder.getOrderTable(),
+                OrderStatus.valueOf(status.getOrderStatus()), savedOrder.getOrderedTime());
         return orderRepository.save(updatedOrder);
     }
 }
