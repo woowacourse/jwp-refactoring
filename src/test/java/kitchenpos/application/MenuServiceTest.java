@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.MenuFixture.getMenu;
-import static kitchenpos.support.fixture.MenuGroupFixture.getMenuGroup;
-import static kitchenpos.support.fixture.MenuProductFixture.getMenuProduct;
-import static kitchenpos.support.fixture.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.domain.MenuFixture.getMenu;
+import static kitchenpos.support.fixture.domain.MenuGroupFixture.getMenuGroup;
+import static kitchenpos.support.fixture.domain.MenuProductFixture.getMenuProduct;
+import static kitchenpos.support.fixture.domain.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.dto.MenuCreateRequestFixture.menuCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -19,6 +20,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.menu.MenuCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,35 +51,35 @@ public class MenuServiceTest {
         @Test
         void 가격이_0보다_작으면_예외를_던진다() {
             //given
-            final Menu menu = getMenu("menu", -1L, 1L, EMPTY_MENU_PRODUCTS);
+            final MenuCreateRequest request = menuCreateRequest("menu", -1L, 1L, EMPTY_MENU_PRODUCTS);
 
             //when
             //then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 메뉴_그룹ID에_해당하는_메뉴그룹이_존재하지_않으면_예외를_던진다() {
             //given
-            final Menu menu = getMenu("menu", -1L, 1L, EMPTY_MENU_PRODUCTS);
+            final MenuCreateRequest request = menuCreateRequest("menu", -1L, 1L, EMPTY_MENU_PRODUCTS);
 
             //when
             //then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 없는_메뉴_상품이_메뉴에_있으면_예외를_던진다() {
             //given
             final MenuGroup menuGroup = menuGroupDao.save(getMenuGroup("menuGroup"));
-            final Menu menu = getMenu("menu", 0L, menuGroup.getId(), List.of(getMenuProduct(1L, 1L, 1L)));
+            final MenuCreateRequest request = menuCreateRequest("menu", -1L, menuGroup.getId(), EMPTY_MENU_PRODUCTS);
 
             //when
             //then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -86,31 +88,31 @@ public class MenuServiceTest {
             final MenuGroup menuGroup = menuGroupDao.save(getMenuGroup("menuGroup"));
             final Product product = productDao.save(getProduct("product", 100L));
             final MenuProduct menuProduct = getMenuProduct(null, product.getId(), 2L);
-            final Menu menu = getMenu("menu", 210L, menuGroup.getId(), List.of(menuProduct));
+            final MenuCreateRequest request = menuCreateRequest("menu", -1L, menuGroup.getId(), List.of(menuProduct));
 
             //when
             //then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        void 등록에_성공한다() {
+        void 성공한다() {
             //given
             final MenuGroup menuGroup = menuGroupDao.save(getMenuGroup("menuGroup"));
             final Product product = productDao.save(getProduct("prodcut", 100L));
             final MenuProduct menuProduct = getMenuProduct(null, product.getId(), 2L);
-            final Menu menu = getMenu("menu", 190L, menuGroup.getId(), List.of(menuProduct));
+            final MenuCreateRequest request = menuCreateRequest("menu", 190L, menuGroup.getId(), List.of(menuProduct));
 
             //when
-            final Menu savedMenu = menuService.create(menu);
+            final Menu savedMenu = menuService.create(request);
 
             //then
             assertAll(
-                () -> assertThat(menuDao.findById(savedMenu.getId())).isPresent(),
-                () -> assertThat(menuProductDao.findAllByMenuId(savedMenu.getId()))
-                    .usingRecursiveComparison()
-                    .isEqualTo(savedMenu.getMenuProducts())
+                    () -> assertThat(menuDao.findById(savedMenu.getId())).isPresent(),
+                    () -> assertThat(menuProductDao.findAllByMenuId(savedMenu.getId()))
+                            .usingRecursiveComparison()
+                            .isEqualTo(savedMenu.getMenuProducts())
             );
         }
     }
@@ -128,15 +130,15 @@ public class MenuServiceTest {
         final MenuProduct menuProduct1 = menuProductDao.save(getMenuProduct(menu1.getId(), product.getId(), 1L));
         final MenuProduct menuProduct2 = menuProductDao.save(getMenuProduct(menu2.getId(), product.getId(), 1L));
 
-        menu1.setMenuProducts(List.of(menuProduct1));
-        menu2.setMenuProducts(List.of(menuProduct2));
+        menu1.addMenuProducts(List.of(menuProduct1));
+        menu2.addMenuProducts(List.of(menuProduct2));
 
         // when
         final List<Menu> allMenu = menuService.list();
 
         // then
         assertThat(allMenu)
-            .usingRecursiveComparison()
-            .isEqualTo(List.of(menu1, menu2));
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(menu1, menu2));
     }
 }

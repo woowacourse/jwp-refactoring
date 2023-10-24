@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.support.fixture.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.domain.ProductFixture.getProduct;
+import static kitchenpos.support.fixture.dto.ProductCreateRequestFixture.productCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.product.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,18 +29,18 @@ class ProductServiceTest {
         @Test
         void 가격이_0원_미만일_떄_예외를_던진다() {
             //given
-            final Product product = getProduct("product", -1L);
+            final ProductCreateRequest product = productCreateRequest("product", -1L);
 
             //when
             //then
             assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 추가에_성공한다() {
             //given
-            final Product product = getProduct("product", 0L);
+            final ProductCreateRequest product = productCreateRequest("product", 0L);
 
             //when
             final Product savedProduct = productService.create(product);
@@ -59,7 +61,7 @@ class ProductServiceTest {
 
         //then
         assertThat(products)
-            .usingRecursiveComparison()
-            .isEqualTo(List.of(pizza, chicken));
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(pizza, chicken));
     }
 }

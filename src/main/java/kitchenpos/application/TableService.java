@@ -1,18 +1,24 @@
 package kitchenpos.application;
 
+import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.ordertable.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.dto.ordertable.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.ui.dto.ordertable.OrderTableCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class TableService {
+
+    private static final List<String> UNCHANGEABLE_ORDER_STATUSES = List.of(
+            OrderStatus.COOKING.name(),
+            OrderStatus.MEAL.name()
+    );
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
@@ -22,11 +28,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTable create(final OrderTableCreateRequest request) {
+        return orderTableDao.save(createOrderTableByRequest(request));
+    }
 
-        return orderTableDao.save(orderTable);
+    private OrderTable createOrderTableByRequest(final OrderTableCreateRequest request) {
+        return new OrderTable(request.getNumberOfGuests(), request.isEmpty());
     }
 
     public List<OrderTable> list() {
@@ -34,41 +41,40 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+        final OrderTable orderTable = findOrderTableById(orderTableId);
+        validateOrderTableGroupExist(orderTable);
+        validateOrderTableOrderStatuses(orderTable);
+        orderTable.changeEmpty(request.isEmpty());
+
+        return orderTableDao.save(orderTable);
+    }
+
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+    private void validateOrderTableGroupExist(final OrderTable orderTable) {
+        if (orderTable.hasTableGroupId()) {
             throw new IllegalArgumentException();
         }
+    }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+    private void validateOrderTableOrderStatuses(final OrderTable orderTable) {
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), UNCHANGEABLE_ORDER_STATUSES)) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setEmpty(orderTable.isEmpty());
-
-        return orderTableDao.save(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
+    public OrderTable changeNumberOfGuests(final Long orderTableId,
+                                           final OrderTableChangeNumberOfGuestsRequest request) {
+        final OrderTable savedOrderTable = findOrderTableById(orderTableId);
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableDao.save(savedOrderTable);
     }
 }

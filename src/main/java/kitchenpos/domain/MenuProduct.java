@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class MenuProduct {
+
     private Long seq;
     private Long menuId;
     private Long productId;
@@ -36,5 +39,25 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final MenuProduct menuProduct = (MenuProduct) o;
+        if (Objects.isNull(this.seq) || Objects.isNull(menuProduct.seq)) {
+            return false;
+        }
+        return Objects.equals(seq, menuProduct.seq);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seq);
     }
 }
