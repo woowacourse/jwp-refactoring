@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class OrderTable {
 
+    private static final int MINIMUM_NUMBER_OF_GUESTS = 0;
+
     @GeneratedValue(strategy = IDENTITY)
     @Id
     private Long id;
@@ -40,14 +42,18 @@ public class OrderTable {
     }
 
     public void changeIsEmpty(boolean hasCookingOrMealOrder, boolean isEmpty) {
-        validateIsEmptyCanBeChanged(hasCookingOrMealOrder);
+        validateOrderTableIsGrouped();
+        validateOrderTableHasCookingOrMealOrder(hasCookingOrMealOrder);
         this.isEmpty = isEmpty;
     }
 
-    private void validateIsEmptyCanBeChanged(boolean hasCookingOrMealOrder) {
+    private void validateOrderTableIsGrouped() {
         if (isGrouped()) {
             throw new IllegalArgumentException("단체 지정된 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
+    }
+
+    private void validateOrderTableHasCookingOrMealOrder(boolean hasCookingOrMealOrder) {
         if (hasCookingOrMealOrder) {
             throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
@@ -58,14 +64,18 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
-        validateNumberOfGuestsCanBeChanged(numberOfGuests);
+        validateMinimum(numberOfGuests);
+        validateOrderTableIsEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validateNumberOfGuestsCanBeChanged(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님 수는 0 미만일 수 없습니다.");
+    private void validateMinimum(int numberOfGuests) {
+        if (numberOfGuests < MINIMUM_NUMBER_OF_GUESTS) {
+            throw new IllegalArgumentException("손님 수는 " + MINIMUM_NUMBER_OF_GUESTS + " 미만일 수 없습니다.");
         }
+    }
+
+    private void validateOrderTableIsEmpty() {
         if (isEmpty) {
             throw new IllegalArgumentException("빈 주문 테이블에 손님 수를 변경할 수 없습니다.");
         }

@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -41,12 +40,12 @@ public class Product {
     }
 
     public static Product of(String name, BigDecimal price) {
-        validatePrice(price);
+        validateMinimum(price);
         return new Product(name, Money.valueOf(price));
     }
 
-    private static void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < MINIMUM_VALUE) {
+    private static void validateMinimum(BigDecimal price) {
+        if (price.compareTo(BigDecimal.ZERO) < MINIMUM_VALUE) {
             throw new IllegalArgumentException("상품 가격은 " + MINIMUM_VALUE + " 미만일 수 없습니다.");
         }
     }

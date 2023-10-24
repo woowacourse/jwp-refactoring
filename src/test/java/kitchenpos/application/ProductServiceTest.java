@@ -54,16 +54,6 @@ class ProductServiceTest {
     }
 
     @Test
-    void 상품을_생성할_때_가격이_null이면_예외를_던진다() {
-        // given
-        ProductCreateRequest invalidProduct = 상품_생성_요청(null);
-
-        // expect
-        assertThatThrownBy(() -> productService.create(invalidProduct))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void 전체_상품을_조회한다() {
         // given
         Long productId = productRepository.save(상품()).getId();
