@@ -1,15 +1,17 @@
 package kitchenpos.table.domain;
 
+import static kitchenpos.table.domain.NumberOfGuests.DEFAULT_NUMBER_OF_GUESTS;
+
 import java.util.Objects;
 
 public class OrderTable {
 
   private final Long id;
   private final Long tableGroupId;
-  private int numberOfGuests;
+  private NumberOfGuests numberOfGuests;
   private boolean empty;
 
-  public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests,
+  public OrderTable(final Long id, final Long tableGroupId, final NumberOfGuests numberOfGuests,
       final boolean empty) {
     this.id = id;
     this.tableGroupId = tableGroupId;
@@ -18,15 +20,15 @@ public class OrderTable {
   }
 
   public OrderTable(final Long id, final Long tableGroupId) {
-    this(id, tableGroupId, 0, true);
+    this(id, tableGroupId, DEFAULT_NUMBER_OF_GUESTS, true);
   }
 
-  public OrderTable(final int numberOfGuests, final boolean empty) {
+  public OrderTable(final NumberOfGuests numberOfGuests, final boolean empty) {
     this(null, null, numberOfGuests, empty);
   }
 
   public OrderTable(final Long id) {
-    this(id, null, 0, true);
+    this(id, null, DEFAULT_NUMBER_OF_GUESTS, true);
   }
 
   public Long getId() {
@@ -37,7 +39,7 @@ public class OrderTable {
     return tableGroupId;
   }
 
-  public int getNumberOfGuests() {
+  public NumberOfGuests getNumberOfGuests() {
     return numberOfGuests;
   }
 
@@ -49,7 +51,7 @@ public class OrderTable {
     return Objects.nonNull(tableGroupId);
   }
 
-  public void updateNumberOfGuests(final int numberOfGuests) {
+  public void updateNumberOfGuests(final NumberOfGuests numberOfGuests) {
     this.numberOfGuests = numberOfGuests;
   }
 

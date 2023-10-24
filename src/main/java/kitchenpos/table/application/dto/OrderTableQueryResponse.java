@@ -50,7 +50,7 @@ public class OrderTableQueryResponse {
 
   public static OrderTableQueryResponse from(final OrderTable orderTable) {
     return new OrderTableQueryResponse(orderTable.getId(), orderTable.getTableGroupId(),
-        orderTable.getNumberOfGuests(),
+        orderTable.getNumberOfGuests().getValue(),
         orderTable.isEmpty());
   }
 }

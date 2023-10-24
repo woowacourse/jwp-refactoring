@@ -1,5 +1,7 @@
 package kitchenpos.table.domain;
 
+import static kitchenpos.table.domain.NumberOfGuests.DEFAULT_NUMBER_OF_GUESTS;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,8 +12,8 @@ class OrderTableTest {
   @DisplayName("updateNumberOfGuests()를 호출하면 주문 테이블의 손님 수를 변경할 수 있다.")
   void updateNumberOfGuests() {
     //given
-    final int before = 0;
-    final int after = 4;
+    final NumberOfGuests before = DEFAULT_NUMBER_OF_GUESTS;
+    final NumberOfGuests after = new NumberOfGuests(4);
     final OrderTable orderTable = new OrderTable(before, true);
 
     //when
@@ -27,7 +29,7 @@ class OrderTableTest {
     //given
     final boolean before = true;
     final boolean after = false;
-    final OrderTable orderTable = new OrderTable(0, before);
+    final OrderTable orderTable = new OrderTable(DEFAULT_NUMBER_OF_GUESTS, before);
 
     //when
     orderTable.updateEmpty(after);

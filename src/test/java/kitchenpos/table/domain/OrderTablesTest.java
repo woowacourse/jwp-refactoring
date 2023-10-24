@@ -1,5 +1,7 @@
 package kitchenpos.table.domain;
 
+import static kitchenpos.table.domain.NumberOfGuests.DEFAULT_NUMBER_OF_GUESTS;
+
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -72,8 +74,8 @@ class OrderTablesTest {
       //given
       final OrderTables orderTables = new OrderTables(
           List.of(
-              new OrderTable(0, true),
-              new OrderTable(3, false)
+              new OrderTable(DEFAULT_NUMBER_OF_GUESTS, true),
+              new OrderTable(new NumberOfGuests(3), false)
           )
       );
 
@@ -109,17 +111,17 @@ class OrderTablesTest {
     //given
     final OrderTables orderTables = new OrderTables(
         List.of(
-            new OrderTable(1L, 1L, 2, false),
-            new OrderTable(3L, 2L, 0, true),
-            new OrderTable(2L, 1L, 3, true),
-            new OrderTable(4L, 3L, 4, false)
+            new OrderTable(1L, 1L, new NumberOfGuests(2), false),
+            new OrderTable(3L, 2L, new NumberOfGuests(0), true),
+            new OrderTable(2L, 1L, new NumberOfGuests(3), true),
+            new OrderTable(4L, 3L, new NumberOfGuests(4), false)
         )
     );
     final List<OrderTable> expected = List.of(
-        new OrderTable(1L, null, 2, false),
-        new OrderTable(3L, null, 0, false),
-        new OrderTable(2L, null, 3, false),
-        new OrderTable(4L, null, 4, false)
+        new OrderTable(1L, null, new NumberOfGuests(2), false),
+        new OrderTable(3L, null, new NumberOfGuests(0), false),
+        new OrderTable(2L, null, new NumberOfGuests(3), false),
+        new OrderTable(4L, null, new NumberOfGuests(4), false)
     );
 
     //when

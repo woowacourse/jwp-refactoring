@@ -1,5 +1,6 @@
 package kitchenpos.table.application.entity;
 
+import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.table.domain.OrderTable;
 
 public class OrderTableEntity {
@@ -38,10 +39,15 @@ public class OrderTableEntity {
 
   public static OrderTableEntity from(final OrderTable orderTable) {
     return new OrderTableEntity(orderTable.getId(), orderTable.getTableGroupId(),
-        orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        orderTable.getNumberOfGuests().getValue(), orderTable.isEmpty());
+  }
+
+  public static OrderTableEntity of(final OrderTable orderTable, final boolean empty) {
+    return new OrderTableEntity(orderTable.getId(), orderTable.getTableGroupId(),
+        orderTable.getNumberOfGuests().getValue(), empty);
   }
 
   public OrderTable toOrderTable() {
-    return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+    return new OrderTable(id, tableGroupId, new NumberOfGuests(numberOfGuests), empty);
   }
 }

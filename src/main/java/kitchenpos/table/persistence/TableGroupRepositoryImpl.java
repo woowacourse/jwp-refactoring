@@ -34,7 +34,8 @@ public class TableGroupRepositoryImpl implements TableGroupRepository {
     for (final OrderTable orderTable : entity.getOrderTables().getOrderTables()) {
       savedOrderTables.add(
           orderTableDao.save(new OrderTableEntity(orderTable.getId(), savedTableGroup.getId(),
-              orderTable.getNumberOfGuests(), false)).toOrderTable());
+              orderTable.getNumberOfGuests().getValue(), false)).toOrderTable()
+      );
     }
 
     return savedTableGroup.toTableGroup(new OrderTables(savedOrderTables));

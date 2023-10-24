@@ -8,6 +8,7 @@ import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableEmptyModifyRequest;
 import kitchenpos.table.application.dto.OrderTableNumberOfGuestModifyRequest;
 import kitchenpos.table.application.dto.OrderTableQueryResponse;
+import kitchenpos.table.domain.NumberOfGuests;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-  private static final int MIN_NUMBER_OF_GUESTS = 0;
   private final OrderRepository orderRepository;
   private final OrderTableRepository orderTableDao;
 
@@ -69,10 +69,9 @@ public class TableService {
   @Transactional
   public OrderTableQueryResponse changeNumberOfGuests(final Long orderTableId,
       final OrderTableNumberOfGuestModifyRequest request) {
-    final int numberOfGuests = request.getNumberOfGuests();
+    final NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
     final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
         .orElseThrow(IllegalArgumentException::new);
-    validateNumberOfGuests(numberOfGuests);
     validateNotEmpty(savedOrderTable);
 
     savedOrderTable.updateNumberOfGuests(numberOfGuests);
@@ -82,12 +81,6 @@ public class TableService {
 
   private static void validateNotEmpty(final OrderTable savedOrderTable) {
     if (savedOrderTable.isEmpty()) {
-      throw new IllegalArgumentException();
-    }
-  }
-
-  private void validateNumberOfGuests(final int numberOfGuests) {
-    if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
       throw new IllegalArgumentException();
     }
   }
