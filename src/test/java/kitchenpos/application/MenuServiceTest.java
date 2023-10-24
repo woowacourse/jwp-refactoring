@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest {
 
-    @InjectMocks
+    @Autowired
     MenuService menuService;
 
     @Autowired
