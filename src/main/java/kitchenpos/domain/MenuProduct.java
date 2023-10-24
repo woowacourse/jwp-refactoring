@@ -19,8 +19,8 @@ public class MenuProduct {
     @Id
     private Long seq;
 
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = LAZY)
     private Product product;
 
     @Embedded
