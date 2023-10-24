@@ -1,17 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.KitchenposException;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.request.MenuRequest;
-import kitchenpos.ui.dto.request.OrderLineItemRequest;
-import kitchenpos.ui.dto.request.OrderRequest;
-import kitchenpos.ui.dto.request.UpdateOrderStateRequest;
+import kitchenpos.ui.dto.request.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,7 +54,7 @@ class OrderServiceTest {
         final MenuRequest 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
         final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
-        final OrderTable 테이블 = tableService.create(new OrderTable());
+        final OrderTable 테이블 = tableService.create(주문_테이블());
         final OrderLineItemRequest 주문1 = new OrderLineItemRequest(저장한_신메뉴.getId(), 1);
 
         final OrderRequest 주문_요청 = new OrderRequest(테이블.getId(), List.of(주문1));
@@ -86,7 +83,7 @@ class OrderServiceTest {
             final MenuRequest 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
-            final OrderTable 테이블 = tableService.create(new OrderTable());
+            final OrderTable 테이블 = tableService.create(주문_테이블());
             final OrderLineItemRequest 주문1 = new OrderLineItemRequest(저장한_신메뉴.getId(), 1);
 
             final OrderRequest 주문_요청 = new OrderRequest(테이블.getId(), List.of(주문1));
@@ -108,7 +105,7 @@ class OrderServiceTest {
 
         @Test
         void 주문_항목이_비었다면_예외가_발생한다() {
-            final OrderTable 테이블 = tableService.create(new OrderTable());
+            final OrderTable 테이블 = tableService.create(주문_테이블());
             final OrderRequest 주문_요청 = new OrderRequest(테이블.getId(), Collections.emptyList());
 
             assertThatThrownBy(() -> orderService.create(주문_요청))
@@ -118,7 +115,7 @@ class OrderServiceTest {
 
         @Test
         void 없는_메뉴를_주문하려하면_예외가_발생한다() {
-            final OrderTable 테이블 = tableService.create(new OrderTable());
+            final OrderTable 테이블 = tableService.create(주문_테이블());
 
             // 존재하지 않는 메뉴를 넣는다.
             final OrderLineItemRequest 없는_메뉴_요청 = new OrderLineItemRequest(-1L, 1);
@@ -136,7 +133,7 @@ class OrderServiceTest {
             final MenuRequest 신메뉴 = 메뉴(List.of(상품1), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
-            final OrderTable 테이블 = tableService.create(new OrderTable());
+            final OrderTable 테이블 = tableService.create(주문_테이블());
 
             // 같은 메뉴를 중복해서 주문에 저장한다
             final OrderLineItemRequest 주문1 = new OrderLineItemRequest(저장한_신메뉴.getId(), 1);
@@ -174,9 +171,8 @@ class OrderServiceTest {
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
             // 테이블의 상태를 emtpy로 설정한다
-            final OrderTable table = new OrderTable();
-            table.setEmpty(true);
-            final OrderTable 테이블 = tableService.create(table);
+            final OrderTable 테이블 = tableService.create(주문_테이블());
+            tableService.changeEmpty(테이블.getId(), new ChangeOrderTableEmptyRequest(true));
             final OrderLineItemRequest 주문1 = new OrderLineItemRequest(저장한_신메뉴.getId(), 1);
             final OrderRequest 주문_요청 = new OrderRequest(테이블.getId(), List.of(주문1));
 
@@ -200,7 +196,7 @@ class OrderServiceTest {
             final MenuRequest 신메뉴 = 메뉴(List.of(상품1, 상품2), 메뉴그룹);
             final Menu 저장한_신메뉴 = menuService.create(신메뉴);
 
-            final OrderTable 테이블 = tableService.create(new OrderTable());
+            final OrderTable 테이블 = tableService.create(주문_테이블());
             final OrderRequest 새로운_주문 = new OrderRequest(테이블.getId(), List.of(new OrderLineItemRequest(저장한_신메뉴.getId(), 1)));
 
             주문 = orderService.create(새로운_주문);

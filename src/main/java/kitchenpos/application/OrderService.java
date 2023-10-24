@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.KitchenposException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.request.OrderLineItemRequest;
 import kitchenpos.ui.dto.request.OrderRequest;
 import kitchenpos.ui.dto.request.UpdateOrderStateRequest;
@@ -29,20 +29,20 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository, final OrderLineItemRepository orderLineItemRepository, final OrderTableDao orderTableDao) {
+    public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository, final OrderLineItemRepository orderLineItemRepository, final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         validateOrderItemsSize(orderRequest);
 
-        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new KitchenposException(ORDER_TABLE_NOT_FOUND));
 
         final Order order = Order.create(orderTable);

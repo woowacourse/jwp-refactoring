@@ -4,7 +4,7 @@ import kitchenpos.exception.KitchenposException;
 
 import javax.persistence.Embeddable;
 
-import static kitchenpos.exception.ExceptionInformation.MENU_QUANTITY_OUT_OF_BOUNCE;
+import static kitchenpos.exception.ExceptionInformation.ORDER_QUANTITY_OUT_OF_BOUNCE;
 
 @Embeddable
 public class Quantity {
@@ -20,22 +20,22 @@ public class Quantity {
         this.quantity = quantity;
     }
 
-    public static Quantity from(final long quantity){
+    public static Quantity from(final long quantity) {
         validateBound(quantity);
         return new Quantity(quantity);
     }
 
     private static void validateBound(final long quantity) {
-        if(quantity < MIN_QUANTITY_BOUND){
-            throw new KitchenposException(MENU_QUANTITY_OUT_OF_BOUNCE);
+        if (quantity < MIN_QUANTITY_BOUND) {
+            throw new KitchenposException(ORDER_QUANTITY_OUT_OF_BOUNCE);
         }
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void setQuantity(final long quantity) {
+        this.quantity = quantity;
     }
 }

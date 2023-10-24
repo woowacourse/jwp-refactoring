@@ -23,19 +23,24 @@ public enum ExceptionInformation {
     MENU_PRICE_OVER_MENU_PRODUCT_PRICE(305, "메뉴의 가격이 메뉴에 속하는 상품의 가격 총합보다 큽니다"),
 
     // 4__: 주문
-    ORDER_LINE_ITEMS_IS_EMPTY(400,"주문 항목이 비었습니다"),
-    ORDER_ITEM_NOT_FOUND_OR_DUPLICATE(401,"주문 항목에 중복되거나 존재하지 않는 메뉴가 존재합니다"),
+    ORDER_LINE_ITEMS_IS_EMPTY(400, "주문 항목이 비었습니다"),
+    ORDER_ITEM_NOT_FOUND_OR_DUPLICATE(401, "주문 항목에 중복되거나 존재하지 않는 메뉴가 존재합니다"),
     UPDATE_COMPLETED_ORDER(403, "완료된 주문의 상태를 변경할 수 없습니다"),
     ORDER_IN_EMPTY_TABLE(404, "empty 상태인 테이블의 주문을 생성할 수 없습니다"),
+    ORDER_QUANTITY_OUT_OF_BOUNCE(405, "메뉴에 속하는 상품의 개수가 허용 범위 밖입니다"),
 
 
     // 5__: 주문_테이블
-    ORDER_TABLE_NOT_FOUND(500, "해당하는 주문 테이블이 존재하지 않습니다")
+    ORDER_TABLE_NOT_FOUND(500, "해당하는 주문 테이블이 존재하지 않습니다"),
+    ORDER_TABLE_GUEST_OUT_OF_BOUNCE(501, "주문테이블의 손님수가 허용범위 밖입니다"),
+    ORDER_TABLE_IS_GROUPING(502, "변경하려는 테이블의 그룹테이블 아이디가 존재합니다"),
+    ORDER_TABLE_STATUS_IS_NOT_COMPLETE(503, "변경하려는 테이블의 주문 상태는 COMPLETION여야 합니다."),
+    EMPTY_TABLE_UPDATE_GUEST(504, "빈테이블의 손님수를 변경할 수 없습니다"),
     ;
 
-    private int code;
+    private final int code;
 
-    private String message;
+    private final String message;
 
     ExceptionInformation(final int code, final String message) {
         this.code = code;

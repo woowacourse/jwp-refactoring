@@ -1,10 +1,10 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.ui.dto.request.*;
 
 import java.math.BigDecimal;
@@ -40,14 +40,8 @@ public class TestFixture {
         return new OrderRequest(테이블.getId(), 주문항목들);
     }
 
-    public static OrderTable 주문_테이블() {
-        final OrderTable 테이블 = new OrderTable();
-        테이블.setEmpty(true);
-        return 테이블;
-    }
-
-    public static OrderTable 빈_테이블() {
-        return new OrderTable();
+    public static CreateOrderTableRequest 주문_테이블() {
+        return new CreateOrderTableRequest(1);
     }
 
     public static TableGroup 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들) {

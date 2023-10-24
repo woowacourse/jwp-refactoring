@@ -1,11 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.support.ServiceTest;
 import kitchenpos.ui.dto.request.UpdateOrderStateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -103,12 +104,8 @@ class TableGroupServiceTest {
 
         @Test
         void 존재하지_않는_테이블로_테이블_그룹을_만들_수_없다() {
-            final OrderTable 저장_안된_테이블1 = new OrderTable();
-            final OrderTable 저장_안된_테이블2 = new OrderTable();
-            저장_안된_테이블1.setId(-1L);
-            저장_안된_테이블2.setId(-1L);
-            저장_안된_테이블1.setEmpty(true);
-            저장_안된_테이블2.setEmpty(true);
+            final OrderTable 저장_안된_테이블1 = OrderTable.create(1);
+            final OrderTable 저장_안된_테이블2 = OrderTable.create(1);
 
             final TableGroup 테이블그룹 = new TableGroup();
             테이블그룹.setOrderTables(List.of(저장_안된_테이블1, 저장_안된_테이블2));
@@ -126,9 +123,7 @@ class TableGroupServiceTest {
             tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블2)));
 
             // when
-            final OrderTable 저장할테이블3 = new OrderTable();
-            저장할테이블3.setEmpty(true);
-            final OrderTable 테이블3 = tableService.create(저장할테이블3);
+            final OrderTable 테이블3 = tableService.create(주문_테이블());
 
             // 이미 그룹화 되어있는 테이블을 다른 그룹으로 묶는다
             final TableGroup 테이블그룹2 = new TableGroup();
@@ -143,7 +138,8 @@ class TableGroupServiceTest {
         @Test
         void 비어있지_않은_테이블을_그룹에_지정하려하면_예외가_발생한다() {
             final OrderTable 테이블1 = tableService.create(주문_테이블());
-            final OrderTable 테이블2 = tableService.create(빈_테이블());
+            final OrderTable 테이블2 = tableService.create(주문_테이블());
+            테이블2.updateOrderStatus(true);
             final TableGroup 테이블그룹 = 그룹화_테이블(List.of(테이블1, 테이블2));
 
             assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
