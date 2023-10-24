@@ -104,7 +104,7 @@ class TableServiceTest {
     void changeEmpty_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
-        orderRepository.save(new Order(두명_테이블, orderStatus, LocalDateTime.now()));
+        orderRepository.save(new Order(두명_테이블, orderStatus));
 
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 

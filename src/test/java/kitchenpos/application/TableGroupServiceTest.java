@@ -58,7 +58,6 @@ class TableGroupServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
-            softAssertions.assertThat(actual.getCreatedDate()).isNotNull();
         });
     }
 
@@ -125,7 +124,7 @@ class TableGroupServiceTest {
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
         그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
@@ -143,7 +142,7 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
         그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
         // when
@@ -167,11 +166,11 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
         그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
-        orderRepository.save(new Order(세명_테이블, orderStatus, LocalDateTime.now()));
-        orderRepository.save(new Order(네명_테이블, orderStatus, LocalDateTime.now()));
+        orderRepository.save(new Order(세명_테이블, orderStatus));
+        orderRepository.save(new Order(네명_테이블, orderStatus));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))

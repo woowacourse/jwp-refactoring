@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.common.BaseCreateTimeEntity;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,14 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order extends BaseCreateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,18 +33,15 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    private LocalDateTime orderedTime;
-
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -67,10 +65,6 @@ public class Order {
 
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

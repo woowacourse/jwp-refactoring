@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +51,7 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        final TableGroup tableGroup = new TableGroup();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         savedTableGroup.initOrderTables(savedOrderTables);
 

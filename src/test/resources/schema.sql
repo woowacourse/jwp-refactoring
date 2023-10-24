@@ -46,7 +46,7 @@ create table orders
 (
     id             bigint       not null auto_increment,
     order_status   varchar(255) not null,
-    ordered_time   datetime     not null,
+    created_time   datetime     not null,
     order_table_id bigint       not null,
     primary key (id)
 );
@@ -71,7 +71,7 @@ create table product
 create table table_group
 (
     id           bigint   not null auto_increment,
-    created_date datetime not null,
+    created_time datetime not null,
     primary key (id)
 );
 

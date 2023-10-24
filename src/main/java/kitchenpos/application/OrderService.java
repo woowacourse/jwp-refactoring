@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +62,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        final Order order = new Order(orderTable, OrderStatus.COOKING);
 
         final Order savedOrder = orderRepository.save(order);
 
