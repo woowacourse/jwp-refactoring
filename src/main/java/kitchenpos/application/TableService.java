@@ -15,6 +15,7 @@ import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableService {
     private final OrderRepository orderRepository;
@@ -25,12 +26,12 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = orderTableRepository.save(request.toEmptyOrderTable());
         return OrderTableResponse.from(orderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
@@ -38,7 +39,6 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse changeIsEmpty(Long orderTableId, OrderTableIsEmptyUpdateRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -54,7 +54,6 @@ public class TableService {
         return OrderTableResponse.from(changedOrderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableNumberOfGuestsUpdateRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);

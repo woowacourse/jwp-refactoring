@@ -9,6 +9,7 @@ import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
@@ -17,12 +18,12 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public ProductResponse create(ProductCreateRequest request) {
         Product product = productRepository.save(request.toProduct());
         return ProductResponse.from(product);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         List<Product> products = productRepository.findAll();
         return products.stream()

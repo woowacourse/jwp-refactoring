@@ -14,6 +14,7 @@ import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class MenuService {
 
@@ -31,7 +32,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         validateMenuGroup(request.getMenuGroupId());
 
@@ -58,6 +58,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         List<Menu> menus = menuRepository.findAll();
         return menus.stream()

@@ -14,6 +14,7 @@ import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class TableGroupService {
     private final OrderRepository orderRepository;
@@ -30,7 +31,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
 
@@ -41,7 +41,6 @@ public class TableGroupService {
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 단체 지정입니다."));
