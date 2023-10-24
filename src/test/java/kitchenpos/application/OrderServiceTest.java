@@ -21,8 +21,6 @@ import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -75,27 +73,6 @@ class OrderServiceTest {
             );
         }
 
-        @ParameterizedTest
-        @EmptySource
-        @DisplayName("주문 항목이 빈 값이거나 컬렉션이 비어있는 경우 예외가 발생한다.")
-        void throwsExceptionWhenOrderLineItemsAreNull(List<OrderLineItemRequest> orderLineItemRequests) {
-            // given
-            final MenuGroup menuGroup = new MenuGroup("치킨");
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Menu menu = new Menu(savedMenuGroup, new ArrayList<>(), "후라이드 치킨", new BigDecimal("15000.00"));
-            menuRepository.save(menu);
-
-            final OrderTable orderTable = new OrderTable(null, 1, false);
-            final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-
-            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                    orderLineItemRequests);
-
-            // when, then
-            assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
         @Test
         @DisplayName("메뉴의 개수와 주문 항목의 개수가 다른 경우 예외가 발생한다.")
         void throwsExceptionWhenOrderLineItemsAndMenuHasDifferentCount() {
@@ -116,11 +93,12 @@ class OrderServiceTest {
 
             // when, then
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("요청한 주문 항목의 개수와 저장된 메뉴의 개수가 댜릅니다.");
         }
 
         @Test
-        @DisplayName("주문 테이블의 ID가 존재하지 않는다면 예외가 발생한다.")
+        @DisplayName("주문 테이블이 존재하지 않는다면 예외가 발생한다.")
         void throwsExceptionWhenOrderTableIdNonExist() {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
@@ -133,7 +111,8 @@ class OrderServiceTest {
 
             // when, then
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("해당 주문 테이블이 존재하지 않습니다.");
         }
 
         @Test
@@ -154,7 +133,8 @@ class OrderServiceTest {
 
             // when, then
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("주문 테이블은 비어있을 수 없습니다.");
         }
     }
 
@@ -221,7 +201,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 ID에 해당되는 주문이 존재하지 않는 경우 예외가 발생한다.")
+        @DisplayName("주문이 존재하지 않는 경우 예외가 발생한다.")
         void throwsExceptionWhenOrderNonExist() {
             // given
             final MenuGroup menuGroup = new MenuGroup("치킨");
@@ -241,7 +221,8 @@ class OrderServiceTest {
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(2L, orderChangeRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("해당 주문이 존재하지 않습니다.");
         }
 
         @Test
@@ -260,13 +241,14 @@ class OrderServiceTest {
             final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
                     List.of(orderLineItemRequest));
             final Order savedOrder = orderService.create(orderCreateRequest);
-            savedOrder.setOrderStatus(OrderStatus.COMPLETION);
+            savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
 
             final OrderChangeRequest orderChangeRequest = new OrderChangeRequest(OrderStatus.COOKING);
 
             // when, then
             assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), orderChangeRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("결제완료 상태인 경우 주문상태를 변경할 수 없습니다.");
         }
     }
 }

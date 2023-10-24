@@ -34,8 +34,7 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
+        final OrderTable savedOrderTable = findOrderTableBy(orderTableId);
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
                 Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
@@ -48,10 +47,14 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableChangNumberOfGuestRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
+        final OrderTable savedOrderTable = findOrderTableBy(orderTableId);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    private OrderTable findOrderTableBy(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
     }
 }

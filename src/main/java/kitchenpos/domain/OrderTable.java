@@ -59,7 +59,7 @@ public class OrderTable {
         }
     }
 
-    private void validateEmptyTable() {
+    public void validateEmptyTable() {
         if (empty) {
             throw new IllegalArgumentException("주문 테이블은 비어있을 수 없습니다.");
         }
@@ -74,12 +74,12 @@ public class OrderTable {
             return false;
         }
         final OrderTable that = (OrderTable) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 
     public Long getId() {

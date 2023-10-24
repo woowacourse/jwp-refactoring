@@ -48,43 +48,19 @@ public class OrderLineItem {
             return false;
         }
         final OrderLineItem that = (OrderLineItem) o;
-        return Objects.equals(seq, that.seq);
+        return Objects.equals(getSeq(), that.getSeq());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(seq);
+        return Objects.hash(getSeq());
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
     public void setOrder(final Order order) {
         this.order = order;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

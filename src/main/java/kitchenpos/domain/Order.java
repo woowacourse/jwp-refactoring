@@ -54,6 +54,17 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(final OrderStatus orderStatusToChange) {
+        validateOrderStatus();
+        this.orderStatus = orderStatusToChange;
+    }
+
+    private void validateOrderStatus() {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException("결제완료 상태인 경우 주문상태를 변경할 수 없습니다.");
+        }
+    }
+
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
         orderLineItem.setOrder(this);
         this.orderLineItems.add(orderLineItem);
@@ -68,51 +79,19 @@ public class Order {
             return false;
         }
         final Order order = (Order) o;
-        return Objects.equals(id, order.id);
+        return Objects.equals(getId(), order.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(getId());
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 }
