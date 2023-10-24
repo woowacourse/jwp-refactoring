@@ -1,14 +1,17 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import kitchenpos.domain.product.Name;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
 
 public class MenuGroup {
     @Id
     private Long id;
-    private String name;
+    @Embedded.Empty
+    private Name name;
 
-    public MenuGroup(final Long id, final String name) {
+    public MenuGroup(final Long id, final Name name) {
         this.id = id;
         this.name = name;
     }
@@ -17,7 +20,7 @@ public class MenuGroup {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 

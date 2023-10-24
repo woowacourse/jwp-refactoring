@@ -3,12 +3,13 @@ package kitchenpos.application.response;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.product.Name;
 
 public class MenuGroupResponse {
     private Long id;
-    private String name;
+    private Name name;
 
-    public MenuGroupResponse(final Long id, final String name) {
+    public MenuGroupResponse(final Long id, final Name name) {
         this.id = id;
         this.name = name;
     }
@@ -27,7 +28,7 @@ public class MenuGroupResponse {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 }

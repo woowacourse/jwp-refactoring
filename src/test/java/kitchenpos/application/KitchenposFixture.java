@@ -32,7 +32,7 @@ public class KitchenposFixture {
     }
 
     public static MenuGroup 메뉴그룹만들기(final MenuGroupService menuGroupService) {
-        final MenuGroupResponse response = menuGroupService.create("코딱지메뉴그룹");
+        final MenuGroupResponse response = menuGroupService.create(new Name("코딱지메뉴그룹"));
         return new MenuGroup(response.getId(), response.getName());
     }
 

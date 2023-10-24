@@ -10,6 +10,7 @@ import java.util.Map;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.product.Name;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ class MenuGroupRestControllerTest {
     @Test
     @DisplayName("POST /api/menu-groups")
     void createProduct() throws Exception {
-        when(menuGroupService.create("메뉴그룹")).thenReturn(MenuGroupResponse.from(new MenuGroup(1L, "메뉴그룹")));
+        when(menuGroupService.create(new Name("메뉴그룹"))).thenReturn(MenuGroupResponse.from(new MenuGroup(1L, new Name("메뉴그룹"))));
         mockMvc.perform(post("/api/menu-groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("name", "메뉴그룹"))))
