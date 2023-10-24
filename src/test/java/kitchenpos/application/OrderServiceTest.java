@@ -8,11 +8,14 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +36,7 @@ import java.util.List;
 import static kitchenpos.fixture.MenuGroupFixtures.TEST_GROUP;
 import static kitchenpos.fixture.OrderTableFixtures.EMPTY_TABLE;
 import static kitchenpos.fixture.OrderTableFixtures.NOT_EMPTY_TABLE;
+import static kitchenpos.fixture.ProductFixtures.PIZZA;
 
 @Transactional
 @SpringBootTest
@@ -55,19 +59,22 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
 
+    @Autowired
+    private ProductDao productDao;
+
     private OrderTable notEmptyTable;
     private Menu testMenu;
 
     @BeforeEach
     void setup() {
         notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
-
         final MenuGroup savedMenuGroup = menuGroupDao.save(TEST_GROUP());
+        final Product savedProduct = productDao.save(PIZZA());
 
-        final Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setName("테스트 메뉴");
-        menu.setMenuGroupId(savedMenuGroup.getId());
+        final Menu menu = new Menu.MenuFactory("테스트 메뉴", new Price(BigDecimal.valueOf(10000)), savedMenuGroup)
+                .addProduct(savedProduct, 1)
+                .create();
+
         testMenu = menuDao.save(menu);
     }
 

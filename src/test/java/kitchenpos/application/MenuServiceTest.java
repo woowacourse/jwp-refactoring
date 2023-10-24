@@ -9,7 +9,7 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -153,12 +153,10 @@ class MenuServiceTest {
     @DisplayName("등록됨 상품들 목록을 가져온다.")
     void getMenuList() {
         // given
-        final Menu menu = getMenuFixture();
+        final Menu menu = new Menu.MenuFactory(MENU_NAME, new Price(BigDecimal.valueOf(1900)), testMenuGroup)
+                .addProduct(testProduct, 2)
+                .create();
         final Menu savedMenu = menuDao.save(menu);
-
-        final MenuProduct savedMenuProduct = menuProductDao.save(new MenuProduct(savedMenu.getId(), 2, testProduct));
-
-        savedMenu.setMenuProducts(List.of(savedMenuProduct));
         final MenuResponse expectedLastResponse = MenuResponse.from(savedMenu);
 
         // when
@@ -171,13 +169,5 @@ class MenuServiceTest {
             softly.assertThat(lastMenu).usingRecursiveComparison()
                     .isEqualTo(expectedLastResponse);
         });
-    }
-
-    private Menu getMenuFixture() {
-        final Menu reqeustMenu = new Menu();
-        reqeustMenu.setName(MENU_NAME);
-        reqeustMenu.setPrice(BigDecimal.valueOf(1900));
-        reqeustMenu.setMenuGroupId(testMenuGroup.getId());
-        return reqeustMenu;
     }
 }

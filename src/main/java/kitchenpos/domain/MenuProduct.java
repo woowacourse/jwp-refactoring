@@ -14,7 +14,9 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private Long menuId;
+    @ManyToOne
+    @JoinColumn(nullable = false, updatable = false)
+    private Menu menu;
 
     @ManyToOne
     @JoinColumn(nullable = false, updatable = false)
@@ -25,18 +27,26 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long menuId, final long quantity, final Product product) {
-        this.menuId = menuId;
+    public MenuProduct(final Menu menu, final long quantity, final Product product) {
+        this.menu = menu;
         this.quantity = quantity;
         this.product = product;
+    }
+
+    public void addToMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     public Long getSeq() {
         return seq;
     }
 
+    public Menu getMenu() {
+        return menu;
+    }
+
     public Long getMenuId() {
-        return menuId;
+        return menu.getId();
     }
 
     public long getQuantity() {
