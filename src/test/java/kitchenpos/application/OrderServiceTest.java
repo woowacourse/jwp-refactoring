@@ -134,7 +134,7 @@ class OrderServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderException.class);
         }
 
         @Test
@@ -149,7 +149,7 @@ class OrderServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderException.class);
         }
 
         @Test
@@ -164,14 +164,14 @@ class OrderServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderException.class);
         }
 
         @Test
         void 테이블이_주문_불가능_상태인_경우_예외가_발생한다() {
             // given
             final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-            orderTable.setEmpty(true);
+            orderTable.changeEmpty(true);
             orderTableDao.save(orderTable);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
@@ -180,7 +180,7 @@ class OrderServiceTest {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderException.class);
         }
     }
 
