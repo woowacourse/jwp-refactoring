@@ -47,11 +47,12 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블의 인원수변경할 때 잘못된 숫자를 입력 시 예외")
     void changeNumberOfGuests_InvalidRequest_ShouldThrowException() {
-        // Arrange
+        //given
         OrderTableCreateRequest request = new OrderTableCreateRequest(4, true);
         Long tableId = tableService.create(request);
 
-        // Act & Assert
+        //when
+        //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, -1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
