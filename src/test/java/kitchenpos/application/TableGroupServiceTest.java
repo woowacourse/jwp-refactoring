@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.TableGroup;
@@ -153,8 +154,8 @@ class TableGroupServiceTest {
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
 
-        final Order order1 = new Order(orderTable1.getId());
-        final Order order2 = new Order(orderTable2.getId());
+        final Order order1 = new Order(orderTable1.getId(), new OrderLineItems(List.of()));
+        final Order order2 = new Order(orderTable2.getId(), new OrderLineItems(List.of()));
         order1.changeStatus(OrderStatus.COMPLETION.name());
         order2.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order1);
@@ -182,8 +183,8 @@ class TableGroupServiceTest {
         tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
-        orderRepository.save(new Order(orderTable1.getId()));
-        orderRepository.save(new Order(orderTable2.getId()));
+        orderRepository.save(new Order(orderTable1.getId(), new OrderLineItems(List.of())));
+        orderRepository.save(new Order(orderTable2.getId(), new OrderLineItems(List.of())));
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
 

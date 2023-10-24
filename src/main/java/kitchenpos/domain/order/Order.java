@@ -1,16 +1,15 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Table(name = "orders")
@@ -31,25 +30,24 @@ public class Order {
     @Column(name = "ordered_time", nullable = false)
     private LocalDateTime orderedTime = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus) {
+    public Order(final Long id,
+                 final Long orderTableId,
+                 final OrderStatus orderStatus,
+                 final OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
+        this.orderLineItems = orderLineItems.join(this);
     }
 
-    public Order(final Long orderTableId) {
-        this(null, orderTableId, OrderStatus.COOKING);
-    }
-
-    public void addOrderLineItems(final OrderLineItem orderLineItem) {
-        orderLineItem.setOrder(this);
-        orderLineItems.add(orderLineItem);
+    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, orderLineItems);
     }
 
     public void changeStatus(final String changingStatus) {
@@ -76,6 +74,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 }

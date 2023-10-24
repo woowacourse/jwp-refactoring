@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.dto.order.OrderRequest;
@@ -39,10 +40,11 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         validateOrderLineItem(orderRequest);
-        final OrderTable orderTable = validateOrderTableIsEmpty(orderRequest);
-        final Order order = new Order(orderTable.getId());
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
+        final OrderLineItems orderLineItems = getOrderLineItems(orderRequest.getOrderLineItems());
+        final Order order = new Order(orderTable.getId(), orderLineItems);
         orderRepository.save(order);
-        addOrderLineItems(getForSaveOrderLineItems(orderRequest.getOrderLineItems()), order);
         return OrderResponse.from(order);
     }
 
@@ -57,26 +59,11 @@ public class OrderService {
         }
     }
 
-    private OrderTable validateOrderTableIsEmpty(final OrderRequest orderRequest) {
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("주문 테이블이 현재 비어있습니다.");
-        }
-        return orderTable;
-    }
-
-    private List<OrderLineItem> getForSaveOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
-        return orderLineItemRequests.stream()
+    private OrderLineItems getOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
             .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
             .collect(Collectors.toUnmodifiableList());
-    }
-
-    private void addOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            order.addOrderLineItems(orderLineItem);
-            orderLineItemRepository.save(orderLineItem);
-        }
+        return new OrderLineItems(orderLineItems);
     }
 
     public List<OrderResponse> list() {

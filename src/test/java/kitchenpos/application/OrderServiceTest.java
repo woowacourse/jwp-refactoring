@@ -6,6 +6,7 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.product.Product;
@@ -166,8 +167,8 @@ class OrderServiceTest {
         // given
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(2, false));
         final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(2, false));
-        orderRepository.save(new Order(orderTable1.getId()));
-        orderRepository.save(new Order(orderTable2.getId()));
+        orderRepository.save(new Order(orderTable1.getId(), new OrderLineItems(List.of())));
+        orderRepository.save(new Order(orderTable2.getId(), new OrderLineItems(List.of())));
 
         // when
         final List<OrderResponse> result = orderService.list();
@@ -181,7 +182,7 @@ class OrderServiceTest {
     void change_order_status() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-        final Order order = new Order(orderTable.getId());
+        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of()));
         orderRepository.save(order);
         final OrderStatusChangeRequest request = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
 
@@ -213,7 +214,7 @@ class OrderServiceTest {
     void change_order_fail_with_completion_order() {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(2, false));
-        final Order order = new Order(orderTable.getId());
+        final Order order = new Order(orderTable.getId(), new OrderLineItems(List.of()));
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 

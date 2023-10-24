@@ -1,5 +1,6 @@
 package kitchenpos.domain.order;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ class OrderTest {
     @Test
     void change_order_Status() {
         // given
-        final Order order = new Order(1L);
+        final Order order = new Order(1L, new OrderLineItems());
         String changingStatus = OrderStatus.COMPLETION.name();
 
         // when
@@ -26,7 +27,7 @@ class OrderTest {
     @Test
     void change_status_fail() {
         // given
-        final Order completionOrder = new Order(1L, 1L, OrderStatus.COMPLETION);
+        final Order completionOrder = new Order(1L, 1L, OrderStatus.COMPLETION, new OrderLineItems());
         String changingStatus = OrderStatus.COOKING.name();
 
         // when
@@ -40,10 +41,9 @@ class OrderTest {
     void add_orderLineItem() {
         // given
         final OrderLineItem orderLineItem = new OrderLineItem(1L, 2);
-        final Order order = new Order(2L);
 
         // when
-        order.addOrderLineItems(orderLineItem);
+        final Order order = new Order(2L, new OrderLineItems(List.of(orderLineItem)));
 
         // then
         assertThat(orderLineItem.getOrder()).isEqualTo(order);

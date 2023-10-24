@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.TableGroup;
@@ -84,9 +85,8 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
         final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
-        final Order order = new Order(savedOrderTable.getId());
+        final Order order = new Order(savedOrderTable.getId(), new OrderLineItems(List.of()));
         order.changeStatus(OrderStatus.COMPLETION.name());
-        order.addOrderLineItems(orderLineItems.get(0));
         orderRepository.save(order);
 
         // when
@@ -131,7 +131,7 @@ class TableServiceTest {
     void change_orderTable_empty_fail_with_invalid_orderStatus() {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
-        orderRepository.save(new Order(savedOrderTable.getId()));
+        orderRepository.save(new Order(savedOrderTable.getId(), new OrderLineItems(List.of())));
 
         // when
         // then
