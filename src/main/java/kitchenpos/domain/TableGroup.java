@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", fetch = FetchType.LAZY)
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {}
 
