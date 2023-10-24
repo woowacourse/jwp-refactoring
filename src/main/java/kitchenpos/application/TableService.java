@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class TableService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -26,7 +27,6 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(final CreateOrderTableRequest request) {
         final OrderTable orderTable = OrderTable.builder()
                 .numberOfGuests(new NumberOfGuests(request.getNumberOfGuests()))
@@ -36,6 +36,7 @@ public class TableService {
         return OrderTableResponse.from(savedOrderTable);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
 
         return orderTableRepository.findAll().stream()
@@ -43,7 +44,6 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -68,7 +68,6 @@ public class TableService {
         return OrderTableResponse.from(updatedOrderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final ChangeNumberOfGuestsRequest request) {
         final NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
 

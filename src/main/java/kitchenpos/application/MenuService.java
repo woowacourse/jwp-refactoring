@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
@@ -34,7 +35,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public MenuResponse create(final CreateMenuRequest request) {
         final Price price = new Price(request.getPrice());
 
@@ -85,17 +85,11 @@ public class MenuService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         return menus.stream()
-                .map(menu -> Menu.builder()
-                        .id(menu.getId())
-                        .name(menu.getName())
-                        .price(menu.getPrice())
-                        .menuGroup(new MenuGroup(menu.getMenuGroup().getId()))
-                        .menuProducts(menuProductRepository.findAllByMenu(menu))
-                        .build())
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
     }

@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
@@ -36,7 +37,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderResponse create(final CreateOrderRequest request) {
         final List<OrderLineItemsDto> orderLineItemDtos = request.getOrderLineItems();
 
@@ -90,23 +90,15 @@ public class OrderService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
         return orders.stream()
-                .map(order -> Order.builder()
-                        .id(order.getId())
-                        .orderTableId(order.getOrderTable())
-                        .orderStatus(order.getOrderStatus())
-                        .orderedTime(order.getOrderedTime())
-                        .orderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()))
-                        .build()
-                )
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);

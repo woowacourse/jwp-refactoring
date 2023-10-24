@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -31,7 +32,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupResponse create(final CreateTableGroupRequest request) {
         final List<OrderTableRequest> orderTables = request.getOrderTables();
 
@@ -74,7 +74,6 @@ public class TableGroupService {
                 new TableGroup(tableGroupId, tableGroup.getCreatedDate(), tableGroup.getOrderTables()));
     }
 
-    @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
