@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -50,7 +49,10 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
         final Order savedOrder = orderRepository.save(order);
 
         for (final OrderCreateRequest.OrderLineItemCreate orderLineItem : orderLineItemCreates) {

@@ -154,10 +154,10 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
             tableGroup = testFixtureBuilder.buildTableGroup(tableGroup);
 
-            OrderTable notCompletionOrdertable = new OrderTable(tableGroup.getId(), 3, false);
-            notCompletionOrdertable = testFixtureBuilder.buildOrderTable(notCompletionOrdertable);
+            OrderTable orderTable = new OrderTable(tableGroup.getId(), 3, false);
+            orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final Order notCompletionOrder = new Order(notCompletionOrdertable, orderStatus, LocalDateTime.now(), Collections.emptyList());
+            final Order notCompletionOrder = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList());
             testFixtureBuilder.buildOrder(notCompletionOrder);
 
             // when & then

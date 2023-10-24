@@ -123,7 +123,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderFindAll() {
             //given
-            Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
+            Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
             order = testFixtureBuilder.buildOrder(order);
 
             //when
@@ -146,7 +146,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderStatusChange() {
             //given
-            Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
+            Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
             order = testFixtureBuilder.buildOrder(order);
 
             //when
@@ -174,7 +174,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderStatusChangeFailWhenStatusIsCompletion() {
             //given
-            Order completionOrder = new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList());
+            Order completionOrder = new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.emptyList());
             completionOrder = testFixtureBuilder.buildOrder(completionOrder);
 
             final String changeStatus = OrderStatus.MEAL.name();

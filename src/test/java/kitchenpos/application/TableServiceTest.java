@@ -132,18 +132,14 @@ class TableServiceTest extends ServiceTest {
             OrderTable notCompletionOrdertable = new OrderTable(null, 3, false);
             notCompletionOrdertable = testFixtureBuilder.buildOrderTable(notCompletionOrdertable);
 
-            final Order notCompletionOrder = new Order(notCompletionOrdertable, orderStatus, LocalDateTime.now(), Collections.emptyList());
+            final Order notCompletionOrder = new Order(notCompletionOrdertable.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList());
             testFixtureBuilder.buildOrder(notCompletionOrder);
-
-            final OrderTable changingStatus = new OrderTable();
-            changingStatus.changeEmpty(!notCompletionOrdertable.isEmpty());
 
             // when & then
             final Long orderTableId = notCompletionOrdertable.getId();
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, true))
                     .isInstanceOf(IllegalArgumentException.class);
         }
-
     }
 
     @DisplayName("주문 테이블 고객 수 변경")
