@@ -1,5 +1,7 @@
 package kitchenpos.application.menu;
 
+import kitchenpos.application.menu.request.MenuCreateRequest;
+import kitchenpos.application.menu.request.MenuProductRequest;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProductRepository;
@@ -35,41 +37,58 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(MenuCreateRequest request) {
+        final BigDecimal price = request.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        List<MenuProductRequest> menuProducts = request.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
+        for (final MenuProductRequest menuProductRequest : menuProducts) {
+            final Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
+        Menu menu = mapToMenu(request, menuProducts);
+
         final Menu savedMenu = menuRepository.save(menu);
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
+        for (final MenuProductRequest menuProductRequest : menuProducts) {
+            MenuProduct menuProduct = mapToMenuProduct(menuProductRequest, menuId);
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.saveMenuProducts(savedMenuProducts);
 
         return savedMenu;
+    }
+
+    private MenuProduct mapToMenuProduct(MenuProductRequest menuProductRequest, Long menuId) {
+        return new MenuProduct(
+                menuId,
+                menuProductRequest.getProductId(),
+                menuProductRequest.getQuantity());
+    }
+
+    private Menu mapToMenu(MenuCreateRequest request, List<MenuProductRequest> menuProducts) {
+        final Menu menu = Menu.of(request.getName(), request.getPrice().longValue(), request.getMenuGroupId());
+        for (final MenuProductRequest menuProduct : menuProducts) {
+            menu.addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
+        }
+        return menu;
     }
 
     public List<Menu> list() {

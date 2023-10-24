@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.application.menu.MenuGroupService;
 import kitchenpos.application.menu.MenuService;
+import kitchenpos.application.menu.request.MenuCreateRequest;
 import kitchenpos.application.menu.request.MenuGroupCreateRequest;
+import kitchenpos.application.menu.request.MenuProductRequest;
 import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
 import kitchenpos.application.order.request.TableCreateRequest;
@@ -116,9 +118,15 @@ public abstract class ServiceTestHelper {
     }
 
     public Menu 메뉴_등록(String name, Long price, MenuGroup menuGroup, Product... products) {
-        Menu menu = Menu.of(name, price, menuGroup.getId());
-        addMenuProducts(menu, products);
-        return menuService.create(menu);
+        List<MenuProductRequest> menuProductRequests = getMenuProductRequests(products);
+        MenuCreateRequest request = new MenuCreateRequest(name, price, menuGroup.getId(), menuProductRequests);
+        return menuService.create(request);
+    }
+
+    private List<MenuProductRequest> getMenuProductRequests(Product[] products) {
+        return Arrays.stream(products)
+                .map(product -> new MenuProductRequest(product.getId(), 1))
+                .collect(Collectors.toList());
     }
 
     private void addMenuProducts(Menu menu, Product[] products) {
@@ -166,11 +174,11 @@ public abstract class ServiceTestHelper {
         return tableService.changeEmpty(orderTableId, updateRequest);
     }
 
-    public TableUpdateRequest 테이블_비움요청(){
+    public TableUpdateRequest 테이블_비움요청() {
         return new TableUpdateRequest(0, true);
     }
 
-    public TableUpdateRequest 테이블_채움요청(){
+    public TableUpdateRequest 테이블_채움요청() {
         return new TableUpdateRequest(0, false);
     }
 
