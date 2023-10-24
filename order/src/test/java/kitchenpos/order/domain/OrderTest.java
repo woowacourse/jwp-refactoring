@@ -1,10 +1,9 @@
 package kitchenpos.order.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Collections;
-import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,8 +17,6 @@ class OrderTest {
     @BeforeEach
     void setUp() {
         orderTableId = 1L;
-        List<OrderLineItem> orderLineItemList = Collections.singletonList(
-                new OrderLineItem(1L, 1L));  // Assume a sample order line item.
     }
 
     @Test
@@ -30,7 +27,7 @@ class OrderTest {
         // then
         assertThat(order).isNotNull();
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-        assertThat(order.getOrderTableId()).isEqualTo(orderTableId);
+        assertThat(order.getOrderTableId().getId()).isEqualTo(orderTableId);
         assertThat(order.getOrderLineItems()).isEqualTo(orderLineItems);
     }
 
@@ -43,7 +40,7 @@ class OrderTest {
             Order order = new Order(orderTableId, orderLineItems);
             order.updateOrderStatus(OrderStatus.MEAL);
 
-            Assertions.assertEquals(OrderStatus.MEAL, order.getOrderStatus());
+            assertEquals(OrderStatus.MEAL, order.getOrderStatus());
         }
 
         @Test
@@ -52,16 +49,14 @@ class OrderTest {
             order.updateOrderStatus(OrderStatus.MEAL);  // first update to MEAL
             order.updateOrderStatus(OrderStatus.COMPLETION);  // then update to COMPLETION
 
-            Assertions.assertEquals(OrderStatus.COMPLETION, order.getOrderStatus());
+            assertEquals(OrderStatus.COMPLETION, order.getOrderStatus());
         }
 
         @Test
         void testInvalidOrderStatusUpdate() {
             Order order = new Order(orderTableId, orderLineItems);
 
-            Assertions.assertThrows(IllegalArgumentException.class, () -> {
-                order.updateOrderStatus(OrderStatus.COMPLETION);
-            });
+            assertThrows(IllegalArgumentException.class, () -> order.updateOrderStatus(OrderStatus.COMPLETION));
         }
 
     }

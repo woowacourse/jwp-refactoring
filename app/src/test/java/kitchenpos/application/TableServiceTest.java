@@ -16,7 +16,6 @@ import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.application.dto.TableEmptyRequest;
 import kitchenpos.ordertable.application.dto.TableGuestRequest;
@@ -26,9 +25,7 @@ import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.tablegroup.application.dto.OrderTableResponse;
 import kitchenpos.tablegroup.application.dto.TableGroupRequest;
-import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
 
-
-    @Autowired
-    private OrderRepository orderRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
@@ -155,11 +149,9 @@ class TableServiceTest extends ServiceTest {
             List<Long> tableIds = tableResponses.stream()
                     .map(TableResponse::getId)
                     .collect(Collectors.toList());
+            tableGroupService.group(TableGroupRequest.from(tableIds));
 
-            TableGroupResponse tableGroupResponse = tableGroupService.create(TableGroupRequest.from(tableIds));
-
-            OrderTableResponse orderTableResponse = tableGroupResponse.getOrderTables().get(0);
-            Long orderTableId = orderTableResponse.getId();
+            Long orderTableId = tableIds.get(0);
 
             TableEmptyRequest tableEmptyRequest = new TableEmptyRequest(false);
 

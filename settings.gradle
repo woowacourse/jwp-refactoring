@@ -2,7 +2,9 @@ rootProject.name = 'kitchenpos'
 
 include('app')
 include('common')
-include('order')
-include('product')
-include('menugroup')
 include('menu')
+include('menugroup')
+include('order')
+include('ordertable')
+include('product')
+include('tablegroup')

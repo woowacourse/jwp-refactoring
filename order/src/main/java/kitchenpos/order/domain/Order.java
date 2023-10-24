@@ -1,7 +1,9 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Embedded;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -9,7 +11,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Order {
     @Id
     private Long id;
-    private Long orderTableId;
+    private AggregateReference<OrderTable, Long> orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @Embedded.Empty
@@ -30,7 +32,7 @@ public class Order {
             OrderLineItems orderLineItems
     ) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTableId = AggregateReference.to(orderTableId);
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -51,7 +53,7 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
+    public AggregateReference<OrderTable, Long> getOrderTableId() {
         return orderTableId;
     }
 

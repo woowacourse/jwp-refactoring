@@ -16,14 +16,12 @@ import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrderStatusRequest;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.product.application.dto.ProductRequest;
 import kitchenpos.product.application.dto.ProductResponse;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.tablegroup.application.dto.OrderTableResponse;
 import kitchenpos.tablegroup.application.dto.TableGroupRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
 
-
-    @Autowired
-    private OrderRepository orderRepository;
     @Autowired
     private OrderTableRepository orderTableRepository;
 
@@ -61,15 +56,17 @@ class TableGroupServiceTest extends ServiceTest {
             );
 
             // when
-            TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
+            TableGroupResponse actual = tableGroupService.group(tableGroupRequest);
 
             // then
-            List<OrderTableResponse> updatedOrderTables = actual.getOrderTables();
-            List<Long> updatedOrderTableIds = updatedOrderTables.stream()
-                    .map(OrderTableResponse::getId)
+
+            List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(actual.getId());
+
+            List<Long> updatedOrderTableIds = orderTables.stream()
+                    .map(OrderTable::getId)
                     .collect(Collectors.toList());
 
-            assertThat(updatedOrderTables).hasSize(2);
+            assertThat(actual).isNotNull();
             assertThat(updatedOrderTableIds).containsExactly(firstOrderTable.getId(), secondOrderTable.getId());
         }
 
@@ -80,7 +77,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            assertThatThrownBy(() -> tableGroupService.group(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -91,7 +88,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            assertThatThrownBy(() -> tableGroupService.group(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -103,7 +100,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             // when
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            assertThatThrownBy(() -> tableGroupService.group(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -113,11 +110,11 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupRequest tableGroupRequest = TableGroupRequest.from(
                     List.of(firstOrderTable.getId(), secondOrderTable.getId())
             );
-            TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
+            TableGroupResponse actual = tableGroupService.group(tableGroupRequest);
 
             // when
             // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            assertThatThrownBy(() -> tableGroupService.group(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -131,7 +128,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupRequest tableGroupRequest = TableGroupRequest.from(
                     List.of(firstOrderTable.getId(), secondOrderTable.getId())
             );
-            TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
+            TableGroupResponse savedTableGroup = tableGroupService.group(tableGroupRequest);
 
             BigDecimal price = BigDecimal.valueOf(1000);
             ProductResponse productResponse = productService.create(new ProductRequest("치킨", price));
@@ -179,7 +176,7 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroupRequest tableGroupRequest = TableGroupRequest.from(
                     List.of(firstOrderTable.getId(), secondOrderTable.getId())
             );
-            TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
+            TableGroupResponse savedTableGroup = tableGroupService.group(tableGroupRequest);
 
             BigDecimal price = BigDecimal.valueOf(1000);
             ProductResponse productResponse = productService.create(new ProductRequest("치킨", price));
