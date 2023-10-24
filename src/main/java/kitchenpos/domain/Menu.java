@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -45,8 +46,19 @@ public class Menu {
     }
 
     public void addMenuProduct(MenuProduct menuProduct) {
-        menuProduct.setMenu(this);
         menuProducts.add(menuProduct);
+    }
+
+    public void validatePrice() {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void checkProductPriceSumEqualsPrice(BigDecimal sum) {
+        if (price.compareTo(sum) != 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
