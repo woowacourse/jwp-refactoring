@@ -13,13 +13,14 @@ class OrderTablesTest {
         // given
         final OrderTable orderTable1 = new OrderTable(2, true);
         final OrderTable orderTable2 = new OrderTable(3, true);
-        final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+        final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
         final TableGroup tableGroup = new TableGroup(orderTables);
         orderTable1.updateTableGroup(tableGroup);
         orderTable2.updateTableGroup(tableGroup);
 
         // when
-        orderTables.ungroup();
+        final OrderTables savedOrderTables = new OrderTables(orderTables);
+        savedOrderTables.ungroup();
 
         // then
         assertAll(

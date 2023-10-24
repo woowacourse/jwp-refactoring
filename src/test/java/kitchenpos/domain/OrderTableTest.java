@@ -40,11 +40,10 @@ class OrderTableTest {
         // given
         final OrderTable orderTable = new OrderTable(
                 null,
-                new TableGroup(new OrderTables(
+                new TableGroup(
                         List.of(
                                 new OrderTable(2, true),
-                                new OrderTable(3, true)
-                        ))
+                                new OrderTable(3, true))
                 ),
                 1,
                 true
