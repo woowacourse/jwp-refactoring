@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateDto;
 import kitchenpos.application.dto.OrderTableUpdateGuestDto;
+import kitchenpos.domain.exception.OrderException.InvalidOrderStatusChangeException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
@@ -184,7 +185,7 @@ class TableServiceTest {
 
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidOrderStatusChangeException.class);
     }
 
     private OrderTable createOrderTable(final boolean emptyStatus, final int guests) {

@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 @Entity
 public class MenuGroup {
 
-    public static int MINIMUM_MENU_GROUP_NAME_LENGTH = 1;
+    public static final int MINIMUM_MENU_GROUP_NAME_LENGTH = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

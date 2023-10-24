@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.exception.TableGroupException.GroupAlreadyExistsException;
 import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
+import kitchenpos.domain.exception.TableGroupException.UngroupingNotPossibleException;
 import org.springframework.util.CollectionUtils;
 
 @Entity
@@ -51,6 +52,13 @@ public class TableGroup {
         return tableGroup;
     }
 
+    public void ungroup(final OrderStatusChecker orderStatusChecker) {
+        if (orderStatusChecker.checkUngroupableTableGroup(id)) {
+            throw new UngroupingNotPossibleException();
+        }
+        orderTables = new ArrayList<>();
+    }
+
     public Long getId() {
         return id;
     }
@@ -61,10 +69,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void ungroup(final OrderStatusChecker orderStatusChecker) {
-        orderStatusChecker.validateOrderStatusChangeableByTableGroupId(id);
-        orderTables = new ArrayList<>();
     }
 }
