@@ -55,8 +55,10 @@ public class OrderService {
         return OrderResponse.toDto(savedOrder);
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderResponse::toDto)
+                .collect(toList());
     }
 
     public Order changeOrderStatus(final Long orderId, final Order order) {
