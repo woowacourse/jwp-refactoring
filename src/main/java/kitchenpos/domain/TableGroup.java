@@ -25,7 +25,7 @@ public class TableGroup {
         this.orderTables = new ArrayList<>();
     }
 
-    public static TableGroup createWithOrderTables(final List<OrderTable> orderTables) {
+    public static TableGroup create(final List<OrderTable> orderTables) {
         validate(orderTables);
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroup.addOrderTables(orderTables);
