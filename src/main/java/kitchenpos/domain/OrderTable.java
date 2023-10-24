@@ -34,6 +34,10 @@ public class OrderTable extends BaseDate {
     public OrderTable() {
     }
 
+    public OrderTable(final int numberOfGuests, final Boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public void changeEmpty(final Boolean empty) {
         if (orders.stream().anyMatch(OrderTable::canUngroupOrChangeEmpty)) {
             throw new IllegalArgumentException("[ERROR] 조리중이거나, 식사중인 테이블을 비울 수 없습니다.");

@@ -1,7 +1,5 @@
 package kitchenpos.ui.request;
 
-import kitchenpos.domain.MenuGroup;
-
 public class MenuGroupCreateRequest {
 
     private String name;
@@ -11,12 +9,6 @@ public class MenuGroupCreateRequest {
     }
 
     public MenuGroupCreateRequest() {
-    }
-
-    public MenuGroup toMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
     }
 
     public String getName() {

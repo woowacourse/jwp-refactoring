@@ -2,14 +2,12 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.step.MenuGroupStep;
 import kitchenpos.ui.request.MenuGroupCreateRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_일식;
 import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_한식;
@@ -36,10 +34,6 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
         final List<MenuGroupCreateRequest> requests = List.of(MENU_GROUP_REQUEST_일식, MENU_GROUP_REQUEST_한식);
         requests.forEach(MenuGroupStep::메뉴_그룹_생성_요청);
 
-        final List<MenuGroup> menuGroups = requests.stream()
-                .map(MenuGroupCreateRequest::toMenuGroup)
-                .collect(Collectors.toList());
-
         final ExtractableResponse<Response> response = 메뉴_그룹_조회_요청();
         final List<MenuGroupResponse> result = response.jsonPath().getList("", MenuGroupResponse.class);
 
@@ -49,11 +43,11 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(result.get(0))
                         .usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(menuGroups.get(0)),
+                        .isEqualTo(requests.get(0)),
                 () -> assertThat(result.get(1))
                         .usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(menuGroups.get(1))
+                        .isEqualTo(requests.get(1))
         );
     }
 }

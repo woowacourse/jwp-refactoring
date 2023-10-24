@@ -2,7 +2,6 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.request.ProductCreateRequest;
 import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.Nested;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-import static kitchenpos.fixture.ProductFixture.스키야키;
 import static kitchenpos.step.ProductStep.PRODUCT_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.ProductStep.PRODUCT_CREATE_REQUEST_우동;
 import static kitchenpos.step.ProductStep.상품_생성_요청;
@@ -27,17 +25,17 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 상품을_생성한다() {
-            final Product product = 스키야키();
-            final ExtractableResponse<Response> response = 상품_생성_요청(PRODUCT_CREATE_REQUEST_스키야키);
+            final ProductCreateRequest request = PRODUCT_CREATE_REQUEST_스키야키;
+            final ExtractableResponse<Response> response = 상품_생성_요청(request);
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
                     () -> assertThat(response.jsonPath().getObject("", ProductResponse.class))
                             .usingRecursiveComparison()
                             .ignoringFields("id", "price")
-                            .isEqualTo(product),
+                            .isEqualTo(request),
                     () -> assertThat((int) response.jsonPath().getDouble("price"))
-                            .isEqualTo(product.getPrice().intValue())
+                            .isEqualTo(request.getPrice().intValue())
             );
         }
     }

@@ -1,7 +1,5 @@
 package kitchenpos.ui.request;
 
-import kitchenpos.domain.OrderTable;
-
 public class TableCreateRequest {
 
     private Integer numberOfGuests;
@@ -13,15 +11,6 @@ public class TableCreateRequest {
     }
 
     public TableCreateRequest() {
-    }
-
-    public OrderTable toOrderTable() {
-        return new OrderTable(
-                null,
-                null,
-                numberOfGuests,
-                empty
-        );
     }
 
     public int getNumberOfGuests() {
