@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static javax.persistence.EnumType.STRING;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
@@ -55,8 +54,8 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void addAllOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+    public void addAllOrderLineItems(final OrderLineItems orderLineItems) {
+        for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
             orderLineItem.changeOrder(this);
             this.orderLineItems.add(orderLineItem);
         }
