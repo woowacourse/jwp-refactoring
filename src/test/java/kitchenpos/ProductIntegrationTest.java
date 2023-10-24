@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -72,6 +73,7 @@ class ProductIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("제품 목록을 조회할 수 있다.")
     void listProducts_success() {
         // when
         List<Product> actual = RestAssured.given().log().all()

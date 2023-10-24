@@ -1,9 +1,7 @@
 package kitchenpos.steps;
 
 import static io.restassured.RestAssured.given;
-import static kitchenpos.TestAid.toJson;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -30,7 +28,7 @@ public class IntegrationTestSteps {
     public void createMenuGroup(MenuGroup menuGroup) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(toJson(menuGroup))
+                                                        .body(menuGroup)
                                                         .when()
                                                         .post(MENU_GROUP_API)
                                                         .then().log().all()
@@ -81,9 +79,7 @@ public class IntegrationTestSteps {
                                                         .contentType(ContentType.JSON)
                                                         .body(orderTable)
                                                         .when()
-                                                        .put(ORDER_TABLE_API + "/"
-                                                            + orderTable.getId()
-                                                            + "/number-of-guests")
+                                                        .put(ORDER_TABLE_API + "/{orderTableId}/number-of-guests", orderTable.getId())
                                                         .then().log().all()
                                                         .extract();
 
@@ -95,7 +91,7 @@ public class IntegrationTestSteps {
                       .contentType(ContentType.JSON)
                       .body(table)
                       .when()
-                      .put(ORDER_TABLE_API + "/" + tableId + "/empty")
+                      .put(ORDER_TABLE_API + "/{tableId}/empty", tableId)
                       .then().log().all()
                       .extract().as(OrderTable.class);
     }
@@ -117,7 +113,7 @@ public class IntegrationTestSteps {
                                                         .contentType(ContentType.JSON)
                                                         .body(changed)
                                                         .when()
-                                                        .put("/api/orders/" + orderId + "/order-status")
+                                                        .put("/api/orders/{orderId}/order-status", orderId)
                                                         .then().log().all()
                                                         .extract();
 

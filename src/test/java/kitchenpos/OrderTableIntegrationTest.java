@@ -5,9 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import java.util.List;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.TableGroupFixture;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,8 +22,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class OrderTableIntegrationTest extends IntegrationTest {
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{displayName} - {arguments}")
     @EnumSource(OrderTableFixture.class)
+    @DisplayName("주문 테이블을 등록할 수 있다.")
     void create_success(OrderTableFixture fixture) {
         // given
         OrderTable table = fixture.toEntity();
@@ -30,8 +37,9 @@ class OrderTableIntegrationTest extends IntegrationTest {
         assertThat(actual.getId()).isNotNull();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{displayName} - {arguments}")
     @ValueSource(ints = {0, 1})
+    @DisplayName("주문 테이블의 수용 인원은 0명 이상이어야 한다.")
     void change_number_of_guests(int changedNumber) {
         // given
         OrderTable table = OrderTableFixture.OCCUPIED_TABLE.toEntity();
@@ -46,8 +54,9 @@ class OrderTableIntegrationTest extends IntegrationTest {
         assertThat(actual.getNumberOfGuests()).isEqualTo(changedNumber);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{displayName} - {arguments}")
     @ValueSource(ints = {-1, -100})
+    @DisplayName("주문 테이블의 수용 인원은 0 미만이면 예외가 발생한다.")
     void change_number_of_guests_failure(int changedNumber) {
         // given
         OrderTable table = OrderTableFixture.OCCUPIED_TABLE.toEntity();
@@ -63,6 +72,7 @@ class OrderTableIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("주문 테이블을 빈 상태로 변경할 수 있다.")
     void change_empty_success() {
         // given
         OrderTable table = OrderTableFixture.computeDefaultOrderTable(arg -> {
@@ -80,17 +90,56 @@ class OrderTableIntegrationTest extends IntegrationTest {
         assertThat(result.isEmpty()).isTrue();
     }
 
-    @ParameterizedTest
-    @ValueSource(longs = {1L, 2L})
-    void change_empty_table_group_exists(Long orderTableId) {
-        // TODO: 10/23/23 테이블 그룹이 존재하는 경우를 위한 api 개설 후 테스트 작성
+    @Test
+    @DisplayName("주문 테이블이 테이블 그룹에 속한 경우 빈 상태로 변경할 수 없다.")
+    void change_empty_failure_table_group_exists() {
         // given
+        OrderTable table1 = OrderTableFixture.computeDefaultOrderTable(arg -> {
+            arg.setEmpty(false);
+            arg.setId(1L);
+        });
+        OrderTable table2 = OrderTableFixture.computeDefaultOrderTable(arg -> {
+            arg.setEmpty(false);
+            arg.setId(2L);
+        });
+        TableGroup tableGroup = TableGroupFixture.computeDefaultTableGroup(arg -> {
+            arg.setOrderTables(List.of(table1, table2));
+        });
+
+        steps.createTable(table1);
+        steps.createTable(table2);
+        steps.createTableGroup(tableGroup);
+
+        // when
+        table1.setEmpty(true);
+        steps.changeEmpty(table1.getId(), table1);
+        ExtractableResponse<Response> response = sharedContext.getResponse();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(500);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{displayName} - {arguments}")
     @CsvSource({"COOKING", "MEAL"})
-    void change_empty_order_status_in(OrderStatus orderStatus) {
-        // TODO: 10/23/23 주문 상태가 COOKING, MEAL 인 경우를 위한 api 개설 후 테스트 작성
+    @DisplayName("주문 테이블이 주문 상태가 Cooking, Meal인 경우 빈 상태로 변경할 수 없다.")
+    void change_empty_failure_order_status_in(OrderStatus orderStatus) {
         // given
+        OrderTable table = OrderTableFixture.computeDefaultOrderTable(arg -> {
+            arg.setId(1L);
+        });
+        Order order = OrderFixture.computeDefaultOrder(arg -> {
+            arg.setOrderStatus(orderStatus.name());
+            arg.setOrderTableId(table.getId());
+        });
+        steps.createTable(table);
+        steps.createOrder(order);
+
+        // when
+        table.setEmpty(true);
+        steps.changeEmpty(table.getId(), table);
+        ExtractableResponse<Response> response = sharedContext.getResponse();
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(500);
     }
 }

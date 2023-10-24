@@ -12,6 +12,7 @@ import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderIntegrationTest extends IntegrationTest {
@@ -27,6 +28,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("주문을 등록할 수 있다.")
     void create_success() {
         // given
         Order expected = OrderFixture.ORDER_1.toEntity();
@@ -46,6 +48,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("주문 목록을 조회할 수 있다.")
     void listOrders_success() {
         // given
         steps.createOrder(OrderFixture.ORDER_1.toEntity());
@@ -62,6 +65,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus_success() {
         // given
         Order order = OrderFixture.ORDER_1.toEntity();
@@ -77,6 +81,7 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("주문 상태가 이미 Completion이면 변경할 수 없다.")
     void changeOrderStatus_failure() {
         // given
         Order order = OrderFixture.ORDER_1.toEntity();

@@ -15,6 +15,8 @@ import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -29,9 +31,11 @@ class MenuIntegrationTest extends IntegrationTest {
     }
 
     @Nested
+    @DisplayName("메뉴를 등록할 수 있다.")
     class create_success {
 
         @Test
+        @DisplayName("메뉴 가격이 상품 가격 총합과 같을 때(최대값)")
         void max_price() {
             // given
             MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity();
@@ -53,6 +57,7 @@ class MenuIntegrationTest extends IntegrationTest {
         }
 
         @Test
+        @DisplayName("메뉴 가격이 0원일 때(최소값)")
         void min_price() {
             // given
             Menu expected = MenuFixture.computeDefaultMenu(arg ->
@@ -72,6 +77,7 @@ class MenuIntegrationTest extends IntegrationTest {
         }
 
         @Test
+        @DisplayName("메뉴가 이미 등록된 메뉴와 이름이 같을 때")
         void same_name() {
             // given
             Menu expected = MenuFixture.computeDefaultMenu(ignored -> {});
@@ -86,6 +92,7 @@ class MenuIntegrationTest extends IntegrationTest {
         }
 
         @Test
+        @DisplayName("메뉴가 이미 등록된 메뉴와 같은 메뉴 상품을 가질 때")
         void same_menuproduct() {
             // given
             MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity();
@@ -108,9 +115,11 @@ class MenuIntegrationTest extends IntegrationTest {
     }
 
     @Nested
+    @DisplayName("메뉴를 등록할 수 없다.")
     class create_failure {
 
         @Test
+        @DisplayName("메뉴 가격이 0보다 작을 때")
         void price_lower_than_0() {
             // given
             Menu menu = MenuFixture.computeDefaultMenu(arg ->
@@ -126,6 +135,7 @@ class MenuIntegrationTest extends IntegrationTest {
         }
 
         @Test
+        @DisplayName("메뉴 그룹이 없을 때")
         void menugroup_not_exists() {
             // given
             Menu menu = MenuFixture.computeDefaultMenu(arg ->
@@ -141,6 +151,7 @@ class MenuIntegrationTest extends IntegrationTest {
         }
 
         @Test
+        @DisplayName("메뉴 가격이 메뉴 상품 가격 총합보다 클 때")
         void price_bigger_than_product_price() {
             // given
             MenuProduct menuProduct = MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity();
@@ -159,6 +170,7 @@ class MenuIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    @DisplayName("메뉴 목록을 조회할 수 있다.")
     void listMenus_success() {
         // when
         List<Menu> actual = RestAssured.given().log().all()
