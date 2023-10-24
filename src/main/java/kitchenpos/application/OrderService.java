@@ -68,16 +68,7 @@ public class OrderService {
         validateOrderLineItemSize(orderLineItemRequests, menuIds);
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 order table 입니다."));
-        validateEmptyByOrderTable(orderTable);
         return orderRepository.save(OrderMapper.toOrder(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
-    }
-
-    private void validateEmptyByOrderTable(
-            final OrderTable orderTable
-    ) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("order table은 비어있을 수 없습니다.");
-        }
     }
 
     private void saveOrderLineItems(
@@ -88,7 +79,8 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItem : orderLineItems) {
             Menu menu = menuRepository.findById(orderLineItem.getMenuId())
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 menu입니다."));
-            savedOrderLineItems.add(orderLineItemRepository.save(new OrderLineItem(savedOrder, menu, orderLineItem.getQuantity())));
+            savedOrderLineItems.add(
+                    orderLineItemRepository.save(new OrderLineItem(savedOrder, menu, orderLineItem.getQuantity())));
         }
         savedOrder.updateOrderLineItems(savedOrderLineItems);
     }

@@ -61,7 +61,7 @@ public class TableService {
             final OrderTable savedOrderTable
     ) {
         if (orderRepository.existsByOrderTableAndOrderStatusIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                savedOrderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("상태가 COOKING, MEAL인 주문이 존재합니다.");
         }
     }

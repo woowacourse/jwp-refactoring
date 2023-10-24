@@ -19,12 +19,11 @@ public class OrderMapper {
             final OrderTable orderTable,
             final OrderStatus status,
             final LocalDateTime orderedTime
-            ) {
+    ) {
         return new Order(
                 orderTable,
-                status.name(),
-                orderedTime,
-                null
+                status,
+                orderedTime
         );
     }
 

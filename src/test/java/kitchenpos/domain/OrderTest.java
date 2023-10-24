@@ -16,49 +16,37 @@ class OrderTest {
 
     @Test
     void 주문_생성() {
-        final OrderTable orderTable = new OrderTable(null, 10, true);
+        final OrderTable orderTable = new OrderTable(null, 10, false);
         assertDoesNotThrow(
-                () -> new Order(orderTable,
-                        OrderStatus.COOKING.name(),
-                        LocalDateTime.now(),
-                        null)
+                () -> new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now())
         );
     }
 
     @Test
     void 주문_상태_변경() {
-        final OrderTable orderTable = new OrderTable(null, 10, true);
-        final Order order = new Order(orderTable,
-                OrderStatus.COOKING.name(),
-                LocalDateTime.now(),
-                null);
+        final OrderTable orderTable = new OrderTable(null, 10, false);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
-        order.updateOrderStatus(OrderStatus.COMPLETION);
+        order.updateOrderStatus("COMPLETION");
 
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 
     @Test
     void COMPLETION인_주문_상태_변경_예외_발생() {
-        final OrderTable orderTable = new OrderTable(null, 10, true);
-        final Order order = new Order(orderTable,
-                OrderStatus.COMPLETION.name(),
-                LocalDateTime.now(),
-                null);
+        final OrderTable orderTable = new OrderTable(null, 10, false);
+        final Order order = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
 
         assertThatThrownBy(
-                () -> order.updateOrderStatus(OrderStatus.COOKING))
+                () -> order.updateOrderStatus("COOKING"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문의 상태가 COMPLETION일 때는 상태 변경이 불가 합니다.");
     }
 
     @Test
     void 주문_상품_변경() {
-        final OrderTable orderTable = new OrderTable(null, 10, true);
-        final Order order = new Order(orderTable,
-                OrderStatus.COOKING.name(),
-                LocalDateTime.now(),
-                null);
+        final OrderTable orderTable = new OrderTable(null, 10, false);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         final OrderLineItem orderLineItem = new OrderLineItem();
         order.updateOrderLineItems(List.of(orderLineItem));

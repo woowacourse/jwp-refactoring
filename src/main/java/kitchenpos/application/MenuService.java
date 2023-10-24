@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
+import static kitchenpos.domain.Price.ZERO_PRICE;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -47,8 +49,7 @@ public class MenuService {
 
         final List<MenuProduct> menuProducts = convertToMenuProducts(request);
         final Menu menu = MenuMapper.toMenu(request, menuGroup);
-        final BigDecimal sum = calculateSumByMenuProducts(menuProducts);
-        validateMenuPrice(menu, sum);
+        validateMenuPrice(menu, calculateSumByMenuProducts(menuProducts));
         final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu, menuProducts);
@@ -67,17 +68,17 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal calculateSumByMenuProducts(
+    private Price calculateSumByMenuProducts(
             final List<MenuProduct> menuProducts
     ) {
         return menuProducts.stream()
                 .map(MenuProduct::getTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(ZERO_PRICE, Price::add);
     }
 
     private void validateMenuPrice(
             final Menu menu,
-            final BigDecimal price
+            final Price price
     ) {
         if (menu.isGreaterThan(price)) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴 상품 가격의 합보다 클 수 없습니다.");

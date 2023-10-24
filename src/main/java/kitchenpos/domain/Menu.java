@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,8 +23,8 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id", nullable = false)
@@ -37,10 +38,9 @@ public class Menu {
 
     private Menu(final Long id,
                  final String name,
-                 final BigDecimal price,
+                 final Price price,
                  final MenuGroup menuGroup,
                  final List<MenuProduct> menuProducts) {
-        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -49,34 +49,21 @@ public class Menu {
     }
 
     public static Menu of(final String name,
-                          final Long price,
+                          final BigDecimal price,
                           final MenuGroup menuGroup) {
-        validateNull(price);
-        return new Menu(null, name, BigDecimal.valueOf(price), menuGroup, new ArrayList<>());
+
+        return new Menu(null, name, new Price(price), menuGroup, new ArrayList<>());
     }
 
     public static Menu of(final String name,
-                          final Long price,
+                          final BigDecimal price,
                           final MenuGroup menuGroup,
                           final List<MenuProduct> menuProducts) {
-        validateNull(price);
-        return new Menu(null, name, BigDecimal.valueOf(price), menuGroup, menuProducts);
+        return new Menu(null, name, new Price(price), menuGroup, menuProducts);
     }
 
-    private static void validateNull(final Long price) {
-        if (price == null) {
-            throw new IllegalArgumentException("메뉴의 가격은 null일 수 없습니다.");
-        }
-    }
-
-    private void validatePrice(final BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("가격은 음수일 수 없습니다.");
-        }
-    }
-
-    public boolean isGreaterThan(final BigDecimal other) {
-        return price.compareTo(other) > 0;
+    public boolean isGreaterThan(final Price other) {
+        return price.isGreaterThan(other);
     }
 
     public Long getId() {
@@ -87,7 +74,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

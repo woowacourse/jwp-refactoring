@@ -14,7 +14,7 @@ public class ProductMapper {
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
-                product.getPrice().longValue()
+                product.getPrice().getValue()
         );
     }
 

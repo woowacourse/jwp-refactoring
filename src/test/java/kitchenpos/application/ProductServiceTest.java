@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.dto.product.ProductCreateRequest;
@@ -26,7 +27,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            ProductCreateRequest request = new ProductCreateRequest("피움 치킨", 18_000L);
+            ProductCreateRequest request = new ProductCreateRequest("피움 치킨", BigDecimal.valueOf(18_000L));
 
             // when
             ProductResponse productResponse = productService.create(request);
@@ -34,7 +35,8 @@ class ProductServiceTest extends ServiceTest {
             // then
             assertSoftly(
                     softly -> {
-                        softly.assertThat(productResponse.getPrice().longValue()).isEqualTo(request.getPrice());
+                        softly.assertThat(productResponse.getPrice().longValue())
+                                .isEqualTo(request.getPrice().longValue());
                         softly.assertThat(productResponse.getName()).isEqualTo(request.getName());
                     }
             );
@@ -55,7 +57,7 @@ class ProductServiceTest extends ServiceTest {
         @ValueSource(longs = {-2L, -100L})
         void 가격이_0미만이면_예외_발생(long price) {
             // given
-            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", price);
+            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", BigDecimal.valueOf(price));
 
             // when, then
             assertThatThrownBy(
@@ -70,7 +72,7 @@ class ProductServiceTest extends ServiceTest {
         @Test
         void 정상_요청() {
             // given
-            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", 18_000L);
+            ProductCreateRequest request = new ProductCreateRequest("조이 치킨", BigDecimal.valueOf(18_000L));
             ProductResponse productResponse = productService.create(request);
 
             // when

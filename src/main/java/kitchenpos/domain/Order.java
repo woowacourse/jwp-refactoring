@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,8 +28,9 @@ public class Order {
     @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -40,10 +44,12 @@ public class Order {
     private Order(
             final Long id,
             final OrderTable orderTable,
-            final String orderStatus,
+            final OrderStatus orderStatus,
             final LocalDateTime orderedTime,
             final List<OrderLineItem> orderLineItems
     ) {
+        validateEmptyByOrderTable(orderTable);
+
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -53,18 +59,28 @@ public class Order {
 
     public Order(
             final OrderTable orderTable,
-            final String orderStatus,
-            final LocalDateTime orderedTime,
-            final List<OrderLineItem> orderLineItems
+            final OrderStatus orderStatus,
+            final LocalDateTime orderedTime
     ) {
-        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
+        this(null, orderTable, orderStatus, orderedTime, new ArrayList<>());
     }
 
-    public void updateOrderStatus(final OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    private void validateEmptyByOrderTable(
+            final OrderTable orderTable
+    ) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("order table은 비어있을 수 없습니다.");
+        }
+    }
+
+    public void updateOrderStatus(final String orderStatus) {
+        final OrderStatus status = OrderStatus.from(orderStatus);
+
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException("주문의 상태가 COMPLETION일 때는 상태 변경이 불가 합니다.");
         }
-        this.orderStatus = orderStatus.name();
+
+        this.orderStatus = status;
     }
 
     public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -83,7 +99,7 @@ public class Order {
         return orderTable.getId();
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

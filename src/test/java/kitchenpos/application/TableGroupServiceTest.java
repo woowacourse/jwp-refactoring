@@ -113,7 +113,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable orderTable2 = new OrderTable(null, 15, true);
             OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
             OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-            TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2)));
+            TableGroup savedTableGroup = tableGroupRepository.save(
+                    new TableGroup(LocalDateTime.now(), List.of(savedOrderTable1, savedOrderTable2)));
             savedOrderTable1.updateTableGroup(savedTableGroup);
 
             TableGroupCreateRequest request = createTableGroup(
@@ -171,6 +172,6 @@ class TableGroupServiceTest extends ServiceTest {
 
     private Order createOrder(final OrderTable orderTable,
                               final OrderStatus status) {
-        return new Order(orderTable, status.name(), LocalDateTime.now(), null);
+        return new Order(orderTable, status, LocalDateTime.now());
     }
 }

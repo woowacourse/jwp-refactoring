@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,7 +34,7 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product newProduct = Product.of("치킨", 18_000L);
+        Product newProduct = Product.of("치킨", BigDecimal.valueOf(18_000L));
 
         MenuGroup newMenuGroup = new MenuGroup("튀김류");
 
@@ -47,7 +49,8 @@ class MenuServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 1L);
-            MenuCreateRequest request = createMenuRequest("치킨 단품", 18_000L, menuGroup.getId(), menuProductRequest);
+            MenuCreateRequest request = createMenuRequest("치킨 단품", BigDecimal.valueOf(18_000L), menuGroup.getId(),
+                    menuProductRequest);
 
             // when
             MenuResponse menuResponse = menuService.create(request);
@@ -57,7 +60,7 @@ class MenuServiceTest extends ServiceTest {
                     softly -> {
                         softly.assertThat(menuResponse.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
                         softly.assertThat(menuResponse.getName()).isEqualTo(request.getName());
-                        softly.assertThat(menuResponse.getPrice().longValue()).isEqualTo(request.getPrice());
+                        softly.assertThat(menuResponse.getPrice()).isEqualTo(request.getPrice());
                         softly.assertThat(menuResponse.getMenuProducts().get(0).getSeq()).isPositive();
                         softly.assertThat(menuResponse.getMenuProducts().get(0).getProductId())
                                 .isEqualTo(menuProductRequest.getProductId());
@@ -68,11 +71,12 @@ class MenuServiceTest extends ServiceTest {
         }
 
         @ParameterizedTest
-        @ValueSource(longs = {-10_000L, -18_000L})
-        void 요청_가격이_0미만이면_예외_발생(long price) {
+        @ValueSource(longs = {-10_000, -18_000})
+        void 요청_가격이_0미만이면_예외_발생(final Long price) {
             // given
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 1L);
-            MenuCreateRequest request = createMenuRequest("치킨 단품", price, menuGroup.getId(), menuProductRequest);
+            MenuCreateRequest request = createMenuRequest("치킨 단품", BigDecimal.valueOf(price), menuGroup.getId(),
+                    menuProductRequest);
 
             // when, then
             assertThatThrownBy(
@@ -80,12 +84,12 @@ class MenuServiceTest extends ServiceTest {
             ).isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 요청_가격이_null이면_예외_발생() {
+        @ParameterizedTest
+        @NullSource
+        void 요청_가격이_null이면_예외_발생(final BigDecimal price) {
             // given
-            Long wrongPrice = null;
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 1L);
-            MenuCreateRequest request = createMenuRequest("치킨 단품", wrongPrice, menuGroup.getId(), menuProductRequest);
+            MenuCreateRequest request = createMenuRequest("치킨 단품", price, menuGroup.getId(), menuProductRequest);
 
             // when, then
             assertThatThrownBy(
@@ -98,7 +102,8 @@ class MenuServiceTest extends ServiceTest {
             // given
             long invalidProductId = -1L;
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(invalidProductId, 1L);
-            MenuCreateRequest request = createMenuRequest("치킨 단품", 18_000L, menuGroup.getId(), menuProductRequest);
+            MenuCreateRequest request = createMenuRequest("치킨 단품", BigDecimal.valueOf(18_000L), menuGroup.getId(),
+                    menuProductRequest);
 
             // when, then
             assertThatThrownBy(
@@ -109,7 +114,7 @@ class MenuServiceTest extends ServiceTest {
         @Test
         void 요청_가격이_메뉴_상품들_가격의_합보다_크면_예외_발생() {
             // given
-            Long wrongPrice = product.getPrice().longValue() + 10_000L;
+            BigDecimal wrongPrice = BigDecimal.valueOf(100_000_000L);
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 1L);
             MenuCreateRequest request = createMenuRequest("치킨 단품", wrongPrice, menuGroup.getId(), menuProductRequest);
 
@@ -127,7 +132,8 @@ class MenuServiceTest extends ServiceTest {
         void 정상_요청() {
             // given
             MenuProductCreateRequest menuProductRequest = new MenuProductCreateRequest(product.getId(), 1L);
-            MenuCreateRequest request = createMenuRequest("치킨 단품", 18_000L, menuGroup.getId(), menuProductRequest);
+            MenuCreateRequest request = createMenuRequest("치킨 단품", BigDecimal.valueOf(18_000L), menuGroup.getId(),
+                    menuProductRequest);
             MenuResponse menuResponse = menuService.create(request);
 
             // when
@@ -141,7 +147,7 @@ class MenuServiceTest extends ServiceTest {
     }
 
     private MenuCreateRequest createMenuRequest(final String name,
-                                                final Long price,
+                                                final BigDecimal price,
                                                 final Long menuGroupId,
                                                 final MenuProductCreateRequest... menuProducts) {
         return new MenuCreateRequest(name, price, menuGroupId, Arrays.asList(menuProducts));

@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -44,8 +44,9 @@ class OrderServiceTest extends ServiceTest {
         OrderTable newOrderTable = new OrderTable(null, 10, false);
         orderTable = orderTableRepository.save(newOrderTable);
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드 세트"));
-        Product product = productRepository.save(Product.of("후라이드", 15_000L));
-        Menu newMenu = Menu.of("치킨", 15_000L, menuGroup, List.of(new MenuProduct(null, product, 1L)));
+        Product product = productRepository.save(Product.of("후라이드", BigDecimal.valueOf(15_000L)));
+        Menu newMenu = Menu.of("치킨", BigDecimal.valueOf(15_000L), menuGroup,
+                List.of(new MenuProduct(null, product, 1L)));
         menu = menuRepository.save(newMenu);
     }
 
@@ -153,20 +154,20 @@ class OrderServiceTest extends ServiceTest {
             OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             OrderCreateRequest orderRequest = createOrderRequest(orderTable.getId(), COOKING, orderLineItemRequest);
             OrderResponse orderResponse = orderService.create(orderRequest);
-            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 
             // when
             OrderResponse response = orderService.changeOrderStatus(orderResponse.getId(), request);
 
             // then
-            assertThat(response.getOrderStatus()).isEqualTo(request.getOrderStatus().name());
+            assertThat(response.getOrderStatus().name()).isEqualTo(request.getOrderStatus());
         }
 
         @Test
         void 주문이_존재하지_않으면_예외_발생() {
             // given
             Long invalidOrderId = -1L;
-            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 
             // when, then
             assertThatThrownBy(
@@ -177,10 +178,10 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 주문이_상태가_COMPLETION이면_예외_발생() {
             // given
-            Order order = new Order(orderTable, COMPLETION.name(), LocalDateTime.now(), null);
+            Order order = new Order(orderTable, COMPLETION, LocalDateTime.now());
             Order savedOrder = orderRepository.save(order);
 
-            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest(MEAL);
+            OrderUpdateStatusRequest request = new OrderUpdateStatusRequest("MEAL");
 
             // when, then
             assertThatThrownBy(

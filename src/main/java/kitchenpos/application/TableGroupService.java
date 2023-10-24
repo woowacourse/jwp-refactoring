@@ -76,7 +76,7 @@ public class TableGroupService {
             final TableGroup tableGroup
     ) {
         if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                tableGroup.getOrderTables(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                tableGroup.getOrderTables(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("주문 상태가 MEAL, COOKING 이면 그룹을 해제할 수 없습니다.");
         }
     }

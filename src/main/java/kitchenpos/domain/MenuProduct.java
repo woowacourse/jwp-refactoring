@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,7 +49,7 @@ public class MenuProduct {
         this(null, menu, product, quantity);
     }
 
-    public BigDecimal getTotalPrice() {
+    public Price getTotalPrice() {
         return product.multiplyPrice(quantity);
     }
 

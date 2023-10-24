@@ -123,12 +123,12 @@ class TableServiceTest extends ServiceTest {
         @ValueSource(strings = {"MEAL", "COOKING"})
         void 상태_변경할_테이블_주문의_상태가_COMPLETION인_경우_예외_발생(final OrderStatus status) {
             // given
-            OrderTable orderTable = new OrderTable(null, 0, true);
+            OrderTable orderTable = new OrderTable(null, 0, false);
             OrderTable savedOrderTable = orderTableRepository.save(orderTable);
             Order order = createOrder(savedOrderTable, status);
             orderRepository.save(order);
 
-            TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(false);
+            TableUpdateEmptyRequest request = new TableUpdateEmptyRequest(true);
 
             // when, then
             assertThatThrownBy(
@@ -205,6 +205,6 @@ class TableServiceTest extends ServiceTest {
 
     private Order createOrder(final OrderTable orderTable,
                               final OrderStatus status) {
-        return new Order(orderTable, status.name(), LocalDateTime.now(), null);
+        return new Order(orderTable, status, LocalDateTime.now());
     }
 }
