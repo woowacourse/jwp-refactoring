@@ -40,42 +40,34 @@ public class OrderService {
     
     @Transactional
     public Order create(final OrderCreateRequest request) {
-        final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItemRequests());
-        final OrderTable orderTable = getOrderTable(request);
+        final OrderTable orderTable = getOrderTable(request.getOrderTableId());
         final OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItemRequests());
         
-        Order order = new Order(orderTable,
+        final Order order = new Order(orderTable,
                 orderStatus,
                 orderLineItems);
         return orderRepository.save(order);
     }
     
+    private OrderTable getOrderTable(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                                   .orElseThrow(() -> new NotExistOrderTable("존재하지 않는 테이블 입니다"));
+    }
+    
     private List<OrderLineItem> getOrderLineItems(final List<OrderLineItemRequest> request) {
         return request.stream()
-                      .map(orderLineItemRequest -> new OrderLineItem(null,
-                              findMenuById(orderLineItemRequest.getMenuId()),
-                              orderLineItemRequest.getQuantity()
-                      ))
+                      .map(orderLineItemRequest ->
+                              new OrderLineItem(null,
+                                      findMenuById(orderLineItemRequest.getMenuId()),
+                                      orderLineItemRequest.getQuantity()
+                              ))
                       .collect(Collectors.toList());
     }
     
     private Menu findMenuById(final Long menuId) {
         return menuRepository.findById(menuId)
                              .orElseThrow(() -> new NotExistMenuException("존재하지 않는 메뉴입니다"));
-    }
-    
-    private OrderTable getOrderTable(final OrderCreateRequest request) {
-        return orderTableRepository.findById(request.getOrderTableId())
-                                   .orElseThrow(() -> new NotExistOrderTable("존재하지 않는 테이블 입니다"));
-    }
-    
-    private void saveOrderLineItems(final Order order, final List<OrderLineItem> orderLineItems) {
-        List<OrderLineItem> orderLineItemsWithOrder = orderLineItems.stream()
-                                                                    .map(orderLineItem -> new OrderLineItem(order,
-                                                                            orderLineItem.getMenu(),
-                                                                            orderLineItem.getQuantity()))
-                                                                    .collect(Collectors.toList());
-        orderLineItemRepository.saveAll(orderLineItemsWithOrder);
     }
     
     public List<Order> list() {

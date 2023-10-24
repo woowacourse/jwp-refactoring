@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity
+@Entity(name = "orders")
 public class Order {
     
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
     
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
     
     public Order(final OrderTable orderTable,
@@ -50,9 +50,7 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-        this.orderLineItems.forEach(orderLineItem -> new OrderLineItem(this,
-                              orderLineItem.getMenu(),
-                              orderLineItem.getQuantity()));
+        putOrderInOrderLineItems();
     }
     
     private void validate(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
@@ -68,6 +66,12 @@ public class Order {
         }
     }
     
+    private void validateIfOrderTableIsEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new InvalidOrderException("빈 테이블에서는 주문할 수 없습니다");
+        }
+    }
+    
     private void validateIfDuplicatedMenuInOrderLineItems(final List<OrderLineItem> orderLineItems) {
         List<Long> menuIds = orderLineItems.stream()
                                            .map(OrderLineItem::getMenu)
@@ -79,10 +83,10 @@ public class Order {
         }
     }
     
-    private void validateIfOrderTableIsEmpty(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new InvalidOrderException("빈 테이블에서는 주문할 수 없습니다");
-        }
+    private void putOrderInOrderLineItems() {
+        this.orderLineItems.forEach(orderLineItem -> new OrderLineItem(this,
+                orderLineItem.getMenu(),
+                orderLineItem.getQuantity()));
     }
     
     public void changeOrderStatus(final OrderStatus orderStatus) {
