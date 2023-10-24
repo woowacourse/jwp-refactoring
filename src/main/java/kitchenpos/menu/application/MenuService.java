@@ -46,7 +46,7 @@ public class MenuService {
         List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProducts();
         MenuGroup menuGroup = findMenuGroup(request.getMenuGroupId());
         Menu menu = menuRepository.save(new Menu(null, request.getName(), price, menuGroup));
-        menu.addMenuProducts(createMenuProducts(menu, menuProductCreateRequests));
+        menu.addMenuProducts(createMenuProducts(menuProductCreateRequests));
         return MenuResponse.from(menu);
     }
 
@@ -55,7 +55,7 @@ public class MenuService {
             .orElseThrow(() -> new KitchenPosException("해당 메뉴 그룹이 없습니다. menuGroupId=" + menuGroupId));
     }
 
-    private List<MenuProduct> createMenuProducts(Menu menu, List<MenuProductCreateRequest> requests) {
+    private List<MenuProduct> createMenuProducts(List<MenuProductCreateRequest> requests) {
         List<Product> products = findProducts(requests);
         validateNotExistProducts(products, requests);
         Map<Long, Long> productIdToQuantity = requests.stream()
