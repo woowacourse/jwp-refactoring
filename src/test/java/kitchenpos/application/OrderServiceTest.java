@@ -1,24 +1,28 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.exception.OrderExceptionType.EMPTY_ORDER_LINE_ITEM_EXCEPTION;
 import static kitchenpos.exception.OrderExceptionType.ORDER_STATUS_ALREADY_COMPLETION_EXCEPTION;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_EMPTY_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
+import kitchenpos.dao.jpa.JpaMenuGroupRepository;
 import kitchenpos.dao.jpa.JpaMenuRepository;
 import kitchenpos.dao.jpa.JpaOrderRepository;
 import kitchenpos.dao.jpa.JpaOrderTableRepository;
 import kitchenpos.dao.jpa.JpaTableGroupRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
@@ -40,9 +44,33 @@ class OrderServiceTest extends IntegrationTest {
     private JpaOrderRepository orderRepository;
     @Autowired
     private JpaMenuRepository menuRepository;
+    @Autowired
+    private JpaMenuGroupRepository menuGroupRepository;
 
     @Nested
     class 주문_저장 {
+
+        @Test
+        void 주문을_성공적으로_저장한다() {
+            // given
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("신메뉴"));
+            Menu menu = menuRepository.save(new Menu("닭꼬치", new Price(1000), menuGroup));
+            OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.id(), List.of(
+                    new CreateOrderLineItemRequest(menu.id(), 1L)
+            ));
+
+            // when
+            Order order = orderService.create(orderCreateRequest);
+
+            // then
+            assertAll(
+                    () -> assertThat(order.orderStatus()).isEqualTo(COOKING),
+                    () -> assertThat(order.orderTable()).usingRecursiveComparison()
+                            .ignoringFields("id")
+                            .isEqualTo(orderTable)
+            );
+        }
 
         @Test
         void 주문_항목이_없으면_예외가_발생한다() {
@@ -107,10 +135,10 @@ class OrderServiceTest extends IntegrationTest {
                     new OrderLineItem(null, menu, 2)
             );
             Order order = orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems));
-            
+
             // when
             BaseExceptionType exceptionType = assertThrows(OrderException.class, () ->
-                    orderService.changeOrderStatus(order.id(), OrderStatus.COOKING)
+                    orderService.changeOrderStatus(order.id(), COOKING)
             ).exceptionType();
 
             // then

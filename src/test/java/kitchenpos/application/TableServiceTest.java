@@ -9,7 +9,7 @@ import static kitchenpos.exception.OrderTableExceptionType.NOT_EXIST_ORDER_TABLE
 import static kitchenpos.exception.OrderTableExceptionType.NUMBER_OF_GUESTS_IS_NULL_OR_NEGATIVE_EXCEPTION;
 import static kitchenpos.exception.OrderTableExceptionType.TABLE_GROUP_IS_NOT_NULL_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
@@ -53,9 +53,14 @@ class TableServiceTest extends IntegrationTest {
         // given
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(10, true);
 
-        // expect
-        assertThatNoException().isThrownBy(
-                () -> tableService.create(orderTableCreateRequest)
+        // when
+        OrderTable orderTable = tableService.create(orderTableCreateRequest);
+
+        // then
+        assertAll(
+                () -> assertThat(orderTable.hasTableGroup()).isFalse(),
+                () -> assertThat(orderTable.isEmpty()).isTrue(),
+                () -> assertThat(orderTable.numberOfGuests()).isEqualTo(10)
         );
     }
 

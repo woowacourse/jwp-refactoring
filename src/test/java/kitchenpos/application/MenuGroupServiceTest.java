@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
@@ -20,8 +19,11 @@ class MenuGroupServiceTest extends IntegrationTest {
         // given
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("신메뉴");
 
-        // expect
-        assertThatNoException().isThrownBy(() -> menuGroupService.create(menuGroupCreateRequest));
+        // when
+        MenuGroup menuGroup = menuGroupService.create(menuGroupCreateRequest);
+
+        // then
+        assertThat(menuGroup.name()).isEqualTo("신메뉴");
     }
 
     @Test

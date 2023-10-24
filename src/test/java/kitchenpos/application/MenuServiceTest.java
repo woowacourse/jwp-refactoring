@@ -6,13 +6,16 @@ import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NEGATIVE_EXCEPTIO
 import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NULL_EXCEPTION;
 import static kitchenpos.exception.ProductExceptionType.NOT_EXIST_PRODUCT_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
+import kitchenpos.dao.jpa.JpaMenuGroupRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.exception.BaseExceptionType;
@@ -31,6 +34,8 @@ class MenuServiceTest extends IntegrationTest {
 
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private JpaMenuGroupRepository menuGroupRepository;
 
     @Nested
     class 메뉴_저장 {
@@ -38,6 +43,7 @@ class MenuServiceTest extends IntegrationTest {
         @Test
         void 메뉴를_저장한다() {
             // given
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("극한직업"));
             List<MenuProductCreateRequest> menuProductCreateRequests = List.of(
                     new MenuProductCreateRequest(1L, 1L),
                     new MenuProductCreateRequest(2L, 1L)
@@ -45,13 +51,21 @@ class MenuServiceTest extends IntegrationTest {
             MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                     "수원왕갈비통닭",
                     BigDecimal.valueOf(1000),
-                    1L,
+                    menuGroup.id(),
                     menuProductCreateRequests
             );
 
             // when
-            assertThatNoException().isThrownBy(
-                    () -> menuService.create(menuCreateRequest)
+            Menu menu = menuService.create(menuCreateRequest);
+
+            // then
+            assertAll(
+                    () -> assertThat(menu.id()).isNotNull(),
+                    () -> assertThat(menu.name()).isEqualTo("수원왕갈비통닭"),
+                    () -> assertThat(menu.price()).isEqualTo(new Price(1000)),
+                    () -> assertThat(menu.menuGroup()).usingRecursiveComparison()
+                            .ignoringFields("id")
+                            .isEqualTo(menuGroup)
             );
         }
 
