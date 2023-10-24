@@ -106,7 +106,7 @@ class OrderTableTest {
     @Test
     void 손님_숫자를_음수로_변경할때_예외가_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, null, null, 0, true);
+        OrderTable orderTable = OrderTable.emptyTable();
 
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
@@ -120,7 +120,7 @@ class OrderTableTest {
     @Test
     void 비어있는_테이블의_손님_숫자를_변경할때_예외가_발생한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, null, null, 0, true);
+        OrderTable orderTable = OrderTable.emptyTable();
 
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
@@ -134,7 +134,7 @@ class OrderTableTest {
     @Test
     void 손님_숫자를_변경한다() {
         // given
-        OrderTable orderTable = new OrderTable(null, null, null, 0, false);
+        OrderTable orderTable = new OrderTable(0, false);
 
         // when
         orderTable.changeNumberOfGuests(1);

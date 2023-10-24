@@ -61,6 +61,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public static OrderTable emptyTable() {
+        return new OrderTable(0, true);
+    }
+
     public boolean hasOrderOfCookingOrMeal() {
         return orders.stream()
                 .anyMatch(Order::isCookingOrMeal);
