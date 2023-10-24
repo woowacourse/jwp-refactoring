@@ -1,7 +1,8 @@
-package kitchenpos.order.dto.response;
+package kitchenpos.ordertable.dto.response;
 
 import io.micrometer.core.lang.Nullable;
 import java.util.Objects;
+import kitchenpos.tablegroup.dto.response.TableGroupResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 

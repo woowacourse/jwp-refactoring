@@ -71,7 +71,7 @@ class TableServiceTest {
         void changeEmpty() {
             // given
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
-            savedOrderTable.setEmpty(false);
+            savedOrderTable.changeEmpty(false);
 
             // when
             final OrderTable updatedOrderTable = tableService.changeEmpty(savedOrderTable.id(), savedOrderTable);
@@ -138,11 +138,11 @@ class TableServiceTest {
         void updateGuestCount() {
             // given
             final OrderTable orderTable = OrderTableFixtures.BASIC.get();
-            orderTable.setEmpty(false);
+            orderTable.changeEmpty(false);
             final OrderTable savedOrderTable = tableService.create(orderTable);
 
             final OrderTable newOrderTable = OrderTableFixtures.BASIC.get();
-            newOrderTable.setNumberOfGuests(3);
+            newOrderTable.changeNumberOfGuests(3);
 
             // when
             tableService.changeNumberOfGuests(savedOrderTable.id(), newOrderTable);
@@ -160,7 +160,7 @@ class TableServiceTest {
             // given
             final OrderTable orderTable = OrderTableFixtures.BASIC.get();
             final OrderTable newOrderTable = OrderTableFixtures.BASIC.get();
-            newOrderTable.setNumberOfGuests(-1);
+            newOrderTable.changeNumberOfGuests(-1);
 
             // when, then
             assertThatIllegalArgumentException()

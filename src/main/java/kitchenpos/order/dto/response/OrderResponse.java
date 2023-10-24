@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.vo.OrderLineItems;
 import kitchenpos.order.domain.vo.OrderStatus;
+import kitchenpos.ordertable.dto.response.OrderTableResponse;
 
 public class OrderResponse {
     private final long id;

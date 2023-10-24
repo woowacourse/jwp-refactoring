@@ -6,10 +6,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import kitchenpos.order.domain.OrderLineItem;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable
 public class OrderLineItems {
+    @BatchSize(size = 10)
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
