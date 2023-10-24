@@ -119,8 +119,4 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
 }

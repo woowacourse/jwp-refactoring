@@ -100,8 +100,4 @@ public class TableGroup {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
     }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
 }
