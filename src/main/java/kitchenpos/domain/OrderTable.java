@@ -39,7 +39,17 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuest(Integer numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void validateOrdertable() {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

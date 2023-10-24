@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -38,40 +37,39 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final TableEmptyUpdateRequest tableEmptyUpdateRequest) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.validateOrdertable();
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        checkIfOrderIsNotCompleted(orderTableId);
 
         savedOrderTable.changeEmpty(tableEmptyUpdateRequest.getEmpty());
 
         return savedOrderTable;
     }
 
-    @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableGuestUpdateRequest tableGuestUpdateRequest) {
-        final int numberOfGuests = tableGuestUpdateRequest.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
+    private void checkIfOrderIsNotCompleted(Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    @Transactional
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableGuestUpdateRequest tableGuestUpdateRequest) {
+        final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.changeNumberOfGuest(numberOfGuests);
+        savedOrderTable.changeNumberOfGuest(tableGuestUpdateRequest.getNumberOfGuests());
 
         return savedOrderTable;
+    }
+
+    private OrderTable getOrderTable(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
