@@ -20,7 +20,6 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.product.Product;
@@ -32,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -120,20 +118,15 @@ public abstract class ServiceTestHelper {
     }
 
     public Menu 메뉴_등록(String name, Long price, MenuGroup menuGroup, Product... products) {
-        List<MenuProductRequest> menuProductRequests = getMenuProductRequests(products);
+        List<MenuProductRequest> menuProductRequests = makeMenuProductRequests(products);
         MenuCreateRequest request = new MenuCreateRequest(name, price, menuGroup.getId(), menuProductRequests);
         return menuService.create(request);
     }
 
-    private List<MenuProductRequest> getMenuProductRequests(Product[] products) {
+    private List<MenuProductRequest> makeMenuProductRequests(Product[] products) {
         return Arrays.stream(products)
                 .map(product -> new MenuProductRequest(product.getId(), 1))
                 .collect(Collectors.toList());
-    }
-
-    private void addMenuProducts(Menu menu, Product[] products) {
-        Arrays.stream(products)
-                .forEach(product -> menu.addProduct(product.getId(), 1));
     }
 
     public List<Menu> 메뉴_목록_조회() {
@@ -202,21 +195,15 @@ public abstract class ServiceTestHelper {
     }
 
     public Order 주문_요청(OrderTable orderTable, Menu... menus) {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = getOrderLineItemCreateRequests(menus);
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = makeOrderLineItemCreateRequests(menus);
         OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), orderLineItemCreateRequests);
         return orderService.create(request);
     }
 
-    private List<OrderLineItemCreateRequest> getOrderLineItemCreateRequests(Menu[] menus) {
+    private List<OrderLineItemCreateRequest> makeOrderLineItemCreateRequests(Menu[] menus) {
         return Arrays.stream(menus)
                 .map(menu -> new OrderLineItemCreateRequest(menu.getId(), 1))
                 .collect(Collectors.toList());
-    }
-
-    private List<OrderLineItem> makeOrderLineItems(Menu[] menus) {
-        return Arrays.stream(menus)
-                .map(menu -> OrderLineItem.of(null, menu.getId(), 1))
-                .collect(Collectors.toUnmodifiableList());
     }
 
     public Order 주문_식사_상태로_변경(Order order) {
