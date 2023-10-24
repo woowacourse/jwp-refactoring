@@ -11,7 +11,7 @@ class QuantityTest extends DomainTest {
         // when & then
         assertThatThrownBy(() -> Quantity.of(-1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(Quantity.PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
+                .hasMessage(Quantity.PRODUCT_QUANTITY_IS_UNDER_ONE_ERROR_MESSAGE);
     }
 
 }

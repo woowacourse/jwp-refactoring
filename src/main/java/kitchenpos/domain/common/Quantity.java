@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 @Embeddable
 public class Quantity {
-    public static final String PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE = "수량은 0보다 커야 합니다.";
+    public static final String PRODUCT_QUANTITY_IS_UNDER_ONE_ERROR_MESSAGE = "수량은 0보다 커야 합니다.";
     @NotNull
     private long quantity;
 
@@ -19,7 +19,7 @@ public class Quantity {
 
     private static void validateQuantity(final long quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException(PRODUCT_QUANTITY_IS_BELOW_ZERO_ERROR_MESSAGE);
+            throw new IllegalArgumentException(PRODUCT_QUANTITY_IS_UNDER_ONE_ERROR_MESSAGE);
         }
     }
 

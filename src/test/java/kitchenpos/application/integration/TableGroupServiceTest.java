@@ -1,19 +1,23 @@
 package kitchenpos.application.integration;
 
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.dto.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.table.CreateTableGroupRequest;
+import kitchenpos.dto.table.OrderTableRequest;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupResponse;
+import kitchenpos.dto.table.UnGroupRequest;
+import kitchenpos.exception.order.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @SpringBootTest
 public class TableGroupServiceTest extends ApplicationIntegrationTest {
@@ -24,21 +28,21 @@ public class TableGroupServiceTest extends ApplicationIntegrationTest {
     @Test
     void create_table_group() {
         // given
-        OrderTable orderTable1 = createOrderTable(4, true);
-        OrderTable orderTable2 = createOrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(Arrays.asList(orderTable1, orderTable2));
+        OrderTableResponse orderTable1 = createOrderTable(4, false);
+        OrderTableResponse orderTable2 = createOrderTable(4, false);
+        final CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable1.getId()), OrderTableRequest.of(orderTable2.getId())));
 
         // when
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse createdTableGroup = tableGroupService.create(createTableGroupRequest);
 
         // then
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(createdTableGroup.getId()).isNotNull();
             softly.assertThat(createdTableGroup.getCreatedDate()).isNotNull();
-            final List<OrderTable> orderTables = createdTableGroup.getOrderTables();
+            final List<OrderTableResponse> orderTables = createdTableGroup.getOrderTables();
             softly.assertThat(orderTables).hasSize(2);
             orderTables.forEach(orderTable -> {
-                softly.assertThat(orderTable.isEmpty()).isFalse();
+                softly.assertThat(orderTable.isOrderable()).isTrue();
                 softly.assertThat(orderTable.getTableGroupId()).isEqualTo(createdTableGroup.getId());
             });
         });
@@ -47,120 +51,78 @@ public class TableGroupServiceTest extends ApplicationIntegrationTest {
     @Test
     void cannot_create_group_table_with_one_order_table() {
         // given
-        OrderTable orderTable = createOrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(List.of(orderTable));
-
+        OrderTableResponse orderTable = createOrderTable(4, false);
+        final CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable.getId())));
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(TableGroup.ORDER_TABLE_SIZE_IS_BELOW_TWO_ERROR_MESSAGE);
     }
 
     @Test
-    void cannot_creat_group_table_with_non_empty_order_table() {
+    void cannot_creat_group_table_with_non_orderable_order_table() {
         // given
-        OrderTable orderTable1 = createOrderTable(4, false);
-        OrderTable orderTable2 = createOrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
+        OrderTableResponse orderTable1 = createOrderTable(4, false);
+        OrderTableResponse orderTable2 = createOrderTable(4, true);
+        final CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable1.getId()), OrderTableRequest.of(orderTable2.getId())));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(TableGroup.ORDERABLE_TABLE_IS_NOT_ALLOWED_ERROR_MESSAGE);
     }
 
     @Test
     void cannot_create_with_not_saved_order_table() {
         // given
-        OrderTable orderTable1 = createOrderTable(4, true);
-        OrderTable orderTable2 = new OrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
+        OrderTableResponse orderTable1 = createOrderTable(4, false);
+        final long orderTable2Id = 1000L;
+        final CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable1.getId()), OrderTableRequest.of(orderTable2Id)));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
+                .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @Test
     void cannot_create_with_already_grouped_order_table() {
         // given
-        OrderTable orderTable1 = createOrderTable(4, true);
-        OrderTable orderTable2 = createOrderTable(4, true);
-        TableGroup tableGroup1 = new TableGroup(List.of(orderTable1, orderTable2));
-        tableGroupService.create(tableGroup1);
-        TableGroup tableGroup2 = new TableGroup(List.of(orderTable1, orderTable2));
+        final OrderTableResponse orderTable1 = createOrderTable(4, false);
+        final OrderTableResponse orderTable2 = createOrderTable(4, false);
+        final CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable1.getId()), OrderTableRequest.of(orderTable2.getId())));
+        tableGroupService.create(createTableGroupRequest);
+        final OrderTableResponse orderTable3 = createOrderTable(4, false);
+        final CreateTableGroupRequest createTableGroupRequest2 = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable3.getId()), OrderTableRequest.of(orderTable2.getId())));
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest2))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(TableGroup.TABLE_IS_IN_TABLE_GROUP_ERROR_MESSAGE);
     }
 
 
     @Test
     void ungroup_table_group() {
         // given
-        OrderTable orderTable1 = createOrderTable(4, true);
-        OrderTable orderTable2 = createOrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        OrderTableResponse orderTable1 = createOrderTable(4, false);
+        OrderTableResponse orderTable2 = createOrderTable(4, false);
+        CreateTableGroupRequest createTableGroupRequest = CreateTableGroupRequest.of(List.of(OrderTableRequest.of(orderTable1.getId()), OrderTableRequest.of(orderTable2.getId())));
+        TableGroupResponse createdTableGroup = tableGroupService.create(createTableGroupRequest);
         orderService.changeOrderStatus(
-                createOrder(orderTable1.getId()).getId(),
-                new Order(OrderStatus.COMPLETION.name())
+                ChangeOrderStatusRequest.of(createOrder(orderTable1.getId()).getId(), OrderStatus.COMPLETION)
         );
         orderService.changeOrderStatus(
-                createOrder(orderTable2.getId()).getId(),
-                new Order(OrderStatus.COMPLETION.name())
+                ChangeOrderStatusRequest.of(createOrder(orderTable2.getId()).getId(), OrderStatus.COMPLETION)
         );
 
         // when
-        tableGroupService.ungroup(createdTableGroup.getId());
+        tableGroupService.ungroup(UnGroupRequest.of(createdTableGroup.getId()));
 
         // then
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(orderTable1.isEmpty()).isTrue();
-            softly.assertThat(orderTable1.getTableGroupId()).isNull();
-            softly.assertThat(orderTable2.isEmpty()).isTrue();
-            softly.assertThat(orderTable2.getTableGroupId()).isNull();
-        });
-    }
-
-    @Test
-    void cannot_ungroup_table_group_with_cooking_order_status() {
-        // given
-        OrderTable orderTable1 = createOrderTable(4, true);
-        OrderTable orderTable2 = createOrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        orderService.changeOrderStatus(
-                createOrder(orderTable1.getId()).getId(),
-                new Order(OrderStatus.COOKING.name())
-        );
-        orderService.changeOrderStatus(
-                createOrder(orderTable2.getId()).getId(),
-                new Order(OrderStatus.COMPLETION.name())
-        );
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void cannot_un_group_table_group_with_meal_order_status() {
-        // given
-        OrderTable orderTable1 = createOrderTable(4, true);
-        OrderTable orderTable2 = createOrderTable(4, true);
-        TableGroup tableGroup = new TableGroup(List.of(orderTable1, orderTable2));
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        orderService.changeOrderStatus(
-                createOrder(orderTable1.getId()).getId(),
-                new Order(OrderStatus.MEAL.name())
-        );
-        orderService.changeOrderStatus(
-                createOrder(orderTable2.getId()).getId(),
-                new Order(OrderStatus.COMPLETION.name())
-        );
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+        SoftAssertions.assertSoftly(softly ->
+                tableService.list().getOrderTables().forEach(orderTable -> {
+                    softly.assertThat(orderTable.getTableGroupId()).isNull();
+                    softly.assertThat(orderTable.isOrderable()).isFalse();
+                }));
     }
 }

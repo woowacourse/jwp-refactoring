@@ -1,13 +1,22 @@
 package kitchenpos.application.integration;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.Disabled;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.table.ChangeNumberOfGuestsRequest;
+import kitchenpos.dto.table.ChangeOrderTableOrderableRequest;
+import kitchenpos.dto.table.CreateOrderTableRequest;
+import kitchenpos.dto.table.CreateTableGroupRequest;
+import kitchenpos.dto.table.OrderTableRequest;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.exception.table.OrderIsNotCompletedBadRequestException;
+import kitchenpos.exception.table.OrderTableIsInTableGroupBadRequest;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TableServiceTest extends ApplicationIntegrationTest {
@@ -15,123 +24,96 @@ class TableServiceTest extends ApplicationIntegrationTest {
     @Test
     void create_table() {
         //given
-        final int numberOfGuests = 0;
-        final boolean empty = true;
-        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, true);
 
         //when
-        final OrderTable createdTable = tableService.create(orderTable);
+        final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //then
-        assertThat(createdTable)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(orderTable);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(createdOrderTable.getId()).isNotNull();
+            softAssertions.assertThat(createdOrderTable.getNumberOfGuests()).isEqualTo(createOrderTableRequest.getNumberOfGuests());
+        });
     }
 
     @Test
-    @Disabled
     void cannot_create_table_with_negative_number_of_guests() {
         //given
-        final int numberOfGuests = -1;
-        final boolean empty = true;
-        final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(-1, true);
+
         //when & then
-        assertThatThrownBy(() -> tableService.create(orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.create(createOrderTableRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(OrderTable.NUMBER_OF_GUESTS_IS_BELOW_ZERO_ERROR_MESSAGE);
     }
 
     @Test
-    @Disabled
-    void cannot_create_table_with_invalid_table_group() {
+    void throw_when_unorderable_table_with_cooking_order_status() {
         //given
-        final long tableGroupId = 100L;
-        final OrderTable orderTable = new OrderTable(tableGroupId, 0, true);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, true);
+        final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
+        final OrderResponse order = createOrder(createdOrderTable.getId());
+        orderService.changeOrderStatus(ChangeOrderStatusRequest.of(order.getId(), OrderStatus.MEAL));
+
         //when & then
-        assertThatThrownBy(() -> tableService.create(orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeOrderable(ChangeOrderTableOrderableRequest.of(createdOrderTable.getId(), false)))
+                .isInstanceOf(OrderIsNotCompletedBadRequestException.class);
     }
 
     @Test
-    void cannot_change_empty_table_with_cooking_order_status() {
+    void throw_when_unorderable_table_with_table_group() {
         //given
-        final int numberOfGuests = -1;
-        final boolean empty = false;
-        final OrderTable createdTable = tableService.create(new OrderTable(numberOfGuests, empty));
-        createOrder(createdTable.getId());
-
-        final boolean changedEmpty = false;
-        final OrderTable changedOrderTable = new OrderTable(changedEmpty);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, false);
+        final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
+        final OrderResponse order = createOrder(createdOrderTable.getId());
+        orderService.changeOrderStatus(ChangeOrderStatusRequest.of(order.getId(), OrderStatus.COMPLETION));
+        tableGroupService.create(CreateTableGroupRequest.of(List.of(OrderTableRequest.of(createdOrderTable.getId()), OrderTableRequest.of(createOrderTable(4, false).getId()))));
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdTable.getId(), changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void cannot_change_empty_table_with_table_group() {
-        //given
-        final int numberOfGuests = -1;
-        final boolean empty = true;
-        final OrderTable createdTable1 = tableService.create(new OrderTable(numberOfGuests, empty));
-        final OrderTable createdTable2 = tableService.create(new OrderTable(numberOfGuests, empty));
-        List<OrderTable> orderTables = List.of(createdTable1, createdTable2);
-        tableGroupService.create(new TableGroup(orderTables));
-
-        final boolean changedEmpty = true;
-        final OrderTable changedOrderTable = new OrderTable(changedEmpty);
-
-        //when & then
-        assertThatThrownBy(() -> tableService.changeEmpty(createdTable1.getId(), changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeOrderable(ChangeOrderTableOrderableRequest.of(createdOrderTable.getId(), false)))
+                .isInstanceOf(OrderTableIsInTableGroupBadRequest.class);
     }
 
 
     @Test
     void change_number_of_guests() {
         //given
-        final int numberOfGuests = 0;
-        final boolean empty = false;
-        final OrderTable createdTable = tableService.create(new OrderTable(numberOfGuests, empty));
-        final int changedNumberOfGuests = 1;
-        final OrderTable changedOrderTable = new OrderTable(changedNumberOfGuests);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, true);
+        final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //when
-        final OrderTable changedTable = tableService.changeNumberOfGuests(createdTable.getId(), changedOrderTable);
+        final OrderTableResponse changedOrderTable = tableService.changeNumberOfGuests(ChangeNumberOfGuestsRequest.of(createdOrderTable.getId(), 5));
 
         //then
-        assertThat(changedTable)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(changedOrderTable);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(changedOrderTable.getId()).isEqualTo(createdOrderTable.getId());
+            softAssertions.assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(5);
+        });
+
     }
 
     @Test
-    @Disabled
-    void cannot_change_number_of_guests_with_negative_number_of_guests() {
+    void throw_when_number_of_guests_with_negative_number_of_guests() {
         //given
-        final int numberOfGuests = 0;
-        final boolean empty = false;
-        final OrderTable createdTable = tableService.create(new OrderTable(numberOfGuests, empty));
-        final int changedNumberOfGuests = -1;
-        final OrderTable changedOrderTable = new OrderTable(changedNumberOfGuests);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, true);
+        final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdTable.getId(), changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(ChangeNumberOfGuestsRequest.of(createdOrderTable.getId(), -1)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(OrderTable.NUMBER_OF_GUESTS_IS_BELOW_ZERO_ERROR_MESSAGE);
+
     }
 
     @Test
-    void cannot_change_number_of_guests_with_empty_order_table() {
+    void throw_when_number_of_guests_with_unorderable_order_table() {
         //given
-        final int numberOfGuests = 0;
-        final boolean empty = true;
-        final OrderTable createdTable = tableService.create(new OrderTable(numberOfGuests, empty));
-        final int changedNumberOfGuests = 3;
-        final OrderTable changedOrderTable = new OrderTable(changedNumberOfGuests);
+        final CreateOrderTableRequest createOrderTableRequest = CreateOrderTableRequest.of(4, false);
+        final OrderTableResponse createdOrderTable = tableService.create(createOrderTableRequest);
 
         //when & then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(createdTable.getId(), changedOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(ChangeNumberOfGuestsRequest.of(createdOrderTable.getId(), 5)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(OrderTable.CHANGE_UNORDERABLE_TABLE_NUMBER_OF_TABLE_ERROR_MESSAGE);
     }
 }
