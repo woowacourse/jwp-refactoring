@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.exception.InvalidMenuPriceException;
 import kitchenpos.domain.exception.InvalidMenuProductException;
 import org.junit.jupiter.api.DisplayNameGeneration;

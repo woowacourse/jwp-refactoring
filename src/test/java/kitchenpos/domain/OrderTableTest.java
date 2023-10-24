@@ -13,6 +13,7 @@ import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
 import kitchenpos.domain.exception.InvalidTableGroupException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

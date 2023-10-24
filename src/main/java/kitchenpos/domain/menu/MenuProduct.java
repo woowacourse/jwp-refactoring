@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.domain.common.Price;
 import kitchenpos.domain.common.Quantity;
 
