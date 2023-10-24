@@ -13,7 +13,6 @@ import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.tablegroup.domain.TableGroupValidator;
 import kitchenpos.tablegroup.exception.TableGroupException;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +36,10 @@ public class TableGroupService {
                 .map(OrderTableFindRequest::getId)
                 .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        TableGroupValidator.validateOrderTableSize(orderTableRequests.size(), savedOrderTables.size());
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create(savedOrderTables));
+        final TableGroup savedTableGroup = tableGroupRepository.save(
+                TableGroup.create(savedOrderTables, orderTableRequests.size(), savedOrderTables.size())
+        );
         associateOrderTable(savedOrderTables, savedTableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
@@ -47,7 +47,6 @@ public class TableGroupService {
 
     private void associateOrderTable(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            TableGroupValidator.validateOrderTableStatus(savedOrderTable);
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             orderTableRepository.save(savedOrderTable);
         }

@@ -31,6 +31,6 @@ public class TableGroupFixtures {
      * ENTITY
      */
     public static TableGroup TABLE_GROUP1() {
-        return TableGroup.create(List.of(ORDER_TABLE1(), ORDER_TABLE1()));
+        return TableGroup.create(List.of(ORDER_TABLE1(), ORDER_TABLE1()), 1, 1);
     }
 }

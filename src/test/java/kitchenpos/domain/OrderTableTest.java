@@ -18,7 +18,7 @@ class OrderTableTest {
     @DisplayName("그룹을 해제한다.")
     void unGroup() {
         // given
-        TableGroup tableGroup = TableGroup.create(List.of(ORDER_TABLE1()));
+        TableGroup tableGroup = TableGroup.create(List.of(ORDER_TABLE1()), 1, 1);
         OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, true);
         orderTable.updateTableGroupId(tableGroup.getId());
 
