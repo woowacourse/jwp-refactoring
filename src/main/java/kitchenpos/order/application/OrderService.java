@@ -1,7 +1,5 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.request.CreateOrderRequest;
 import kitchenpos.order.application.dto.request.OrderLineItemRequest;
 import kitchenpos.order.application.dto.request.UpdateOrderStatusRequest;
@@ -11,72 +9,64 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(
-            MenuRepository menuRepository,
             OrderRepository orderRepository,
             OrderLineItemRepository orderLineItemRepository,
-            OrderTableRepository orderTableRepository
-    ) {
-        this.menuRepository = menuRepository;
+            OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public OrderResponse create(CreateOrderRequest createOrderRequest) {
-        OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
+        Order order = new Order(createOrderRequest.getOrderTableId(), LocalDateTime.now());
+        List<OrderLineItem> orderLineItems = extractOrderLineItems(createOrderRequest);
 
-        List<OrderLineItemRequest> orderLineItemRequests = createOrderRequest.getOrderLineItems();
-        addOrderLineItems(orderLineItemRequests, order);
-
-        long orderMenuSize = extractOrderMenuCount(orderLineItemRequests);
-        order.checkEqualMenuCount(orderMenuSize);
+        orderValidator.validate(order, orderLineItems);
 
         orderRepository.save(order);
-        return OrderResponse.from(order);
+        saveOrderLineItems(order, orderLineItems);
+        return OrderResponse.of(order, orderLineItems);
     }
 
-    private long extractOrderMenuCount(List<OrderLineItemRequest> orderLineItemRequests) {
-        List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
+    private List<OrderLineItem> extractOrderLineItems(CreateOrderRequest createOrderRequest) {
+        List<OrderLineItemRequest> orderLineItemRequests = createOrderRequest.getOrderLineItems();
+        return orderLineItemRequests.stream()
+                .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()))
                 .collect(Collectors.toList());
-
-        return menuRepository.countByIdIn(menuIds);
     }
 
-    private void addOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
-        for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(IllegalArgumentException::new);
-            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
-            order.addOrderLineItem(orderLineItem);
+    private void saveOrderLineItems(Order order, List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.changeOrder(order);
+            orderLineItemRepository.save(orderLineItem);
         }
     }
 
     public List<OrderResponse> list() {
         List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderResponse::from)
-                .collect(Collectors.toList());
+
+        List<OrderResponse> response = new ArrayList<>();
+        for (Order order : orders) {
+            List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
+            response.add(OrderResponse.of(order, orderLineItems));
+        }
+        return response;
     }
 
     @Transactional
@@ -90,7 +80,7 @@ public class OrderService {
 
         OrderStatus orderStatus = OrderStatus.valueOf(updateOrderStatusRequest.getOrderStatus());
         order.changeOrderStatus(orderStatus);
-
-        return OrderResponse.from(order);
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
+        return OrderResponse.of(order, orderLineItems);
     }
 }

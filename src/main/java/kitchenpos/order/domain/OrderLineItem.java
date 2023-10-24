@@ -24,9 +24,15 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Order order, Long menuId, long quantity) {
+        this.seq = seq;
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    public OrderLineItem(Long menuId, long quantity) {
+        this(null, null, menuId, quantity);
     }
 
     public void changeOrder(Order order) {
