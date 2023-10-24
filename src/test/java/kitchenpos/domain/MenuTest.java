@@ -19,7 +19,7 @@ class MenuTest {
     @Test
     void success_ofEmptyMenuProducts() {
         // given
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
 
         // when
@@ -47,7 +47,7 @@ class MenuTest {
     @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
     void throwException_price_isNegative(final String negativePriceValue) {
         // expect
-        assertThatThrownBy(() -> new Menu(new Name("테스트용 메뉴명"), new Price(negativePriceValue), null, MenuProducts.empty()))
+        assertThatThrownBy(() -> new Menu(new Name("테스트용 메뉴명"), Price.from(negativePriceValue), null, MenuProducts.empty()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -55,7 +55,7 @@ class MenuTest {
     @Test
     void success_addMenuProducts() {
         // given
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 

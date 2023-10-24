@@ -34,7 +34,7 @@ class MenuProductsTest {
                 new MenuGroup(new Name("테스트용 메뉴 그룹명"))
         );
 
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final Quantity quantity = new Quantity(10);
 
         // when
@@ -58,9 +58,9 @@ class MenuProductsTest {
     void success_getTotalPrice() {
         // given
         final List<MenuProduct> menuProductItems = List.of(
-                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), new Price("10000")), new Quantity(1)),
-                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), new Price("5000")), new Quantity(2)),
-                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), new Price("2000")), new Quantity(5))
+                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), Price.from("10000")), new Quantity(1)),
+                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), Price.from("5000")), new Quantity(2)),
+                MenuProduct.withoutMenu(new Product(new Name("테스트용 상품명"), Price.from("2000")), new Quantity(5))
         );
         final MenuProducts menuProducts = new MenuProducts(menuProductItems);
 

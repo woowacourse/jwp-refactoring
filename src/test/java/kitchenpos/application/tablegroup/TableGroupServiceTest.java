@@ -192,7 +192,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @MethodSource("getOrderStatusWithoutCompletion")
         void throwException_when_orderStatus_isCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
+            final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000")));
             final Menu savedMenu = createMenu(savedProduct);
             final OrderTable savedOrderTableWithFiveGuests = createOrder(orderStatus, savedMenu, 5);
             final OrderTable savedOrderTableWithTenGuests = createOrder(orderStatus, savedMenu, 10);

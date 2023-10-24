@@ -8,7 +8,7 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
-    public static final Price ZERO = new Price("0");
+    public static final Price ZERO = new Price(BigDecimal.ZERO);
 
     @Column(name = "price", nullable = false)
     private BigDecimal value;
@@ -17,11 +17,25 @@ public class Price {
     }
 
     public Price(final BigDecimal value) {
+        if (value == null) {
+            throw new IllegalArgumentException("가격은 null 일 수 없습니다.");
+        }
+        if (value.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 음이 아닌 정수이어야 합니다.");
+        }
         this.value = value;
     }
 
-    public Price(final String value) {
-        this.value = new BigDecimal(value);
+    public static Price from(final String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("가격은 null 일 수 없습니다.");
+        }
+        final BigDecimal newValue = new BigDecimal(value);
+        if (newValue.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 음이 아닌 정수이어야 합니다.");
+        }
+
+        return new Price(newValue);
     }
 
     public Price sum(final Price otherPrice) {

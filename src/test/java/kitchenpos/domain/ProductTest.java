@@ -15,7 +15,7 @@ class ProductTest {
     @DisplayName("[SUCCESS] 생성한다.")
     @Test
     void success_create() {
-        assertThatCode(() -> new Product(new Name("테스트용 상품명"), new Price("10000")))
+        assertThatCode(() -> new Product(new Name("테스트용 상품명"), Price.from("10000")))
                 .doesNotThrowAnyException();
     }
 
@@ -32,7 +32,7 @@ class ProductTest {
     @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
     void throwException_when_price_isNegative(final String value) {
         // expect
-        assertThatThrownBy(() -> new Product(new Name("테스트용 상품명"), new Price(value)))
+        assertThatThrownBy(() -> new Product(new Name("테스트용 상품명"), Price.from(value)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

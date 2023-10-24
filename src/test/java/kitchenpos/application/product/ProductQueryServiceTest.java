@@ -32,7 +32,7 @@ class ProductQueryServiceTest extends ApplicationTestConfig {
         // given
         final List<Product> savedProducts = new ArrayList<>();
         for (int productSaveCount = 1; productSaveCount <= 10; productSaveCount++) {
-            final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
+            final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000")));
             savedProducts.add(savedProduct);
         }
 

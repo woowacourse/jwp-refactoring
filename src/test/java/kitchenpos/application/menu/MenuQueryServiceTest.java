@@ -39,16 +39,16 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
         final List<MenuProduct> unsavedMenuProducts = new ArrayList<>(List.of(
-                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
-                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
-                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
-                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10)),
-                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000"))), new Quantity(10))
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10))
         ));
 
         final Menu menu = Menu.withEmptyMenuProducts(
                 new Name("테스트용 메뉴명"),
-                new Price("0"),
+                Price.from("0"),
                 savedMenuGroup
         );
         menu.addMenuProducts(unsavedMenuProducts);

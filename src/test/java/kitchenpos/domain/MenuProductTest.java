@@ -18,7 +18,7 @@ class MenuProductTest {
     @DisplayName("[SUCCESS] 생성한다.")
     @Test
     void success_create() {
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴그룹명"));
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
@@ -30,7 +30,7 @@ class MenuProductTest {
     @Test
     void success_ofWithoutMenu() {
         // given
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final Quantity quantity = new Quantity(10);
 
         // when
@@ -48,7 +48,7 @@ class MenuProductTest {
     @Test
     void success_getTotalPrice() {
         // given
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final Quantity quantity = new Quantity(10);
 
         // when
@@ -65,11 +65,11 @@ class MenuProductTest {
         // given
         final Menu menu = Menu.withEmptyMenuProducts(
                 new Name("테스트용 메뉴명"),
-                new Price("10000"),
+                Price.from("10000"),
                 new MenuGroup(new Name("테스트용 메뉴 그룹명"))
         );
 
-        final Product product = new Product(new Name("테스트용 상품명"), new Price("10000"));
+        final Product product = new Product(new Name("테스트용 상품명"), Price.from("10000"));
         final Quantity quantity = new Quantity(10);
         final MenuProduct menuProduct = MenuProduct.withoutMenu(product, quantity);
         menu.addMenuProducts(List.of(menuProduct));

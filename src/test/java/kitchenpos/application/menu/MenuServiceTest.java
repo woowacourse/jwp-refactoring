@@ -125,7 +125,7 @@ class MenuServiceTest extends ApplicationTestConfig {
 
             final List<MenuProductCreateRequest> menuProductCreateRequests = new ArrayList<>();
             for (int count = 1; count <= 10; count++) {
-                final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), new Price("10000")));
+                final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000")));
                 menuProductCreateRequests.add(new MenuProductCreateRequest(savedProduct.getId(), 10));
             }
 
