@@ -57,7 +57,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order order =  new Order();
+        final Order order = new Order();
         order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())

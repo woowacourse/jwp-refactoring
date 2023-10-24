@@ -5,16 +5,10 @@ import kitchenpos.domain.OrderTable;
 public class OrderTableFixtures {
 
     public static OrderTable EMPTY_TABLE() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-        return orderTable;
+        return new OrderTable(0, true);
     }
 
     public static OrderTable NOT_EMPTY_TABLE() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(false);
-        return orderTable;
+        return new OrderTable(0, false);
     }
 }

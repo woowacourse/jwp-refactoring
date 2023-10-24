@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +27,7 @@ public class TableService {
 
     @Transactional
     public TableResponse create(final TableCreateRequest request) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-        orderTable.setNumberOfGuests(request.getNumberOfGuests());
-        orderTable.setEmpty(request.getEmpty());
-
+        final OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.getEmpty());
         return TableResponse.from(orderTableDao.save(orderTable));
     }
 
@@ -49,37 +43,23 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(request.getEmpty());
+        savedOrderTable.changeEmpty(request.getEmpty());
 
-        return TableResponse.from(orderTableDao.save(savedOrderTable));
+        return TableResponse.from(savedOrderTable);
     }
 
     @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId, final TableChangeNumberOfGuestRequest request) {
-        final int numberOfGuests = request.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return TableResponse.from(orderTableDao.save(savedOrderTable));
+        return TableResponse.from(savedOrderTable);
     }
 }

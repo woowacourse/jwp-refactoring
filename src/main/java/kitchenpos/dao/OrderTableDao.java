@@ -13,6 +13,4 @@ public interface OrderTableDao {
     List<OrderTable> findAll();
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
-
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

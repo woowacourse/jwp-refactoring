@@ -118,19 +118,14 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹지정된 태이블로는 생성시 예외가 발생한다.")
         void throwExceptionWithAlreadyGroupedTable() {
             // given
-            final TableGroup otherTableGroup = new TableGroup();
-            otherTableGroup.setCreatedDate(LocalDateTime.now());
-            final TableGroup savedOtherTableGroup = tableGroupDao.save(otherTableGroup);
+            tableGroupDao.save(new TableGroup(List.of(testTable1, testTable2)));
 
-            final OrderTable groupedTable = new OrderTable();
-            groupedTable.setEmpty(true);
-            groupedTable.setTableGroupId(savedOtherTableGroup.getId());
-            final OrderTable savedGroupedTable = orderTableDao.save(groupedTable);
+            final OrderTable savedTable = orderTableDao.save(new OrderTable(0, true));
 
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
                             new OrderTableId(testTable1.getId()),
-                            new OrderTableId(savedGroupedTable.getId())
+                            new OrderTableId(savedTable.getId())
                     ));
 
             // when
@@ -148,18 +143,7 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(testTable1, testTable2));
-            tableGroup.setCreatedDate(LocalDateTime.now());
-            testTableGroup = tableGroupDao.save(tableGroup);
-
-            testTable1.setId(null);
-            testTable1.setTableGroupId(testTableGroup.getId());
-            testTable1 = orderTableDao.save(testTable1);
-
-            testTable2.setId(null);
-            testTable2.setTableGroupId(testTableGroup.getId());
-            testTable2 = orderTableDao.save(testTable2);
+            testTableGroup = tableGroupDao.save(new TableGroup(List.of(testTable1, testTable2)));
         }
 
         @Test
