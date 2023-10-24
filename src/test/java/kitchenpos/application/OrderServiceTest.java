@@ -5,6 +5,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -80,7 +81,7 @@ class OrderServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-            softAssertions.assertThat(actual.getOrderLineItems()).isNotEmpty();
+            softAssertions.assertThat(actual.getOrderLineItems().getOrderLineItems()).isNotEmpty();
         });
     }
 
@@ -156,9 +157,9 @@ class OrderServiceTest {
         final OrderLineItem 후라이드_2개_메뉴_1개_주문항목 = new OrderLineItem(후라이드_2개_메뉴, 1l);
 
         final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블, OrderStatus.COOKING));
-        세명_테이블_주문.addOrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목));
+        세명_테이블_주문.addOrderLineItems(new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목)));
         final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블, OrderStatus.COOKING));
-        네명_테이블_주문.addOrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목));
+        네명_테이블_주문.addOrderLineItems(new OrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목)));
 
         // when
         final List<Order> actual = orderService.list();
@@ -178,7 +179,7 @@ class OrderServiceTest {
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴, 1l);
         final Order 주문 = orderRepository.save(new Order(주문_테이블, OrderStatus.COOKING));
-        주문.addOrderLineItems(List.of(주문항목));
+        주문.addOrderLineItems(new OrderLineItems(List.of(주문항목)));
 
         final OrderStatus expect = OrderStatus.MEAL;
         final ChangeOrderStatusRequest order = new ChangeOrderStatusRequest(expect.name());
@@ -197,7 +198,7 @@ class OrderServiceTest {
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴, 1l);
         final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블, OrderStatus.COMPLETION));
-        완료된_주문.addOrderLineItems(List.of(주문항목));
+        완료된_주문.addOrderLineItems(new OrderLineItems(List.of(주문항목)));
 
         final OrderStatus newOrderStatus = OrderStatus.MEAL;
         final ChangeOrderStatusRequest order = new ChangeOrderStatusRequest(newOrderStatus.name());

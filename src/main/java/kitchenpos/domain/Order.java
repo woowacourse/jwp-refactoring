@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.common.BaseCreateTimeEntity;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -11,11 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,8 +30,8 @@ public class Order extends BaseCreateTimeEntity {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems = new OrderLineItems();
 
     protected Order() {
     }
@@ -48,8 +45,12 @@ public class Order extends BaseCreateTimeEntity {
         this.orderStatus = orderStatus;
     }
 
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+    public static Order createNewOrder(final OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COOKING);
+    }
+
+    public void addOrderLineItems(final OrderLineItems orderLineItems) {
+        for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
             this.orderLineItems.add(orderLineItem);
             orderLineItem.setOrder(this);
         }
@@ -75,7 +76,7 @@ public class Order extends BaseCreateTimeEntity {
         return orderStatus;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 
