@@ -16,10 +16,6 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
-    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -30,7 +26,7 @@ public class MenuProduct {
     }
 
     public MenuProduct(Product product, long quantity) {
-        this(null, null, product, quantity);
+        this(null, product, quantity);
     }
 
     public MenuProduct(Long seq, Product product, long quantity) {
@@ -39,23 +35,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
-        this.seq = seq;
-        this.menu = menu;
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public Long seq() {
         return seq;
-    }
-
-    public Menu menu() {
-        return menu;
     }
 
     public Product product() {

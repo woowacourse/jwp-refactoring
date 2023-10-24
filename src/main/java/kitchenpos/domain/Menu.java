@@ -42,7 +42,6 @@ public class Menu {
 
     public Menu(Long id, String name, Price price, MenuGroup menuGroup, MenuProducts menuProducts) {
         validatePrice(price, menuProducts);
-        menuProducts.setMenuToAll(this);
         this.id = id;
         this.name = name;
         this.price = price;

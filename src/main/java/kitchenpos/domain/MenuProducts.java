@@ -6,12 +6,14 @@ import static javax.persistence.FetchType.EAGER;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = ALL, fetch = EAGER)
+    @OneToMany(cascade = ALL, fetch = EAGER)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> items;
 
     protected MenuProducts() {
@@ -19,10 +21,6 @@ public class MenuProducts {
 
     public MenuProducts(List<MenuProduct> items) {
         this.items = items;
-    }
-
-    public void setMenuToAll(Menu menu) {
-        items.forEach(it -> it.setMenu(menu));
     }
 
     public Price calculateTotalPrice() {

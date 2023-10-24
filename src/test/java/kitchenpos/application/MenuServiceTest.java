@@ -137,9 +137,7 @@ class MenuServiceTest extends IntegrationTest {
                 () -> assertThat(result.name()).isEqualTo(메뉴이름),
                 () -> assertThat(result.price()).isEqualByComparingTo(BigDecimal.valueOf(11)),
                 () -> assertThat(result.menuGroupResponse().id()).isEqualByComparingTo(메뉴그룹.id()),
-                () -> assertThat(result.menuProductResponses()).hasSize(2),
-                () -> assertThat(result.menuProductResponses().get(0).menuId()).isEqualTo(result.id()),
-                () -> assertThat(result.menuProductResponses().get(1).menuId()).isEqualTo(result.id())
+                () -> assertThat(result.menuProductResponses()).hasSize(2)
         );
     }
 
