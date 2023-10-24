@@ -10,6 +10,7 @@ import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class TableGroupService {
     }
 
     private List<OrderTable> findOrderTables(final List<OrderTable> orderTables, final List<Long> orderTableIds) {
-        if (orderTableIds.isEmpty()) {
+        if (CollectionUtils.isEmpty(orderTables)) {
             throw new KitchenposException(TABLE_GROUP_UNDER_BOUNCE);
         }
         final List<OrderTable> savedOrderTables = orderTableRepository.findByIds(orderTableIds);

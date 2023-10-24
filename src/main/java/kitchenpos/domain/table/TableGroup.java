@@ -1,19 +1,14 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.exception.KitchenposException;
-import org.springframework.util.CollectionUtils;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static kitchenpos.exception.ExceptionInformation.TABLE_GROUP_NOT_EMPTY_OR_ALREADY_GROUPED;
-import static kitchenpos.exception.ExceptionInformation.TABLE_GROUP_UNDER_BOUNCE;
 
 @Entity
 public class TableGroup {
-    private static final int MIN_TABLE_GROUP_BOUNCE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,55 +16,32 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     protected TableGroup() {
     }
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    private TableGroup(final LocalDateTime createdDate, final OrderTables orderTables) {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
     public static TableGroup create(final List<OrderTable> orderTables) {
-        validateGroupSize(orderTables);
-        validateOrderTableStatus(orderTables);
-        return new TableGroup(LocalDateTime.now(), orderTables);
+        return new TableGroup(LocalDateTime.now(), OrderTables.create(orderTables));
     }
 
-    private static void validateGroupSize(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_TABLE_GROUP_BOUNCE) {
-            throw new KitchenposException(TABLE_GROUP_UNDER_BOUNCE);
-        }
-    }
-
-    private static void validateOrderTableStatus(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (orderTable.unableGrouping()) {
-                throw new KitchenposException(TABLE_GROUP_NOT_EMPTY_OR_ALREADY_GROUPED);
-            }
-        }
-    }
 
     public void updateOrderTablesGrouped() {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroupId(this);
-            orderTable.updateOrderStatus(false);
-        }
-    }
+        orderTables.updateOrderTablesGrouped(this);
 
-    public List<Long> getOrderTableIds() {
-        return orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
     }
 
     public void updateOrderTablesUngrouped() {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.deleteTableGroupId();
-            orderTable.updateOrderStatus(false);
-        }
+        orderTables.updateOrderTablesUngrouped();
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.getOrderTableIds();
     }
 
     public Long getId() {
@@ -83,6 +55,6 @@ public class TableGroup {
 
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 }
