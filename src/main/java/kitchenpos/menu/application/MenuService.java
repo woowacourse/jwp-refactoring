@@ -1,0 +1,81 @@
+package kitchenpos.menu.application;
+
+import kitchenpos.menu.application.dto.request.MenuProductRequest;
+import kitchenpos.menu.application.dto.request.MenuRequest;
+import kitchenpos.menu.application.dto.response.MenuProductResponse;
+import kitchenpos.menu.application.dto.response.MenuResponse;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class MenuService {
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
+
+    public MenuService(
+            MenuRepository menuRepository,
+            MenuGroupRepository menuGroupRepository,
+            MenuProductRepository menuProductRepository,
+            ProductRepository productRepository
+    ) {
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
+    }
+
+    @Transactional
+    public MenuResponse create(MenuRequest menuRequest) {
+        MenuGroup menuGroup = findMenuGroup(menuRequest);
+        List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
+        List<MenuProduct> menuProducts = createMenuProducts(menuProductRequests);
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
+
+        menuRepository.save(menu);
+        return MenuResponse.from(menu);
+    }
+
+    private MenuGroup findMenuGroup(MenuRequest menuRequest) {
+        return menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private List<MenuProduct> createMenuProducts(List<MenuProductRequest> menuProductRequests) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : menuProductRequests) {
+            Product product = productRepository.findById(menuProductRequest.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));
+        }
+        return menuProducts;
+    }
+
+    public List<MenuResponse> list() {
+        List<Menu> menus = menuRepository.findAll();
+        List<MenuResponse> menuResponse = new ArrayList<>();
+
+        for (Menu menu : menus) {
+            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
+            List<MenuProductResponse> menuProductResponses = menuProducts.stream()
+                    .map(MenuProductResponse::toDto)
+                    .collect(Collectors.toList());
+            menuResponse.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menuProductResponses));
+        }
+
+        return menuResponse;
+    }
+}
