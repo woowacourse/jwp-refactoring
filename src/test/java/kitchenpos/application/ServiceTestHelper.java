@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.menu.MenuGroupService;
 import kitchenpos.application.menu.MenuService;
+import kitchenpos.application.menu.request.MenuGroupCreateRequest;
 import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
 import kitchenpos.application.order.request.TableCreateRequest;
@@ -106,8 +107,8 @@ public abstract class ServiceTestHelper {
     }
 
     public MenuGroup 메뉴_그룹_등록(String name) {
-        MenuGroup menuGroup = new MenuGroup(name);
-        return menuGroupService.create(menuGroup);
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest(name);
+        return menuGroupService.create(request);
     }
 
     public List<MenuGroup> 메뉴_그룹_전체_조회() {
