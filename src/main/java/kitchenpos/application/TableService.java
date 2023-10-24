@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.ordertable.OrderTableChangeGuestRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeStatusRequest;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
@@ -39,7 +40,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeStatusRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다."));
         savedOrderTable.validateOrderTableHasTableGroupId();
@@ -48,7 +49,7 @@ public class TableService {
             List.of(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("요리중이거나 식사중인 주문 테이블은 상태를 변경할 수 없습니다.");
         }
-        savedOrderTable.changeEmptyStatus();
+        savedOrderTable.changeEmptyStatus(request.isEmpty());
         return OrderTableResponse.from(savedOrderTable);
     }
 

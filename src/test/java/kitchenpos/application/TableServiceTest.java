@@ -8,6 +8,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableChangeGuestRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeStatusRequest;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
@@ -88,9 +89,10 @@ class TableServiceTest {
         final Order order = new Order(savedOrderTable.getId(), new OrderLineItems(List.of()));
         order.changeStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
-        final OrderTableResponse result = tableService.changeEmpty(savedOrderTable.getId());
+        final OrderTableResponse result = tableService.changeEmpty(savedOrderTable.getId(), request);
 
         // then
         assertSoftly(softly -> {
@@ -106,10 +108,11 @@ class TableServiceTest {
     void change_orderTable_empty_fail_with_not_exist_orderTable() {
         // given
         final Long wrongOrderTableId = 0L;
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId))
+        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -119,10 +122,11 @@ class TableServiceTest {
         // given
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave());
         final OrderTable alreadyContainedOrderTable = orderTableRepository.save(new OrderTable(null, tableGroup, 5, false));
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(alreadyContainedOrderTable.getId()))
+        assertThatThrownBy(() -> tableService.changeEmpty(alreadyContainedOrderTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -132,10 +136,11 @@ class TableServiceTest {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
         orderRepository.save(new Order(savedOrderTable.getId(), new OrderLineItems(List.of())));
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId()))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

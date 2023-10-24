@@ -150,7 +150,7 @@ class OrderServiceTest {
     void create_order_fail_with_empty_orderTable() {
         // given
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
-        savedOrderTable.changeEmptyStatus();
+        savedOrderTable.changeEmptyStatus(true);
         final List<OrderLineItemRequest> emptyOrderLineItemRequest = List.of();
         final OrderRequest wrongOrderRequest = new OrderRequest(savedOrderTable.getId(),
             emptyOrderLineItemRequest);

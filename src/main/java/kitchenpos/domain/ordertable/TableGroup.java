@@ -42,7 +42,7 @@ public class TableGroup {
     public void ungroup() {
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
-            orderTable.changeEmptyStatus();
+            orderTable.changeEmptyStatus(true);
         }
         orderTables.clear();
     }

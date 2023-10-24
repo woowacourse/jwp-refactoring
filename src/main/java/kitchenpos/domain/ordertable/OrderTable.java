@@ -49,8 +49,8 @@ public class OrderTable {
         }
     }
 
-    public void changeEmptyStatus() {
-        this.empty = !empty;
+    public void changeEmptyStatus(final boolean changingEmptyStatus) {
+        this.empty = changingEmptyStatus;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {

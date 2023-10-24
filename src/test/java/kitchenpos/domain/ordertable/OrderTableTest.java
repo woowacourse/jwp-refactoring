@@ -27,7 +27,7 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(1L, new TableGroup(2L), 4, false);
 
         // when
-        orderTable.changeEmptyStatus();
+        orderTable.changeEmptyStatus(true);
 
         // then
         assertThat(orderTable.isEmpty()).isTrue();
