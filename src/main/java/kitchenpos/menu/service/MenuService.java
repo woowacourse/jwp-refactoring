@@ -4,18 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.value.Price;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
-import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu.repository.ProductRepository;
+import kitchenpos.value.Price;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +40,7 @@ public class MenuService {
         final Price price = new Price(request.getPrice());
 
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(()->new NoSuchDataException("해당하는 id의 메뉴 그룹이 없습니다."));
+                .orElseThrow(() -> new NoSuchDataException("해당하는 id의 메뉴 그룹이 없습니다."));
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(MenuProduct::from)
@@ -49,18 +49,18 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProduct())
-                    .orElseThrow(()-> new NoSuchDataException("해당하는 id의 상품이 없습니다."));
+                    .orElseThrow(() -> new NoSuchDataException("해당하는 id의 상품이 없습니다."));
             sum = sum.add(product.getPrice().multiply(menuProduct.getQuantity()));
         }
 
         price.isValidPrice(sum);
 
-        final Menu menu = Menu.builder()
-                .name(request.getName())
-                .price(request.getPrice())
-                .menuGroup(menuGroup)
-                .menuProducts(menuProducts)
-                .build();
+        final Menu menu = new Menu(
+                request.getName(),
+                request.getPrice(),
+                menuGroup,
+                menuProducts
+        );
 
         final Menu savedMenu = menuRepository.save(menu);
 
@@ -76,14 +76,7 @@ public class MenuService {
             savedMenuProducts.add(menuProductRepository.save(newMenuProduct));
         }
 
-        return MenuResponse.from(Menu.builder()
-                .id(savedMenu.getId())
-                .name(savedMenu.getName())
-                .price(savedMenu.getPrice())
-                .menuGroup(menuGroup)
-                .menuProducts(savedMenuProducts)
-                .build()
-        );
+        return MenuResponse.from(Menu.of(savedMenu, savedMenuProducts));
     }
 
     @Transactional(readOnly = true)

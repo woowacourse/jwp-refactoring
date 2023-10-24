@@ -36,16 +36,21 @@ public class Menu {
     protected Menu() {
     }
 
-    private Menu(Builder builder) {
-        this.id = builder.id;
-        this.name = builder.name;
-        this.price = builder.price;
-        this.menuGroup = builder.menuGroup;
-        this.menuProducts = builder.menuProducts;
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(name,price,menuGroup,menuProducts);
+        this.id = id;
+        this.menuProducts = menuProducts;
+    }
+
+    public static Menu of(final Menu menu, final List<MenuProduct> menuProducts){
+        return new Menu(menu.id,menu.name,menu.price,menu.menuGroup,menuProducts);
     }
 
     public Long getId() {
@@ -66,42 +71,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public static class Builder {
-        private Long id;
-        private String name;
-        private BigDecimal price;
-        private MenuGroup menuGroup;
-        private List<MenuProduct> menuProducts;
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder price(BigDecimal price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder menuGroup(MenuGroup menuGroup) {
-            this.menuGroup = menuGroup;
-            return this;
-        }
-
-        public Builder menuProducts(List<MenuProduct> menuProducts) {
-            this.menuProducts = menuProducts;
-            return this;
-        }
-
-        public Menu build() {
-            return new Menu(this);
-        }
     }
 }

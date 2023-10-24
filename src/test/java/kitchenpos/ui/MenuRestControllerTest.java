@@ -50,13 +50,8 @@ class MenuRestControllerTest {
                 1L,
                 List.of()
         );
-        final Menu menu = Menu.builder()
-                .id(1L)
-                .name("test")
-                .price(BigDecimal.ZERO)
-                .menuGroup(new MenuGroup(1L))
-                .menuProducts(List.of())
-                .build();
+        final Menu menu = getObject(Menu.class,1L,"test",BigDecimal.ZERO,new MenuGroup(1L),List.of());
+
         when(menuService.create(any()))
                 .thenReturn(MenuResponse.from(menu));
 
