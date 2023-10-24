@@ -4,11 +4,9 @@ import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.List;
 
-import static javax.persistence.CascadeType.REMOVE;
-
 @Embeddable
 public class OrderTables {
-    @OneToMany(mappedBy = "tableGroup", cascade = REMOVE)
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     protected OrderTables() {
