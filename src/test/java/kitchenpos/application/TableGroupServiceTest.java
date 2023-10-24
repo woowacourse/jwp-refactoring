@@ -69,7 +69,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹화하려는 테이블은 2개 이상이어야 합니다.");
     }
 
     @Test
@@ -82,7 +83,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹화하려는 테이블은 2개 이상이어야 합니다.");
     }
 
     @Test
@@ -98,7 +100,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹화를 요청한 테이블 중에 존재하지 않는 테이블이 포함되어 있습니다.");
     }
 
     @Test
@@ -114,7 +117,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
     }
 
     @Test
@@ -133,7 +137,8 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블을 그룹화하려면 테이블이 비어있고 그룹화되어있지 않아야 합니다.");
     }
 
     @Test
@@ -174,6 +179,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
     }
 }

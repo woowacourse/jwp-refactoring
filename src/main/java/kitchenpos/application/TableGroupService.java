@@ -6,15 +6,12 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.ui.dto.CreateTableGroupOrderTableRequest;
 import kitchenpos.ui.dto.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,24 +28,12 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final CreateTableGroupRequest request) {
-        final List<CreateTableGroupOrderTableRequest> createTableGroupOrderTableRequests = request.getOrderTables();
-
-        if (CollectionUtils.isEmpty(createTableGroupOrderTableRequests) || createTableGroupOrderTableRequests.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
         final List<Long> orderTableIds = request.getOrderTableIds();
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (createTableGroupOrderTableRequests.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException("그룹화를 요청한 테이블 중에 존재하지 않는 테이블이 포함되어 있습니다.");
         }
 
         final TableGroup tableGroup = new TableGroup();
@@ -68,7 +53,7 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블 그룹을 해제하려면 그룹화된 테이블의 모든 주문이 완료 상태이어야 합니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
