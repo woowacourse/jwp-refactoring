@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NEGATIVE_EXCEPTION;
+import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NULL_EXCEPTION;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -28,8 +29,15 @@ public class Price {
     }
 
     public Price(BigDecimal value) {
+        checkNull(value);
         checkPositive(value);
         this.value = value;
+    }
+
+    private void checkNull(BigDecimal value) {
+        if (value == null) {
+            throw new PriceException(PRICE_IS_NULL_EXCEPTION);
+        }
     }
 
     private void checkPositive(BigDecimal value) {
