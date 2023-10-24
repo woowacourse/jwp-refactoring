@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,30 +18,14 @@ class ProductServiceTest extends ServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
-
-
-    @Test
-    void Product를_생성할_수_있다() {
-        //when
-        final Product product = productService.create(new Product("치킨", new BigDecimal(20000)));
-
-        //then
-        assertThat(product.getId()).isNotNull();
-    }
-
-    @Test
-    void price가_null이면_예외가_발생한다() {
-        //when, then
-        Assertions.assertThatThrownBy(() -> productService.create(new Product("치킨", null)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+    private ProductRepository productRepository;
 
     @Test
     void price가_0원보다_작으면_예외가_발생한다() {
         //when, then
-        Assertions.assertThatThrownBy(() -> productService.create(new Product("치킨", new BigDecimal(-1))))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> productService.create("치킨", new BigDecimal(-1)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("가격이 0보다 작거나 null일 수 없습니다.");
     }
 
     @Test
@@ -49,8 +33,8 @@ class ProductServiceTest extends ServiceTest {
         //given
         final Product chicken = new Product("치킨", new BigDecimal(20000));
         final Product pizza = new Product("피자", new BigDecimal(20000));
-        productDao.save(chicken);
-        productDao.save(pizza);
+        productRepository.save(chicken);
+        productRepository.save(pizza);
 
         //when
         final List<Product> list = productService.list();

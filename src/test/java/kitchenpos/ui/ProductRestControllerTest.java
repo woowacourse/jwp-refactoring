@@ -2,7 +2,7 @@ package kitchenpos.ui;
 
 import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -17,7 +17,7 @@ class ProductRestControllerTest extends ControllerTest {
     void Product를_생성하면_201을_반환한다() {
         // given
         final var 요청_준비 = RestAssured.given()
-                .body(new Product("디노 짬뽕", new BigDecimal(12000)))
+                .body(new ProductCreateRequest("디노 짬뽕", new BigDecimal(12000)))
                 .contentType(JSON);
 
         // when
