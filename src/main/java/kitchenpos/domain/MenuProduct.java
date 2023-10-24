@@ -39,7 +39,14 @@ public class MenuProduct {
     }
 
     public void joinMenu(final Menu menu) {
+        validateMenu();
         this.menu = menu;
+    }
+
+    private void validateMenu() {
+        if (this.menu != null) {
+            throw new IllegalArgumentException("메뉴가 이미 존재합니다.");
+        }
     }
 
     public Long getSeq() {

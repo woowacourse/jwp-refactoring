@@ -44,7 +44,14 @@ public class Menu {
     }
 
     public void joinMenuGroup(final MenuGroup menuGroup) {
+        validateMenuGroup();
         this.menuGroup = menuGroup;
+    }
+
+    private void validateMenuGroup() {
+        if (this.menuGroup != null) {
+            throw new IllegalArgumentException("메뉴 그룹이 이미 존재합니다.");
+        }
     }
 
     public Long getId() {

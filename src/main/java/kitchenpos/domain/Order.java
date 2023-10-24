@@ -28,15 +28,15 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @CreatedDate
-    private LocalDateTime orderedTime;
-
     @Embedded
     private OrderLineItems orderLineItems;
 
     @ManyToOne
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
+
+    @CreatedDate
+    private LocalDateTime orderedTime;
 
     protected Order() {
     }
@@ -63,12 +63,14 @@ public class Order {
     }
 
     public void joinOrderTable(final OrderTable orderTable) {
+        validateOrderTable();
         this.orderTable = orderTable;
     }
 
-    public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        orderLineItems.forEach(orderLineItem -> orderLineItem.joinOrder(this));
-        this.orderLineItems = new OrderLineItems(orderLineItems, this);
+    private void validateOrderTable() {
+        if (this.orderTable != null) {
+            throw new IllegalArgumentException("주문 테이블이 이미 존재합니다.");
+        }
     }
 
     public Long getId() {

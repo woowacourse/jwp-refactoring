@@ -27,5 +27,4 @@ class MenuPriceTest {
         assertThatThrownBy(() -> new MenuPrice(BigDecimal.valueOf(-1000L)))
             .isInstanceOf(IllegalArgumentException.class);
     }
-
 }

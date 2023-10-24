@@ -29,10 +29,6 @@ public class MenuPrice {
         return value;
     }
 
-    public boolean isSamePrice(final MenuPrice otherMenuPrice) {
-        return value.compareTo(otherMenuPrice.value) == 0;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

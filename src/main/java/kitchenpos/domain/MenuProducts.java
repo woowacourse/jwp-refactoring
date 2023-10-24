@@ -20,10 +20,6 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
-    public void addMenuProduct(final MenuProduct menuProduct) {
-        menuProducts.add(menuProduct);
-    }
-
     public MenuPrice calculatePrice() {
         final BigDecimal result = menuProducts.stream()
             .map(MenuProduct::getPrice)
