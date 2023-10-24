@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.dto.MenuGroupRequest;
+import kitchenpos.domain.dto.MenuGroupResponse;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import support.fixture.MenuGroupBuilder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,20 +41,22 @@ class MenuGroupServiceTest {
     @ParameterizedTest
     @MethodSource
     @DisplayName("모든 메뉴 그룹 목록을 조회할 수 있다.")
-    void should_return_menuGroup_list_when_request_list(final List<MenuGroup> menuGroups) {
+    void should_return_menuGroup_list_when_request_list(final List<MenuGroup> newMenuGroups) {
         // given
-        final List<MenuGroup> expect = menuGroupRepository.findAll();
-        expect.addAll(menuGroups);
+        menuGroupRepository.saveAll(newMenuGroups);
 
-        menuGroupRepository.saveAll(menuGroups);
+        final List<MenuGroup> menuGroups = menuGroupRepository.findAll();
+
+        final List<MenuGroupResponse> expect = menuGroups.stream()
+                .map(MenuGroupResponse::from)
+                .collect(Collectors.toList());
 
         // when
-        final List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
 
         // then
         assertThat(actual)
                 .usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(expect);
     }
 
@@ -59,13 +64,15 @@ class MenuGroupServiceTest {
     @DisplayName("MenuGroup을 생성한다.")
     void should_save_new_menuGroup_when_create() {
         // given
-        final MenuGroup menuGroup = new MenuGroupBuilder().build();
+        final MenuGroupRequest menuGroup = new MenuGroupRequest("메뉴 그룹 이름");
 
         // when
-        final MenuGroup expect = menuGroupService.create(menuGroup);
+        final MenuGroupResponse expect = menuGroupService.create(menuGroup);
 
         // then
-        final MenuGroup actual = menuGroupRepository.findById(expect.getId()).get();
+        final MenuGroup savedMenuGroup = menuGroupRepository.findById(expect.getId()).get();
+
+        final MenuGroupResponse actual = MenuGroupResponse.from(savedMenuGroup);
 
         assertThat(actual)
                 .usingRecursiveComparison()
