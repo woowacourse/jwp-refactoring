@@ -72,7 +72,7 @@ public class Order {
     public void changeOrderStatus(String orderStatus) {
         OrderStatus.checkIfHas(orderStatus);
 
-        if (this.orderStatus == OrderStatus.COMPLETION) {
+        if (OrderStatus.checkWhetherCompletion(this.orderStatus)) {
             throw new OrderException("이미 완료된 주문입니다.");
         }
 
@@ -80,7 +80,7 @@ public class Order {
     }
 
     public void validateOrderStatusIsCompletion() {
-        if (orderStatus == OrderStatus.MEAL || orderStatus == OrderStatus.COOKING) {
+        if (OrderStatus.checkWhetherMeal(orderStatus) || OrderStatus.checkWhetherCooking(orderStatus)) {
             throw new OrderException("주문 상태가 주문 완료가 아닙니다.");
         }
     }

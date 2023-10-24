@@ -11,4 +11,16 @@ public enum OrderStatus {
             throw new OrderStatusException("해당하는 주문 상태가 없습니다.");
         }
     }
+
+    public static boolean checkWhetherCompletion(OrderStatus orderStatus) {
+        return orderStatus == COMPLETION;
+    }
+
+    public static boolean checkWhetherMeal(OrderStatus orderStatus) {
+        return orderStatus == MEAL;
+    }
+
+    public static boolean checkWhetherCooking(OrderStatus orderStatus) {
+        return orderStatus == COOKING;
+    }
 }
