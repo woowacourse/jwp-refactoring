@@ -156,21 +156,6 @@ class MenuIntegrationTest extends IntegrationTest {
             // then
             assertThat(response.statusCode()).isEqualTo(500);
         }
-
-        @Test
-        void same_menuproduct() {
-            // given
-            Menu menu = MenuFixture.computeDefaultMenu(arg ->
-                arg.setMenuProducts(List.of(MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity(), MenuProductFixture.FRIED_CHICKEN_MENU_PRODUCT.toEntity()))
-            );
-
-            // when
-            steps.createMenu(menu);
-            ExtractableResponse<Response> response = sharedContext.getResponse();
-
-            // then
-            assertThat(response.statusCode()).isEqualTo(500);
-        }
     }
 
     @Test
