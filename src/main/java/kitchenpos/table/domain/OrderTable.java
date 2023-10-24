@@ -1,5 +1,6 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,11 +8,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import kitchenpos.order.domain.GroupedOrderTables;
+import kitchenpos.order.domain.TableGroup;
 
 @Entity
 public class OrderTable {
 
     private static final int MIN_NUMBER_OF_GUESTS = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,12 +34,10 @@ public class OrderTable {
     }
 
     private OrderTable(
-            Long id,
             TableGroup tableGroup,
             Integer numberOfGuests,
             Boolean empty
     ) {
-        this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
@@ -46,9 +48,9 @@ public class OrderTable {
             Boolean empty
     ) {
         validateNumberOfGuests(numberOfGuests);
-        validateNumberEmpty(empty);
+        validateEmpty(empty);
 
-        return new OrderTable(null, null, numberOfGuests, empty);
+        return new OrderTable(null, numberOfGuests, empty);
     }
 
     private static void validateNumberOfGuests(Integer numberOfGuests) {
@@ -57,7 +59,7 @@ public class OrderTable {
         }
     }
 
-    private static void validateNumberEmpty(Boolean empty) {
+    private static void validateEmpty(Boolean empty) {
         if (empty == null) {
             throw new NullPointerException("empty는 null일 수 없습니다.");
         }
@@ -87,7 +89,6 @@ public class OrderTable {
         if (isGrouped()) {
             throw new IllegalArgumentException("다른 그룹에 속해있으므로, 주문 상태를 변경할 수 없습니다.");
         }
-
     }
 
     public void group(TableGroup tableGroup) {

@@ -1,10 +1,13 @@
 package kitchenpos.order.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.util.CollectionUtils;
 
 @Embeddable

@@ -1,13 +1,13 @@
-package kitchenpos.order.ui;
+package kitchenpos.table.ui;
 
 import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
-import kitchenpos.order.dto.request.TableCreationRequest;
-import kitchenpos.order.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.order.dto.request.TableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.dto.response.TableResponse;
-import kitchenpos.order.application.TableService;
+import kitchenpos.table.dto.request.TableCreationRequest;
+import kitchenpos.table.dto.request.TableEmptyUpdateRequest;
+import kitchenpos.table.dto.request.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.table.dto.response.TableResponse;
+import kitchenpos.table.application.TableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

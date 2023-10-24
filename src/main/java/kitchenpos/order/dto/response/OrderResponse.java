@@ -3,6 +3,7 @@ package kitchenpos.order.dto.response;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.dto.response.TableResponse;
 
 public class OrderResponse {
 
@@ -47,5 +48,5 @@ public class OrderResponse {
     public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
-    
+
 }

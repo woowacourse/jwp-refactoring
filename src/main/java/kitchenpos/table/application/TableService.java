@@ -1,17 +1,17 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.dto.request.TableCreationRequest;
-import kitchenpos.order.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.order.dto.request.TableNumberOfGuestsUpdateRequest;
-import kitchenpos.order.dto.response.TableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.TableCreationRequest;
+import kitchenpos.table.dto.request.TableEmptyUpdateRequest;
+import kitchenpos.table.dto.request.TableNumberOfGuestsUpdateRequest;
+import kitchenpos.table.dto.response.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
