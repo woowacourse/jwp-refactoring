@@ -43,16 +43,23 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void updateTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        checkEmtpy();
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    private void checkEmtpy() {
+        if (empty) {
+            throw new IllegalArgumentException("주문 테이블이 비어있으면 방문자 수를 변경할 수 없습니다.");
+        }
     }
 
     public void ungroup() {
