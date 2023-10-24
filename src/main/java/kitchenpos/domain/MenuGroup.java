@@ -1,8 +1,10 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import org.springframework.data.annotation.Id;
 
 public class MenuGroup {
+    @Id
     private Long id;
     private String name;
 

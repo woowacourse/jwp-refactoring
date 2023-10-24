@@ -1,52 +1,47 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.product.Price;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
 public class Menu {
+    @Id
     private Long id;
     private String name;
-    private BigDecimal price;
+    @Embedded.Nullable
+    private Price price;
     private Long menuGroupId;
+    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
     private List<MenuProduct> menuProducts;
+
+    public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 
     public Long getMenuGroupId() {
         return menuGroupId;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

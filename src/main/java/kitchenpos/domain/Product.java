@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import kitchenpos.domain.product.Name;
 import kitchenpos.domain.product.Price;
 import org.springframework.data.annotation.Id;
@@ -22,7 +21,7 @@ public class Product {
         this.price = price;
     }
 
-    public BigDecimal multiplyPrice(final Price price) {
+    public Price multiplyPrice(final Price price) {
         return this.price.multiply(price);
     }
 

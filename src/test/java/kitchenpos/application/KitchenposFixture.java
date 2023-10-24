@@ -19,21 +19,11 @@ import org.springframework.util.ReflectionUtils;
 public class KitchenposFixture {
     public static Menu 저장할메뉴만들기(final String name, final String price, final Long menuGroupId,
                                 final MenuProduct... menuProducts) {
-        final Menu menu = new Menu();
-        menu.setId(9987L);
-        menu.setName(name);
-        menu.setPrice(new BigDecimal(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(List.of(menuProducts));
-        return menu;
+        return new Menu(9987L, name, new Price(new BigDecimal(price)), menuGroupId, List.of(menuProducts));
     }
 
     public static MenuProduct 메뉴상품만들기(final Product savedProduct, final long quantity) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(999L);
-        menuProduct.setProductId(savedProduct.getId());
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(999L, null, savedProduct.getId(), quantity);
     }
 
     public static Product 상품만들기(final String name, final String price, final ProductService productService) {
@@ -57,7 +47,7 @@ public class KitchenposFixture {
         return orderTable;
     }
 
-    public static OrderLineItem 주문할메뉴만들기(final Menu savedMenu, final int quantity) {
-        return new OrderLineItem(null, null, savedMenu.getId(), quantity);
+    public static OrderLineItem 주문할메뉴만들기(final Long menuId, final int quantity) {
+        return new OrderLineItem(null, null, menuId, quantity);
     }
 }

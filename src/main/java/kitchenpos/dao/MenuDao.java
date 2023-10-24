@@ -1,15 +1,10 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Menu;
-
 import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.Menu;
+import org.springframework.data.repository.CrudRepository;
 
-public interface MenuDao {
-    Menu save(Menu entity);
-
-    Optional<Menu> findById(Long id);
-
+public interface MenuDao extends CrudRepository<Menu, Long> {
     List<Menu> findAll();
 
     long countByIdIn(List<Long> ids);

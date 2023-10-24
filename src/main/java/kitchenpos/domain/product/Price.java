@@ -18,7 +18,32 @@ public class Price implements Serializable {
         this.value = value;
     }
 
-    public BigDecimal multiply(final Price price) {
-        return this.value.multiply(price.value);
+    public Price multiply(final Price price) {
+        return new Price(this.value.multiply(price.value));
+    }
+
+    public Price add(final Price price) {
+        return new Price(this.value.add(price.value));
+    }
+
+    public boolean isBiggerThan(final Price price) {
+        return this.value.compareTo(price.value) > 0;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Price price = (Price) o;
+        return Objects.equals(value, price.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

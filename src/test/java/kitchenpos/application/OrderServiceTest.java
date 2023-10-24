@@ -9,11 +9,12 @@ import static kitchenpos.application.KitchenposFixture.주문할메뉴만들기;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.request.MenuProductRequest;
+import kitchenpos.application.response.MenuResponse;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
+import kitchenpos.dao.MenuCustomDao;
 import kitchenpos.dao.OrderCustomDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -22,6 +23,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Price;
 import kitchenpos.ui.request.OrderLineItemsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,9 +32,8 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import({ProductService.class, MenuService.class,
-        JdbcTemplateMenuDao.class, MenuGroupService.class, JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class, OrderService.class, TableService.class, OrderCustomDao.class})
+@Import({ProductService.class, MenuService.class, MenuCustomDao.class,
+        MenuGroupService.class, OrderService.class, TableService.class, OrderCustomDao.class})
 class OrderServiceTest {
 
     @Autowired
@@ -53,14 +54,17 @@ class OrderServiceTest {
         final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
+        final MenuResponse savedMenu
+                = menuService.create("메뉴!", new Price(new BigDecimal("4000")), savedMenuGroup.getId(),
+                List.of(new MenuProductRequest(savedProduct.getId(), 4L)));
 
-        final Menu savedMenu = menuService.create(저장할메뉴만들기("메뉴!", "4000", savedMenuGroup.getId(), menuProduct));
-        final Menu savedMenu2 = menuService.create(저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct));
+        final MenuResponse savedMenu2
+                = menuService.create("메뉴 2!", new Price(new BigDecimal("9000")), savedMenuGroup.getId(),
+                List.of(new MenuProductRequest(savedProduct.getId(), 4L)));
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
-        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
+        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu.getId(), 4);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2.getId(), 3);
 
         // given : 주문 테이블
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
@@ -110,7 +114,7 @@ class OrderServiceTest {
         // given : 주문 메뉴
         final OrderLineItem orderLineItem = new OrderLineItem(null, null, 0L, 4); // 존재하지 않는 메뉴
 
-        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2.getId(), 3);
 
         // given : 주문 테이블
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
@@ -141,8 +145,8 @@ class OrderServiceTest {
         final Menu savedMenu2 = 저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct);
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
-        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
+        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu.getId(), 4);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2.getId(), 3);
 
         // given : 주문
         assertThatThrownBy(() -> orderService.create(0L, List.of(
@@ -167,13 +171,16 @@ class OrderServiceTest {
         final MenuGroup savedMenuGroup = 메뉴그룹만들기(menuGroupService);
 
         // given : 메뉴
-        final MenuProduct menuProduct = 메뉴상품만들기(savedProduct, 4L);
-        final Menu savedMenu = menuService.create(저장할메뉴만들기("메뉴!", "4000", savedMenuGroup.getId(), menuProduct));
-        final Menu savedMenu2 = menuService.create(저장할메뉴만들기("메뉴 2!", "9000", savedMenuGroup.getId(), menuProduct));
+        final MenuResponse savedMenu
+                = menuService.create("메뉴!", new Price(new BigDecimal("4000")), savedMenuGroup.getId(),
+                List.of(new MenuProductRequest(savedProduct.getId(), 4L)));
+        final MenuResponse savedMenu2
+                = menuService.create("메뉴 2!", new Price(new BigDecimal("9000")), savedMenuGroup.getId(),
+                List.of(new MenuProductRequest(savedProduct.getId(), 4L)));
 
         // given : 주문 메뉴
-        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu, 4);
-        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2, 3);
+        final OrderLineItem orderLineItem = 주문할메뉴만들기(savedMenu.getId(), 4);
+        final OrderLineItem orderLineItem2 = 주문할메뉴만들기(savedMenu2.getId(), 3);
 
         // given : 주문 테이블
         final OrderTable savedOrderTable = 주문테이블만들기(tableService, false);
