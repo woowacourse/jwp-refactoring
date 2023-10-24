@@ -9,19 +9,18 @@ public class Price {
   private final BigDecimal value;
 
   public Price(final BigDecimal value) {
+    validatePrice(value);
     this.value = value;
+  }
+
+  private void validatePrice(final BigDecimal value) {
+    if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
+      throw new IllegalArgumentException();
+    }
   }
 
   public BigDecimal getValue() {
     return value;
-  }
-
-  public boolean isNull() {
-    return Objects.isNull(value);
-  }
-
-  public boolean isLessThan(final Price compare) {
-    return value.compareTo(compare.value) < 0;
   }
 
   public boolean isGreaterThan(final Price compare) {

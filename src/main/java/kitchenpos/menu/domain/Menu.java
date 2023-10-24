@@ -13,7 +13,6 @@ public class Menu {
 
   public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
       final List<MenuProduct> menuProducts) {
-    validatePrice(price);
     this.id = id;
     this.name = name;
     this.price = price;
@@ -50,9 +49,4 @@ public class Menu {
     return menuProducts;
   }
 
-  private void validatePrice(final Price price) {
-    if (price.isNull() || price.isLessThan(Price.ZERO)) {
-      throw new IllegalArgumentException();
-    }
-  }
 }

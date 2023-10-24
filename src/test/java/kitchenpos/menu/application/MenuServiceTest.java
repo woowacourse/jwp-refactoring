@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.helper.ServiceIntegrateTest;
 import kitchenpos.menu.application.dto.request.MenuCreateRequest;
@@ -29,7 +30,7 @@ class MenuServiceTest extends ServiceIntegrateTest {
   void create_success() {
     //given, when
     final MenuQueryResponse savedMenu = menuService.create(getMenu(BigDecimal.valueOf(19000), 1L));
-    final Menu actual = menuDao.findById(savedMenu.getId()).get().toMenu();
+    final Menu actual = menuDao.findById(savedMenu.getId()).get().toMenu(new ArrayList<>());
 
     //then
     Assertions.assertAll(

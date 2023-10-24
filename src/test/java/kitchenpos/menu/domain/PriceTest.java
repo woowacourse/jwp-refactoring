@@ -3,12 +3,34 @@ package kitchenpos.menu.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class PriceTest {
+
+  @Test
+  @DisplayName("Price를 생성할 때 음수값을 입력하면 예외를 반환한다.")
+  void Price_fail_negative() {
+    //given, when
+    final ThrowingCallable actual = () -> new Price(BigDecimal.valueOf(-3000));
+
+    //then
+    Assertions.assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  @DisplayName("Price를 생성할 때 null 값을 입력하면 예외를 반환한다.")
+  void Price_fail_null() {
+    //given, when
+    final ThrowingCallable actual = () -> new Price(null);
+
+    //then
+    Assertions.assertThatThrownBy(actual).isInstanceOf(IllegalArgumentException.class);
+  }
 
   @ParameterizedTest
   @CsvSource(value = {"300:400:700", "500:500:1000", "200:300:500"}, delimiter = ':')
@@ -35,20 +57,6 @@ class PriceTest {
 
     //then
     assertThat(actual).isEqualTo(new Price(expected));
-  }
-
-  @Test
-  @DisplayName("isLessThan()을 호출했을 때, 기준 가격이 입력 받은 가격보다 저렴하면 true를 반환한다.")
-  void isLessThan() {
-    //given
-    final Price criteria = new Price(BigDecimal.valueOf(300L));
-    final Price compare = new Price(BigDecimal.valueOf(400L));
-
-    //when
-    final boolean actual = criteria.isLessThan(compare);
-
-    //then
-    assertThat(actual).isTrue();
   }
 
   @Test
