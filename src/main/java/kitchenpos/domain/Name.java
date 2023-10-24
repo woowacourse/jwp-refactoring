@@ -19,7 +19,7 @@ public class Name {
     }
 
     private void validate(final String value) {
-        if (Objects.isNull(value) || value.trim().length() == 0) {
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
