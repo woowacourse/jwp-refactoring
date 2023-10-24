@@ -20,6 +20,16 @@ public class Price {
         this.value = value;
     }
 
+    public boolean biggerThan(final Price otherPrice) {
+        return value.compareTo(otherPrice.value) > 0;
+    }
+
+    public Price multiply(final long quantity) {
+        final BigDecimal value = this.value.multiply(BigDecimal.valueOf(quantity));
+
+        return new Price(value);
+    }
+
     public BigDecimal getValue() {
         return value;
     }
@@ -35,9 +45,5 @@ public class Price {
     @Override
     public int hashCode() {
         return Objects.hash(value);
-    }
-
-    public boolean biggerThan(final BigDecimal otherValue) {
-        return value.compareTo(otherValue) > 0;
     }
 }

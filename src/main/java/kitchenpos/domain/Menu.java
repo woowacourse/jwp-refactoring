@@ -52,7 +52,7 @@ public class Menu {
     }
 
     private void validatePrice(final MenuProducts menuProducts) {
-        final BigDecimal menuProductsTotalPrice = menuProducts.calculateTotalPrice();
+        final Price menuProductsTotalPrice = menuProducts.calculateTotalPrice();
         if (price == null || price.biggerThan(menuProductsTotalPrice)) {
             throw new IllegalArgumentException("메뉴 가격은 메뉴를 구성하는 상품의 가격 합보다 작아야 합니다.");
         }

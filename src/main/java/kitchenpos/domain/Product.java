@@ -31,6 +31,10 @@ public class Product {
         this.price = new Price(price);
     }
 
+    public Price calculatePriceWithCount(final long quantity) {
+        return price.multiply(quantity);
+    }
+
     public Long getId() {
         return id;
     }
@@ -39,8 +43,8 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getValue();
+    public Price getPrice() {
+        return price;
     }
 
     @Override

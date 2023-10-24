@@ -17,9 +17,9 @@ class MenuProductTest {
         final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2l);
 
         // when
-        final BigDecimal actual = 후라이드_2개.calculateMenuProductPrice();
+        final Price actual = 후라이드_2개.calculateMenuProductPrice();
 
         // then
-        assertThat(actual).isEqualByComparingTo(BigDecimal.valueOf(34000));
+        assertThat(actual).isEqualTo(new Price(new BigDecimal(34000)));
     }
 }

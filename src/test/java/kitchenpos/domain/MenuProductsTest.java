@@ -21,9 +21,9 @@ class MenuProductsTest {
         final MenuProducts menuProducts = new MenuProducts(List.of(후라이드_1개, 양념치킨_2개));
 
         // when
-        final BigDecimal actual = menuProducts.calculateTotalPrice();
+        final Price actual = menuProducts.calculateTotalPrice();
 
         // then
-        assertThat(actual).isEqualByComparingTo(BigDecimal.valueOf(57000));
+        assertThat(actual).isEqualTo(new Price(BigDecimal.valueOf(57000)));
     }
 }

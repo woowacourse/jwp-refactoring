@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.CreateProductRequest;
@@ -38,7 +39,7 @@ class ProductServiceTest {
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
             softAssertions.assertThat(actual.getName()).isEqualTo(request.getName());
-            softAssertions.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
+            softAssertions.assertThat(actual.getPrice()).isEqualTo(new Price(request.getPrice()));
         });
     }
 

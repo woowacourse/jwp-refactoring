@@ -7,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -35,8 +34,8 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public BigDecimal calculateMenuProductPrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    public Price calculateMenuProductPrice() {
+        return product.calculatePriceWithCount(quantity);
     }
 
     public Long getSeq() {

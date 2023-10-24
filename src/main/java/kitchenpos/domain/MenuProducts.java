@@ -24,13 +24,13 @@ public class MenuProducts {
         menuProducts.add(menuProduct);
     }
 
-    public BigDecimal calculateTotalPrice() {
+    public Price calculateTotalPrice() {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.calculateMenuProductPrice());
+            sum = sum.add(menuProduct.calculateMenuProductPrice().getValue());
         }
 
-        return sum;
+        return new Price(sum);
     }
 
     public List<MenuProduct> getMenuProducts() {
