@@ -31,7 +31,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
+    private final List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() {
     }

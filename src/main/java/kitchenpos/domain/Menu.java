@@ -32,7 +32,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
