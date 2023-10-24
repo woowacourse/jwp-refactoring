@@ -8,6 +8,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,7 +33,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<OrderTableIdRequest> orderTableIds = tableGroupRequest.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
@@ -68,9 +70,19 @@ public class TableGroupService {
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return new TableGroupResponse(
+                savedTableGroup.getId(),
+                savedTableGroup.getCreatedDate(),
+                savedTableGroup.getOrderTables().stream()
+                        .map(orderTable -> new OrderTableResponse(
+                                orderTable.getId(),
+                                orderTable.getTableGroupId(),
+                                orderTable.getNumberOfGuests(),
+                                orderTable.isEmpty())
+                        ).collect(Collectors.toList())
+        );
     }
-
+    
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);

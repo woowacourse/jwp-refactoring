@@ -5,9 +5,10 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class TableGroupServiceTest {
             }
 
             final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
             assertSoftly(softly -> {
                 assertThat(savedTableGroup.getId()).isNotNull();
@@ -88,9 +89,9 @@ class TableGroupServiceTest {
             }
 
             final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
             final List<Long> savedOrderTableIds = savedTableGroup.getOrderTables().stream()
-                    .map(OrderTable::getId)
+                    .map(OrderTableResponse::getId)
                     .collect(Collectors.toList());
 
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -113,7 +114,7 @@ class TableGroupServiceTest {
             }
 
             final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
