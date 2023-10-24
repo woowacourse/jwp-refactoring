@@ -13,16 +13,16 @@ public class Menu {
     @Id
     private Long id;
     
-    private String menuName;
+    private String name;
     
     @Embedded
-    private MenuPrice menuPrice;
+    private MenuPrice price;
     
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
     
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MenuProduct> menuProducts;
     
     public static Menu of(final String name,
@@ -32,30 +32,29 @@ public class Menu {
         return new Menu(name,
                 new MenuPrice(menuPrice),
                 menuGroup,
-                menuProducts);
+                menuProducts
+        );
     }
     
-    public Menu(final String menuName,
-                final MenuPrice menuPrice,
+    public Menu(final String name,
+                final MenuPrice price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        this(null, menuName, menuPrice, menuGroup, menuProducts);
+        this(null, name, price, menuGroup, menuProducts);
     }
     
     public Menu(final Long id,
-                final String menuName,
-                final MenuPrice menuPrice,
+                final String name,
+                final MenuPrice price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
-        validate(menuPrice, menuProducts);
+        validate(price, menuProducts);
         this.id = id;
-        this.menuName = menuName;
-        this.menuPrice = menuPrice;
+        this.name = name;
+        this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-        this.menuProducts.forEach(menuProduct -> new MenuProduct(this,
-                menuProduct.getProduct(),
-                menuProduct.getQuantity()));
+        putMenuInMenuProducts();
     }
     
     private static void validate(final MenuPrice menuPrice,
@@ -70,16 +69,22 @@ public class Menu {
         }
     }
     
+    private void putMenuInMenuProducts() {
+        this.menuProducts.forEach(menuProduct -> new MenuProduct(this,
+                menuProduct.getProduct(),
+                menuProduct.getQuantity()));
+    }
+    
     public Long getId() {
         return id;
     }
     
-    public String getMenuName() {
-        return menuName;
+    public String getName() {
+        return name;
     }
     
     public MenuPrice getPrice() {
-        return menuPrice;
+        return price;
     }
     
     public MenuGroup getMenuGroup() {

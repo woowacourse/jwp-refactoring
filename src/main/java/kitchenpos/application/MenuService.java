@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -36,7 +37,7 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuCreateRequest request) {
         final MenuGroup menuGroup = getMenuGroup(request);
-        final List<MenuProduct> menuProducts = getMenuProducts(request);
+        final List<MenuProduct> menuProducts = getMenuProducts(request.getMenuProductCreateRequests());
         final Menu menu = Menu.of(request.getMenuName(),
                 request.getMenuPrice(),
                 menuGroup,
@@ -50,8 +51,8 @@ public class MenuService {
                                   .orElseThrow(() -> new NotExistMenuGroupException("존재하지 않는 메뉴 그룹입니다"));
     }
     
-    private List<MenuProduct> getMenuProducts(final MenuCreateRequest request) {
-        return request.getMenuProductCreateRequests().stream()
+    private List<MenuProduct> getMenuProducts(final List<MenuProductCreateRequest> request) {
+        return request.stream()
                       .map(menuProductCreateRequest ->
                               new MenuProduct(null,
                                       getProduct(menuProductCreateRequest.getProductId()),
