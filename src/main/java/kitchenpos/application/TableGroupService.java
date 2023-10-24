@@ -46,10 +46,7 @@ public class TableGroupService {
     }
     
     private void updateOrderTables(final TableGroup tableGroup, final List<OrderTable> savedOrderTables) {
-        savedOrderTables.forEach(orderTable -> new OrderTable(orderTable.getId(),
-                tableGroup,
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty()));
+        savedOrderTables.forEach(orderTable -> orderTable.setTableGroup(tableGroup));
     }
     
     @Transactional
