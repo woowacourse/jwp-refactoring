@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,17 +13,17 @@ import javax.persistence.ManyToOne;
 public class MenuProduct {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
+    @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    @Column(name = "product_id")
+    @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private long quantity;
 
     protected MenuProduct() {

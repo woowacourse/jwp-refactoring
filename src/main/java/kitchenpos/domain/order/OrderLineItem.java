@@ -17,13 +17,13 @@ public class OrderLineItem {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "menu_id")
+    @Column(name = "menu_id", nullable = false)
     private Long menuId;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity", nullable = false)
     private long quantity;
 
     protected OrderLineItem() {
