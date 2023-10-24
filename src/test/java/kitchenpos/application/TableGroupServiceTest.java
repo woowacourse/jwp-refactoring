@@ -1,87 +1,65 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.OrderTableId;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-class TableGroupServiceTest extends ServiceTest{
+class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private OrderTableRepository orderTableRepository;
 
-    private TableGroup tableGroup;
+    private TableGroupCreateRequest createRequest;
 
     @BeforeEach
     void setUp() {
-        tableGroup = makeTableGroup();
+        createRequest = makeTableGroupCreate();
     }
 
     @Test
     void 테이블_그룹을_생성한다() {
-        Mockito.when(orderTableDao.findAllByIdIn(anyList()))
-                .thenReturn(List.of(makeEmptyOrderTableById(1L), makeEmptyOrderTableById(2L)));
-        Mockito.when(tableGroupDao.save(any(TableGroup.class)))
-                .thenReturn(tableGroup);
-        Mockito.when(orderTableDao.save(any(OrderTable.class)))
-                .thenReturn(makeOrderTableById(1L));
-
-        TableGroup saved = tableGroupService.create(tableGroup);
-        assertThat(saved.getId()).isEqualTo(tableGroup.getId());
+        TableGroupResponse response = tableGroupService.create(createRequest);
+        assertThat(response.getOrderTables().size()).isEqualTo(2);
     }
 
     @Test
-    void ungroup() {
-        Mockito.when(orderTableDao.findAllByTableGroupId(anyLong()))
-                .thenReturn(List.of(makeOrderTableById(1L)));
-        Mockito.when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                .thenReturn(false);
-        Mockito.when(orderTableDao.save(any(OrderTable.class)))
-                .thenReturn(makeEmptyOrderTableById(1L));
-
-        assertThatCode(
-                () -> tableGroupService.ungroup(1L)
-        ).doesNotThrowAnyException();
+    void 주문테이블이_주문가능_상태이면_예외발생() {
+        tableService.changeEmpty(1L, new OrderTableChangeEmptyRequest(false));
+        assertThatThrownBy(
+                () -> tableGroupService.create(createRequest)
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    private TableGroup makeTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        tableGroup.setOrderTables(List.of(makeOrderTableById(1L), makeOrderTableById(2L)));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroup;
+    @Test
+    void 통합_계산_해제() {
+        TableGroupResponse response = tableGroupService.create(createRequest);
+        tableGroupService.ungroup(response.getId());
+
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(List.of(1L, 2L));
+        for (OrderTable orderTable : orderTables) {
+            assertAll(
+                    () -> assertThat(orderTable.getTableGroup()).isNull(),
+                    () -> assertThat(orderTable.isEmpty()).isFalse()
+            );
+        }
+
     }
 
-    private OrderTable makeOrderTableById(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
-        return orderTable;
-    }
-
-    private OrderTable makeEmptyOrderTableById(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(1);
-        return orderTable;
+    private TableGroupCreateRequest makeTableGroupCreate() {
+        return new TableGroupCreateRequest(List.of(
+                new OrderTableId(1L),
+                new OrderTableId(2L)));
     }
 }
