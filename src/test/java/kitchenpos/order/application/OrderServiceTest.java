@@ -131,7 +131,7 @@ class OrderServiceTest {
     @Test
     void 상태를_변경하려는_주문이_이미_완료_상태면_예외발생() {
         // given
-        Order order = new Order();
+        Order order = new Order(1L, LocalDateTime.now());
         order.changeOrderStatus(OrderStatus.COMPLETION);
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));

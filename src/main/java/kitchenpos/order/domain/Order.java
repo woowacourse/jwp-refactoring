@@ -24,7 +24,7 @@ public class Order {
     private OrderStatus orderStatus = OrderStatus.COOKING;
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(Long orderTableId, LocalDateTime orderedTime) {

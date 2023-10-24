@@ -12,9 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -73,7 +75,7 @@ class TableServiceTest {
     void 상태를_바꾸려는_테이블의_테이블_그룹이_존재하면_예외발생() {
         // given
         OrderTable orderTable = new OrderTable(3, false);
-        orderTable.changeTableGroup(new TableGroup());
+        orderTable.changeTableGroup(new TableGroup(LocalDateTime.now()));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
@@ -145,6 +147,6 @@ class TableServiceTest {
                 .willReturn(Optional.of(new OrderTable(1L, 3, false)));
 
         // when, then
-        tableService.changeNumberOfGuests(1L, updateOrderTableGuests);
+        assertDoesNotThrow(() -> tableService.changeNumberOfGuests(1L, updateOrderTableGuests));
     }
 }

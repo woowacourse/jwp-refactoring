@@ -18,7 +18,7 @@ public class Menu {
 
     private Long menuGroupId;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
