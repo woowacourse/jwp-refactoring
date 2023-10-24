@@ -20,7 +20,7 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
-    protected Menu() {
+    public Menu() {
     }
 
     public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {

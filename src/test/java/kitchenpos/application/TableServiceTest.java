@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -75,7 +75,7 @@ class TableServiceTest {
 
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(false);
             when(orderTableRepository.save(any(OrderTable.class)))
                     .thenReturn(savedOrderTable);
@@ -110,7 +110,7 @@ class TableServiceTest {
 
             when(orderTableRepository.findById(anyLong()))
                     .thenReturn(Optional.of(savedOrderTable));
-            when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
             // when, then

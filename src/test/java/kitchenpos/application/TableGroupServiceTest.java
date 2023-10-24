@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import kitchenpos.persistence.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -152,7 +151,7 @@ class TableGroupServiceTest {
                     .thenReturn(Optional.of(savedTableGroup));
             when(orderTableRepository.findAllByTableGroup(any(TableGroup.class)))
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
-            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(false);
             when(orderTableRepository.save(any(OrderTable.class)))
                     .thenReturn(null);
@@ -187,7 +186,7 @@ class TableGroupServiceTest {
                     .thenReturn(Optional.of(savedTableGroup));
             when(orderTableRepository.findAllByTableGroup(any(TableGroup.class)))
                     .thenReturn(List.of(savedOrderTable1, savedOrderTable2));
-            when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
+            when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any()))
                     .thenReturn(true);
 
             // when, then
