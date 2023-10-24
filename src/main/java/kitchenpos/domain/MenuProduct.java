@@ -38,22 +38,6 @@ public class MenuProduct {
         return product.calculatePriceWithCount(quantity);
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
     public void setMenu(final Menu menu) {
         this.menu = menu;
     }

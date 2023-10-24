@@ -12,6 +12,7 @@ public class MenuGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
 
     protected MenuGroup() {
@@ -23,10 +24,6 @@ public class MenuGroup {
 
     public Long getId() {
         return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override

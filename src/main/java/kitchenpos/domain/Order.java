@@ -68,10 +68,6 @@ public class Order extends BaseCreateTimeEntity {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }

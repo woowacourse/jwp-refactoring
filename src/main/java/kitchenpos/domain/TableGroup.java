@@ -43,10 +43,6 @@ public class TableGroup extends BaseCreateTimeEntity {
         return id;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
