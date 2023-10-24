@@ -1,19 +1,10 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.menugroup.domain.MenuGroup;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -25,44 +16,23 @@ public class Menu {
     private String name;
     private BigDecimal price;
 
-    @ManyToOne(fetch = LAZY)
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+//    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+//    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validate(price, menuProducts);
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
+        this.menuGroupId = menuGroupId;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
-    }
-
-    private void validate(BigDecimal menuPrice, List<MenuProduct> menuProducts) {
-        if (Objects.isNull(menuPrice) || menuPrice.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        BigDecimal totalMenuProductsPrice = menuProducts.stream()
-                .map(MenuProduct::calculatePrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        if (menuPrice.compareTo(totalMenuProductsPrice) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        menuProducts
-                .forEach(menuProduct -> menuProduct.changeMenu(this));
-        this.menuProducts.addAll(menuProducts);
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
     }
 
     public Long getId() {
@@ -77,11 +47,7 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 }

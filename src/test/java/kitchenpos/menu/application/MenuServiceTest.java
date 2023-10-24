@@ -6,10 +6,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,13 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
@@ -35,13 +32,10 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupRepository menuGroupRepository;
-
-    @Mock
     private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductRepository productRepository;
+    private MenuValidator menuValidator;
 
     @InjectMocks
     private MenuService menuService;
@@ -54,18 +48,18 @@ class MenuServiceTest {
 
         BigDecimal productPrice = BigDecimal.TEN;
         String productName = "치킨";
-        Product product = new Product(productName, productPrice);
-        MenuProduct menuProduct = new MenuProduct(product, 1);
 
-        MenuGroup menuGroup = new MenuGroup(1L, "한식");
-        Menu menu = new Menu(1L, menuName, menuPrice, menuGroup, List.of(menuProduct));
+        Menu menu = new Menu(1L, menuName, menuPrice, 1L);
+        MenuProduct menuProduct = new MenuProduct(1L, menu, 1L, 1);
 
-        given(menuGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
-        given(productRepository.findById(anyLong()))
-                .willReturn(Optional.of(product));
+        willDoNothing()
+                .given(menuValidator).validate(any(), anyList());
+
         given(menuRepository.save(any(Menu.class)))
                 .willReturn(menu);
+
+        given(menuProductRepository.save(any(MenuProduct.class)))
+                .willReturn(menuProduct);
 
         // when
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 1);
@@ -85,9 +79,8 @@ class MenuServiceTest {
                 1L,
                 List.of(new MenuProductRequest(1L, 1))
         );
-
-        given(menuGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
+        willThrow(IllegalArgumentException.class)
+                .given(menuValidator).validate(any(), anyList());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(minusPriceMenu))
@@ -104,8 +97,8 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
-        given(menuGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
+        willThrow(IllegalArgumentException.class)
+                .given(menuValidator).validate(any(), anyList());
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -121,10 +114,12 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
+        willThrow(IllegalArgumentException.class)
+                .given(menuValidator).validate(any(), anyList());
+
         // when, then
         assertThatThrownBy(() -> menuService.create(nullMenuGroupMenu))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(productRepository).should(never()).findById(anyLong());
     }
 
     @Test
@@ -136,14 +131,8 @@ class MenuServiceTest {
                 1L,
                 List.of(new MenuProductRequest(1L, 1))
         );
-
-        Product product = new Product("치킨", BigDecimal.TEN);
-
-        given(menuGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
-
-        given(productRepository.findById(anyLong()))
-                .willReturn(Optional.of(product));
+        willThrow(IllegalArgumentException.class)
+                .given(menuValidator).validate(any(), anyList());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(expensiveMenu))
@@ -161,14 +150,8 @@ class MenuServiceTest {
                 List.of(new MenuProductRequest(1L, 1))
         );
 
-        Product product = new Product("치킨", BigDecimal.TEN);
-
-        given(menuGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(new MenuGroup(1L, "한식")));
-
-        // 예외 상황: 존재하지 않는 상품
-        given(productRepository.findById(anyLong()))
-                .willReturn(Optional.empty());
+        willThrow(IllegalArgumentException.class)
+                .given(menuValidator).validate(any(), anyList());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))

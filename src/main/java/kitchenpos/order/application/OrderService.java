@@ -43,7 +43,7 @@ public class OrderService {
     public OrderResponse create(CreateOrderRequest createOrderRequest) {
         OrderTable orderTable = orderTableRepository.findById(createOrderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Order order = new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
 
         List<OrderLineItemRequest> orderLineItemRequests = createOrderRequest.getOrderLineItems();
         addOrderLineItems(orderLineItemRequests, order);
@@ -67,7 +67,7 @@ public class OrderService {
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            OrderLineItem orderLineItem = new OrderLineItem(menu, orderLineItemRequest.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
             order.addOrderLineItem(orderLineItem);
         }
     }

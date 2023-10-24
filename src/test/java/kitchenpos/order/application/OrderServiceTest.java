@@ -1,9 +1,7 @@
 package kitchenpos.order.application;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.application.dto.request.CreateOrderRequest;
 import kitchenpos.order.application.dto.request.OrderLineItemRequest;
 import kitchenpos.order.application.dto.request.UpdateOrderStatusRequest;
@@ -12,7 +10,6 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.Test;
@@ -42,8 +39,7 @@ class OrderServiceTest {
     private Menu chicken = new Menu(1L,
             "chicken",
             BigDecimal.TEN,
-            new MenuGroup(1L, "치킨"),
-            List.of(new MenuProduct(new Product("치킨", BigDecimal.TEN), 1)));
+            1L);
     @Mock
     private MenuRepository menuRepository;
     @Mock
@@ -167,8 +163,8 @@ class OrderServiceTest {
     void 주문_상태를_변경한다() {
         // given
         OrderTable orderTable = new OrderTable(1L, 3, false);
-        Order order = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
-        order.addOrderLineItem(new OrderLineItem(chicken, 3));
+        Order order = new Order(1L, OrderStatus.MEAL, LocalDateTime.now());
+        order.addOrderLineItem(new OrderLineItem(1L, 3));
 
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));

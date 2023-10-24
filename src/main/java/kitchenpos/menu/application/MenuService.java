@@ -8,10 +8,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,46 +18,49 @@ import java.util.stream.Collectors;
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
+    private final MenuValidator menuValidator;
 
     public MenuService(
             MenuRepository menuRepository,
-            MenuGroupRepository menuGroupRepository,
             MenuProductRepository menuProductRepository,
-            ProductRepository productRepository
-    ) {
+            MenuValidator menuValidator) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
-        this.productRepository = productRepository;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
     public MenuResponse create(MenuRequest menuRequest) {
-        MenuGroup menuGroup = findMenuGroup(menuRequest);
-        List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
-        List<MenuProduct> menuProducts = createMenuProducts(menuProductRequests);
-        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
+        List<MenuProduct> menuProducts = extractMenuProdcuts(menuRequest);
+
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId());
+        menuValidator.validate(menu, menuProducts);
 
         menuRepository.save(menu);
-        return MenuResponse.from(menu);
+        saveMenuProducts(menuProducts, menu);
+
+        return MenuResponse.of(menu, menuProducts);
     }
 
-    private MenuGroup findMenuGroup(MenuRequest menuRequest) {
-        return menuGroupRepository.findById(menuRequest.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+    private List<MenuProduct> extractMenuProdcuts(MenuRequest menuRequest) {
+        List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
+        return createMenuProducts(menuProductRequests);
     }
 
     private List<MenuProduct> createMenuProducts(List<MenuProductRequest> menuProductRequests) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));
+            menuProducts.add(new MenuProduct(menuProductRequest.getProductId(), menuProductRequest.getQuantity()));
         }
         return menuProducts;
+    }
+
+    private void saveMenuProducts(List<MenuProduct> menuProducts, Menu menu) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.changeMenu(menu);
+            menuProductRepository.save(menuProduct);
+        }
     }
 
     public List<MenuResponse> list() {
@@ -73,7 +72,7 @@ public class MenuService {
             List<MenuProductResponse> menuProductResponses = menuProducts.stream()
                     .map(MenuProductResponse::toDto)
                     .collect(Collectors.toList());
-            menuResponse.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroup().getId(), menuProductResponses));
+            menuResponse.add(new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses));
         }
 
         return menuResponse;

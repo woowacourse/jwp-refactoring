@@ -13,7 +13,7 @@ public class MenuProductResponse {
     }
 
     public static MenuProductResponse toDto(MenuProduct menuProduct) {
-        return new MenuProductResponse(menuProduct.getProduct().getId(), menuProduct.getQuantity());
+        return new MenuProductResponse(menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public Long getProductId() {

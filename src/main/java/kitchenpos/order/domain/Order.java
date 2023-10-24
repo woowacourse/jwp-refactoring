@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ import java.util.List;
 
 import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -26,8 +24,7 @@ public class Order {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(STRING)
     private OrderStatus orderStatus;
@@ -39,9 +36,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        validate(orderTable);
-        this.orderTable = orderTable;
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+//        validate(orderTableId);
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
@@ -83,8 +80,8 @@ public class Order {
         return orderedTime;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
