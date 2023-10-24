@@ -8,6 +8,8 @@ import static kitchenpos.common.fixture.OrderFixture.주문;
 import static kitchenpos.common.fixture.OrderLineItemFixture.주문_항목;
 import static kitchenpos.common.fixture.ProductFixture.상품;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -25,11 +27,13 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusUpdateRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -71,62 +75,92 @@ class OrderServiceTest {
         orderLineItem = 주문_항목(menu.getId());
     }
 
+    @Nested
+    class 주문을_생성할_때 {
+
+        @Test
+        void 정상적으로_생성한다() {
+            // given
+            OrderCreateRequest order = 주문_생성_요청(orderTableId, List.of(orderLineItem));
+
+            // when
+            OrderResponse createdOrder = orderService.create(order);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(createdOrder.getId()).isNotNull();
+                softly.assertThat(createdOrder).usingRecursiveComparison()
+                        .ignoringFields("id", "orderLineItems.seq", "orderLineItems.orderId")
+                        .ignoringFieldsOfTypes(LocalDateTime.class)
+                        .isEqualTo(OrderResponse.from(주문(orderTableId, COOKING, List.of(orderLineItem))));
+            });
+        }
+
+        @Test
+        void 주문을_생성할_때_주문_항목이_비었으면_예외를_던진다() {
+            // given
+            OrderCreateRequest invalidOrder = 주문_생성_요청(orderTableId, List.of());
+
+            // expect
+            assertThatThrownBy(() -> orderService.create(invalidOrder))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문을_생성할_때_주문_항목_개수와_메뉴의_개수가_다르면_예외를_던진다() {
+            // given
+            OrderCreateRequest invalidOrder = 주문_생성_요청(orderTableId, List.of(orderLineItem, orderLineItem));
+
+            // expect
+            assertThatThrownBy(() -> orderService.create(invalidOrder))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문을_생성할_때_존재하지_않는_주문_테이블이면_예외를_던진다() {
+            // given
+            OrderCreateRequest invalidOrder = 주문_생성_요청(Long.MIN_VALUE, List.of(orderLineItem));
+
+            // expect
+            assertThatThrownBy(() -> orderService.create(invalidOrder))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 주문을_생성할_때_주문_테이블이_비었으면_예외를_던진다() {
+            // given
+            OrderCreateRequest invalidOrder = 주문_생성_요청(emptyOrderTableId, List.of(orderLineItem));
+
+            // expect
+            assertThatThrownBy(() -> orderService.create(invalidOrder))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
     @Test
-    void 주문을_생성한다() {
+    void 주문을_조회한다() {
         // given
-        OrderCreateRequest order = 주문_생성_요청(orderTableId, List.of(orderLineItem));
+        OrderResponse createdOrder = orderService.create(주문_생성_요청(orderTableId, List.of(orderLineItem)));
 
         // when
-        OrderResponse createdOrder = orderService.create(order);
+        List<OrderResponse> orders = orderService.list();
 
         // then
-        assertSoftly(softly -> {
-            softly.assertThat(createdOrder.getId()).isNotNull();
-            softly.assertThat(createdOrder).usingRecursiveComparison()
-                    .ignoringFields("id", "orderLineItems.seq", "orderLineItems.orderId")
-                    .ignoringFieldsOfTypes(LocalDateTime.class)
-                    .isEqualTo(OrderResponse.from(주문(orderTableId, COOKING, List.of(orderLineItem))));
-        });
+        assertThat(orders).usingRecursiveComparison()
+                .isEqualTo(List.of(createdOrder));
     }
 
     @Test
-    void 주문을_생성할_때_주문_항목이_비었으면_예외를_던진다() {
+    void 주문_상태를_변경한다() {
         // given
-        OrderCreateRequest invalidOrder = 주문_생성_요청(orderTableId, List.of());
+        Long orderId = orderService.create(주문_생성_요청(orderTableId, List.of(orderLineItem))).getId();
+        OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 
-        // expect
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
+        // when
+        OrderResponse order = orderService.changeOrderStatus(orderId, request);
 
-    @Test
-    void 주문을_생성할_때_주문_항목_개수와_메뉴의_개수가_다르면_예외를_던진다() {
-        // given
-        OrderCreateRequest invalidOrder = 주문_생성_요청(orderTableId, List.of(orderLineItem, orderLineItem));
-
-        // expect
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문을_생성할_때_존재하지_않는_주문_테이블이면_예외를_던진다() {
-        // given
-        OrderCreateRequest invalidOrder = 주문_생성_요청(Long.MIN_VALUE, List.of(orderLineItem));
-
-        // expect
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 주문을_생성할_때_주문_테이블이_비었으면_예외를_던진다() {
-        // given
-        OrderCreateRequest invalidOrder = 주문_생성_요청(emptyOrderTableId, List.of(orderLineItem));
-
-        // expect
-        assertThatThrownBy(() -> orderService.create(invalidOrder))
-                .isInstanceOf(IllegalArgumentException.class);
+        // then
+        assertThat(order.getOrderStatus()).isEqualTo(MEAL.name());
     }
 
     static class OrderRequestFixture {
