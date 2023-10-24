@@ -3,6 +3,8 @@ package kitchenpos.menu.domain;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -10,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.value.Quantity;
 import kitchenpos.menu.dto.MenuProductDto;
 
@@ -33,20 +36,28 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Long menuId, Long product, Quantity quantity) {
+    public MenuProduct(Long seq, Long menuId, Product product, Quantity quantity) {
         this.seq = seq;
         this.menuId = menuId;
-        this.product = new Product(product);
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public static MenuProduct from(final MenuProductDto dto) {
+    public static MenuProduct of(final MenuProductDto dto, final List<Product> products){
+        final Product product = products.stream()
+                .filter(pr -> pr.getId().equals(dto.getMenuId()))
+                .findFirst()
+                .orElseThrow(()->new NoSuchDataException("해당하는 id의 상품이 없습니다."));
         return new MenuProduct(
                 dto.getSeq(),
                 dto.getMenuId(),
-                dto.getProductId(),
+                product,
                 new Quantity(dto.getQuantity())
         );
+    }
+
+    public BigDecimal calculateTotal(){
+        return product.getPrice().multiply(quantity);
     }
 
     public Long getSeq() {
@@ -57,7 +68,11 @@ public class MenuProduct {
         return menuId;
     }
 
-    public Long getProduct() {
+    public Product getProduct() {
+        return product;
+    }
+
+    public Long getProductId(){
         return product.getId();
     }
 

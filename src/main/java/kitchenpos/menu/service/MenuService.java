@@ -9,6 +9,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.dto.MenuProductDto;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
@@ -42,15 +43,19 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new NoSuchDataException("해당하는 id의 메뉴 그룹이 없습니다."));
 
+        final List<Long> productIds = request.getMenuProducts().stream()
+                .map(MenuProductDto::getProductId)
+                .collect(Collectors.toList());
+
+        final List<Product> products = productRepository.findAllById(productIds);
+
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(MenuProduct::from)
+                .map(dto -> MenuProduct.of(dto,products))
                 .collect(Collectors.toList());
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProduct())
-                    .orElseThrow(() -> new NoSuchDataException("해당하는 id의 상품이 없습니다."));
-            sum = sum.add(product.getPrice().multiply(menuProduct.getQuantity()));
+            sum = sum.add(menuProduct.calculateTotal());
         }
 
         price.isValidPrice(sum);

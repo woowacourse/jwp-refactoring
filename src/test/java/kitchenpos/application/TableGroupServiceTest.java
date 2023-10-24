@@ -1,18 +1,16 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.exception.EmptyTableException;
+import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.table.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.table.dto.response.TableGroupResponse;
-import kitchenpos.exception.EmptyTableException;
-import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.table.service.TableGroupService;
 import kitchenpos.table.service.TableService;
 import kitchenpos.util.ObjectCreator;
@@ -21,8 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 @DisplayName("테이블 그룹 테스트")
+@Import({TableGroupService.class, TableService.class})
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
@@ -50,8 +50,9 @@ class TableGroupServiceTest extends ServiceTest {
         // then
         assertSoftly(softly ->
                 orderTables.stream()
-                .filter(orderTable -> orderTable.getId().equals(1L) || orderTable.getId().equals(2L))
-                .forEach(orderTable -> softly.assertThat(orderTable.getTableGroupId()).isEqualTo(actual.getId()))
+                        .filter(orderTable -> orderTable.getId().equals(1L) || orderTable.getId().equals(2L))
+                        .forEach(
+                                orderTable -> softly.assertThat(orderTable.getTableGroupId()).isEqualTo(actual.getId()))
         );
     }
 

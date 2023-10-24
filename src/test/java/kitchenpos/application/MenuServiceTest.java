@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
 import kitchenpos.value.Quantity;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.MenuProductDto;
@@ -23,7 +24,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
+@DisplayName("메뉴 테스트")
+@Import(MenuService.class)
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
@@ -36,8 +40,8 @@ class MenuServiceTest extends ServiceTest {
         // given
         final int newMenuId = menuService.list().size() + 1;
         final List<MenuProductDto> dto = List.of(
-                MenuProductDto.from(new MenuProduct(1L,1L,1L,new Quantity(1L))),
-                MenuProductDto.from(new MenuProduct(2L,2L,2L,new Quantity(2L)))
+                MenuProductDto.from(new MenuProduct(1L,1L,ObjectCreator.getObject(Product.class,1L),new Quantity(1L))),
+                MenuProductDto.from(new MenuProduct(2L,2L,ObjectCreator.getObject(Product.class,2L),new Quantity(2L)))
         );
         final CreateMenuRequest request = ObjectCreator.getObject(CreateMenuRequest.class, "test", BigDecimal.valueOf(29), 1L, dto);
         // when
@@ -71,7 +75,13 @@ class MenuServiceTest extends ServiceTest {
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         final List<MenuProductDto> dto = new ArrayList<>();
         for (Long productId : products) {
-            dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, new Quantity(1L))));
+            dto.add(MenuProductDto.from(
+                    new MenuProduct(
+                            productId,
+                            productId,
+                            ObjectCreator.getObject(Product.class,productId)
+                            , new Quantity(1L))
+            ));
         }
         return ObjectCreator.getObject(CreateMenuRequest.class, "test", price, menuGroupId, dto);
     }

@@ -11,7 +11,10 @@ import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
+@DisplayName("메뉴 그룹 테스트")
+@Import(MenuGroupService.class)
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired

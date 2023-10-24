@@ -20,8 +20,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 @DisplayName("테이블 테스트")
+@Import(TableService.class)
 class TableServiceTest extends ServiceTest {
 
     @Autowired

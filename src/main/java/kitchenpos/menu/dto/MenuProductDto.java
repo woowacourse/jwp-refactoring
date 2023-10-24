@@ -20,7 +20,7 @@ public class MenuProductDto {
         return new MenuProductDto(
                 menuProduct.getSeq(),
                 menuProduct.getMenuId(),
-                menuProduct.getProduct(),
+                menuProduct.getProductId(),
                 menuProduct.getQuantity().getValue()
         );
     }
