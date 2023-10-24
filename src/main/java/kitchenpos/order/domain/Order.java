@@ -14,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.exception.OrderException;
 
@@ -60,11 +59,6 @@ public class Order {
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new OrderException.CannotChangeOrderStatusByCurrentOrderStatusException();
         }
-    }
-
-    public void confirmOrderLineItem(final Menu menu, final long quantity) {
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, quantity);
-        orderLineItem.confirmOrder(this);
     }
 
     public Long getId() {

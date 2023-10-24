@@ -19,7 +19,6 @@ import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
@@ -65,9 +64,6 @@ class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -146,7 +142,7 @@ class OrderServiceTest extends ServiceTest {
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId());
 
-            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 
@@ -156,8 +152,10 @@ class OrderServiceTest extends ServiceTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderLineItemsResponse.getOrderLineItems().get(0).getMenuId())
-                        .isEqualTo(orderLineItem.getMenu().getId());
+                softly.assertThat(orderLineItemsResponse.getOrderLineItems().get(0).getName())
+                        .isEqualTo(orderLineItem.getName());
+                softly.assertThat(orderLineItemsResponse.getOrderLineItems().get(0).getPrice())
+                        .isEqualTo(orderLineItem.getPrice());
                 softly.assertThat(orderLineItemsResponse.getOrderLineItems().get(0).getQuantity())
                         .isEqualTo(orderLineItem.getQuantity());
             });
@@ -187,7 +185,7 @@ class OrderServiceTest extends ServiceTest {
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId());
 
-            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 
@@ -218,7 +216,7 @@ class OrderServiceTest extends ServiceTest {
             savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable.getId());
 
-            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 
@@ -248,7 +246,7 @@ class OrderServiceTest extends ServiceTest {
             Order order = Order.from(savedOrderTable.getId());
             order.changeStatus(OrderStatus.COMPLETION);
 
-            OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
+            OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getName(), savedMenu.getPrice(), 1L);
             orderLineItem.confirmOrder(order);
             orderRepository.save(order);
 

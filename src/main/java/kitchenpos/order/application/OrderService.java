@@ -14,6 +14,7 @@ import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
 import kitchenpos.order.application.event.OrderCreateEvent;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.exception.OrderException;
@@ -56,7 +57,8 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(NotFoundMenuException::new);
-            savedOrder.confirmOrderLineItem(menu, orderLineItemRequest.getQuantity());
+            final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity());
+            orderLineItem.confirmOrder(savedOrder);
         }
     }
 
