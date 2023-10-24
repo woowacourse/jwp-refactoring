@@ -55,7 +55,7 @@ class OrderTableRepositoryTest {
     void 테이블_그룹_아이디_리스트에서_존재하는_아이디_개수를_반환한다() {
         // given
         final List<OrderTable> orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블_엔티티들_생성(4));
-        final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_생성(orderTables));
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroupFixture.단체_지정_엔티티_생성(orderTables));
 
         // when
         final List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
