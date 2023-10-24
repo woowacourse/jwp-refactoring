@@ -1,15 +1,18 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.OrderService;
-import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.ui.request.OrderRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
+import kitchenpos.application.OrderService;
+import kitchenpos.application.request.OrderRequest;
+import kitchenpos.application.response.OrderResponse;
+import kitchenpos.domain.OrderStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderRestController {
@@ -34,8 +37,8 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Order order
+            @RequestBody final String orderStatus
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, OrderStatus.valueOf(order.getOrderStatus())));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, OrderStatus.valueOf(orderStatus)));
     }
 }
