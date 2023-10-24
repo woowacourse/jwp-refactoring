@@ -39,7 +39,7 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final TableEmptyUpdateRequest tableEmptyUpdateRequest) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
 
-        savedOrderTable.validateOrdertable();
+        savedOrderTable.checkTableGroup();
 
         checkIfOrderIsNotCompleted(orderTableId);
 

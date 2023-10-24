@@ -46,7 +46,7 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void validateOrdertable() {
+    public void checkTableGroup() {
         if (tableGroup != null) {
             throw new IllegalArgumentException();
         }
@@ -69,6 +69,7 @@ public class OrderTable {
     }
 
     public void setTableGroup(TableGroup tableGroup) {
+        tableGroup.addOrderTable(this);
         this.tableGroup = tableGroup;
     }
 

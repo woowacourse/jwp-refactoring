@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -40,7 +39,6 @@ public class TableGroup {
     }
 
     public void addOrderTable(OrderTable orderTable) {
-        orderTable.setTableGroup(this);
         orderTables.add(orderTable);
     }
 

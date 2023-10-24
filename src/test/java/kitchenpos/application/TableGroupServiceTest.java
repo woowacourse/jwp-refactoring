@@ -122,7 +122,7 @@ class TableGroupServiceTest {
 
         TableGroup tableGroup = tableGroupService.create(tableGroupCreateRequest);
 
-        Order order = orderRepository.save(new Order(orderTable1, status));
+        orderRepository.save(new Order(orderTable1, status));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
