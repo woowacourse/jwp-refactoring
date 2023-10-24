@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 public class OrderLineItems {
 
     @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
     public OrderLineItems() {
