@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 public class UpdateOrderTableEmptyResponse {

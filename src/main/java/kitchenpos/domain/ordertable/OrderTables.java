@@ -1,10 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
 import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import org.springframework.util.CollectionUtils;

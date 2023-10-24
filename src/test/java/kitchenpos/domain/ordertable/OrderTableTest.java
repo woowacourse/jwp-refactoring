@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
 import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
 import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;

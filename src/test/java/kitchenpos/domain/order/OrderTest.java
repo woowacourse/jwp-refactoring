@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
 import kitchenpos.domain.menu.Menu;
