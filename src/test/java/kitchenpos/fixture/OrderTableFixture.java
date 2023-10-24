@@ -13,6 +13,10 @@ public class OrderTableFixture {
         return new OrderTable(2L, null, 0, false);
     }
 
+    public static OrderTable 단일_신규_테이블() {
+        return new OrderTable(3L, null, 4, false);
+    }
+
     public static OrderTable 단일_조리_테이블() {
         return new OrderTable(1L, null, 2, false);
     }
