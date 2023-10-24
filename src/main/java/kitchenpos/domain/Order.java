@@ -30,7 +30,6 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
 
-
     @JsonIgnore
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;

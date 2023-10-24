@@ -1,6 +1,7 @@
 package kitchenpos.ui.request;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderCreateRequest {
@@ -14,7 +15,7 @@ public class OrderCreateRequest {
         this.orderTableId = orderTableId;
         this.orderStatus = "COOKING";
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new ArrayList<>(orderLineItems);
     }
 
     public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItems) {

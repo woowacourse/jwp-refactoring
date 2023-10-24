@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest request) {
+    public OrderResponse create(final OrderCreateRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
                 .map(it -> new OrderLineItem(it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
@@ -69,21 +70,21 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return OrderResponse.from(orders);
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderUpdateOrderStatusRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderUpdateOrderStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -98,6 +99,6 @@ public class OrderService {
 
         savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 }

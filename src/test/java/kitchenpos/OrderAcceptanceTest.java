@@ -3,7 +3,6 @@ package kitchenpos;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.request.MenuProductCreateRequest;
@@ -11,6 +10,7 @@ import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
 import kitchenpos.ui.request.TableCreateRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +64,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getLong("orderTable.id")).isEqualTo(savedOrderTable.getId())
+                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId())
             );
         }
 
@@ -150,7 +150,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(
+            final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
                             savedOrderTable.getId(),
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
@@ -158,7 +158,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
             );
 
             final ExtractableResponse<Response> response = 주문_조회_요청();
-            final List<Order> result = response.jsonPath().getList("", Order.class);
+            final List<OrderResponse> result = response.jsonPath().getList("", OrderResponse.class);
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
@@ -188,21 +188,19 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(
+            final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
                             savedOrderTable.getId(),
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
                     )
             );
 
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COOKING"));
-            final Order result = response.jsonPath().getObject("", Order.class);
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COMPLETION"));
+            final OrderResponse result = response.jsonPath().getObject("", OrderResponse.class);
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
-                    () -> assertThat(result)
-                            .usingRecursiveComparison()
-                            .isEqualTo(savedOrder)
+                    () -> assertThat(result.getOrderStatus()).isEqualTo("COMPLETION")
             );
         }
 
@@ -221,7 +219,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     )
             );
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(
+            final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
                     new OrderCreateRequest(
                             savedOrderTable.getId(),
                             List.of(new OrderLineItemCreateRequest(menuId, 2L))
