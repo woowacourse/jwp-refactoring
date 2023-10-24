@@ -34,7 +34,6 @@ public class MenuService {
         );
         final Menu savedMenu = menuRepository.save(menu);
 
-        System.out.println("gkgkjdlkjldjsf: "+savedMenu.getId());
         final List<MenuProductCreateRequest> menuProductCreateRequestList = request.getMenuProducts();
         for (final MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequestList) {
             final MenuProduct menuProduct =
@@ -45,7 +44,6 @@ public class MenuService {
                     );
             savedMenu.addMenuProduct(menuProduct);
         }
-        System.out.println("여긴");
         return savedMenu;
     }
 
