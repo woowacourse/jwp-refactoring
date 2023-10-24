@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.application.exception.TableGroupNotFoundException;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.dto.request.CreateOrderGroupOrderTableRequest;
 import kitchenpos.ui.dto.request.CreateTableGroupRequest;
 import org.springframework.stereotype.Service;
@@ -17,16 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }

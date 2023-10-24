@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -7,6 +7,7 @@ import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

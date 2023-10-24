@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.exception.OrderTableNotFoundException;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;

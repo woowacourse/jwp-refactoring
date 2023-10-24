@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +11,13 @@ import kitchenpos.domain.exception.InvalidOrderLineItemException;
 public class OrderLineItems {
 
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private List<OrderLineItem> values = new ArrayList<>();
 
     protected OrderLineItems() {
     }
 
-    private OrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    private OrderLineItems(final List<OrderLineItem> values) {
+        this.values = values;
     }
 
     public static OrderLineItems of(final Order order, final List<OrderLineItem> orderLineItems) {
@@ -39,7 +39,7 @@ public class OrderLineItems {
         }
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItem> getValues() {
+        return values;
     }
 }

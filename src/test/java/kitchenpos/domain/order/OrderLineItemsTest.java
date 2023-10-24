@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,10 +8,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.InvalidOrderLineItemException;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -38,8 +43,8 @@ class OrderLineItemsTest {
 
         // then
         assertAll(
-                () -> assertThat(actual.getOrderLineItems()).hasSize(1),
-                () -> assertThat(actual.getOrderLineItems().get(0).getOrder()).isEqualTo(order)
+                () -> assertThat(actual.getValues()).hasSize(1),
+                () -> assertThat(actual.getValues().get(0).getOrder()).isEqualTo(order)
         );
     }
 

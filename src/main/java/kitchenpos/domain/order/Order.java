@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.InvalidOrderStatusException;
 
 @Entity
@@ -81,7 +82,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.getOrderLineItems();
+        return orderLineItems.getValues();
     }
 
     public boolean isCompletion() {

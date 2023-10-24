@@ -1,7 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import kitchenpos.domain.order.OrderStatus;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

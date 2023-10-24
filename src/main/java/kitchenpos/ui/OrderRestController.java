@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import kitchenpos.ui.dto.request.CreateOrderRequest;
 import kitchenpos.ui.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.ui.dto.response.CreateOrderResponse;

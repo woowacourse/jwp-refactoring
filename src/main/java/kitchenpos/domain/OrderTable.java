@@ -14,6 +14,7 @@ import kitchenpos.domain.common.NumberOfGuests;
 import kitchenpos.domain.exception.InvalidEmptyOrderTableException;
 import kitchenpos.domain.exception.InvalidOrderStatusCompletionException;
 import kitchenpos.domain.exception.InvalidTableGroupException;
+import kitchenpos.domain.order.Order;
 
 @Entity
 public class OrderTable {
