@@ -6,8 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
-import kitchenpos.domain.order.OrderLineItem;
-
 public class OrderLineItems {
 
     @OneToMany(cascade = CascadeType.PERSIST)

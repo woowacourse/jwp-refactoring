@@ -128,7 +128,7 @@ class TableServiceTest extends BaseServiceTest {
                     new Menu("떡순튀", BigDecimal.valueOf(20), menuGroup.getId(), new MenuProducts(menuProducts))
             );
             final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(menu.getId(),2));
-            final Order order = new Order(savedTable, new OrderLineItems(orderLineItems));
+            final Order order = new Order(savedTable.getId(), new OrderLineItems(orderLineItems));
             orderRepository.save(order);
 
             final ChangeEmptyRequest changeEmptyRequest = new ChangeEmptyRequest(true);

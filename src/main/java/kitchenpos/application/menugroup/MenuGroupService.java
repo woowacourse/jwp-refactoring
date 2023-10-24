@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.menugroup;
 
 import java.util.List;
 

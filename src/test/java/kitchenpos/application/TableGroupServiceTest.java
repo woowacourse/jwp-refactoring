@@ -193,7 +193,7 @@ class TableGroupServiceTest extends BaseServiceTest{
                     .map(OrderTable::getId)
                     .collect(Collectors.toList());
             final OrderTable orderTable = orderTableRepository.findById(tableIds.get(0)).get();
-            final Order order = new Order(orderTable, null);
+            final Order order = new Order(orderTable.getId(), null);
             orderRepository.save(order);
 
             //when & then
