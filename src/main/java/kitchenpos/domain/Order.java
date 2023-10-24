@@ -33,6 +33,43 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
+    public Order() {
+    }
+
+    public Order(final OrderTable orderTable, final String orderStatus) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = LocalDateTime.now();
+    }
+
+    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void setOrderStatus(final String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

@@ -21,4 +21,29 @@ public class OrderLineItem {
     private Menu menu;
 
     private long quantity;
+
+    public OrderLineItem() {
+    }
+
+    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }
