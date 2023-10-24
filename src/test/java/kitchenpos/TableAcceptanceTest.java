@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.request.TableUpdateEmptyRequest;
 import kitchenpos.ui.request.TableUpdateNumberOfGuestsRequest;
+import kitchenpos.ui.response.TableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -37,13 +38,13 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블을_조회한다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
 
             final ExtractableResponse<Response> response = 테이블_조회_요청();
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
-                    () -> assertThat(response.jsonPath().getList("", OrderTable.class).get(0))
+                    () -> assertThat(response.jsonPath().getList("", TableResponse.class).get(0))
                             .usingRecursiveComparison()
                             .isEqualTo(savedOrderTable)
             );
@@ -55,7 +56,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블을_Empty_상태로_변경한다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
             final ExtractableResponse<Response> response = 테이블_상태_Empty로_변경_요청(savedOrderTable.getId(), new TableUpdateEmptyRequest(true));
 
             assertAll(
@@ -66,7 +67,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 테이블의_사람_수를_변경한다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(6, false));
 
             final int newNumberOfGuests = 5;
 

@@ -2,7 +2,6 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.request.MenuProductCreateRequest;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
@@ -11,13 +10,13 @@ import kitchenpos.ui.request.TableCreateRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
 import kitchenpos.ui.response.OrderResponse;
 import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.ui.response.TableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.OrderTableFixture.NOT_EMPTY_테이블;
 import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_일식;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
 import static kitchenpos.step.MenuStep.MENU_CREATE_REQUEST_스키야키;
@@ -42,7 +41,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_생성한다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(NOT_EMPTY_테이블());
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -70,8 +69,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_항목은_반드시_1개_이상이어야_한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final ExtractableResponse<Response> response = 주문_생성_요청(
                     new OrderCreateRequest(
@@ -85,8 +83,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 동일한_메뉴는_1개의_주문항목으로_표시되어야_한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -138,7 +135,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_조회한다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
@@ -175,7 +172,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태를_변경한다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
@@ -206,7 +203,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태가_COMPLETION인_테이블_상태는_변경할_수_없다() {
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
             final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
             final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
