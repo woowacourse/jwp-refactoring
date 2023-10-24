@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderResponse;
@@ -53,7 +54,8 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
 
         for (final OrderCreateRequest.OrderLineItemCreate orderLineItem : orderLineItemCreates) {
-            savedOrder.addOrderLineItem(orderLineItemRepository.save(new OrderLineItem(savedOrder, menuRepository.findById(orderLineItem.getMenuId()).orElseThrow(IllegalArgumentException::new), orderLineItem.getQuantity())));
+            final Menu menu = menuRepository.findById(orderLineItem.getMenuId()).orElseThrow(IllegalArgumentException::new);
+            savedOrder.addOrderLineItem(new OrderLineItem(menu.getId(), orderLineItem.getQuantity()));
         }
 
         return savedOrder.getId();

@@ -2,6 +2,7 @@ package kitchenpos.order.domain;
 
 import kitchenpos.table.domain.OrderTable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +32,8 @@ public class Order {
     private String orderStatus;
     @Column(nullable = false)
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
@@ -71,12 +73,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderStatus(String name) {
-        this.orderStatus = name;
-    }
-
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
-        orderLineItem.settingOrder(this);
         final List<OrderLineItem> items = new ArrayList<>(orderLineItems);
         items.add(orderLineItem);
         orderLineItems = items;
