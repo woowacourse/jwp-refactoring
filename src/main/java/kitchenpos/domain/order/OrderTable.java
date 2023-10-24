@@ -52,6 +52,15 @@ public class OrderTable {
         }
     }
 
+    public void ungroup() {
+        if (tableGroup != null || !empty) {
+            throw new IllegalStateException(String.format("OrderTable이 그룹을 해제할 수 없는 상태입니다. tableGroup = %s, empty = %s", tableGroup, empty));
+        }
+
+        changeGroup(null);
+        changeEmpty(false);
+    }
+
     public void changeGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }

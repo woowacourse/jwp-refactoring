@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
@@ -11,6 +14,8 @@ import kitchenpos.domain.order.service.dto.TableGroupResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -83,7 +88,6 @@ class TableGroupServiceTest {
             given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
             given(spyOrderTable1.getId()).willReturn(1L);
             given(spyOrderTable2.getId()).willReturn(1L);
-            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
             // when
             tableGroupService.ungroup(tableGroupId);
@@ -97,18 +101,19 @@ class TableGroupServiceTest {
             );
         }
 
-        @Test
-        void 주문상태가_요리와_식사중이면_그룹을_해제할_수_없다() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"MEAL", "COOKING"})
+        void 주문상태가_요리와_식사중이면_그룹을_해제할_수_없다(final OrderStatus orderStatus) {
             // given
             final long tableGroupId = 1L;
+            final OrderTable spyOrderTable = spy(new OrderTable(3, true));
 
-            final OrderTable spyOrderTable1 = spy(new OrderTable(3, true));
-            final OrderTable spyOrderTable2 = spy(new OrderTable(5, true));
+            final List<OrderTable> ordertables = List.of(spyOrderTable);
+            given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(ordertables);
+            given(spyOrderTable.getId()).willReturn(1L);
 
-            given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(List.of(spyOrderTable1, spyOrderTable2));
-            given(spyOrderTable1.getId()).willReturn(1L);
-            given(spyOrderTable2.getId()).willReturn(1L);
-            given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
+            final Order order = new Order(spyOrderTable, orderStatus, now(), new OrderLineItems());
+            given(orderRepository.findAllByOrderTableIds(anyList())).willReturn(List.of(order));
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

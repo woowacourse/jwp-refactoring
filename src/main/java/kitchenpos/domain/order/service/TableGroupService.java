@@ -1,6 +1,6 @@
 package kitchenpos.domain.order.service;
 
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.OrderTables;
 import kitchenpos.domain.order.TableGroup;
@@ -12,7 +12,6 @@ import kitchenpos.domain.order.service.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,15 +49,13 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+        final List<Order> savedOrders = orderRepository.findAllByOrderTableIds(orderTableIds);
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+        final boolean cannotUngroup = savedOrders.stream().anyMatch(Order::isProceeding);
+        if (cannotUngroup) {
+            throw new IllegalArgumentException("주문 상태가 식사중이거나 요리중이면 그룹을 해제할 수 없습니다.");
         }
 
-        orderTables.forEach(orderTable -> {
-            orderTable.changeGroup(null);
-            orderTable.changeEmpty(false);
-        });
+        orderTables.forEach(OrderTable::ungroup);
     }
 }
