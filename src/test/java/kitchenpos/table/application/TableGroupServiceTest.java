@@ -1,7 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.application.dto.request.CreateTableGroupRequest.TableInfo;
 import kitchenpos.table.domain.OrderTable;
@@ -26,16 +24,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
 
     @Mock
-    private OrderRepository orderRepository;
+    private TableValidator tableValidator;
     @Mock
     private OrderTableRepository orderTableRepository;
     @Mock
@@ -120,7 +120,7 @@ class TableGroupServiceTest {
         tableGroupService.create(createTableGroupRequest);
 
         // then
-//        then(tableGroupRepository).should(times(1)).save(any());
+        then(tableGroupRepository).should(times(1)).save(any());
     }
 
     @Test
@@ -131,8 +131,8 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of(OrderStatus.COOKING, OrderStatus.MEAL))))
-                .willReturn(true);
+        willThrow(IllegalArgumentException.class)
+                .given(tableValidator).validateIsTableGroupCompleteMeal(anyList());
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
@@ -148,8 +148,8 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), eq(List.of(OrderStatus.COOKING, OrderStatus.MEAL))))
-                .willReturn(false);
+        willDoNothing()
+                .given(tableValidator).validateIsTableGroupCompleteMeal(anyList());
 
         // when, then
         tableGroupService.ungroup(1L);

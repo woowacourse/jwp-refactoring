@@ -1,7 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.request.CreateTableGroupRequest;
 import kitchenpos.table.application.dto.request.CreateTableGroupRequest.TableInfo;
 import kitchenpos.table.application.dto.response.CreateTableGroupResponse;
@@ -12,20 +10,20 @@ import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
+
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableValidator tableValidator;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository, TableValidator tableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -75,10 +73,6 @@ public class TableGroupService {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        tableValidator.validateIsTableGroupCompleteMeal(orderTableIds);
     }
 }

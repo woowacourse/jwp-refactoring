@@ -1,7 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.application.dto.request.CreateOrderTableRequest;
 import kitchenpos.table.application.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.table.application.dto.request.UpdateOrderTableGuests;
@@ -14,16 +12,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
@@ -31,7 +28,7 @@ import static org.mockito.Mockito.times;
 class TableServiceTest {
 
     @Mock
-    private OrderRepository orderRepository;
+    private TableValidator tableValidator;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -60,9 +57,8 @@ class TableServiceTest {
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), eq(List.of(OrderStatus.COOKING, OrderStatus.MEAL))))
-                .willReturn(false);
-        // when, then
+        willDoNothing()
+                .given(tableValidator).validateIsTableCompleteMeal(anyLong());
         tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false));
     }
 
@@ -70,7 +66,7 @@ class TableServiceTest {
     void 상태를_바꾸려는_테이블은_반드시_존재해야_한다() {
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false)))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderRepository).should(never()).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
+        then(tableValidator).should(never()).validateIsTableCompleteMeal(anyLong());
     }
 
     @Test
@@ -93,8 +89,8 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(3, false);
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING, OrderStatus.MEAL)))
-                .willReturn(true);
+        willThrow(IllegalArgumentException.class)
+                .given(tableValidator).validateIsTableCompleteMeal(anyLong());
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false)))
