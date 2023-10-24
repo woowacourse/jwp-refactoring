@@ -78,10 +78,8 @@ class TableServiceTest extends ServiceTest {
         Order order = createOrder(orderTable, OrderStatus.COMPLETION, menu);
         orderDao.save(order);
 
-        orderTable.setEmpty(true);
-
         // when
-        OrderTable savedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
+        OrderTable savedOrderTable = tableService.changeEmpty(orderTable.getId(), true);
 
         // then
         assertThat(savedOrderTable.isEmpty()).isTrue();
@@ -104,12 +102,9 @@ class TableServiceTest extends ServiceTest {
         Order order = createOrder(savedOrderTable1, OrderStatus.COMPLETION, menu);
         orderDao.save(order);
 
-        OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setEmpty(true);
-
         // when, then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(savedOrderTable1.getId(), changeOrderTable))
+                () -> tableService.changeEmpty(savedOrderTable1.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -127,10 +122,9 @@ class TableServiceTest extends ServiceTest {
         Order order = createOrder(orderTable, orderStatus, menu);
         orderDao.save(order);
 
-        orderTable.setEmpty(true);
         // when, then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(orderTable.getId(), orderTable))
+                () -> tableService.changeEmpty(orderTable.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
