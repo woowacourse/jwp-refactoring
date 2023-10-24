@@ -1,15 +1,12 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
-public class Menu {
+public class ProductDto {
     private Long id;
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
     public Long getId() {
         return id;
@@ -35,22 +32,6 @@ public class Menu {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -59,8 +40,8 @@ public class Menu {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Menu menu = (Menu) object;
-        return Objects.equals(id, menu.id);
+        ProductDto productDto = (ProductDto) object;
+        return Objects.equals(id, productDto.id);
     }
 
     @Override

@@ -1,8 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
 import java.util.Objects;
 
-public class MenuProduct {
+public class MenuProductDto {
     private Long seq;
     private Long menuId;
     private Long productId;
@@ -48,7 +48,7 @@ public class MenuProduct {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        MenuProduct that = (MenuProduct) object;
+        MenuProductDto that = (MenuProductDto) object;
         return Objects.equals(seq, that.seq);
     }
 

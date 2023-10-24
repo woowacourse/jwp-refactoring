@@ -2,50 +2,48 @@ package kitchenpos.fixture;
 
 import java.util.List;
 import java.util.function.Consumer;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import org.aspectj.weaver.ast.Or;
+import kitchenpos.dto.OrderDto;
+import kitchenpos.dto.OrderLineItemDto;
 
 public enum OrderFixture {
 
-    ORDER_1(1L, 1L, "COOKING", null, List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity())),
+    ORDER_1(1L, 1L, "COOKING", null, List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toDto())),
     ;
 
     private final Long id;
     private final Long orderTableId;
     private final String orderStatus;
     private final String orderedTime;
-    private final List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItemDto> orderLineItemDtos;
 
     OrderFixture(Long id, Long orderTableId, String orderStatus, String orderedTime,
-        List<OrderLineItem> orderLineItems) {
+        List<OrderLineItemDto> orderLineItemDtos) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItemDtos = orderLineItemDtos;
     }
 
-    public static Order computeDefaultOrder(Consumer<Order> consumer) {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderStatus("COOKING");
-        order.setOrderedTime(null);
-        order.setOrderLineItems(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity()));
-        consumer.accept(order);
-        return order;
+    public static OrderDto computeDefaultOrder(Consumer<OrderDto> consumer) {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(1L);
+        orderDto.setOrderTableId(1L);
+        orderDto.setOrderStatus("COOKING");
+        orderDto.setOrderedTime(null);
+        orderDto.setOrderLineItems(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toDto()));
+        consumer.accept(orderDto);
+        return orderDto;
     }
 
-    public Order toEntity() {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(null);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+    public OrderDto toEntity() {
+        OrderDto orderDto = new OrderDto();
+        orderDto.setId(id);
+        orderDto.setOrderTableId(orderTableId);
+        orderDto.setOrderStatus(orderStatus);
+        orderDto.setOrderedTime(null);
+        orderDto.setOrderLineItems(orderLineItemDtos);
+        return orderDto;
     }
 
     private enum OrderLineItemFixture {
@@ -65,13 +63,13 @@ public enum OrderFixture {
             this.quantity = quantity;
         }
 
-        private OrderLineItem toEntity() {
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setSeq(seq);
-            orderLineItem.setOrderId(orderId);
-            orderLineItem.setMenuId(menuId);
-            orderLineItem.setQuantity(quantity);
-            return orderLineItem;
+        private OrderLineItemDto toDto() {
+            OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
+            orderLineItemDto.setSeq(seq);
+            orderLineItemDto.setOrderId(orderId);
+            orderLineItemDto.setMenuId(menuId);
+            orderLineItemDto.setQuantity(quantity);
+            return orderLineItemDto;
         }
     }
 }

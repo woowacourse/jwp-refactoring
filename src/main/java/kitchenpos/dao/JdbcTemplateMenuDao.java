@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Menu;
+import kitchenpos.dto.MenuDto;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -32,14 +32,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     @Override
-    public Menu save(final Menu entity) {
+    public MenuDto save(final MenuDto entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<Menu> findById(final Long id) {
+    public Optional<MenuDto> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -48,7 +48,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     @Override
-    public List<Menu> findAll() {
+    public List<MenuDto> findAll() {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
@@ -61,15 +61,15 @@ public class JdbcTemplateMenuDao implements MenuDao {
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
     }
 
-    private Menu select(final Long id) {
+    private MenuDto select(final Long id) {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        final Menu entity = new Menu();
+    private MenuDto toEntity(final ResultSet resultSet) throws SQLException {
+        final MenuDto entity = new MenuDto();
         entity.setId(resultSet.getLong("id"));
         entity.setName(resultSet.getString("name"));
         entity.setPrice(resultSet.getBigDecimal("price"));

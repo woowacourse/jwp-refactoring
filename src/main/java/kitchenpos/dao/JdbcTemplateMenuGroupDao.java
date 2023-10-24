@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupDto;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -32,14 +32,14 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     }
 
     @Override
-    public MenuGroup save(final MenuGroup entity) {
+    public MenuGroupDto save(final MenuGroupDto entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<MenuGroup> findById(final Long id) {
+    public Optional<MenuGroupDto> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -48,7 +48,7 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
     }
 
     @Override
-    public List<MenuGroup> findAll() {
+    public List<MenuGroupDto> findAll() {
         final String sql = "SELECT id, name FROM menu_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
@@ -61,15 +61,15 @@ public class JdbcTemplateMenuGroupDao implements MenuGroupDao {
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
-    private MenuGroup select(final Long id) {
+    private MenuGroupDto select(final Long id) {
         final String sql = "SELECT id, name FROM menu_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private MenuGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final MenuGroup entity = new MenuGroup();
+    private MenuGroupDto toEntity(final ResultSet resultSet) throws SQLException {
+        final MenuGroupDto entity = new MenuGroupDto();
         entity.setId(resultSet.getLong("id"));
         entity.setName(resultSet.getString("name"));
         return entity;

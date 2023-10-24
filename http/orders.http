@@ -1,10 +1,10 @@
 ###
-POST {{host}}/api/orders
+POST {{host}}/api/orderDtos
 Content-Type: application/json
 
 {
   "orderTableId": 1,
-  "orderLineItems": [
+  "orderLineItemDtos": [
     {
       "menuId": 1,
       "quantity": 1
@@ -13,10 +13,10 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/orders
+GET {{host}}/api/orderDtos
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT {{host}}/api/orderDtos/1/orderDto-status
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{host}}/api/orders/1/order-status
+PUT {{host}}/api/orderDtos/1/orderDto-status
 Content-Type: application/json
 
 {

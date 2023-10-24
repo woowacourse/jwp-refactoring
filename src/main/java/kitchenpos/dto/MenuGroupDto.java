@@ -1,8 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
 import java.util.Objects;
 
-public class MenuGroup {
+public class MenuGroupDto {
     private Long id;
     private String name;
 
@@ -30,8 +30,8 @@ public class MenuGroup {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        MenuGroup menuGroup = (MenuGroup) object;
-        return Objects.equals(id, menuGroup.id);
+        MenuGroupDto menuGroupDto = (MenuGroupDto) object;
+        return Objects.equals(id, menuGroupDto.id);
     }
 
     @Override

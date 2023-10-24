@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.OrderLineItemDto;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -32,14 +32,14 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     @Override
-    public OrderLineItem save(final OrderLineItem entity) {
+    public OrderLineItemDto save(final OrderLineItemDto entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
     }
 
     @Override
-    public Optional<OrderLineItem> findById(final Long id) {
+    public Optional<OrderLineItemDto> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -48,28 +48,28 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
     }
 
     @Override
-    public List<OrderLineItem> findAll() {
+    public List<OrderLineItemDto> findAll() {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
-    public List<OrderLineItem> findAllByOrderId(final Long orderId) {
+    public List<OrderLineItemDto> findAllByOrderId(final Long orderId) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderLineItem select(final Long id) {
+    private OrderLineItemDto select(final Long id) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("seq", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderLineItem entity = new OrderLineItem();
+    private OrderLineItemDto toEntity(final ResultSet resultSet) throws SQLException {
+        final OrderLineItemDto entity = new OrderLineItemDto();
         entity.setSeq(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setOrderId(resultSet.getLong("order_id"));
         entity.setMenuId(resultSet.getLong("menu_id"));

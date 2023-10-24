@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import java.util.function.Consumer;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableDto;
 
 public enum OrderTableFixture {
 
@@ -22,8 +22,8 @@ public enum OrderTableFixture {
         this.tableGroupId = tableGroupId;
     }
 
-    public static OrderTable computeDefaultOrderTable(Consumer<OrderTable> consumer) {
-        OrderTable table = new OrderTable();
+    public static OrderTableDto computeDefaultOrderTableDto(Consumer<OrderTableDto> consumer) {
+        OrderTableDto table = new OrderTableDto();
         table.setId(null);
         table.setNumberOfGuests(0);
         table.setEmpty(true);
@@ -32,8 +32,8 @@ public enum OrderTableFixture {
         return table;
     }
 
-    public OrderTable toEntity() {
-        OrderTable table = new OrderTable();
+    public OrderTableDto toDto() {
+        OrderTableDto table = new OrderTableDto();
         table.setId(id);
         table.setNumberOfGuests(numberOfGuests);
         table.setEmpty(empty);

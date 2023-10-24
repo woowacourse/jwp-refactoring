@@ -1,13 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class TableGroup {
+public class TableGroupDto {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private List<OrderTableDto> orderTableDtos;
 
     public Long getId() {
         return id;
@@ -25,12 +25,12 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<OrderTableDto> getOrderTables() {
+        return orderTableDtos;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void setOrderTables(final List<OrderTableDto> orderTableDtos) {
+        this.orderTableDtos = orderTableDtos;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TableGroup {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        TableGroup that = (TableGroup) object;
+        TableGroupDto that = (TableGroupDto) object;
         return Objects.equals(id, that.id);
     }
 

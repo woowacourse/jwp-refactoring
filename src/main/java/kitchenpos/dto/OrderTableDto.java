@@ -1,8 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
 import java.util.Objects;
 
-public class OrderTable {
+public class OrderTableDto {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -48,7 +48,7 @@ public class OrderTable {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        OrderTable table = (OrderTable) object;
+        OrderTableDto table = (OrderTableDto) object;
         return Objects.equals(id, table.id);
     }
 

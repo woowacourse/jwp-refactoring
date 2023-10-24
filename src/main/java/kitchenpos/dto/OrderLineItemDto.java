@@ -1,8 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
 
 import java.util.Objects;
 
-public class OrderLineItem {
+public class OrderLineItemDto {
     private Long seq;
     private Long orderId;
     private Long menuId;
@@ -48,7 +48,7 @@ public class OrderLineItem {
         if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        OrderLineItem that = (OrderLineItem) object;
+        OrderLineItemDto that = (OrderLineItemDto) object;
         return Objects.equals(seq, that.seq);
     }
 

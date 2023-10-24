@@ -1,12 +1,12 @@
 ###
-POST {{host}}/api/menus
+POST {{host}}/api/menuDtos
 Content-Type: application/json
 
 {
   "name": "후라이드+후라이드",
   "price": 19000,
   "menuGroupId": 1,
-  "menuProducts": [
+  "menuProductDtos": [
     {
       "productId": 1,
       "quantity": 2
@@ -15,6 +15,6 @@ Content-Type: application/json
 }
 
 ###
-GET {{host}}/api/menus
+GET {{host}}/api/menuDtos
 
 ###

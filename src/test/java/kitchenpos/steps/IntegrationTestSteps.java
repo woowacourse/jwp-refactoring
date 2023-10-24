@@ -5,12 +5,12 @@ import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuDto;
+import kitchenpos.dto.MenuGroupDto;
+import kitchenpos.dto.OrderDto;
+import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.ProductDto;
+import kitchenpos.dto.TableGroupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +25,10 @@ public class IntegrationTestSteps {
     @Autowired
     SharedContext sharedContext;
 
-    public void createMenuGroup(MenuGroup menuGroup) {
+    public void createMenuGroup(MenuGroupDto menuGroupDto) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(menuGroup)
+                                                        .body(menuGroupDto)
                                                         .when()
                                                         .post(MENU_GROUP_API)
                                                         .then().log().all()
@@ -37,10 +37,10 @@ public class IntegrationTestSteps {
         sharedContext.setResponse(response);
     }
 
-    public void createMenu(Menu menu) {
+    public void createMenu(MenuDto menuDto) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(menu)
+                                                        .body(menuDto)
                                                         .when()
                                                         .post(MENU_API)
                                                         .then().log().all()
@@ -49,10 +49,10 @@ public class IntegrationTestSteps {
         sharedContext.setResponse(response);
     }
 
-    public void createProduct(Product product) {
+    public void createProduct(ProductDto productDto) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(product)
+                                                        .body(productDto)
                                                         .when()
                                                         .post(PRODUCT_API)
                                                         .then().log().all()
@@ -61,10 +61,10 @@ public class IntegrationTestSteps {
         sharedContext.setResponse(response);
     }
 
-    public void createTable(OrderTable orderTable) {
+    public void createTable(OrderTableDto orderTableDto) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(orderTable)
+                                                        .body(orderTableDto)
                                                         .when()
                                                         .post(ORDER_TABLE_API)
                                                         .then().log().all()
@@ -73,33 +73,33 @@ public class IntegrationTestSteps {
         sharedContext.setResponse(response);
     }
 
-    public void changeNumberOfGuests(OrderTable orderTable, int number) {
-        orderTable.setNumberOfGuests(number);
+    public void changeNumberOfGuests(OrderTableDto orderTableDto, int number) {
+        orderTableDto.setNumberOfGuests(number);
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(orderTable)
+                                                        .body(orderTableDto)
                                                         .when()
-                                                        .put(ORDER_TABLE_API + "/{orderTableId}/number-of-guests", orderTable.getId())
+                                                        .put(ORDER_TABLE_API + "/{orderTableId}/number-of-guests", orderTableDto.getId())
                                                         .then().log().all()
                                                         .extract();
 
         sharedContext.setResponse(response);
     }
 
-    public OrderTable changeEmpty(Long tableId, OrderTable table) {
+    public OrderTableDto changeEmpty(Long tableId, OrderTableDto table) {
         return given().log().all()
                       .contentType(ContentType.JSON)
                       .body(table)
                       .when()
                       .put(ORDER_TABLE_API + "/{tableId}/empty", tableId)
                       .then().log().all()
-                      .extract().as(OrderTable.class);
+                      .extract().as(OrderTableDto.class);
     }
 
-    public void createOrder(Order order) {
+    public void createOrder(OrderDto orderDto) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(order)
+                                                        .body(orderDto)
                                                         .when()
                                                         .post("/api/orders")
                                                         .then().log().all()
@@ -108,7 +108,7 @@ public class IntegrationTestSteps {
         sharedContext.setResponse(response);
     }
 
-    public void changeOrderStatus(Long orderId, Order changed) {
+    public void changeOrderStatus(Long orderId, OrderDto changed) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
                                                         .body(changed)
@@ -120,10 +120,10 @@ public class IntegrationTestSteps {
         sharedContext.setResponse(response);
     }
 
-    public void createTableGroup(TableGroup tableGroup) {
+    public void createTableGroup(TableGroupDto tableGroupDto) {
         ExtractableResponse<Response> response = given().log().all()
                                                         .contentType(ContentType.JSON)
-                                                        .body(tableGroup)
+                                                        .body(tableGroupDto)
                                                         .when()
                                                         .post("/api/table-groups")
                                                         .then().log().all()
