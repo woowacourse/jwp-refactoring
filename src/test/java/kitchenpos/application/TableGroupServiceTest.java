@@ -226,7 +226,8 @@ class TableGroupServiceTest {
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("결제가 완료되지 않은 테이블이 존재합니다.");
         }
     }
 }

@@ -97,4 +97,18 @@ class OrderTableTest {
                     .hasMessage("주문 테이블은 비어있을 수 없습니다.");
         }
     }
+
+    @Test
+    @DisplayName("주문 테이블을 그룹해제한다.")
+    void ungroup() {
+        // given
+        final TableGroup tableGroup = new TableGroup(new ArrayList<>());
+        final OrderTable orderTable = new OrderTable(tableGroup, 2, true);
+
+        // when
+        orderTable.ungroup();
+
+        // then
+        assertThat(orderTable.getTableGroup()).isNull();
+    }
 }

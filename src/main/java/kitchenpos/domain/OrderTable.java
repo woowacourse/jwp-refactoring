@@ -65,6 +65,10 @@ public class OrderTable {
         }
     }
 
+    public void ungroup() {
+        this.tableGroup = null;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -90,15 +94,15 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 }

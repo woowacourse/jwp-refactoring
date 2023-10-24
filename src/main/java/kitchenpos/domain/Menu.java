@@ -82,10 +82,6 @@ public class Menu {
         return menuGroup;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
-
     public String getName() {
         return name;
     }

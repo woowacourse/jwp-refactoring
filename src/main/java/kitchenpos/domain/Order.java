@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -29,7 +30,7 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(value = EnumType.STRING)
@@ -60,7 +61,7 @@ public class Order {
     }
 
     private void validateOrderStatus() {
-        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
+        if (orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException("결제완료 상태인 경우 주문상태를 변경할 수 없습니다.");
         }
     }
