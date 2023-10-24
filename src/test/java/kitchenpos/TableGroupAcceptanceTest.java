@@ -35,11 +35,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             final TableGroupResponse result = response.jsonPath().getObject("", TableGroupResponse.class);
 
             assertAll(
-                    () -> assertThat(response.statusCode()).isEqualTo(CREATED.value())
-//                    () -> assertThat(result.getOrderTables())
-//                            .usingRecursiveComparison()
-//                            .ignoringFields("id", "tableGroupId", "empty")
-//                            .isEqualTo(List.of(table1, table2))
+                    () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
+                    () -> assertThat(result.getOrderTables())
+                            .usingRecursiveComparison()
+                            .ignoringFields("id", "tableGroupId", "empty")
+                            .isEqualTo(List.of(table1, table2))
             );
         }
 
