@@ -24,25 +24,52 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
+    private Order(final OrderTable orderTable,
+                  final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime) {
         this(null, orderTable, orderStatus, orderedTime);
     }
 
-    public Order(final Long id,
-                 final OrderTable orderTable,
-                 final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
+    private Order(final Long id,
+                  final OrderTable orderTable,
+                  final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public void addOrderLineItem(final OrderLineItem orderLineItem) {
+    public static Order create(final OrderTable orderTable,
+                               final List<OrderLineItem> orderLineItems) {
+        validateNotEmptyOrderTable(orderTable);
+        final Order order = new Order(
+                orderTable,
+                OrderStatus.COOKING,
+                LocalDateTime.now());
+        order.addOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    private static void validateNotEmptyOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            addOrderLineItem(orderLineItem);
+        }
+    }
+
+    private void addOrderLineItem(final OrderLineItem orderLineItem) {
         orderLineItem.dependOn(this);
         this.orderLineItems.add(orderLineItem);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {

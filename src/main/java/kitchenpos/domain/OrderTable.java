@@ -55,7 +55,7 @@ public class OrderTable {
         }
     }
 
-    private void validateActive() {
+    public void validateActive() {
         if (empty) {
             throw new IllegalArgumentException();
         }

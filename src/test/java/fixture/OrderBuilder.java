@@ -52,13 +52,8 @@ public class OrderBuilder {
     }
 
     public Order build() {
-        final Order order = new Order(
-                this.id,
-                this.orderTable,
-                this.orderStatus,
-                this.orderedTime
-        );
-        orderLineItems.forEach(order::addOrderLineItem);
+        final Order order = Order.create(this.orderTable, orderLineItems);
+        order.changeOrderStatus(orderStatus);
         return order;
     }
 }
