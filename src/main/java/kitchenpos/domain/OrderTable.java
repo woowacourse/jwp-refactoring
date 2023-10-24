@@ -21,6 +21,13 @@ public class OrderTable {
 
     }
 
+    public void changeEmpty(boolean isEmpty) {
+        if (this.tableGroupId != null) {
+            throw new IllegalArgumentException("단체로 지정된 테이블은 상태를 변경할 수 없습니다.");
+        }
+        this.empty = isEmpty;
+    }
+
     public Long getId() {
         return id;
     }
