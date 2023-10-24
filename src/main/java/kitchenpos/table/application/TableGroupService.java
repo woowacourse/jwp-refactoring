@@ -4,8 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.order.Order;
-import kitchenpos.order.persistence.OrderRepository;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.TableGroup;
 import kitchenpos.table.persistence.OrderTableRepository;
@@ -18,18 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupValidator tableGroupValidator;
 
     public TableGroupService(
-        OrderRepository orderRepository,
+        TableGroupRepository tableGroupRepository,
         OrderTableRepository orderTableRepository,
-        TableGroupRepository tableGroupRepository
+        TableGroupValidator tableGroupValidator
     ) {
-        this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
@@ -45,7 +43,7 @@ public class TableGroupService {
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문그룹입니다."));
-        validateUngroupable(tableGroup.getOrderTables());
+        tableGroupValidator.validateUngroupable(getOrderTableIds(tableGroup.getOrderTables()));
         tableGroup.ungroup();
     }
 
@@ -63,13 +61,9 @@ public class TableGroupService {
         return tableGroup;
     }
 
-    private void validateUngroupable(List<OrderTable> orderTables) {
-        List<Long> orderTableIds = orderTables.stream()
+    private List<Long> getOrderTableIds(List<OrderTable> orderTables) {
+        return orderTables.stream()
             .map(OrderTable::getId)
             .collect(toList());
-        List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
-        if (orders.stream().anyMatch(Order::isNotCompletion)) {
-            throw new IllegalArgumentException("주문이 완료 상태여만 그룹을 삭제할 수 있습니다.");
-        }
     }
 }
