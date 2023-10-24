@@ -12,6 +12,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -117,6 +118,28 @@ public class IntegrationTestSteps {
                                                         .body(changed)
                                                         .when()
                                                         .put("/api/orders/" + orderId + "/order-status")
+                                                        .then().log().all()
+                                                        .extract();
+
+        sharedContext.setResponse(response);
+    }
+
+    public void createTableGroup(TableGroup tableGroup) {
+        ExtractableResponse<Response> response = given().log().all()
+                                                        .contentType(ContentType.JSON)
+                                                        .body(tableGroup)
+                                                        .when()
+                                                        .post("/api/table-groups")
+                                                        .then().log().all()
+                                                        .extract();
+
+        sharedContext.setResponse(response);
+    }
+
+    public void upgroup(Long id) {
+        ExtractableResponse<Response> response = given().log().all()
+                                                        .when()
+                                                        .delete("/api/table-groups/" + id)
                                                         .then().log().all()
                                                         .extract();
 

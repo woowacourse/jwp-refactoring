@@ -5,9 +5,10 @@ import kitchenpos.domain.OrderTable;
 
 public enum OrderTableFixture {
 
-    EMPTY_TABLE(1L, 0, true, null),
-    OCCUPIED_TABLE(2L, 4, false, null),
-    OCCUPIED_TABLE_OF_GROUP(3L, 4, false, 1L);
+    EMPTY_TABLE1(1L, 0, true, null),
+    EMPTY_TABLE2(2L, 0, true, null),
+    OCCUPIED_TABLE(3L, 4, false, null),
+    OCCUPIED_TABLE_OF_GROUP(4L, 4, false, 1L);
 
     private final Long id;
     private final int numberOfGuests;
