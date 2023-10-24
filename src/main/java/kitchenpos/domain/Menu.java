@@ -43,15 +43,6 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
-                final List<MenuProduct> menuProducts) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
     public void validateMenuPrice(final Price productSum) {
         if (this.price.isGreaterThan(productSum)) {
             throw new IllegalArgumentException("메뉴의 가격이 상품 가격들의 합보다 큽니다.");

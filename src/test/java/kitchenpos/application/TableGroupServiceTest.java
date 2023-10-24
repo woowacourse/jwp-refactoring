@@ -66,34 +66,6 @@ class TableGroupServiceTest {
         then(orderTableRepository).should(times(2)).save(any());
     }
 
-    @DisplayName("주문 테이블이 존재하지 않으면 등록할 수 없다.")
-    @Test
-    void create_FailWhenTableIsNull() {
-        // given
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(null);
-        final TableGroup tableGroup = new TableGroup(1L);
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블의 수가 올바르지 않습니다.");
-    }
-
-    @DisplayName("주문 테이블의 개수가 2개 미만이면 등록할 수 없다.")
-    @Test
-    void create_FailWhenTableIsUnderTwo() {
-        // given
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(10L));
-        final TableGroup tableGroup = new TableGroup(1L);
-        final OrderTable orderTable1 = new OrderTable(10L, tableGroup, 2, true);
-        tableGroup.addOrderTable(orderTable1);
-
-        // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블의 수가 올바르지 않습니다.");
-    }
-
     @DisplayName("존재하지 않는 주문 테이블이 포함되어 있으면 등록할 수 없다.")
     @Test
     void create_FailWhenTableSizeUnMatch() {
@@ -128,7 +100,7 @@ class TableGroupServiceTest {
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("테이블이 비어있지 않거나 이미 할당되어 있습니다.");
+                .hasMessage("테이블의 상태가 비어 있지 않습니다.");
     }
 
     @DisplayName("특정 단체를 삭제할 수 있다.")

@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -19,8 +20,8 @@ public class Price {
         this.value = value;
     }
 
-    public Price add(final Price otherPrice) {
-        return new Price(value.add(otherPrice.value));
+    public Price add(final Price price) {
+        return new Price(value.add(price.value));
     }
 
     public Price multiply(final long quantity) {
@@ -28,10 +29,27 @@ public class Price {
     }
 
     public boolean isGreaterThan(final Price price) {
-        return value.compareTo(price.value) > 0;
+        return this.value.compareTo(price.value) > 0;
     }
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Price price = (Price) o;
+        return Objects.equals(value, price.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

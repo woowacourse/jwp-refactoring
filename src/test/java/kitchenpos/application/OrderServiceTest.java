@@ -167,7 +167,7 @@ class OrderServiceTest {
         // when & then
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 테이블의 상태가 비어있습니다.");
+                .hasMessage("테이블의 상태가 비어 있습니다.");
     }
 
     @DisplayName("주문 목록을 조회할 수 있다.")
