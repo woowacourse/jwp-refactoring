@@ -20,7 +20,7 @@ public class CreateTableGroupRequest {
 
     public List<Long> getOrderTableIds() {
         return orderTables.stream()
-                          .map(createTableGroupOrderTableRequest -> createTableGroupOrderTableRequest.getId())
+                          .map(CreateTableGroupOrderTableRequest::getId)
                           .collect(Collectors.toList());
     }
 }

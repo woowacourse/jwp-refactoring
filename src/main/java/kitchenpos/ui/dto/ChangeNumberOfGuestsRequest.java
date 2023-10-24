@@ -1,7 +1,5 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.OrderTable;
-
 public class ChangeNumberOfGuestsRequest {
 
     private int numberOfGuests;
@@ -15,9 +13,5 @@ public class ChangeNumberOfGuestsRequest {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public OrderTable toEntity() {
-        return new OrderTable(numberOfGuests);
     }
 }

@@ -17,7 +17,6 @@ public class CreateMenuGroupRequest {
         return name;
     }
 
-
     public MenuGroup toEntity() {
         return new MenuGroup(name);
     }
