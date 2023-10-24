@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +25,7 @@ class MenuGroupServiceTest {
     MenuGroupService menuGroupService;
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Nested
     class create {
@@ -33,16 +33,13 @@ class MenuGroupServiceTest {
         @Test
         void 성공() {
             // given
-            MenuGroup expect = new MenuGroup();
-            expect.setId(1L);
-            given(menuGroupDao.save(any(MenuGroup.class)))
-                .willReturn(expect);
+            var request = new MenuGroupCreateRequest("주류");
 
             // when
-            MenuGroup actual = menuGroupService.create(new MenuGroup());
+            var response = menuGroupService.create(request);
 
             // then
-            assertThat(actual.getId()).isEqualTo(1L);
+            assertThat(response.getName()).isEqualTo("주류");
         }
     }
 
@@ -52,14 +49,18 @@ class MenuGroupServiceTest {
         @Test
         void 성공() {
             // given
-            given(menuGroupDao.findAll())
-                .willReturn(List.of(new MenuGroup(), new MenuGroup()));
+            List<MenuGroup> expect = List.of(
+                new MenuGroup(1L, "주류"),
+                new MenuGroup(1L, "튀김류")
+            );
+            given(menuGroupRepository.findAll())
+                .willReturn(expect);
 
             // when
-            List<MenuGroup> actual = menuGroupService.findAll();
+            var response = menuGroupService.findAll();
 
             // then
-            assertThat(actual).hasSize(2);
+            assertThat(response).hasSize(2);
         }
     }
 }

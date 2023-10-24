@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -8,20 +7,23 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyList;
 import static org.mockito.BDDMockito.given;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.KitchenPosException;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.ui.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,152 +37,112 @@ class TableGroupServiceTest {
     TableGroupService tableGroupService;
 
     @Mock
-    OrderDao orderDao;
+    TableGroupRepository tableGroupRepository;
 
     @Mock
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Mock
-    TableGroupDao tableGroupDao;
+    OrderRepository orderRepository;
 
     @Nested
     class create {
 
-        @ParameterizedTest
-        @ValueSource(ints = {0, 1})
-        void 주문_테이블_목록의_갯수가_1개_이하이면_예외(int count) {
+        @Test
+        void 주문_테이블_목록이_비어있으면_예외() {
             // given
-            TableGroup tableGroup = new TableGroup();
-            List<OrderTable> orderTables = IntStream.range(0, count)
-                .mapToObj(i -> new OrderTable())
-                .collect(toList());
-            tableGroup.setOrderTables(orderTables);
+            var request = new TableGroupCreateRequest(Collections.emptyList());
 
             // when & then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("주문 테이블 목록은 2개 이상이어야 합니다.");
         }
 
         @Test
-        void 주문_테이블_목록으로_조회한_테이블_목록의_개수가_조회한_테이블_목록의_개수와_맞지_않으면_예외() {
+        void 주문_테이블_목록이_1개_이하면_예외() {
             // given
-            TableGroup tableGroup = new TableGroup();
-            OrderTable orderTable1 = new OrderTable();
-            orderTable1.setId(1L);
-            OrderTable orderTable2 = new OrderTable();
-            orderTable2.setId(2L);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
+            var request = new TableGroupCreateRequest(List.of(1L));
 
-            // when
-            given(orderTableDao.findAllByIdIn(anyList()))
-                .willReturn(List.of(new OrderTable()));
-
-            // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("주문 테이블 목록은 2개 이상이어야 합니다.");
         }
 
         @Test
-        void 주문_테이블_목록에서_비어있는_테이블이_있으면_예외() {
+        void 주문_테이블_식별자에_대한_주문_테이블이_없으면_예외() {
             // given
-            TableGroup tableGroup = new TableGroup();
-            OrderTable orderTable1 = new OrderTable();
-            orderTable1.setId(1L);
-            OrderTable orderTable2 = new OrderTable();
-            orderTable2.setId(2L);
-            orderTable2.setEmpty(true);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            given(orderTableDao.findAllByIdIn(anyList()))
-                .willReturn(tableGroup.getOrderTables());
+            var request = new TableGroupCreateRequest(List.of(1L, 2L, 4885L, 4886L));
+            LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+            given(tableGroupRepository.save(any(TableGroup.class)))
+                .willReturn(new TableGroup(1L, createdDate));
+            given(orderTableRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    new OrderTable(1L, false, 0),
+                    new OrderTable(2L, false, 0)
+                ));
 
-            // when
-            orderTable1.setEmpty(false);
-
-            // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문_테이블_목록에서_테이블_그룹에_등록된_테이블이_있으면_예외() {
-            // given
-            TableGroup tableGroup = new TableGroup();
-            OrderTable orderTable1 = new OrderTable();
-            orderTable1.setId(1L);
-            orderTable1.setEmpty(true);
-            OrderTable orderTable2 = new OrderTable();
-            orderTable2.setId(2L);
-            orderTable2.setEmpty(true);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            given(orderTableDao.findAllByIdIn(anyList()))
-                .willReturn(tableGroup.getOrderTables());
-
-            // when
-            orderTable1.setTableGroupId(1L);
-
-            // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-                .isInstanceOf(IllegalArgumentException.class);
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.create(request))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("존재하지 않는 주문 테이블이 있습니다. notExistOrderTableIds=[4885, 4886]");
         }
 
         @Test
         void 성공() {
             // given
-            TableGroup tableGroup = new TableGroup();
-            OrderTable orderTable1 = new OrderTable();
-            orderTable1.setId(1L);
-            orderTable1.setEmpty(true);
-            OrderTable orderTable2 = new OrderTable();
-            orderTable2.setId(2L);
-            orderTable2.setEmpty(true);
-            tableGroup.setOrderTables(List.of(orderTable1, orderTable2));
-            given(orderTableDao.findAllByIdIn(anyList()))
-                .willReturn(tableGroup.getOrderTables());
-            TableGroup savedTableGroup = new TableGroup();
-            savedTableGroup.setId(1L);
-            savedTableGroup.setOrderTables(tableGroup.getOrderTables());
-            given(tableGroupDao.save(any(TableGroup.class)))
-                .willReturn(savedTableGroup);
+            var request = new TableGroupCreateRequest(List.of(1L, 2L));
+            LocalDateTime createdDate = LocalDateTime.parse("2023-10-15T22:40:00");
+            given(tableGroupRepository.save(any(TableGroup.class)))
+                .willReturn(new TableGroup(1L, createdDate));
+            given(orderTableRepository.findAllByIdIn(anyList()))
+                .willReturn(List.of(
+                    new OrderTable(1L, false, 0),
+                    new OrderTable(2L, false, 0)
+                ));
 
             // when
-            TableGroup actual = tableGroupService.create(tableGroup);
+            var actual = tableGroupService.create(request);
 
             // then
-            List<OrderTable> actualOrderTables = actual.getOrderTables();
-            assertThat(actualOrderTables)
-                .map(OrderTable::getTableGroupId)
-                .allMatch(tableGroupId -> tableGroupId.equals(1L));
+            assertThat(actual.getOrderTableIds()).hasSize(2);
         }
     }
 
-    // TODO 조회한 주문 테이블이 empty 이면 예외 발생
-    // TODO 비즈니스 로직이 SQL에 있는 것을 수정
     @Nested
     class ungroup {
 
         @Test
-        void 주문_테이블의_주문의_상태가_COMPLETION이_아니면_예외() {
+        void 계산_완료_상태가_아닌_주문이_있으면_예외() {
             // given
-            Long tableGroupId = 1L;
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            given(orderRepository.findAllByOrderTableIdIn(anyList()))
+                .willReturn(List.of(
+                    new Order(1L, OrderStatus.COMPLETION, orderedTime, new OrderTable(1L, false, 0)),
+                    new Order(2L, OrderStatus.COMPLETION, orderedTime, new OrderTable(1L, false, 0)),
+                    new Order(3L, OrderStatus.MEAL, orderedTime, new OrderTable(1L, false, 0))
+                ));
 
-            // when
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                .willReturn(true);
-
-            // then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+            // when & then
+            assertThatThrownBy(() -> tableGroupService.ungroup(1L))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("계산 완료 상태가 아닌 주문이 있는 테이블은 그룹을 해제할 수 없습니다.");
         }
 
         @Test
         void 성공() {
             // given
-            Long tableGroupId = 1L;
-            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-                .willReturn(false);
+            LocalDateTime orderedTime = LocalDateTime.parse("2023-10-15T22:40:00");
+            given(orderRepository.findAllByOrderTableIdIn(anyList()))
+                .willReturn(List.of(
+                    new Order(1L, OrderStatus.COMPLETION, orderedTime, new OrderTable(1L, false, 0)),
+                    new Order(2L, OrderStatus.COMPLETION, orderedTime, new OrderTable(1L, false, 0)),
+                    new Order(3L, OrderStatus.COMPLETION, orderedTime, new OrderTable(1L, false, 0))
+                ));
 
-            // when
-            assertThatNoException().isThrownBy(() -> tableGroupService.ungroup(tableGroupId));
+            // when & then
+            assertThatNoException().isThrownBy(() -> tableGroupService.ungroup(1L));
         }
     }
 }

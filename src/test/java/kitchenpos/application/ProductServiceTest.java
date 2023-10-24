@@ -1,15 +1,13 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
-import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -28,63 +26,21 @@ class ProductServiceTest {
     ProductService productService;
 
     @Mock
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Nested
     class create {
 
         @Test
-        void 가격이_null이면_예외() {
-            // given
-            Product product = new Product();
-            product.setPrice(null);
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 가격이_0보다_작으면_에외() {
-            // given
-            Product product = new Product();
-            product.setPrice(BigDecimal.valueOf(-1));
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 가격이_0원이어도_성공() {
-            // given
-            Product product = new Product();
-            product.setPrice(BigDecimal.ZERO);
-            Product savedProduct = new Product();
-            savedProduct.setId(1L);
-            given(productDao.save(any(Product.class)))
-                .willReturn(savedProduct);
-
-            // when & then
-            assertThatNoException()
-                .isThrownBy(() -> productService.create(product));
-        }
-
-        @Test
         void 성공() {
             // given
-            Product product = new Product();
-            product.setPrice(BigDecimal.valueOf(1000));
-            Product savedProduct = new Product();
-            savedProduct.setId(1L);
-            given(productDao.save(any(Product.class)))
-                .willReturn(savedProduct);
+            var request = new ProductCreateRequest("소주", 5000);
 
             // when
-            Product actual = productService.create(product);
+            var response = productService.create(request);
 
             // then
-            assertThat(actual.getId()).isEqualTo(1L);
+            assertThat(response.getName()).isEqualTo("소주");
         }
     }
 
@@ -94,14 +50,18 @@ class ProductServiceTest {
         @Test
         void 성공() {
             // given
-            given(productDao.findAll())
-                .willReturn(List.of(new Product(), new Product()));
+            List<Product> expect = List.of(
+                new Product(1L, "소주", Money.ZERO),
+                new Product(2L, "맥주주", Money.ZERO)
+            );
+            given(productRepository.findAll())
+                .willReturn(expect);
 
             // when
-            List<Product> actual = productService.findAll();
-            
-            // when & then
-            assertThat(actual).hasSize(2);
+            var response = productService.findAll();
+
+            // then
+            assertThat(response).hasSize(2);
         }
     }
 }

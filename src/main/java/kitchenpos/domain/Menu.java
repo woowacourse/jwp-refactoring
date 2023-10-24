@@ -1,52 +1,94 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import kitchenpos.exception.KitchenPosException;
 
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 255, nullable = false)
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @Embedded
+    @AttributeOverride(name = "amount", column = @Column(name = "price", nullable = false))
+    private Money price;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuGroup menuGroup;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
+
+    protected Menu() {
+    }
+
+    public Menu(Long id, String name, Money price, MenuGroup menuGroup) {
+        validate(price);
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+    }
+
+    private void validate(Money price) {
+        if (price == null) {
+            throw new KitchenPosException("메뉴의 가격은 null이 될 수 없습니다.");
+        }
+        if (price.isLessThan(Money.ZERO)) {
+            throw new KitchenPosException("메뉴의 가격은 0보다 작을 수 없습니다.");
+        }
+    }
+
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts.addAll(menuProducts);
+        validateMenuProducts(this.menuProducts);
+    }
+
+    private void validateMenuProducts(List<MenuProduct> menuProducts) {
+        Money totalPrice = menuProducts.stream()
+            .map(MenuProduct::getTotalPrice)
+            .reduce(Money.ZERO, Money::plus);
+        if (price.isGreaterThan(totalPrice)) {
+            throw new KitchenPosException("메뉴의 가격은 메뉴 상품의 총합 가격보다 작아야 합니다.");
+        }
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Money getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        return Collections.unmodifiableList(menuProducts);
     }
 }
