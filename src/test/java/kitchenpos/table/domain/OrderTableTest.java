@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderTableValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -22,7 +23,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class OrderTableTest {
 
     private final OrderRepository orderRepository = mock(OrderRepository.class);
-    private final OrderTableValidator orderTableValidator = new OrderTableValidator(orderRepository);
+    private final OrderTableValidator orderTableValidator = new OrderTableValidatorImpl(orderRepository);
 
     @Nested
     class 비어있음_상태_변경_검증_시 {
