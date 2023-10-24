@@ -19,6 +19,7 @@ class MenuTest {
         // when
         // then
         assertThatThrownBy(() -> new Menu("메뉴", 30000, 1L, menuProducts))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("메뉴 금액은 상품들의 금액 합보다 클 수 없습니다.");
     }
 }

@@ -57,7 +57,8 @@ class OrderTableTest {
         // when
         // then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(changingNumberOfGuests))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("주문테이블이 비어있는 상태이면 손님 수를 변경할 수 없습니다.");
     }
 
     @DisplayName("변경할 손님 수가 음수이면 손님 수를 변경할 수 없다.")
@@ -70,6 +71,7 @@ class OrderTableTest {
         // when
         // then
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(changingNumberOfGuests))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("변경할 손님 수는 음수이면 안됩니다.");
     }
 }

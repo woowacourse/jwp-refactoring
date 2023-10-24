@@ -33,7 +33,8 @@ class OrderTest {
         // when
         // then
         assertThatThrownBy(() -> completionOrder.changeStatus(changingStatus))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 Completion인 상태인 경우 주문 테이블의 상태를 변경할 수 없습니다.");
     }
 
     @DisplayName("주문에 주문상품을 추가하면 연관관계가 맺어진다.")

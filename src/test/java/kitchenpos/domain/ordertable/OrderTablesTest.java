@@ -20,7 +20,8 @@ class OrderTablesTest {
         // when
         // then
         assertThatThrownBy(() -> new OrderTables(orderTables))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("테이블 그룹할 주문 테이블은 2개 이상이어야 합니다.");
     }
 
     private static Stream<Arguments> getShortOrderTables() {
@@ -38,7 +39,8 @@ class OrderTablesTest {
         // when
         // then
         assertThatThrownBy(() -> new OrderTables(orderTables))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 포함된 주문 테이블은 새로운 테이블 그룹에 속할 수 없습니다.");
     }
 
     private static Stream<Arguments> getWrongOrderTables() {

@@ -20,7 +20,8 @@ class PriceTest {
         // when
         // then
         assertThatThrownBy(() -> Price.from(-1))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("상품 가격은 null 혹은 음수가 될 수 없습니다.");
     }
 
     @DisplayName("price 값이 null이면 예외를 발생시킨다.")
@@ -30,7 +31,8 @@ class PriceTest {
         // when
         // then
         assertThatThrownBy(() -> Price.from(null))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("상품 가격은 null 혹은 음수가 될 수 없습니다.");
     }
 
     @DisplayName("현재 자신의 금액보다 큰 금액이 들어오면 true를 반환하고 그렇지 않으면 false를 반환한다.")
