@@ -1,5 +1,5 @@
 ###
-POST localhost:8080/api/menus
+POST {{host}}/api/menus
 Content-Type: application/json
 
 {
@@ -15,6 +15,6 @@ Content-Type: application/json
 }
 
 ###
-GET localhost:8080/api/menus
+GET {{host}}/api/menus
 
 ###
