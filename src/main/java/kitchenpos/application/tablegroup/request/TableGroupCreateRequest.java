@@ -4,17 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
-    private List<OrderTableIdRequest> orderTables;
+    private List<OrderTableIdRequest> orderTableIds;
 
-    protected TableGroupCreateRequest() {
+    public TableGroupCreateRequest() {
     }
 
-    public TableGroupCreateRequest(List<OrderTableIdRequest> orderTables) {
-        this.orderTables = orderTables;
+    public TableGroupCreateRequest(List<OrderTableIdRequest> orderTableIdRequests) {
+        this.orderTableIds = orderTableIdRequests;
     }
 
     public List<Long> getOrderTableIds() {
-        return orderTables.stream()
+        return orderTableIds.stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
     }
