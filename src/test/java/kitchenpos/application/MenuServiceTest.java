@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Price;
 import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -66,9 +67,9 @@ class MenuServiceTest {
     void 메뉴_생성시_메뉴_상품들의_가격_총합은_상품들의_원래_가격_총합보다_커선_안된다() {
         var menu = 후라이드_두마리_REQUEST();
         var menuProduct = menu.getMenuProducts().get(0);
-        BigDecimal priceSum = 후라이드().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
+        Price sum = 후라이드().getPrice().multiply(menuProduct.getQuantity());
 
-        menu.setPrice(priceSum.add(BigDecimal.ONE));
+        menu.setPrice(sum.add(new Price(1)).getAmount());
 
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);

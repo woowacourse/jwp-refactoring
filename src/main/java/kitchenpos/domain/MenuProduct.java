@@ -41,10 +41,6 @@ public class MenuProduct {
         return product;
     }
 
-    public Long getProductId() {
-        return product.getId();
-    }
-
     public long getQuantity() {
         return quantity;
     }
