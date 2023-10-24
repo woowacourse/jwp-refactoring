@@ -5,7 +5,10 @@ import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
 
-    private final List<SingleOrderTableCreateRequest> orderTables;
+    private List<SingleOrderTableCreateRequest> orderTables;
+
+    private TableGroupCreateRequest() {
+    }
 
     public TableGroupCreateRequest(final List<SingleOrderTableCreateRequest> orderTables) {
         this.orderTables = orderTables;

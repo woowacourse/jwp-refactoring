@@ -2,7 +2,10 @@ package kitchenpos.dto.table;
 
 public class SingleOrderTableCreateRequest {
 
-    private final Long id;
+    private Long id;
+
+    private SingleOrderTableCreateRequest() {
+    }
 
     public SingleOrderTableCreateRequest(final Long id) {
         this.id = id;

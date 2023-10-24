@@ -2,8 +2,11 @@ package kitchenpos.dto.table;
 
 public class TableCreateRequest {
 
-    private final int numberOfGuests;
-    private final boolean empty;
+    private int numberOfGuests;
+    private boolean empty;
+
+    private TableCreateRequest() {
+    }
 
     public TableCreateRequest(
             final int numberOfGuests,

@@ -2,8 +2,11 @@ package kitchenpos.dto.menu;
 
 public class MenuProductCreateRequest {
 
-    private final Long productId;
-    private final Long quantity;
+    private Long productId;
+    private Long quantity;
+
+    private MenuProductCreateRequest() {
+    }
 
     public MenuProductCreateRequest(
             final Long productId,

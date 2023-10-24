@@ -4,10 +4,13 @@ import java.util.List;
 
 public class MenuCreateRequest {
 
-    private final String name;
-    private final Long price;
-    private final Long menuGroupId;
-    private final List<MenuProductCreateRequest> menuProducts;
+    private String name;
+    private Long price;
+    private Long menuGroupId;
+    private List<MenuProductCreateRequest> menuProducts;
+
+    private MenuCreateRequest() {
+    }
 
     public MenuCreateRequest(
             final String name,
