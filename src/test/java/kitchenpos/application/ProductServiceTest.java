@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -26,7 +25,11 @@ class ProductServiceTest extends ServiceIntegrationTest {
         final ProductResponse result = productService.create(product);
 
         // then
-        assertThat(result.getId()).isNotNull();
+        assertSoftly(softly -> {
+            softly.assertThat(result.getId()).isNotNull();
+            softly.assertThat(result.getName()).isEqualTo(product.getName());
+            softly.assertThat(result.getPrice()).isEqualByComparingTo(product.getPrice());
+        });
     }
 
     @Test

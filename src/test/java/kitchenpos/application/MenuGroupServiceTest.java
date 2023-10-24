@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
@@ -22,7 +23,10 @@ class MenuGroupServiceTest extends ServiceIntegrationTest {
         final MenuGroupResponse result = menuGroupService.create(menuGroup);
 
         // then
-        assertThat(result.getId()).isNotNull();
+        assertSoftly(softly -> {
+            softly.assertThat(result.getId()).isNotNull();
+            softly.assertThat(result.getName()).isEqualTo(menuGroup.getName());
+        });
     }
 
     @Test

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -51,7 +50,13 @@ class MenuServiceTest extends ServiceIntegrationTest {
         final MenuResponse result = menuService.create(menu);
 
         // then
-        assertThat(result.getId()).isNotNull();
+        assertSoftly(softly -> {
+            softly.assertThat(result.getId()).isNotNull();
+            softly.assertThat(result.getName()).isEqualTo(menu.getName());
+            softly.assertThat(result.getPrice()).isEqualByComparingTo(menu.getPrice());
+            softly.assertThat(result.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+            softly.assertThat(result.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size());
+        });
     }
 
     @ParameterizedTest
