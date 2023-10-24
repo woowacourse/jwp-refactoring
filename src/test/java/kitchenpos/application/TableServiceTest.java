@@ -3,8 +3,10 @@ package kitchenpos.application;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.ChangeOrderTableEmptyRequest;
 import kitchenpos.ui.dto.CreateOrderTableRequest;
@@ -32,6 +34,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -95,6 +100,22 @@ class TableServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(invalidOrderTableId, orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("테이블의 비어있음 정보를 변경할 때 테이블이 그룹화되어 있으면 예외가 발생한다.")
+    void changeEmpty_groupedTable() {
+        // given
+        final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
+        final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
+        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+
+        final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
+
+        // when & then
+        assertThatThrownBy(() -> tableService.changeEmpty(세명_테이블.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
