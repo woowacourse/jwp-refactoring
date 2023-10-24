@@ -10,6 +10,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.request.OrderTableIdRequest;
 import kitchenpos.ui.request.OrderTableRequest;
 import kitchenpos.ui.request.TableGroupRequest;
 import kitchenpos.ui.response.TableGroupResponse;
@@ -40,10 +41,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 테이블_그룹을_생성한다() {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, 10, true),
-                        new OrderTableRequest(2L, 10, true)
+                        new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(2L)
                 )
         );
         final TableGroupResponse created = tableGroupService.create(tableGroupRequest);
@@ -54,9 +54,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 주문_테이블이_2개_이하면_예외를_발생한다() {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, 10, true)
+                        new OrderTableIdRequest(1L)
                 )
         );
 
@@ -65,10 +64,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블_그룹의_입력_테이블들이_비어_있으면_예외를_발생한다() {
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                LocalDateTime.now(),
-                List.of()
-        );
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of());
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -76,10 +72,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 주문테이블아이디들로_주문테이블을_조회해서_개수가_맞지_않으면_예외를_발생한다() {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, 10, true),
-                        new OrderTableRequest(1000L, 10, true)
+                        new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(1000L)
                 )
         );
 
@@ -89,10 +84,9 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void 주문테이블들이_비어있지_않으면_예외를_발생한다() {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
-                LocalDateTime.now(),
                 List.of(
-                        new OrderTableRequest(1L, 10, true),
-                        new OrderTableRequest(10L, 10, false)
+                        new OrderTableIdRequest(1L),
+                        new OrderTableIdRequest(10L)
                 )
         );
 

@@ -28,7 +28,7 @@ class MenuServiceTest extends ServiceTest {
                 "메뉴",
                 BigDecimal.valueOf(10000),
                 1L,
-                List.of(new MenuProductRequest(1L, 1L, 100L))
+                List.of(new MenuProductRequest(1L, 100L))
         );
 
         final MenuResponse created = menuService.create(menu);
@@ -42,7 +42,7 @@ class MenuServiceTest extends ServiceTest {
                 "메뉴",
                 BigDecimal.valueOf(-10000),
                 1L,
-                List.of(new MenuProductRequest(1L, 1L, 100L))
+                List.of(new MenuProductRequest(1L, 100L))
         );
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -54,7 +54,7 @@ class MenuServiceTest extends ServiceTest {
                 "메뉴",
                 BigDecimal.valueOf(10000),
                 100L,
-                List.of(new MenuProductRequest(1L, 1L, 100L))
+                List.of(new MenuProductRequest(1L, 100L))
         );
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -66,7 +66,7 @@ class MenuServiceTest extends ServiceTest {
                 "메뉴",
                 BigDecimal.valueOf(10000),
                 100L,
-                List.of(new MenuProductRequest(1L, 100L, 100L))
+                List.of(new MenuProductRequest(100L, 100L))
         );
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -78,7 +78,7 @@ class MenuServiceTest extends ServiceTest {
                 "메뉴",
                 BigDecimal.valueOf(1000000),
                 100L,
-                List.of(new MenuProductRequest(1L, 1L, 100L))
+                List.of(new MenuProductRequest(1L, 100L))
         );
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);

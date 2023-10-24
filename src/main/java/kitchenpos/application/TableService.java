@@ -6,6 +6,8 @@ import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.validator.OrderTableValidator;
 import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.request.UpdateOrderTableEmptyRequest;
+import kitchenpos.ui.request.UpdateOrderTableNumberOfGuestsRequest;
 import kitchenpos.ui.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,17 +37,17 @@ public class TableService {
     }
 
     public OrderTableResponse changeEmpty(final Long orderTableId,
-                                          final OrderTableRequest orderTableRequest) {
+                                          final UpdateOrderTableEmptyRequest updateOrderTableEmptyRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         orderTableValidator.validateCompletedOrderTable(orderTable);
-        orderTable.setEmpty(orderTableRequest.isEmpty());
+        orderTable.setEmpty(updateOrderTableEmptyRequest.isEmpty());
         return OrderTableResponse.from(orderTable);
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-                                                   final OrderTableRequest orderTableRequest) {
-        final int numberOfGuests = orderTableRequest.getNumberOfGuests();
+                                                   final UpdateOrderTableNumberOfGuestsRequest updateOrderTableNumberOfGuestsRequest) {
+        final int numberOfGuests = updateOrderTableNumberOfGuestsRequest.getNumberOfGuests();
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);

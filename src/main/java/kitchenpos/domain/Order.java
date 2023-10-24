@@ -69,7 +69,14 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
+        validateInProgressing();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateInProgressing() {
+        if (OrderStatus.COMPLETION == orderStatus) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

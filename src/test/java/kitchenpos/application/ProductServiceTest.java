@@ -23,7 +23,7 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 제품을_저장한다() {
-        final ProductRequest request = new ProductRequest(null, "abc", BigDecimal.valueOf(1000));
+        final ProductRequest request = new ProductRequest("abc", BigDecimal.valueOf(1000));
 
         final ProductResponse productResponse = productService.create(request);
 
@@ -32,7 +32,7 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 제품_가격이_음수면_예외를_발생한다() {
-        final ProductRequest request = new ProductRequest(null, "abc", BigDecimal.valueOf(-200));
+        final ProductRequest request = new ProductRequest("abc", BigDecimal.valueOf(-200));
 
         assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }

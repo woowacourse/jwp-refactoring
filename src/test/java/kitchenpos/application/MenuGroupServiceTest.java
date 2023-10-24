@@ -21,7 +21,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
     @Test
     void 메뉴그룹을_생성한다() {
-        final MenuGroupRequest request = new MenuGroupRequest(null, "abc");
+        final MenuGroupRequest request = new MenuGroupRequest("abc");
 
         final MenuGroupResponse created = menuGroupService.create(request);
 

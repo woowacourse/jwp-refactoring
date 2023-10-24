@@ -12,6 +12,7 @@ import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.request.OrderLineItemRequest;
 import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.request.UpdateOrderStatusRequest;
 import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,6 @@ class OrderServiceTest extends ServiceTest {
         orderLineItemRequests.add(new OrderLineItemRequest(3L, 5));
         final OrderRequest orderRequest = new OrderRequest(
                 9L,
-                null,
                 orderLineItemRequests
         );
 
@@ -59,7 +59,6 @@ class OrderServiceTest extends ServiceTest {
         final List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
         final OrderRequest orderRequest = new OrderRequest(
                 9L,
-                null,
                 orderLineItemRequests
         );
 
@@ -74,7 +73,6 @@ class OrderServiceTest extends ServiceTest {
         orderLineItemRequests.add(new OrderLineItemRequest(100L, 5));
         final OrderRequest orderRequest = new OrderRequest(
                 9L,
-                null,
                 orderLineItemRequests
         );
 
@@ -89,7 +87,6 @@ class OrderServiceTest extends ServiceTest {
         orderLineItemRequests.add(new OrderLineItemRequest(3L, 5));
         final OrderRequest orderRequest = new OrderRequest(
                 100L,
-                null,
                 orderLineItemRequests
         );
 
@@ -129,13 +126,9 @@ class OrderServiceTest extends ServiceTest {
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 3));
         orderLineItemRequests.add(new OrderLineItemRequest(2L, 2));
         orderLineItemRequests.add(new OrderLineItemRequest(3L, 5));
-        final OrderRequest orderRequest = new OrderRequest(
-                savedOrderTable.getId(),
-                "COMPLETION",
-                orderLineItemRequests
-        );
+        final UpdateOrderStatusRequest updateOrderStatusRequest = new UpdateOrderStatusRequest("COMPLETION");
 
-        final OrderResponse orderResponse = orderService.changeOrderStatus(1L, orderRequest);
+        final OrderResponse orderResponse = orderService.changeOrderStatus(1L, updateOrderStatusRequest);
 
         assertThat(orderResponse.getOrderStatus()).isEqualTo("COMPLETION");
     }
@@ -159,13 +152,9 @@ class OrderServiceTest extends ServiceTest {
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 3));
         orderLineItemRequests.add(new OrderLineItemRequest(2L, 2));
         orderLineItemRequests.add(new OrderLineItemRequest(3L, 5));
-        final OrderRequest orderRequest = new OrderRequest(
-                100L,
-                "COMPLETION",
-                orderLineItemRequests
-        );
+        final UpdateOrderStatusRequest updateOrderStatusRequest = new UpdateOrderStatusRequest("COMPLETION");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, orderRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, updateOrderStatusRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -187,12 +176,8 @@ class OrderServiceTest extends ServiceTest {
         orderLineItemRequests.add(new OrderLineItemRequest(1L, 3));
         orderLineItemRequests.add(new OrderLineItemRequest(2L, 2));
         orderLineItemRequests.add(new OrderLineItemRequest(3L, 5));
-        final OrderRequest orderRequest = new OrderRequest(
-                orderTable.getId(),
-                "COMPLETION",
-                orderLineItemRequests
-        );
+        final UpdateOrderStatusRequest updateOrderStatusRequest = new UpdateOrderStatusRequest("COMPLETION");
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, orderRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(100L, updateOrderStatusRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 }
