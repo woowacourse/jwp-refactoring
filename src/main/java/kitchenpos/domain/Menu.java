@@ -55,8 +55,16 @@ public class Menu {
         return id;
     }
 
-    public MenuName getName() {
-        return name;
+    public String getName() {
+        return name.getName();
+    }
+
+    public BigDecimal getPrice() {
+        return price.value();
+    }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

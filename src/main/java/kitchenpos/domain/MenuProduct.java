@@ -51,4 +51,8 @@ public class MenuProduct {
     public Product getProduct() {
         return product;
     }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }
