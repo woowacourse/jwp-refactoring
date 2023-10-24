@@ -99,14 +99,14 @@ class TableServiceTest {
             final OrderTable firstOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
             final OrderTable secondOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
 
-            final List<OrderTable> orderTables = tableGroup.getOrderTables();
+            final List<OrderTable> orderTables = tableGroup.orderTables();
             orderTables.get(0).setId(firstOrderTable.id());
             orderTables.get(1).setId(secondOrderTable.id());
 
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
-            savedOrderTable.setTableGroupId(savedTableGroup.id());
+            savedOrderTable.setTableGroup(savedTableGroup.id());
             orderTableDao.save(savedOrderTable);
 
             // when, then

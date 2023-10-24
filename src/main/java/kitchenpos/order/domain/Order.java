@@ -72,6 +72,14 @@ public class Order {
         this.orderStatus = requestOrderStatus;
     }
 
+    public void ungroupOrderTable() {
+        if (this.orderStatus == OrderStatus.COOKING || this.orderStatus == OrderStatus.MEAL) {
+            throw new IllegalArgumentException("주문 상태가 요리중이거나 식사중일 경우 table group을 해제할 수 없습니다.");
+        }
+
+        this.orderTable.ungroup();
+    }
+
     public Long id() {
         return id;
     }

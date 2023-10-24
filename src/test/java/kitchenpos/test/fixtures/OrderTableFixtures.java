@@ -19,7 +19,7 @@ public enum OrderTableFixtures {
 
     public OrderTable get() {
         final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setTableGroup(tableGroupId);
         orderTable.changeNumberOfGuests(numberOfGuests);
         orderTable.changeEmpty(empty);
         return orderTable;

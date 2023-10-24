@@ -90,7 +90,7 @@ class TableGroupServiceTest {
             // given
             final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
             initOrderTables(tableGroup);
-            final List<OrderTable> orderTables = tableGroup.getOrderTables();
+            final List<OrderTable> orderTables = tableGroup.orderTables();
             orderTables.add(OrderTableFixtures.BASIC.get());
 
             // when, then
@@ -105,7 +105,7 @@ class TableGroupServiceTest {
             // given
             final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
             initOrderTables(tableGroup);
-            final OrderTable orderTable = tableGroup.getOrderTables().get(0);
+            final OrderTable orderTable = tableGroup.orderTables().get(0);
             tableService.changeEmpty(orderTable.id(), OrderTableFixtures.NOT_EMPTY.get());
 
             // when, then
@@ -122,8 +122,8 @@ class TableGroupServiceTest {
 
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-            final OrderTable orderTable = tableGroup.getOrderTables().get(0);
-            orderTable.setTableGroupId(savedTableGroup.id());
+            final OrderTable orderTable = tableGroup.orderTables().get(0);
+            orderTable.setTableGroup(savedTableGroup.id());
             orderTableDao.save(orderTable);
 
             // when, then
@@ -157,7 +157,7 @@ class TableGroupServiceTest {
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             final Order order = OrderFixtures.BASIC.get();
-            final OrderTable orderTable = tableGroup.getOrderTables().get(0);
+            final OrderTable orderTable = tableGroup.orderTables().get(0);
             order.setOrderTable(orderTable.id());
             final Order savedOrder = orderService.create(order);
 
@@ -174,7 +174,7 @@ class TableGroupServiceTest {
         final OrderTable firstOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
         final OrderTable secondOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
 
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        final List<OrderTable> orderTables = tableGroup.orderTables();
         orderTables.get(0).setId(firstOrderTable.id());
         orderTables.get(1).setId(secondOrderTable.id());
     }
