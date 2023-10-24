@@ -20,4 +20,30 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     private LocalDateTime createdDate;
+
+    public TableGroup() {
+    }
+
+    public TableGroup(final Long id, final List<OrderTable> orderTables, final LocalDateTime createdDate) {
+        this.id = id;
+        this.orderTables = orderTables;
+        this.createdDate = createdDate;
+    }
+
+    public TableGroup(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+        this.createdDate = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
 }
