@@ -17,9 +17,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "FROM Order o WHERE o.orderTableId = (:orderTableId) AND o.orderStatus IN (:orderStatuses)")
     boolean existsByOrderTableIdAndOrderStatusIn(
             @Param("orderTableId") Long orderTableId,
-            @Param("orderStatuses") List<OrderStatus> list
+            @Param("orderStatuses") List<OrderStatus> orderStatuses
     );
 
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> list);
+    @Query("SELECT CASE " +
+            "WHEN COUNT(o.id) > 0 " +
+            "THEN TRUE ELSE FALSE " +
+            "END " +
+            "FROM Order o WHERE o.orderTableId IN (:orderTableIds) AND o.orderStatus IN (:orderStatuses)")
+    boolean existsByOrderTableIdInAndOrderStatusIn(
+            @Param("orderTableIds") List<Long> orderTableIds,
+            @Param("orderStatuses") List<OrderStatus> orderStatuses);
 
 }

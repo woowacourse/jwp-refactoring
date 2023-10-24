@@ -36,7 +36,13 @@ public enum ExceptionInformation {
     ORDER_TABLE_IS_GROUPING(502, "변경하려는 테이블의 그룹테이블 아이디가 존재합니다"),
     ORDER_TABLE_STATUS_IS_NOT_COMPLETE(503, "변경하려는 테이블의 주문 상태는 COMPLETION여야 합니다."),
     EMPTY_TABLE_UPDATE_GUEST(504, "빈테이블의 손님수를 변경할 수 없습니다"),
-    ;
+
+    // 6__: 주문_테이블_그룹화
+    TABLE_GROUP_UNDER_BOUNCE(600, "단체 지정할 수 있는 테이블은 2개이상부터 입니다."),
+    TABLE_GROUP_NOT_EMPTY_OR_ALREADY_GROUPED(601, "비어있지 않은 테이블이나, 이미 그룹화 되어있는 테이블은 그룹화 할 수 없습니다"),
+    ORDER_TABLE_IN_TABLE_GROUP_NOT_FOUND_OR_DUPLICATED(602, "그룹화 하려는 테이블이 중복되거나 존재하지 않습니다"),
+    UNGROUP_NOT_COMPLETED_ORDER_TABLE(603, "그룹화 해제하려는 테이블 중 주문이 완료되지 않은 테이블이 있습니다"),
+    TABLE_GROUP_NOT_FOUND(604, "존재하지_않는_테이블_그룹입니다");
 
     private final int code;
 

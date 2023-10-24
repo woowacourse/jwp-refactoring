@@ -1,13 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.exception.KitchenposException;
 import kitchenpos.support.ServiceTest;
+import kitchenpos.ui.dto.request.ChangeOrderTableEmptyRequest;
+import kitchenpos.ui.dto.request.CreateTableGroupRequest;
 import kitchenpos.ui.dto.request.UpdateOrderStateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,12 +21,13 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static kitchenpos.exception.ExceptionInformation.*;
 import static kitchenpos.support.TestFixture.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayName("테이블 서비스 테스트")
+@DisplayName("테이블 그룹화 서비스 테스트")
 @ServiceTest
 class TableGroupServiceTest {
 
@@ -54,6 +58,9 @@ class TableGroupServiceTest {
             // given
             final OrderTable 테이블1 = tableService.create(주문_테이블());
             final OrderTable 테이블2 = tableService.create(주문_테이블());
+            tableService.changeEmpty(테이블1.getId(), new ChangeOrderTableEmptyRequest(true));
+            tableService.changeEmpty(테이블2.getId(), new ChangeOrderTableEmptyRequest(true));
+
             final TableGroup 저장된_테이블그룹 = tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블2)));
 
             // then
@@ -72,34 +79,26 @@ class TableGroupServiceTest {
         void 테이블이_1개일_경우_예외가_발생한다() {
             final OrderTable 테이블1 = tableService.create(주문_테이블());
 
-            final TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(테이블1));
-
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("단체 지정할 수 있는 테이블은 2개이상부터 입니다.");
+            assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupRequest(List.of(테이블1))))
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(TABLE_GROUP_UNDER_BOUNCE.getMessage());
         }
 
         @Test
         void 테이블이_없을경우_예외가_발생한다() {
-            final TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(Collections.emptyList());
-
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("단체 지정할 수 있는 테이블은 2개이상부터 입니다.");
+            assertThatThrownBy(() -> tableGroupService.create(new CreateTableGroupRequest(Collections.emptyList())))
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(TABLE_GROUP_UNDER_BOUNCE.getMessage());
         }
 
         @Test
         void 중복된_테이블로_테이블_그룹을_만들_수_없다() {
             final OrderTable 테이블1 = tableService.create(주문_테이블());
+            final var 중복된_테이블_그룹_생성요청 = new CreateTableGroupRequest(List.of(테이블1, 테이블1));
 
-            final TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(테이블1, 테이블1));
-
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("그룹화 하려는 테이블이 중복되거나 존재하지 않습니다");
+            assertThatThrownBy(() -> tableGroupService.create(중복된_테이블_그룹_생성요청))
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(ORDER_TABLE_IN_TABLE_GROUP_NOT_FOUND_OR_DUPLICATED.getMessage());
         }
 
         @Test
@@ -107,12 +106,12 @@ class TableGroupServiceTest {
             final OrderTable 저장_안된_테이블1 = OrderTable.create(1);
             final OrderTable 저장_안된_테이블2 = OrderTable.create(1);
 
-            final TableGroup 테이블그룹 = new TableGroup();
-            테이블그룹.setOrderTables(List.of(저장_안된_테이블1, 저장_안된_테이블2));
+            final var 저장_안된_테이블으로_그룹_생성_요청 = new CreateTableGroupRequest(List.of(저장_안된_테이블1, 저장_안된_테이블2));
 
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("그룹화 하려는 테이블이 중복되거나 존재하지 않습니다");
+
+            assertThatThrownBy(() -> tableGroupService.create(저장_안된_테이블으로_그룹_생성_요청))
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(ORDER_TABLE_IN_TABLE_GROUP_NOT_FOUND_OR_DUPLICATED.getMessage());
         }
 
         @Test
@@ -120,19 +119,18 @@ class TableGroupServiceTest {
             // given
             final OrderTable 테이블1 = tableService.create(주문_테이블());
             final OrderTable 테이블2 = tableService.create(주문_테이블());
+            tableService.changeEmpty(테이블1.getId(), new ChangeOrderTableEmptyRequest(true));
+            tableService.changeEmpty(테이블2.getId(), new ChangeOrderTableEmptyRequest(true));
             tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블2)));
 
             // when
             final OrderTable 테이블3 = tableService.create(주문_테이블());
 
             // 이미 그룹화 되어있는 테이블을 다른 그룹으로 묶는다
-            final TableGroup 테이블그룹2 = new TableGroup();
-            테이블그룹2.setOrderTables(List.of(테이블1, 테이블3));
-
             // then
-            assertThatThrownBy(() -> tableGroupService.create(테이블그룹2))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("비어있지 않은 테이블이나, 이미 그룹화 되어있는 테이블은 그룹화 할 수 없습니다");
+            assertThatThrownBy(() -> tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블3))))
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(TABLE_GROUP_NOT_EMPTY_OR_ALREADY_GROUPED.getMessage());
         }
 
         @Test
@@ -140,11 +138,11 @@ class TableGroupServiceTest {
             final OrderTable 테이블1 = tableService.create(주문_테이블());
             final OrderTable 테이블2 = tableService.create(주문_테이블());
             테이블2.updateOrderStatus(true);
-            final TableGroup 테이블그룹 = 그룹화_테이블(List.of(테이블1, 테이블2));
+            final var 테이블그룹 = 그룹화_테이블(List.of(테이블1, 테이블2));
 
             assertThatThrownBy(() -> tableGroupService.create(테이블그룹))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("비어있지 않은 테이블이나, 이미 그룹화 되어있는 테이블은 그룹화 할 수 없습니다");
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(TABLE_GROUP_NOT_EMPTY_OR_ALREADY_GROUPED.getMessage());
         }
     }
 
@@ -157,6 +155,8 @@ class TableGroupServiceTest {
             // given
             final OrderTable 테이블1 = tableService.create(주문_테이블());
             final OrderTable 테이블2 = tableService.create(주문_테이블());
+            tableService.changeEmpty(테이블1.getId(), new ChangeOrderTableEmptyRequest(true));
+            tableService.changeEmpty(테이블2.getId(), new ChangeOrderTableEmptyRequest(true));
             final TableGroup 저장된_테이블_그룹 = tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블2)));
 
             tableGroupService.ungroup(저장된_테이블_그룹.getId());
@@ -179,6 +179,8 @@ class TableGroupServiceTest {
             // given
             final OrderTable 테이블1 = tableService.create(주문_테이블());
             final OrderTable 테이블2 = tableService.create(주문_테이블());
+            tableService.changeEmpty(테이블1.getId(), new ChangeOrderTableEmptyRequest(true));
+            tableService.changeEmpty(테이블2.getId(), new ChangeOrderTableEmptyRequest(true));
             final TableGroup 저장된_테이블_그룹 = tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블2)));
 
             // when
@@ -190,8 +192,8 @@ class TableGroupServiceTest {
 
             // then
             assertThatThrownBy(() -> tableGroupService.ungroup(저장된_테이블_그룹.getId()))
-                    .isExactlyInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("테이블 중 주문이 완료되지 않은 테이블이 있다면 그룹화를 해제할 수 없다");
+                    .isExactlyInstanceOf(KitchenposException.class)
+                    .hasMessage(UNGROUP_NOT_COMPLETED_ORDER_TABLE.getMessage());
         }
 
         @Test
@@ -199,6 +201,8 @@ class TableGroupServiceTest {
             // given
             final OrderTable 테이블1 = tableService.create(주문_테이블());
             final OrderTable 테이블2 = tableService.create(주문_테이블());
+            tableService.changeEmpty(테이블1.getId(), new ChangeOrderTableEmptyRequest(true));
+            tableService.changeEmpty(테이블2.getId(), new ChangeOrderTableEmptyRequest(true));
             final TableGroup 저장된_테이블_그룹 = tableGroupService.create(그룹화_테이블(List.of(테이블1, 테이블2)));
 
             // 테이블에 주문이 존재한다

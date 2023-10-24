@@ -13,18 +13,22 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private TableGroup tableGroup;
 
     @Embedded
     private Guest guest;
+
     private boolean empty;
 
     protected OrderTable() {
 
     }
 
-    public OrderTable(final Long tableGroupId, final Guest guest, final boolean empty) {
-        this.tableGroupId = tableGroupId;
+    public OrderTable(final TableGroup tableGroup, final Guest guest, final boolean empty) {
+        this.tableGroup = tableGroup;
         this.guest = guest;
         this.empty = empty;
     }
@@ -38,7 +42,10 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
-        return tableGroupId;
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 
     public boolean isEmpty() {
@@ -60,15 +67,19 @@ public class OrderTable {
         guest = Guest.create(numberOfGuests);
     }
 
-    public void updateTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void updateTableGroupId(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public void deleteTableGroupId() {
-        this.tableGroupId = null;
+        this.tableGroup = null;
     }
 
     public boolean isGrouped() {
-        return Objects.nonNull(tableGroupId);
+        return Objects.nonNull(tableGroup);
+    }
+
+    public boolean unableGrouping() {
+        return !isEmpty() || isGrouped();
     }
 }

@@ -1,6 +1,5 @@
 package kitchenpos.support;
 
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
@@ -44,9 +43,7 @@ public class TestFixture {
         return new CreateOrderTableRequest(1);
     }
 
-    public static TableGroup 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들) {
-        final TableGroup 테이블그룹 = new TableGroup();
-        테이블그룹.setOrderTables(그룹화_할_테이블들);
-        return 테이블그룹;
+    public static CreateTableGroupRequest 그룹화_테이블(List<OrderTable> 그룹화_할_테이블들) {
+        return new CreateTableGroupRequest(그룹화_할_테이블들);
     }
 }
