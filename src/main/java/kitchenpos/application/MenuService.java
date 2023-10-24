@@ -8,6 +8,7 @@ import kitchenpos.dao.jpa.JpaProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
@@ -37,7 +38,7 @@ public class MenuService {
     @Transactional
     public Menu create(final MenuCreateRequest request) {
         MenuGroup menuGroup = menuGroupRepository.getById(request.menuGroupId());
-        Menu menu = menuRepository.save(new Menu(request.name(), request.price(), menuGroup));
+        Menu menu = menuRepository.save(new Menu(request.name(), new Price(request.price()), menuGroup));
 
         for (MenuProductCreateRequest menuProductCreateRequest : request.menuProducts()) {
             Product product = productRepository.getById(menuProductCreateRequest.productId());

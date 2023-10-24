@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.exception.ProductExceptionType.PRICE_IS_NULL_OR_MINUS_EXCEPTION;
+import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NEGATIVE_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,8 +9,8 @@ import java.util.List;
 import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.exception.ProductException;
-import kitchenpos.exception.ProductExceptionType;
+import kitchenpos.exception.BaseExceptionType;
+import kitchenpos.exception.PriceException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -50,12 +50,12 @@ class ProductServiceTest extends IntegrationTest {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("신상품", -1);
 
         // when
-        ProductExceptionType exceptionType = assertThrows(ProductException.class,
+        BaseExceptionType exceptionType = assertThrows(PriceException.class,
                 () -> productService.create(productCreateRequest)
         ).exceptionType();
 
         // then
-        assertThat(exceptionType).isEqualTo(PRICE_IS_NULL_OR_MINUS_EXCEPTION);
+        assertThat(exceptionType).isEqualTo(PRICE_IS_NEGATIVE_EXCEPTION);
     }
 
     @Test

@@ -15,9 +15,9 @@ class MenuTest {
     void 메뉴_가격이_메뉴_상품의_총합_이상이면_예외_발생() {
         // given
         MenuGroup menuGroup = new MenuGroup(1L, "치킨");
-        Menu menu = new Menu(1L, "후라이드 치킨", BigDecimal.valueOf(1001), menuGroup);
+        Menu menu = new Menu(1L, "후라이드 치킨", new Price(BigDecimal.valueOf(1001)), menuGroup);
 
-        Product product = new Product(1L, "후라이드 치킨", BigDecimal.valueOf(1000));
+        Product product = new Product(1L, "후라이드 치킨", new Price(1000));
 
         // when
         MenuExceptionType exceptionType = assertThrows(MenuException.class,

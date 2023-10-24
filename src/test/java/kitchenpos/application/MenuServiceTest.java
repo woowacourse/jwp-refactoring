@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.exception.MenuExceptionType.NEGATIVE_PRICE_EXCEPTION;
-import static kitchenpos.exception.MenuExceptionType.NULL_PRICE_EXCEPTION;
 import static kitchenpos.exception.MenuExceptionType.PRICE_IS_UNDER_TOTAL_PRODUCT_AMOUNT;
 import static kitchenpos.exception.MenuGroupExceptionType.NOT_EXIST_MENU_GROUP_EXCEPTION;
+import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NEGATIVE_EXCEPTION;
+import static kitchenpos.exception.PriceExceptionType.PRICE_IS_NULL_EXCEPTION;
 import static kitchenpos.exception.ProductExceptionType.NOT_EXIST_PRODUCT_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -15,10 +15,12 @@ import kitchenpos.common.annotation.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.exception.BaseExceptionType;
 import kitchenpos.exception.MenuException;
 import kitchenpos.exception.MenuExceptionType;
 import kitchenpos.exception.MenuGroupException;
 import kitchenpos.exception.MenuGroupExceptionType;
+import kitchenpos.exception.PriceException;
 import kitchenpos.exception.ProductException;
 import kitchenpos.exception.ProductExceptionType;
 import org.junit.jupiter.api.Nested;
@@ -89,12 +91,12 @@ class MenuServiceTest extends IntegrationTest {
             );
 
             // when
-            MenuExceptionType exceptionType = assertThrows(MenuException.class, () ->
+            BaseExceptionType exceptionType = assertThrows(PriceException.class, () ->
                     menuService.create(menuCreateRequest)
             ).exceptionType();
 
             // then
-            assertThat(exceptionType).isEqualTo(NULL_PRICE_EXCEPTION);
+            assertThat(exceptionType).isEqualTo(PRICE_IS_NULL_EXCEPTION);
         }
 
         @Test
@@ -112,12 +114,12 @@ class MenuServiceTest extends IntegrationTest {
             );
 
             // when
-            MenuExceptionType exceptionType = assertThrows(MenuException.class, () ->
+            BaseExceptionType exceptionType = assertThrows(PriceException.class, () ->
                     menuService.create(menuCreateRequest)
             ).exceptionType();
 
             // then
-            assertThat(exceptionType).isEqualTo(NEGATIVE_PRICE_EXCEPTION);
+            assertThat(exceptionType).isEqualTo(PRICE_IS_NEGATIVE_EXCEPTION);
         }
 
         @Test

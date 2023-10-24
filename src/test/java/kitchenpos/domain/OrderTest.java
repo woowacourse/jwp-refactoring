@@ -8,7 +8,6 @@ import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_EMPTY_EXCEPTIO
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.exception.BaseExceptionType;
@@ -23,7 +22,7 @@ class OrderTest {
 
     @BeforeEach
     void setUp() {
-        this.menu = new Menu("신메뉴", BigDecimal.valueOf(1000), new MenuGroup("신메뉴 그룹"));
+        this.menu = new Menu("신메뉴", new Price(1000), new MenuGroup("신메뉴 그룹"));
         this.orderLineItems = List.of(
                 new OrderLineItem(null, menu, 1),
                 new OrderLineItem(null, menu, 2)

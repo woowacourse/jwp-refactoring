@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -42,7 +41,7 @@ public class MenuProduct {
         menu.add(this);
     }
 
-    public BigDecimal amount() {
+    public Price amount() {
         return product.calculateAmount(quantity);
     }
 
