@@ -3,7 +3,7 @@ package kitchenpos.domain.mapper;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
 @Component

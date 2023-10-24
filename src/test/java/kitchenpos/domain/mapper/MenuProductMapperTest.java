@@ -2,7 +2,7 @@ package kitchenpos.domain.mapper;
 
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;

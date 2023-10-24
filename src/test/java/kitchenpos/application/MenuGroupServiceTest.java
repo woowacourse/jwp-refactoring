@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.CreateMenuGroupRequest;
 import kitchenpos.application.dto.response.CreateMenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;

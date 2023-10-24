@@ -2,7 +2,7 @@ package kitchenpos.domain.mapper;
 
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.domain.Menu;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -62,7 +62,7 @@ public class MenuMapperTest {
             CreateMenuRequest request = REQUEST.후라이드_치킨_16000원_1마리_등록_요청();
             given(menuGroupRepository.findById(anyLong()))
                     .willReturn(Optional.empty());
-            
+
             // when & then
             Assertions.assertThatThrownBy(() -> menuMapper.toMenu(request))
                     .isInstanceOf(IllegalArgumentException.class);

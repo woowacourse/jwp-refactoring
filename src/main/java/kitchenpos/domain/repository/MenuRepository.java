@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.domain.repository;
 
 import kitchenpos.domain.Menu;
 import org.springframework.data.repository.CrudRepository;

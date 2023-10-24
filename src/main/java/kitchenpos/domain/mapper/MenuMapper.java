@@ -3,7 +3,7 @@ package kitchenpos.domain.mapper;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

@@ -5,7 +5,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
