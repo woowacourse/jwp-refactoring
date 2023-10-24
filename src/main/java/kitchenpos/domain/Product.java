@@ -22,18 +22,13 @@ public class Product {
     @Embedded
     private Price price;
 
-    public Product(final Long id, final String name, final BigDecimal price) {
-        validateName(name);
-        this.id = id;
-        this.name = name;
-        this.price = Price.from(price);
-    }
-
     protected Product() {
     }
 
     public Product(final String name, final BigDecimal price) {
-        this(null, name, price);
+        validateName(name);
+        this.name = name;
+        this.price = Price.from(price);
     }
 
     private void validateName(final String name) {
