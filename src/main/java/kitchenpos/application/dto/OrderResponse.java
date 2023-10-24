@@ -12,6 +12,9 @@ public class OrderResponse {
 
     private List<OrderLineItem> orderLineItems;
 
+    public OrderResponse() {
+    }
+
     public OrderResponse(final Long id, final String orderStatus, final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderStatus = orderStatus;

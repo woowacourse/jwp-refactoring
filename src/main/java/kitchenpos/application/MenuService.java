@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.repository.MenuGroupRepository;
@@ -26,12 +28,12 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         validateMenuGroup(request.getMenuGroupId());
         final List<MenuProduct> menuProducts = menuProductRepository.getAllById(request.getMenuProductIds());
-
         final Menu menu = Menu.forSave(request.getName(), menuProducts);
-        return menuRepository.save(menu);
+
+        return MenuResponse.from(menuRepository.save(menu));
     }
 
     private void validateMenuGroup(final Long menuGroupId) {
@@ -40,7 +42,9 @@ public class MenuService {
         }
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+            .map(MenuResponse::from)
+            .collect(Collectors.toList());
     }
 }

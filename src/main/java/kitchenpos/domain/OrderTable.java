@@ -34,17 +34,15 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(final Long id, final int numberOfGuests, final boolean empty, final List<Order> orders,
-                      final TableGroup tableGroup) {
+    public OrderTable(final Long id, final int numberOfGuests, final boolean empty, final List<Order> orders) {
         this.id = id;
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
         this.orders = new Orders(orders);
-        this.tableGroup = tableGroup;
     }
 
     public static OrderTable forSave(final int numberOfGuests, final boolean empty, final List<Order> orders) {
-        return new OrderTable(null, numberOfGuests, empty, orders, null);
+        return new OrderTable(null, numberOfGuests, empty, orders);
     }
 
     public void changeEmpty() {
@@ -71,7 +69,14 @@ public class OrderTable {
     }
 
     public void addOrder(final Order order) {
-        order.joinOrderTable(this);
+        validateEmptyStatus();
+        orders.addOrder(order, this);
+    }
+
+    private void validateEmptyStatus() {
+        if (empty) {
+            throw new IllegalArgumentException("빈 테이블에는 주문을 추가할 수 없습니다.");
+        }
     }
 
     public boolean hasTableGroup() {
@@ -96,5 +101,9 @@ public class OrderTable {
 
     public boolean isNotEmpty() {
         return !empty;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

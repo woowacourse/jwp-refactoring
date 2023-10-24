@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -16,12 +17,11 @@ public class OrderTables {
 
     public OrderTables(final List<OrderTable> orderTables) {
         validate(orderTables);
-        this.orderTables = orderTables;
+        this.orderTables = new ArrayList<>(orderTables);
     }
 
     private void validate(final List<OrderTable> orderTables) {
         validateOrderTablesSize(orderTables);
-        validateOrderTableStatus(orderTables);
     }
 
     private void validateOrderTablesSize(final List<OrderTable> orderTables) {
@@ -33,6 +33,15 @@ public class OrderTables {
         }
     }
 
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
+    }
+
+    public void registerTableGroup(final TableGroup tableGroup) {
+        validateOrderTableStatus(orderTables);
+        orderTables.forEach(orderTable -> orderTable.registerTableGroup(tableGroup));
+    }
+
     private void validateOrderTableStatus(final List<OrderTable> orderTables) {
         if (orderTables.stream()
             .anyMatch(OrderTable::isNotEmpty)) {
@@ -42,14 +51,6 @@ public class OrderTables {
             .anyMatch(OrderTable::hasTableGroup)) {
             throw new IllegalArgumentException("이미 테이블 그룹으로 지정된 테이블은 테이블 그룹으로 지정할 수 없습니다.");
         }
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void registerTableGroup(final TableGroup tableGroup) {
-        orderTables.forEach(orderTable -> orderTable.registerTableGroup(tableGroup));
     }
 
     public void ungroup() {

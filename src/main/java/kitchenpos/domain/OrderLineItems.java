@@ -16,8 +16,15 @@ public class OrderLineItems {
     }
 
     public OrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
+        validate(orderLineItems);
         orderLineItems.forEach(orderLineItem -> orderLineItem.joinOrder(order));
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new ArrayList<>(orderLineItems);
+    }
+
+    private void validate(final List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException("주문 항목은 비어 있을 수 없습니다.");
+        }
     }
 
     public List<OrderLineItem> getOrderLineItems() {

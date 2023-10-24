@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -37,11 +38,11 @@ class ProductServiceTest {
             .willReturn(product);
 
         // when
-        final Product savedProduct = productService.create(new ProductCreateRequest("상품", BigDecimal.TEN));
+        final ProductResponse savedProduct = productService.create(new ProductCreateRequest("상품", BigDecimal.TEN));
 
         // then
         assertThat(savedProduct.getId()).isEqualTo(1L);
-        assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice());
+        assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice().longValue());
         assertThat(savedProduct.getName()).isEqualTo(product.getName());
     }
 
@@ -76,12 +77,12 @@ class ProductServiceTest {
             ));
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> products = productService.list();
 
         // then
         assertThat(products).hasSize(2);
         assertThat(products.stream()
-                       .map(Product::getId)
+                       .map(ProductResponse::getId)
                        .collect(toList())).usingRecursiveComparison()
             .isEqualTo(List.of(1L, 2L));
     }

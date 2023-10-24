@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +35,7 @@ class MenuGroupServiceTest {
 
         // when
         // then
-        final MenuGroup result = menuGroupService.create(menuGroup);
+        final MenuGroupResponse result = menuGroupService.create(new MenuGroupCreateRequest("메뉴 그룹"));
         assertThat(result.getId()).isEqualTo(menuGroup.getId());
         assertThat(result.getName()).isEqualTo(menuGroup.getName());
     }
@@ -52,11 +54,12 @@ class MenuGroupServiceTest {
             .willReturn(expectedMenuGroups);
 
         // when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups)
             .usingRecursiveComparison()
+            .comparingOnlyFields("id", "name")
             .isEqualTo(expectedMenuGroups);
         assertThat(menuGroups.size()).isEqualTo(4);
     }

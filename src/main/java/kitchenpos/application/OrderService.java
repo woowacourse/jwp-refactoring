@@ -43,11 +43,9 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         final List<OrderLineItem> orderLineItems = makeOrderLineItems(request.getOrderLineItems());
         final Order order = Order.forSave(OrderStatus.COOKING, orderLineItems);
-
         orderTable.addOrder(order);
-        orderRepository.save(order);
 
-        return OrderResponse.from(order);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     private void validateAllExistOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemIds) {

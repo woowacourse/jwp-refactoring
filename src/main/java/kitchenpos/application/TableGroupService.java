@@ -1,6 +1,9 @@
 package kitchenpos.application;
 
+import java.util.List;
 import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.TableGroupResponse;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
@@ -22,21 +25,28 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
-        final OrderTables orderTables = orderTableRepository.getAllById(request.getOrderTableIds());
-        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave(orderTables.getOrderTables()));
-
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        validateEmptyOrderTables(request.getOrderTableIds());
+        final List<OrderTable> savedOrderTables = orderTableRepository.getAllById(request.getOrderTableIds());
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave(savedOrderTables));
+        final OrderTables orderTables = new OrderTables(savedOrderTables);
         orderTables.registerTableGroup(tableGroup);
         orderTableRepository.saveAll(orderTables.getOrderTables());
 
-        return tableGroup;
+        return TableGroupResponse.from(tableGroup);
+    }
+
+    private void validateEmptyOrderTables(final List<Long> orderTableIds) {
+        if (orderTableIds.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 없습니다.");
+        }
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        final OrderTables orderTables = orderTableRepository.getByTableGroup(tableGroup);
-
+        final List<OrderTable> savedOrderTables = orderTableRepository.findByTableGroup(tableGroup);
+        final OrderTables orderTables = new OrderTables(savedOrderTables);
         orderTables.ungroup();
     }
 }

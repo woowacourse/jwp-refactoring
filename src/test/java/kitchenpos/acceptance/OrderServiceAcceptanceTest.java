@@ -21,7 +21,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
@@ -33,9 +32,6 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -57,7 +53,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        orderTableRepository.save(OrderTable.forSave(4, true, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
@@ -66,8 +62,8 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        final OrderCreateRequest request = new OrderCreateRequest(1L, "COOKING", List.of(
-            new OrderLineItemCreateRequest(1L, 1L)
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), "COOKING", List.of(
+            new OrderLineItemCreateRequest(menu.getId(), 1L)
         ));
 
         // when
@@ -83,7 +79,6 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     @Test
     void create_failNotSameOrderLineItemsCount() {
         // given
-        orderTableRepository.save(OrderTable.forSave(4, true, Collections.emptyList()));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
@@ -92,7 +87,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        orderTableRepository.save(OrderTable.forSave(4, true, Collections.emptyList()));
+        orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
         final OrderCreateRequest request = new OrderCreateRequest(1L, "COOKING", List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
@@ -116,7 +111,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        orderTableRepository.save(OrderTable.forSave(4, true, Collections.emptyList()));
+        orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
         final OrderCreateRequest request = new OrderCreateRequest(1L, "COOKING", List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
@@ -145,7 +140,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     }
 
     private Order createOrder() {
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, true, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));
@@ -172,7 +167,8 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
 
         // when
         final OrderResponse changedOrder = orderService.changeOrderStatus(order.getId(),
-                                                                  new OrderChangeOrderStatusRequest("COMPLETION"));
+                                                                          new OrderChangeOrderStatusRequest(
+                                                                              "COMPLETION"));
 
         // then
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
@@ -182,7 +178,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
     @Test
     void func() {
         // given
-        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, true, Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
         final Product product1 = productRepository.save(Product.forSave("후라이드", BigDecimal.TEN));
         final Product product2 = productRepository.save(Product.forSave("양념", BigDecimal.TEN));
         final MenuGroup menuGroup = menuGroupRepository.save(MenuGroup.forSave("치킨"));

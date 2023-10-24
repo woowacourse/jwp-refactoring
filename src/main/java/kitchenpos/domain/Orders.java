@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -15,7 +16,12 @@ public class Orders {
     }
 
     public Orders(final List<Order> orders) {
-        this.orders = orders;
+        this.orders = new ArrayList<>(orders);
+    }
+
+    public void addOrder(final Order order, final OrderTable orderTable) {
+        orders.add(order);
+        order.joinOrderTable(orderTable);
     }
 
     public boolean hasProceedingOrder() {

@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
@@ -23,30 +25,32 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest request) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = OrderTable.forSave(request.getNumberOfGuests(), request.isEmpty(),
                                                          Collections.emptyList());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+            .map(OrderTableResponse::from)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId) {
+    public OrderTableResponse changeEmpty(final Long orderTableId) {
         final OrderTable orderTable = orderTableRepository.getById(orderTableId);
         orderTable.changeEmpty();
 
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId,
-                                           final OrderTableUpdateNumberOfGuestsRequest request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableUpdateNumberOfGuestsRequest request) {
         final OrderTable orderTable = orderTableRepository.getById(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }
 }

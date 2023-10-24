@@ -8,9 +8,10 @@ import static org.mockito.BDDMockito.given;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
@@ -25,9 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
-
-    @Mock
     private OrderTableRepository orderTableRepository;
 
     @InjectMocks
@@ -37,13 +35,11 @@ class TableServiceTest {
     @Test
     void create() {
         // given
-        final OrderTable orderTable = OrderTable.forSave(2, true, Collections.emptyList());
-
-        given(orderTableRepository.save(orderTable))
-            .willReturn(new OrderTable(1L, 2, true, Collections.emptyList(), null));
+        given(orderTableRepository.save(any()))
+            .willReturn(new OrderTable(1L, 2, true, Collections.emptyList()));
 
         // when
-        final OrderTable savedOrderTable = tableService.create(new OrderTableCreateRequest(2, true));
+        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableCreateRequest(2, true));
 
         // then
         assertThat(savedOrderTable.getId()).isEqualTo(1L);
@@ -57,19 +53,16 @@ class TableServiceTest {
         final int numberOfGuests = 2;
 
         given(orderTableRepository.getById(orderTableId))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.emptyList(), null));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(OrderStatus.COOKING.name(),
-                                                                                  OrderStatus.MEAL.name())))
-            .willReturn(false);
+            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.emptyList()));
 
         given(orderTableRepository.save(any(OrderTable.class)))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, true, Collections.emptyList(), null));
+            .willReturn(new OrderTable(orderTableId, numberOfGuests, true, Collections.emptyList()));
 
         // when
-        final OrderTable savedOrderTable = tableService.changeEmpty(orderTableId);
+        final OrderTableResponse savedOrderTable = tableService.changeEmpty(orderTableId);
 
         // then
-        assertThat(savedOrderTable.isNotEmpty()).isFalse();
+        assertThat(savedOrderTable.isEmpty()).isTrue();
         assertThat(savedOrderTable.getId()).isEqualTo(orderTableId);
     }
 
@@ -78,6 +71,8 @@ class TableServiceTest {
     void changeEmpty_failNotExistOrderTable() {
         // given
         final Long notExistedTableId = 0L;
+        given(orderTableRepository.getById(notExistedTableId))
+            .willThrow(IllegalArgumentException.class);
 
         // when
         // then
@@ -94,7 +89,7 @@ class TableServiceTest {
 
         given(orderTableRepository.getById(orderTableId))
             .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.singletonList(
-                new Order(1L, OrderStatus.COOKING, Collections.emptyList())), null));
+                new Order(1L, OrderStatus.COOKING, List.of(new OrderLineItem(1L, 1L, null))))));
 
         // when
         // then
@@ -112,15 +107,15 @@ class TableServiceTest {
         final int previousNumberOfGuests = 1;
         given(orderTableRepository.getById(orderTableId))
             .willReturn(
-                new OrderTable(orderTableId, previousNumberOfGuests, false, Collections.emptyList(), null));
+                new OrderTable(orderTableId, previousNumberOfGuests, false, Collections.emptyList()));
 
         given(orderTableRepository.save(any(OrderTable.class)))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.emptyList(), null));
+            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.emptyList()));
 
         // when
-        final OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTableId,
-                                                                             new OrderTableUpdateNumberOfGuestsRequest(
-                                                                                 numberOfGuests));
+        final OrderTableResponse savedOrderTable = tableService.changeNumberOfGuests(orderTableId,
+                                                                                     new OrderTableUpdateNumberOfGuestsRequest(
+                                                                                         numberOfGuests));
 
         // then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
@@ -132,6 +127,8 @@ class TableServiceTest {
     void changeNumberOfGuests_failNegativeNumberOfGuests() {
         // given
         final Long orderTableId = 1L;
+        given(orderTableRepository.getById(orderTableId))
+            .willReturn(new OrderTable(orderTableId, 1, false, Collections.emptyList()));
 
         // when
         // then
@@ -165,7 +162,7 @@ class TableServiceTest {
         final int previousNumberOfGuests = 1;
         given(orderTableRepository.getById(orderTableId))
             .willReturn(
-                new OrderTable(orderTableId, previousNumberOfGuests, true, Collections.emptyList(), null));
+                new OrderTable(orderTableId, previousNumberOfGuests, true, Collections.emptyList()));
 
         // when
         // then

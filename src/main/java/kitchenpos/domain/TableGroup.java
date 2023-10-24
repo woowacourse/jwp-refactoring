@@ -28,7 +28,6 @@ public class TableGroup {
     public TableGroup(final Long id, final List<OrderTable> orderTables) {
         this.id = id;
         this.orderTables = new OrderTables(orderTables);
-        this.orderTables.registerTableGroup(this);
     }
 
     public static TableGroup forSave(final List<OrderTable> orderTables) {
@@ -37,6 +36,10 @@ public class TableGroup {
 
     public Long getId() {
         return id;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables.getOrderTables();
     }
 
     public LocalDateTime getCreatedDate() {

@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
@@ -59,13 +60,14 @@ class MenuServiceTest {
 
         // when
         final MenuCreateRequest request = new MenuCreateRequest("메뉴", menuGroupId, List.of(1L, 2L));
-        final Menu created = menuService.create(request);
+        final MenuResponse created = menuService.create(request);
 
         // then
         assertThat(created.getId()).isEqualTo(1L);
         assertThat(created.getName()).isEqualTo(request.getName());
-        assertThat(created.getPrice()).isEqualTo(
-            new MenuProducts(List.of(menuProduct1, menuProduct2), menu).calculatePrice());
+        assertThat(created.getPrice())
+            .isEqualTo(
+                new MenuProducts(List.of(menuProduct1, menuProduct2), menu).calculatePrice().getValue().longValue());
     }
 
     @DisplayName("메뉴의 MemberGroupId 가 존재하지 않으면 예외가 발생한다.")
