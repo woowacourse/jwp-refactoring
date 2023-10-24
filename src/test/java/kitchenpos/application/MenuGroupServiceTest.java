@@ -6,8 +6,8 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.supports.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;

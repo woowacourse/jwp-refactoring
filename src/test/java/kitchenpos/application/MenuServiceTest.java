@@ -2,21 +2,28 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.supports.MenuFixture;
+import kitchenpos.supports.MenuGroupFixture;
 import kitchenpos.supports.MenuProductFixture;
 import kitchenpos.supports.ProductFixture;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
@@ -32,16 +39,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuServiceTest {
 
     @Mock
-    MenuDao menuDao;
+    MenuRepository menuRepository;
 
     @Mock
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Mock
-    MenuProductDao menuProductDao;
-
-    @Mock
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @InjectMocks
     MenuService menuService;
@@ -53,37 +57,37 @@ class MenuServiceTest {
         void 메뉴의_가격은_null일_수_없다() {
             // given
             BigDecimal price = null;
-            Menu menu = MenuFixture.fixture().price(price).build();
+            MenuCreateRequest request = new MenuCreateRequest("메뉴", price, 1L, List.of());
 
             // when
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("올바르지 않는 메뉴 가격입니다.");
+                .hasMessage("올바르지 않은 메뉴 가격입니다.");
         }
 
         @Test
         void 메뉴의_가격은_음수일_수_없다() {
             // given
-            int price = -1000;
-            Menu menu = MenuFixture.fixture().price(price).build();
+            BigDecimal price = new BigDecimal(-1000);
+            MenuCreateRequest request = new MenuCreateRequest("메뉴", price, 1L, List.of());
 
             // when
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("올바르지 않는 메뉴 가격입니다.");
+                .hasMessage("올바르지 않은 메뉴 가격입니다.");
         }
 
         @Test
         void 메뉴_그룹은_DB에_존재해야한다() {
             // given
             Long menuGroupId = 1L;
-            Menu menu = MenuFixture.fixture().menuGroupId(menuGroupId).build();
+            MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(1000), menuGroupId, List.of());
 
-            given(menuGroupDao.existsById(menuGroupId))
-                .willReturn(false);
+            given(menuGroupRepository.findByIdOrThrow(menuGroupId))
+                .willThrow(new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 메뉴 그룹입니다.");
         }
@@ -91,23 +95,23 @@ class MenuServiceTest {
         @Test
         void 메뉴_상품의_상품은_모두_DB에_존재해야한다() {
             // given
-            List<MenuProduct> menuProducts = List.of(
-                MenuProductFixture.fixture().productId(1L).build(),
-                MenuProductFixture.fixture().productId(2L).build()
-            );
-
             Long menuGroupId = 1L;
-            Menu menu = MenuFixture.fixture().menuProducts(menuProducts).build();
-            given(menuGroupDao.existsById(menuGroupId))
-                .willReturn(true);
+            MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(1000), menuGroupId,
+                List.of(
+                    new MenuProductCreateRequest(1L, 1L),
+                    new MenuProductCreateRequest(2L, 1L)
+                ));
+            MenuGroup menuGroup = MenuGroupFixture.fixture().id(menuGroupId).build();
 
-            given(productDao.findById(1L))
-                .willReturn(Optional.of(ProductFixture.fixture().id(1L).build()));
-            given(productDao.findById(2L))
-                .willReturn(Optional.empty());
+            given(menuGroupRepository.findByIdOrThrow(menuGroupId))
+                .willReturn(menuGroup);
+            given(menuRepository.save(any(Menu.class)))
+                .willReturn(MenuFixture.fixture().menuGroup(menuGroup).build());
+            given(productRepository.findAllById(eq(List.of(1L, 2L))))
+                .willReturn(List.of(ProductFixture.fixture().id(1L).build()));
 
             // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 상품입니다.");
         }
@@ -115,76 +119,61 @@ class MenuServiceTest {
         @Test
         void 메뉴_가격이_상품의_가격_총합보다_크면_예외() {
             // given
-            int menuPrice = 13000;
+            int menuPrice = 9000;
             Long menuGroupId = 1L;
-
-            Product product1 = ProductFixture.fixture().id(1L).price(2000).build();
-            Product product2 = ProductFixture.fixture().id(2L).price(3000).build();
-            List<MenuProduct> menuProducts = List.of(
-                MenuProductFixture.fixture().productId(product1.getId()).quantity(3L).build(),
-                MenuProductFixture.fixture().productId(product2.getId()).quantity(2L).build()
+            MenuCreateRequest request = new MenuCreateRequest("메뉴", new BigDecimal(menuPrice), menuGroupId,
+                List.of(
+                    new MenuProductCreateRequest(1L, 1L),
+                    new MenuProductCreateRequest(2L, 2L)
+                ));
+            MenuGroup menuGroup = MenuGroupFixture.fixture().id(menuGroupId).build();
+            List<Product> products = List.of(
+                ProductFixture.fixture().id(1L).price(2000).build(),
+                ProductFixture.fixture().id(2L).price(3000).build()
             );
-            Menu menu = MenuFixture.fixture().price(menuPrice).menuGroupId(menuGroupId).menuProducts(menuProducts)
-                .build();
 
-            given(menuGroupDao.existsById(menuGroupId))
-                .willReturn(true);
-            given(productDao.findById(product1.getId()))
-                .willReturn(Optional.of(product1));
-            given(productDao.findById(product2.getId()))
-                .willReturn(Optional.of(product2));
+            given(menuGroupRepository.findByIdOrThrow(menuGroupId))
+                .willReturn(menuGroup);
+            given(menuRepository.save(any(Menu.class)))
+                .willReturn(new Menu(1L, request.getName(), new Price(request.getPrice()), menuGroup));
+            given(productRepository.findAllById(eq(List.of(1L, 2L))))
+                .willReturn(products);
 
             // when
-            assertThatThrownBy(() -> menuService.create(menu))
+            assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴 가격은 상품의 가격 총 합보다 작아야합니다.");
+                .hasMessage("메뉴 가격은 상품의 가격 총 합보다 클 수 없습니다.");
         }
 
         @Test
         void 이름_가격_메뉴그룹id_메뉴상품들을_입력받아_생성한다() {
             // given
-            String name = "치킨 콤보 세트";
-            int menuPrice = 12_000;
+            int menuPrice = 8000;
             Long menuGroupId = 1L;
-            Product product1 = ProductFixture.fixture().id(1L).price(2000).build();
-            Product product2 = ProductFixture.fixture().id(2L).price(3000).build();
-            List<MenuProductFixture> menuProductFixtures = List.of(
-                MenuProductFixture.fixture().productId(product1.getId()).quantity(3L),
-                MenuProductFixture.fixture().productId(product2.getId()).quantity(2L)
-            );
-            List<MenuProduct> menuProducts = List.of(
-                menuProductFixtures.get(0).build(),
-                menuProductFixtures.get(1).build());
-            MenuFixture menuFixture = MenuFixture.fixture().price(menuPrice).name(name).menuGroupId(menuGroupId)
-                .menuProducts(menuProducts);
-            Menu menu = menuFixture.build();
-            Long menuId = 1L;
-            Menu savedMenu = menuFixture.id(menuId).build();
-            List<MenuProduct> savedMenuProducts = List.of(
-                menuProductFixtures.get(0).menuId(menuId).build(),
-                menuProductFixtures.get(1).menuId(menuId).build()
+            MenuCreateRequest request = new MenuCreateRequest("치킨 콤보 세트", new BigDecimal(menuPrice), menuGroupId,
+                List.of(
+                    new MenuProductCreateRequest(1L, 1L),
+                    new MenuProductCreateRequest(2L, 2L)
+                ));
+            MenuGroup menuGroup = MenuGroupFixture.fixture().id(menuGroupId).build();
+            List<Product> products = List.of(
+                ProductFixture.fixture().id(1L).price(2000).build(),
+                ProductFixture.fixture().id(2L).price(3000).build()
             );
 
-            given(menuGroupDao.existsById(menuGroupId))
-                .willReturn(true);
-            given(productDao.findById(product1.getId()))
-                .willReturn(Optional.of(product1));
-            given(productDao.findById(product2.getId()))
-                .willReturn(Optional.of(product2));
-            given(menuDao.save(menu))
-                .willReturn(savedMenu);
-            given(menuProductDao.save(menuProducts.get(0)))
-                .willReturn(savedMenuProducts.get(0));
-            given(menuProductDao.save(menuProducts.get(1)))
-                .willReturn(savedMenuProducts.get(1));
+            given(menuGroupRepository.findByIdOrThrow(menuGroupId))
+                .willReturn(menuGroup);
+            given(menuRepository.save(any(Menu.class)))
+                .willReturn(new Menu(1L, request.getName(), new Price(request.getPrice()), menuGroup));
+            given(productRepository.findAllById(eq(List.of(1L, 2L))))
+                .willReturn(products);
 
             // when
-            Menu actual = menuService.create(menu);
+            MenuResponse actual = menuService.create(request);
 
             // then
-            assertThat(actual)
-                .usingRecursiveComparison()
-                .isEqualTo(menuFixture.id(menuId).menuProducts(savedMenuProducts).build());
+            AssertionsForClassTypes.assertThat(actual.getId())
+                .isEqualTo(1L);
         }
     }
 
@@ -200,34 +189,27 @@ class MenuServiceTest {
             );
             List<List<MenuProduct>> menuProducts = List.of(
                 List.of(
-                    MenuProductFixture.fixture().seq(1L).menuId(1L).build(),
-                    MenuProductFixture.fixture().seq(2L).menuId(1L).build()
+                    MenuProductFixture.fixture().seq(1L).menu(menus.get(0)).build(),
+                    MenuProductFixture.fixture().seq(2L).menu(menus.get(0)).build()
                 ),
                 List.of(
-                    MenuProductFixture.fixture().seq(3L).menuId(2L).build(),
-                    MenuProductFixture.fixture().seq(4L).menuId(2L).build()
+                    MenuProductFixture.fixture().seq(3L).menu(menus.get(1)).build(),
+                    MenuProductFixture.fixture().seq(4L).menu(menus.get(1)).build()
                 )
             );
 
-            given(menuDao.findAll())
+            menus.get(0).setUpMenuProducts(menuProducts.get(0));
+            menus.get(1).setUpMenuProducts(menuProducts.get(1));
+
+            given(menuRepository.findAllWithFetch())
                 .willReturn(menus);
-            given(menuProductDao.findAllByMenuId(menus.get(0).getId()))
-                .willReturn(menuProducts.get(0));
-            given(menuProductDao.findAllByMenuId(menus.get(1).getId()))
-                .willReturn(menuProducts.get(1));
 
             // when
-            List<Menu> actual = menuService.list();
+            List<MenuResponse> actual = menuService.list();
 
             // then
-            assertThat(actual)
-                .usingRecursiveComparison()
-                .isEqualTo(
-                    List.of(
-                        MenuFixture.fixture().id(1L).menuProducts(menuProducts.get(0)).build(),
-                        MenuFixture.fixture().id(2L).menuProducts(menuProducts.get(1)).build()
-                    )
-                );
+            assertThat(actual.stream().map(MenuResponse::getId))
+                .containsExactly(1L, 2L);
         }
     }
 }

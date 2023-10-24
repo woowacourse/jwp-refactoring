@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.supports.ProductFixture;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -23,7 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ProductServiceTest {
 
     @Mock
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @InjectMocks
     ProductService productService;
@@ -32,50 +35,17 @@ class ProductServiceTest {
     class 상품_생성 {
 
         @Test
-        void 가격은_null일_수_없다() {
-            // given
-            Product product = ProductFixture.fixture().price(null).build();
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 가격은_음수일_수_없다() {
-            // given
-            int price = -1000;
-            Product product = ProductFixture.fixture().price(price).build();
-
-            // when & then
-            assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 이름과_가격을_받아_상품을_생성한다() {
             // given
-            int price = 1000;
-            String name = "피자";
-            Product product = ProductFixture.fixture()
-                .name(name)
-                .price(price)
-                .build();
-
-            Product expected = ProductFixture.fixture()
-                .id(1L)
-                .name(name)
-                .price(price)
-                .build();
-
-            given(productDao.save(product))
-                .willReturn(expected);
+            ProductCreateRequest request = new ProductCreateRequest("피자", new BigDecimal(1000));
+            given(productRepository.save(any(Product.class)))
+                .willReturn(ProductFixture.fixture().id(1L).build());
 
             // when
-            Product actual = productService.create(product);
+            ProductResponse actual = productService.create(request);
 
             // then
-            assertThat(actual).isEqualTo(expected);
+            assertThat(actual.getId()).isEqualTo(1L);
         }
     }
 
@@ -85,19 +55,17 @@ class ProductServiceTest {
         @Test
         void 전체_상품을_조회한다() {
             // given
-            List<Product> expected = List.of(
-                ProductFixture.fixture().id(1L).build(),
-                ProductFixture.fixture().id(2L).build()
-            );
-
-            given(productDao.findAll())
-                .willReturn(expected);
+            given(productRepository.findAll())
+                .willReturn(List.of(
+                    ProductFixture.fixture().id(1L).build(),
+                    ProductFixture.fixture().id(2L).build()
+                ));
 
             // when
-            List<Product> actual = productService.list();
+            List<ProductResponse> actual = productService.list();
 
             // then
-            assertThat(actual).isEqualTo(expected);
+            assertThat(actual.stream().map(ProductResponse::getId)).containsExactly(1L, 2L);
         }
     }
 }
