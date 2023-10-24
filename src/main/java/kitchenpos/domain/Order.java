@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,18 +55,19 @@ public class Order {
     }
 
     public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime) {
-        this(id, orderTable, orderStatus, orderedTime, null);
-    }
-
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+                 final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
+        validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         addOrderLineItems(orderLineItems);
+    }
+
+    private void validate(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 비어있습니다.");
+        }
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -77,6 +79,10 @@ public class Order {
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public boolean completed() {
+        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
     public Long getId() {

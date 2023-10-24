@@ -1,6 +1,7 @@
 package kitchenpos.application.dto.order;
 
 import java.util.List;
+import org.springframework.util.CollectionUtils;
 
 public class OrderCreateRequest {
 
@@ -8,8 +9,15 @@ public class OrderCreateRequest {
     private final List<OrderLineItemCreateRequest> orderLineItems;
 
     public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemCreateRequest> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getOrderTableId() {

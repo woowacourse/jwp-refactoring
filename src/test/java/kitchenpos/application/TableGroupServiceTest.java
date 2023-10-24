@@ -196,6 +196,7 @@ class TableGroupServiceTest {
             );
             final TableGroupCreateResponse 저장된_테이블_그룹 = tableGroupService.create(테이블_그룹_요청값);
 
+            저장된_주문_테이블1.changeEmpty(false);
             final Order 주문 = 주문(null, 저장된_주문_테이블1, 주문_상태, null, Collections.emptyList());
             orderRepository.save(주문);
 

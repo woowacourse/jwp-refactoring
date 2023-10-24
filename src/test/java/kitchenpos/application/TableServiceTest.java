@@ -227,6 +227,7 @@ class TableServiceTest {
         menuRepository.save(메뉴);
 
         final OrderTable 주문_테이블 = orderTableRepository.findById(저장된_주문_테이블.getId()).get();
+        주문_테이블.changeEmpty(false);
         final Order 주문 = 주문(null, 주문_테이블, 주문_상태, null, Collections.emptyList());
         orderRepository.save(주문);
     }

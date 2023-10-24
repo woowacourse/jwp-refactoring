@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.order.OrderCreateRequest;
 import kitchenpos.application.dto.order.OrderCreateRequest.OrderLineItemCreateRequest;
@@ -110,17 +109,6 @@ class OrderServiceTest {
         }
 
         @Test
-        void 주문_메뉴_목록이_비어있으면_예외가_발생한다() {
-            // given
-            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
-                    Collections.emptyList());
-
-            // expected
-            assertThatThrownBy(() -> orderService.create(주문_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
         void 주문_메뉴_목록들_중_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
             // given
             final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
@@ -128,7 +116,8 @@ class OrderServiceTest {
 
             // expected
             assertThatThrownBy(() -> orderService.create(주문_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("메뉴 정보가 올바르지 않습니다.");
         }
 
         @Test
@@ -139,7 +128,8 @@ class OrderServiceTest {
 
             // expected
             assertThatThrownBy(() -> orderService.create(주문_요청값))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
@@ -209,7 +199,9 @@ class OrderServiceTest {
             // expected
             assertThatThrownBy(
                     () -> orderService.changeOrderStatus(저장된_주문.getId() + 1, new OrderStatusRequest(COMPLETION))
-            ).isInstanceOf(IllegalArgumentException.class);
+            )
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문입니다.");
         }
 
         @Test
@@ -223,7 +215,9 @@ class OrderServiceTest {
             // expected
             assertThatThrownBy(
                     () -> orderService.changeOrderStatus(저장된_주문.getId(), new OrderStatusRequest(COMPLETION))
-            ).isInstanceOf(IllegalArgumentException.class);
+            )
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("이미 완료된 주문입니다.");
         }
     }
 }

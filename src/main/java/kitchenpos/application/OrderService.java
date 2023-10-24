@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.dto.order.OrderCreateRequest;
 import kitchenpos.application.dto.order.OrderCreateRequest.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.order.OrderCreateResponse;
@@ -20,7 +19,6 @@ import kitchenpos.persistence.OrderRepository;
 import kitchenpos.persistence.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -42,36 +40,45 @@ public class OrderService {
 
     public OrderCreateResponse create(final OrderCreateRequest request) {
         final List<OrderLineItemCreateRequest> requestOrderLineItems = request.getOrderLineItems();
+        checkValidOrderLineItems(requestOrderLineItems);
 
-        if (CollectionUtils.isEmpty(requestOrderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
+        final List<OrderLineItem> orderLineItems = makeOrderLineItems(requestOrderLineItems);
 
+        final Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        final Order savedOrder = orderRepository.save(order);
+
+        return OrderCreateResponse.of(savedOrder);
+    }
+
+    private void checkValidOrderLineItems(final List<OrderLineItemCreateRequest> requestOrderLineItems) {
         final List<Long> menuIds = requestOrderLineItems.stream()
                 .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(toList());
 
         if (requestOrderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 정보가 올바르지 않습니다.");
         }
+    }
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문 테이블입니다. id = " + orderTableId));
+    }
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
+    private List<OrderLineItem> makeOrderLineItems(final List<OrderLineItemCreateRequest> requestOrderLineItems) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest requestOrderLineItem : requestOrderLineItems) {
-            final Menu menu = menuRepository.findById(requestOrderLineItem.getMenuId()).get();
+            final Menu menu = findMenuById(requestOrderLineItem.getMenuId());
             final OrderLineItem orderLineItem = new OrderLineItem(menu, requestOrderLineItem.getQuantity());
             orderLineItems.add(orderLineItem);
         }
-        final Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
-        final Order savedOrder = orderRepository.save(order);
+        return orderLineItems;
+    }
 
-        return OrderCreateResponse.of(savedOrder);
+    private Menu findMenuById(final Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴입니다. id = " + menuId));
     }
 
     @Transactional(readOnly = true)
@@ -82,16 +89,24 @@ public class OrderService {
     }
 
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = findOrderById(orderId);
 
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        checkCompleted(savedOrder);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus().name());
         savedOrder.changeOrderStatus(orderStatus);
 
         return OrderResponse.of(savedOrder);
+    }
+
+    private Order findOrderById(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다. id = " + orderId));
+    }
+
+    private void checkCompleted(final Order savedOrder) {
+        if (savedOrder.completed()) {
+            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+        }
     }
 }
