@@ -1,52 +1,45 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.CreateMenuGroupDto;
+import kitchenpos.application.dto.MenuGroupDto;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupName;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest extends MockServiceTest {
 
     @InjectMocks
     private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴그룹_목록을_조회한다() {
         // given
-        MenuGroup expectedFirstMenuGroup = new MenuGroup();
-        expectedFirstMenuGroup.setId(1L);
-        expectedFirstMenuGroup.setName("고기");
+        MenuGroupDto expectedFirstMenuGroup = new MenuGroupDto(1L, "고기");
+        MenuGroupDto expectedSecondMenuGroup = new MenuGroupDto(2L, "물고기");
+        List<MenuGroupDto> expected = List.of(expectedFirstMenuGroup, expectedSecondMenuGroup);
 
-        MenuGroup expectedSecondMenuGroup = new MenuGroup();
-        expectedSecondMenuGroup.setId(2L);
-        expectedSecondMenuGroup.setName("물고기");
+        MenuGroup mockFirstMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName("고기"));
+        MenuGroup mockSecondMenuGroup = new MenuGroup(
+                2L,
+                new MenuGroupName("물고기"));
 
-        List<MenuGroup> expected = List.of(expectedFirstMenuGroup, expectedSecondMenuGroup);
-
-        MenuGroup mockFirstMenuGroup = new MenuGroup();
-        mockFirstMenuGroup.setId(1L);
-        mockFirstMenuGroup.setName("고기");
-
-        MenuGroup mockSecondMenuGroup = new MenuGroup();
-        mockSecondMenuGroup.setId(2L);
-        mockSecondMenuGroup.setName("물고기");
-
-        BDDMockito.given(menuGroupDao.findAll())
+        BDDMockito.given(menuGroupRepository.findAll())
                 .willReturn(List.of(mockFirstMenuGroup, mockSecondMenuGroup));
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupDto> actual = menuGroupService.list();
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -55,22 +48,19 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹을_추가한다() {
         // given
-        MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("고기");
+        MenuGroupDto expected = new MenuGroupDto(1L, "고기");
 
-        MenuGroup argumentMenuGroup = new MenuGroup();
-        argumentMenuGroup.setName("고기");
+        CreateMenuGroupDto createMenuGroupDto = new CreateMenuGroupDto("고기");
 
-        MenuGroup mockReturnMenuGroup = new MenuGroup();
-        mockReturnMenuGroup.setId(1L);
-        mockReturnMenuGroup.setName("고기");
+        MenuGroup mockReturnMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName("고기"));
 
-        BDDMockito.given(menuGroupDao.save(argumentMenuGroup))
+        BDDMockito.given(menuGroupRepository.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(argumentMenuGroup);
+        MenuGroupDto actual = menuGroupService.create(createMenuGroupDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -79,22 +69,19 @@ class MenuGroupServiceTest extends MockServiceTest {
     @Test
     void 메뉴그룹을_추가할_때_이름이_공백일_수_있다() {
         // given
-        MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("");
+        MenuGroupDto expected = new MenuGroupDto(1L, "");
 
-        MenuGroup argumentMenuGroup = new MenuGroup();
-        argumentMenuGroup.setName("");
+        CreateMenuGroupDto createMenuGroupDto = new CreateMenuGroupDto("");
 
-        MenuGroup mockReturnMenuGroup = new MenuGroup();
-        mockReturnMenuGroup.setId(1L);
-        mockReturnMenuGroup.setName("");
+        MenuGroup mockReturnMenuGroup = new MenuGroup(
+                1L,
+                new MenuGroupName(""));
 
-        BDDMockito.given(menuGroupDao.save(argumentMenuGroup))
+        BDDMockito.given(menuGroupRepository.save(BDDMockito.any(MenuGroup.class)))
                 .willReturn(mockReturnMenuGroup);
 
         // when
-        MenuGroup actual = menuGroupService.create(argumentMenuGroup);
+        MenuGroupDto actual = menuGroupService.create(createMenuGroupDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);

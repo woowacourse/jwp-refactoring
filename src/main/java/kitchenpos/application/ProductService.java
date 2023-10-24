@@ -1,34 +1,48 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.CreateProductDto;
+import kitchenpos.application.dto.ProductDto;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductDto create(CreateProductDto createProductDto) {
+        Product product = new Product(
+                new ProductName(createProductDto.getName()),
+                new ProductPrice(createProductDto.getPrice()));
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(product);
+        Product savedProduct = productRepository.save(product);
+        return new ProductDto(
+                savedProduct.getId(),
+                savedProduct.getName(),
+                savedProduct.getPrice());
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    @Transactional(readOnly = true)
+    public List<ProductDto> list() {
+        return productRepository.findAll()
+                .stream()
+                .map(product -> new ProductDto(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice()
+                ))
+                .collect(Collectors.toList());
     }
 }

@@ -1,279 +1,248 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.CreateOrderLineItemDto;
+import kitchenpos.application.dto.OrderDto;
+import kitchenpos.application.dto.UpdateOrderStatusDto;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuName;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.order.GuestNumber;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemQuantity;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.exception.MenuException;
+import kitchenpos.exception.OrderException;
+import kitchenpos.exception.OrderTableException;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
 class OrderServiceTest extends MockServiceTest {
 
     @InjectMocks
     private OrderService orderService;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    private OrderTable orderTable;
-    private Order order;
-    private OrderLineItem firstOrderLineItem;
-    private OrderLineItem secondOrderLineItem;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(null);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(0);
-
-        order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(orderTable.getId());
-
-        firstOrderLineItem = new OrderLineItem();
-        firstOrderLineItem.setSeq(1L);
-        firstOrderLineItem.setOrderId(order.getId());
-        firstOrderLineItem.setMenuId(1L);
-
-        secondOrderLineItem = new OrderLineItem();
-        secondOrderLineItem.setSeq(2L);
-        secondOrderLineItem.setOrderId(order.getId());
-        secondOrderLineItem.setMenuId(2L);
-    }
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void 주문_목록을_조회한다() {
         // given
-        List<Order> expected = List.of(order);
-        order.setOrderLineItems(List.of(firstOrderLineItem, secondOrderLineItem));
+        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+        Menu chicken = new Menu(new MenuName("chicken"), new MenuPrice(BigDecimal.TEN), null);
+        Menu pizza = new Menu(new MenuName("pizza"), new MenuPrice(BigDecimal.ONE), null);
 
-        Order mockReturnOrder = new Order();
-        mockReturnOrder.setOrderTableId(order.getOrderTableId());
-        mockReturnOrder.setId(order.getId());
+        Order order = new Order(LocalDateTime.now());
+        OrderLineItem orderLineItem = new OrderLineItem(chicken, new OrderLineItemQuantity(1L));
+        OrderLineItem orderLineItem1 = new OrderLineItem(pizza, new OrderLineItemQuantity(2L));
+        order.addOrderLineItems(List.of(orderLineItem, orderLineItem1));
+        orderTable.addOrder(order);
 
-        BDDMockito.given(orderDao.findAll())
-                .willReturn(List.of(mockReturnOrder));
-
-        BDDMockito.given(orderLineItemDao.findAllByOrderId(mockReturnOrder.getId()))
-                .willReturn(List.of(firstOrderLineItem, secondOrderLineItem));
+        BDDMockito.given(orderRepository.findAllWithOrderLineItems())
+                .willReturn(List.of(order));
 
         // when
-        List<Order> actual = orderService.list();
+        List<OrderDto> actual = orderService.list();
 
         // then
-        Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(actual.size()).isEqualTo(1);
+        softAssertions.assertThat(actual.get(0).getOrderLineItems().size()).isEqualTo(2);
+        softAssertions.assertAll();
     }
 
     @Test
     void 주문을_추가한다() {
         // given
-        Order expected = new Order();
-        expected.setId(1L);
-        expected.setOrderTableId(order.getOrderTableId());
-        expected.setOrderStatus(OrderStatus.COOKING.name());
-        expected.setOrderLineItems(List.of(firstOrderLineItem, secondOrderLineItem));
+        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
 
-        Order argumentOrder = new Order();
-        argumentOrder.setOrderTableId(order.getOrderTableId());
-        argumentOrder.setOrderLineItems(List.of(firstOrderLineItem, secondOrderLineItem));
+        Menu chicken = new Menu(new MenuName("chicken"), new MenuPrice(BigDecimal.TEN), null);
+        Menu pizza = new Menu(new MenuName("pizza"), new MenuPrice(BigDecimal.ONE), null);
 
-        BDDMockito.given(menuDao.countByIdIn(BDDMockito.anyList()))
-                .willReturn(Long.valueOf(argumentOrder.getOrderLineItems().size()));
-
-        BDDMockito.given(orderTableDao.findById(argumentOrder.getOrderTableId()))
+        BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
+        BDDMockito.given(menuRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.of(chicken))
+                .willReturn(Optional.of(pizza));
+        BDDMockito.given(orderRepository.save(BDDMockito.any(Order.class)))
+                .will(next -> next.getArguments()[0]);
 
-        Order savedOrder = new Order();
-        savedOrder.setId(1L);
-        savedOrder.setOrderStatus(OrderStatus.COOKING.name());
-        savedOrder.setOrderTableId(argumentOrder.getOrderTableId());
-        BDDMockito.given(orderDao.save(argumentOrder))
-                .willReturn(savedOrder);
-
-        BDDMockito.given(orderLineItemDao.save(firstOrderLineItem))
-                .willReturn(firstOrderLineItem);
-        BDDMockito.given(orderLineItemDao.save(secondOrderLineItem))
-                .willReturn(secondOrderLineItem);
+        CreateOrderDto createOrderDto = new CreateOrderDto(
+                1L,
+                List.of(
+                        new CreateOrderLineItemDto(1L, 2L),
+                        new CreateOrderLineItemDto(2L, 4L)
+                ));
 
         // when
-        Order actual = orderService.create(argumentOrder);
+        OrderDto actual = orderService.create(createOrderDto);
 
         // then
-        Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-        BDDMockito.then(orderLineItemDao)
-                .should(BDDMockito.times(2))
-                .save(BDDMockito.any(OrderLineItem.class));
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(actual.getOrderLineItems().size()).isEqualTo(2);
+        softAssertions.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        softAssertions.assertAll();
     }
 
     @Test
     void 주문을_추가할_때_주문_안에_주문아이템_아이디들_값이_비어있으면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(Collections.emptyList());
+        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
+
+        BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.of(orderTable));
+
+        CreateOrderDto createOrderDto = new CreateOrderDto(
+                1L,
+                Collections.emptyList());
 
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
-        BDDMockito.then(menuDao)
-                .should(BDDMockito.times(0))
-                .countByIdIn(BDDMockito.anyList());
+        Assertions.assertThatThrownBy(() -> orderService.create(createOrderDto))
+                .isInstanceOf(OrderException.class);
     }
 
     @Test
-    void 주문을_추가할_때_존재하지_않는_주문아이템이_있으면_예외를_던진다() {
+    void 주문을_추가할_때_존재하지_않는_주문_메뉴가_있으면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(firstOrderLineItem));
+        OrderTable orderTable = new OrderTable(new GuestNumber(10), false);
 
-        BDDMockito.given(menuDao.countByIdIn(BDDMockito.anyList()))
-                .willReturn(0L);
+        BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.of(orderTable));
+        BDDMockito.given(menuRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.empty());
+
+        CreateOrderDto createOrderDto = new CreateOrderDto(
+                1L,
+                List.of(
+                        new CreateOrderLineItemDto(1L, 2L),
+                        new CreateOrderLineItemDto(2L, 4L)
+                ));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
-        BDDMockito.then(orderTableDao)
-                .should(BDDMockito.times(0))
-                .findById(BDDMockito.anyLong());
+        Assertions.assertThatThrownBy(() -> orderService.create(createOrderDto))
+                .isInstanceOf(MenuException.class);
     }
 
     @Test
     void 주문을_추가할_때_존재하지_않는_주문테이블이면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(List.of(firstOrderLineItem));
-
-        BDDMockito.given(menuDao.countByIdIn(BDDMockito.anyList()))
-                .willReturn(1L);
-        BDDMockito.given(orderTableDao.findById(BDDMockito.anyLong()))
+        BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.empty());
 
+        CreateOrderDto createOrderDto = new CreateOrderDto(
+                1L,
+                List.of(
+                        new CreateOrderLineItemDto(1L, 2L),
+                        new CreateOrderLineItemDto(2L, 4L)
+                ));
+
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> orderService.create(createOrderDto))
+                .isInstanceOf(OrderTableException.class);
     }
 
     @Test
     void 주문을_추가할_때_주문테이블이_주문을_할_수_없는_주문테이블이면_예외를_던진다() {
         // given
-        Order order = new Order();
-        order.setOrderLineItems(List.of(firstOrderLineItem));
-        OrderTable orderTable = this.orderTable;
-        orderTable.setEmpty(true);
-        order.setOrderTableId(orderTable.getId());
+        OrderTable orderTable = new OrderTable(new GuestNumber(10), true);
 
-        BDDMockito.given(menuDao.countByIdIn(BDDMockito.anyList()))
-                .willReturn(1L);
-        BDDMockito.given(orderTableDao.findById(BDDMockito.anyLong()))
+        Menu chicken = new Menu(new MenuName("chicken"), new MenuPrice(BigDecimal.TEN), null);
+        Menu pizza = new Menu(new MenuName("pizza"), new MenuPrice(BigDecimal.ONE), null);
+
+        BDDMockito.given(orderTableRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.of(orderTable));
+        BDDMockito.given(menuRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.of(chicken))
+                .willReturn(Optional.of(pizza));
+
+        CreateOrderDto createOrderDto = new CreateOrderDto(
+                1L,
+                List.of(
+                        new CreateOrderLineItemDto(1L, 2L),
+                        new CreateOrderLineItemDto(2L, 4L)
+                ));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> orderService.create(createOrderDto))
+                .isInstanceOf(OrderTableException.class);
     }
 
     @Test
     void 주문상태를_수정한다() {
         // given
-        Order expected = new Order();
-        expected.setId(1L);
-        expected.setOrderStatus(OrderStatus.MEAL.name());
-        expected.setOrderLineItems(List.of(firstOrderLineItem, secondOrderLineItem));
+        Order order = new Order(LocalDateTime.now());
+        order.changeOrderTable(new OrderTable(new GuestNumber(1), false));
+        order.addOrderLineItems(Collections.emptyList());
 
-        Long argumentOrderId = 1L;
-        Order argumentOrder = new Order();
-        argumentOrder.setOrderStatus(OrderStatus.MEAL.name());
+        BDDMockito.given(orderRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.of(order));
 
-        Order savedOrder = new Order();
-        savedOrder.setId(1L);
-        savedOrder.setOrderStatus(OrderStatus.COOKING.name());
-        BDDMockito.given(orderDao.findById(argumentOrderId))
-                .willReturn(Optional.of(savedOrder));
-
-        BDDMockito.given(orderLineItemDao.findAllByOrderId(argumentOrderId))
-                .willReturn(List.of(firstOrderLineItem, secondOrderLineItem));
+        UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(1L, OrderStatus.MEAL.name());
 
         // when
-        Order actual = orderService.changeOrderStatus(argumentOrderId, argumentOrder);
+        orderService.changeOrderStatus(updateOrderStatusDto);
 
         // then
-        Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        Assertions.assertThat(order.getOrderStatus()).isSameAs(OrderStatus.MEAL);
     }
 
     @Test
     void 주문상태를_수정할_때_주문_아이디에_해당하는_주문이_없으면_예외를_던진다() {
         // given
-        Long orderId = 1L;
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.MEAL.name());
-
-        BDDMockito.given(orderDao.findById(orderId))
+        BDDMockito.given(orderRepository.findById(BDDMockito.anyLong()))
                 .willReturn(Optional.empty());
 
+        UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(1L, OrderStatus.MEAL.name());
+
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
+                .isInstanceOf(OrderException.class);
     }
 
     @Test
     void 주문상태를_수정할_때_수정하려는_주문의_상태가_COMPLETION_이면_예외를_던진다() {
         // given
-        Long orderId = 1L;
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        Order order = new Order(LocalDateTime.now());
+        order.completeOrder();
 
-        Order savedOrder = new Order();
-        savedOrder.setId(1L);
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        BDDMockito.given(orderDao.findById(orderId))
-                .willReturn(Optional.of(savedOrder));
+        BDDMockito.given(orderRepository.findById(BDDMockito.anyLong()))
+                .willReturn(Optional.of(order));
+
+        UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(1L, OrderStatus.MEAL.name());
 
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
+                .isInstanceOf(OrderException.class);
     }
 
     @Test
     void 주문상태를_수정할_때_수정하려는_주문의_상태가_존재하지_않는_주문상태이면_예외를_던진다() {
         // given
-        Long orderId = 1L;
-        Order order = new Order();
-        order.setOrderStatus("NoSuchStatus");
-
-        Order savedOrder = new Order();
-        savedOrder.setId(1L);
-        savedOrder.setOrderStatus(OrderStatus.MEAL.name());
-        BDDMockito.given(orderDao.findById(orderId))
-                .willReturn(Optional.of(savedOrder));
+        UpdateOrderStatusDto updateOrderStatusDto = new UpdateOrderStatusDto(1L, "NoSuchOrderStatus");
 
         // when, then
-        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> orderService.changeOrderStatus(updateOrderStatusDto))
+                .isInstanceOf(OrderException.class);
     }
 }

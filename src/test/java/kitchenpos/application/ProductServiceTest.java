@@ -1,60 +1,60 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.application.dto.CreateProductDto;
+import kitchenpos.application.dto.ProductDto;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.product.ProductPrice;
+import kitchenpos.exception.ProductPriceException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
 class ProductServiceTest extends MockServiceTest {
 
     @InjectMocks
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Test
     void 상품_목록을_조회한다() {
         // given
-        Product expectedFirstProduct = new Product();
-        expectedFirstProduct.setId(1L);
-        expectedFirstProduct.setName("pizza");
-        expectedFirstProduct.setPrice(BigDecimal.valueOf(18000L));
+        ProductDto expectedFirstProduct = new ProductDto(
+                1L,
+                "pizza",
+                BigDecimal.valueOf(18000L));
+        ProductDto expectedSecondProduct = new ProductDto(
+                2L,
+                "chicken",
+                BigDecimal.valueOf(21000L));
 
-        Product expectedSecondProduct = new Product();
-        expectedSecondProduct.setId(2L);
-        expectedSecondProduct.setName("chicken");
-        expectedSecondProduct.setPrice(BigDecimal.valueOf(21000L));
-
-        List<Product> expected = List.of(
+        List<ProductDto> expected = List.of(
                 expectedFirstProduct,
                 expectedSecondProduct
         );
 
-        Product mockFirstProduct = new Product();
-        mockFirstProduct.setId(1L);
-        mockFirstProduct.setName("pizza");
-        mockFirstProduct.setPrice(BigDecimal.valueOf(18000L));
+        Product mockFirstProduct = new Product(
+                1L,
+                new ProductName("pizza"),
+                new ProductPrice(BigDecimal.valueOf(18000L)));
+        Product mockSecondProduct = new Product(
+                2L,
+                new ProductName("chicken"),
+                new ProductPrice(BigDecimal.valueOf(21000L)));
 
-        Product mockSecondProduct = new Product();
-        mockSecondProduct.setId(2L);
-        mockSecondProduct.setName("chicken");
-        mockSecondProduct.setPrice(BigDecimal.valueOf(21000L));
-
-        BDDMockito.given(productDao.findAll())
+        BDDMockito.given(productRepository.findAll())
                 .willReturn(List.of(mockFirstProduct, mockSecondProduct));
 
         // when
-        List<Product> actual = productService.list();
+        List<ProductDto> actual = productService.list();
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -63,25 +63,25 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가한다() {
         // given
-        Product expected = new Product();
-        expected.setId(1L);
-        expected.setName("pizza");
-        expected.setPrice(BigDecimal.valueOf(18000L));
+        ProductDto expected = new ProductDto(
+                1L,
+                "pizza",
+                BigDecimal.valueOf(18000L));
 
-        Product argumentProduct = new Product();
-        argumentProduct.setName("pizza");
-        argumentProduct.setPrice(BigDecimal.valueOf(18000L));
+        CreateProductDto createProductDto = new CreateProductDto(
+                "pizza",
+                BigDecimal.valueOf(18000L));
 
-        Product mockReturnProduct = new Product();
-        mockReturnProduct.setId(1L);
-        mockReturnProduct.setName("pizza");
-        mockReturnProduct.setPrice(BigDecimal.valueOf(18000L));
+        Product mockReturnProduct = new Product(
+                1L,
+                new ProductName("pizza"),
+                new ProductPrice(BigDecimal.valueOf(18000L)));
 
-        BDDMockito.given(productDao.save(argumentProduct))
+        BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
                 .willReturn(mockReturnProduct);
 
         // when
-        Product actual = productService.create(argumentProduct);
+        ProductDto actual = productService.create(createProductDto);
 
         // then
         Assertions.assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
@@ -90,48 +90,58 @@ class ProductServiceTest extends MockServiceTest {
     @Test
     void 상품을_추가할_때_가격이_0_일_수_있다() {
         // given
-        Product argumentProduct = new Product();
-        argumentProduct.setName("pizza");
-        argumentProduct.setPrice(BigDecimal.valueOf(0L));
+        CreateProductDto createProductDto = new CreateProductDto(
+                "pizza",
+                BigDecimal.valueOf(0L));
+        BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
+                .willReturn(new Product(
+                        1L,
+                        new ProductName("pizza"),
+                        new ProductPrice(BigDecimal.valueOf(0L))));
 
         // when, then
         Assertions.assertThatNoException()
-                .isThrownBy(() -> productService.create(argumentProduct));
+                .isThrownBy(() -> productService.create(createProductDto));
     }
 
     @Test
     void 상품을_추가할_때_이름이_공백_일_수_있다() {
         // given
-        Product argumentProduct = new Product();
-        argumentProduct.setName("");
-        argumentProduct.setPrice(BigDecimal.valueOf(1000L));
+        CreateProductDto createProductDto = new CreateProductDto(
+                "",
+                BigDecimal.valueOf(1000L));
+        BDDMockito.given(productRepository.save(BDDMockito.any(Product.class)))
+                .willReturn(new Product(
+                        1L,
+                        new ProductName(""),
+                        new ProductPrice(BigDecimal.valueOf(1000L))));
 
         // when, then
         Assertions.assertThatNoException()
-                .isThrownBy(() -> productService.create(argumentProduct));
+                .isThrownBy(() -> productService.create(createProductDto));
     }
 
     @Test
     void 상품을_추가할_때_가격이_null_이면_예외를_던진다() {
         // given
-        Product argumentProduct = new Product();
-        argumentProduct.setName("pizza");
-        argumentProduct.setPrice(null);
+        CreateProductDto createProductDto = new CreateProductDto(
+                "pizza",
+                null);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> productService.create(argumentProduct))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> productService.create(createProductDto))
+                .isInstanceOf(ProductPriceException.class);
     }
 
     @Test
     void 상품을_추가할_때_가격이_음수면_예외를_던진다() {
         // given
-        Product argumentProduct = new Product();
-        argumentProduct.setName("pizza");
-        argumentProduct.setPrice(BigDecimal.valueOf(-100L));
+        CreateProductDto createProductDto = new CreateProductDto(
+                "pizza",
+                BigDecimal.valueOf(-100L));
 
         // when, then
-        Assertions.assertThatThrownBy(() -> productService.create(argumentProduct))
-                .isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThatThrownBy(() -> productService.create(createProductDto))
+                .isInstanceOf(ProductPriceException.class);
     }
 }
