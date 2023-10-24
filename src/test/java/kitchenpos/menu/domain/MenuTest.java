@@ -21,7 +21,7 @@ class MenuTest {
     void 수량과_가격의_곱보다_메뉴의_가격이_비싸면_예외를_반환한다() {
         // given
         MenuGroup menuGroup = new MenuGroup("menuGroup");
-        Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup, Collections.emptyList());
+        Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(), Collections.emptyList());
         Product product = Product.of("product", new BigDecimal(2500));
         List<MenuProduct> menuProducts = List.of(new MenuProduct(menu, product, 3L));
 

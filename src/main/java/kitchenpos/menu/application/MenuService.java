@@ -38,7 +38,7 @@ public class MenuService {
     public MenuResponse create(MenuRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
-        Menu menu = menuRepository.save(Menu.of(request.getName(), request.getPrice(), menuGroup,
+        Menu menu = menuRepository.save(Menu.of(request.getName(), request.getPrice(), menuGroup.getId(),
                 Collections.emptyList()));
 
         List<MenuProduct> menuProducts = request.getMenuProducts().stream()

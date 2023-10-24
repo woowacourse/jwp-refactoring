@@ -3,15 +3,13 @@ package kitchenpos.menu.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menu.exception.MenuPriceTooExpensiveException;
 
 @Entity
@@ -26,27 +24,26 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @Column(name = "menu_group_id")
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    private Menu(String name, Price price, MenuGroup menuGroup,
+    private Menu(String name, Price price, Long menuGroupId,
             List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
     protected Menu() {
     }
 
-    public static Menu of(String name, BigDecimal price, MenuGroup menuGroup,
+    public static Menu of(String name, BigDecimal price, Long menuGroupId,
             List<MenuProduct> menuProducts) {
-        return new Menu(name, Price.from(price), menuGroup, menuProducts);
+        return new Menu(name, Price.from(price), menuGroupId, menuProducts);
     }
 
     public void changeMenuProducts(List<MenuProduct> menuProducts) {
@@ -78,8 +75,8 @@ public class Menu {
         return price.getPrice();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
