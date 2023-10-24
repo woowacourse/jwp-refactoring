@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.table.domain.OrderTable;
-
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -26,9 +24,6 @@ public class Order {
     private OrderStatus orderStatus = OrderStatus.COOKING;
     private LocalDateTime orderedTime;
 
-//    @OneToMany(mappedBy = "order", cascade = PERSIST)
-//    private List<OrderLineItem> orderLineItems = new ArrayList<>();
-
     public Order() {
     }
 
@@ -36,23 +31,6 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderedTime = orderedTime;
     }
-
-    private void validate(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-//    public void addOrderLineItem(OrderLineItem orderLineItem) {
-//        this.orderLineItems.add(orderLineItem);
-//        orderLineItem.changeOrder(this);
-//    }
-
-//    public void checkEqualMenuCount(long orderMenuSize) {
-//        if (orderMenuSize != orderLineItems.size()) {
-//            throw new IllegalArgumentException();
-//        }
-//    }
 
     public boolean isCompleted() {
         return orderStatus == OrderStatus.COMPLETION;
@@ -77,8 +55,4 @@ public class Order {
     public Long getOrderTableId() {
         return orderTableId;
     }
-
-//    public List<OrderLineItem> getOrderLineItems() {
-//        return orderLineItems;
-//    }
 }

@@ -18,9 +18,6 @@ public class Menu {
 
     private Long menuGroupId;
 
-//    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
-//    private List<MenuProduct> menuProducts = new ArrayList<>();
-
     public Menu() {
     }
 
