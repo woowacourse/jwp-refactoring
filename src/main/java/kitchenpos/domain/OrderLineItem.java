@@ -24,16 +24,16 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    private long quantity;
+    private Quantity quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
+    public OrderLineItem(Order order, Menu menu, Quantity quantity) {
         this(null, order, menu, quantity);
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, Order order, Menu menu, Quantity quantity) {
         this.seq = seq;
         this.order = order;
         this.menu = menu;

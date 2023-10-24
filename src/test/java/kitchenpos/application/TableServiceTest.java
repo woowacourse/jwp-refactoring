@@ -23,6 +23,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Quantity;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.exception.BaseExceptionType;
@@ -84,8 +85,8 @@ class TableServiceTest extends IntegrationTest {
             OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup, 1, false));
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(null, menu, 1),
-                    new OrderLineItem(null, menu, 2)
+                    new OrderLineItem(null, menu, new Quantity(1)),
+                    new OrderLineItem(null, menu, new Quantity(2))
             );
             orderRepository.save(new Order(orderTable, MEAL, LocalDateTime.now(), orderLineItems));
 
@@ -104,8 +105,8 @@ class TableServiceTest extends IntegrationTest {
             OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(null, menu, 1),
-                    new OrderLineItem(null, menu, 2)
+                    new OrderLineItem(null, menu, new Quantity(1)),
+                    new OrderLineItem(null, menu, new Quantity(2))
             );
             orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems));
 
@@ -124,8 +125,8 @@ class TableServiceTest extends IntegrationTest {
             OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 10, false));
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(null, menu, 1),
-                    new OrderLineItem(null, menu, 2)
+                    new OrderLineItem(null, menu, new Quantity(1)),
+                    new OrderLineItem(null, menu, new Quantity(2))
             );
             orderRepository.save(new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems));
 

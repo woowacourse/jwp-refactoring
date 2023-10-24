@@ -23,6 +23,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
+import kitchenpos.domain.Quantity;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
@@ -131,8 +132,8 @@ class OrderServiceTest extends IntegrationTest {
 
             Menu menu = menuRepository.getById(1L);
             List<OrderLineItem> orderLineItems = List.of(
-                    new OrderLineItem(null, menu, 1),
-                    new OrderLineItem(null, menu, 2)
+                    new OrderLineItem(null, menu, new Quantity(1)),
+                    new OrderLineItem(null, menu, new Quantity(2))
             );
             Order order = orderRepository.save(new Order(orderTable, COMPLETION, LocalDateTime.now(), orderLineItems));
 

@@ -12,6 +12,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Quantity;
 import kitchenpos.dto.request.CreateOrderLineItemRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (CreateOrderLineItemRequest orderLineItemRequest : request.createOrderLineItemRequests()) {
             Menu menu = jpaMenuRepository.getById(orderLineItemRequest.menuId());
-            OrderLineItem orderLineItem = new OrderLineItem(null, menu, orderLineItemRequest.quantity());
+            OrderLineItem orderLineItem = new OrderLineItem(null, menu, new Quantity(orderLineItemRequest.quantity()));
             orderLineItems.add(orderLineItem);
         }
 

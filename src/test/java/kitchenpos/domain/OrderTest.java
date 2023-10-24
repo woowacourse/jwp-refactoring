@@ -24,8 +24,8 @@ class OrderTest {
     void setUp() {
         this.menu = new Menu("신메뉴", new Price(1000), new MenuGroup("신메뉴 그룹"));
         this.orderLineItems = List.of(
-                new OrderLineItem(null, menu, 1),
-                new OrderLineItem(null, menu, 2)
+                new OrderLineItem(null, menu, new Quantity(1)),
+                new OrderLineItem(null, menu, new Quantity(2))
         );
     }
 
@@ -48,7 +48,7 @@ class OrderTest {
         // given
         OrderTable orderTable = new OrderTable(null, 10, false);
         Order order = new Order(orderTable, COOKING, LocalDateTime.now(), orderLineItems);
-        OrderLineItem orderLineItem = new OrderLineItem(1L, order, null, 10);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, order, null, new Quantity(10));
 
         // when
         order.add(orderLineItem);
