@@ -56,7 +56,7 @@ class OrderLineItemRepositoryTest {
         final Product product = productRepository.save(ProductFixture.상품_생성());
         menus = menuRepository.saveAll(MenuFixture.메뉴들_생성(3, menuGroup, List.of(product)));
         final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
-        order = orderRepository.save(OrderFixture.요리_상태의_주문_생성(orderTable, menus.get(0)));
+        order = orderRepository.save(OrderFixture.조리_상태의_주문_생성(orderTable, menus.get(0)));
     }
 
     @Test

@@ -13,6 +13,18 @@ public class OrderTableFixture {
         return new OrderTable(5, false);
     }
 
+    public static OrderTable 주문_테이블_생성(final int numberOfGuests) {
+        return new OrderTable(numberOfGuests, false);
+    }
+
+    public static OrderTable 비지_않은_테이블_생성() {
+        return 주문_테이블_생성();
+    }
+
+    public static OrderTable 빈_테이블_생성() {
+        return new OrderTable(0, true);
+    }
+
     public static List<OrderTable> 주문_테이블들_생성(final int count) {
         List<OrderTable> 주문_테이블들 = new ArrayList<>();
 

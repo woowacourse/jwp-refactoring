@@ -57,7 +57,7 @@ class OrderRepositoryTest {
             final Product product = productRepository.save(ProductFixture.상품_생성());
             final Menu menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, List.of(product)));
             orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_생성());
-            orderRepository.save(OrderFixture.요리_상태의_주문_생성(orderTable, menu));
+            orderRepository.save(OrderFixture.조리_상태의_주문_생성(orderTable, menu));
         }
 
         @Test
@@ -109,7 +109,7 @@ class OrderRepositoryTest {
             final Product product = productRepository.save(ProductFixture.상품_생성());
             final Menu menu = menuRepository.save(MenuFixture.메뉴_생성(menuGroup, List.of(product)));
             orderTables = orderTableRepository.saveAll(OrderTableFixture.주문_테이블들_생성(3));
-            orderRepository.saveAll(OrderFixture.요리_상태의_주문들_생성(orderTables, menu));
+            orderRepository.saveAll(OrderFixture.조리_상태의_주문들_생성(orderTables, menu));
         }
 
         @Test
