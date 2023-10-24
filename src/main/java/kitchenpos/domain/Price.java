@@ -20,7 +20,7 @@ public class Price {
         value = null;
     }
 
-    public Price(int value) {
+    public Price(long value) {
         this(BigDecimal.valueOf(value));
     }
 
