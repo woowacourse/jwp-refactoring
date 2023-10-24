@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class OrderService {
 
@@ -33,7 +34,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public Order create(final OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItemCreateRequests();
 
@@ -73,7 +73,6 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);

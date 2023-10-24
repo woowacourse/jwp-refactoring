@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional
 @Service
 public class MenuGroupService {
 
@@ -17,13 +18,13 @@ public class MenuGroupService {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    @Transactional
     public MenuGroup create(final MenuGroupCreateRequest menuGroupCreateRequest) {
         MenuGroup menuGroup = new MenuGroup(menuGroupCreateRequest.getName());
 
         return menuGroupRepository.save(menuGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroup> list() {
         return menuGroupRepository.findAll();
     }

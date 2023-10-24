@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class MenuService {
 
@@ -33,7 +34,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public Menu create(final MenuCreateRequest menuCreateRequest) {
         MenuGroup menuGroup = getMenugroup(menuCreateRequest);
 
@@ -70,6 +70,7 @@ public class MenuService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
+    @Transactional(readOnly = true)
     public List<Menu> list() {
         return menuRepository.findAll();
     }
