@@ -23,7 +23,7 @@ public class TableGroupService {
     }
 
     public TableGroup create(final TableGroupCreateRequest request) {
-        final List<Long> orderTableIds = request.getOrderTables();
+        final List<Long> orderTableIds = request.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
