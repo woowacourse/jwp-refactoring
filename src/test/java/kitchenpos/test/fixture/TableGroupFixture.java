@@ -7,10 +7,11 @@ import kitchenpos.domain.TableGroup;
 
 public class TableGroupFixture {
 
+    public static TableGroup 테이블_그룹(LocalDateTime createdDate) {
+        return new TableGroup(createdDate);
+    }
+
     public static TableGroup 테이블_그룹(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(createdDate, orderTables);
     }
 }
