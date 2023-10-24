@@ -22,7 +22,7 @@ public class ProductName {
 
     private void validate(final String value) {
         validateNotBlank(value);
-        validateLength(value);
+        validateLength(value.strip());
     }
 
     private static void validateNotBlank(final String value) {

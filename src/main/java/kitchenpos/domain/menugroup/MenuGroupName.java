@@ -12,7 +12,7 @@ public class MenuGroupName {
 
     public MenuGroupName(final String value) {
         validate(value);
-        this.value = value;
+        this.value = value.strip();
     }
 
     protected MenuGroupName() {
@@ -20,7 +20,7 @@ public class MenuGroupName {
 
     private void validate(final String value) {
         validateNotBlank(value);
-        validateLength(value);
+        validateLength(value.strip());
     }
 
     private void validateNotBlank(final String value) {

@@ -17,12 +17,12 @@ public class MenuName {
 
     public MenuName(final String value) {
         validate(value);
-        this.value = value;
+        this.value = value.strip();
     }
 
     private void validate(final String value) {
         validateNotBlank(value);
-        validateLength(value);
+        validateLength(value.strip());
     }
 
     private static void validateNotBlank(final String value) {
