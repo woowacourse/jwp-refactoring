@@ -32,7 +32,7 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTable().getId(),
+                order.getOrderTableId(),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 order.getOrderLineItems().stream()

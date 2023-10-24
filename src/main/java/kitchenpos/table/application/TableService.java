@@ -1,21 +1,25 @@
 package kitchenpos.table.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.table.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.table.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.table.application.dto.OrderTableCreateRequest;
 import kitchenpos.table.application.dto.OrderTableResponse;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.OrderTableValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
+    private final OrderTableValidator orderTableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderTableRepository orderTableRepository) {
+    public TableService(OrderTableValidator orderTableValidator, OrderTableRepository orderTableRepository) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -29,13 +33,13 @@ public class TableService {
         return orderTableRepository.findAll()
                 .stream()
                 .map(OrderTableResponse::from)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeEmptyRequest request) {
         OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
-        savedOrderTable.setEmpty(request.isEmpty());
+        savedOrderTable.setEmpty(request.isEmpty(), orderTableValidator);
         return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 

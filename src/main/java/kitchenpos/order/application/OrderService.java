@@ -15,29 +15,29 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
 
+    private final OrderValidator orderValidator;
     private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
-    private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
 
     public OrderService(
-            ProductRepository productRepository, MenuRepository menuRepository,
-            OrderTableRepository orderTableRepository,
+            OrderValidator orderValidator,
+            ProductRepository productRepository,
+            MenuRepository menuRepository,
             OrderRepository orderRepository
     ) {
+        this.orderValidator = orderValidator;
         this.productRepository = productRepository;
         this.menuRepository = menuRepository;
-        this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
     }
 
@@ -58,9 +58,8 @@ public class OrderService {
                     return new OrderLineItem(snapShot, it.getQuantity());
                 })
                 .collect(Collectors.toList());
-        OrderTable orderTable = orderTableRepository.getById(request.getOrderTableId());
         return OrderResponse.from(orderRepository.save(
-                new Order(orderTable, orderLineItems)
+                new Order(request.getOrderTableId(), orderLineItems, orderValidator)
         ));
     }
 

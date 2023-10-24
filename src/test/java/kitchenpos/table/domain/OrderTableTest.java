@@ -3,15 +3,12 @@ package kitchenpos.table.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import java.math.BigDecimal;
-import java.util.List;
-import kitchenpos.order.domain.MenuProductSnapShot;
-import kitchenpos.order.domain.MenuSnapShot;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -24,14 +21,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTableTest {
 
-    private final MenuSnapShot menuSnapshot = new MenuSnapShot(
-            "메뉴그룹",
-            "말랑",
-            BigDecimal.valueOf(20),
-            List.of(
-                    new MenuProductSnapShot("상품", BigDecimal.valueOf(10), 2)
-            )
-    );
+    private final OrderRepository orderRepository = mock(OrderRepository.class);
+    private final OrderTableValidator orderTableValidator = new OrderTableValidator(orderRepository);
 
     @Nested
     class 비어있음_상태_변경_검증_시 {
@@ -44,7 +35,7 @@ class OrderTableTest {
 
             // when & then
             assertThatThrownBy(() ->
-                    orderTable.setEmpty(true)
+                    orderTable.setEmpty(true, orderTableValidator)
             ).isInstanceOf(OrderTableException.class)
                     .hasMessage("그룹에 속한 테이블은 비어있음 상태를 변경할 수 없습니다.");
         }
@@ -53,12 +44,12 @@ class OrderTableTest {
         void 조리_혹은_식사중_상태의_테이블이라면_예외() {
             // given
             OrderTable orderTable = new OrderTable(10, false);
-            ReflectionTestUtils.setField(orderTable, "id", 2L);
-            new Order(orderTable, List.of(new OrderLineItem(menuSnapshot, 10)));
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), anyList()))
+                    .willReturn(true);
 
             // when & then
             assertThatThrownBy(() ->
-                    orderTable.setEmpty(false)
+                    orderTable.setEmpty(false, orderTableValidator)
             ).isInstanceOf(OrderTableException.class)
                     .hasMessage("조리 혹은 식사중 상태의 테이블의 비어있음 상태는 변경할 수 없습니다.");
         }
@@ -67,19 +58,15 @@ class OrderTableTest {
         void 그룹에_속하지_않은_테이블_중_계산_완료되었거나_주문하지_않은_테이블의_상태는_변경_가능() {
             // given
             OrderTable completeOrderTable = new OrderTable(10, false);
-            ReflectionTestUtils.setField(completeOrderTable, "id", 2L);
-            new Order(completeOrderTable, List.of(new OrderLineItem(menuSnapshot, 10)))
-                    .setOrderStatus(OrderStatus.COMPLETION.name());
-
             OrderTable notInGroupTable = new OrderTable(10, false);
             ReflectionTestUtils.setField(notInGroupTable, "id", 3L);
 
             // when & then
             assertDoesNotThrow(() ->
-                    completeOrderTable.setEmpty(true)
+                    completeOrderTable.setEmpty(true, orderTableValidator)
             );
             assertDoesNotThrow(() ->
-                    notInGroupTable.setEmpty(true)
+                    notInGroupTable.setEmpty(true, orderTableValidator)
             );
         }
     }
@@ -110,7 +97,7 @@ class OrderTableTest {
             orderTable.grouping(mock(TableGroup.class));
 
             // when
-            orderTable.ungroup();
+            orderTable.ungroup(orderTableValidator);
 
             // then
             assertThat(orderTable.getTableGroup()).isNull();
@@ -120,12 +107,12 @@ class OrderTableTest {
         void 조리_혹은_식사중_상태의_테이블이라면_예외() {
             // given
             OrderTable orderTable = new OrderTable(10, false);
-            ReflectionTestUtils.setField(orderTable, "id", 2L);
-            new Order(orderTable, List.of(new OrderLineItem(menuSnapshot, 10)));
+            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), anyList()))
+                    .willReturn(true);
 
             // when & then
             assertThatThrownBy(() ->
-                    orderTable.ungroup()
+                    orderTable.ungroup(orderTableValidator)
             ).isInstanceOf(OrderTableException.class)
                     .hasMessage("조리 혹은 식사중 상태의 테이블이 포함되어 있어 그룹을 해제할 수 없습니다.");
         }

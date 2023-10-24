@@ -38,9 +38,9 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public void ungroup() {
+    public void ungroup(OrderTableValidator orderTableValidator) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
+            orderTable.ungroup(orderTableValidator);
         }
     }
 

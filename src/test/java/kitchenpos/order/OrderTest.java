@@ -4,6 +4,8 @@ import static kitchenpos.order.domain.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,7 +15,9 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderException;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -25,6 +29,8 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class OrderTest {
 
+    private final OrderTableRepository orderTableRepository = mock(OrderTableRepository.class);
+    private final OrderValidator orderValidator = new OrderValidator(orderTableRepository);
     private final MenuSnapShot menuSnapshot = new MenuSnapShot(
             "메뉴그룹",
             "말랑",
@@ -39,11 +45,16 @@ class OrderTest {
 
         @Test
         void 주문_목록이_비어있는_경우_예외() {
+            // given
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(1, true));
+
             // when & then
             assertThatThrownBy(() ->
                     new Order(
-                            new OrderTable(1, true),
-                            List.of()
+                            1L,
+                            List.of(),
+                            orderValidator
                     )
             ).isInstanceOf(OrderException.class)
                     .hasMessage("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
@@ -51,26 +62,34 @@ class OrderTest {
 
         @Test
         void 주문을_한_테이블이_비어있으면_예외() {
+            // given
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(1, true));
+
             // when & then
             assertThatThrownBy(() ->
                     new Order(
-                            new OrderTable(1, true),
+                            1L,
                             List.of(
                                     new OrderLineItem(menuSnapshot, 10)
-                            ))
+                            ), orderValidator)
             ).isInstanceOf(OrderException.class)
                     .hasMessage("비어있는 테이블에서는 주문할 수 없습니다.");
         }
 
         @Test
         void 주문_목록이_비어있지_않고_주문을_한_테이블이_비어있지_않은_경우_주문할_수_있다() {
+            // given
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(1, false));
+
             // when & then
             assertDoesNotThrow(() ->
                     new Order(
-                            new OrderTable(1, false),
+                            1L,
                             List.of(
                                     new OrderLineItem(menuSnapshot, 10)
-                            ))
+                            ), orderValidator)
             );
         }
     }
@@ -81,11 +100,15 @@ class OrderTest {
         @Test
         void 결제되지_않은_주문의_상태를_변경한다() {
             // given
+            // given
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(1, false));
+
             Order order = new Order(
-                    new OrderTable(1, false),
+                    1L,
                     List.of(
                             new OrderLineItem(menuSnapshot, 10)
-                    ));
+                    ), orderValidator);
 
             // when
             order.setOrderStatus(COMPLETION.name());
@@ -97,11 +120,15 @@ class OrderTest {
         @Test
         void 이미_결제_완료된_주문은_상태를_변경할_수_없다() {
             // given
+            // given
+            given(orderTableRepository.getById(1L))
+                    .willReturn(new OrderTable(1, false));
+
             Order order = new Order(
-                    new OrderTable(1, false),
+                    1L,
                     List.of(
                             new OrderLineItem(menuSnapshot, 10)
-                    ));
+                    ), orderValidator);
             order.setOrderStatus(COMPLETION.name());
 
             // when & then
