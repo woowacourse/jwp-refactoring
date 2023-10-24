@@ -12,7 +12,7 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;
+    private Long menuId;// TODO : Menu에서 List<MenuProduct>를 가지도록 하는 것이 좋지 않을까
     private Long productId;
     @Embedded
     private MenuQuantity quantity;

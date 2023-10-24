@@ -1,10 +1,10 @@
-package kitchenpos.order.ui;
+package kitchenpos.ordertable.ui;
 
-import kitchenpos.order.OrderTable;
-import kitchenpos.order.application.OrderTableService;
-import kitchenpos.order.application.request.ChangeEmptyRequest;
-import kitchenpos.order.application.request.NumberOfGuestsRequest;
-import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.application.OrderTableService;
+import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
+import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;
+import kitchenpos.ordertable.application.request.OrderTableRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

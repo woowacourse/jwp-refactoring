@@ -34,13 +34,13 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
+
     public Menu create(final MenuRequest request) {
-        final BigDecimal price = request.getPrice();
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
         final List<MenuProductRequest> menuProductRequests = request.getMenuProducts();
-        final Menu savedMenu = saveMenu(request, price, menuProductRequests);
+        final Menu savedMenu = saveMenu(request, request.getPrice(), menuProductRequests);
         publisher.publishEvent(new SaveMenuProductsEvent(menuProductRequests, savedMenu));
 
         return savedMenu;

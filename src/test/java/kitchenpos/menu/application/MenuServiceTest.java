@@ -89,7 +89,6 @@ class MenuServiceTest {
         void menuGroupNotExist() {
             // given
             final MenuRequest request = mock(MenuRequest.class);
-            given(request.getPrice()).willReturn(BigDecimal.valueOf(10000));
             given(request.getMenuGroupId()).willReturn(1L);
             given(menuGroupRepository.existsById(anyLong())).willReturn(false);
 

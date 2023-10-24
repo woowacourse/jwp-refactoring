@@ -1,4 +1,4 @@
-package kitchenpos.order.application.request;
+package kitchenpos.ordertable.application.request;
 
 public class NumberOfGuestsRequest {
     private int numberOfGuests;

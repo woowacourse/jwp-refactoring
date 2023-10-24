@@ -1,11 +1,13 @@
 package kitchenpos.order.application;
 
-import kitchenpos.order.Empty;
-import kitchenpos.order.NumberOfGuests;
-import kitchenpos.order.OrderTable;
-import kitchenpos.order.application.request.ChangeEmptyRequest;
-import kitchenpos.order.application.request.NumberOfGuestsRequest;
-import kitchenpos.order.application.request.OrderTableRequest;
+import kitchenpos.ordertable.Empty;
+import kitchenpos.ordertable.NumberOfGuests;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.application.OrderTableRepository;
+import kitchenpos.ordertable.application.OrderTableService;
+import kitchenpos.ordertable.application.request.ChangeEmptyRequest;
+import kitchenpos.ordertable.application.request.NumberOfGuestsRequest;
+import kitchenpos.ordertable.application.request.OrderTableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
