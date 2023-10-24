@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.vo.OrderStatus;
@@ -14,6 +14,7 @@ import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +36,18 @@ public class OrderService {
 
     @Transactional
     public Long create(final OrderCreateRequest request) {
+        final OrderTable orderTable = orderTableRepository.findById(request.orderTableId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "[ERROR] OrderTable이 존재하지 않습니다. id : " + request.orderTableId()
+                ));
+
         final Order order = new Order(
-                orderTableRepository.getById(request.orderTableId()),
                 OrderStatus.COOKING,
                 LocalDateTime.now()
         );
-
         final List<OrderLineItem> orderLineItems = createOrderLineItems(request);
         order.addOrderLineItems(orderLineItems);
+        order.addOrderTable(orderTable);
 
         return orderRepository.save(order).id();
     }
@@ -53,7 +58,11 @@ public class OrderService {
         final List<Long> menuIds = orderLineItemCreateRequests.stream()
                 .map(OrderLineItemCreateRequest::menuId)
                 .collect(Collectors.toUnmodifiableList());
-        final List<Menu> menus = menuRepository.getAllById(menuIds);
+        final List<Menu> menus = menuRepository.findAllById(menuIds);
+
+        if (menuIds.size() != menus.size()) {
+            throw new IllegalArgumentException("없는 메뉴가 존재합니다.");
+        }
 
         final List<Long> quantities = orderLineItemCreateRequests.stream()
                 .map(OrderLineItemCreateRequest::quantity)
@@ -74,7 +83,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatus requestOrderStatus) {
-        final Order savedOrder = orderRepository.getById(orderId);
+        final Order savedOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("[ERROR] Order가 존재하지 않습니다. id : " + orderId));
         savedOrder.changeOrderStatus(requestOrderStatus);
         return OrderResponse.from(savedOrder);
     }

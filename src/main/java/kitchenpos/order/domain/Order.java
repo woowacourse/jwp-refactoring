@@ -43,20 +43,11 @@ public class Order {
     }
 
     public Order(
-            final OrderTable orderTable,
             final OrderStatus orderStatus,
             final LocalDateTime orderedTime
     ) {
-        validateOrderTable(orderTable);
-        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-    }
-
-    private void validateOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("order table이 비어있습니다.");
-        }
     }
 
     public void addOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -80,43 +71,39 @@ public class Order {
         this.orderTable.ungroup();
     }
 
-    public Long id() {
-        return id;
+    public boolean isStatusCookingOrMeal() {
+        return this.orderStatus == OrderStatus.COOKING || this.orderStatus == OrderStatus.MEAL;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void addOrderTable(final OrderTable orderTable) {
+        validateOrderTable(orderTable);
+        orderTable.addOrder(this);
+        this.orderTable = orderTable;
+    }
+
+    private void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("order table이 비어있습니다.");
+        }
+    }
+
+    public Long id() {
+        return id;
     }
 
     public OrderTable orderTable() {
         return orderTable;
     }
 
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public OrderStatus orderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime orderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public OrderLineItems orderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final OrderLineItems orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

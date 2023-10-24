@@ -1,29 +1,27 @@
 package kitchenpos.tablegroup.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.ordertable.application.TableService;
-import kitchenpos.ordertable.dao.OrderTableDao;
 import kitchenpos.order.apllication.OrderService;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.vo.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.test.fixtures.OrderFixtures;
-import kitchenpos.test.fixtures.OrderTableFixtures;
-import kitchenpos.test.fixtures.TableGroupFixtures;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.dto.request.OrderTableCreateRequest;
+import kitchenpos.tablegroup.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class TableGroupServiceTest {
     @Autowired
     TableGroupService tableGroupService;
@@ -35,7 +33,7 @@ class TableGroupServiceTest {
     OrderService orderService;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
 
     @Nested
     @DisplayName("테이블 그룹을 생성할 때, ")
@@ -45,90 +43,96 @@ class TableGroupServiceTest {
         @DisplayName("정상적으로 생성한다")
         void createTableGroup() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final OrderTableCreateRequest orderTableCreateRequestB = new OrderTableCreateRequest(2, true);
+            final Long orderTableIdB = tableService.create(orderTableCreateRequestB);
+            final TableGroupCreateRequest tableGroupCreateRequest =
+                    new TableGroupCreateRequest(List.of(orderTableIdA, orderTableIdB));
 
             // when
-            final TableGroup saved = tableGroupService.create(tableGroup);
+            final Long orderTableGroupId = tableGroupService.create(tableGroupCreateRequest);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(saved.createdDate().truncatedTo(ChronoUnit.MINUTES))
-                        .isEqualTo(tableGroup.createdDate().truncatedTo(ChronoUnit.MINUTES));
-            });
+            assertThat(orderTableGroupId).isPositive();
         }
 
         @Test
         @DisplayName("주문 테이블 목록이 비어있을 시 예외 발생")
         void orderTablesEmptyException() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
-            tableGroup.setOrderTables(Collections.emptyList());
+            final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
+                    Collections.emptyList());
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.create(tableGroup));
+                    .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
         }
 
         @Test
         @DisplayName("주문 테이블이 2개 미만일 시 예외 발생")
         void orderTablesLessThanTwoException() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
-            tableGroup.setOrderTables(List.of(OrderTableFixtures.BASIC.get()));
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(orderTableIdA));
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.create(tableGroup));
+                    .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
         }
 
         @Test
         @DisplayName("주문 테이블 개수와 실제 저장되어있던 주문 테이블 개수가 불일치 할 시 예외 발생")
         void orderTablesCountWrongException() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
-            final List<OrderTable> orderTables = tableGroup.orderTables();
-            orderTables.add(OrderTableFixtures.BASIC.get());
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final TableGroupCreateRequest tableGroupCreateRequest =
+                    new TableGroupCreateRequest(List.of(orderTableIdA, -1L));
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.create(tableGroup));
-            orderTables.remove(orderTables.size() - 1);
+                    .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
         }
 
         @Test
         @DisplayName("비어있지 않은 주문 테이블이 한 개라도 존재할 시 예외 발생")
         void notEmptyOrderTableExistException() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
-            final OrderTable orderTable = tableGroup.orderTables().get(0);
-            tableService.changeEmpty(orderTable.id(), OrderTableFixtures.NOT_EMPTY.get());
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final OrderTableCreateRequest orderTableCreateRequestB = new OrderTableCreateRequest(2, false);
+            final Long orderTableIdB = tableService.create(orderTableCreateRequestB);
+            final TableGroupCreateRequest tableGroupCreateRequest =
+                    new TableGroupCreateRequest(List.of(orderTableIdA, orderTableIdB));
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.create(tableGroup));
+                    .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
         }
 
         @Test
         @DisplayName("TableGroupId가 null이 아닌 주문 테이블이 한 개라도 존재할 시 예외 발생")
         void tableGroupOfNotNullTableGroupIdExistException() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final OrderTableCreateRequest orderTableCreateRequestB = new OrderTableCreateRequest(2, true);
+            final Long orderTableIdB = tableService.create(orderTableCreateRequestB);
 
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final OrderTableCreateRequest orderTableCreateRequestC = new OrderTableCreateRequest(3, true);
+            final Long orderTableIdC = tableService.create(orderTableCreateRequestC);
+            final TableGroupCreateRequest tableGroupCreateRequestB =
+                    new TableGroupCreateRequest(List.of(orderTableIdB, orderTableIdC));
+            tableGroupService.create(tableGroupCreateRequestB);
 
-            final OrderTable orderTable = tableGroup.orderTables().get(0);
-            orderTable.setTableGroup(savedTableGroup.id());
-            orderTableDao.save(orderTable);
+            final TableGroupCreateRequest tableGroupCreateRequestA =
+                    new TableGroupCreateRequest(List.of(orderTableIdA, orderTableIdB, orderTableIdC));
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.create(tableGroup));
+                    .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequestA));
         }
     }
 
@@ -139,43 +143,43 @@ class TableGroupServiceTest {
         @DisplayName("정상적으로 제거한다")
         void deleteTableGroup() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final OrderTableCreateRequest orderTableCreateRequestB = new OrderTableCreateRequest(2, true);
+            final Long orderTableIdB = tableService.create(orderTableCreateRequestB);
+            final TableGroupCreateRequest tableGroupCreateRequest =
+                    new TableGroupCreateRequest(List.of(orderTableIdA, orderTableIdB));
+
+            final Long tableGroupId = tableGroupService.create(tableGroupCreateRequest);
 
             // when, then
             assertThatNoException()
-                    .isThrownBy(() -> tableGroupService.ungroup(savedTableGroup.id()));
+                    .isThrownBy(() -> tableGroupService.ungroup(tableGroupId));
         }
 
         @Test
         @DisplayName("테이블 그룹에 속한 주문 테이블 중, 요리 또는 식사중인 테이블이 하나라도 존재할 시 예외 발생")
         void notCompletionOrderStatusExistException() {
             // given
-            final TableGroup tableGroup = TableGroupFixtures.BASIC.get();
-            initOrderTables(tableGroup);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final OrderTableCreateRequest orderTableCreateRequestA = new OrderTableCreateRequest(1, true);
+            final Long orderTableIdA = tableService.create(orderTableCreateRequestA);
+            final OrderTableCreateRequest orderTableCreateRequestB = new OrderTableCreateRequest(2, true);
+            final Long orderTableIdB = tableService.create(orderTableCreateRequestB);
+            final TableGroupCreateRequest tableGroupCreateRequest =
+                    new TableGroupCreateRequest(List.of(orderTableIdA, orderTableIdB));
 
-            final Order order = OrderFixtures.BASIC.get();
-            final OrderTable orderTable = tableGroup.orderTables().get(0);
-            order.setOrderTable(orderTable.id());
-            final Order savedOrder = orderService.create(order);
+            final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 2);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTableIdA,
+                    List.of(orderLineItemCreateRequest)
+            );
 
-            savedOrder.setOrderStatus(OrderStatus.COOKING.name());
-            orderService.changeOrderStatus(savedOrder.id(), savedOrder);
+            final Long tableGroupId = tableGroupService.create(tableGroupCreateRequest);
+            orderService.create(orderCreateRequest);
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> tableGroupService.ungroup(savedTableGroup.id()));
+                    .isThrownBy(() -> tableGroupService.ungroup(tableGroupId));
         }
-    }
-
-    private void initOrderTables(final TableGroup tableGroup) {
-        final OrderTable firstOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
-        final OrderTable secondOrderTable = tableService.create(OrderTableFixtures.BASIC.get());
-
-        final List<OrderTable> orderTables = tableGroup.orderTables();
-        orderTables.get(0).setId(firstOrderTable.id());
-        orderTables.get(1).setId(secondOrderTable.id());
     }
 }

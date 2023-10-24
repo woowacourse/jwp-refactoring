@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.order.domain.Order;
 import kitchenpos.ordertable.domain.vo.Orders;
 import kitchenpos.tablegroup.domain.TableGroup;
 
@@ -76,20 +77,16 @@ public class OrderTable {
         this.empty = false;
     }
 
+    public void addOrder(final Order order) {
+        this.orders.add(order);
+    }
+
     public Long id() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup tableGroup() {
         return tableGroup;
-    }
-
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
     }
 
     public int numberOfGuests() {
@@ -102,5 +99,9 @@ public class OrderTable {
 
     public Orders orders() {
         return orders;
+    }
+
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 }

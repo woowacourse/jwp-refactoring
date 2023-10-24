@@ -6,7 +6,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.vo.OrderStatus;
 import org.hibernate.annotations.BatchSize;
 
 @Embeddable
@@ -17,8 +16,11 @@ public class Orders {
 
     public boolean hasCookingOrMealOrders() {
         return orders.stream()
-                .map(Order::orderStatus)
-                .anyMatch(orderStatus -> orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL);
+                .anyMatch(Order::isStatusCookingOrMeal);
+    }
+
+    public void add(final Order order) {
+        this.orders.add(order);
     }
 
     public List<Order> orders() {

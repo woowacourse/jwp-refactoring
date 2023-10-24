@@ -4,24 +4,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.time.temporal.ChronoUnit;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.ordertable.application.TableService;
-import kitchenpos.order.dao.OrderDao;
+import kitchenpos.menu.appllication.MenuService;
+import kitchenpos.menu.dto.request.MenuCreateRequest;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.dto.request.MenuGroupCreateRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.vo.OrderStatus;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.test.fixtures.OrderFixtures;
-import kitchenpos.test.fixtures.OrderLineItemFixtures;
-import kitchenpos.test.fixtures.OrderTableFixtures;
+import kitchenpos.order.dto.request.OrderCreateRequest;
+import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.dto.request.OrderTableCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class OrderServiceTest {
     @Autowired
     OrderService orderService;
@@ -30,7 +36,13 @@ class OrderServiceTest {
     TableService tableService;
 
     @Autowired
-    OrderDao orderDao;
+    MenuService menuService;
+
+    @Autowired
+    MenuGroupService menuGroupService;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Nested
     @DisplayName("주문을 등록할 때,")
@@ -39,71 +51,67 @@ class OrderServiceTest {
         @DisplayName("정상 등록된다.")
         void create() {
             // given
-            final Order order = OrderFixtures.BASIC.get();
-            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
-            order.setOrderTable(savedOrderTable.id());
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
+            final Long orderTableId = tableService.create(orderTableCreateRequest);
+
+            final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 2);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTableId,
+                    List.of(orderLineItemCreateRequest)
+            );
 
             // when
-            final Order saved = orderService.create(order);
+            final Long orderId = orderService.create(orderCreateRequest);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(saved.id()).isEqualTo(saved.id());
-                softly.assertThat(saved.orderTable()).isEqualTo(order.orderTable());
-                softly.assertThat(saved.orderStatus()).isEqualTo(order.orderStatus());
-                softly.assertThat(saved.orderedTime().truncatedTo(ChronoUnit.MINUTES))
-                        .isEqualTo(order.orderedTime().truncatedTo(ChronoUnit.MINUTES));
-            });
+            assertThat(orderId).isPositive();
         }
 
         @Test
         @DisplayName("주문 메뉴 목록이 비어있을 시 예외 발생")
         void orderLineItemsEmptyException() {
             // given
-            final Order order = OrderFixtures.BASIC.get();
-            order.setOrderLineItems(Collections.emptyList());
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
+            final Long orderTableId = tableService.create(orderTableCreateRequest);
+
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTableId, Collections.emptyList());
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.create(order));
-        }
-
-        @Test
-        @DisplayName("주문 메뉴 개수와 실제 주문 메뉴 개수가 불일치 할 시 예외 발생")
-        void orderLineItemsCountWrongException() {
-            // given
-            final Order order = OrderFixtures.BASIC.get();
-            order.setOrderLineItems(List.of(OrderLineItemFixtures.BASIC.get(), OrderLineItemFixtures.BASIC.get()));
-
-            // when, then
-            assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.create(order));
+                    .isThrownBy(() -> orderService.create(orderCreateRequest));
         }
 
         @Test
         @DisplayName("주문 테이블이 존재하지 않을 시 예외 발생")
         void orderTableNotExistException() {
             // given
-            final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTable(-1L);
+            final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 2);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    -1,
+                    List.of(orderLineItemCreateRequest)
+            );
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.create(order));
+                    .isThrownBy(() -> orderService.create(orderCreateRequest));
         }
 
         @Test
         @DisplayName("주문 테이블이 비어있을 시 예외 발생")
         void orderTableEmptyException() {
             // given
-            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.EMPTY.get());
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, true);
+            final Long orderTableId = tableService.create(orderTableCreateRequest);
 
-            final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTable(savedOrderTable.id());
+            final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 2);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTableId,
+                    List.of(orderLineItemCreateRequest)
+            );
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.create(order));
+                    .isThrownBy(() -> orderService.create(orderCreateRequest));
         }
     }
 
@@ -111,18 +119,28 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회할 수 있다")
     void getOrders() {
         // given
-        final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
+        final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
+        final Long orderTableId = tableService.create(orderTableCreateRequest);
 
-        final Order order = OrderFixtures.BASIC.get();
-        order.setOrderTable(savedOrderTable.id());
+        final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                orderTableId,
+                List.of(orderLineItemCreateRequest)
+        );
 
-        orderService.create(order);
+        final Long orderId = orderService.create(orderCreateRequest);
 
         // when
-        final List<Order> list = orderService.list();
+        final List<OrderResponse> responses = orderService.list();
 
         // then
-        assertThat(list).isNotEmpty();
+        final OrderResponse orderResponse = responses.get(0);
+        assertSoftly(softly -> {
+            softly.assertThat(orderResponse.getId()).isEqualTo(orderId);
+            softly.assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+            softly.assertThat(orderResponse.getOrderTable().getId()).isEqualTo(orderTableId);
+            softly.assertThat(orderResponse.getOrderLineItems()).hasSize(1);
+        });
     }
 
     @Nested
@@ -132,48 +150,70 @@ class OrderServiceTest {
         @DisplayName("정상 변경된다")
         void changeOrderStatus() {
             // given
-            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
-            final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTable(savedOrderTable.id());
-            order.setOrderStatus(OrderStatus.MEAL.name());
-            final Order savedOrder = orderService.create(order);
+            final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("menuGroupName");
+            final Long menuGroupId = menuGroupService.create(menuGroupCreateRequest);
 
-            final Order newOrder = OrderFixtures.EMPTY.get();
+            final String name = "name";
+            final BigDecimal price = BigDecimal.ZERO;
+            final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
+                    name,
+                    price,
+                    menuGroupId,
+                    Collections.emptyList()
+            );
 
+            final Long menuId = menuService.create(menuCreateRequest);
+
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
+            final Long orderTableId = tableService.create(orderTableCreateRequest);
+
+            final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menuId, 2);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTableId,
+                    List.of(orderLineItemCreateRequest)
+            );
+
+            final Long orderId = orderService.create(orderCreateRequest);
+            final OrderStatus orderStatus = OrderStatus.COMPLETION;
 
             // when
-            final Order changed = orderService.changeOrderStatus(savedOrder.id(), newOrder);
+            final OrderResponse orderResponse = orderService.changeOrderStatus(orderId, orderStatus);
 
             // then
-            assertThat(changed.orderStatus()).isEqualTo(newOrder.orderStatus());
+            assertThat(orderResponse.getOrderStatus()).isEqualTo(orderStatus);
         }
 
         @Test
         @DisplayName("현재 주문이 존재하지 않을 시 예외 처리")
         void orderNotExistException() {
             // given
-            final Order order = OrderFixtures.BASIC.get();
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.changeOrderStatus(null, order));
+                    .isThrownBy(() -> orderService.changeOrderStatus(-1L, OrderStatus.COMPLETION));
         }
 
         @Test
         @DisplayName("현재 주문 상태가 완료 상태일 시 예외 처리")
         void orderStatusCompletionException() {
             // given
-            final OrderTable savedOrderTable = tableService.create(OrderTableFixtures.NOT_EMPTY.get());
-            final Order order = OrderFixtures.BASIC.get();
-            order.setOrderTable(savedOrderTable.id());
+            final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(2, false);
+            final Long orderTableId = tableService.create(orderTableCreateRequest);
 
-            final Order savedOrder = orderService.create(order);
-            savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-            orderDao.save(savedOrder);
+            final OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(1L, 2);
+            final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                    orderTableId,
+                    List.of(orderLineItemCreateRequest)
+            );
+
+            final Long orderId = orderService.create(orderCreateRequest);
+            final Order savedOrder = orderRepository.findById(orderId).get();
+            savedOrder.changeOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(savedOrder);
 
             // when, then
             assertThatIllegalArgumentException()
-                    .isThrownBy(() -> orderService.changeOrderStatus(savedOrder.id(), savedOrder));
+                    .isThrownBy(() -> orderService.changeOrderStatus(orderId, OrderStatus.COMPLETION));
         }
     }
 }

@@ -10,7 +10,8 @@ import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductCreateRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.repository.MenuGroupRepository;
-import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menugroup.repository.MenuRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,14 @@ public class MenuService {
 
     @Transactional
     public Long create(final MenuCreateRequest request) {
+        final MenuGroup menuGroup = menuGroupRepository.findById(request.menuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "[ERROR] MenuGroup이 존재하지 않습니다. id : " + request.menuGroupId()
+                ));
         final Menu menu = new Menu(
                 request.name(),
                 request.price(),
-                menuGroupRepository.getById(request.menuGroupId())
+                menuGroup
         );
         menu.addMenuProducts(createMenuProducts(request));
         return menuRepository.save(menu).id();
@@ -47,7 +52,11 @@ public class MenuService {
         final List<MenuProductCreateRequest> menuProductCreateRequests = request.menuProducts();
 
         final List<Long> productIds = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::productId);
-        final List<Product> products = productRepository.getAllById(productIds);
+        final List<Product> products = productRepository.findAllById(productIds);
+
+        if (productIds.size() != products.size()) {
+            throw new IllegalArgumentException("없는 상품이 존재합니다.");
+        }
 
         final List<Long> quantities = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::quantity);
 
