@@ -194,6 +194,6 @@ class OrderServiceTest {
                 )
         );
 
-        assertThat(savedOrder).extracting("orderStatus").isEqualTo(OrderStatus.COOKING.name());
+        assertThat(savedOrder).extracting("orderStatus").isEqualTo(OrderStatus.COOKING);
     }
 }

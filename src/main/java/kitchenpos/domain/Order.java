@@ -12,12 +12,12 @@ public class Order {
     @Id
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @MappedCollection(idColumn = "ORDER_ID", keyColumn = "SEQ")
     private List<OrderLineItem> orderLineItems;
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
+    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -34,16 +34,12 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
-
-        this.orderStatus = orderStatus;
+    public void transitionToNextStatus() {
+        this.orderStatus = orderStatus.transitionToNextStatus();
     }
 
     public LocalDateTime getOrderedTime() {

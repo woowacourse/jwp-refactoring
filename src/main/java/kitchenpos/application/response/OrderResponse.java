@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderResponse {
     @JsonProperty
@@ -12,13 +13,13 @@ public class OrderResponse {
     @JsonProperty
     private final Long orderTableId;
     @JsonProperty
-    private final String orderStatus;
+    private final OrderStatus orderStatus;
     @JsonProperty
     private final LocalDateTime orderedTime;
     @JsonProperty
     private final List<OrderLineItemResponse> orderLineItems;
 
-    public OrderResponse(final Long id, final Long orderTableId, final String orderStatus,
+    public OrderResponse(final Long id, final Long orderTableId, final OrderStatus orderStatus,
                          final LocalDateTime orderedTime,
                          final List<OrderLineItemResponse> orderLineItems) {
         this.id = id;

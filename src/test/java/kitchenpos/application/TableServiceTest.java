@@ -90,7 +90,7 @@ class TableServiceTest {
                     )
             );
 
-            orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
+            orderService.changeOrderStatus(savedOrder.getId());
 
             assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), false))
                     .isInstanceOf(IllegalArgumentException.class);

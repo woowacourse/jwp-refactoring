@@ -41,7 +41,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         return OrderResponse.from(orderCustomDao.save(
-                new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems)
+                new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)
         ));
     }
 
@@ -71,9 +71,9 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+    public OrderResponse changeOrderStatus(final Long orderId) {
         final Order savedOrder = orderCustomDao.findMandatoryById(orderId);
-        savedOrder.changeOrderStatus(orderStatus.name());
+        savedOrder.transitionToNextStatus();
 
         orderCustomDao.save(savedOrder);
 
