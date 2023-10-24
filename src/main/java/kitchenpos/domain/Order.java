@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,7 +33,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "order_table_id")
+    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_table_id"))
     private OrderTable orderTable;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
