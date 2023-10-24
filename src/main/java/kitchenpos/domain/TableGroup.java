@@ -4,42 +4,38 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroup {
+
+    private static final int MIN_TABLE_SIZE = 2;
+
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     public TableGroup(Long id, LocalDateTime createdDate) {
         this(id, createdDate, null);
     }
 
-    private TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroup(LocalDateTime createdDate, OrderTables orderTables) {
         this(null, createdDate, orderTables);
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
-    public static TableGroup from(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            validateOrderTable(orderTable);
+    public static TableGroup from(OrderTables orderTables) {
+        orderTables.validateTableStatus();
+        if (orderTables.size() < MIN_TABLE_SIZE) {
+            throw new IllegalArgumentException("2개 미만의 테이블은 단체로 지정할 수 없습니다.");
         }
         return new TableGroup(LocalDateTime.now(), orderTables);
     }
 
-    private static void validateOrderTable(OrderTable orderTable) {
-        if (!orderTable.isEmpty() || orderTable.getTableGroupId() != null) {
-            throw new IllegalArgumentException("비어 있지 않거나, 이미 그룹으로 지정된 테이블은 단체로 지정할 수 없습니다.");
-        }
-    }
-
-    public void assignTables(List<OrderTable> orderTables) {
+    public void assignTables(OrderTables orderTables) {
         this.orderTables = orderTables;
-        for (OrderTable orderTable : this.orderTables) {
-            orderTable.group(this.id);
-        }
+        orderTables.group(this.id);
     }
 
     public Long getId() {
@@ -59,10 +55,10 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void setOrderTables(final OrderTables orderTables) {
         this.orderTables = orderTables;
     }
 }

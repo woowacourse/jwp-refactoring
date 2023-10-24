@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static kitchenpos.domain.TableGroup.from;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,10 +18,10 @@ class TableGroupTest {
         // given
         OrderTable orderTable1 = new OrderTable(1L, null, 5, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 5, false);
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+        OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
 
         // when, then
-        assertThatThrownBy(() -> TableGroup.from(orderTables))
+        assertThatThrownBy(() -> from(orderTables))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -30,7 +31,19 @@ class TableGroupTest {
         // given
         OrderTable orderTable1 = new OrderTable(1L, null, 5, true);
         OrderTable orderTable2 = new OrderTable(2L, 2L, 5, true);
-        List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
+        OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
+
+        // when, then
+        assertThatThrownBy(() -> from(orderTables))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("2개 미만의 테이블을 단체로 지정하면 예외가 발생한다.")
+    @Test
+    void from_LessThanMinimumTableSize_ExceptionThrown() {
+        // given
+        OrderTable orderTable = new OrderTable(1L, null, 5, true);
+        OrderTables orderTables = new OrderTables(List.of(orderTable));
 
         // when, then
         assertThatThrownBy(() -> TableGroup.from(orderTables))
@@ -43,10 +56,11 @@ class TableGroupTest {
         // given
         OrderTable orderTable1 = new OrderTable(1L, null, 5, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 5, true);
+        OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
         TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now(), null);
 
         // when
-        tableGroup.assignTables(List.of(orderTable1, orderTable2));
+        tableGroup.assignTables(orderTables);
 
         // then
         assertThat(tableGroup.getOrderTables()).allMatch(orderTable -> orderTable.getTableGroupId().equals(tableGroup.getId()));
