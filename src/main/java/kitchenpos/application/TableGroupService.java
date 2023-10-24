@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,28 +36,16 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<Long> orderTableIds = request.getOrderTableIds();
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            final Long tableGroupId = savedOrderTable.getTableGroupId();
-            System.out.println("tableGroupId = " + tableGroupId);
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(tableGroupId)) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(
+                new TableGroup(LocalDateTime.now(), savedOrderTables)
+        );
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
+            savedOrderTable.empty();
             orderTableRepository.save(savedOrderTable);
         }
         savedTableGroup.changeOrderTables(savedOrderTables);
@@ -81,7 +68,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
+            orderTable.empty();
             orderTableRepository.save(orderTable);
         }
     }

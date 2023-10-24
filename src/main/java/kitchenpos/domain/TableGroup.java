@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -35,7 +36,14 @@ public class TableGroup {
 
     private static void validateOrderTables(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("[ERROR] 2개 이상의 테이블만 그룹으로 묶을 수 있습니다.");
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            final Long tableGroupId = orderTable.getTableGroupId();
+            if (!orderTable.isEmpty() || Objects.nonNull(tableGroupId)) {
+                throw new IllegalArgumentException("[ERROR] 비어있거나, 이미 테이블 그룹이 존재하는 테이블은 그룹에 넣을 수 없습니다.");
+            }
         }
     }
 

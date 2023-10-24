@@ -56,7 +56,7 @@ public class OrderTable extends BaseDate {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public void empty() {
+        this.empty = true;
     }
 }
