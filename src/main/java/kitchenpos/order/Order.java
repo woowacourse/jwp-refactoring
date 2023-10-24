@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +22,8 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @Embedded

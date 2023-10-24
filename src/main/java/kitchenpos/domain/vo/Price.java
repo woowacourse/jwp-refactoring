@@ -19,6 +19,10 @@ public class Price {
         this.value = value;
     }
 
+    public BigDecimal multiply(Quantity quantity) {
+        return this.value.multiply(BigDecimal.valueOf(quantity.getValue()));
+    }
+
     public BigDecimal getValue() {
         return value;
     }
