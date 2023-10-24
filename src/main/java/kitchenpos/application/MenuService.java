@@ -35,7 +35,7 @@ public class MenuService {
     public MenuResponse create(final MenuCreateRequest request) {
         validateMenuGroup(request.getMenuGroupId());
 
-        List<MenuProduct> menuProducts = toMenuProducts(request.getMenuProducts());
+        List<MenuProduct> menuProducts = menuProductsFrom(request.getMenuProducts());
         Menu menu = request.toMenu(menuProducts);
 
         Menu savedMenu = menuRepository.save(menu);
@@ -48,7 +48,7 @@ public class MenuService {
         }
     }
 
-    private List<MenuProduct> toMenuProducts(List<MenuProductCreateRequest> menuProducts) {
+    private List<MenuProduct> menuProductsFrom(List<MenuProductCreateRequest> menuProducts) {
         return menuProducts.stream()
                 .map(menuProductRequest -> {
                     Product product = productRepository.findById(menuProductRequest.getProductId())
