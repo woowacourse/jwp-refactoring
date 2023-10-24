@@ -6,6 +6,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
 import kitchenpos.fixture.*;
 import kitchenpos.request.OrderTableCreateRequest;
+import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
-import static kitchenpos.fixture.TableGroupFixtures.createTableGroup;
+import static kitchenpos.fixture.TableGroupFixtures.getTableGroupCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -89,22 +90,22 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_InTableGroup_ExceptionThrown() {
         // given
-        OrderTableCreateRequest request = new OrderTableCreateRequest(5, true);
-        OrderTable savedOrderTable1 = tableService.create(request);
-        OrderTable savedOrderTable2 = tableService.create(request);
+        OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(5, true);
+        OrderTable orderTable1 = tableService.create(orderTableCreateRequest);
+        OrderTable orderTable2 = tableService.create(orderTableCreateRequest);
+        TableGroupCreateRequest tableGroupCreateRequest = getTableGroupCreateRequest(List.of(orderTable1, orderTable2));
 
-        TableGroup tableGroup = createTableGroup(savedOrderTable1, savedOrderTable2);
-        tableGroupService.create(tableGroup);
+        tableGroupService.create(tableGroupCreateRequest);
 
         Menu menu = createMenu("양념1마리", 17_000);
         menuDao.save(menu);
 
-        Order order = createOrder(savedOrderTable1, OrderStatus.COMPLETION, menu);
+        Order order = createOrder(orderTable1, OrderStatus.COMPLETION, menu);
         orderDao.save(order);
 
         // when, then
         assertThatThrownBy(
-                () -> tableService.changeEmpty(savedOrderTable1.getId(), true))
+                () -> tableService.changeEmpty(orderTable1.getId(), true))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
