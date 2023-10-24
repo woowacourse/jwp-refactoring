@@ -4,11 +4,13 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -44,6 +46,22 @@ public class TableGroup {
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+
+        for (final OrderTable savedOrderTable : orderTables) {
+            if (savedOrderTable == null) {
+                throw new IllegalArgumentException();
+            }
+
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+                throw new IllegalArgumentException();
+            }
+
+            savedOrderTable.setEmpty(false);
+        }
+
         this.orderTables = orderTables;
     }
 }
