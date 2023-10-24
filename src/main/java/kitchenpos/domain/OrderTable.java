@@ -5,6 +5,9 @@ import kitchenpos.common.BaseDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -18,6 +21,9 @@ public class OrderTable extends BaseDate {
     private int numberOfGuests;
     private boolean empty;
 
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders = new ArrayList<>();
+
     public OrderTable(final Long id, final Long tableGroupId, final Integer numberOfGuests, final boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
@@ -26,6 +32,30 @@ public class OrderTable extends BaseDate {
     }
 
     public OrderTable() {
+    }
+
+    public void ungroup() {
+        if (orders.stream().anyMatch(OrderTable::canUngroup)) {
+            throw new IllegalArgumentException("[ERROR] 조리중이거나, 식사중인 테이블은 그룹을 해제할 수 없습니다.");
+        }
+        this.tableGroupId = null;
+        notEmpty();
+    }
+
+    private static boolean canUngroup(final Order it) {
+        return it.getOrderStatus() == OrderStatus.COOKING || it.getOrderStatus() == OrderStatus.MEAL;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public void notEmpty() {
+        this.empty = false;
+    }
+
+    public void empty() {
+        this.empty = true;
     }
 
     public Long getId() {
@@ -50,13 +80,5 @@ public class OrderTable extends BaseDate {
 
     public void setNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void empty() {
-        this.empty = true;
     }
 }

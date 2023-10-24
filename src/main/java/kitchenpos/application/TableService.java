@@ -52,7 +52,12 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.empty();
+        if (request.getEmpty()) {
+            savedOrderTable.empty();
+        }
+        if (!request.getEmpty()) {
+            savedOrderTable.notEmpty();
+        }
 
         return TableResponse.from(orderTableRepository.save(savedOrderTable));
     }
