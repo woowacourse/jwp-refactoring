@@ -32,31 +32,11 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct of(final Product product, final long quantity) {
-        return new MenuProduct(null, null, product, quantity);
-    }
-
     public Long getId() {
         return id;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public Long getMenuId() {
-        return menu.getId();
-    }
-
     public Product getProduct() {
         return product;
-    }
-
-    public Long getProductId() {
-        return product.getId();
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 }

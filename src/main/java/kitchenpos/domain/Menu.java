@@ -45,18 +45,32 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    private Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+    }
+
     public static Menu of(final String name,
                           final BigDecimal price,
                           final MenuGroup menuGroup,
                           final Map<Product, Integer> productWithQuantity
     ) {
         validatePrice(price);
-        final List<MenuProduct> menuProducts = validateTotalPrice(price, productWithQuantity);
-
-        return new Menu(null, name, price, menuGroup, menuProducts);
+        final Menu menu = new Menu(name, price, menuGroup);
+        menu.menuProducts = createMenuProducts(menu, price, productWithQuantity);
+        return menu;
     }
 
-    private static List<MenuProduct> validateTotalPrice(final BigDecimal price, final Map<Product, Integer> productWithQuantity) {
+    private static List<MenuProduct> createMenuProducts(final Menu menu, final BigDecimal price, final Map<Product, Integer> productWithQuantity) {
+        validateTotalPrice(price, productWithQuantity);
+
+        return productWithQuantity.keySet().stream()
+                .map(product -> makeMenuProduct(menu, product, productWithQuantity.get(product)))
+                .collect(Collectors.toList());
+    }
+
+    private static void validateTotalPrice(final BigDecimal price, final Map<Product, Integer> productWithQuantity) {
         BigDecimal calculatedTotalPrice = productWithQuantity.entrySet().stream()
                 .map(entry -> entry.getKey().getPrice().multiply(BigDecimal.valueOf(entry.getValue())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -64,10 +78,10 @@ public class Menu {
         if (price.compareTo(calculatedTotalPrice) > 0) {
             throw new IllegalArgumentException();
         }
+    }
 
-        return productWithQuantity.keySet().stream()
-                .map(product -> MenuProduct.of(product, productWithQuantity.get(product)))
-                .collect(Collectors.toList());
+    private static MenuProduct makeMenuProduct(final Menu menu, final Product product, final long quantity) {
+        return new MenuProduct(null, menu, product, quantity);
     }
 
 
