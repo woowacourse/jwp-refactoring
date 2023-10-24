@@ -60,7 +60,7 @@ class OrderTableServiceTest extends ServiceTest {
             softly.assertThat(response.getId()).isNotNull();
             softly.assertThat(response.getNumberOfGuests()).isEqualTo(numberOfGuests);
             softly.assertThat(response.isEmpty()).isEqualTo(empty);
-            softly.assertThat(response.getTableGroup()).isNull();
+            softly.assertThat(response.getTableGroupId()).isNull();
         });
     }
 
@@ -107,7 +107,7 @@ class OrderTableServiceTest extends ServiceTest {
             final OrderTable orderTable = OrderTableFixtures.ORDER_TABLE1();
             final TableGroup tableGroup = TABLE_GROUP1();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-            orderTable.confirmTableGroup(savedTableGroup);
+            orderTable.updateTableGroupId(savedTableGroup.getId());
             final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
             // when & then

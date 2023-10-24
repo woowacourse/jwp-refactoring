@@ -1,15 +1,12 @@
 package kitchenpos.ordertable.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
@@ -18,46 +15,30 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
+
     private int numberOfGuests;
     private boolean empty;
 
-    protected OrderTable() {}
+    protected OrderTable() {
+    }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
+    public void updateTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public boolean isExistTableGroup() {
-        return Objects.nonNull(this.tableGroup);
-    }
-
-    public void confirmTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-        tableGroup.getOrderTables().add(this);
+        return Objects.nonNull(tableGroupId);
     }
 
     public void unGroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = false;
     }
 
@@ -74,5 +55,21 @@ public class OrderTable {
         if (this.empty == true) {
             throw new OrderTableException.CannotChangeNumberOfGuestsStateInEmptyException();
         }
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

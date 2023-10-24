@@ -141,7 +141,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
-            savedOrderTable.confirmTableGroup(savedTableGroup);
+            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
@@ -182,7 +182,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
-            savedOrderTable.confirmTableGroup(savedTableGroup);
+            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
@@ -213,7 +213,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
-            savedOrderTable.confirmTableGroup(savedTableGroup);
+            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable);
 
             OrderLineItem orderLineItem = new OrderLineItem(savedMenu, 1L);
@@ -242,7 +242,7 @@ class OrderServiceTest extends ServiceTest {
 
             OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
             TableGroup savedTableGroup = tableGroupRepository.save(TABLE_GROUP1());
-            savedOrderTable.confirmTableGroup(savedTableGroup);
+            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             Order order = Order.from(savedOrderTable);
             order.changeStatus(OrderStatus.COMPLETION);
 

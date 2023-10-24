@@ -13,8 +13,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
+@Sql(value = {"/h2-truncate.sql"})
 class OrderTableRepositoryTest {
 
     @Autowired
@@ -31,8 +33,8 @@ class OrderTableRepositoryTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTable orderTable1 = ORDER_TABLE1();
         final OrderTable orderTable2 = ORDER_TABLE1();
-        orderTable1.confirmTableGroup(savedTableGroup);
-        orderTable2.confirmTableGroup(savedTableGroup);
+        orderTable1.updateTableGroupId(savedTableGroup.getId());
+        orderTable2.updateTableGroupId(savedTableGroup.getId());
 
         final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
         final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
@@ -54,15 +56,8 @@ class OrderTableRepositoryTest {
         // given
         final TableGroup tableGroup = TABLE_GROUP1();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable1 = ORDER_TABLE1();
-        final OrderTable orderTable2 = ORDER_TABLE1();
-        orderTable1.confirmTableGroup(savedTableGroup);
-        orderTable2.confirmTableGroup(savedTableGroup);
 
-        final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-
-        final List<OrderTable> expectedOrderTables = List.of(savedOrderTable1, savedOrderTable2);
+        final List<OrderTable> expectedOrderTables = List.of(savedTableGroup.getOrderTables().get(0), savedTableGroup.getOrderTables().get(1));
 
         // when
         List<OrderTable> actual = orderTableRepository.findAllByTableGroupId(savedTableGroup.getId());

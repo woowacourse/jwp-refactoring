@@ -63,8 +63,8 @@ class TableGroupServiceTest extends ServiceTest {
             assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
                 softly.assertThat(response.getCreatedDate()).isNotNull();
-                softly.assertThat(orderTableResponses.get(0).getTableGroup()).isNotNull();
-                softly.assertThat(orderTableResponses.get(1).getTableGroup()).isNotNull();
+                softly.assertThat(orderTableResponses.get(0).getTableGroupId()).isNotNull();
+                softly.assertThat(orderTableResponses.get(1).getTableGroupId()).isNotNull();
             });
         }
     }
@@ -83,8 +83,8 @@ class TableGroupServiceTest extends ServiceTest {
             TableGroup tableGroup = TABLE_GROUP1();
             TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-            orderTable1.confirmTableGroup(savedTableGroup);
-            orderTable2.confirmTableGroup(savedTableGroup);
+            orderTable1.updateTableGroupId(savedTableGroup.getId());
+            orderTable2.updateTableGroupId(savedTableGroup.getId());
 
             orderTableRepository.save(orderTable1);
             orderTableRepository.save(orderTable2);
@@ -96,9 +96,9 @@ class TableGroupServiceTest extends ServiceTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(orderTables.get(0).getTableGroup()).isNull();
+                softly.assertThat(orderTables.get(0).getTableGroupId()).isNull();
                 softly.assertThat(orderTables.get(0).isEmpty()).isFalse();
-                softly.assertThat(orderTables.get(1).getTableGroup()).isNull();
+                softly.assertThat(orderTables.get(1).getTableGroupId()).isNull();
                 softly.assertThat(orderTables.get(1).isEmpty()).isFalse();
             });
         }
@@ -112,9 +112,9 @@ class TableGroupServiceTest extends ServiceTest {
 
             final TableGroup tableGroup = TABLE_GROUP1();
             final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-            orderTable1.confirmTableGroup(savedTableGroup);
-            orderTable2.confirmTableGroup(savedTableGroup);
+            
+            orderTable1.updateTableGroupId(savedTableGroup.getId());
+            orderTable2.updateTableGroupId(savedTableGroup.getId());
 
             final OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
 

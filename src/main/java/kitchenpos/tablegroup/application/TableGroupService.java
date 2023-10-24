@@ -39,7 +39,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         TableGroupValidator.validateOrderTableSize(orderTableRequests.size(), savedOrderTables.size());
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
+        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create(savedOrderTables));
         associateOrderTable(savedOrderTables, savedTableGroup);
 
         return TableGroupResponse.from(savedTableGroup);
@@ -48,7 +48,7 @@ public class TableGroupService {
     private void associateOrderTable(final List<OrderTable> savedOrderTables, final TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             TableGroupValidator.validateOrderTableStatus(savedOrderTable);
-            savedOrderTable.confirmTableGroup(savedTableGroup);
+            savedOrderTable.updateTableGroupId(savedTableGroup.getId());
             orderTableRepository.save(savedOrderTable);
         }
     }

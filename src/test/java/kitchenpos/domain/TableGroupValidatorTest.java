@@ -43,7 +43,7 @@ class TableGroupValidatorTest {
     void throws_AlreadyExistTableGroup() {
         // given
         final OrderTable orderTable = new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false);
-        orderTable.confirmTableGroup(TABLE_GROUP1());
+        orderTable.updateTableGroupId(TABLE_GROUP1().getId());
 
         // when & then
         assertThatThrownBy(() -> TableGroupValidator.validateOrderTableStatus(orderTable))
