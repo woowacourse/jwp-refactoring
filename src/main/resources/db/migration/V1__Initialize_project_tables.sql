@@ -1,101 +1,101 @@
-create table menu
+CREATE TABLE MENU
 (
-    id            bigint         not null auto_increment,
-    name          varchar(255)   not null,
-    price         decimal(19, 2) not null,
-    menu_group_id bigint         not null,
-    primary key (id)
+    ID            BIGINT         NOT NULL AUTO_INCREMENT,
+    NAME          VARCHAR(255)   NOT NULL,
+    PRICE         DECIMAL(19, 2) NOT NULL,
+    MENU_GROUP_ID BIGINT         NOT NULL,
+    PRIMARY KEY (ID)
 );
 
-create table menu_group
+CREATE TABLE MENU_GROUP
 (
-    id   bigint       not null auto_increment,
-    name varchar(255) not null,
-    primary key (id)
+    ID   BIGINT       NOT NULL AUTO_INCREMENT,
+    NAME VARCHAR(255) NOT NULL,
+    PRIMARY KEY (ID)
 );
 
-create table menu_product
+CREATE TABLE MENU_PRODUCT
 (
-    seq        bigint not null auto_increment,
-    quantity   bigint not null,
-    menu_id    bigint not null,
-    product_id bigint not null,
-    primary key (seq)
+    SEQ        BIGINT NOT NULL AUTO_INCREMENT,
+    QUANTITY   BIGINT NOT NULL,
+    MENU_ID    BIGINT NOT NULL,
+    PRODUCT_ID BIGINT NOT NULL,
+    PRIMARY KEY (SEQ)
 );
 
-create table order_line_item
+CREATE TABLE ORDER_LINE_ITEM
 (
-    seq      bigint not null auto_increment,
-    quantity bigint not null,
-    menu_id  bigint not null,
-    order_id bigint not null,
-    primary key (seq)
+    SEQ      BIGINT NOT NULL AUTO_INCREMENT,
+    QUANTITY BIGINT NOT NULL,
+    MENU_ID  BIGINT NOT NULL,
+    ORDER_ID BIGINT NOT NULL,
+    PRIMARY KEY (SEQ)
 );
 
-create table orders
+CREATE TABLE ORDERS
 (
-    id             bigint       not null auto_increment,
-    order_status   varchar(255) not null,
-    ordered_time   datetime     not null,
-    order_table_id bigint       not null,
-    primary key (id)
+    ID             BIGINT       NOT NULL AUTO_INCREMENT,
+    ORDER_STATUS   VARCHAR(255) NOT NULL,
+    ORDERED_TIME   DATETIME     NOT NULL,
+    ORDER_TABLE_ID BIGINT       NOT NULL,
+    PRIMARY KEY (ID)
 );
 
-create table order_table
+CREATE TABLE ORDER_TABLE
 (
-    id               bigint  not null auto_increment,
-    empty            bit     not null,
-    number_of_guests integer not null,
-    table_group_id   bigint,
-    primary key (id)
+    ID               BIGINT  NOT NULL AUTO_INCREMENT,
+    EMPTY            BIT     NOT NULL,
+    NUMBER_OF_GUESTS INTEGER NOT NULL,
+    TABLE_GROUP_ID   BIGINT,
+    PRIMARY KEY (ID)
 );
 
-create table product
+CREATE TABLE PRODUCT
 (
-    id    bigint         not null auto_increment,
-    name  varchar(255)   not null,
-    price decimal(19, 2) not null,
-    primary key (id)
+    ID    BIGINT         NOT NULL AUTO_INCREMENT,
+    NAME  VARCHAR(255)   NOT NULL,
+    PRICE DECIMAL(19, 2) NOT NULL,
+    PRIMARY KEY (ID)
 );
 
-create table table_group
+CREATE TABLE TABLE_GROUP
 (
-    id           bigint   not null auto_increment,
-    created_date datetime not null,
-    primary key (id)
+    ID           BIGINT   NOT NULL AUTO_INCREMENT,
+    CREATED_DATE DATETIME NOT NULL,
+    PRIMARY KEY (ID)
 );
 
-alter table menu
-    add constraint fk_menu_to_menu_group
-        foreign key (menu_group_id)
-            references menu_group (id);
+ALTER TABLE MENU
+    ADD CONSTRAINT FK_MENU_TO_MENU_GROUP
+        FOREIGN KEY (MENU_GROUP_ID)
+            REFERENCES MENU_GROUP (ID);
 
-alter table menu_product
-    add constraint fk_menu_product_to_menu
-        foreign key (menu_id)
-            references menu (id);
+ALTER TABLE MENU_PRODUCT
+    ADD CONSTRAINT FK_MENU_PRODUCT_TO_MENU
+        FOREIGN KEY (MENU_ID)
+            REFERENCES MENU (ID);
 
-alter table menu_product
-    add constraint fk_menu_product_to_product
-        foreign key (product_id)
-            references product (id);
+ALTER TABLE MENU_PRODUCT
+    ADD CONSTRAINT FK_MENU_PRODUCT_TO_PRODUCT
+        FOREIGN KEY (PRODUCT_ID)
+            REFERENCES PRODUCT (ID);
 
-alter table order_line_item
-    add constraint fk_order_line_item_to_menu
-        foreign key (menu_id)
-            references menu (id);
+ALTER TABLE ORDER_LINE_ITEM
+    ADD CONSTRAINT FK_ORDER_LINE_ITEM_TO_MENU
+        FOREIGN KEY (MENU_ID)
+            REFERENCES MENU (ID);
 
-alter table order_line_item
-    add constraint fk_order_line_item_to_orders
-        foreign key (order_id)
-            references orders (id);
+ALTER TABLE ORDER_LINE_ITEM
+    ADD CONSTRAINT FK_ORDER_LINE_ITEM_TO_ORDERS
+        FOREIGN KEY (ORDER_ID)
+            REFERENCES ORDERS (ID);
 
-alter table orders
-    add constraint fk_orders_to_order_table
-        foreign key (order_table_id)
-            references order_table (id);
+ALTER TABLE ORDERS
+    ADD CONSTRAINT FK_ORDERS_TO_ORDER_TABLE
+        FOREIGN KEY (ORDER_TABLE_ID)
+            REFERENCES ORDER_TABLE (ID);
 
-alter table order_table
-    add constraint fk_order_table_to_table_group
-        foreign key (table_group_id)
-            references table_group (id);
+ALTER TABLE ORDER_TABLE
+    ADD CONSTRAINT FK_ORDER_TABLE_TO_TABLE_GROUP
+        FOREIGN KEY (TABLE_GROUP_ID)
+            REFERENCES TABLE_GROUP (ID);

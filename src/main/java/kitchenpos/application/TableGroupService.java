@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kitchenpos.application.dto.request.CreateTableGroupRequest.CreateOrderTable;
+
 @Service
 public class TableGroupService {
     private final OrderRepository orderRepository;
@@ -33,7 +35,7 @@ public class TableGroupService {
 
     @Transactional
     public CreateTableGroupResponse create(final CreateTableGroupRequest request) {
-        final List<OrderTable> orderTableEntities = getOrderTables(request.getOrderTableIds());
+        final List<OrderTable> orderTableEntities = getOrderTables(request.getOrderTables());
         TableGroup tableGroup = TableGroup.builder()
                 .createdDate(LocalDateTime.now())
                 .orderTables(orderTableEntities)
@@ -52,10 +54,10 @@ public class TableGroupService {
                 .collect(Collectors.toList());
     }
 
-    private List<OrderTable> getOrderTables(List<Long> orderTableIds) {
+    private List<OrderTable> getOrderTables(List<CreateOrderTable> orderTableIds) {
         List<OrderTable> orderTables = new ArrayList<>();
-        for (Long orderTableId : orderTableIds) {
-            OrderTable entity = orderTableRepository.findById(orderTableId)
+        for (CreateOrderTable createOrderTable : orderTableIds) {
+            OrderTable entity = orderTableRepository.findById(createOrderTable.getId())
                     .orElseThrow(IllegalArgumentException::new);
             orderTables.add(entity);
         }

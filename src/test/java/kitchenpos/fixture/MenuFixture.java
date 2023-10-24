@@ -70,7 +70,7 @@ public class MenuFixture {
                     .id(1L)
                     .name("후라이드치킨")
                     .price(BigDecimal.valueOf(16000L))
-                    .menuGroup(MENU_GROUP.메뉴_그룹_치킨())
+                    .menuGroupId(MENU_GROUP.메뉴_그룹_치킨().getId())
                     .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
                     .build();
         }
@@ -80,7 +80,7 @@ public class MenuFixture {
                     .id(1L)
                     .name("후라이드치킨")
                     .price(BigDecimal.valueOf(price))
-                    .menuGroup(MENU_GROUP.메뉴_그룹_치킨())
+                    .menuGroupId(MENU_GROUP.메뉴_그룹_치킨().getId())
                     .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
                     .build();
         }

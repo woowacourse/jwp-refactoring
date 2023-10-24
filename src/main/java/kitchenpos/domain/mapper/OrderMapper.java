@@ -4,7 +4,6 @@ import kitchenpos.application.dto.request.CreateOrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
@@ -20,16 +19,18 @@ public class OrderMapper {
     }
 
     public Order toOrder(CreateOrderRequest request, List<OrderLineItem> orderLineItems) {
+        validate(request.getOrderTableId());
         return Order.builder()
-                .orderTable(getOrderTable(request.getOrderTableId()))
+                .orderTableId(request.getOrderTableId())
                 .orderStatus(OrderStatus.valueOf(request.getOrderStatus()))
                 .orderedTime(request.getOrderedTime())
                 .orderLineItems(orderLineItems)
                 .build();
     }
 
-    private OrderTable getOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    private void validate(Long orderTableId) {
+        if (orderTableRepository.existsById(orderTableId)) {
+            throw new IllegalArgumentException();
+        }
     }
 }

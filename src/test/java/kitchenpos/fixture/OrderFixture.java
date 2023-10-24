@@ -28,7 +28,7 @@ public class OrderFixture {
         public static Order 주문_요청_조리중() {
             return Order.builder()
                     .id(1L)
-                    .orderTable(ORDER_TABLE.주문_테이블_1())
+                    .orderTableId(ORDER_TABLE.주문_테이블_1().getId())
                     .orderStatus(OrderStatus.COOKING)
                     .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
                     .orderLineItems(getOrderLineItems(1L, 1L, 1L))
@@ -38,7 +38,7 @@ public class OrderFixture {
         public static Order 주문_요청_식사중() {
             return Order.builder()
                     .id(2L)
-                    .orderTable(ORDER_TABLE.주문_테이블_1())
+                    .orderTableId(ORDER_TABLE.주문_테이블_1().getId())
                     .orderStatus(OrderStatus.MEAL)
                     .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
                     .orderLineItems(getOrderLineItems(2L, 2L, 2L))
@@ -48,7 +48,7 @@ public class OrderFixture {
         public static Order 주문_요청_계산_완료() {
             return Order.builder()
                     .id(3L)
-                    .orderTable(ORDER_TABLE.주문_테이블_1())
+                    .orderTableId(ORDER_TABLE.주문_테이블_1().getId())
                     .orderStatus(OrderStatus.COMPLETION)
                     .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
                     .orderLineItems(getOrderLineItems(3L, 3L, 3L))
@@ -58,7 +58,7 @@ public class OrderFixture {
         public static Order 주문_요청_현재상태는(OrderStatus orderStatus) {
             return Order.builder()
                     .id(3L)
-                    .orderTable(ORDER_TABLE.주문_테이블_1())
+                    .orderTableId(ORDER_TABLE.주문_테이블_1().getId())
                     .orderStatus(orderStatus)
                     .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
                     .orderLineItems(getOrderLineItems(3L, 3L, 3L))

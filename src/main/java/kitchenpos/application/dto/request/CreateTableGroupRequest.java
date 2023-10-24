@@ -1,20 +1,27 @@
 package kitchenpos.application.dto.request;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class CreateTableGroupRequest {
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<Long> orderTableIds;
+    private List<CreateOrderTable> orderTables;
 
     private CreateTableGroupRequest() {
     }
 
-    private CreateTableGroupRequest(Long id, LocalDateTime createdDate, List<Long> orderTableIds) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTableIds = orderTableIds;
+    public static class CreateOrderTable {
+        private final long id;
+
+        public CreateOrderTable(long id) {
+            this.id = id;
+        }
+
+        public long getId() {
+            return id;
+        }
+    }
+
+    public List<CreateOrderTable> getOrderTables() {
+        return orderTables;
     }
 
     public static CreateTableGroupRequestBuilder builder() {
@@ -22,42 +29,20 @@ public class CreateTableGroupRequest {
     }
 
     public static final class CreateTableGroupRequestBuilder {
-        private Long id;
-        private LocalDateTime createdDate;
-        private List<Long> orderTableIds;
+        private List<CreateOrderTable> orderTables;
 
         private CreateTableGroupRequestBuilder() {
         }
 
-        public CreateTableGroupRequestBuilder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public CreateTableGroupRequestBuilder createdDate(LocalDateTime createdDate) {
-            this.createdDate = createdDate;
-            return this;
-        }
-
-        public CreateTableGroupRequestBuilder orderTables(List<Long> orderTableIds) {
-            this.orderTableIds = orderTableIds;
+        public CreateTableGroupRequestBuilder orderTables(List<CreateOrderTable> orderTables) {
+            this.orderTables = orderTables;
             return this;
         }
 
         public CreateTableGroupRequest build() {
-            return new CreateTableGroupRequest(id, createdDate, orderTableIds);
+            CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest();
+            createTableGroupRequest.orderTables = this.orderTables;
+            return createTableGroupRequest;
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public List<Long> getOrderTableIds() {
-        return orderTableIds;
     }
 }

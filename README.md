@@ -95,3 +95,23 @@
 | 단체 지정    | table group      | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목    | order line item  | 주문에 속하는 수량이 있는 메뉴             |
 | 매장 식사    | eat in           | 포장하지 않고 매장에서 식사하는 것           |
+
+## 요구사항
+
+### 서비스 경량화
+
+- [ ] MenuGroupService
+- [ ] MenuService
+- [ ] OrderService
+- [ ] ProductService
+- [ ] TableGroupService
+- [ ] TableService
+
+### 인수테스트 작성
+
+- [ ] menu-groups
+- [ ] menus
+- [ ] orders
+- [ ] products
+- [ ] table-groups
+- [ ] tables

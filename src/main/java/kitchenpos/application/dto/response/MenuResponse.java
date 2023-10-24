@@ -25,7 +25,7 @@ public class MenuResponse {
                 .id(menu.getId())
                 .name(menu.getName())
                 .price(menu.getPrice())
-                .menuGroupId(menu.getMenuGroup().getId())
+                .menuGroupId(menu.getMenuGroupId())
                 .menuProducts(MenuProductResponse.from(menu))
                 .build();
     }

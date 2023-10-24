@@ -40,7 +40,7 @@ public class MenuProductFixture {
         public static MenuProduct 후라이드_치킨_1마리() {
             return MenuProduct.builder()
                     .seq(1L)
-                    .product(PRODUCT.후라이드_치킨(16000L))
+                    .productId(PRODUCT.후라이드_치킨(16000L).getId())
                     .quantity(1)
                     .build();
         }

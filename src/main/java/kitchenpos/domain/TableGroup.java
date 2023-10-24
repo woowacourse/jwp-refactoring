@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ public class TableGroup {
     @Id
     private final Long id;
     private final LocalDateTime createdDate;
+    @MappedCollection(idColumn = "TABLE_GROUP_ID", keyColumn = "SEQ")
     private final List<OrderTable> orderTables;
 
     private TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {

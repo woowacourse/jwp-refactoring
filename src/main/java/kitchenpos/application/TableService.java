@@ -56,6 +56,9 @@ public class TableService {
 
     private void validateOrderStatus(Long orderTableId) {
         Order order = orderRepository.findByOrderTableId(orderTableId);
+        if (order == null) {
+            return;
+        }
         if (order.getOrderStatus() == COOKING || order.getOrderStatus() == MEAL) {
             throw new IllegalArgumentException();
         }

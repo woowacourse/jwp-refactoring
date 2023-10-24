@@ -2,7 +2,6 @@ package kitchenpos.domain.mapper;
 
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import org.springframework.stereotype.Component;
 
@@ -20,10 +19,11 @@ public class MenuMapper {
     }
 
     public Menu toMenu(final CreateMenuRequest createMenuRequest) {
+        validateMenuGroupId(createMenuRequest.getMenuGroupId());
         return Menu.builder()
                 .name(createMenuRequest.getName())
                 .price(createMenuRequest.getPrice())
-                .menuGroup(getMenuGroupById(createMenuRequest.getMenuGroupId()))
+                .menuGroupId(createMenuRequest.getMenuGroupId())
                 .menuProducts(createMenuRequest.getMenuProducts()
                         .stream()
                         .map(menuProductMapper::toMenuProduct)
@@ -31,8 +31,9 @@ public class MenuMapper {
                 .build();
     }
 
-    private MenuGroup getMenuGroupById(final Long menuGroupId) {
-        return menuGroupRepository.findById(menuGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다."));
+    private void validateMenuGroupId(Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
+        }
     }
 }

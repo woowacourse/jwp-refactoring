@@ -38,7 +38,7 @@ public class OrderTable {
     }
 
     public OrderTable fillTable() {
-        return new OrderTable(id, numberOfGuests, true);
+        return new OrderTable(id, numberOfGuests, false);
     }
 
     public OrderTable ungroup() {

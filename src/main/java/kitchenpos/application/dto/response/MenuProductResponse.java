@@ -26,7 +26,7 @@ public class MenuProductResponse {
     }
 
     private static MenuProductResponse from(Menu menu, MenuProduct menuProduct) {
-        return new MenuProductResponse(menuProduct.getSeq(), menu.getId(), menuProduct.getProduct().getId(), menuProduct.getQuantity());
+        return new MenuProductResponse(menuProduct.getSeq(), menu.getId(), menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public static MenuProductResponseBuilder builder() {

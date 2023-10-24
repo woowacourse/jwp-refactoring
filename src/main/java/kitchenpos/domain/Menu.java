@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,15 +14,16 @@ public class Menu {
     private final Long id;
     private final String name;
     private final BigDecimal price;
-    private final MenuGroup menuGroup;
+    private final Long menuGroupId;
+    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
     private final List<MenuProduct> menuProducts;
 
-    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
@@ -38,12 +40,7 @@ public class Menu {
     }
 
     public Menu updateMenuProducts(List<MenuProduct> savedMenuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct savedMenuProduct : savedMenuProducts) {
-            sum = sum.add(savedMenuProduct.getPrice());
-        }
-        validPrice(sum);
-        return new Menu(id, name, price, menuGroup, savedMenuProducts);
+        return new Menu(id, name, price, menuGroupId, savedMenuProducts);
     }
 
     public static MenuBuilder builder() {
@@ -54,7 +51,7 @@ public class Menu {
         private Long id;
         private String name;
         private BigDecimal price;
-        private MenuGroup menuGroup;
+        private Long menuGroupId;
         private List<MenuProduct> menuProducts = new ArrayList<>();
 
         private MenuBuilder() {
@@ -75,8 +72,8 @@ public class Menu {
             return this;
         }
 
-        public MenuBuilder menuGroup(MenuGroup menuGroup) {
-            this.menuGroup = menuGroup;
+        public MenuBuilder menuGroupId(Long menuGroupId) {
+            this.menuGroupId = menuGroupId;
             return this;
         }
 
@@ -86,7 +83,7 @@ public class Menu {
         }
 
         public Menu build() {
-            return new Menu(id, name, price, menuGroup, menuProducts);
+            return new Menu(id, name, price, menuGroupId, menuProducts);
         }
     }
 
@@ -102,8 +99,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
