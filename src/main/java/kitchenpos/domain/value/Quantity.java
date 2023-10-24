@@ -2,6 +2,7 @@ package kitchenpos.domain.value;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.InvalidNumberException;
 
 @Embeddable
 public class Quantity {
@@ -19,7 +20,7 @@ public class Quantity {
 
     private void validate(final long quantity){
         if(quantity < 0){
-            throw new IllegalArgumentException();
+            throw new InvalidNumberException("수량은 음수가 될 수 없습니다.");
         }
     }
 

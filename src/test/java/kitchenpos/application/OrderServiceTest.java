@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.stream.Stream;
 import kitchenpos.domain.entity.OrderLineItem;
 import kitchenpos.domain.value.Quantity;
+import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.request.order.ChangeOrderRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.EmptyTableException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,13 +53,15 @@ class OrderServiceTest extends ServiceTest {
     void create_Fail(
             final String name,
             final Long id,
-            final List<Long> products
+            final List<Long> products,
+            final Class exception,
+            final String errorMessage
     ) {
 
-
         // when
-        assertThatThrownBy(() -> orderService.create(createOrderRequest(id,products)))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(createOrderRequest(id, products)))
+                .isInstanceOf(exception)
+                .hasMessage(errorMessage);
     }
 
     private CreateOrderRequest createOrderRequest(final Long id, final List<Long> products
@@ -68,7 +73,7 @@ class OrderServiceTest extends ServiceTest {
                                     productId,
                                     productId,
                                     productId,
-                                    new Quantity(productId)
+                                    new Quantity(1L)
                             )
                     )
             );
@@ -78,10 +83,10 @@ class OrderServiceTest extends ServiceTest {
 
     private static Stream<Arguments> orderTableProvider() {
         return Stream.of(
-                Arguments.of("상품이 없는", 5L, List.of()),
-                Arguments.of("메뉴에 없는 상품", 5L, List.of(-1L)),
-                Arguments.of("빈 테이블", 1L, List.of(1L, 2L)),
-                Arguments.of("존재하지 않는", -1L, List.of(1L, 2L))
+                Arguments.of("상품이 없는", 5L, List.of(), EmptyListException.class, "아이템이 비어있습니다."),
+                Arguments.of("메뉴에 없는 상품", 5L, List.of(-1L), NoSuchDataException.class, "입력한 메뉴들이 일치하지 않습니다."),
+                Arguments.of("빈 테이블", 1L, List.of(1L, 2L), EmptyTableException.class, "비어있는 테이블의 주문은 생성할 수 없습니다."),
+                Arguments.of("존재하지 않는", -1L, List.of(1L, 2L), NoSuchDataException.class, "입력한 id의 테이블이 존재하지 않습니다.")
         );
     }
 

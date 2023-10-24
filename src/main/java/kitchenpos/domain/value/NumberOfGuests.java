@@ -2,6 +2,7 @@ package kitchenpos.domain.value;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import kitchenpos.exception.InvalidNumberException;
 
 @Embeddable
 public class NumberOfGuests {
@@ -23,7 +24,7 @@ public class NumberOfGuests {
 
     private void validate(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidNumberException("손님 수는 음수가 될 수 없습니다.");
         }
     }
 }

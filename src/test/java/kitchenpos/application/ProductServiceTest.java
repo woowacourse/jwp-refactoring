@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.product.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.exception.InvalidNumberException;
 import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,8 @@ class ProductServiceTest extends ServiceTest {
 
         // when
         assertThatThrownBy(() -> productService.create(request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidNumberException.class)
+                .hasMessage("가격은 음수가 될 수 없습니다.");
     }
 
     @DisplayName("상품 목록을 조회한다")

@@ -11,6 +11,10 @@ import kitchenpos.dto.request.table.ChangeEmptyRequest;
 import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.table.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.GroupTableException;
+import kitchenpos.exception.NoSuchDataException;
+import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -46,15 +50,15 @@ public class TableService {
 
     public OrderTableResponse changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(()-> new NoSuchDataException("해당하는 id의 테이블이 존재하지 않습니다."));
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+            throw new GroupTableException("그룹이 설정된 테이블의 상태는 변경 할 수 없습니다.");
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블의 상태는 변경 할 수 없습니다.");
         }
 
         final OrderTable orderTable = OrderTable.builder()
@@ -72,10 +76,10 @@ public class TableService {
         final NumberOfGuests numberOfGuests = new NumberOfGuests(request.getNumberOfGuests());
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(()->new NoSuchDataException("해당하는 id의 테이블이 존재하지 않습니다."));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new EmptyListException("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
         }
 
         final OrderTable orderTable = OrderTable.builder()

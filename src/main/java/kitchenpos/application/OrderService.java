@@ -13,6 +13,10 @@ import kitchenpos.dto.request.order.ChangeOrderRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
 import kitchenpos.dto.OrderLineItemsDto;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.EmptyTableException;
+import kitchenpos.exception.GroupTableException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -41,7 +45,7 @@ public class OrderService {
         final List<OrderLineItemsDto> orderLineItemDtos = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new IllegalArgumentException();
+            throw new EmptyListException("아이템이 비어있습니다.");
         }
 
         final List<Long> menuIds = orderLineItemDtos.stream()
@@ -49,14 +53,14 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new NoSuchDataException("입력한 메뉴들이 일치하지 않습니다.");
         }
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(()->new NoSuchDataException("입력한 id의 테이블이 존재하지 않습니다."));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new EmptyTableException("비어있는 테이블의 주문은 생성할 수 없습니다.");
         }
 
         final Order order = Order.builder()
@@ -101,10 +105,10 @@ public class OrderService {
 
     public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(()->new NoSuchDataException("해당하는 id의 주문이 존재하지 않습니다."));
 
         if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new GroupTableException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());

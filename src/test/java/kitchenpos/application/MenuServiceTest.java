@@ -13,6 +13,8 @@ import kitchenpos.domain.value.Quantity;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.MenuProductDto;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.NoSuchDataException;
+import kitchenpos.exception.InvalidNumberException;
 import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,12 +55,12 @@ class MenuServiceTest extends ServiceTest {
             final BigDecimal price,
             final List<Long> products,
             final Class exception,
-            final String message
+            final String errorMessage
     ) {
         // when & then
         assertThatThrownBy(() -> menuService.create(createMenuRequest(products,price,menuGroupId)))
                 .isInstanceOf(exception)
-                .hasMessage(message);
+                .hasMessage(errorMessage);
     }
 
     private CreateMenuRequest createMenuRequest(
@@ -68,7 +70,7 @@ class MenuServiceTest extends ServiceTest {
     ) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         final List<MenuProductDto> dto = new ArrayList<>();
         for (Long productId : products) {
-            dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, new Quantity(productId))));
+            dto.add(MenuProductDto.from(new MenuProduct(productId, productId, productId, new Quantity(1L))));
         }
         return ObjectCreator.getObject(CreateMenuRequest.class, "test", price, menuGroupId, dto);
     }
@@ -76,13 +78,13 @@ class MenuServiceTest extends ServiceTest {
     private static Stream<Arguments> menuParameterProvider() {
         return Stream.of(
                 Arguments.of("음수의 가격을 가진", 1L, BigDecimal.valueOf(-1), List.of(1L, 2L),
-                        IllegalArgumentException.class, null),
+                        InvalidNumberException.class, "가격은 음수가 될 수 없습니다."),
                 Arguments.of("메뉴 그룹에 속하지 않은", -1L, BigDecimal.valueOf(100), List.of(1L, 2L),
-                        IllegalArgumentException.class, null),
+                        NoSuchDataException.class, "해당하는 id의 메뉴 그룹이 없습니다."),
                 Arguments.of("없는 상품을 가진", 1L, BigDecimal.valueOf(100), List.of(-1L),
-                        IllegalArgumentException.class, null),
-                Arguments.of("없는 상품을 가진", 1L, BigDecimal.valueOf(100000000), List.of(1L),
-                        IllegalArgumentException.class, null)
+                        NoSuchDataException.class, "해당하는 id의 상품이 없습니다."),
+                Arguments.of("상품 가격의 총합보다 더 비싼", 1L, BigDecimal.valueOf(100000000), List.of(1L),
+                        InvalidNumberException.class, "상품 가격의 총합보다 메뉴가 더 비쌀 수 없습니다.")
         );
     }
 

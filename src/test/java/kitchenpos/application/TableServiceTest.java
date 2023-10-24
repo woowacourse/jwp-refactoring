@@ -9,6 +9,9 @@ import kitchenpos.dto.request.table.ChangeEmptyRequest;
 import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.table.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.exception.EmptyListException;
+import kitchenpos.exception.InvalidNumberException;
+import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,7 +78,8 @@ class TableServiceTest extends ServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(-1L, request))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchDataException.class)
+                .hasMessage("해당하는 id의 테이블이 존재하지 않습니다.");
 
     }
 
@@ -114,22 +118,24 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests_Failed(
             final String name,
             final long orderTableId,
-            final int numberOfGuests
+            final int numberOfGuests,
+            final Class exception,
+            final String errorMessage
     ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         // given
         final ChangeNumberOfGuestsRequest request = ObjectCreator.getObject(ChangeNumberOfGuestsRequest.class,
                 numberOfGuests);
 
         // when & then
-        assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(orderTableId, request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, request))
+                .isInstanceOf(exception)
+                .hasMessage(errorMessage);
     }
 
     private static Stream<Arguments> idAndEmptyAndGuestsProvider() {
         return Stream.of(
-                Arguments.of("0이하로", 1L, -1),
-                Arguments.of("없는 테이블에서", -1L, 4)
+                Arguments.of("0이하로", 1L, -1, InvalidNumberException.class, "손님 수는 음수가 될 수 없습니다."),
+                Arguments.of("없는 테이블에서", -1L, 4, NoSuchDataException.class, "해당하는 id의 테이블이 존재하지 않습니다.")
         );
     }
 
@@ -141,8 +147,8 @@ class TableServiceTest extends ServiceTest {
         final ChangeNumberOfGuestsRequest request = ObjectCreator.getObject(ChangeNumberOfGuestsRequest.class, 0);
 
         // when & then
-        assertThatThrownBy(
-                () -> tableService.changeNumberOfGuests(1L, request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
+                .isInstanceOf(EmptyListException.class)
+                .hasMessage("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
     }
 }
