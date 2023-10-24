@@ -3,8 +3,11 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.product.Product;
-import kitchenpos.dto.menu.MenuProductDto;
+import kitchenpos.dto.menu.MenuProductResponse;
+import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
@@ -53,7 +56,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest("메뉴",
             8000,
             menuGroup.getId(),
-            List.of(new MenuProductDto(null, null, product.getId(), 1L)));
+            List.of(new MenuProductRequest(product.getId(), 1L)));
 
         // when
         final MenuResponse result = menuService.create(request);
@@ -66,7 +69,7 @@ class MenuServiceTest {
             softly.assertThat(result.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
         });
 
-        final List<MenuProductDto> menuProductsResult = result.getMenuProducts();
+        final List<MenuProductResponse> menuProductsResult = result.getMenuProducts();
         assertSoftly(softly -> {
             softly.assertThat(menuProductsResult).hasSize(1);
             softly.assertThat(menuProductsResult.get(0).getMenuId()).isEqualTo(result.getId());
@@ -84,7 +87,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest("메뉴",
             8000,
             invalidMenuGroupId,
-            List.of(new MenuProductDto(null, null, product.getId(), 1L)));
+            List.of(new MenuProductRequest(product.getId(), 1L)));
 
         // when
         // then
@@ -101,7 +104,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest("메뉴",
             8000,
             menuGroup.getId(),
-            List.of(new MenuProductDto(null, null, invalidProductId, 1L)));
+            List.of(new MenuProductRequest(invalidProductId, 1L)));
 
         // when
         // then
@@ -118,7 +121,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest("메뉴",
             20000,
             menuGroup.getId(),
-            List.of(new MenuProductDto(null, null, product.getId(), 1L)));
+            List.of(new MenuProductRequest(product.getId(), 1L)));
 
         // when
         // then
@@ -130,11 +133,15 @@ class MenuServiceTest {
     @Test
     void find_all_menus() {
         // given
+        final Product product1 = productRepository.save(new Product("상품", 10000));
+        final MenuProducts menuProducts1 = new MenuProducts(List.of(new MenuProduct(product1, 1)));
         final MenuGroup menuGroup1 = menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
-        final Menu menu1 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup1.getId()));
+        final Menu menu1 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup1.getId(), menuProducts1));
 
+        final Product product2 = productRepository.save(new Product("상품", 10000));
+        final MenuProducts menuProducts2 = new MenuProducts(List.of(new MenuProduct(product2, 1)));
         final MenuGroup menuGroup2 = menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
-        final Menu menu2 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup2.getId()));
+        final Menu menu2 = menuRepository.save(new Menu("메뉴1", 8000, menuGroup2.getId(), menuProducts2));
 
         // when
         final List<MenuResponse> result = menuService.list();

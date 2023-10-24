@@ -10,8 +10,12 @@ public class Price {
 
     private static final int ZERO = 0;
 
-    @Column(nullable = false, name = "price")
+    @Column(name = "price", nullable = false)
     private BigDecimal value;
+
+    protected Price() {
+
+    }
 
     private Price(final BigDecimal value) {
         this.value = value;
@@ -20,10 +24,6 @@ public class Price {
     public static Price from(final Integer price) {
         validateValue(price);
         return new Price(new BigDecimal(price));
-    }
-
-    protected Price() {
-
     }
 
     private static void validateValue(final Integer value) {

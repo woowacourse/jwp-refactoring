@@ -3,9 +3,12 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.dto.order.OrderLineItemResponse;
 import kitchenpos.dto.order.OrderRequest;
@@ -15,6 +18,7 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.support.DataCleaner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +49,9 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private OrderService orderService;
 
     @BeforeEach
@@ -56,9 +63,11 @@ class OrderServiceTest {
     @Test
     void create_order() {
         // given
+        final Product product = productRepository.save(new Product("상품", 10000));
+        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 2)));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
-        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId()));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId(), menuProducts));
 
         final OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(),
             List.of(new OrderLineItemRequest(savedMenu.getId(), 3)));
@@ -99,9 +108,11 @@ class OrderServiceTest {
     @Test
     void create_order_fail_with_wrong_orderLineItem_count() {
         // given
+        final Product product = productRepository.save(new Product("상품", 10000));
+        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 2)));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(5));
-        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId()));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId(), menuProducts));
         final List<OrderLineItemRequest> duplicatedContainMenu = List.of(
             new OrderLineItemRequest(savedMenu.getId(), 3),
             new OrderLineItemRequest(savedMenu.getId(), 3));
@@ -119,8 +130,10 @@ class OrderServiceTest {
     void create_order_fail_with_not_found_orderTable() {
         // given
         final Long wrongOrderTableId = 0L;
+        final Product product = productRepository.save(new Product("상품", 10000));
+        final MenuProducts menuProducts = new MenuProducts(List.of(new MenuProduct(product, 2)));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId()));
+        final Menu savedMenu = menuRepository.save(new Menu("메뉴", 10000, menuGroup.getId(), menuProducts));
 
         final OrderRequest wrongOrderRequest = new OrderRequest(wrongOrderTableId,
             List.of(new OrderLineItemRequest(savedMenu.getId(), 3)));

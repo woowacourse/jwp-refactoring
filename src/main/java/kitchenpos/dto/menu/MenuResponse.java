@@ -11,13 +11,13 @@ public class MenuResponse {
     private String name;
     private Integer price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProducts;
+    private List<MenuProductResponse> menuProducts;
 
     public MenuResponse(final Long id,
                         final String name,
                         final Integer price,
                         final Long menuGroupId,
-                        final List<MenuProductDto> menuProducts) {
+                        final List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -27,15 +27,15 @@ public class MenuResponse {
 
     public static MenuResponse from(final Menu menu) {
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
-        final List<MenuProductDto> menuProductDtos = menuProducts.stream()
-            .map(MenuProductDto::from)
+        final List<MenuProductResponse> menuProductResponses = menuProducts.stream()
+            .map(MenuProductResponse::from)
             .collect(Collectors.toUnmodifiableList());
 
         return new MenuResponse(menu.getId(),
             menu.getName(),
             menu.getPrice().intValue(),
             menu.getMenuGroupId(),
-            menuProductDtos);
+            menuProductResponses);
     }
 
     public Long getId() {
@@ -54,7 +54,7 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProducts() {
+    public List<MenuProductResponse> getMenuProducts() {
         return menuProducts;
     }
 }

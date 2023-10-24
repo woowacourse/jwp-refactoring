@@ -2,24 +2,24 @@ package kitchenpos.dto.menu;
 
 import kitchenpos.domain.menu.MenuProduct;
 
-public class MenuProductDto {
+public class MenuProductResponse {
 
     private Long seq;
     private Long menuId;
     private Long productId;
     private long quantity;
 
-    public MenuProductDto(final Long seq, final Long menuId, final Long productId, final long quantity) {
+    public MenuProductResponse(final Long seq, final Long menuId, final Long productId, final long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public static MenuProductDto from(final MenuProduct menuProduct) {
-        return new MenuProductDto(menuProduct.getSeq(),
+    public static MenuProductResponse from(final MenuProduct menuProduct) {
+        return new MenuProductResponse(menuProduct.getSeq(),
             menuProduct.getMenu().getId(),
-            menuProduct.getProductId(),
+            menuProduct.getProduct().getId(),
             menuProduct.getQuantity());
     }
 
