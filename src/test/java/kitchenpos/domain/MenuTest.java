@@ -1,34 +1,66 @@
 package kitchenpos.domain;
 
+import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 class MenuTest {
 
-    @Test
-    void 메뉴_상품들_가격_합보다_크면_예외가_발생한다() {
-        //given
-        Map<Product, Integer> 메뉴_상품들 =
-                Map.of(new Product(1L, "상품", Money.of(10_000)), 2,
-                        new Product(2L, "상품", Money.of(3_000)), 5
-                );
+    @Nested
+    class 메뉴_상품리스트를_변경할_때 {
 
-        int 가격_합 = 메뉴_상품들.entrySet()
-                .stream().mapToInt(entry -> entry.getKey().getPrice().getValue().intValue() * entry.getValue())
-                .sum();
+        @Test
+        void 메뉴_상품들_가격_합보다_크면_예외가_발생한다() {
+            //given
+            Map<Product, Integer> 메뉴_상품들 =
+                    Map.of(new Product(1L, "상품", Money.of(10_000)), 2,
+                            new Product(2L, "상품", Money.of(3_000)), 5
+                    );
 
-        Money 합보다_큰_가격 = Money.of(가격_합 + 1);
-        Menu 메뉴 = Menu.of( "메뉴", 합보다_큰_가격, null, Map.of(new Product("상품", Money.of(30_000)), 2));
+            int 가격_합 = 메뉴_상품들.entrySet()
+                    .stream().mapToInt(entry -> entry.getKey().getPrice().getValue().intValue() * entry.getValue())
+                    .sum();
 
-        //expect
-        assertThatThrownBy(() -> 메뉴.changeMenuProducts(메뉴_상품들))
-                .isInstanceOf(IllegalArgumentException.class);
+            Money 합보다_큰_가격 = Money.of(가격_합 + 1);
+            Menu 메뉴 = Menu.of("메뉴", 합보다_큰_가격, null, Map.of(new Product("상품", Money.of(30_000)), 2));
+
+            //expect
+            assertThatThrownBy(() -> 메뉴.changeMenuProducts(메뉴_상품들))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 리스트가_비어있으면_예외가_발생한다() {
+            //given
+            Map<Product, Integer> 메뉴_상품들 = Map.of();
+            Menu 메뉴 = new Menu(null, "메뉴", Money.of(10_000), null,
+                    List.of(mock(MenuProduct.class), mock(MenuProduct.class)));
+            //expect
+            assertThatThrownBy(() -> 메뉴.changeMenuProducts(메뉴_상품들))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 리스트가_null이면_예외가_발생한다() {
+            //given
+            Map<Product, Integer> 메뉴_상품들 = null;
+            Menu 메뉴 = new Menu(null, "메뉴", Money.of(10_000), null,
+                    List.of(mock(MenuProduct.class), mock(MenuProduct.class)));
+
+            //expect
+            assertThatThrownBy(() -> 메뉴.changeMenuProducts(메뉴_상품들))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
     }
 
     @Test
@@ -44,10 +76,11 @@ class MenuTest {
     @Test
     void id가_같으면_동등하다() {
         //given
-        Menu 메뉴 = new Menu(1L, "메뉴", Money.of(10_000), 1L);
+        Menu 메뉴 = new Menu(1L, "메뉴", Money.of(10_000), 1L, List.of(mock(MenuProduct.class), mock(MenuProduct.class)));
 
         //when
-        boolean actual = 메뉴.equals(new Menu(1L, "다른메뉴", Money.of(10_000), 1L));
+        boolean actual = 메뉴.equals(
+                new Menu(1L, "다른메뉴", Money.of(10_000), 1L, List.of(mock(MenuProduct.class), mock(MenuProduct.class))));
 
         //then
         assertThat(actual).isTrue();

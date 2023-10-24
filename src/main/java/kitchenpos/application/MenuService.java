@@ -38,13 +38,7 @@ public class MenuService {
         if (!menuGroupRepository.existsById(command.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
-
-        final List<CreateMenuProductCommand> menuProductCommands = command.getMenuProducts();
-        if (menuProductCommands.isEmpty()) {
-            throw new IllegalArgumentException("메뉴에는 최소 한 개 이상의 상품이 포함되어야 합니다.");
-        }
-
-        final Map<Product, Integer> productToQuantity = findProductWithQuantity(menuProductCommands);
+        final Map<Product, Integer> productToQuantity = findProductWithQuantity(command.getMenuProducts());
         final Menu menu = Menu.of(command.getName(), new Money(command.getPrice()), command.getMenuGroupId(),
                 productToQuantity);
         return MenuDto.from(menuRepository.save(menu));
