@@ -126,7 +126,8 @@ class MenuServiceTest {
         // when
         // then
         assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("메뉴 금액은 상품들의 금액 합보다 클 수 없습니다.");
     }
 
     @DisplayName("전체 메뉴를 조회할 수 있다.")

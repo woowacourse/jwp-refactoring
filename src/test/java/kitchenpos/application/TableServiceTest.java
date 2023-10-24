@@ -113,7 +113,8 @@ class TableServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블에 테이블 그룹이 존재하면 주문 테이블의 상태를 변경할 수 없다.")
@@ -127,7 +128,8 @@ class TableServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(alreadyContainedOrderTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 테이블 그룹에 속한 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블의 상태가 COOKING이거나 MEAL인 경우 주문 테이블의 상태를 변경할 수 없다.")
@@ -141,7 +143,8 @@ class TableServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("요리중이거나 식사중인 주문 테이블은 상태를 변경할 수 없습니다.");
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
@@ -171,7 +174,8 @@ class TableServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), wrongRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("변경할 손님 수는 음수이면 안됩니다.");
     }
 
     @DisplayName("주문 테이블이 존재하지 않는 경우 손님 수를 변경할 수 없다.")
@@ -184,7 +188,8 @@ class TableServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongOrderTableId, request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블이 비어있으면 손님 수를 변경할 수 없다.")
@@ -197,6 +202,7 @@ class TableServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage( "주문테이블이 비어있는 상태이면 손님 수를 변경할 수 없습니다.");
     }
 }

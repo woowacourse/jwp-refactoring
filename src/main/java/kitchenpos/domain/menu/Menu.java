@@ -54,7 +54,7 @@ public class Menu {
 
     private void validateOverPrice(final Price price, final BigDecimal productSumPrice) {
         if (price.isBigger(productSumPrice)) {
-            throw new IllegalArgumentException("메뉴 금액은 상품의 합보다 클 수 없습니다.");
+            throw new IllegalArgumentException("메뉴 금액은 상품들의 금액 합보다 클 수 없습니다.");
         }
     }
 

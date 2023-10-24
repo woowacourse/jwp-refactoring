@@ -102,7 +102,8 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.create(wrongOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("메뉴없이 주문은 할 수 없습니다.");
     }
 
     @DisplayName("주문 상품의 개수와 주문 내역의 개수가 다르면 주문을 생성할 수 없다.")
@@ -123,7 +124,8 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.create(wrongOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않은 메뉴로 주문을 할 수 없습니다.");
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 주문을 생성할 수 없다.")
@@ -142,7 +144,8 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.create(wrongOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블이 비어있으면 주문을 생성할 수 없다.")
@@ -158,7 +161,8 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.create(wrongOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("메뉴없이 주문은 할 수 없습니다.");
     }
 
     @DisplayName("전체 주문을 조회할 수 있다.")
@@ -206,7 +210,8 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않는 주문입니다.");
     }
 
     @DisplayName("주문 상태가 COMPLETION이면 주문 상태를 변경할 수 없다.")
@@ -223,6 +228,7 @@ class OrderServiceTest {
         // when
         // then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 Completion인 상태인 경우 주문 테이블의 상태를 변경할 수 없습니다.");
     }
 }

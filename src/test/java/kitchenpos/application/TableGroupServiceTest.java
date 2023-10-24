@@ -84,12 +84,14 @@ class TableGroupServiceTest {
     @ParameterizedTest
     void create_tableGroup_fail_with_table_cont_0_or_1(final List<OrderTableIdRequest> orderTableIds) {
         // given
+        orderTableRepository.save(new OrderTable(4));
         final TableGroupRequest wrongRequest = new TableGroupRequest(orderTableIds);
 
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.create(wrongRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("테이블 그룹할 주문 테이블은 2개 이상이어야 합니다.");
     }
 
     private static Stream<Arguments> getOrderTable() {
@@ -111,7 +113,8 @@ class TableGroupServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.create(wrongRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("실제 존재하지 않은 주문 테이블이 포함되어 있습니다.");
     }
 
     @DisplayName("비어있지 않는 주문 테이블이있다면 주문 테이블 그룹을 생성할 수 없다.")
@@ -127,7 +130,8 @@ class TableGroupServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.create(wrongRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 포함된 주문 테이블은 새로운 테이블 그룹에 속할 수 없습니다.");
     }
 
     @DisplayName("이미 다른 테이블 그룹에 포함된 주문 테이블이있다면 테이블 그룹을 생성할 수 없다.")
@@ -146,7 +150,8 @@ class TableGroupServiceTest {
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.create(wrongRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 포함된 주문 테이블은 새로운 테이블 그룹에 속할 수 없습니다.");
     }
 
     @Transactional
@@ -183,23 +188,25 @@ class TableGroupServiceTest {
         });
     }
 
-    @Transactional
     @DisplayName("주문 정보의 상태가 COOKING 혹은 MEAL이면 주문 테이블 그룹에서 주문 테이블을 분리할 수 없다.")
     @Test
     void ungroup_fail_with_table_order_status_COOKING_and_MEAL() {
         // given
         final TableGroup tableGroup = TableGroup.forSave();
         tableGroupRepository.save(tableGroup);
-        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(5));
-        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(4));
-        orderRepository.save(new Order(orderTable1.getId(), new OrderLineItems(List.of())));
-        orderRepository.save(new Order(orderTable2.getId(), new OrderLineItems(List.of())));
+        final OrderTable orderTable1 = new OrderTable(5);
+        final OrderTable orderTable2 = new OrderTable(4);
         tableGroup.addOrderTable(orderTable1);
         tableGroup.addOrderTable(orderTable2);
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
+        orderRepository.save(new Order(orderTable1.getId(), new OrderLineItems(List.of())));
+        orderRepository.save(new Order(orderTable2.getId(), new OrderLineItems(List.of())));
 
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("현재 요리중이거나 식사 중인 경우 그룹해제를 할 수 없습니다.");
     }
 }

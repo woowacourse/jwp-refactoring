@@ -44,6 +44,9 @@ public class TableGroupService {
 
     private OrderTables getOrderTables(final List<Long> orderTableIds) {
         final List<OrderTable> orderTables = orderTableRepository.findAllById(orderTableIds);
+        if (orderTables.size() != orderTableIds.size()) {
+            throw new IllegalArgumentException("실제 존재하지 않은 주문 테이블이 포함되어 있습니다.");
+        }
         return new OrderTables(orderTables);
     }
 
