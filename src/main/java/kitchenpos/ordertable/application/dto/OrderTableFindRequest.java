@@ -2,7 +2,10 @@ package kitchenpos.ordertable.application.dto;
 
 public class OrderTableFindRequest {
 
-    private final Long id;
+    private Long id;
+
+    private OrderTableFindRequest() {
+    }
 
     public OrderTableFindRequest(final Long id) {
         this.id = id;

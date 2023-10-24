@@ -9,7 +9,10 @@ public class TableGroupCreateRequest {
 
     @Size(min = 2)
     @NotEmpty
-    private final List<OrderTableFindRequest> orderTables;
+    private List<OrderTableFindRequest> orderTables;
+
+    private TableGroupCreateRequest() {
+    }
 
     public TableGroupCreateRequest(final List<OrderTableFindRequest> orderTables) {
         this.orderTables = orderTables;

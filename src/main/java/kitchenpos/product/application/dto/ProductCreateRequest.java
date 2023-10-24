@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 public class ProductCreateRequest {
 
-    private final String name;
+    private String name;
 
-    private final BigDecimal price;
+    private BigDecimal price;
+
+    private ProductCreateRequest() {
+    }
 
     public ProductCreateRequest(final String name, final BigDecimal price) {
         this.name = name;

@@ -5,10 +5,13 @@ import javax.validation.constraints.NotEmpty;
 
 public class OrderCreateRequest {
 
-    private final Long orderTableId;
+    private Long orderTableId;
 
     @NotEmpty
-    private final List<OrderLineItemRequest> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItems;
+
+    private OrderCreateRequest() {
+    }
 
     public OrderCreateRequest(final Long orderTableId, final List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
