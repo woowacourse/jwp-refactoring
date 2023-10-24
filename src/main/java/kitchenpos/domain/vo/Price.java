@@ -30,8 +30,8 @@ public class Price {
         return new Price();
     }
 
-    public Price multiply(final long number) {
-        return new Price(value.multiply(BigDecimal.valueOf(number)));
+    public Price multiply(final long multiplier) {
+        return new Price(value.multiply(BigDecimal.valueOf(multiplier)));
     }
 
     public Price add(final Price price) {
