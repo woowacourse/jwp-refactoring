@@ -10,12 +10,12 @@ public class MenuGroupName {
     @Column(name = "name", nullable = false)
     private String value;
 
+    protected MenuGroupName() {
+    }
+
     public MenuGroupName(final String value) {
         validate(value);
         this.value = value.strip();
-    }
-
-    protected MenuGroupName() {
     }
 
     private void validate(final String value) {

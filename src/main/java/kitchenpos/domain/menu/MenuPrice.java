@@ -13,6 +13,7 @@ public class MenuPrice {
 
     protected MenuPrice() {
     }
+
     public MenuPrice(final BigDecimal value) {
         validate(value);
         this.value = value;

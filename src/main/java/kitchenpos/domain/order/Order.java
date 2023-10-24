@@ -2,6 +2,7 @@ package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -37,7 +38,7 @@ public class Order {
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
 
-    @JoinColumn(name = "ordered_time", nullable = false, updatable = false)
+    @Column(name = "ordered_time", nullable = false, updatable = false)
     private LocalDateTime orderedTime;
 
     protected Order() {

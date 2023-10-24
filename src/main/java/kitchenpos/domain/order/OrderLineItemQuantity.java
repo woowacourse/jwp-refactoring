@@ -10,7 +10,7 @@ public class OrderLineItemQuantity {
     @Column(name = "quantity", nullable = false)
     private Long value;
 
-    public OrderLineItemQuantity() {
+    protected OrderLineItemQuantity() {
     }
 
     public OrderLineItemQuantity(final Long value) {

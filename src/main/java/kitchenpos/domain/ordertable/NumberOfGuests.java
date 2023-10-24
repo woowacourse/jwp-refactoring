@@ -10,7 +10,7 @@ public class NumberOfGuests {
     @Column(name = "number_of_guests")
     private Integer value;
 
-    public NumberOfGuests() {
+    protected NumberOfGuests() {
     }
 
     public NumberOfGuests(final Integer value) {
