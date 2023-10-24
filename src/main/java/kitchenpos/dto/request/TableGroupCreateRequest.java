@@ -2,7 +2,6 @@ package kitchenpos.dto.request;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dto.IdForRequest;
 
 public class TableGroupCreateRequest {
 
