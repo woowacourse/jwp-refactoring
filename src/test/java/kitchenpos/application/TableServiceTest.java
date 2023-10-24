@@ -5,13 +5,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Stream;
-import kitchenpos.dto.request.table.ChangeEmptyRequest;
-import kitchenpos.dto.request.table.ChangeNumberOfGuestsRequest;
-import kitchenpos.dto.request.table.CreateOrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.table.dto.request.ChangeEmptyRequest;
+import kitchenpos.table.dto.request.ChangeNumberOfGuestsRequest;
+import kitchenpos.table.dto.request.CreateOrderTableRequest;
+import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.exception.EmptyListException;
 import kitchenpos.exception.InvalidNumberException;
 import kitchenpos.exception.NoSuchDataException;
+import kitchenpos.table.service.TableService;
 import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

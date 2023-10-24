@@ -6,12 +6,15 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import kitchenpos.dto.request.tablegroup.CreateTableGroupRequest;
-import kitchenpos.dto.request.tablegroup.OrderTableRequest;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.table.dto.request.OrderTableRequest;
+import kitchenpos.table.dto.response.OrderTableResponse;
+import kitchenpos.table.dto.response.TableGroupResponse;
 import kitchenpos.exception.EmptyTableException;
 import kitchenpos.exception.InvalidOrderStateException;
+import kitchenpos.table.service.TableGroupService;
+import kitchenpos.table.service.TableService;
 import kitchenpos.util.ObjectCreator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,9 +45,14 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when
         final TableGroupResponse actual = tableGroupService.create(request);
+        final List<OrderTableResponse> orderTables = tableService.list();
 
         // then
-        assertThat(actual.getOrderTables()).hasSize(2);
+        assertSoftly(softly ->
+                orderTables.stream()
+                .filter(orderTable -> orderTable.getId().equals(1L) || orderTable.getId().equals(2L))
+                .forEach(orderTable -> softly.assertThat(orderTable.getTableGroupId()).isEqualTo(actual.getId()))
+        );
     }
 
     @DisplayName("2개 미만의 테이블 그룹 생성에 실패한다")

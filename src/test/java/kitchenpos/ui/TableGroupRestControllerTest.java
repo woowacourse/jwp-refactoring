@@ -12,11 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.entity.OrderTable;
-import kitchenpos.domain.entity.TableGroup;
-import kitchenpos.dto.request.tablegroup.CreateTableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.table.service.TableGroupService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.dto.request.CreateTableGroupRequest;
+import kitchenpos.table.dto.response.TableGroupResponse;
+import kitchenpos.table.ui.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +48,10 @@ class TableGroupRestControllerTest {
 
         final CreateTableGroupRequest request = getObject(CreateTableGroupRequest.class, 1L, orderTables);
 
-        final TableGroup tableGroup = new TableGroup(1L, now(), orderTables);
+        final TableGroup tableGroup = new TableGroup(1L, now());
 
         when(tableGroupService.create(any()))
-                .thenReturn(TableGroupResponse.from(tableGroup));
+                .thenReturn(TableGroupResponse.from(tableGroup,orderTables));
 
         // when & then
         mockMvc.perform(post("/api/table-groups")

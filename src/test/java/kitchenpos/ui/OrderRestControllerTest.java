@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.entity.OrderStatus.COOKING;
+import static kitchenpos.order.domain.type.OrderStatus.COOKING;
 import static kitchenpos.util.ObjectCreator.getObject;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -14,11 +14,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import kitchenpos.application.OrderService;
-import kitchenpos.domain.entity.Order;
-import kitchenpos.dto.request.order.ChangeOrderRequest;
-import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.order.service.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.dto.request.ChangeOrderRequest;
+import kitchenpos.order.dto.request.CreateOrderRequest;
+import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.order.ui.OrderRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
