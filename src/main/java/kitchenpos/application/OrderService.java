@@ -12,11 +12,9 @@ import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -35,29 +33,17 @@ public class OrderService {
     }
 
     public Order create(final OrderCreateRequest orderCreateRequest) {
+        orderCreateRequest.validate();
+
+        final OrderTable orderTable = getOrderTable(orderCreateRequest);
+
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItemCreateRequests();
 
-        if (CollectionUtils.isEmpty(orderLineItemCreateRequests)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItemCreateRequests.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemCreateRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
+        if (orderLineItemCreateRequests.size() != menuRepository.countByIdIn(orderCreateRequest.getMenuIds())) {
             throw new IllegalArgumentException();
         }
 
         Order order = new Order(orderTable, new ArrayList<>());
-
 
         for (final OrderLineItemCreateRequest orderLineItem : orderLineItemCreateRequests) {
             Menu menu = menuRepository.findById(orderLineItem.getMenuId())
@@ -69,6 +55,17 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    private OrderTable getOrderTable(OrderCreateRequest orderCreateRequest) {
+        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return orderTable;
+    }
+
+    @Transactional(readOnly = true)
     public List<Order> list() {
         return orderRepository.findAll();
     }
