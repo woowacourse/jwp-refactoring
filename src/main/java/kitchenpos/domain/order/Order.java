@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import static javax.persistence.CascadeType.PERSIST;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
@@ -16,8 +18,6 @@ import javax.persistence.Table;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.InvalidOrderException;
 import kitchenpos.exception.InvalidOrderStatusException;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 @Table(name = "orders")
 @Entity
@@ -35,8 +35,7 @@ public class Order {
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
-    @Cascade(CascadeType.PERSIST)
-    @OneToMany(mappedBy = "order", orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems;
 
     @Column(name = "ordered_time", nullable = false, updatable = false)

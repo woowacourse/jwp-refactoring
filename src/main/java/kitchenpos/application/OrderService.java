@@ -38,12 +38,7 @@ public class OrderService {
     @Transactional
     public Order create(final OrderCreateRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-                                                          .map(
-                                                                  orderLineItemCreateRequest -> new OrderLineItem(
-                                                                          findMenuById(orderLineItemCreateRequest),
-                                                                          orderLineItemCreateRequest.getQuantity()
-                                                                  )
-                                                          )
+                                                          .map(this::createOrderLineItem)
                                                           .collect(Collectors.toList());
 
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
@@ -51,6 +46,11 @@ public class OrderService {
 
         final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
         return orderDao.save(order);
+    }
+
+    private OrderLineItem createOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
+        final Menu menu = findMenuById(orderLineItemCreateRequest);
+        return new OrderLineItem(menu, orderLineItemCreateRequest.getQuantity());
     }
 
     private Menu findMenuById(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
