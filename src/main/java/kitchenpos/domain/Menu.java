@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.util.BigDecimalUtil;
 
 public class Menu {
@@ -58,6 +59,26 @@ public class Menu {
 
     public void addMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts.addAll(menuProducts);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Menu menu = (Menu) o;
+        if (Objects.isNull(this.id) || Objects.isNull(menu.id)) {
+            return false;
+        }
+        return Objects.equals(id, menu.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static class Builder {

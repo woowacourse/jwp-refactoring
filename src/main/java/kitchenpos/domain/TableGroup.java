@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroup {
@@ -53,5 +54,25 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return new ArrayList<>(orderTables);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TableGroup tableGroup = (TableGroup) o;
+        if (Objects.isNull(this.id) || Objects.isNull(tableGroup.id)) {
+            return false;
+        }
+        return Objects.equals(id, tableGroup.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

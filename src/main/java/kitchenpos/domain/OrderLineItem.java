@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 public class OrderLineItem {
 
     private Long seq;
@@ -34,4 +36,23 @@ public class OrderLineItem {
         return quantity;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final OrderLineItem orderLineItem = (OrderLineItem) o;
+        if (Objects.isNull(this.seq) || Objects.isNull(orderLineItem.seq)) {
+            return false;
+        }
+        return Objects.equals(seq, orderLineItem.seq);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seq);
+    }
 }
