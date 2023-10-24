@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import java.math.BigDecimal;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -38,5 +40,9 @@ public class MenuProduct {
 
     public Product getProduct() {
         return product;
+    }
+
+    public BigDecimal calculatedPrice () {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 }

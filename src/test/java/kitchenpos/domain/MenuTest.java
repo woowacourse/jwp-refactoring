@@ -34,7 +34,7 @@ class MenuTest {
         assertThat(menu.getName()).isEqualTo(menuName);
         assertThat(menu.getPrice()).isEqualByComparingTo(menuPrice);
         assertThat(menu.getMenuGroup()).isEqualTo(menuGroup);
-        assertThat(menu.getMenuProducts()).hasSize(2);
+        assertThat(menu.getMenuProducts().getMenuProducts()).hasSize(2);
     }
 
     @Test
