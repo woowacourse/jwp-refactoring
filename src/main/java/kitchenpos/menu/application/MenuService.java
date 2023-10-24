@@ -6,7 +6,6 @@ import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
 import org.springframework.stereotype.Service;
@@ -31,15 +30,11 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuCreateRequest request) {
-        List<MenuProduct> menuProducts = request.getMenuProducts()
-                .stream()
-                .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
-                .collect(Collectors.toList());
         Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
                 menuGroupRepository.getById(request.getMenuGroupId()),
-                menuProducts
+                request.toMenuProducts()
         );
         menu.register(menuValidator);
         return MenuResponse.from(menuRepository.save(menu));
