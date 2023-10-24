@@ -38,7 +38,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupDto create(final TableGroupDto tableGroupDto) {
         final List<OrderTableDto> orderTableDtos = tableGroupDto.getOrderTables();
-        final List<OrderTable> savedOrderTables = findAndValidateOrderTables(orderTableDtos);
+        final List<OrderTable> savedOrderTables = findOrderTables(orderTableDtos);
 
         final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
@@ -46,15 +46,22 @@ public class TableGroupService {
         return TableGroupDto.from(savedTableGroup);
     }
 
-    private List<OrderTable> findAndValidateOrderTables(final List<OrderTableDto> orderTableDtos) {
+    private List<OrderTable> findOrderTables(final List<OrderTableDto> orderTableDtos) {
         final List<Long> orderTableIds = orderTableDtos.stream()
             .map(OrderTableDto::getId)
             .collect(Collectors.toList());
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateRequestTableAlreadySaved(orderTableDtos, savedOrderTables);
+        return savedOrderTables;
+    }
+
+    private static void validateRequestTableAlreadySaved(
+        final List<OrderTableDto> orderTableDtos,
+        final List<OrderTable> savedOrderTables
+    ) {
         if (orderTableDtos.size() != savedOrderTables.size()) {
             throw new TableGroupException(ORDER_TABLE_IS_NOT_PRESENT_ALL);
         }
-        return savedOrderTables;
     }
 
     @Transactional
@@ -76,6 +83,7 @@ public class TableGroupService {
             .findByOrderTableIdIn(orderTableIds)
             .stream()
             .anyMatch(Order::isNotAlreadyCompletion);
+
         if (orderStatusIsNotCompletion) {
             throw new OrderException(OrderExceptionType.ORDER_IS_NOT_COMPLETION);
         }
