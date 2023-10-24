@@ -42,8 +42,7 @@ public class TableRestController {
             @RequestBody final UpdateOrderTableEmptyRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, request))
-                ;
+                .body(tableService.changeEmpty(orderTableId, request));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
@@ -52,7 +51,6 @@ public class TableRestController {
             @RequestBody final UpdateOrderTableGuestsRequest request
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, request))
-                ;
+                .body(tableService.changeNumberOfGuests(orderTableId, request));
     }
 }

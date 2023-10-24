@@ -17,7 +17,7 @@ public class OrderTableFixture {
         public static CreateOrderTableRequest 주문_테이블_생성_요청_3명() {
             return CreateOrderTableRequest.builder()
                     .numberOfGuests(3)
-                    .empty(true)
+                    .empty(false)
                     .build();
         }
 

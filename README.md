@@ -112,6 +112,6 @@
 - [ ] menu-groups
 - [ ] menus
 - [ ] orders
-- [ ] products
+- [x] products
 - [ ] table-groups
-- [ ] tables
+- [x] tables
