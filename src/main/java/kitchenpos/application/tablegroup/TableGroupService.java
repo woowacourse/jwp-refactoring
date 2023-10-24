@@ -38,17 +38,7 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        TableGroup tableGroup = mapToTableGroup(savedOrderTables);
+        TableGroup tableGroup = mapToTableGroup(savedOrderTables, orderTableIds.size());
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
@@ -63,8 +53,8 @@ public class TableGroupService {
         return savedTableGroup;
     }
 
-    private TableGroup mapToTableGroup(List<OrderTable> orderTables) {
-        return TableGroup.of(orderTables);
+    private TableGroup mapToTableGroup(List<OrderTable> orderTables, int requestSize) {
+        return TableGroup.of(orderTables, requestSize);
     }
 
     @Transactional

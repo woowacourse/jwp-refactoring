@@ -5,6 +5,7 @@ import kitchenpos.domain.order.OrderTable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TableGroup {
     private Long id;
@@ -22,8 +23,28 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public static TableGroup of(List<OrderTable> orderTables) {
+    public static TableGroup of(List<OrderTable> orderTables, int requestSize) {
+        validateOrderTables(orderTables, requestSize);
         return new TableGroup(null, LocalDateTime.now(), new ArrayList<>(orderTables));
+    }
+
+    private static void validateOrderTables(List<OrderTable> orderTables, int requestSize) {
+        validateSize(orderTables, requestSize);
+        validateEmptyOrNull(orderTables);
+    }
+
+    private static void validateSize(List<OrderTable> orderTables, int requestSize) {
+        if (orderTables.size() != requestSize) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void validateEmptyOrNull(List<OrderTable> orderTables) {
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     public Long getId() {
