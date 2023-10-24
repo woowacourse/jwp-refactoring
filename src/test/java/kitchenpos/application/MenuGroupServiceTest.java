@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,11 @@ import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-@Import({MenuGroupService.class, JdbcTemplateMenuGroupDao.class})
+@Import(MenuGroupService.class)
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Autowired
     private MenuGroupService menuGroupService;
 
@@ -25,16 +25,15 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         // given
-        MenuGroup expected = new MenuGroup();
-        expected.setName("메뉴 그룹");
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest("메뉴 그룹");
 
         // when
-        MenuGroup actual = menuGroupService.create(expected);
+        MenuGroup actual = menuGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(menuGroupDao.findById(actual.getId())).isPresent();
-            softly.assertThat(actual.getName()).isEqualTo(expected.getName());
+            softly.assertThat(menuGroupRepository.findById(actual.getId())).isPresent();
+            softly.assertThat(actual.getName()).isEqualTo(request.getName());
         });
     }
 
@@ -42,14 +41,11 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void list() {
         // given
-        MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setName("두마리메뉴");
+        MenuGroupCreateRequest 두마리메뉴_그룹_생성_요청 = new MenuGroupCreateRequest("두마리메뉴");
+        MenuGroupCreateRequest 한마리메뉴_그룹_생성_요청 = new MenuGroupCreateRequest("두마리메뉴");
 
-        MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup2.setName("한마리메뉴");
-
-        MenuGroup 한마리메뉴 = menuGroupService.create(menuGroup1);
-        MenuGroup 두마리메뉴 = menuGroupService.create(menuGroup2);
+        MenuGroup 한마리메뉴 = menuGroupService.create(한마리메뉴_그룹_생성_요청);
+        MenuGroup 두마리메뉴 = menuGroupService.create(두마리메뉴_그룹_생성_요청);
 
         // when
         List<MenuGroup> list = menuGroupService.list();
