@@ -22,7 +22,7 @@ class OrderTest {
     class ChangeOrderStatus {
 
         @Test
-        @DisplayName("성공적으로 바꾼다..")
+        @DisplayName("성공적으로 바꾼다.")
         void success() {
             final Order order = new Order(1L, OrderStatus.MEAL, LocalDateTime.now(), Map.of());
 
