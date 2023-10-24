@@ -18,8 +18,8 @@ public class Menu {
 
     private static final int MINIMUM_VALUE = 0;
 
-    @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Id
     private Long id;
 
     @Column(nullable = false)
