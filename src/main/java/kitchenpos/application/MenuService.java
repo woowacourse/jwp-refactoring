@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
@@ -32,7 +33,6 @@ public class MenuService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -44,7 +44,6 @@ public class MenuService {
 
     private List<MenuProduct> createMenuProducts(final MenuRequest menuRequest) {
         final Map<Long, Product> products = findProducts(menuRequest);
-
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             final Product product = products.get(menuProductRequest.getProductId());
@@ -52,7 +51,6 @@ public class MenuService {
             final MenuProduct menuProduct = new MenuProduct(null, product, quantity);
             menuProducts.add(menuProduct);
         }
-
         return menuProducts;
     }
 
@@ -66,9 +64,9 @@ public class MenuService {
                 .collect(Collectors.toMap(Product::getId, product -> product));
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
-
         return menus.stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());

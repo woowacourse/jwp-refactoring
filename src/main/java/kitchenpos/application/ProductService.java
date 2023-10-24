@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
@@ -18,16 +19,13 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
-        final Product product = productRequest.convert();
-
-        product.validatePrice();
-
+        final Product product = new Product(productRequest.getName(), productRequest.getPrice());
         final Product savedProduct = productRepository.save(product);
         return ProductResponse.from(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         final List<Product> allProducts = productRepository.findAll();
         return allProducts.stream()
