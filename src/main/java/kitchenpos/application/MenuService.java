@@ -5,7 +5,6 @@ import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.ui.request.MenuCreateRequest;
 import kitchenpos.ui.response.MenuResponse;
@@ -35,9 +34,6 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
-
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
                 .map(it -> new MenuProduct(
                                 productRepository.findById(it.getProductId()).get(),
@@ -49,39 +45,13 @@ public class MenuService {
                 new Menu(
                         request.getName(),
                         request.getPrice(),
-                        menuGroup,
+                        menuGroupRepository.findById(request.getMenuGroupId()).get(),
                         menuProducts
                 )
         );
 
-        menuProducts.forEach(it -> it.setMenu(savedMenu));
-        final List<MenuProduct> savedMenuProducts = menuProductRepository.saveAll(menuProducts);
-        savedMenu.updateMenuProducts(savedMenuProducts);
-
+        savedMenu.updateMenuProducts(menuProducts);
         return MenuResponse.from(savedMenu);
-    }
-
-    @Transactional
-    public Menu create2(final MenuCreateRequest request) {
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-                .map(it -> new MenuProduct(
-                        productRepository.findById(it.getProductId()).get(),
-                        it.getQuantity())
-                )
-                .collect(Collectors.toList());
-
-        final Menu savedMenu = menuRepository.save(
-                new Menu(
-                        request.getName(),
-                        request.getPrice(),
-                        menuGroup,
-                        menuProducts
-                )
-        );
-        return savedMenu;
     }
 
     public List<MenuResponse> list() {
