@@ -13,8 +13,4 @@ public class OrderStatusChangeRequest {
     public String getOrderStatus() {
         return orderStatus;
     }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
 }
