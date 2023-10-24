@@ -46,7 +46,7 @@ public class OrderLineItem extends BaseDate {
         return menuId;
     }
 
-    public Long getSeq() {
+    public Long getSeq() { 
         return seq;
     }
 

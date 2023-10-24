@@ -57,16 +57,8 @@ public class MenuProduct extends BaseDate {
         return product;
     }
 
-    public void setProduct(final Product productId) {
-        this.product = productId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     @Override
