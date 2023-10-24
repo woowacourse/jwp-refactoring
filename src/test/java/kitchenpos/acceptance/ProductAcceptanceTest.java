@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -16,9 +17,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 class ProductAcceptanceTest extends AcceptanceTest {
 
     @Test
-    void 프로덕트를_생성한다() {
+    void 상품을_생성한다() {
         // given
-        Product product = new Product("김치찌개", new BigDecimal("10000.00"));
+        ProductCreateRequest product = new ProductCreateRequest("김치찌개", BigDecimal.valueOf(10000));
 
         // when
         ExtractableResponse<Response> response = RestAssured.given()
@@ -41,9 +42,9 @@ class ProductAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 가격이_음수인_프로덕트_생성_요청시_예외_발생() {
+    void 가격이_음수인_상품_생성_요청시_예외_발생() {
         // given
-        Product product = new Product("김치찌개", new BigDecimal("-3"));
+        ProductCreateRequest product = new ProductCreateRequest("김치찌개", BigDecimal.valueOf(-3));
 
         ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
@@ -61,9 +62,9 @@ class ProductAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    void 프로덕트_전체_목록을_조회한다() {
+    void 상품_전체_목록을_조회한다() {
         // given
-        Product product = new Product("김치찌개", new BigDecimal("10000.0"));
+        ProductCreateRequest product = new ProductCreateRequest("김치찌개", BigDecimal.valueOf(10000));
 
         RestAssured.given()
                 .log().all()
@@ -93,6 +94,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
         List<Product> actual = response.jsonPath().getList("", Product.class);
 
         assertThat(actual).usingRecursiveComparison().ignoringFields("id")
-                .isEqualTo(List.of(product));
+                .isEqualTo(List.of(new Product("김치찌개", new BigDecimal("10000.0"))));
     }
 }
