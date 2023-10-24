@@ -1,8 +1,6 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.order.OrderStatus;
-import kitchenpos.order.persistence.OrderRepository;
 import kitchenpos.order.request.OrderTableCreateRequest;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.persistence.OrderTableRepository;
@@ -12,11 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderTableService {
 
-    private final OrderRepository orderRepository;
+    private final OrderTableValidator orderTableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderTableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableService(OrderTableValidator orderTableValidator, OrderTableRepository orderTableRepository) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -29,7 +27,7 @@ public class OrderTableService {
     public OrderTable changeEmpty(Long orderTableId, boolean changedStatus) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-        validateIsCompletionOrder(orderTableId);
+        orderTableValidator.validateChangeEmpty(orderTableId);
         savedOrderTable.changeEmpty(changedStatus);
         return orderTableRepository.save(savedOrderTable);
     }
@@ -44,12 +42,5 @@ public class OrderTableService {
 
     public List<OrderTable> list() {
         return orderTableRepository.findAll();
-    }
-
-    private void validateIsCompletionOrder(Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
-            List.of(OrderStatus.MEAL, OrderStatus.COOKING))) {
-            throw new IllegalArgumentException("주문이 완료된 테이블만 상태를 변경할 수 있습니다.");
-        }
     }
 }
