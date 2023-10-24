@@ -85,8 +85,8 @@ class MenuServiceTest {
             // then
             final Menu 예상_메뉴 = new Menu(null, "메뉴", new Price(BigDecimal.valueOf(22000, 2)),
                     new MenuGroup("양념 반 후라이드 반"), null);
-            final MenuProduct 예상_메뉴_상품1 = new MenuProduct(예상_메뉴, 메뉴_상품_1.getProduct(), 메뉴_상품_1.getQuantity());
-            final MenuProduct 예상_메뉴_상품2 = new MenuProduct(예상_메뉴, 메뉴_상품_2.getProduct(), 메뉴_상품_2.getQuantity());
+            final MenuProduct 예상_메뉴_상품1 = new MenuProduct(null, 예상_메뉴, 메뉴_상품_1.getProduct(), 메뉴_상품_1.getQuantity());
+            final MenuProduct 예상_메뉴_상품2 = new MenuProduct(null, 예상_메뉴, 메뉴_상품_2.getProduct(), 메뉴_상품_2.getQuantity());
             final MenuCreateResponse 예상_응답값 = MenuCreateResponse.of(
                     new Menu(null, "메뉴", new Price(BigDecimal.valueOf(22000, 2)), new MenuGroup("양념 반 후라이드 반"),
                             new MenuProducts(List.of(예상_메뉴_상품1, 예상_메뉴_상품2)))
@@ -188,15 +188,15 @@ class MenuServiceTest {
         // then
         final Menu 예상_메뉴1 = new Menu(null, "메뉴", new Price(BigDecimal.valueOf(22000, 2)), new MenuGroup("양념 반 후라이드 반"),
                 null);
-        final MenuProduct 예상_메뉴_상품1 = new MenuProduct(예상_메뉴1, 메뉴_상품_1.getProduct(), 메뉴_상품_1.getQuantity());
-        final MenuProduct 예상_메뉴_상품2 = new MenuProduct(예상_메뉴1, 메뉴_상품_2.getProduct(), 메뉴_상품_2.getQuantity());
+        final MenuProduct 예상_메뉴_상품1 = new MenuProduct(null, 예상_메뉴1, 메뉴_상품_1.getProduct(), 메뉴_상품_1.getQuantity());
+        final MenuProduct 예상_메뉴_상품2 = new MenuProduct(null, 예상_메뉴1, 메뉴_상품_2.getProduct(), 메뉴_상품_2.getQuantity());
         final MenuCreateResponse 예상_메뉴1_응답값 = MenuCreateResponse.of(
                 new Menu(null, "메뉴", new Price(BigDecimal.valueOf(22000, 2)), new MenuGroup("양념 반 후라이드 반"),
                         new MenuProducts(List.of(예상_메뉴_상품1, 예상_메뉴_상품2)))
         );
         final Menu 예상_메뉴2 = new Menu(null, "메뉴2", new Price(BigDecimal.valueOf(24000, 2)), new MenuGroup("양념 2개"),
                 null);
-        final MenuProduct 예상_메뉴2_상품1 = new MenuProduct(예상_메뉴2, 저장된_양념_치킨, 2);
+        final MenuProduct 예상_메뉴2_상품1 = new MenuProduct(null, 예상_메뉴2, 저장된_양념_치킨, 2);
         final MenuCreateResponse 예상_메뉴2_응답값 = MenuCreateResponse.of(
                 new Menu(null, "메뉴2", new Price(BigDecimal.valueOf(24000, 2)), new MenuGroup("양념 2개"),
                         new MenuProducts(List.of(예상_메뉴2_상품1)))
