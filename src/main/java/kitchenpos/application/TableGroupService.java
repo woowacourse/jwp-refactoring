@@ -35,7 +35,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = getOrderTables(request.getOrderTables());
         TableGroup tableGroup = new TableGroup(savedOrderTables);
         updateOrderTables(tableGroup, savedOrderTables);
-        return tableGroup;
+        return tableGroupRepository.save(tableGroup);
     }
     
     private List<OrderTable> getOrderTables(final List<Long> OrderTableIds) {
@@ -46,13 +46,10 @@ public class TableGroupService {
     }
     
     private void updateOrderTables(final TableGroup tableGroup, final List<OrderTable> savedOrderTables) {
-        final List<OrderTable> orderTables = savedOrderTables.stream()
-                                                             .map(orderTable -> new OrderTable(orderTable.getId(),
-                                                                     tableGroup,
-                                                                     orderTable.getNumberOfGuests(),
-                                                                     orderTable.isEmpty()))
-                                                             .collect(Collectors.toList());
-        orderTableRepository.saveAll(orderTables);
+        savedOrderTables.forEach(orderTable -> new OrderTable(orderTable.getId(),
+                tableGroup,
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()));
     }
     
     @Transactional
@@ -60,10 +57,12 @@ public class TableGroupService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                                                     .orElseThrow(() -> new NotExistTableGroupException("존재하지 않는 단체 테이블입니다"));
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        final List<List<Order>> ordersInTables = orderTables.stream()
+        final List<List<Order>> ordersInEachTable = orderTables.stream()
                                                             .map(orderTable -> orderRepository.findAllByOrderTableId(orderTable.getId()))
                                                             .collect(Collectors.toList());
-        tableGroup.ungroup(orderTables, ordersInTables);
-        tableGroupRepository.save(tableGroup);
+        tableGroup.validateIfUngroupAvailable(ordersInEachTable);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.detachFromTableGroup();
+        }
     }
 }

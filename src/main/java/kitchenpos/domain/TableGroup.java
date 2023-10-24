@@ -59,7 +59,7 @@ public class TableGroup {
                                                     .map(OrderTable::getId)
                                                     .collect(Collectors.toList());
         final Set<Long> notDuplicatedOrderTableIds = new HashSet<>(orderTableIds);
-        if (!notDuplicatedOrderTableIds.containsAll(orderTableIds)) {
+        if (notDuplicatedOrderTableIds.size() != orderTableIds.size()) {
             throw new InvalidTableGroupException("같은 테이블은 단체 테이블로 만들 수 없습니다");
         }
         
@@ -81,22 +81,17 @@ public class TableGroup {
         }
     }
     
-    public void ungroup(List<OrderTable> orderTables, List<List<Order>> ordersInTables) {
+    public void validateIfUngroupAvailable(List<List<Order>> ordersInTables) {
         for (List<Order> orders : ordersInTables) {
             validateIfOrdersOfTableCompleted(orders);
         }
-        this.orderTables = orderTables.stream()
-                                      .map(orderTable -> new OrderTable(null,
-                                              orderTable.getNumberOfGuests(),
-                                              false))
-                                      .collect(Collectors.toList());
     }
     
     private void validateIfOrdersOfTableCompleted(final List<Order> orders) {
         boolean isOrderOfTableInProgress = orders.stream()
                                                  .anyMatch(order -> order.getOrderStatus() != COMPLETION);
         if (isOrderOfTableInProgress) {
-            throw new InvalidTableGroupUngroupException("테이블의 주문 상태가 COOKING 혹은 MEAL이면 단체 테이블을 해제할 수 없습니다");
+            throw new InvalidTableGroupUngroupException("단체 테이블에 속하는 테이블의 주문 상태가 COOKING 혹은 MEAL이면 단체 테이블을 해제할 수 없습니다");
         }
     }
     
