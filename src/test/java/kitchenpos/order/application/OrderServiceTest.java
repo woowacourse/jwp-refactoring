@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.application.dto.request.CreateOrderRequest;
 import kitchenpos.order.application.dto.request.OrderLineItemRequest;
 import kitchenpos.order.application.dto.request.UpdateOrderStatusRequest;
@@ -15,13 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -35,10 +34,6 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
-    private Menu chicken = new Menu(1L,
-            "chicken",
-            BigDecimal.TEN,
-            1L);
     @Mock
     private OrderRepository orderRepository;
     @Mock
@@ -150,7 +145,6 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_변경한다() {
         // given
-        OrderTable orderTable = new OrderTable(1L, 3, false);
         Order order = new Order(1L, LocalDateTime.now());
         order.changeOrderStatus(OrderStatus.MEAL);
 
@@ -158,6 +152,6 @@ class OrderServiceTest {
                 .willReturn(Optional.of(order));
 
         // when
-        orderService.changeOrderStatus(1L, new UpdateOrderStatusRequest("COMPLETION"));
+        assertDoesNotThrow(() -> orderService.changeOrderStatus(1L, new UpdateOrderStatusRequest("COMPLETION")));
     }
 }
