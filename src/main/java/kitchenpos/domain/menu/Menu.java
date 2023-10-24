@@ -60,12 +60,16 @@ public class Menu {
     public void addMenuProducts(final MenuProducts toAddMenuProducts) {
         final Price sum = toAddMenuProducts.getPriceSumOfProducts();
 
-        if (price.compareTo(sum) > 0) {
+        if (isMenuPriceGreaterThan(sum)) {
             throw new IllegalArgumentException();
         }
 
         toAddMenuProducts.getMenuProducts().forEach(menuProduct -> menuProduct.changeMenu(this));
         this.menuProducts.addAll(toAddMenuProducts.getMenuProducts());
+    }
+
+    private boolean isMenuPriceGreaterThan(final Price sum) {
+        return price.compareTo(sum) > 0;
     }
 
     public Long getId() {

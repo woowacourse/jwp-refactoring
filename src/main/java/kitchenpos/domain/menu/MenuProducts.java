@@ -5,7 +5,6 @@ import kitchenpos.domain.common.Price;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +30,8 @@ public class MenuProducts {
 
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = menuProduct.getProduct();
-            sum = sum.add(product.getPrice().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            final Price productPrice = product.getPrice();
+            sum = sum.add(productPrice.multiply(menuProduct.getQuantity()));
         }
 
         return sum;

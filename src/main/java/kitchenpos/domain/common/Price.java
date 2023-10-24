@@ -35,12 +35,18 @@ public class Price {
         return ZERO;
     }
 
-    public Price add(final BigDecimal price) {
-        return new Price(this.price.add(price));
+    public Price add(final Price price) {
+        return new Price(this.price.add(price.price));
     }
 
     public int compareTo(final Price target) {
         return price.compareTo(target.getPrice());
+    }
+
+    public Price multiply(final long quantity) {
+        final BigDecimal result = price.multiply(BigDecimal.valueOf(quantity));
+
+        return new Price(result);
     }
 
     public BigDecimal getPrice() {
