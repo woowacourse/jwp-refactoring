@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdDate;
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();

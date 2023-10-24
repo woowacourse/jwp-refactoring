@@ -32,13 +32,14 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_table_id"))
     private OrderTable orderTable;
-    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
     @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime orderedTime;
     @Embedded
     private OrderLineItems orderLineItems = new OrderLineItems();

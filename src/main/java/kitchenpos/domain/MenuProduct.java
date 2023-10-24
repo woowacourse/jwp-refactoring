@@ -16,11 +16,11 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"))
     private Menu menu;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_menu_product_to_product"))
     private Product product;
     @Column(nullable = false)
     private long quantity;

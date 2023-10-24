@@ -15,10 +15,10 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))
     private Order order;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_to_menu"))
     private Menu menu;
     @Column(nullable = false)
