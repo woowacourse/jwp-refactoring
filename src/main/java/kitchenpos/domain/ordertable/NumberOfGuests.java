@@ -7,7 +7,7 @@ import kitchenpos.exception.InvalidGuestNumberException;
 @Embeddable
 public class NumberOfGuests {
 
-    @Column(name = "number_of_guests")
+    @Column(name = "number_of_guests", nullable = false)
     private Integer value;
 
     protected NumberOfGuests() {

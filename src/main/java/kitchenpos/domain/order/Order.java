@@ -28,10 +28,11 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_table_id")
+    @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
     @Cascade(CascadeType.PERSIST)

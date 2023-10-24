@@ -24,19 +24,18 @@ public class OrderTable {
     @Id
     private Long id;
 
+    @Column(name = "empty", nullable = false)
+    private Boolean empty;
+
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
     @ManyToOne
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     @OneToMany(mappedBy = "orderTable")
     private List<Order> order;
-
-
-    @Embedded
-    private NumberOfGuests numberOfGuests;
-
-    @Column(name = "empty", nullable = false)
-    private Boolean empty;
 
     protected OrderTable() {
     }

@@ -15,10 +15,10 @@ public class OrderLineItem {
     @Id
     private Long seq;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Menu menu;
 
     @Embedded

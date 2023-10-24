@@ -17,7 +17,7 @@ public class TableGroup {
     @Id
     private Long id;
 
-    @OneToMany
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     @Column(name = "created_date", nullable = false, updatable = false)
