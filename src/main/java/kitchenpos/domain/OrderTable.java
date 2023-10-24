@@ -45,6 +45,17 @@ public class OrderTable extends BaseDate {
         notEmpty();
     }
 
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("[ERROR] 손님의 숫자는 항상 0보다 커야 합니다.");
+        }
+        if (isEmpty()) {
+            throw new IllegalArgumentException("[ERROR] 빈 테이블의 손님 수는 변경할 수 없습니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public void ungroup() {
         if (orders.stream().anyMatch(OrderTable::canUngroupOrChangeEmpty)) {
             throw new IllegalArgumentException("[ERROR] 조리중이거나, 식사중인 테이블은 그룹을 해제할 수 없습니다.");
