@@ -1,43 +1,37 @@
 package kitchenpos.application;
 
-import kitchenpos.application.fixture.ProductServiceFixture;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
-class ProductServiceTest extends ProductServiceFixture {
+class ProductServiceTest {
 
-    @InjectMocks
-    ProductService productService;
+    @Autowired
+    private ProductService productService;
 
-    @Mock
-    ProductDao productDao;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     void 상품을_등록한다() {
         // given
-        given(productDao.save(any(Product.class))).willReturn(저장된_상품);
-
-        final Product product = new Product(상품_이름, 상품_가격);
+        final Product product = ProductFixture.상품_생성();
 
         // when
         final Product actual = productService.create(product);
@@ -46,7 +40,7 @@ class ProductServiceTest extends ProductServiceFixture {
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual.getId()).isPositive();
             softAssertions.assertThat(actual).usingRecursiveComparison()
-                          .isEqualTo(저장된_상품);
+                          .isEqualTo(product);
         });
     }
 
@@ -54,7 +48,7 @@ class ProductServiceTest extends ProductServiceFixture {
     @NullSource
     void 상품_등록시_가격이_null이라면_예외를_반환한다(BigDecimal price) {
         // given
-        final Product product = new Product(상품_이름, price);
+        final Product product = new Product(ProductFixture.상품명, price);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -64,7 +58,8 @@ class ProductServiceTest extends ProductServiceFixture {
     @Test
     void 상품_등록시_가격이_음수라면_예외를_반환한다() {
         // given
-        final Product product = new Product(상품_이름, 상품_가격이_음수);
+        final BigDecimal negative_price = BigDecimal.valueOf(-10_000);
+        final Product product = new Product(ProductFixture.상품명, negative_price);
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -74,7 +69,7 @@ class ProductServiceTest extends ProductServiceFixture {
     @Test
     void 상품_목록을_조회한다() {
         // given
-        given(productDao.findAll()).willReturn(저장된_상품들);
+        final List<Product> products = productRepository.saveAll(ProductFixture.상품들_생성(3));
 
         // when
         final List<Product> actual = productService.list();
@@ -83,9 +78,11 @@ class ProductServiceTest extends ProductServiceFixture {
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
             softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
-                          .isEqualTo(저장된_상품1);
+                          .isEqualTo(products.get(0));
             softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
-                          .isEqualTo(저장된_상품2);
+                          .isEqualTo(products.get(1));
+            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
+                          .isEqualTo(products.get(2));
         });
     }
 }
