@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -51,6 +52,10 @@ public class Order {
     }
 
     public Order() {
+    }
+
+    public boolean canChangeOrderStatus() {
+        return !Objects.equals(orderStatus, OrderStatus.COMPLETION.name());
     }
 
     public Long getId() {
