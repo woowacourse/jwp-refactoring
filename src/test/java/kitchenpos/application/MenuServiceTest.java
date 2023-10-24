@@ -112,7 +112,12 @@ class MenuServiceTest {
         // given
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct menuProduct = new MenuProduct(persistProduct, 1);
+        final MenuProduct menuProduct = new MenuProduct(
+                persistProduct.getId(),
+                persistProduct.price(),
+                persistProduct.name(),
+                1L
+        );
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), persistMenuGroup);
         final Menu expected = menuRepository.save(menu);
 

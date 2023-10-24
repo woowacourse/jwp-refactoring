@@ -46,7 +46,7 @@ public class MenuProducts {
 
     private static Price calculateTotalMenuProductPrice(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-                           .map(menuProduct -> menuProduct.productPrice().times(menuProduct.getQuantity()))
+                           .map(MenuProduct::calculateMenuProductPrice)
                            .reduce(Price.ZERO, Price::plus);
     }
 

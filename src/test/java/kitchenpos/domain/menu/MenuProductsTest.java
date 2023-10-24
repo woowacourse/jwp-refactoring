@@ -24,7 +24,7 @@ class MenuProductsTest {
     void of_메서드는_유효한_데이터를_전달하면_menuProducts를_초기화한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product, 1L);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
 
@@ -43,7 +43,7 @@ class MenuProductsTest {
     void of_메서드는_menuProducts가_비어_있으면_예외가_발생한다(final List<MenuProduct> invalidMenuProducts) {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product, 1L);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
 
@@ -56,8 +56,8 @@ class MenuProductsTest {
     void of_메서드는_menuProducts의_가격보다_menu의_가격이_클_경우_예외가_발생한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct validMenuProduct = new MenuProduct(product, 5L);
-        final MenuProduct invalidMenuProduct = new MenuProduct(product, 1L);
+        final MenuProduct validMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 5L);
+        final MenuProduct invalidMenuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Menu menu = Menu.of("메뉴", new BigDecimal("30"), List.of(validMenuProduct), menuGroup);
 

@@ -13,7 +13,7 @@ public class ReadMenuProductResponse {
     public ReadMenuProductResponse(final Menu menu, final MenuProduct menuProduct) {
         this.seq = menuProduct.getSeq();
         this.menuId = menu.getId();
-        this.productId = menuProduct.getProduct().getId();
+        this.productId = menuProduct.getProductId();
         this.quantity = menuProduct.getQuantity();
     }
 

@@ -22,7 +22,7 @@ class MenuTest {
     void of_메서드는_유효한_값을_전달하면_Menu를_초기화한다() {
         // given
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product, 1L);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         // when & then
@@ -34,7 +34,7 @@ class MenuTest {
     void of_메서드는_메뉴의_가격보다_메뉴_상품의_총_가격이_작으면_예외가_발생한다() {
         // given
         final Product product = new Product("상품", BigDecimal.ONE);
-        final MenuProduct menuProduct = new MenuProduct(product, 1L);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
 
         // when & then

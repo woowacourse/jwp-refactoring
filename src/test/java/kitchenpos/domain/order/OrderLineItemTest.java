@@ -7,7 +7,6 @@ import java.util.List;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -22,7 +21,7 @@ class OrderLineItemTest {
         // given
         final MenuGroup menuGroup = new MenuGroup("메뉴 그룹");
         final Product product = new Product("상품", BigDecimal.TEN);
-        final MenuProduct menuProduct = new MenuProduct(product, 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getId(), product.price(), product.name(), 1L);
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup);
 
         // when & then

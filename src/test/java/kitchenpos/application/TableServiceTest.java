@@ -160,7 +160,12 @@ class TableServiceTest {
     private Menu persistMenu() {
         final MenuGroup persistMenuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
         final Product persistProduct = productRepository.save(new Product("상품", BigDecimal.TEN));
-        final MenuProduct persistMenuProduct = new MenuProduct(persistProduct, 1);
+        final MenuProduct persistMenuProduct = new MenuProduct(
+                persistProduct.getId(),
+                persistProduct.price(),
+                persistProduct.name(),
+                1L
+        );
         final Menu menu = Menu.of(
                 "메뉴",
                 BigDecimal.TEN,

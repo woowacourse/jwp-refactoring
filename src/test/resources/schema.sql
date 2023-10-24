@@ -16,10 +16,12 @@ create table menu_group
 
 create table menu_product
 (
-    seq        bigint not null auto_increment,
-    quantity   bigint not null,
-    menu_id    bigint not null,
-    product_id bigint not null,
+    seq        bigint         not null auto_increment,
+    quantity   bigint         not null,
+    menu_id    bigint         not null,
+    product_id bigint         not null,
+    name       varchar(255)   not null,
+    price      decimal(19, 2) not null,
     primary key (seq)
 );
 

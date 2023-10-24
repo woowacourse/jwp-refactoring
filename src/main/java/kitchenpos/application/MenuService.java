@@ -50,7 +50,13 @@ public class MenuService {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
                                               .orElseThrow(ProductNotFoundException::new);
 
-            menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));
+            final MenuProduct menuProduct = new MenuProduct(
+                    product.getId(),
+                    product.price(),
+                    product.name(),
+                    menuProductRequest.getQuantity()
+            );
+            menuProducts.add(menuProduct);
         }
 
         return menuProducts;
