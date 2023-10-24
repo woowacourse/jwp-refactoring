@@ -1,7 +1,7 @@
 package kitchenpos.order.application;
 
-import kitchenpos.common.event.listener.MenuEventListener;
-import kitchenpos.common.event.listener.OrderTableEventListener;
+import kitchenpos.common.event.message.ValidatorMenuExist;
+import kitchenpos.common.event.message.ValidatorOrderTable;
 import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.application.dto.OrderUpdateRequest;
@@ -11,6 +11,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.exception.OrderLineItemEmptyException;
 import kitchenpos.order.exception.OrderNotFoundException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,19 +22,17 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MenuEventListener menuEventListener;
-    private final OrderTableEventListener orderTableEventListener;
+    private final ApplicationEventPublisher publisher;
 
-    public OrderService(final OrderRepository orderRepository, final MenuEventListener menuEventListener, final OrderTableEventListener orderTableEventListener) {
+    public OrderService(final OrderRepository orderRepository, final ApplicationEventPublisher publisher) {
         this.orderRepository = orderRepository;
-        this.menuEventListener = menuEventListener;
-        this.orderTableEventListener = orderTableEventListener;
+        this.publisher = publisher;
     }
 
     @Transactional
     public Order create(final OrderCreateRequest req) {
         validateOrderLineItemsEmpty(req);
-        orderTableEventListener.validateOrderTable(req.getOrderTableId());
+        publisher.publishEvent(new ValidatorOrderTable(req.getOrderTableId()));
 
         List<OrderLineItem> orderLineItems = makeOrderLineItems(req.getOrderLineItems());
         validateOrderLineItemEmpty(req, orderLineItems);
@@ -52,7 +51,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         orderLineItemRequests.forEach(orderLineItemRequest -> {
-            menuEventListener.validateMenuExist(orderLineItemRequest.getMenuId());
+            publisher.publishEvent(new ValidatorMenuExist(orderLineItemRequest.getMenuId()));
             orderLineItems.add(orderLineItemRequest.toDomain());
         });
 

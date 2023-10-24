@@ -1,7 +1,9 @@
 package kitchenpos.common.event.listener;
 
+import kitchenpos.common.event.message.ValidatorMenuExist;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.exception.MenuNotFoundException;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,8 +15,9 @@ public class MenuEventListener {
         this.menuService = menuService;
     }
 
-    public void validateMenuExist(final Long menuId) {
-        if (!menuService.isExistMenuById(menuId)) {
+    @EventListener
+    private void validateMenuExist(final ValidatorMenuExist validatorMenuExist) {
+        if (!menuService.isExistMenuById(validatorMenuExist.getMenuId())) {
             throw new MenuNotFoundException();
         }
     }

@@ -1,8 +1,10 @@
 package kitchenpos.common.event.listener;
 
+import kitchenpos.common.event.message.ValidatorOrderTable;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.exception.OrderTableEmptyException;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +16,10 @@ public class OrderTableEventListener {
         this.tableService = tableService;
     }
 
-    public void validateOrderTable(final Long orderTableId) {
+    @EventListener
+    private void validateOrderTable(final ValidatorOrderTable validatorOrderTable) {
+        Long orderTableId = validatorOrderTable.getOrderTableId();
+
         validateOrderTableExistById(orderTableId);
         validateOrderTableEmptyById(orderTableId);
     }
