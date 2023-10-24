@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest {
 
     @Autowired
