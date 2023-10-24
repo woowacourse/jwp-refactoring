@@ -38,13 +38,12 @@ public class OrderService {
     public OrderResponse create(OrderCreateRequest request) {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems()
                 .stream()
-                .map(it ->
-                        menuSnapShotCreator.create(
-                                menuRepository.getById(it.getMenuId()), it.getQuantity()
-                        )).collect(Collectors.toList());
-        return OrderResponse.from(orderRepository.save(
-                new Order(request.getOrderTableId(), orderLineItems, orderValidator)
-        ));
+                .map(it -> menuSnapShotCreator.create(
+                        menuRepository.getById(it.getMenuId()), it.getQuantity()
+                )).collect(Collectors.toList());
+        Order order = new Order(request.getOrderTableId(), orderLineItems);
+        order.place(orderValidator);
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     public List<OrderResponse> list() {

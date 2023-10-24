@@ -48,15 +48,14 @@ class OrderTest {
             // given
             given(orderTableRepository.getById(1L))
                     .willReturn(new OrderTable(1, true));
+            Order order = new Order(
+                    1L,
+                    List.of()
+            );
 
             // when & then
-            assertThatThrownBy(() ->
-                    new Order(
-                            1L,
-                            List.of(),
-                            orderValidator
-                    )
-            ).isInstanceOf(OrderException.class)
+            assertThatThrownBy(() -> order.place(orderValidator))
+                    .isInstanceOf(OrderException.class)
                     .hasMessage("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
         }
 
@@ -65,15 +64,16 @@ class OrderTest {
             // given
             given(orderTableRepository.getById(1L))
                     .willReturn(new OrderTable(1, true));
+            Order order = new Order(
+                    1L,
+                    List.of(
+                            new OrderLineItem(menuSnapshot, 10)
+                    )
+            );
 
             // when & then
-            assertThatThrownBy(() ->
-                    new Order(
-                            1L,
-                            List.of(
-                                    new OrderLineItem(menuSnapshot, 10)
-                            ), orderValidator)
-            ).isInstanceOf(OrderException.class)
+            assertThatThrownBy(() -> order.place(orderValidator))
+                    .isInstanceOf(OrderException.class)
                     .hasMessage("비어있는 테이블에서는 주문할 수 없습니다.");
         }
 
@@ -82,15 +82,15 @@ class OrderTest {
             // given
             given(orderTableRepository.getById(1L))
                     .willReturn(new OrderTable(1, false));
+            Order order = new Order(
+                    1L,
+                    List.of(
+                            new OrderLineItem(menuSnapshot, 10)
+                    )
+            );
 
             // when & then
-            assertDoesNotThrow(() ->
-                    new Order(
-                            1L,
-                            List.of(
-                                    new OrderLineItem(menuSnapshot, 10)
-                            ), orderValidator)
-            );
+            assertDoesNotThrow(() -> order.place(orderValidator));
         }
     }
 
@@ -100,15 +100,13 @@ class OrderTest {
         @Test
         void 결제되지_않은_주문의_상태를_변경한다() {
             // given
-            // given
             given(orderTableRepository.getById(1L))
                     .willReturn(new OrderTable(1, false));
-
             Order order = new Order(
                     1L,
                     List.of(
                             new OrderLineItem(menuSnapshot, 10)
-                    ), orderValidator);
+                    ));
 
             // when
             order.setOrderStatus(COMPLETION.name());
@@ -120,7 +118,6 @@ class OrderTest {
         @Test
         void 이미_결제_완료된_주문은_상태를_변경할_수_없다() {
             // given
-            // given
             given(orderTableRepository.getById(1L))
                     .willReturn(new OrderTable(1, false));
 
@@ -128,7 +125,7 @@ class OrderTest {
                     1L,
                     List.of(
                             new OrderLineItem(menuSnapshot, 10)
-                    ), orderValidator);
+                    ));
             order.setOrderStatus(COMPLETION.name());
 
             // when & then

@@ -14,11 +14,20 @@ public class OrderValidator {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public void validateCreate(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public void validatePlace(Long orderTableId, List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new OrderException("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
         }
         if (orderTableRepository.getById(orderTableId).isEmpty()) {
+            throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
+        }
+    }
+
+    public void validatePlace(Order order) {
+        if (CollectionUtils.isEmpty(order.getOrderLineItems())) {
+            throw new OrderException("주문 목록이 비어있는 경우 주문하실 수 없습니다.");
+        }
+        if (orderTableRepository.getById(order.getOrderTableId()).isEmpty()) {
             throw new OrderException("비어있는 테이블에서는 주문할 수 없습니다.");
         }
     }

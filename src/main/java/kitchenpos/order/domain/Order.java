@@ -34,16 +34,15 @@ public class Order {
     protected Order() {
     }
 
-    public Order(
-            Long orderTableId,
-            List<OrderLineItem> orderLineItems,
-            OrderValidator orderValidator
-    ) {
-        orderValidator.validateCreate(orderTableId, orderLineItems);
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+    }
+
+    public void place(OrderValidator orderValidator) {
+        orderValidator.validatePlace(this);
     }
 
     public void setOrderStatus(String orderStatus) {
@@ -68,7 +67,6 @@ public class Order {
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
-
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
