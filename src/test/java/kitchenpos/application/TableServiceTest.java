@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.dto.OrderTableRequest;
+import kitchenpos.domain.dto.OrderTableResponse;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -17,9 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import support.fixture.OrderBuilder;
 import support.fixture.TableBuilder;
-import support.fixture.TableGroupBuilder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,13 +55,14 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 생성한다.")
     void createTest() {
         // given
-        final OrderTable table = new TableBuilder().build();
+        final OrderTableRequest request = new OrderTableRequest(null, 0, true);
 
         // when
-        final OrderTable expect = tableService.create(table);
+        final OrderTableResponse expect = tableService.create(request);
 
         // then
-        final OrderTable actual = orderTableRepository.findById(expect.getId()).get();
+        final OrderTable orderTable = orderTableRepository.findById(expect.getId()).get();
+        final OrderTableResponse actual = OrderTableResponse.from(orderTable);
 
         assertThat(actual)
                 .usingRecursiveComparison()
@@ -72,17 +74,18 @@ class TableServiceTest {
     @DisplayName("주문 테이블 목록을 조회한다.")
     void listTest(final List<OrderTable> tables) {
         // given
-        final List<OrderTable> expect = orderTableRepository.findAll();
-        expect.addAll(tables);
-
         orderTableRepository.saveAll(tables);
 
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
+        final List<OrderTableResponse> expect = orderTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
+
         // when & then
-        final List<OrderTable> actual = tableService.list();
+        final List<OrderTableResponse> actual = tableService.list();
 
         assertThat(actual)
                 .usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(expect);
     }
 
@@ -95,31 +98,10 @@ class TableServiceTest {
         void should_throw_when_table_does_not_exists() {
             // given
             final long notExistsTableId = -1L;
-            final OrderTable notExistsTable = new TableBuilder().build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(notExistsTableId, notExistsTable));
-        }
-
-        @Test
-        @DisplayName("Table의 그룹 id가 존재할 경우 IllegalArgumentException이 발생한다.")
-        void should_throw_when_tableGroupId_is_exists() {
-            // given
-            final OrderTable table1 = orderTableRepository.save(new TableBuilder().build());
-            final OrderTable table2 = orderTableRepository.save(new TableBuilder().build());
-
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder()
-                    .setOrderTables(List.of(table1, table2))
-                    .build());
-
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setTableGroup(tableGroup)
-                    .build());
-
-            // when & then
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(table.getId(), table));
+                    () -> tableService.changeEmpty(notExistsTableId, null));
         }
 
         @ParameterizedTest
@@ -134,9 +116,11 @@ class TableServiceTest {
                     .setOrderStatus(orderStatus)
                     .build());
 
+            final OrderTableRequest request = new OrderTableRequest(null, 0, true);
+
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(table.getId(), table));
+                    () -> tableService.changeEmpty(table.getId(), request));
         }
 
         @Test
@@ -154,8 +138,8 @@ class TableServiceTest {
                     .build());
 
             // when
-            table.setEmpty(emptyStatus);
-            tableService.changeEmpty(table.getId(), table);
+            final OrderTableRequest request = new OrderTableRequest(null, 0, emptyStatus);
+            tableService.changeEmpty(table.getId(), request);
 
             // then
             final OrderTable actual = orderTableRepository.findById(table.getId()).get();
@@ -178,8 +162,9 @@ class TableServiceTest {
                     .build());
 
             // when
-            table.setNumberOfGuests(expectNumberOfGuests);
-            tableService.changeNumberOfGuests(table.getId(), table);
+            final OrderTableRequest request = new OrderTableRequest(null, expectNumberOfGuests, false);
+
+            tableService.changeNumberOfGuests(table.getId(), request);
 
             // then
             final OrderTable actual = orderTableRepository.findById(table.getId()).get();
@@ -195,9 +180,11 @@ class TableServiceTest {
                     .setEmpty(false)
                     .build();
 
+            final OrderTableRequest request = new OrderTableRequest(null, 0, false);
+
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), table));
+                    () -> tableService.changeNumberOfGuests(table.getId(), request));
         }
 
         @Test
@@ -208,9 +195,11 @@ class TableServiceTest {
                     .setEmpty(true)
                     .build());
 
+            final OrderTableRequest request = new OrderTableRequest(null, 0, false);
+
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), table));
+                    () -> tableService.changeNumberOfGuests(table.getId(), request));
         }
     }
 }

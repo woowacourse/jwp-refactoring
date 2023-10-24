@@ -6,6 +6,7 @@ import javax.persistence.*;
 public class OrderTable {
 
     private static final int MIN_NUMBER_OF_GUESTS = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +25,10 @@ public class OrderTable {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public OrderTable(final int numberOfGuests) {
+        this(null, numberOfGuests, true);
     }
 
     protected OrderTable() {
