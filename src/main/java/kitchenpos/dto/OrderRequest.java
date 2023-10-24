@@ -4,8 +4,8 @@ import java.util.List;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
-    private Long orderTableId;
-    private List<OrderLineItem> orderLineItems;
+    private final Long orderTableId;
+    private final List<OrderLineItem> orderLineItems;
 
     public OrderRequest(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;

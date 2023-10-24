@@ -1,9 +1,9 @@
 package kitchenpos.dto;
 
 public class OrderTableRequest {
-    private Long tableGroupId;
-    private Integer numberOfGuests;
-    private Boolean empty;
+    private final Long tableGroupId;
+    private final Integer numberOfGuests;
+    private final Boolean empty;
 
     public OrderTableRequest(final Long tableGroupId, final Integer numberOfGuests, final Boolean empty) {
         this.tableGroupId = tableGroupId;

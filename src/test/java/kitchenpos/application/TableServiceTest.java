@@ -83,7 +83,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            long nonExistTableId = 99L;
+            final long nonExistTableId = 99L;
             final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             // when & then

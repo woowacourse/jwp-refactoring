@@ -13,7 +13,7 @@ public class OrderTest {
     class 주문_생성시 {
         @Test
         void 주문_테이블_아이디가_null이면_예외가_발생한다() {
-            List<OrderLineItem> orderLineItems = List.of((new OrderLineItem(1L, 1L, 1)));
+            final List<OrderLineItem> orderLineItems = List.of((new OrderLineItem(1L, 1L, 1)));
             assertThatThrownBy(() -> new Order(null, OrderStatus.MEAL.name(), orderLineItems))
                     .isInstanceOf(InvalidOrderException.class);
         }
@@ -27,7 +27,7 @@ public class OrderTest {
 
     @Test
     void 주문_상태가_계산_완료일_때_주문_상태를_변경하면_예외가_발생한다() {
-        List<OrderLineItem> orderLineItems = List.of((new OrderLineItem(1L, 1L, 1)));
+        final List<OrderLineItem> orderLineItems = List.of((new OrderLineItem(1L, 1L, 1)));
         final Order order = new Order(1L, OrderStatus.COMPLETION.name(), orderLineItems);
         assertThatThrownBy(() -> order.changeStatus(OrderStatus.MEAL))
                 .isInstanceOf(InvalidOrderException.class);

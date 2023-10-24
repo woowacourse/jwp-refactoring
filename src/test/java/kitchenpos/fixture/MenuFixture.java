@@ -40,12 +40,12 @@ public class MenuFixture {
 
     public static Menu createChickenSetMenuById(final Long id) {
         final Menu chickenSetMenu = new Menu(
+                id,
                 "치킨 세트",
                 BigDecimal.valueOf(10000),
                 1L,
                 List.of(CHICKEN_MENU_PRODUCT)
         );
-        chickenSetMenu.setId(id);
         return chickenSetMenu;
     }
 
