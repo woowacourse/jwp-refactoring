@@ -55,7 +55,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public void dependOn(final Menu menu) {
+    public void groupedBy(final Menu menu) {
         this.menu = menu;
     }
 }

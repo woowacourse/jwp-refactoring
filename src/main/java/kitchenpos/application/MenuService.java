@@ -13,7 +13,9 @@ import kitchenpos.ui.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,24 +36,34 @@ public class MenuService {
     public MenuResponse create(final MenuRequest menuRequest) {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        final Menu menu = new Menu(
-                menuRequest.getName(),
-                menuRequest.getPrice(),
-                menuGroup
-        );
-        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProducts();
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            final MenuProduct menuProduct = new MenuProduct(menu, product, menuProductRequest.getQuantity());
-            menu.addMenuProduct(menuProduct);
-        }
-
-        menu.validatePriceOverZero();
-        menu.validateTotalPrice();
-
+        final List<MenuProduct> menuProducts = createMenuProducts(menuRequest);
+        final Menu menu = Menu.create(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
         final Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
+    }
+
+    private List<MenuProduct> createMenuProducts(final MenuRequest menuRequest) {
+        final Map<Long, Product> products = findProducts(menuRequest);
+
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
+            final Product product = products.get(menuProductRequest.getProductId());
+            final long quantity = menuProductRequest.getQuantity();
+            final MenuProduct menuProduct = new MenuProduct(null, product, quantity);
+            menuProducts.add(menuProduct);
+        }
+
+        return menuProducts;
+    }
+
+    private Map<Long, Product> findProducts(final MenuRequest menuRequest) {
+        final List<Long> productsIds = menuRequest.getMenuProducts()
+                .stream()
+                .map(MenuProductRequest::getProductId)
+                .collect(Collectors.toList());
+        return productRepository.findByIdIn(productsIds)
+                .stream()
+                .collect(Collectors.toMap(Product::getId, product -> product));
     }
 
     public List<MenuResponse> list() {

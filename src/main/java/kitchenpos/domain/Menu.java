@@ -22,13 +22,13 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name,
+    private Menu(final String name,
                 final BigDecimal price,
                 final MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
-    public Menu(final Long id,
+    private Menu(final Long id,
                 final String name,
                 final BigDecimal price,
                 final MenuGroup menuGroup) {
@@ -38,13 +38,37 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public void validatePriceOverZero() {
+    public static Menu create(final String name,
+                              final BigDecimal price,
+                              final MenuGroup menuGroup,
+                              final List<MenuProduct> menuProducts) {
+        final Menu menu = new Menu(name, price, menuGroup);
+        menu.addMenuProducts(menuProducts);
+
+        menu.validatePriceOverZero();
+        menu.validateTotalPrice();
+
+        return menu;
+    }
+
+    private void addMenuProducts(final List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            addMenuProduct(menuProduct);
+        }
+    }
+
+    private void addMenuProduct(final MenuProduct menuProduct) {
+        menuProduct.groupedBy(this);
+        this.menuProducts.add(menuProduct);
+    }
+
+    private void validatePriceOverZero() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void validateTotalPrice() {
+    private void validateTotalPrice() {
         final BigDecimal totalPrice = calculateAllProductPrice();
 
         if (price.compareTo(totalPrice) > 0) {
@@ -56,11 +80,6 @@ public class Menu {
         return menuProducts.stream()
                 .map(MenuProduct::calculateTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public void addMenuProduct(final MenuProduct menuProduct) {
-        menuProduct.dependOn(this);
-        this.menuProducts.add(menuProduct);
     }
 
     public Long getId() {
