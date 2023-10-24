@@ -2,18 +2,18 @@ package kitchenpos.order.application;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.application.TableValidator;
+import kitchenpos.table.application.TableOrderStatusValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class TableValidatorImpl implements TableValidator {
+public class TableOrderStatusValidatorImpl implements TableOrderStatusValidator {
 
     private final OrderRepository orderRepository;
 
-    public TableValidatorImpl(OrderRepository orderRepository) {
+    public TableOrderStatusValidatorImpl(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

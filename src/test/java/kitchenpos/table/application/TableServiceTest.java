@@ -28,7 +28,7 @@ import static org.mockito.Mockito.times;
 class TableServiceTest {
 
     @Mock
-    private TableValidator tableValidator;
+    private TableOrderStatusValidator tableOrderStatusValidator;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -58,7 +58,7 @@ class TableServiceTest {
                 .willReturn(Optional.of(orderTable));
 
         willDoNothing()
-                .given(tableValidator).validateIsTableCompleteMeal(anyLong());
+                .given(tableOrderStatusValidator).validateIsTableCompleteMeal(anyLong());
         tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false));
     }
 
@@ -66,7 +66,7 @@ class TableServiceTest {
     void 상태를_바꾸려는_테이블은_반드시_존재해야_한다() {
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false)))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(tableValidator).should(never()).validateIsTableCompleteMeal(anyLong());
+        then(tableOrderStatusValidator).should(never()).validateIsTableCompleteMeal(anyLong());
     }
 
     @Test
@@ -90,7 +90,7 @@ class TableServiceTest {
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         willThrow(IllegalArgumentException.class)
-                .given(tableValidator).validateIsTableCompleteMeal(anyLong());
+                .given(tableOrderStatusValidator).validateIsTableCompleteMeal(anyLong());
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, new UpdateOrderTableEmptyRequest(false)))

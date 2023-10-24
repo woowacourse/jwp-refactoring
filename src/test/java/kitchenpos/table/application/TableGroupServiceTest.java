@@ -35,11 +35,14 @@ import static org.mockito.Mockito.times;
 class TableGroupServiceTest {
 
     @Mock
-    private TableValidator tableValidator;
+    private TableOrderStatusValidator tableOrderStatusValidator;
     @Mock
     private OrderTableRepository orderTableRepository;
     @Mock
     private TableGroupRepository tableGroupRepository;
+
+    @Mock
+    private TablesValidator tablesValidator;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -48,6 +51,9 @@ class TableGroupServiceTest {
     @MethodSource("generateInvalidOrderTables")
     void 테이블_그룹을_만드려는_테이블_없으면_예외_발생(List<TableInfo> orderTables) {
         // given
+        willThrow(IllegalArgumentException.class)
+                .given(tablesValidator).validate(anyList(), any());
+
         // when, then
         CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(orderTables);
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
@@ -59,7 +65,8 @@ class TableGroupServiceTest {
         // given
         given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(new OrderTable(1, true)));
-
+        willThrow(IllegalArgumentException.class)
+                .given(tablesValidator).validate(anyList(), any());
         // when, then
         CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(List.of(new TableInfo(1L), new TableInfo(2L)));
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
@@ -80,6 +87,9 @@ class TableGroupServiceTest {
         given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));
 
+        willThrow(IllegalArgumentException.class)
+                .given(tablesValidator).validate(anyList(), any());
+
         // when, then
         CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(List.of(new TableInfo(1L), new TableInfo(2L)));
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest))
@@ -98,6 +108,9 @@ class TableGroupServiceTest {
 
         given(orderTableRepository.findAllByIdIn(anyList()))
                 .willReturn(List.of(orderTable1, orderTable2));
+
+        willThrow(IllegalArgumentException.class)
+                .given(tablesValidator).validate(anyList(), any());
 
         // when, then
         CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest(List.of(new TableInfo(1L), new TableInfo(2L)));
@@ -132,7 +145,7 @@ class TableGroupServiceTest {
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
         willThrow(IllegalArgumentException.class)
-                .given(tableValidator).validateIsTableGroupCompleteMeal(anyList());
+                .given(tableOrderStatusValidator).validateIsTableGroupCompleteMeal(anyList());
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
@@ -149,7 +162,7 @@ class TableGroupServiceTest {
         given(orderTableRepository.findAllByTableGroupId(anyLong()))
                 .willReturn(List.of(orderTable1, orderTable2));
         willDoNothing()
-                .given(tableValidator).validateIsTableGroupCompleteMeal(anyList());
+                .given(tableOrderStatusValidator).validateIsTableGroupCompleteMeal(anyList());
 
         // when, then
         tableGroupService.ungroup(1L);

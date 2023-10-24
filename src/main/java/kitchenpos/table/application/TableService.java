@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
-    private final TableValidator tableValidator;
+    private final TableOrderStatusValidator tableOrderStatusValidator;
 
-    public TableService(OrderTableRepository orderTableRepository, TableValidator tableValidator) {
+    public TableService(OrderTableRepository orderTableRepository, TableOrderStatusValidator tableOrderStatusValidator) {
         this.orderTableRepository = orderTableRepository;
-        this.tableValidator = tableValidator;
+        this.tableOrderStatusValidator = tableOrderStatusValidator;
     }
 
     @Transactional
@@ -53,7 +53,7 @@ public class TableService {
     }
 
     private void validateIsOrderNotCompleted(Long orderTableId) {
-        tableValidator.validateIsTableCompleteMeal(orderTableId);
+        tableOrderStatusValidator.validateIsTableCompleteMeal(orderTableId);
     }
 
     @Transactional

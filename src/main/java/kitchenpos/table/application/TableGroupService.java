@@ -10,6 +10,7 @@ import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,36 +19,25 @@ public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final TableValidator tableValidator;
+    private final TableOrderStatusValidator tableOrderStatusValidator;
+    private final TablesValidator tablesValidator;
 
-    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository, TableValidator tableValidator) {
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository, TableOrderStatusValidator tableOrderStatusValidator, TablesValidator tablesValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableValidator = tableValidator;
+        this.tableOrderStatusValidator = tableOrderStatusValidator;
+        this.tablesValidator = tablesValidator;
     }
 
     @Transactional
     public CreateTableGroupResponse create(CreateTableGroupRequest createTableGroupRequest) {
         List<OrderTable> orderTables = findOrderTables(createTableGroupRequest.getOrderTables());
-        validateOrderTables(createTableGroupRequest, orderTables);
+        tablesValidator.validate(orderTables, createTableGroupRequest);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.addOrderTables(orderTables);
-
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         tableGroupRepository.save(tableGroup);
-        return CreateTableGroupResponse.from(tableGroup);
-    }
-
-    private void validateOrderTables(CreateTableGroupRequest createTableGroupRequest, List<OrderTable> orderTables) {
-        if (orderTables.size() != createTableGroupRequest.getOrderTables().size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || orderTable.existsTableGroup()) {
-                throw new IllegalArgumentException();
-            }
-        }
+        saveOrderTables(orderTables, tableGroup);
+        return CreateTableGroupResponse.of(tableGroup, orderTables);
     }
 
     private List<OrderTable> findOrderTables(List<TableInfo> tableGroupOrderTablesRequest) {
@@ -56,6 +46,13 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         return orderTableRepository.findAllByIdIn(orderTableIds);
+    }
+
+    private void saveOrderTables(List<OrderTable> orderTables, TableGroup tableGroup) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.changeTableGroup(tableGroup);
+            orderTableRepository.save(orderTable);
+        }
     }
 
     @Transactional
@@ -73,6 +70,6 @@ public class TableGroupService {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        tableValidator.validateIsTableGroupCompleteMeal(orderTableIds);
+        tableOrderStatusValidator.validateIsTableGroupCompleteMeal(orderTableIds);
     }
 }

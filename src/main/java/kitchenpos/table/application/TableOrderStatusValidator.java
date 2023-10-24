@@ -2,7 +2,7 @@ package kitchenpos.table.application;
 
 import java.util.List;
 
-public interface TableValidator {
+public interface TableOrderStatusValidator {
 
     void validateIsTableCompleteMeal(Long orderTableId);
 

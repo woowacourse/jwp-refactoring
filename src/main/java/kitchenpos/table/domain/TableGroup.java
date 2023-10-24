@@ -1,13 +1,9 @@
 package kitchenpos.table.domain;
 
-import org.springframework.util.CollectionUtils;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -19,28 +15,16 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
-
     public TableGroup() {
-        this.createdDate = LocalDateTime.now();
     }
 
-    public TableGroup(Long id) {
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = createdDate;
     }
 
-    public void addOrderTables(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        for (OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.changeEmpty(false);
-            savedOrderTable.changeTableGroup(this);
-        }
-        this.orderTables = orderTables;
+    public TableGroup(LocalDateTime createdDate) {
+        this(null, createdDate);
     }
 
     public Long getId() {
@@ -49,9 +33,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }
