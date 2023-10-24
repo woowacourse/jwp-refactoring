@@ -48,7 +48,7 @@ public class OrderService {
                     Menu menu = menuRepository.getById(it.getMenuId());
                     List<MenuProductSnapShot> productSnapShots = new ArrayList<>();
                     for (MenuProduct menuProduct : menu.getMenuProducts()) {
-                        Product product = menuProduct.getProduct();
+                        Product product = productRepository.getById(menuProduct.getProductId());
                         MenuProductSnapShot snapShot = new MenuProductSnapShot(product.getName(), product.getPrice(),
                                 menuProduct.getQuantity());
                         productSnapShots.add(snapShot);
