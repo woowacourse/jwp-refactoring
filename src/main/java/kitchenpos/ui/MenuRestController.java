@@ -23,8 +23,8 @@ public class MenuRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final MenuRequset requset) {
-        final Long menuId = menuService.create(requset);
+    public ResponseEntity<Void> create(@RequestBody @Valid final MenuRequset request) {
+        final Long menuId = menuService.create(request);
         return ResponseEntity.created(URI.create("/api/menus/" + menuId)).build();
     }
 

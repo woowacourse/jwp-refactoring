@@ -113,8 +113,7 @@ class ProductRestControllerTest {
 
         // when
         final ResultActions resultActions = mockMvc.perform(get("/api/products")
-                .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productResponses)));
+                .contentType(APPLICATION_JSON));
 
         // then
         resultActions.andExpect(status().isOk());

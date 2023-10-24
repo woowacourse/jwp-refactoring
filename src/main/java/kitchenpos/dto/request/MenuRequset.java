@@ -3,11 +3,12 @@ package kitchenpos.dto.request;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class MenuRequset {
 
-    @NotNull(message = "이름을 입력해 주세요")
+    @NotBlank(message = "이름을 입력해 주세요")
     private final String name;
 
     @NotNull(message = "금액을 입력해 주세요.")
