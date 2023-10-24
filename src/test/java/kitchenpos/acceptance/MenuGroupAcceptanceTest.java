@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.request.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +17,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void 메뉴_그룹을_생성한다() {
         // given
-        MenuGroup menuGroup = new MenuGroup("가을 특선 메뉴");
+        MenuGroupCreateRequest menuGroup = new MenuGroupCreateRequest("가을 특선 메뉴");
 
         // when
         ExtractableResponse<Response> response = RestAssured.given()
