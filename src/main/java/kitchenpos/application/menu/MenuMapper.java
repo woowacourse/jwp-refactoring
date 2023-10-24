@@ -1,11 +1,14 @@
-package kitchenpos.domain.menu;
+package kitchenpos.application.menu;
 
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import kitchenpos.application.MenuValidator;
+import kitchenpos.application.menu.MenuValidator;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.dto.MenuRequest;
 
 @Component

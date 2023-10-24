@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import kitchenpos.application.table.TableValidator;
 import kitchenpos.domain.tablegroup.TableGroup;
 
 @Entity
@@ -18,8 +19,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
     @JoinColumn(name = "table_group_id")
+    @ManyToOne
     private TableGroup tableGroup;
 
     private int numberOfGuests;
@@ -45,10 +46,11 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void updateEmptyStatus(final boolean empty) {
+    public void updateEmptyStatus(final boolean empty, final TableValidator tableValidator) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("그룹화 된 테이블은 못비워용");
         }
+        tableValidator.validateOrderStatus(this.id);
         this.empty = empty;
     }
 

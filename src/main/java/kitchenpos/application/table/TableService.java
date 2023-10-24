@@ -1,12 +1,10 @@
-package kitchenpos.application;
+package kitchenpos.application.table;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.ChangeEmptyRequest;
@@ -17,11 +15,14 @@ import kitchenpos.dto.OrderTableRequest;
 @Transactional(readOnly = true)
 public class TableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            final TableValidator tableValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -37,15 +38,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final ChangeEmptyRequest request) {
         final OrderTable savedOrderTable = getOrderTable(orderTableId);
-
-        final List<Order> orders = orderRepository.findByOrderByOrderTableId(orderTableId);
-        final boolean containsNotCompletionOrder = orders.stream()
-                .anyMatch(Order::isNotCompletionStatus);
-        if (containsNotCompletionOrder) {
-            throw new IllegalArgumentException("이미 주문이 진행 중이에요");
-        }
-
-        savedOrderTable.updateEmptyStatus(request.isEmpty());
+        savedOrderTable.updateEmptyStatus(request.isEmpty(), tableValidator);
         return savedOrderTable;
     }
 

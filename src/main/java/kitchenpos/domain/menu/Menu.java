@@ -10,8 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import kitchenpos.application.MenuValidator;
-import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.application.menu.MenuValidator;
 
 @Entity
 public class Menu {
