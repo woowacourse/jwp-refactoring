@@ -34,12 +34,11 @@ public class MenuService {
     }
 
     public Long create(final MenuCreateRequest request) {
-        validateExistedMenuGroup(request);
         final List<Long> productIds = request.extractIds();
-        final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final List<Product> products = productRepository.findByIdIn(productIds);
-        validateAllProductsFound(productIds, products);
+        validateAllFound(productIds, products);
         final Map<Product, Integer> productWithQuantity = makeProductWithQuantity(request.getMenuProducts(), products);
+        final MenuGroup menuGroup = menuGroupRepository.getById(request.getMenuGroupId());
         final Menu menu = Menu.of(request.getName(), request.getPrice(), menuGroup, productWithQuantity);
         return menuRepository.save(menu).getId();
     }
@@ -65,14 +64,8 @@ public class MenuService {
                 ));
     }
 
-    private static void validateAllProductsFound(final List<Long> productIdToQuantity, final List<Product> products) {
-        if (products.stream().noneMatch(product -> productIdToQuantity.contains(product.getId()))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateExistedMenuGroup(final MenuCreateRequest menuCreateRequest) {
-        if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
+    private static void validateAllFound(final List<Long> productIds, final List<Product> products) {
+        if (productIds.size() != products.size()) {
             throw new IllegalArgumentException();
         }
     }
