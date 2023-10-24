@@ -100,7 +100,7 @@
 
 ### 검증 로직 분리
 
-- [ ] menu
+- [x] menu
 - [x] menugroup
 - [ ] order
 - [ ] product
