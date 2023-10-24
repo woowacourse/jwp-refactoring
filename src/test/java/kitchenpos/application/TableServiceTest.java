@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -150,7 +148,7 @@ class TableServiceTest extends ServiceTest {
 
         private void 주문만들기(final OrderTable 생성된_테이블) {
             OrderLineItem 주문상품 = 주문_상품_만들기();
-            Order 주문 = new Order(null, 생성된_테이블.getId(), COOKING, now(), List.of(주문상품));
+            Order 주문 = new Order(생성된_테이블.getId(), List.of(주문상품));
             orderRepository.save(주문);
         }
 

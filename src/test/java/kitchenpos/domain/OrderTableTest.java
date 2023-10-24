@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import java.util.List;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -90,4 +93,27 @@ class OrderTableTest {
         assertThat(actual).isTrue();
     }
 
+    @Test
+    void 주문할_수_있다() {
+        //given
+        OrderTable orderTable = new OrderTable(2, false);
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, null, 1L, 1L));
+
+        //when
+        Order order = orderTable.order(orderLineItems);
+
+        //then
+        assertThat(order.getOrderLineItems()).containsAll(orderLineItems)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "order");
+    }
+
+    @Test
+    void 테이블이_빈_상태이면_주문할_수_없다() {
+        //given
+
+        //when
+
+        //then
+    }
 }

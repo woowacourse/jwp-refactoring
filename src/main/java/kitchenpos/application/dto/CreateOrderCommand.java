@@ -12,6 +12,7 @@ public class CreateOrderCommand {
         private Long menuId;
         private int quantity;
 
+
         public OrderLineItem toDomain(Order order) {
             return new OrderLineItem(null, order, menuId, quantity);
         }
@@ -45,13 +46,6 @@ public class CreateOrderCommand {
 
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-
-    public List<Long> getMenuIds() {
-        return orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
     }
 
     public List<OrderLineItemRequest> getOrderLineItemRequests() {

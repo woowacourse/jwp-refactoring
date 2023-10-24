@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -33,14 +34,19 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, orphanRemoval = true)
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
     }
 
-    public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
-                 final List<OrderLineItem> orderLineItems) {
+    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, null, orderLineItems);
+    }
+
+    private Order(final Long id, final Long orderTableId, final OrderStatus orderStatus,
+                  final LocalDateTime orderedTime,
+                  final List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -79,6 +85,12 @@ public class Order {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
         }
+
+        long distinctMenuCount = orderLineItems.stream().map(OrderLineItem::getMenuId).distinct().count();
+        if (orderLineItems.size() != distinctMenuCount) {
+            throw new IllegalArgumentException("주문 항목은 각각 다른 메뉴여야합니다.");
+        }
+
         this.orderLineItems = orderLineItems;
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.setOrder(this);

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.ChangeOrderStatusCommand;
@@ -14,7 +13,6 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -34,29 +32,22 @@ public class OrderService {
 
     @Transactional
     public OrderDto create(final CreateOrderCommand command) {
-        if (noOrderLineItems(command)) {
-            throw new IllegalArgumentException("주문항목은 최소 한개 이상이어야 합니다.");
-        }
-        if (invalidOrderLineItems(command)) {
-            throw new IllegalArgumentException("주문항목은 각각 다른 메뉴이며 존재해야합니다.");
-        }
+        validateMenus(command);
 
         final OrderTable orderTable = orderTableRepository.getById(command.getOrderTableId());
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("테이블이 주문 가능한 테이블이어야 합니다.");
-        }
+        Order order = orderTable.order(command.getOrderLineItems());
 
-        Order order = new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                command.getOrderLineItems());
         return OrderDto.from(orderRepository.save(order));
     }
 
-    private boolean invalidOrderLineItems(final CreateOrderCommand command) {
-        return command.getOrderLineItemRequests().size() != menuRepository.countByIdIn(command.getMenuIds());
-    }
+    private void validateMenus(final CreateOrderCommand command) {
+        List<Long> menuIds = command.getOrderLineItemRequests().stream()
+                .map(request -> request.getMenuId())
+                .collect(Collectors.toList());
 
-    private boolean noOrderLineItems(final CreateOrderCommand command) {
-        return CollectionUtils.isEmpty(command.getOrderLineItemRequests());
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("메뉴가 존재하지 않습니다.");
+        }
     }
 
     public List<OrderDto> list() {

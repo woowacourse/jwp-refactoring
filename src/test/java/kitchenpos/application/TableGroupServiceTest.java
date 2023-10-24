@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static java.time.LocalDateTime.now;
 import static kitchenpos.domain.order.OrderStatus.COMPLETION;
-import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -103,7 +101,8 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable 테이블 = 빈_테이블_생성();
 
             OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
-            Order 주문 = new Order(null, 테이블.getId(), COMPLETION, now(), List.of(주문_항목));
+            Order 주문 = new Order(테이블.getId(), List.of(주문_항목));
+            주문.changeOrderStatus(COMPLETION);
             orderRepository.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup();
@@ -123,7 +122,7 @@ class TableGroupServiceTest extends ServiceTest {
             OrderTable 테이블 = 빈_테이블_생성();
 
             OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
-            Order 주문 = new Order(null, 테이블.getId(), COOKING, now(), List.of(주문_항목));
+            Order 주문 = new Order(테이블.getId(), List.of(주문_항목));
             orderRepository.save(주문);
 
             TableGroup 테이블_그룹 = new TableGroup();
