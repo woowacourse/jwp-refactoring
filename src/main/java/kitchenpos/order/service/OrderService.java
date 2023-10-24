@@ -3,7 +3,6 @@ package kitchenpos.order.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.exception.EmptyListException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
@@ -19,7 +18,6 @@ import kitchenpos.order.repository.OrderRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -40,9 +38,7 @@ public class OrderService {
     public OrderResponse create(final CreateOrderRequest request) {
         final List<OrderLineItemsDto> orderLineItemDtos = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new EmptyListException("아이템이 비어있습니다.");
-        }
+        publisher.publishEvent(request);
 
         final List<Long> menuIds = orderLineItemDtos.stream()
                 .map(OrderLineItemsDto::getMenuId)

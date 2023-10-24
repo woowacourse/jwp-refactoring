@@ -3,7 +3,6 @@ package kitchenpos.table.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.exception.InvalidOrderStateException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
@@ -16,7 +15,6 @@ import kitchenpos.table.repository.TableGroupRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @Transactional
@@ -34,11 +32,8 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final CreateTableGroupRequest request) {
+        publisher.publishEvent(request);
         final List<OrderTableRequest> orderTables = request.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new InvalidOrderStateException("테이블 2개 이상부터 그룹을 형성할 수 있습니다.");
-        }
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableRequest::getId)
