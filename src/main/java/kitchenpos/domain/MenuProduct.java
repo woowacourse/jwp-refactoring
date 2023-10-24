@@ -23,18 +23,13 @@ public class MenuProduct {
     @JoinColumn(nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Menu menu;
-
     public MenuProduct() {
     }
 
-    public MenuProduct(Long seq, long quantity, Product product, Menu menu) {
+    public MenuProduct(Long seq, long quantity, Product product) {
         this.seq = seq;
         this.quantity = quantity;
         this.product = product;
-        this.menu = menu;
     }
 
     public Money getTotalPrice() {
@@ -51,9 +46,5 @@ public class MenuProduct {
 
     public Product getProduct() {
         return product;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 }

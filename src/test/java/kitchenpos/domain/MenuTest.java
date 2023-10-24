@@ -68,7 +68,7 @@ class MenuTest {
             Menu menu = new Menu(1L, "맥주세트", Money.from(1100), menuGroup);
 
             List<MenuProduct> menuProducts = List.of(
-                new MenuProduct(1L, 10, new Product(1L, "맥주", Money.from(100)), menu));
+                new MenuProduct(1L, 10, new Product(1L, "맥주", Money.from(100))));
 
             // when & then
             assertThatThrownBy(() -> menu.addMenuProducts(menuProducts))
@@ -83,7 +83,7 @@ class MenuTest {
             Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
 
             List<MenuProduct> menuProducts = List.of(
-                new MenuProduct(1L, 11, new Product(1L, "맥주", Money.from(100)), menu));
+                new MenuProduct(1L, 11, new Product(1L, "맥주", Money.from(100))));
 
             // when
             menu.addMenuProducts(menuProducts);
@@ -102,7 +102,7 @@ class MenuTest {
             Menu menu = new Menu(1L, "맥주세트", Money.from(1000), menuGroup);
 
             List<MenuProduct> menuProducts = List.of(
-                new MenuProduct(1L, 10, new Product(1L, "맥주", Money.from(100)), menu));
+                new MenuProduct(1L, 10, new Product(1L, "맥주", Money.from(100))));
 
             // when
             menu.addMenuProducts(menuProducts);

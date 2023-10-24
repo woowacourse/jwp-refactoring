@@ -49,7 +49,7 @@ class MenuControllerV1Test {
             new MenuProductCreateRequest(10, 1L)
         ));
         var response = new MenuResponse(1L, "맥주세트", BigDecimal.valueOf(1000), 1L, List.of(
-            new MenuProductResponse(1L, 1L, 1L, 10)
+            new MenuProductResponse(1L,  1L, 10)
         ));
 
         given(menuService.create(any(MenuCreateRequest.class)))
@@ -69,7 +69,7 @@ class MenuControllerV1Test {
         // given
         var response = LongStream.rangeClosed(1, 5)
             .mapToObj(id -> {
-                var menuProducts = List.of(new MenuProductResponse(id, id, 1L, 10));
+                var menuProducts = List.of(new MenuProductResponse(id, 1L, 10));
                 return new MenuResponse(id, "맥주세트" + id, BigDecimal.valueOf(1000), 1L, menuProducts);
             })
             .collect(toList());

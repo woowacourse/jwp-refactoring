@@ -48,7 +48,7 @@ public class OrderService {
         List<OrderLineCreateRequest> orderLineCreateRequests = request.getOrderLineCreateRequests();
         validateOrderLineRequests(orderLineCreateRequests);
         Order order = orderRepository.save(new Order(null, OrderStatus.COOKING, LocalDateTime.now(), orderTable));
-        List<OrderLineItem> orderLineItems = createOrderLineItems(order, orderLineCreateRequests);
+        List<OrderLineItem> orderLineItems = createOrderLineItems(orderLineCreateRequests);
         order.addOrderLineItems(orderLineItems);
         return OrderResponse.from(order);
     }
@@ -64,13 +64,13 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> createOrderLineItems(Order order, List<OrderLineCreateRequest> requests) {
+    private List<OrderLineItem> createOrderLineItems(List<OrderLineCreateRequest> requests) {
         List<Menu> menus = findMenus(requests);
         validateNotExistsMenus(menus, requests);
         Map<Long, Long> menuIdToQuantity = requests.stream()
             .collect(toMap(OrderLineCreateRequest::getMenuId, OrderLineCreateRequest::getQuantity));
         return menus.stream()
-            .map(menu -> new OrderLineItem(null, menuIdToQuantity.get(menu.getId()), menu.getId(), order))
+            .map(menu -> new OrderLineItem(null, menuIdToQuantity.get(menu.getId()), menu.getId()))
             .collect(toList());
     }
 

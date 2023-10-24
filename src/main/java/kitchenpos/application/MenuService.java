@@ -61,7 +61,7 @@ public class MenuService {
         Map<Long, Long> productIdToQuantity = requests.stream()
             .collect(toMap(MenuProductCreateRequest::getProductId, MenuProductCreateRequest::getQuantity));
         return products.stream()
-            .map(product -> new MenuProduct(null, productIdToQuantity.get(product.getId()), product, menu))
+            .map(product -> new MenuProduct(null, productIdToQuantity.get(product.getId()), product))
             .collect(toList());
     }
 
