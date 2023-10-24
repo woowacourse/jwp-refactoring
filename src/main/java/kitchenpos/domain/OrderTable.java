@@ -33,10 +33,20 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void dependOn(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     public void changeNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuestsOverZero();
         validateActive();
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public void validateEmptyTable() {
+        if (!empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateNumberOfGuestsOverZero() {
@@ -49,6 +59,11 @@ public class OrderTable {
         if (empty) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void detachFromGroup() {
+        this.empty = false;
+        this.tableGroup = null;
     }
 
     public void setEmpty(final boolean empty) {

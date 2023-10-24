@@ -37,7 +37,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹을_저장한다() {
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 10, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null,1L, 10, false);
 
         final OrderTableResponse created = tableService.create(orderTableRequest);
 
@@ -59,7 +59,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 주문테이블을_빈_테이블로_바꾼다() {
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 10, true);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1L, 10, true);
 
         final OrderTableResponse edit = tableService.changeEmpty(10L, orderTableRequest);
 
@@ -68,7 +68,7 @@ class TableServiceTest extends ServiceTest {
 
     @Test
     void 테이블그룹에_속한_상태로_빈_테이블로_바꾸면_예외를_발생한다() {
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 10, true);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null,null, 10, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(9L, orderTableRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -79,13 +79,13 @@ class TableServiceTest extends ServiceTest {
         final OrderTable saveOrderTable = orderTableRepository.save(OrderTableBuilder.init().tableGroup(saveTableGroup).empty(false).build());
         orderRepository.save(OrderBuilder.init().orderTable(saveOrderTable).orderStatus(OrderStatus.MEAL).build());
 
-        assertThatThrownBy(() -> tableService.changeEmpty(saveOrderTable.getId(), new OrderTableRequest(saveTableGroup.getId(), saveOrderTable.getNumberOfGuests(), true))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(saveOrderTable.getId(), new OrderTableRequest(null, saveTableGroup.getId(), saveOrderTable.getNumberOfGuests(), true))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 주문_테이블_고객수를_변경한다() {
         final int changeGuestCount = 11;
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(1L, changeGuestCount, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1L, changeGuestCount, false);
 
         final OrderTableResponse edit = tableService.changeNumberOfGuests(9L, orderTableRequest);
 
@@ -95,7 +95,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문_테이블의_상태가_빈_상태면_주문_테이블_고객수를_변경하지_못한다() {
         final int changeGuestCount = 11;
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(1L, changeGuestCount, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1L, changeGuestCount, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTableRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -103,7 +103,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 고객수가_음수이면_예외를_발생한다() {
         final int changeGuestCount = -11;
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(1L, changeGuestCount, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1L, changeGuestCount, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTableRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -111,7 +111,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void 주문테이블이_존재하지_않으면_예외를_발생한다() {
         final int changeGuestCount = 11;
-        final OrderTableRequest orderTableRequest = new OrderTableRequest(1L, changeGuestCount, false);
+        final OrderTableRequest orderTableRequest = new OrderTableRequest(null, 1L, changeGuestCount, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(100L, orderTableRequest)).isInstanceOf(IllegalArgumentException.class);
     }

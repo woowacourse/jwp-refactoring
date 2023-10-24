@@ -10,4 +10,7 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderTableAndOrderStatusIn(final OrderTable orderTable,
                                                final List<OrderStatus> orderStatuses);
+
+    boolean existsByOrderTableInAndOrderStatusIn(final List<OrderTable> orderTables,
+                                                 final List<OrderStatus> orderStatuses);
 }

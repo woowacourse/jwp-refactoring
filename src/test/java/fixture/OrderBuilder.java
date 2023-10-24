@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderBuilder {
@@ -21,7 +22,7 @@ public class OrderBuilder {
         builder.orderTable = OrderTableBuilder.init().build();
         builder.orderStatus = OrderStatus.COOKING;
         builder.orderedTime = LocalDateTime.now();
-        builder.orderLineItems = List.of();
+        builder.orderLineItems = new ArrayList<>();
         return builder;
     }
 

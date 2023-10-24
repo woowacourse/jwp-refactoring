@@ -1,7 +1,10 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,10 +19,30 @@ public class TableGroup {
 
     protected TableGroup() {}
 
-    public TableGroup(final LocalDateTime createdDate,
-                      final List<OrderTable> orderTables) {
+    private TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTables = new ArrayList<>();
+    }
+
+    public static TableGroup createWithOrderTables(final List<OrderTable> orderTables) {
+        validate(orderTables);
+        final TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        tableGroup.addOrderTables(orderTables);
+        return tableGroup;
+    }
+
+    private static void validate(final List<OrderTable> orderTables) {
+        validateNotEmptyOrderTables(orderTables);
+
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.validateEmptyTable();
+        }
+    }
+
+    private static void validateNotEmptyOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public TableGroup(final Long id,
@@ -28,6 +51,25 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public void addOrderTables(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            addOrderTable(orderTable);
+        }
+    }
+
+    public void addOrderTable(final OrderTable orderTable) {
+        orderTable.setEmpty(false);
+        orderTable.dependOn(this);
+        orderTables.add(orderTable);
+    }
+
+    public void ungroup() {
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.detachFromGroup();
+        }
+        orderTables.clear();
     }
 
     public Long getId() {
