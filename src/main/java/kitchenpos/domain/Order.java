@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
@@ -29,19 +30,29 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
-        this(null, orderTable, orderStatus);
+    public Order(final OrderTable orderTable) {
+        this(null, orderTable, OrderStatus.COOKING);
     }
 
     public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus) {
-        this(id, orderTable, orderStatus, null);
-    }
-
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime orderedTime) {
+        checkOrderTableIsEmpty(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+    }
+
+    private void checkOrderTableIsEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeStatus(final OrderStatus status) {
+        if (Objects.equals(OrderStatus.COMPLETION, orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+
+        orderStatus = status;
     }
 
     public Long getId() {
@@ -51,7 +62,6 @@ public class Order {
     public OrderTable getOrderTable() {
         return orderTable;
     }
-
 
     public OrderStatus getOrderStatus() {
         return orderStatus;

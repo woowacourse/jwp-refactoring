@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,37 +36,47 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderCreateRequest request) {
-        final List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
+        final List<OrderLineItemDto> orderLineItems = request.getOrderLineItems();
+        checkValidOrderLineItems(orderLineItems);
 
-        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
+        final OrderTable orderTable = findOrderTableById(request.getOrderTableId());
+        final Order savedOrder = orderRepository.save(new Order(orderTable));
+        saveOrderLineItems(orderLineItems, savedOrder);
+        return savedOrder;
+    }
+
+    private void checkValidOrderLineItems(final List<OrderLineItemDto> orderLineItems) {
+        checkEmptyOrder(orderLineItems);
+        checkNotExistOrderItems(orderLineItems);
+    }
+
+    private void checkEmptyOrder(final List<OrderLineItemDto> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final List<Long> menuIds = orderLineItemDtos.stream()
+    private void checkNotExistOrderItems(final List<OrderLineItemDto> orderLineItems) {
+        final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItemDto::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+    private OrderTable findOrderTableById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+    private void saveOrderLineItems(final List<OrderLineItemDto> orderLineItems, final Order order) {
+        for (final OrderLineItemDto orderLineItem : orderLineItems) {
+            final Menu savedMenu = menuRepository.findById(orderLineItem.getMenuId())
+                    .orElseThrow(IllegalArgumentException::new);
+            orderLineItemRepository.save(new OrderLineItem(order, savedMenu, orderLineItem.getQuantity()));
         }
-
-        final Order order = new Order(orderTable, OrderStatus.COOKING);
-        final Order savedOrder = orderRepository.save(order);
-
-        for (final OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            final Menu savedMenu = menuRepository.findById(orderLineItemDto.getMenuId()).get();
-            final OrderLineItem orderLineItem = new OrderLineItem(savedOrder, savedMenu, orderLineItemDto.getQuantity());
-            orderLineItemRepository.save(orderLineItem);
-        }
-
-        return savedOrder;
     }
 
     public List<Order> list() {
@@ -82,15 +91,13 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusDto status) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        final Order order = findOrderById(orderId);
+        order.changeStatus(OrderStatus.valueOf(status.getOrderStatus()));
+        return orderRepository.save(order);
+    }
+
+    private Order findOrderById(final Long orderId) {
+        return orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final Order updatedOrder = new Order(savedOrder.getId(), savedOrder.getOrderTable(),
-                OrderStatus.valueOf(status.getOrderStatus()), savedOrder.getOrderedTime());
-        return orderRepository.save(updatedOrder);
     }
 }
