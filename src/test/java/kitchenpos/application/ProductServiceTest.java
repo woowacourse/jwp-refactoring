@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidProductPriceException;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static kitchenpos.fixture.ProductFixture.PRODUCT;
@@ -17,48 +20,47 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 class ProductServiceTest {
-    
+
     @Autowired
     ProductService productService;
-    
+
     @Autowired
-    ProductDao productDao;
-    
+    ProductRepository productRepository;
+
     @Test
     void 상품을_생성할_때_상품의_가격이_0미만이면_예외가_발생한다() {
         // given
-        Product product = PRODUCT("짜장면", -1L);
-        
+         ProductCreateRequest productCreateRequest = new ProductCreateRequest("짜장면", BigDecimal.valueOf(-1L));
+
         // when & then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("상품의 가격은 0원 이상이어야 합니다");
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
+                .isInstanceOf(InvalidProductPriceException.class)
+                .hasMessageContaining("상품 가격은 0원 이상이어야 합니다");
     }
-    
+
     @Test
     void 상품을_생성한다() {
         // given
-        Product product = PRODUCT("짜장면", 8000L);
-        
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("짜장면", BigDecimal.valueOf(8000L));
         // when
-        Product savedProduct = productService.create(product);
-        
+        Product savedProduct = productService.create(productCreateRequest);
+
         // then
-        assertThat(productDao.findById(savedProduct.getId())).isPresent();
+        assertThat(productRepository.findById(savedProduct.getId())).isPresent();
     }
-    
+
     @Test
     void list() {
         // given
         Product product1 = PRODUCT("짜장면", 8000L);
-        Product savedProduct1 = productService.create(product1);
+        Product savedProduct1 = productRepository.save(product1);
         Product product2 = PRODUCT("딤섬", 8000L);
-        Product savedProduct2 = productService.create(product2);
-        
+        Product savedProduct2 = productRepository.save(product2);
+
         // when
         List<Product> expected = List.of(savedProduct1, savedProduct2);
         List<Product> actual = productService.list();
-        
+
         // then
         assertThat(actual)
                 .usingRecursiveComparison()
