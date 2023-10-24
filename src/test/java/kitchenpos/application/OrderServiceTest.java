@@ -25,11 +25,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.fixture.OrderFixture.order;
-import static kitchenpos.fixture.OrderLineItemFixture.orderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -62,7 +61,8 @@ class OrderServiceTest {
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2l);
-        후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴, List.of(후라이드_2개)));
+        후라이드_2개_메뉴 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
+        후라이드_2개_메뉴.addMenuProducts(List.of(후라이드_2개));
     }
 
     @Test
@@ -79,7 +79,7 @@ class OrderServiceTest {
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(OrderStatus.valueOf(actual.getOrderStatus())).isEqualTo(OrderStatus.COOKING);
+            softAssertions.assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
             softAssertions.assertThat(actual.getOrderedTime()).isNotNull();
             softAssertions.assertThat(actual.getOrderLineItems()).isNotEmpty();
         });
@@ -150,10 +150,12 @@ class OrderServiceTest {
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, false));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, false));
 
-        final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
+        final OrderLineItem 후라이드_2개_메뉴_1개_주문항목 = new OrderLineItem(후라이드_2개_메뉴, 1l);
 
-        orderRepository.save(order(세명_테이블.getId(), OrderStatus.COOKING, List.of(주문항목)));
-        orderRepository.save(order(네명_테이블.getId(), OrderStatus.COOKING, List.of(주문항목)));
+        final Order 세명_테이블_주문 = orderRepository.save(new Order(세명_테이블, OrderStatus.COOKING, LocalDateTime.now()));
+        세명_테이블_주문.addOrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목));
+        final Order 네명_테이블_주문 = orderRepository.save(new Order(네명_테이블, OrderStatus.COOKING, LocalDateTime.now()));
+        네명_테이블_주문.addOrderLineItems(List.of(후라이드_2개_메뉴_1개_주문항목));
 
         // when
         final List<Order> actual = orderService.list();
@@ -161,8 +163,8 @@ class OrderServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0).getOrderTableId()).isEqualTo(세명_테이블.getId());
-            softAssertions.assertThat(actual.get(1).getOrderTableId()).isEqualTo(네명_테이블.getId());
+            softAssertions.assertThat(actual.get(0).getOrderTable().getId()).isEqualTo(세명_테이블.getId());
+            softAssertions.assertThat(actual.get(1).getOrderTable().getId()).isEqualTo(네명_테이블.getId());
         });
     }
 
@@ -171,8 +173,9 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
-        final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
-        final Order 주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COOKING, List.of(주문항목)));
+        final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴, 1l);
+        final Order 주문 = orderRepository.save(new Order(주문_테이블, OrderStatus.COOKING, LocalDateTime.now()));
+        주문.addOrderLineItems(List.of(주문항목));
 
         final OrderStatus expect = OrderStatus.MEAL;
         final ChangeOrderStatusRequest order = new ChangeOrderStatusRequest(expect.name());
@@ -181,7 +184,7 @@ class OrderServiceTest {
         final Order actual = orderService.changeOrderStatus(주문.getId(), order);
 
         // then
-        assertThat(OrderStatus.valueOf(actual.getOrderStatus())).isEqualTo(expect);
+        assertThat(actual.getOrderStatus()).isEqualTo(expect);
     }
 
     @Test
@@ -189,8 +192,9 @@ class OrderServiceTest {
     void changeOrderStatus_orderStatusCompletion() {
         // given
         final OrderTable 주문_테이블 = orderTableRepository.save(new OrderTable(3, false));
-        final OrderLineItem 주문항목 = orderLineItem(후라이드_2개_메뉴.getId(), 1l);
-        final Order 완료된_주문 = orderRepository.save(order(주문_테이블.getId(), OrderStatus.COMPLETION, List.of(주문항목)));
+        final OrderLineItem 주문항목 = new OrderLineItem(후라이드_2개_메뉴, 1l);
+        final Order 완료된_주문 = orderRepository.save(new Order(주문_테이블, OrderStatus.COMPLETION, LocalDateTime.now()));
+        완료된_주문.addOrderLineItems(List.of(주문항목));
 
         final OrderStatus newOrderStatus = OrderStatus.MEAL;
         final ChangeOrderStatusRequest order = new ChangeOrderStatusRequest(newOrderStatus.name());

@@ -21,9 +21,8 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderTable> orderTables = new ArrayList<>();
 
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
+    public TableGroup(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     public void initOrderTables(final List<OrderTable> orderTables) {

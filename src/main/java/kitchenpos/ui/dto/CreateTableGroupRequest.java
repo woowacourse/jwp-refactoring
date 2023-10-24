@@ -1,9 +1,5 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,11 +18,9 @@ public class CreateTableGroupRequest {
         return orderTables;
     }
 
-    public TableGroup toEntity() {
-        final List<OrderTable> orderTables = this.orderTables.stream()
-                                                             .map(CreateTableGroupOrderTableRequest::toEntity)
-                                                             .collect(Collectors.toList());
-
-        return new TableGroup(LocalDateTime.now(), orderTables);
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+                          .map(createTableGroupOrderTableRequest -> createTableGroupOrderTableRequest.getId())
+                          .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.fixture.OrderFixture.order;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
@@ -125,9 +125,8 @@ class TableGroupServiceTest {
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(세명_테이블, 네명_테이블)));
-        세명_테이블.groupBy(그룹화된_세명_네명_테이블);
-        네명_테이블.groupBy(그룹화된_세명_네명_테이블);
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
@@ -144,9 +143,8 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(세명_테이블, 네명_테이블)));
-        세명_테이블.groupBy(그룹화된_세명_네명_테이블);
-        네명_테이블.groupBy(그룹화된_세명_네명_테이블);
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
         // when
         tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
@@ -169,12 +167,11 @@ class TableGroupServiceTest {
         // given
         final OrderTable 세명_테이블 = orderTableRepository.save(new OrderTable(3, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
-        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), List.of(세명_테이블, 네명_테이블)));
-        세명_테이블.groupBy(그룹화된_세명_네명_테이블);
-        네명_테이블.groupBy(그룹화된_세명_네명_테이블);
+        final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
-        orderRepository.save(order(세명_테이블.getId(), orderStatus));
-        orderRepository.save(order(네명_테이블.getId(), orderStatus));
+        orderRepository.save(new Order(세명_테이블, orderStatus, LocalDateTime.now()));
+        orderRepository.save(new Order(네명_테이블, orderStatus, LocalDateTime.now()));
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))

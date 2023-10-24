@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
@@ -16,9 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.fixture.OrderFixture.order;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -103,7 +104,7 @@ class TableServiceTest {
     void changeEmpty_invalidOrderStatus(final OrderStatus orderStatus) {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
-        orderRepository.save(order(두명_테이블.getId(), orderStatus));
+        orderRepository.save(new Order(두명_테이블, orderStatus, LocalDateTime.now()));
 
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 
