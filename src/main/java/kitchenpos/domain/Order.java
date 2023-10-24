@@ -1,29 +1,24 @@
 package kitchenpos.domain;
 
-import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.EnumType.STRING;
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.exception.OrderExceptionType.CAN_NOT_CHANGE_COMPLETION_ORDER_STATUS;
-import static kitchenpos.exception.OrderExceptionType.ORDER_LINE_ITEMS_CAN_NOT_EMPTY;
 import static kitchenpos.exception.OrderExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.exception.OrderException;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -44,13 +39,13 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", cascade = ALL, fetch = EAGER)
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, OrderLineItems orderLineItems) {
         this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
@@ -59,10 +54,10 @@ public class Order {
             OrderTable orderTable,
             OrderStatus orderStatus,
             LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems
+            OrderLineItems orderLineItems
     ) {
-        validate(orderTable, orderLineItems);
-        orderLineItems.forEach(it -> it.setOrder(this));
+        validate(orderTable);
+        orderLineItems.setOrderToAll(this);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -70,12 +65,9 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    private void validate(OrderTable orderTable) {
         if (orderTable.empty()) {
             throw new OrderException(ORDER_TABLE_CAN_NOT_EMPTY);
-        }
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new OrderException(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
         }
     }
 
@@ -106,7 +98,7 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> orderLineItems() {
+    public OrderLineItems orderLineItems() {
         return orderLineItems;
     }
 }

@@ -72,7 +72,9 @@ class OrderServiceTest extends IntegrationTest {
     void 주문_테이블이_비어있으면_예외가_발생한다() {
         // given
         OrderTable 주문테이블 = 주문테이블저장(주문테이블(0, true));
-        CreateOrderCommand command = new CreateOrderCommand(주문테이블.id(), List.of());
+        Menu 메뉴 = 맛있는_메뉴_저장();
+        OrderLineItemCommand orderLineItemCommand = new OrderLineItemCommand(메뉴.id(), 0);
+        CreateOrderCommand command = new CreateOrderCommand(주문테이블.id(), List.of(orderLineItemCommand));
 
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->

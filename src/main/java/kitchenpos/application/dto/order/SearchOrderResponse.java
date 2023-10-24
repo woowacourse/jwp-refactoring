@@ -40,7 +40,7 @@ public class SearchOrderResponse {
                 order.orderTable().id(),
                 order.orderStatus().name(),
                 order.orderedTime(),
-                order.orderLineItems().stream()
+                order.orderLineItems().items().stream()
                         .map(OrderLineItemResponse::from)
                         .collect(Collectors.toList())
         );

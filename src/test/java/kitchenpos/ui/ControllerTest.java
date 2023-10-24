@@ -17,6 +17,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
@@ -92,7 +93,7 @@ public class ControllerTest {
                 new OrderTable(1L, 테이블_그룹(), 0, false),
                 OrderStatus.MEAL,
                 null,
-                List.of(orderLineItem)
+                new OrderLineItems(List.of(orderLineItem))
         );
     }
 

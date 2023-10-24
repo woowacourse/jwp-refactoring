@@ -15,7 +15,7 @@ import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
-    
+
     @Test
     void 주문테이블이_비어있으면_예외가_발생한다() {
         // given
@@ -31,27 +31,13 @@ class OrderTest {
     }
 
     @Test
-    void 주문항목이_null이면_예외가_발생한다() {
-        // given
-        OrderTable orderTable = new OrderTable(0, false);
-
-        // when
-        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                new Order(orderTable, null, null)
-        ).exceptionType();
-
-        // then
-        assertThat(exceptionType).isEqualTo(ORDER_LINE_ITEMS_CAN_NOT_EMPTY);
-    }
-
-    @Test
     void 주문항목이_비어있으면_예외가_발생한다() {
         // given
         OrderTable orderTable = new OrderTable(0, false);
 
         // when
         BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
-                new Order(orderTable, null, List.of())
+                new Order(orderTable, null, new OrderLineItems(List.of()))
         ).exceptionType();
 
         // then
@@ -65,9 +51,9 @@ class OrderTest {
         OrderLineItem orderLineItem = new OrderLineItem(null, 0);
 
         // when & then
-        assertThatCode(() -> new Order(orderTable, null, List.of(
+        assertThatCode(() -> new Order(orderTable, null, new OrderLineItems(List.of(
                 orderLineItem
-        ))).doesNotThrowAnyException();
+        )))).doesNotThrowAnyException();
     }
 
     @Test

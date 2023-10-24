@@ -10,6 +10,7 @@ import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -95,7 +96,11 @@ public class IntegrationTest {
     }
 
     protected Order 주문(OrderTable 주문테이블, OrderStatus 주문상태, OrderLineItem... 주문항목) {
-        return new Order(주문테이블, 주문상태, Arrays.asList(주문항목));
+        return new Order(주문테이블, 주문상태, 주문항목들(주문항목));
+    }
+
+    protected OrderLineItems 주문항목들(OrderLineItem... 주문항목) {
+        return new OrderLineItems(Arrays.asList(주문항목));
     }
 
     protected OrderLineItem 주문항목(Menu 메뉴, long 수량) {

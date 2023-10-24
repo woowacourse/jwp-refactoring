@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.order.ChangeOrderStatusCommand;
@@ -8,9 +7,11 @@ import kitchenpos.application.dto.order.ChangeOrderStatusResponse;
 import kitchenpos.application.dto.order.CreateOrderCommand;
 import kitchenpos.application.dto.order.CreateOrderResponse;
 import kitchenpos.application.dto.order.SearchOrderResponse;
+import kitchenpos.application.dto.orderlineitem.OrderLineItemCommand;
 import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -38,11 +39,15 @@ public class OrderService {
     @Transactional
     public CreateOrderResponse create(CreateOrderCommand command) {
         OrderTable orderTable = orderTableRepository.getById(command.orderTableId());
-        List<OrderLineItem> orderLineItems = command.orderLineItemCommands().stream()
+        Order order = new Order(orderTable, OrderStatus.COOKING, getOrderLineItems(command.orderLineItemCommands()));
+        return CreateOrderResponse.from(orderRepository.save(order));
+    }
+
+    private OrderLineItems getOrderLineItems(List<OrderLineItemCommand> orderLineItemCommands) {
+        List<OrderLineItem> orderLineItems = orderLineItemCommands.stream()
                 .map(it -> new OrderLineItem(menuRepository.getById(it.menuId()), it.quantity()))
                 .collect(Collectors.toList());
-        Order order = new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
-        return CreateOrderResponse.from(orderRepository.save(order));
+        return new OrderLineItems(orderLineItems);
     }
 
     public List<SearchOrderResponse> list() {
