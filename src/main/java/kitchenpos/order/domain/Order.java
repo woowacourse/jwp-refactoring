@@ -5,6 +5,7 @@ import static javax.persistence.EnumType.STRING;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.order.domain.type.OrderStatus.COMPLETION;
+import static kitchenpos.order.domain.type.OrderStatus.COOKING;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,22 +43,41 @@ public class Order {
     protected Order() {
     }
 
-    public void validateStatus() {
+    public void validateIsNotComplete() {
         if (!orderStatus.equals(COMPLETION)) {
             throw new InvalidOrderStateException("조리 중이거나 식사 중인 테이블의 상태는 변경 할 수 없습니다.");
         }
     }
 
-    private Order(Builder builder) {
-        this.id = builder.id;
-        this.orderTableId = builder.orderTableId;
-        this.orderStatus = builder.orderStatus;
-        this.orderedTime = builder.orderedTime;
-        this.orderLineItems = builder.orderLineItems;
+    public void validateIsComplete(){
+        if(orderStatus.equals(COMPLETION)){
+            throw new InvalidOrderStateException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");
+        }
     }
 
-    public static Builder builder() {
-        return new Builder();
+    private Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
+        this(orderTableId,orderStatus,orderedTime);
+        this.id = id;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order from(final Long orderTableId){
+        return new Order(orderTableId,COOKING,LocalDateTime.now());
+    }
+
+    public static Order of(final Order order, final List<OrderLineItem> orderLineItems){
+        return new Order(order.id,order.orderTableId,order.orderStatus,order.getOrderedTime(),orderLineItems);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -78,42 +98,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public static class Builder {
-        private Long id;
-        private Long orderTableId;
-        private OrderStatus orderStatus;
-        private LocalDateTime orderedTime;
-        private List<OrderLineItem> orderLineItems;
-
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder orderTableId(Long orderTableId) {
-            this.orderTableId = orderTableId;
-            return this;
-        }
-
-        public Builder orderStatus(OrderStatus orderStatus) {
-            this.orderStatus = orderStatus;
-            return this;
-        }
-
-        public Builder orderedTime(LocalDateTime orderedTime) {
-            this.orderedTime = orderedTime;
-            return this;
-        }
-
-        public Builder orderLineItems(List<OrderLineItem> orderLineItems) {
-            this.orderLineItems = orderLineItems;
-            return this;
-        }
-
-        public Order build() {
-            return new Order(this);
-        }
     }
 }

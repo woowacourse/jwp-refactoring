@@ -51,13 +51,7 @@ class OrderRestControllerTest {
                 List.of()
         );
 
-        final Order order = Order.builder()
-                .id(1L)
-                .orderTableId(1L)
-                .orderedTime(now())
-                .orderStatus(COOKING)
-                .orderLineItems(List.of())
-                .build();
+        final Order order = getObject(Order.class,1L,1L,COOKING,now(),List.of());
         when(orderService.create(any()))
                 .thenReturn(OrderResponse.from(order));
 
@@ -77,13 +71,8 @@ class OrderRestControllerTest {
     @Test
     void list() throws Exception {
         // given
-        final Order order = Order.builder()
-                .id(1L)
-                .orderTableId(1L)
-                .orderedTime(now())
-                .orderStatus(COOKING)
-                .orderLineItems(List.of())
-                .build();
+        final Order order = getObject(Order.class,1L,1L,COOKING,now(),List.of());
+
         when(orderService.list()).thenReturn(List.of(OrderResponse.from(order)));
 
         // when & then
@@ -97,13 +86,8 @@ class OrderRestControllerTest {
     void changeOrderStatus() throws Exception {
         // given
         final ChangeOrderRequest request = getObject(ChangeOrderRequest.class, "COOKING");
-        final Order order = Order.builder()
-                .id(1L)
-                .orderTableId(1L)
-                .orderedTime(now())
-                .orderStatus(COOKING)
-                .orderLineItems(List.of())
-                .build();
+        final Order order = getObject(Order.class,1L,1L,COOKING,now(),List.of());
+
         when(orderService.changeOrderStatus(any(), any()))
                 .thenReturn(OrderResponse.from(order));
 

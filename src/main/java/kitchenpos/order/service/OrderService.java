@@ -1,12 +1,9 @@
 package kitchenpos.order.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.exception.EmptyListException;
-import kitchenpos.exception.GroupTableException;
 import kitchenpos.exception.NoSuchDataException;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
@@ -57,11 +54,7 @@ public class OrderService {
 
         publisher.publishEvent(new OrderTableIdValidateEvent(request.getOrderTableId()));
 
-        final Order order = Order.builder()
-                .orderTableId(request.getOrderTableId())
-                .orderStatus(OrderStatus.COOKING)
-                .orderedTime(LocalDateTime.now())
-                .build();
+        final Order order = Order.from(request.getOrderTableId());
 
         final Long orderId = orderRepository.save(order).getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -78,14 +71,7 @@ public class OrderService {
             savedOrderLineItems.add(orderLineItemRepository.save(newOrderLineItem));
         }
 
-        return OrderResponse.from(Order.builder()
-                .id(orderId)
-                .orderTableId(order.getOrderTable())
-                .orderStatus(order.getOrderStatus())
-                .orderedTime(order.getOrderedTime())
-                .orderLineItems(savedOrderLineItems)
-                .build()
-        );
+        return OrderResponse.from(Order.of(order, savedOrderLineItems));
     }
 
     @Transactional(readOnly = true)
@@ -101,22 +87,12 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NoSuchDataException("해당하는 id의 주문이 존재하지 않습니다."));
 
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new GroupTableException("계산이 완료된 주문의 상태를 변경할 수 없습니다.");
-        }
+        savedOrder.validateIsComplete();
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
 
-        final Order order = Order.builder()
-                .id(orderId)
-                .orderTableId(savedOrder.getOrderTable())
-                .orderStatus(orderStatus)
-                .orderedTime(savedOrder.getOrderedTime())
-                .orderLineItems(orderLineItemRepository.findAllByOrderId(orderId))
-                .build();
+        savedOrder.changeOrderStatus(orderStatus);
 
-        orderRepository.save(order);
-
-        return OrderResponse.from(order);
+        return OrderResponse.from(savedOrder);
     }
 }

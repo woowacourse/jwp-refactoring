@@ -18,13 +18,13 @@ public class OrderStatusEventListener {
     @EventListener
     public void validateOrderStatus(final OrderStatusValidateByIdEvent event) {
         orderRepository.findByOrderTableId(event.getOrderTableId())
-                .ifPresent(order -> order.validateStatus());
+                .ifPresent(order -> order.validateIsNotComplete());
     }
 
     @EventListener
     public void validateOrderStatusByOrderIds(final OrderStatusValidateByIdsEvent event) {
         orderRepository.findAllByOrderTableIdIn(event.getOrderTableIds()).stream()
-                .forEach(order -> order.validateStatus());
+                .forEach(order -> order.validateIsNotComplete());
     }
 }
 
