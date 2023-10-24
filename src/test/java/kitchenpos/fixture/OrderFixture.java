@@ -1,11 +1,18 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import kitchenpos.application.dto.request.CreateOrderRequest;
+import kitchenpos.application.dto.request.UpdateOrderStatusRequest;
+import kitchenpos.application.dto.response.CreateOrderResponse;
+import kitchenpos.application.dto.response.OrderLineItemResponse;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderFixture {
@@ -16,58 +23,167 @@ public class OrderFixture {
     public static class ORDER {
 
         public static Order 주문_요청_조리중() {
-            final Order order = new Order();
-            order.setId(1L);
-            order.setOrderTableId(1L);
-            order.setOrderStatus(OrderStatus.COOKING.name());
-            order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
-            order.setOrderLineItems(getOrderLineItems(order.getId(), order.getId(), order.getId()));
-            return order;
+            return Order.builder()
+                    .id(1L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(getOrderLineItems(1L, 1L, 1L))
+                    .build();
         }
 
         public static Order 주문_요청_식사중() {
-            final Order order = new Order();
-            order.setId(2L);
-            order.setOrderTableId(2L);
-            order.setOrderStatus(OrderStatus.MEAL.name());
-            order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
-
-            order.setOrderLineItems(getOrderLineItems(order.getId(), order.getId(), order.getId(), order.getId()));
-            return order;
+            return Order.builder()
+                    .id(2L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.MEAL.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(getOrderLineItems(2L, 2L, 2L))
+                    .build();
         }
 
         public static Order 주문_요청_계산_완료() {
-            final Order order = new Order();
-            order.setId(3L);
-            order.setOrderTableId(3L);
-            order.setOrderStatus(OrderStatus.COMPLETION.name());
-            order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
-
-            order.setOrderLineItems(getOrderLineItems(order.getId()));
-            return order;
+            return Order.builder()
+                    .id(3L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COMPLETION.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(getOrderLineItems(3L, 3L, 3L))
+                    .build();
         }
 
-        public static Order 주문_요청(OrderStatus orderStatus) {
-            final Order order = new Order();
-            order.setId(1L);
-            order.setOrderTableId(1L);
-            order.setOrderStatus(orderStatus.name());
-            order.setOrderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0));
-            order.setOrderLineItems(getOrderLineItems(order.getId(), order.getId(), order.getId()));
-            return order;
+        public static Order 주문_요청_현재상태는(OrderStatus orderStatus) {
+            return Order.builder()
+                    .id(3L)
+                    .orderTableId(1L)
+                    .orderStatus(orderStatus.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(getOrderLineItems(3L, 3L, 3L))
+                    .build();
         }
 
-        private static List<OrderLineItem> getOrderLineItems(Long... orderIds) {
+        private static List<OrderLineItem> getOrderLineItems(Long... orderId) {
             List<OrderLineItem> orderLineItems = new ArrayList<>();
-            for (Long id : orderIds) {
-                OrderLineItem orderLineItem = new OrderLineItem();
-                orderLineItem.setSeq(1L);
-                orderLineItem.setOrderId(id);
-                orderLineItem.setMenuId(1L);
-                orderLineItem.setQuantity(1);
+            for (Long id : orderId) {
+                OrderLineItem orderLineItem = OrderLineItem.builder()
+                        .seq(1L)
+                        .orderId(id)
+                        .menuId(1L)
+                        .quantity(1L)
+                        .build();
                 orderLineItems.add(orderLineItem);
             }
             return orderLineItems;
+        }
+    }
+
+    public static class RESPONSE {
+
+        public static CreateOrderResponse 주문_생성_응답_조리중() {
+            OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.builder()
+                    .seq(1L)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
+            return CreateOrderResponse.builder()
+                    .id(1L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(List.of(orderLineItemResponse))
+                    .build();
+        }
+
+        public static OrderResponse 주문_식사중_응답() {
+            OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.builder()
+                    .seq(1L)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
+            return OrderResponse.builder()
+                    .id(1L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.MEAL.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(List.of(orderLineItemResponse))
+                    .build();
+        }
+
+        public static OrderResponse 주문_조리중_응답() {
+            OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.builder()
+                    .seq(1L)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
+            return OrderResponse.builder()
+                    .id(1L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(List.of(orderLineItemResponse))
+                    .build();
+        }
+
+        public static OrderResponse 주문_계산완료_응답() {
+            OrderLineItemResponse orderLineItemResponse = OrderLineItemResponse.builder()
+                    .seq(1L)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
+            return OrderResponse.builder()
+                    .id(1L)
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COMPLETION.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItems(List.of(orderLineItemResponse))
+                    .build();
+        }
+    }
+
+    public static class REQUEST {
+
+        public static CreateOrderRequest 주문_생성_요청() {
+            return CreateOrderRequest.builder()
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItemIds(List.of(1L, 2L))
+                    .build();
+        }
+
+        public static CreateOrderRequest 주문_생성_요청_주문항목(List<Long> orderLineItemIds) {
+            return CreateOrderRequest.builder()
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItemIds(orderLineItemIds)
+                    .build();
+        }
+
+
+        public static CreateOrderRequest 주문_생성_요청_비어있는_주문항목() {
+            return CreateOrderRequest.builder()
+                    .orderTableId(1L)
+                    .orderStatus(OrderStatus.COOKING.name())
+                    .orderedTime(LocalDateTime.of(2021, 8, 24, 0, 0, 0, 0))
+                    .orderLineItemIds(Collections.emptyList())
+                    .build();
+        }
+
+        public static UpdateOrderStatusRequest 주문_상태_변경_요청(String orderStatus) {
+            return new UpdateOrderStatusRequest(orderStatus);
+        }
+    }
+
+    public static class ORDER_LINE_ITEM {
+
+        public static OrderLineItem 주문_항목_아이템_1개(Long orderId) {
+            return OrderLineItem.builder()
+                    .seq(1L)
+                    .orderId(orderId)
+                    .menuId(1L)
+                    .quantity(1L)
+                    .build();
         }
     }
 }

@@ -61,10 +61,10 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     private Product toEntity(final ResultSet resultSet) throws SQLException {
-        final Product entity = new Product();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        return entity;
+        return Product.builder()
+                .id(resultSet.getLong(KEY_COLUMN_NAME))
+                .name(resultSet.getString("name"))
+                .price(resultSet.getBigDecimal("price"))
+                .build();
     }
 }
