@@ -30,13 +30,13 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    private void validateOrderTablesSize(List<OrderTable> orderTables) {
+    private void validateOrderTablesSize(final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("단체에 속한 테이블은 최소 2개 이상이어야 합니다.");
         }
     }
 
-    public void addOrderTables(List<OrderTable> orderTables) {
+    public void addOrderTables(final List<OrderTable> orderTables) {
         validateOrderTablesSize(orderTables);
         orderTables.forEach(orderTable -> orderTable.group(this));
         this.orderTables = orderTables;
@@ -44,6 +44,10 @@ public class TableGroup {
 
     public Long getId() {
         return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
