@@ -6,6 +6,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupDto;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -42,28 +45,23 @@ class TableGroupServiceTest {
     @Test
     void 단체_지정을_생성한다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(true);
-        orderTable2.setEmpty(true);
-
+        OrderTable orderTable1 = new OrderTable(1L, null, 2, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
 
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = tableGroupDto.toDomain();
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
         given(orderTableDao.findAllByIdIn(orderTableIds))
                 .willReturn(orderTables);
-        given(tableGroupDao.save(tableGroup))
+        given(tableGroupDao.save(any()))
                 .willReturn(tableGroup);
 
         // when
-        TableGroup result = tableGroupService.create(tableGroup);
+        TableGroupDto result = tableGroupService.create(tableGroupDto);
 
         // then
         assertThat(result.getOrderTables()).containsAll(orderTables);
@@ -72,16 +70,12 @@ class TableGroupServiceTest {
     @Test
     void 비어있지_않은_테이블을_단체_지정하면_예외를_던진다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(false);
-        orderTable2.setEmpty(false);
-
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 2, false);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 3, false);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -93,25 +87,19 @@ class TableGroupServiceTest {
                 .willReturn(tableGroup);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 이미_단체_지정된_테이블을_단체_지정하면_예외를_던진다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(true);
-        orderTable2.setEmpty(true);
-        orderTable1.setTableGroupId(1L);
-        orderTable2.setTableGroupId(1L);
-
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 2, true);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -123,23 +111,19 @@ class TableGroupServiceTest {
                 .willReturn(tableGroup);
 
         // when & then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 단체_지정을_해제한다() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
-        orderTable1.setEmpty(true);
-        orderTable2.setEmpty(true);
-
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 2, true);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 3, true);
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        TableGroupDto tableGroupDto = new TableGroupDto(LocalDateTime.now(), orderTables);
+        TableGroup tableGroup = tableGroupDto.toDomain();
 
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)

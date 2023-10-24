@@ -62,9 +62,8 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final TableGroup entity = new TableGroup();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
-        return entity;
+        Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        LocalDateTime createdDate = resultSet.getObject("created_date", LocalDateTime.class);
+        return new TableGroup(id, createdDate);
     }
 }

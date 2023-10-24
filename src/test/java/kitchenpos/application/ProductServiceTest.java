@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductDto;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -31,16 +33,13 @@ class ProductServiceTest {
     @Test
     void 상품을_생성한다() {
         // given
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("product");
-        product.setPrice(new BigDecimal("1000"));
+        ProductDto product = new ProductDto(1L, "product", BigDecimal.valueOf(1000));
 
-        given(productDao.save(product))
-                .willReturn(product);
+        given(productDao.save(any()))
+                .willReturn(product.toDomain());
 
         // when
-        Product result = productService.create(product);
+        ProductDto result = productService.create(product);
 
         // then
         assertSoftly(softly -> {
@@ -53,9 +52,7 @@ class ProductServiceTest {
     @Test
     void 가격이_0원_보다_작은_상품을_생성하면_예외를_던진다() {
         // given
-        Product product = new Product();
-        product.setName("product");
-        product.setPrice(new BigDecimal("-1"));
+        ProductDto product = new ProductDto("product", BigDecimal.valueOf(-1));
 
         // when & then
         assertThatThrownBy(() -> productService.create(product))
@@ -65,15 +62,16 @@ class ProductServiceTest {
     @Test
     void 상품을_전체_조회한다() {
         // given
-        Product product1 = new Product();
-        Product product2 = new Product();
+        Product product1 = new Product(1L, "product1", BigDecimal.valueOf(1000));
+        Product product2 = new Product(1L, "product2", BigDecimal.valueOf(2000));
+
         List<Product> expected = List.of(product1, product2);
 
         given(productDao.findAll())
                 .willReturn(expected);
 
         // when
-        List<Product> result = productService.list();
+        List<ProductDto> result = productService.list();
 
         // then
         assertThat(result).hasSize(2);

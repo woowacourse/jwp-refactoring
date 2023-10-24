@@ -1,22 +1,28 @@
-package kitchenpos.domain;
+package kitchenpos.dto;
+
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
-public class Menu {
+public class MenuDto {
+
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, null);
+    public static MenuDto from(Menu menu) {
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        validate(price);
+    public static MenuDto of(Menu menu, List<MenuProduct> menuProducts) {
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
+    }
+
+    public MenuDto(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -24,16 +30,8 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    private void validate(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void validatePrice(BigDecimal sum) {
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+    public Menu toDomain() {
+        return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 
     public Long getId() {
