@@ -4,7 +4,9 @@ import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.repository.MenuGroupRepository;
-import org.assertj.core.api.*;
+import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -30,10 +32,10 @@ class MenuGroupServiceTest extends ServiceTestConfig {
     @Test
     void 메뉴를_등록한다() {
         // given
-        final MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹_생성();
+        final MenuGroupRequest menuGroupRequest = MenuGroupFixture.메뉴_그룹_요청_dto_생성();
 
         // when
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroupResponse actual = menuGroupService.create(menuGroupRequest);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -42,17 +44,17 @@ class MenuGroupServiceTest extends ServiceTestConfig {
     @Test
     void 메뉴_목록을_조회한다() {
         // given
-        final List<MenuGroup> menuGroups = menuGroupRepository.saveAll(MenuGroupFixture.메뉴_그룹들_생성(3));
+        final List<MenuGroup> menuGroups = menuGroupRepository.saveAll(MenuGroupFixture.메뉴_그룹_엔티티들_생성(3));
 
         // when
-        final List<MenuGroup> actual = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
 
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).isEqualTo(menuGroups.get(0));
-            softAssertions.assertThat(actual.get(1)).isEqualTo(menuGroups.get(1));
-            softAssertions.assertThat(actual.get(2)).isEqualTo(menuGroups.get(2));
+            softAssertions.assertThat(actual.get(0).getId()).isEqualTo(menuGroups.get(0).getId());
+            softAssertions.assertThat(actual.get(1).getId()).isEqualTo(menuGroups.get(1).getId());
+            softAssertions.assertThat(actual.get(2).getId()).isEqualTo(menuGroups.get(2).getId());
         });
     }
 }

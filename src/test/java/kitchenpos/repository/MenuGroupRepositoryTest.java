@@ -27,7 +27,7 @@ class MenuGroupRepositoryTest {
         @Test
         void 존재한다면_참을_반환한다() {
             // given
-            final MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹_생성();
+            final MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹_엔티티_생성();
             menuGroupRepository.save(menuGroup);
 
             // when

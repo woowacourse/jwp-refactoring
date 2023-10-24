@@ -35,7 +35,7 @@ class MenuRepositoryTest {
     void 메뉴_아이디_리스트에서_존재하는_아이디_개수를_반환한다() {
         // given
         final Long unsavedId = 999L;
-        final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_생성());
+        final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
         final Product product = productRepository.save(ProductFixture.상품_엔티티_생성());
         final List<Menu> menus = menuRepository.saveAll(MenuFixture.메뉴_엔티티들_생성(4, menuGroup, List.of(product)));
 
