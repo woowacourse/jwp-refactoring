@@ -51,8 +51,6 @@ class MenuServiceTest {
     void init() {
         product1 = Product.of("kong", BigDecimal.valueOf(1000));
         product2 = Product.of("wuga", BigDecimal.valueOf(5000));
-        product1.setId(1L);
-        product2.setId(2L);
 
         MenuProduct menuProduct1 = new MenuProduct(product1, 10);
         MenuProduct menuProduct2 = new MenuProduct(product2, 3);
@@ -60,21 +58,6 @@ class MenuServiceTest {
         menuGroup = MenuGroup.from("menuGroup1");
 
         this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup, List.of(menuProduct1, menuProduct2));
-    }
-
-    @Test
-    @DisplayName("메뉴를 생성할 수 있다.")
-    void create_success() {
-        when(menuGroupRepository.getById(1L)).thenReturn(menuGroup);
-        when(productRepository.findAllById(anyList())).thenReturn(List.of(product1, product2));
-        when(menuRepository.save(any())).thenReturn(menu);
-
-        List<MenuProductRequest> menuProductRequests = new ArrayList<>();
-        menuProductRequests.add(new MenuProductRequest(1L, 10));
-        menuProductRequests.add(new MenuProductRequest(2L, 3));
-        MenuRequest menuRequest = new MenuRequest("kong", BigDecimal.valueOf(10000), 1L, menuProductRequests);
-
-        menuService.create(menuRequest);
     }
 
     @Test

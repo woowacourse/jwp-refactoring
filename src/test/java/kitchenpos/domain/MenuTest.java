@@ -19,7 +19,6 @@ class MenuTest {
     @Test
     @DisplayName("메뉴를 생성할 수 있다.")
     void init_success() {
-
         Menu wugas = Menu.of("wugas", BigDecimal.valueOf(10000), MenuGroup.from("kong"), List.of(kong, wuga));
 
         assertThat(wugas.getName()).isEqualTo("wugas");

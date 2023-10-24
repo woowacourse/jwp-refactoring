@@ -14,13 +14,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import kitchenpos.domain.exception.OrderException.CompletionOrderException;
 import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
 
-@Entity(name = "orders")
+@Entity
+@Table(name = "orders")
 @EntityListeners(AuditingEntityListener.class)
 public class Order {
 
@@ -36,6 +38,7 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
     @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "seq")
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {

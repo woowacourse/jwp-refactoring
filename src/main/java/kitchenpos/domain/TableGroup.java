@@ -9,6 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.exception.TableGroupException.CannotAssignOrderTableException;
 import kitchenpos.domain.exception.TableGroupException.InsufficientOrderTableSizeException;
@@ -29,6 +30,7 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
     @OneToMany
+    @JoinColumn(name = "id")
     private List<OrderTable> orderTables;
 
     protected TableGroup() {

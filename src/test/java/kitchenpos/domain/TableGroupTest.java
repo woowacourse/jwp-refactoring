@@ -44,10 +44,10 @@ class TableGroupTest {
     @Test
     @DisplayName("주문 테이블 중 테이블 그룹이 지정된 테이블이 있으면 테이블 그룹을 생성할 수 없다.")
     void init_fail3() {
-        OrderTable AssignedTableGroupOrderTable = new OrderTable(10);
-        AssignedTableGroupOrderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
+        OrderTable assignedTableGroupOrderTable = new OrderTable(10);
+        assignedTableGroupOrderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
 
-        assertThatThrownBy(() -> TableGroup.from(List.of(AssignedTableGroupOrderTable, new OrderTable(10))))
+        assertThatThrownBy(() -> TableGroup.from(List.of(assignedTableGroupOrderTable, new OrderTable(10))))
                 .isInstanceOf(CannotAssignOrderTableException.class);
     }
 

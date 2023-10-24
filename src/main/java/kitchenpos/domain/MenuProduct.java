@@ -59,10 +59,6 @@ public class MenuProduct {
         return product;
     }
 
-    public void setProduct(final Product product) {
-        this.product = product;
-    }
-
     public long getQuantity() {
         return quantity;
     }
