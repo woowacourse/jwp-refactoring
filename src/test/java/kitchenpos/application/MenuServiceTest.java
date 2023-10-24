@@ -1,11 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.request.MenuCreateRequest;
+import kitchenpos.ui.request.MenuProductCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,7 +17,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static kitchenpos.fixture.MenuFixture.*;
+import static kitchenpos.fixture.MenuFixture.MENU_1;
+import static kitchenpos.fixture.MenuFixture.MENU_2;
+import static kitchenpos.fixture.MenuFixture.MENU_3;
+import static kitchenpos.fixture.MenuFixture.MENU_4;
+import static kitchenpos.fixture.MenuFixture.MENU_5;
+import static kitchenpos.fixture.MenuFixture.MENU_6;
 import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP1;
 import static kitchenpos.fixture.ProductFixture.PRODUCT_1;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,10 +35,10 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private static Stream<BigDecimal> menuPriceSource() {
         return Stream.of(
@@ -43,18 +50,24 @@ class MenuServiceTest {
     @Test
     void 메뉴를_생성한다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(MENU_GROUP1);
-        Product product = productDao.save(PRODUCT_1);
+        MenuGroup menuGroup = menuGroupRepository.save(MENU_GROUP1);
+        Product product = productRepository.save(PRODUCT_1);
 
-        MenuProduct menuProduct = new MenuProduct(null, null, product.getId(), 3);
-        Menu menu = new Menu("치킨메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(menuProduct));
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 3);
+
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("치킨메뉴", new BigDecimal("48000.00"), menuGroup.getId(),
+                List.of(menuProductCreateRequest));
+
+        MenuProduct menuProduct = new MenuProduct(product, 3);
+        Menu menu = new Menu("치킨메뉴", new BigDecimal("48000.00"), menuGroup,
+                List.of(menuProduct));
 
         // when
-        Menu createdMenu = menuService.create(menu);
+        Menu createdMenu = menuService.create(menuCreateRequest);
 
         // then
         assertThat(createdMenu).usingRecursiveComparison()
-                .ignoringFields("id", "menuProducts.menuId", "menuProducts.seq")
+                .ignoringFields("id", "menuProducts.menu", "menuProducts.seq")
                 .isEqualTo(menu);
     }
 
@@ -62,8 +75,8 @@ class MenuServiceTest {
     @MethodSource("menuPriceSource")
     void 메뉴_가격이_음수거나_null이면_예외_발생한다(BigDecimal price) {
         // given
-        Menu menu = new Menu("한식", price, 1L,
-                List.of(new MenuProduct(null, null, 1L, 3)));
+        MenuCreateRequest menu = new MenuCreateRequest("한식", price, 1L,
+                List.of(new MenuProductCreateRequest(3L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -71,13 +84,14 @@ class MenuServiceTest {
     }
 
     @Test
-    void 메뉴_프로덕트들의_가격의_합이_메뉴_가격과_같지_않으면_예외_발생한다() {
+    void 메뉴_상품들의_가격의_합이_메뉴_가격과_같지_않으면_예외_발생한다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(MENU_GROUP1);
-        Product product = productDao.save(PRODUCT_1);
+        MenuGroup menuGroup = menuGroupRepository.save(MENU_GROUP1);
+        Product product = productRepository.save(PRODUCT_1);
 
-        MenuProduct menuProduct = new MenuProduct(null, null, product.getId(), 2);
-        Menu menu = new Menu("치킨메뉴", new BigDecimal("30000.00"), menuGroup.getId(), List.of(menuProduct));
+        MenuCreateRequest menu =
+                new MenuCreateRequest("치킨메뉴", new BigDecimal("30000.00"),
+                        menuGroup.getId(), List.of(new MenuProductCreateRequest(1L, 2)));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -90,7 +104,8 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus).usingRecursiveComparison().ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
+        assertThat(menus).usingRecursiveComparison()
+                .ignoringFields("id", "menuGroup.id", "menuProducts.seq", "menuProducts.menu", "menuProducts.product.id")
                 .isEqualTo(List.of(MENU_1, MENU_2, MENU_3, MENU_4, MENU_5, MENU_6));
     }
 }
