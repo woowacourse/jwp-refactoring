@@ -23,15 +23,15 @@ public class Menu {
     }
 
     private Menu(final String name,
-                final BigDecimal price,
-                final MenuGroup menuGroup) {
+                 final BigDecimal price,
+                 final MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
     private Menu(final Long id,
-                final String name,
-                final BigDecimal price,
-                final MenuGroup menuGroup) {
+                 final String name,
+                 final BigDecimal price,
+                 final MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;

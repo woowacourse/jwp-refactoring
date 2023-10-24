@@ -11,13 +11,11 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.request.OrderTableIdRequest;
-import kitchenpos.ui.request.OrderTableRequest;
 import kitchenpos.ui.request.TableGroupRequest;
 import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

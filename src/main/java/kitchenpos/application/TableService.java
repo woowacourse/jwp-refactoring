@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.validator.OrderTableValidator;
 import kitchenpos.ui.request.OrderTableRequest;
 import kitchenpos.ui.request.UpdateOrderTableEmptyRequest;
