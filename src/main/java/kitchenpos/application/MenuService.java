@@ -32,11 +32,13 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+        MenuGroup menuGroup = menuGroupRepository
+                .findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
-            Product product = productRepository.findById(menuProductRequest.getProductId())
+            Product product = productRepository
+                    .findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             MenuProduct menuProduct = new MenuProduct(product, menuProductRequest.getQuantity());
             menuProducts.add(menuProduct);
@@ -45,7 +47,9 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        return menuRepository.findAll().stream()
+        return menuRepository
+                .findAll()
+                .stream()
                 .map(MenuResponse::toResponse)
                 .collect(Collectors.toList());
     }
