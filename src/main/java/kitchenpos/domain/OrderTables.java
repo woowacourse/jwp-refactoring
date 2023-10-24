@@ -11,7 +11,7 @@ import java.util.List;
 @Embeddable
 public class OrderTables {
 
-    @BatchSize(size = 10)
+    @BatchSize(size = 100)
     @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "tableGroup")
     private List<OrderTable> orderTableItems;
 

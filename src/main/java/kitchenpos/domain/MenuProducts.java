@@ -12,7 +12,7 @@ import java.util.List;
 @Embeddable
 public class MenuProducts {
 
-    @BatchSize(size = 10)
+    @BatchSize(size = 100)
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "menu")
     private List<MenuProduct> menuProductItems = new ArrayList<>();
 
