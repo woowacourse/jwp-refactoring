@@ -1,66 +1,50 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.dto.menugroup.MenuGroupRequest;
+import kitchenpos.application.dto.menugroup.MenuGroupResponse;
+import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends DataDependentIntegrationTest {
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹을 생성, 저장한다.")
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("menuGroup");
-        given(menuGroupDao.save(any(MenuGroup.class)))
-            .willReturn(menuGroup);
+        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("menuGroup");
 
         // when
-        final MenuGroup result = menuGroupService.create(menuGroup);
+        final MenuGroupResponse result = menuGroupService.create(menuGroupRequest);
 
         // then
-        assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("menuGroup");
+        assertThat(result.getId()).isNotNull();
     }
 
     @DisplayName("모든 메뉴 그룹을 조회한다.")
     @Test
     void list() {
         // given
-        final MenuGroup menuGroup1 = new MenuGroup();
-        final MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup1.setId(1L);
-        menuGroup1.setName("menuGroup1");
-        menuGroup2.setId(2L);
-        menuGroup2.setName("menuGroup2");
-
-        final List<MenuGroup> menuGroups = List.of(menuGroup1, menuGroup2);
-        given(menuGroupDao.findAll())
-            .willReturn(menuGroups);
+        final MenuGroupRequest menuGroupRequest1 = new MenuGroupRequest("menuGroup1");
+        final MenuGroupRequest menuGroupRequest2 = new MenuGroupRequest("menuGroup2");
+        final MenuGroupResponse menuGroupResponse1 = menuGroupService.create(menuGroupRequest1);
+        final MenuGroupResponse menuGroupResponse2 = menuGroupService.create(menuGroupRequest2);
 
         // when
-        final List<MenuGroup> foundMenuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> foundMenuGroups = menuGroupService.list();
 
         // then
+        assertThat(foundMenuGroups).hasSize(2);
         assertThat(foundMenuGroups).usingRecursiveComparison()
-            .isEqualTo(menuGroups);
+            .ignoringFields("id")
+            .isEqualTo(List.of(menuGroupResponse1, menuGroupResponse2));
     }
 }
