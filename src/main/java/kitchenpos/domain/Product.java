@@ -32,7 +32,7 @@ public class Product {
         this.price = price;
     }
 
-    public Price calculateAmount(long quantity) {
+    public Price calculateAmount(Quantity quantity) {
         return price.calculateAmount(quantity);
     }
 

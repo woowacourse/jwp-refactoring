@@ -15,7 +15,7 @@ class MenuProductTest {
         Product product = new Product(1L, "후라이드 치킨", new Price(1000));
 
         // when
-        MenuProduct menuProduct = new MenuProduct(menu, product, 1);
+        MenuProduct menuProduct = new MenuProduct(menu, product, new Quantity(1));
 
         // then
         assertThat(menu.menuProducts().get(0)).isEqualTo(menuProduct);
@@ -28,7 +28,7 @@ class MenuProductTest {
         Menu menu = new Menu(1L, "후라이드 치킨", new Price(1000), menuGroup);
 
         Product product = new Product(1L, "후라이드 치킨", new Price(1000));
-        MenuProduct menuProduct = new MenuProduct(menu, product, 1);
+        MenuProduct menuProduct = new MenuProduct(menu, product, new Quantity(1));
 
         // when
         Price result = menuProduct.amount();

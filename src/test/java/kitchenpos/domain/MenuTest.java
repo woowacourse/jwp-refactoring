@@ -21,7 +21,7 @@ class MenuTest {
 
         // when
         MenuExceptionType exceptionType = assertThrows(MenuException.class,
-                () -> new MenuProduct(menu, product, 1)
+                () -> new MenuProduct(menu, product, new Quantity(1))
         ).exceptionType();
 
 

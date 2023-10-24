@@ -66,7 +66,7 @@ class PriceTest {
     void 수량을_곱해_총합을_계산한다() {
         // given
         Price price = new Price(1000);
-        long quantity = 10;
+        Quantity quantity = new Quantity(10);
 
         // when
         Price amount = price.calculateAmount(quantity);

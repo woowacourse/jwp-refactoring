@@ -50,8 +50,8 @@ public class Price {
         return this.value.compareTo(other.value) > 0;
     }
 
-    public Price calculateAmount(long quantity) {
-        BigDecimal amount = value.multiply(new BigDecimal(quantity));
+    public Price calculateAmount(Quantity quantity) {
+        BigDecimal amount = value.multiply(new BigDecimal(quantity.value()));
         return new Price(amount);
     }
 

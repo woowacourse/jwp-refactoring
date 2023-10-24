@@ -10,6 +10,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Quantity;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class MenuService {
 
         for (MenuProductCreateRequest menuProductCreateRequest : request.menuProducts()) {
             Product product = productRepository.getById(menuProductCreateRequest.productId());
-            MenuProduct menuProduct = new MenuProduct(menu, product, menuProductCreateRequest.quantity());
+            MenuProduct menuProduct = new MenuProduct(menu, product, new Quantity(menuProductCreateRequest.quantity()));
             menuProductRepository.save(menuProduct);
         }
         return menuRepository.save(menu);
