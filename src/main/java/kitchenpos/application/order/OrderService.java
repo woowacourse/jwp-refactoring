@@ -1,5 +1,7 @@
 package kitchenpos.application.order;
 
+import kitchenpos.application.order.request.OrderCreateRequest;
+import kitchenpos.application.order.request.OrderLineItemCreateRequest;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.order.OrderLineItemRepository;
@@ -38,45 +40,57 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(OrderCreateRequest request) {
+        List<OrderLineItemCreateRequest> orderLineItems = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
 
         final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+                .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = mapToOrder(request, orderTable);
 
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
+        for (final OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItems) {
+            OrderLineItem orderLineItem = mapToOrderLineItem(orderLineItemCreateRequest, orderId);
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
+    }
+
+    private OrderLineItem mapToOrderLineItem(OrderLineItemCreateRequest orderLineItem, Long orderId) {
+        return OrderLineItem.of(
+                orderId,
+                orderLineItem.getMenuId(),
+                orderLineItem.getQuantity()
+        );
+    }
+
+    private Order mapToOrder(OrderCreateRequest request, OrderTable orderTable) {
+        return Order.of(
+                request.getOrderTableId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now()
+        );
     }
 
     public List<Order> list() {

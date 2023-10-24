@@ -7,6 +7,8 @@ import kitchenpos.application.menu.request.MenuGroupCreateRequest;
 import kitchenpos.application.menu.request.MenuProductRequest;
 import kitchenpos.application.order.OrderService;
 import kitchenpos.application.order.TableService;
+import kitchenpos.application.order.request.OrderCreateRequest;
+import kitchenpos.application.order.request.OrderLineItemCreateRequest;
 import kitchenpos.application.order.request.TableCreateRequest;
 import kitchenpos.application.order.request.TableUpdateRequest;
 import kitchenpos.application.product.ProductService;
@@ -200,14 +202,15 @@ public abstract class ServiceTestHelper {
     }
 
     public Order 주문_요청(OrderTable orderTable, Menu... menus) {
-        Order order = Order.of(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        addOrderLineItems(order, menus);
-        return orderService.create(order);
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = getOrderLineItemCreateRequests(menus);
+        OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), orderLineItemCreateRequests);
+        return orderService.create(request);
     }
 
-    private void addOrderLineItems(Order order, Menu... menus) {
-        makeOrderLineItems(menus)
-                .forEach(order::addOrderLineItem);
+    private List<OrderLineItemCreateRequest> getOrderLineItemCreateRequests(Menu[] menus) {
+        return Arrays.stream(menus)
+                .map(menu -> new OrderLineItemCreateRequest(menu.getId(), 1))
+                .collect(Collectors.toList());
     }
 
     private List<OrderLineItem> makeOrderLineItems(Menu[] menus) {
