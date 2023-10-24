@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,36 +26,38 @@ public class OrderTable {
 
     protected OrderTable() {}
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroup = tableGroup;
+    public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
-        this(id, null, numberOfGuests, empty);
-    }
-
-    public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, numberOfGuests, empty);
-    }
-
     public void updateEmpty(final boolean empty) {
+        if (isGrouped()) {
+            throw new IllegalArgumentException("그룹에 속해있는 테이블은 빈 상태를 변경할 수 없습니다.");
+        }
         this.empty = empty;
     }
 
     public void ungroup() {
         this.tableGroup = null;
-        this.empty = false;
     }
 
     public void groupBy(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
-        this.empty = false;
+    }
+
+    public boolean isUnableToBeGrouped() {
+        return !empty || Objects.nonNull(tableGroup);
+    }
+
+    private boolean isGrouped() {
+        return Objects.nonNull(tableGroup);
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("비어있는 테이블은 손님 수를 바꿀 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

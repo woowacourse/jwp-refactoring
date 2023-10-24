@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.table.TableEmptyChangeRequest;
 import kitchenpos.application.dto.table.TableGuestChangeRequest;
@@ -45,38 +44,31 @@ public class TableService {
 
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableEmptyChangeRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = findById(orderTableId);
+
+        if (orderRepository.existsByOrderTableAndOrderStatusIn(orderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+            throw new IllegalArgumentException();
+        }
+        orderTable.updateEmpty(request.isEmpty());
+
+        return TableResponse.from(orderTable);
+    }
+
+    private OrderTable findById(final Long id) {
+        return orderTableRepository.findById(id)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(savedOrderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-        savedOrderTable.updateEmpty(request.isEmpty());
-
-        return TableResponse.from(savedOrderTable);
     }
 
     @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId, final TableGuestChangeRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
-
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("변경하려는 손님 수는 0보다 작을 수 없습니다.");
         }
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+        final OrderTable orderTable = findById(orderTableId);
+        orderTable.changeNumberOfGuests(numberOfGuests);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.changeNumberOfGuests(numberOfGuests);
-
-        return TableResponse.from(savedOrderTable);
+        return TableResponse.from(orderTable);
     }
 }

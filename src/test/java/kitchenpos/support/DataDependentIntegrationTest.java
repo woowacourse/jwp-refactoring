@@ -1,6 +1,6 @@
 package kitchenpos.support;
 
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,8 +10,8 @@ public class DataDependentIntegrationTest {
     @Autowired
     private DataCleaner dataCleaner;
 
-    @AfterEach
-    void tearDown() {
+    @BeforeEach
+    void setUp() {
         dataCleaner.clear();
     }
 }

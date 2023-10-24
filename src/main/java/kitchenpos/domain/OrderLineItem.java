@@ -25,15 +25,10 @@ public class OrderLineItem {
 
     protected OrderLineItem() {}
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
-        this.seq = seq;
+    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
-    }
-
-    public OrderLineItem(final Order order, final Menu menu, final long quantity) {
-        this(null, order, menu, quantity);
     }
 
     public Long getSeq() {

@@ -10,9 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
+
+    private static final int MIN_GROUP_SIZE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,27 +29,29 @@ public class TableGroup {
 
     protected TableGroup() {}
 
-    public TableGroup(final Long id, final LocalDateTime createdDate, final List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
-    }
-
-    public TableGroup(final Long id, final LocalDateTime createdDate) {
-        this(id, createdDate, new ArrayList<>());
-    }
-
     public TableGroup(final LocalDateTime createdDate) {
-        this(null, createdDate);
-    }
-
-    public TableGroup(final LocalDateTime createdDate, final List<OrderTable> orderTables) {
         this.createdDate = createdDate;
-        this.orderTables = new ArrayList<>(orderTables);
+        this.orderTables = new ArrayList<>();
     }
 
     public void addOrderTables(final List<OrderTable> orderTables) {
+        validateTablesAbleToGroup(orderTables);
         this.orderTables = orderTables;
+    }
+
+    private void validateTablesAbleToGroup(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_GROUP_SIZE) {
+            throw new IllegalArgumentException("그룹으로 묶을 테이블은 2개 이상이어야 합니다.");
+        }
+        for (final OrderTable orderTable : orderTables) {
+            validateTableAbleToGroup(orderTable);
+        }
+    }
+
+    private void validateTableAbleToGroup(final OrderTable orderTable) {
+        if (orderTable.isUnableToBeGrouped()) {
+            throw new IllegalArgumentException("그룹으로 묶을 수 없는 테이블입니다.");
+        }
     }
 
     public Long getId() {

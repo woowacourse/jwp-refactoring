@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.order.MenuQuantityDto;
 import kitchenpos.application.dto.order.OrderRequest;
@@ -20,7 +18,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -46,26 +43,15 @@ public class OrderService {
     public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
 
-        final Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
-        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderRequest.getOrderLineItems(), orderToSave);
+        final Order order = Order.createDefault(orderTable, LocalDateTime.now());
+        final List<OrderLineItem> orderLineItems = convertToOrderLineItems(orderRequest.getOrderLineItems(), order);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
+        order.addOrderLineItems(orderLineItems);
+        orderRepository.save(order);
+        orderLineItemRepository.saveAll(orderLineItems);
 
-        final Order savedOrder = orderRepository.save(orderToSave);
-
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.addOrderLineItems(savedOrderLineItems);
-
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(order);
     }
 
     private List<OrderLineItem> convertToOrderLineItems(final List<MenuQuantityDto> menuQuantities, final Order order) {
@@ -93,16 +79,12 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest changeRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        final Order order = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        final OrderStatus orderStatus = OrderStatus.from(changeRequest.getOrderStatus());
+        order.changeOrderStatus(orderStatus);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(changeRequest.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus);
-
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(order);
     }
 }

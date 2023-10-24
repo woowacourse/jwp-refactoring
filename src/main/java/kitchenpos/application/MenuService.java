@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.menu.MenuRequest;
 import kitchenpos.application.dto.menu.MenuResponse;
@@ -11,6 +8,7 @@ import kitchenpos.application.dto.menu.ProductQuantityDto;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
@@ -41,36 +39,15 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final BigDecimal price = menuRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
             .orElseThrow(IllegalArgumentException::new);
 
-        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
+        final Menu menu = new Menu(menuRequest.getName(), Price.from(menuRequest.getPrice()), menuGroup);
 
         final List<MenuProduct> menuProducts = getMenuProductsFromRequest(menuRequest.getMenuProducts(), menu);
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = menuProduct.getProduct();
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
-        savedMenu.addMenuProducts(savedMenuProducts);
+        menu.addMenuProducts(menuProducts);
+        menuRepository.save(menu);
+        menuProductRepository.saveAll(menuProducts);
 
         return MenuResponse.from(menu);
     }

@@ -11,6 +11,7 @@ import kitchenpos.application.dto.menu.MenuRequest;
 import kitchenpos.application.dto.menu.MenuResponse;
 import kitchenpos.application.dto.menu.ProductQuantityDto;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
@@ -37,7 +38,7 @@ class MenuServiceTest extends DataDependentIntegrationTest {
     void create_success() {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
+        final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
         final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(500L), menuGroup.getId(), List.of(
             new ProductQuantityDto(product.getId(), 2)
         ));
@@ -96,7 +97,7 @@ class MenuServiceTest extends DataDependentIntegrationTest {
     @Test
     void create_menuTotalPrice_fail() {
         // given
-        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
+        final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(2001L), menuGroup.getId(), List.of(
             new ProductQuantityDto(product.getId(), 2)
@@ -112,7 +113,7 @@ class MenuServiceTest extends DataDependentIntegrationTest {
     void list() {
         // given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
+        final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
         final MenuRequest menuRequest = new MenuRequest("menu", BigDecimal.valueOf(1000L), menuGroup.getId(), List.of(
             new ProductQuantityDto(product.getId(), 2L)
         ));

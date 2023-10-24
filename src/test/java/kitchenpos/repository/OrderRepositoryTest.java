@@ -8,14 +8,14 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.support.DataCleaner;
+import kitchenpos.support.DataDependentIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
-class OrderRepositoryTest {
+class OrderRepositoryTest extends DataDependentIntegrationTest {
 
     @Autowired
     private OrderRepository orderRepository;

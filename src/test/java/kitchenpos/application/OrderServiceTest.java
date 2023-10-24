@@ -7,31 +7,29 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dto.menu.MenuRequest;
-import kitchenpos.application.dto.menu.MenuResponse;
-import kitchenpos.application.dto.menu.ProductQuantityDto;
 import kitchenpos.application.dto.order.MenuQuantityDto;
 import kitchenpos.application.dto.order.OrderRequest;
 import kitchenpos.application.dto.order.OrderResponse;
 import kitchenpos.application.dto.order.OrderStatusChangeRequest;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.support.DataDependentIntegrationTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends DataDependentIntegrationTest {
 
-    private Long menuId;
-    private MenuGroup menuGroup;
-    private OrderTable orderTable;
     private static final long NOT_EXIST_ID = Long.MAX_VALUE;
 
     @Autowired
@@ -41,7 +39,7 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     private OrderService orderService;
 
     @Autowired
-    private MenuService menuService;
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -49,22 +47,25 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @BeforeEach
-    void setUp() {
-        menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        final Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000L)));
-        final MenuResponse menu = menuService.create(new MenuRequest("menu", BigDecimal.valueOf(1000L), menuGroup.getId(),
-            List.of(new ProductQuantityDto(product.getId(), 2)
-            )));
-        menuId = menu.getId();
-        orderTable = orderTableRepository.save(new OrderTable(3, false));
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    private Menu createMenu() {
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        final Product product = productRepository.save(new Product("product", Price.from(BigDecimal.valueOf(1000L))));
+        final Menu menu = menuRepository.save(new Menu("menu", Price.from(BigDecimal.valueOf(1000L)), menuGroup));
+        menuProductRepository.save(new MenuProduct(menu, product, 2));
+
+        return menu;
     }
 
     @DisplayName("새 주문을 저장한다.")
     @Test
     void create_success() {
         // given
-        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3)));
+        final Menu menu = createMenu();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
 
         // when
         final OrderResponse savedOrder = orderService.create(orderRequest);
@@ -74,7 +75,7 @@ class OrderServiceTest extends DataDependentIntegrationTest {
             () -> assertThat(savedOrder.getId()).isNotNull(),
             () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId()),
             () -> assertThat(savedOrder.getOrderLineItems()).usingRecursiveComparison()
-                .isEqualTo(List.of(new MenuQuantityDto(menuId, 3)))
+                .isEqualTo(List.of(new MenuQuantityDto(menu.getId(), 3)))
         );
     }
 
@@ -82,6 +83,7 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void create_empty_fail() {
         // given
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), Collections.emptyList());
 
         // when, then
@@ -93,6 +95,7 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void create_notExistMenu_fail() {
         // given
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
         final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(NOT_EXIST_ID, 3)));
 
         // when, then
@@ -104,7 +107,8 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void create_notExistTable_fail() {
         // given
-        final OrderRequest orderRequest = new OrderRequest(NOT_EXIST_ID, List.of(new MenuQuantityDto(menuId, 3)));
+        final Menu menu = createMenu();
+        final OrderRequest orderRequest = new OrderRequest(NOT_EXIST_ID, List.of(new MenuQuantityDto(menu.getId(), 3)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -115,10 +119,12 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void create_emptyTable_fail() {
         // given
+        final Menu menu = createMenu();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
         orderTable.updateEmpty(true);
         orderTableRepository.save(orderTable);
 
-        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3)));
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -129,9 +135,11 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void list() {
         // given
-        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3)));
+        final Menu menu = createMenu();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+        final OrderRequest orderRequest = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 3)));
         final OrderResponse createdOrder = orderService.create(orderRequest);
-        final OrderRequest orderRequest2 = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 2)));
+        final OrderRequest orderRequest2 = new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 2)));
         final OrderResponse createdOrder2 = orderService.create(orderRequest2);
 
         // when
@@ -147,7 +155,11 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void changeOrderStatus() {
         // given
-        final OrderResponse prevOrder = orderService.create(new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3))));
+        final Menu menu = createMenu();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+        final OrderResponse prevOrder = orderService.create(new OrderRequest(orderTable.getId(),
+            List.of(new MenuQuantityDto(menu.getId(), 3))
+        ));
         final OrderStatusChangeRequest statusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 
         // when
@@ -173,7 +185,9 @@ class OrderServiceTest extends DataDependentIntegrationTest {
     @Test
     void changeOrderStatus_wrongStatus_fail() {
         // given
-        final OrderResponse prevOrder = orderService.create(new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menuId, 3))));
+        final Menu menu = createMenu();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false));
+        final OrderResponse prevOrder = orderService.create(new OrderRequest(orderTable.getId(), List.of(new MenuQuantityDto(menu.getId(), 3))));
         final OrderResponse completedOrder = orderService.changeOrderStatus(prevOrder.getId(), new OrderStatusChangeRequest(OrderStatus.COMPLETION.name()));
         final Long orderId = completedOrder.getId();
 
