@@ -56,7 +56,7 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
         for (final OrderTable orderTable : orderTables) {
-            orderTable.removeTableGroup(null);
+            orderTable.removeTableGroup();
             orderTable.updateEmpty(false);
         }
     }
