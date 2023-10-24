@@ -16,6 +16,7 @@ import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,25 +106,27 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 테이블_그룹에_조리중이나_식사중인_테이블이_있다면_언그룹을_못한다() {
-        TableGroup tableGroup = TableGroupBuilder.init()
-                .build();
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        OrderTable orderTable1 = OrderTableBuilder.init()
+        final OrderTable orderTable1 = OrderTableBuilder.init()
                 .empty(false)
+                .tableGroup(null)
                 .build();
-        OrderTable orderTable2 = OrderTableBuilder.init()
+        final OrderTable orderTable2 = OrderTableBuilder.init()
                 .empty(false)
+                .tableGroup(null)
                 .build();
-        savedTableGroup.addOrderTable(orderTable1);
-        savedTableGroup.addOrderTable(orderTable2);
-        OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-        OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
-        Order order1 = OrderBuilder.init()
-                .orderTable(savedOrderTable1)
+        List<OrderTable> orderTables = new ArrayList<>();
+        orderTables.add(orderTable1);
+        orderTables.add(orderTable2);
+        final TableGroup tableGroup = TableGroupBuilder.init()
+                .orderTables(orderTables)
+                .build();
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final Order order1 = OrderBuilder.init()
+                .orderTable(orderTable1)
                 .orderStatus(OrderStatus.MEAL)
                 .build();
-        Order order2 = OrderBuilder.init()
-                .orderTable(savedOrderTable2)
+        final Order order2 = OrderBuilder.init()
+                .orderTable(orderTable2)
                 .orderStatus(OrderStatus.COMPLETION)
                 .build();
         orderRepository.save(order1);

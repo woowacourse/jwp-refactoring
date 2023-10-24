@@ -44,10 +44,8 @@ public class Menu {
                               final List<MenuProduct> menuProducts) {
         final Menu menu = new Menu(name, price, menuGroup);
         menu.addMenuProducts(menuProducts);
-
         menu.validatePriceOverZero();
         menu.validateTotalPrice();
-
         return menu;
     }
 
@@ -70,7 +68,6 @@ public class Menu {
 
     private void validateTotalPrice() {
         final BigDecimal totalPrice = calculateAllProductPrice();
-
         if (price.compareTo(totalPrice) > 0) {
             throw new IllegalArgumentException();
         }

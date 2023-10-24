@@ -54,13 +54,13 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public void addOrderTables(final List<OrderTable> orderTables) {
+    private void addOrderTables(final List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
             addOrderTable(orderTable);
         }
     }
 
-    public void addOrderTable(final OrderTable orderTable) {
+    private void addOrderTable(final OrderTable orderTable) {
         orderTable.groupedBy(this);
         orderTables.add(orderTable);
     }

@@ -114,9 +114,9 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTable orderTable = OrderTableBuilder.init()
                 .empty(false)
+                .tableGroup(tableGroup)
                 .build();
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        savedTableGroup.addOrderTable(orderTable);
         final Order order = OrderBuilder.init()
                 .orderTable(savedOrderTable)
                 .orderStatus(OrderStatus.MEAL)
@@ -140,9 +140,9 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTable orderTable = OrderTableBuilder.init()
                 .empty(false)
+                .tableGroup(savedTableGroup)
                 .build();
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        savedTableGroup.addOrderTable(orderTable);
         final Order order = OrderBuilder.init()
                 .orderTable(savedOrderTable)
                 .orderStatus(OrderStatus.MEAL)
@@ -164,9 +164,9 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTable orderTable = OrderTableBuilder.init()
                 .empty(false)
+                .tableGroup(savedTableGroup)
                 .build();
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        savedTableGroup.addOrderTable(orderTable);
         final Order order = OrderBuilder.init()
                 .orderTable(savedOrderTable)
                 .orderStatus(OrderStatus.COMPLETION)

@@ -18,11 +18,14 @@ public class Product {
     protected Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
+    public Product(final String name,
+                   final BigDecimal price) {
         this(null, name, price);
     }
 
-    public Product(final Long id, final String name, final BigDecimal price) {
+    public Product(final Long id,
+                   final String name,
+                   final BigDecimal price) {
         validatePrice(price);
         this.id = id;
         this.name = name;
