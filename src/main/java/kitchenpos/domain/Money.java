@@ -5,6 +5,8 @@ import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.Embeddable;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNull;
 import static javax.persistence.AccessType.FIELD;
 
 @Embeddable
@@ -24,10 +26,11 @@ public class Money {
     }
 
     protected Money() {
+        this.value = BigDecimal.ZERO;
     }
 
     public Money(final BigDecimal value) {
-        if (value == null || value.compareTo(BigDecimal.ZERO) < 0) {
+        if (isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("가격이 없거나 0보다 작습니다.");
         }
         this.value = value;
