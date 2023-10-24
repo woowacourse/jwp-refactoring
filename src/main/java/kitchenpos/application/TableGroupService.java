@@ -6,6 +6,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableIdRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -29,20 +31,18 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+        final List<OrderTableIdRequest> orderTableIds = tableGroupRequest.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<OrderTable> savedOrderTables = orderTableIds.stream()
+                .map(id -> orderTableDao.findById(id.getId()).get())
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -52,9 +52,13 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(
+                new TableGroup(
+                        null,
+                        LocalDateTime.now(),
+                        savedOrderTables
+                )
+        );
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {

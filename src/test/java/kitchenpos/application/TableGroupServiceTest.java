@@ -6,6 +6,8 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.OrderTableIdRequest;
+import kitchenpos.dto.request.TableGroupRequest;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,13 +37,13 @@ class TableGroupServiceTest {
     class 단체_지정을_등록한다 {
         @Test
         void 단체_지정이_정상적으로_등록된다() {
-            final List<OrderTable> orderTables = new ArrayList<>();
+            final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
-                orderTables.add(savedOrderTable);
+                orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
-            final TableGroup tableGroup = new TableGroup(null, null, orderTables);
+            final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             assertSoftly(softly -> {
@@ -54,7 +56,7 @@ class TableGroupServiceTest {
         void 단체_지정시_2개_보다_작은_테이블을_입력하면_예외가_발생한다() {
             final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
 
-            final TableGroup tableGroup = new TableGroup(null, null, List.of(savedOrderTable));
+            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId())));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -62,12 +64,12 @@ class TableGroupServiceTest {
 
         @Test
         void 단체_지정되어있는_테이블을_단체_지정하면_예외가_발생한다() {
-            final List<OrderTable> orderTables = new ArrayList<>();
+            final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
-                orderTables.add(savedOrderTable);
+                orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
-            final TableGroup tableGroup = new TableGroup(null, null, orderTables);
+            final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
             tableGroupService.create(tableGroup);
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -79,13 +81,13 @@ class TableGroupServiceTest {
     class 단체_지정을_해제한다 {
         @Test
         void 단체_지정을_정상적으로_해제한다() {
-            final List<OrderTable> orderTables = new ArrayList<>();
+            final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
-                orderTables.add(savedOrderTable);
+                orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
-            final TableGroup tableGroup = new TableGroup(null, null, orderTables);
+            final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
             final List<Long> savedOrderTableIds = savedTableGroup.getOrderTables().stream()
                     .map(OrderTable::getId)
@@ -103,14 +105,14 @@ class TableGroupServiceTest {
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 테이블이_조리_혹은_식사_상태일떄_단체_지정을_해제하면_예외가_발생한다(final String status) {
-            final List<OrderTable> orderTables = new ArrayList<>();
+            final List<OrderTableIdRequest> orderTables = new ArrayList<>();
             for (int i = 0; i < 2; i++) {
                 final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
-                orderTables.add(savedOrderTable);
+                orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
                 orderDao.save(new Order(null, savedOrderTable.getId(), status, LocalDateTime.now(), List.of()));
             }
 
-            final TableGroup tableGroup = new TableGroup(null, null, orderTables);
+            final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
             final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
