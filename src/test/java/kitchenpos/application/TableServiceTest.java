@@ -3,13 +3,13 @@ package kitchenpos.application;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.helper.IntegrationTestHelper;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.exception.OrderStatusProgressMealException;
 import kitchenpos.ordertable.application.TableService;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeNumberOfGuestRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.exception.CannotChangeNumberOfGuestBecauseOfEmptyTableException;
-import kitchenpos.ordertable.exception.CannotUnGroupBecauseOfStatusException;
 import kitchenpos.ordertable.exception.NumberOfGuestsInvalidException;
 import kitchenpos.ordertable.exception.OrderTableNotFoundException;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -112,7 +112,7 @@ class TableServiceTest extends IntegrationTestHelper {
 
         // when & then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changedTableRequest))
-                .isInstanceOf(CannotUnGroupBecauseOfStatusException.class);
+                .isInstanceOf(OrderStatusProgressMealException.class);
     }
 
     @Test

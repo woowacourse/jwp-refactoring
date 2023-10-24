@@ -16,10 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class OrderService {
+
+    private static final List<String> PROGRESS_MEAL_STATUS = Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
 
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher publisher;
@@ -80,5 +83,10 @@ public class OrderService {
     private Order findOrder(final Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isStatusInProgressMealByIds(final List<Long> orderTableIds) {
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, PROGRESS_MEAL_STATUS);
     }
 }

@@ -5,9 +5,9 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.exception.OrderStatusProgressMealException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.ordertable.exception.CannotUnGroupBecauseOfStatusException;
 import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
@@ -110,6 +110,6 @@ class TableGroupServiceTest extends IntegrationTestHelper {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
-                .isInstanceOf(CannotUnGroupBecauseOfStatusException.class);
+                .isInstanceOf(OrderStatusProgressMealException.class);
     }
 }

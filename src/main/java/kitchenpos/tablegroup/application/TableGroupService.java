@@ -1,21 +1,19 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.common.event.message.ValidatorHavingMeal;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
-import kitchenpos.ordertable.exception.CannotUnGroupBecauseOfStatusException;
 import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.tablegroup.application.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.TableGroupRepository;
 import kitchenpos.tablegroup.exception.TableGroupInvalidSizeException;
 import kitchenpos.tablegroup.exception.TableNotFoundException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,70 +22,65 @@ public class TableGroupService {
 
     private static final int MINIMUM_TABLE_SIZE = 2;
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository, final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest req) {
-        // 1. 주문 테이블이 2개보다 적으면 예외
-        validateTableSize(req.getOrderTables());
+        validateCreateSize(req);
 
         TableGroup tableGroup = tableGroupRepository.save(TableGroup.createDefault());
         List<Long> orderTableIds = req.getOrderTables();
 
         List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        // 2. 테이블을 찾을 수 없다면 예외 발생
-        validateTableNotFound(req.getOrderTables(), findOrderTables);
-
-        findOrderTables.forEach(it ->
-                it.updateTableGroupStatus(tableGroup.getId())
-        );
+        validateTableExist(orderTableIds, findOrderTables);
+        updateTableGroupStatus(findOrderTables, tableGroup.getId());
 
         return TableGroupResponse.from(tableGroup, findOrderTables);
     }
 
-    private void validateTableSize(final List<Long> orderTableIds) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < MINIMUM_TABLE_SIZE) {
+    private void validateCreateSize(final TableGroupCreateRequest req) {
+        if (CollectionUtils.isEmpty(req.getOrderTables()) || req.getOrderTables().size() < MINIMUM_TABLE_SIZE) {
             throw new TableGroupInvalidSizeException();
         }
     }
 
-    private void validateTableNotFound(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
-        if (orderTableIds.size() != savedOrderTables.size()) {
+    private void validateTableExist(final List<Long> orderTableIds, final List<OrderTable> findOrderTables) {
+        if (orderTableIds.size() != findOrderTables.size()) {
             throw new TableNotFoundException();
         }
+    }
+
+    private void updateTableGroupStatus(final List<OrderTable> findOrderTables, final Long tableGroupId) {
+        findOrderTables.forEach(it -> it.updateTableGroupStatus(tableGroupId));
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
-        validateStatus(orderTables);
+        validateStatusHavingMeal(orderTables);
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroupStatus(null);
-        }
+        ungroupOrderTables(orderTables);
     }
 
-    private void validateStatus(final List<OrderTable> orderTables) {
+    private void validateStatusHavingMeal(final List<OrderTable> orderTables) {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (isStatusCookingOrMeal(orderTableIds)) {
-            throw new CannotUnGroupBecauseOfStatusException();
-        }
+        publisher.publishEvent(new ValidatorHavingMeal(orderTableIds));
     }
 
-    private boolean isStatusCookingOrMeal(final List<Long> orderTableIds) {
-        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+    private void ungroupOrderTables(final List<OrderTable> orderTables) {
+        orderTables.forEach(orderTable -> orderTable.updateTableGroupStatus(null));
     }
 }
