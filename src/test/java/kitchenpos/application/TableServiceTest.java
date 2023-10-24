@@ -1,24 +1,28 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.TableService;
 import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderTableResponse;
+import kitchenpos.domain.order.service.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static kitchenpos.domain.order.OrderStatus.COOKING;
-import static kitchenpos.domain.order.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -26,11 +30,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -90,55 +91,29 @@ class TableServiceTest {
             final OrderTable spyOrderTable = spy(new OrderTable(5, false));
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
-            final TableGroup emptyTableGroup = mock(TableGroup.class);
-            given(spyOrderTable.getTableGroup()).willReturn(emptyTableGroup);
-            final Long emptyTableGroupId = null;
-            given(emptyTableGroup.getId()).willReturn(emptyTableGroupId);
-
             final long orderTableId = 1L;
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))).willReturn(false);
-
-            // when
-            tableService.changeEmpty(orderTableId, spyOrderTable);
-
-            // then
-            verify(orderTableRepository, times(1)).save(any(OrderTable.class));
-        }
-
-        @Test
-        void 단체_지정_아이디가_null이_아니면_예외를_던진다() {
-            // given
-            final OrderTable target = spy(new OrderTable(5, false));
-            given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(target));
-
-            // when
-            final TableGroup nonNullTableGroup = mock(TableGroup.class);
-            final long nonNullTableGroupId = 1L;
-            when(nonNullTableGroup.getId()).thenReturn(nonNullTableGroupId);
-            when(target.getTableGroup()).thenReturn(nonNullTableGroup);
-
-            // then
-            final long orderTableId = 1L;
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, target))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문상태가_요리중이거나_식사중이면_예외가_발생한다() {
-            // given
-            final OrderTable orderTable = spy(new OrderTable(5, false));
-            given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(orderTable));
-
-            final TableGroup emptyTableGroup = mock(TableGroup.class);
-            given(orderTable.getTableGroup()).willReturn(emptyTableGroup);
-            final Long emptyTableGroupId = null;
-            given(emptyTableGroup.getId()).willReturn(emptyTableGroupId);
-
-            final long orderTableId = 1L;
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))).willReturn(true);
+            final Order order = new Order(spyOrderTable, COMPLETION, LocalDateTime.now(), new OrderLineItems());
+            given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(false);
+            tableService.changeEmpty(orderTableId, request);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"MEAL","COOKING"})
+        void 주문상태가_요리중이거나_식사중이면_예외가_발생한다(final OrderStatus orderStatus) {
+            // given
+            final OrderTable spyOrderTable = spy(new OrderTable(5, false));
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
+
+            final long orderTableId = 1L;
+            final Order order = new Order(spyOrderTable, orderStatus, LocalDateTime.now(), new OrderLineItems());
+            given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
+
+            // when, then
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(false);
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

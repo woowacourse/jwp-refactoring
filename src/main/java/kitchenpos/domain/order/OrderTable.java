@@ -34,10 +34,17 @@ public class OrderTable {
     }
 
     public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        validateNotNull(tableGroup);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void validateNotNull(final TableGroup tableGroup) {
+        if (tableGroup != null) {
+            throw new IllegalArgumentException(String.format("OrderTable을 생성할 때 tableGroup 이 있는 상태 일 수 없습니다. TableGroupId = %s", tableGroup.getId()));
+        }
     }
 
     public void changeGroup(final TableGroup tableGroup) {

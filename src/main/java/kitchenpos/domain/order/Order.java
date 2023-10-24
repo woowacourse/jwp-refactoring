@@ -75,6 +75,10 @@ public class Order {
         this.orderStatus = toChangeOrderStatus;
     }
 
+    public boolean isProceeding() {
+        return orderStatus == OrderStatus.COOKING || orderStatus == OrderStatus.MEAL;
+    }
+
     public Long getId() {
         return id;
     }

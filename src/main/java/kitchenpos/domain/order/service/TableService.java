@@ -1,17 +1,16 @@
 package kitchenpos.domain.order.service;
 
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
 import kitchenpos.domain.order.service.dto.OrderTableResponse;
+import kitchenpos.domain.order.service.dto.OrderTableUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,22 +41,17 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public void changeEmpty(final Long orderTableId, final OrderTableUpdateRequest reqeust) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException(String.format("OrderTable 의 식별자로 OrderTable을 찾을 수 없습니다. 식별자 = %s", orderTableId)));
+        final Order order = orderRepository.findByOrderTableId(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("OrderTable 의 식별자로 해당하는 Order을 찾을 수 없습니다. 식별자 = %s", orderTableId)));
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup().getId())) {
-            throw new IllegalArgumentException();
+        if (order.isProceeding()) {
+            throw new IllegalArgumentException("Order가 요리 중이거나 식사중이면 상태를 변경할 수 없습니다.");
         }
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.changeEmpty(orderTable.isEmpty());
-
-        return orderTableRepository.save(savedOrderTable);
+        savedOrderTable.changeEmpty(reqeust.isEmpty());
     }
 
     @Transactional

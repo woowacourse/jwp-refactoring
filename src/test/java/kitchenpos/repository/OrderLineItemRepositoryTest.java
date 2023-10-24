@@ -5,7 +5,6 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,8 @@ class OrderLineItemRepositoryTest extends RepositoryTestConfig {
     @Test
     void findAllByOrderId() {
         // given
-        final TableGroup tableGroup1 = createTableGroup(LocalDateTime.now());
-        final TableGroup tableGroup2 = createTableGroup(LocalDateTime.now());
-        final OrderTable orderTable1 = createOrderTable(tableGroup1, 10, false);
-        final OrderTable orderTable2 = createOrderTable(tableGroup2, 5, false);
-
-        tableGroup1.addOrderTables(List.of(orderTable1));
-        tableGroup2.addOrderTables(List.of(orderTable2));
+        final OrderTable orderTable1 = createOrderTable(null, 10, false);
+        final OrderTable orderTable2 = createOrderTable(null, 5, false);
 
         final MenuGroup japanese = createMenuGroup("일식");
         final Menu wooDong = createMenu("우동", BigDecimal.valueOf(5000), japanese);
