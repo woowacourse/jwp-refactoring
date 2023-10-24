@@ -19,11 +19,11 @@ public class TableGroupResponse {
         );
     }
 
-    public Long id() {
+    public Long getId() {
         return id;
     }
 
-    public LocalDateTime createdDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 }

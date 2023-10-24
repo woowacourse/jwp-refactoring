@@ -22,15 +22,15 @@ public class OrderLineItemResponse {
         );
     }
 
-    public Long seq() {
+    public Long getSeq() {
         return seq;
     }
 
-    public MenuResponse menuResponse() {
+    public MenuResponse getMenuResponse() {
         return menuResponse;
     }
 
-    public long quantity() {
+    public long getQuantity() {
         return quantity;
     }
 }

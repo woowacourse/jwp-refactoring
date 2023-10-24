@@ -43,20 +43,20 @@ public class OrderTableResponse {
         return TableGroupResponse.from(tableGroup);
     }
 
-    public long id() {
+    public long getId() {
         return id;
     }
 
     @Nullable
-    public TableGroupResponse tableGroupResponse() {
+    public TableGroupResponse getTableGroupResponse() {
         return tableGroupResponse;
     }
 
-    public int numberOfGuests() {
+    public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public boolean empty() {
+    public boolean isEmpty() {
         return empty;
     }
 }

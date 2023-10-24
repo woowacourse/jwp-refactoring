@@ -55,7 +55,7 @@ public class Order {
 
     private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("order table이 비어있습니다.");
         }
     }
 

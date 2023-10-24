@@ -47,23 +47,23 @@ public class OrderResponse {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public long id() {
+    public long getId() {
         return id;
     }
 
-    public OrderTableResponse orderTable() {
+    public OrderTableResponse getOrderTable() {
         return orderTable;
     }
 
-    public OrderStatus orderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public LocalDateTime orderedTime() {
+    public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public List<OrderLineItemResponse> orderLineItems() {
+    public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
 }

@@ -22,15 +22,15 @@ public class MenuProductResponse {
         );
     }
 
-    public Long seq() {
+    public Long getSeq() {
         return seq;
     }
 
-    public ProductResponse product() {
+    public ProductResponse getProduct() {
         return product;
     }
 
-    public long quantity() {
+    public long getQuantity() {
         return quantity;
     }
 }

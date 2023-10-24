@@ -42,23 +42,23 @@ public class MenuResponse {
         );
     }
 
-    public long id() {
+    public long getId() {
         return id;
     }
 
-    public String name() {
+    public String getName() {
         return name;
     }
 
-    public BigDecimal price() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public MenuGroupResponse menuGroup() {
+    public MenuGroupResponse getMenuGroup() {
         return menuGroup;
     }
 
-    public List<MenuProductResponse> menuProducts() {
+    public List<MenuProductResponse> getMenuProducts() {
         return menuProducts;
     }
 }
