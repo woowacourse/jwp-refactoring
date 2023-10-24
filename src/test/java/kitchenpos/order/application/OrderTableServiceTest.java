@@ -4,24 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.common.annotation.ServiceTest;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.presentation.dto.ChangeEmptyRequest;
 import kitchenpos.order.presentation.dto.ChangeNumberOfGuestsRequest;
 import kitchenpos.order.presentation.dto.CreateOrderTableRequest;
 import kitchenpos.support.TestSupporter;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DisplayNameGeneration(ReplaceUnderscores.class)
-@Sql("/truncate.sql")
-@SpringBootTest
+@ServiceTest
 class OrderTableServiceTest {
 
     @Autowired
