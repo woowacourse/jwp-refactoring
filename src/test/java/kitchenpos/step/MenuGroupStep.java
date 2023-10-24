@@ -3,8 +3,8 @@ package kitchenpos.step;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.request.MenuGroupCreateRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 
 import static io.restassured.http.ContentType.JSON;
 
@@ -13,9 +13,9 @@ public class MenuGroupStep {
     public static final MenuGroupCreateRequest MENU_GROUP_REQUEST_일식 = new MenuGroupCreateRequest("일식");
     public static final MenuGroupCreateRequest MENU_GROUP_REQUEST_한식 = new MenuGroupCreateRequest("한식");
 
-    public static MenuGroup 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(final MenuGroupCreateRequest request) {
+    public static MenuGroupResponse 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(final MenuGroupCreateRequest request) {
         final ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(request);
-        return response.jsonPath().getObject("", MenuGroup.class);
+        return response.jsonPath().getObject("", MenuGroupResponse.class);
     }
 
     public static Long 메뉴_그룹_생성_요청하고_아이디_반환(final MenuGroupCreateRequest request) {
