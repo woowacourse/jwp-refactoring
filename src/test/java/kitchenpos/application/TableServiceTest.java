@@ -51,7 +51,7 @@ class TableServiceTest {
     @Test
     void create_orderTable() {
         // given
-        final OrderTableRequest request = new OrderTableRequest(5);
+        final OrderTableRequest request = new OrderTableRequest(5, true);
 
         // when
         final OrderTableResponse result = tableService.create(request);
@@ -60,7 +60,7 @@ class TableServiceTest {
         assertSoftly(softly -> {
             softly.assertThat(result.getId()).isEqualTo(1L);
             softly.assertThat(result.getTableGroupId()).isNull();
-            softly.assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuest());
+            softly.assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
             softly.assertThat(result.isEmpty()).isFalse();
         });
     }
