@@ -18,7 +18,7 @@ public class Order {
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
-        this.orderStatus = OrderStatus.valueOf(orderStatus);
+        this.orderStatus = OrderStatus.find(orderStatus);
         this.orderedTime = orderedTime;
     }
 
