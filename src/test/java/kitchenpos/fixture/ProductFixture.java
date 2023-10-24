@@ -1,5 +1,9 @@
 package kitchenpos.fixture;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import kitchenpos.application.dto.request.CreateProductRequest;
 import kitchenpos.application.dto.response.CreateProductResponse;
 import kitchenpos.application.dto.response.ProductResponse;
@@ -63,5 +67,16 @@ public class ProductFixture {
                     .price("16000")
                     .build();
         }
+    }
+
+    public static Long 상품_생성(CreateProductRequest request) {
+        ExtractableResponse<Response> response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when().post("/api/products")
+                .then().log().all()
+                .statusCode(201)
+                .extract();
+        return Long.parseLong(response.header("Location").split("/")[3]);
     }
 }

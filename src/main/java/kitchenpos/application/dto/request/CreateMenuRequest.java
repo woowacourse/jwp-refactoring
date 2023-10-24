@@ -8,7 +8,6 @@ public class CreateMenuRequest {
     private CreateMenuRequest() {
     }
 
-    private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
@@ -19,18 +18,12 @@ public class CreateMenuRequest {
     }
 
     public static final class CreateMenuRequestBuilder {
-        private Long id;
         private String name;
         private BigDecimal price;
         private Long menuGroupId;
         private List<MenuProductRequest> menuProducts;
 
         private CreateMenuRequestBuilder() {
-        }
-
-        public CreateMenuRequestBuilder id(Long id) {
-            this.id = id;
-            return this;
         }
 
         public CreateMenuRequestBuilder name(String name) {
@@ -59,13 +52,8 @@ public class CreateMenuRequest {
             createMenuRequest.menuGroupId = this.menuGroupId;
             createMenuRequest.price = this.price;
             createMenuRequest.name = this.name;
-            createMenuRequest.id = this.id;
             return createMenuRequest;
         }
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {

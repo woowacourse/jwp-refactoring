@@ -11,7 +11,7 @@ public class TableGroup {
     @Id
     private final Long id;
     private final LocalDateTime createdDate;
-    @MappedCollection(idColumn = "TABLE_GROUP_ID", keyColumn = "SEQ")
+    @MappedCollection(idColumn = "TABLE_GROUP_ID", keyColumn = "ID")
     private final List<OrderTable> orderTables;
 
     private TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {

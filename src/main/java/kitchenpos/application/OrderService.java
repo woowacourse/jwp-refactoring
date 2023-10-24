@@ -9,6 +9,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.mapper.OrderLineItemMapper;
 import kitchenpos.domain.mapper.OrderMapper;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
@@ -19,13 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static kitchenpos.application.dto.request.CreateOrderRequest.CreateOrderLineItem;
 
 @Service
 public class OrderService {
 
     private final OrderMapper orderMapper;
+    private final OrderLineItemMapper orderLineItemMapper;
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
@@ -33,12 +36,14 @@ public class OrderService {
 
     public OrderService(
             final OrderMapper orderMapper,
+            final OrderLineItemMapper orderLineItemMapper,
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.orderMapper = orderMapper;
+        this.orderLineItemMapper = orderLineItemMapper;
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
@@ -54,35 +59,33 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItemIds());
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(request.getOrderLineItems());
         final Order order = orderMapper.toOrder(request, orderLineItems);
         final Order savedOrder = orderRepository.save(order);
-        final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems);
 
         return CreateOrderResponse.of(
-                savedOrder.updateOrderLineItems(savedOrderLineItems),
-                savedOrderLineItems.stream()
+                savedOrder.updateOrderLineItems(orderLineItems),
+                orderLineItems.stream()
                         .map(OrderLineItemResponse::from)
                         .collect(Collectors.toList())
         );
     }
 
-    private List<OrderLineItem> saveOrderLineItems(List<OrderLineItem> orderLineItems) {
+    private List<OrderLineItem> getOrderLineItems(List<CreateOrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
         return orderLineItems.stream()
-                .map(orderLineItemRepository::save)
+                .map(orderLineItemMapper::toOrderLineItem)
                 .collect(Collectors.toList());
     }
 
-    private List<OrderLineItem> getOrderLineItems(List<Long> menuIds) {
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+    private void validateOrderLineItems(List<CreateOrderLineItem> createOrderLineItems) {
+        List<Long> menuIds = createOrderLineItems.stream()
+                .map(CreateOrderLineItem::getMenuId)
+                .collect(Collectors.toList());
+
+        if (createOrderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
-
-        return menuIds.stream()
-                .map(orderLineItemRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {

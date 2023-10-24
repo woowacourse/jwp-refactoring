@@ -8,8 +8,15 @@ public class CreateTableGroupRequest {
     private CreateTableGroupRequest() {
     }
 
+    private CreateTableGroupRequest(List<CreateOrderTable> orderTables) {
+        this.orderTables = orderTables;
+    }
+
     public static class CreateOrderTable {
-        private final long id;
+        private long id;
+
+        private CreateOrderTable() {
+        }
 
         public CreateOrderTable(long id) {
             this.id = id;
@@ -18,10 +25,6 @@ public class CreateTableGroupRequest {
         public long getId() {
             return id;
         }
-    }
-
-    public List<CreateOrderTable> getOrderTables() {
-        return orderTables;
     }
 
     public static CreateTableGroupRequestBuilder builder() {
@@ -40,9 +43,11 @@ public class CreateTableGroupRequest {
         }
 
         public CreateTableGroupRequest build() {
-            CreateTableGroupRequest createTableGroupRequest = new CreateTableGroupRequest();
-            createTableGroupRequest.orderTables = this.orderTables;
-            return createTableGroupRequest;
+            return new CreateTableGroupRequest(orderTables);
         }
+    }
+
+    public List<CreateOrderTable> getOrderTables() {
+        return orderTables;
     }
 }

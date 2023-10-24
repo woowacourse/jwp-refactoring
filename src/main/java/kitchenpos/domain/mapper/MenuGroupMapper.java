@@ -9,7 +9,6 @@ public class MenuGroupMapper {
 
     public static MenuGroup toMenuGroup(final CreateMenuGroupRequest menuGroup) {
         return MenuGroup.builder()
-                .id(menuGroup.getId())
                 .name(menuGroup.getName())
                 .build();
     }

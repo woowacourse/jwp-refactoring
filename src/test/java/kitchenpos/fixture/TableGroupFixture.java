@@ -6,10 +6,11 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static kitchenpos.application.dto.request.CreateTableGroupRequest.CreateOrderTable;
-import static kitchenpos.application.dto.request.CreateTableGroupRequest.builder;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -51,9 +52,13 @@ public class TableGroupFixture {
 
     public static class REQUEST {
 
-        public static CreateTableGroupRequest 주문_테이블_그룹_생성_요청() {
-            return builder()
-                    .orderTables(List.of(new CreateOrderTable(1L), new CreateOrderTable(2L)))
+        public static CreateTableGroupRequest 주문_테이블_그룹_생성_요청(Long... orderTableIds) {
+            List<CreateOrderTable> requests = Arrays.stream(orderTableIds)
+                    .map(CreateOrderTable::new)
+                    .collect(Collectors.toList());
+
+            return CreateTableGroupRequest.builder()
+                    .orderTables(requests)
                     .build();
         }
     }

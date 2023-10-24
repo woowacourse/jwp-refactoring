@@ -1,16 +1,18 @@
 package kitchenpos.application.dto.request;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class CreateOrderRequest {
 
     private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<Long> orderLineItemIds;
+    private List<CreateOrderLineItem> orderLineItems;
 
     private CreateOrderRequest() {
+    }
+
+    public CreateOrderRequest(Long orderTableId, List<CreateOrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderLineItems = orderLineItems;
     }
 
     public static CreateOrderRequestBuilder builder() {
@@ -19,9 +21,7 @@ public class CreateOrderRequest {
 
     public static final class CreateOrderRequestBuilder {
         private Long orderTableId;
-        private String orderStatus;
-        private LocalDateTime orderedTime;
-        private List<Long> orderLineItemIds;
+        private List<CreateOrderLineItem> orderLineItems;
 
         private CreateOrderRequestBuilder() {
         }
@@ -31,28 +31,13 @@ public class CreateOrderRequest {
             return this;
         }
 
-        public CreateOrderRequestBuilder orderStatus(String orderStatus) {
-            this.orderStatus = orderStatus;
-            return this;
-        }
-
-        public CreateOrderRequestBuilder orderedTime(LocalDateTime orderedTime) {
-            this.orderedTime = orderedTime;
-            return this;
-        }
-
-        public CreateOrderRequestBuilder orderLineItemIds(List<Long> orderLineItemIds) {
-            this.orderLineItemIds = orderLineItemIds;
+        public CreateOrderRequestBuilder orderLineItems(List<CreateOrderLineItem> orderLineItems) {
+            this.orderLineItems = orderLineItems;
             return this;
         }
 
         public CreateOrderRequest build() {
-            CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-            createOrderRequest.orderStatus = this.orderStatus;
-            createOrderRequest.orderTableId = this.orderTableId;
-            createOrderRequest.orderedTime = this.orderedTime;
-            createOrderRequest.orderLineItemIds = this.orderLineItemIds;
-            return createOrderRequest;
+            return new CreateOrderRequest(orderTableId, orderLineItems);
         }
     }
 
@@ -60,15 +45,28 @@ public class CreateOrderRequest {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    public List<CreateOrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
+    public static class CreateOrderLineItem {
+        private long menuId;
+        private long quantity;
 
-    public List<Long> getOrderLineItemIds() {
-        return orderLineItemIds;
+        private CreateOrderLineItem() {
+        }
+
+        public CreateOrderLineItem(long menuId, long quantity) {
+            this.menuId = menuId;
+            this.quantity = quantity;
+        }
+
+        public long getMenuId() {
+            return menuId;
+        }
+
+        public long getQuantity() {
+            return quantity;
+        }
     }
 }

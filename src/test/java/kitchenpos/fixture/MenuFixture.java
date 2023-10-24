@@ -1,5 +1,10 @@
 package kitchenpos.fixture;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
+import kitchenpos.application.dto.request.CreateMenuGroupRequest;
 import kitchenpos.application.dto.request.CreateMenuRequest;
 import kitchenpos.application.dto.response.CreateMenuResponse;
 import kitchenpos.application.dto.response.MenuResponse;
@@ -20,22 +25,22 @@ public class MenuFixture {
     public static class REQUEST {
 
         public static CreateMenuRequest 후라이드_치킨_16000원_1마리_등록_요청() {
+            Long productId = ProductFixture.상품_생성(ProductFixture.REQUEST.후라이드_치킨_16000원());
+            Long menuGroupId = MenuGroupFixture.메뉴_그룹_생성(CreateMenuGroupRequest.builder().name("치킨류").build());
             return CreateMenuRequest.builder()
-                    .id(1L)
                     .name("후라이드치킨")
+                    .menuGroupId(menuGroupId)
                     .price(BigDecimal.valueOf(16000L))
-                    .menuGroupId(1L)
-                    .menuProducts(List.of(MenuProductFixture.REQUEST.후라이드_치킨_1마리_요청()))
+                    .menuProducts(List.of(MenuProductFixture.REQUEST.상품_N_M개_요청(productId, 1)))
                     .build();
         }
 
-        public static CreateMenuRequest 후라이드_치킨_N원_1마리_등록_요청(Long price) {
+        public static CreateMenuRequest A_상품_B_원_C_그룹_메뉴_등록_요청(Long productId, Long price, Long menuGroupId) {
             return CreateMenuRequest.builder()
-                    .id(1L)
                     .name("후라이드치킨")
-                    .price(price == null ? null : BigDecimal.valueOf(price))
-                    .menuGroupId(1L)
-                    .menuProducts(List.of(MenuProductFixture.REQUEST.후라이드_치킨_1마리_요청()))
+                    .menuGroupId(menuGroupId)
+                    .price(BigDecimal.valueOf(price))
+                    .menuProducts(List.of(MenuProductFixture.REQUEST.상품_N_M개_요청(productId, 1)))
                     .build();
         }
     }
@@ -84,5 +89,16 @@ public class MenuFixture {
                     .menuProducts(List.of(MENU_PRODUCT.후라이드_치킨_1마리()))
                     .build();
         }
+    }
+
+    public static Long 메뉴_생성(CreateMenuRequest request) {
+        ExtractableResponse<Response> response = RestAssured.given()
+                .body(request)
+                .contentType(ContentType.JSON)
+                .when().post("/api/menus")
+                .then().log().all()
+                .statusCode(201)
+                .extract();
+        return Long.parseLong(response.header("Location").split("/")[3]);
     }
 }

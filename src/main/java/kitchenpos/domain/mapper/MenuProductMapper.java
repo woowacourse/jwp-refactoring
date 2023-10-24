@@ -12,7 +12,6 @@ public class MenuProductMapper {
 
     public MenuProduct toMenuProduct(final MenuProductRequest request) {
         return MenuProduct.builder()
-                .seq(request.getSeq())
                 .productId(request.getProductId())
                 .quantity(request.getQuantity())
                 .build();

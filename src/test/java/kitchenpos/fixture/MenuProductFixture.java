@@ -14,11 +14,10 @@ public class MenuProductFixture {
 
     public static class REQUEST {
 
-        public static MenuProductRequest 후라이드_치킨_1마리_요청() {
+        public static MenuProductRequest 상품_N_M개_요청(Long productId, int quantity) {
             return MenuProductRequest.builder()
-                    .menuId(1L)
-                    .productId(1L)
-                    .quantity(1)
+                    .productId(productId)
+                    .quantity(quantity)
                     .build();
         }
     }

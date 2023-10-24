@@ -5,12 +5,12 @@ import org.springframework.data.annotation.Id;
 public class OrderLineItem {
     @Id
     private final Long seq;
-    private final Menu menu;
+    private final Long menuId;
     private final long quantity;
 
-    private OrderLineItem(Long seq, Menu menu, long quantity) {
+    private OrderLineItem(Long seq, Long menuId, long quantity) {
         this.seq = seq;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 
@@ -18,8 +18,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public long getQuantity() {
@@ -32,7 +32,7 @@ public class OrderLineItem {
 
     public static final class OrderLineItemBuilder {
         private Long seq;
-        private Menu menu;
+        private Long menuId;
         private long quantity;
 
         private OrderLineItemBuilder() {
@@ -43,8 +43,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public OrderLineItemBuilder menu(Menu menu) {
-            this.menu = menu;
+        public OrderLineItemBuilder menuId(Long menuId) {
+            this.menuId = menuId;
             return this;
         }
 
@@ -54,7 +54,7 @@ public class OrderLineItem {
         }
 
         public OrderLineItem build() {
-            return new OrderLineItem(seq, menu, quantity);
+            return new OrderLineItem(seq, menuId, quantity);
         }
     }
 }

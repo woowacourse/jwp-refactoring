@@ -1,9 +1,11 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.AccessType;
 import org.springframework.data.annotation.Id;
 
 public class OrderTable {
     @Id
+    @AccessType(AccessType.Type.PROPERTY)
     private final Long id;
     private final int numberOfGuests;
     private final boolean empty;

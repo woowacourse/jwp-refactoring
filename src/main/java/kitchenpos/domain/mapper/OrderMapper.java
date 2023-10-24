@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -22,14 +23,14 @@ public class OrderMapper {
         validate(request.getOrderTableId());
         return Order.builder()
                 .orderTableId(request.getOrderTableId())
-                .orderStatus(OrderStatus.valueOf(request.getOrderStatus()))
-                .orderedTime(request.getOrderedTime())
                 .orderLineItems(orderLineItems)
+                .orderedTime(LocalDateTime.now())
+                .orderStatus(OrderStatus.COOKING)
                 .build();
     }
 
     private void validate(Long orderTableId) {
-        if (orderTableRepository.existsById(orderTableId)) {
+        if (!orderTableRepository.existsById(orderTableId)) {
             throw new IllegalArgumentException();
         }
     }

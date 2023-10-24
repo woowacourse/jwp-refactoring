@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table("ORDERS")
@@ -15,7 +16,7 @@ public class Order {
     private final Long orderTableId;
     private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
-    @MappedCollection(idColumn = "id")
+    @MappedCollection(idColumn = "ORDER_ID", keyColumn = "SEQ")
     private final List<OrderLineItem> orderLineItems;
 
     private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
@@ -50,7 +51,7 @@ public class Order {
         private Long orderTableId;
         private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
-        private List<OrderLineItem> orderLineItems;
+        private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         private OrderBuilder() {
         }
