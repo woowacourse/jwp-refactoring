@@ -18,13 +18,13 @@ public class MenuGroup {
     protected MenuGroup() {
     }
 
+    public MenuGroup(String name) {
+        this(null, name);
+    }
+
     public MenuGroup(Long id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public MenuGroup(String name) {
-        this(null, name);
     }
 
     public Long id() {
