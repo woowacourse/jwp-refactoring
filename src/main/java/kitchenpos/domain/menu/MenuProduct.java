@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -10,42 +10,43 @@ import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
-public class OrderLineItem {
+public class MenuProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "order_line_item_order"))
-    private Order order;
+    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "menu_product_menu"))
+    private Menu menu;
 
     @ManyToOne
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "order_line_item_menu"))
-    private Menu menu;
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "menu_product_product"))
+    private Product product;
+
     private long quantity;
 
-    protected OrderLineItem() {
+    protected MenuProduct() {
     }
 
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
+    public MenuProduct(final Product product, final long quantity) {
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Price calculateMenuProductPrice() {
+        return product.calculatePriceWithCount(quantity);
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final OrderLineItem that = (OrderLineItem) o;
+        final MenuProduct that = (MenuProduct) o;
         return Objects.equals(seq, that.seq);
     }
 

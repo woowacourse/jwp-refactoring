@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;

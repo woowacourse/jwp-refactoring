@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Price;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.CreateProductRequest;
 import org.assertj.core.api.SoftAssertions;

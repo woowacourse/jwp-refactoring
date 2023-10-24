@@ -1,6 +1,7 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import kitchenpos.common.BaseCreateTimeEntity;
+import kitchenpos.domain.table.OrderTable;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;

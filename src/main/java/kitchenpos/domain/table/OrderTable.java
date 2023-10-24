@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;

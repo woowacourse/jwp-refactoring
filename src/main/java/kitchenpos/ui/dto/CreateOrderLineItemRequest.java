@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class CreateOrderLineItemRequest {
 

@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.NumberOfGuests;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.NumberOfGuests;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
