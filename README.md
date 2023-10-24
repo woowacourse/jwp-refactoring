@@ -6,7 +6,7 @@
 
 - 상품을 등록할 수 있다.
 - 상품의 가격이 올바르지 않으면 등록할 수 없다.
-    - 상품의 가격은 0 원 이상이어야 한다.
+    - 상품의 가격은 null이 아니며 0원 이상이어야 한다.
 - 상품의 목록을 조회할 수 있다.
 
 ### 메뉴 그룹
@@ -60,6 +60,30 @@
     - 변경될 손님의 수는 0명 이상이어야 한다.
     - 대상 테이블이 존재하지 않을 경우 예외를 반환한다.
     - 대상 테이블은 비어있지 않아야 한다.
+
+## 리팩토링 TODO List
+
+- [x] 패키지 구조 변경
+- [x] setter 제거
+    - [x] product
+    - [x] menu group
+    - [x] menu
+    - [x] order
+    - [x] table group
+    - [x] table
+- [x] dto 생성
+    - [x] product
+    - [x] menu group
+    - [x] menu
+    - [x] order
+    - [x] table group
+    - [x] table
+- [x] Entity와 Domain 분리(Repository 생성)
+- [x] orderTable의 empty, numberOfGuests 변경 api를 patch api로 수정
+- [ ] 도메인에 적절하게 책임 분배(일급컬렉션, 값객체, ...)
+- [ ] test 코드 분리 & 새 테스트 작성
+- [x] 도메인을 menu, order, table로 나누기
+- [x] 생성자 중복 초기화 구문을 this로 리팩토링
 
 ## 용어 사전
 
