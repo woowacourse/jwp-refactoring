@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuName;
+import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductQuantity;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -15,6 +17,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
 import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +46,9 @@ class OrderServiceTest {
     @Autowired
     private OrderTableDao orderTableDao;
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
+    @Autowired
+    private MenuProductRepository menuProductRepository;
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired
@@ -55,8 +61,8 @@ class OrderServiceTest {
     void setUp() {
         final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(null, "메뉴 그룹"));
         final Product savedProduct = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
-        final List<MenuProduct> menuProducts = List.of(new MenuProduct(null, null, savedProduct.getId(), 2));
-        final Menu savedMenu = menuDao.save(new Menu(null, "메뉴", BigDecimal.ONE, savedMenuGroup.getId(), menuProducts));
+        final Menu savedMenu = menuRepository.save(new Menu(new MenuName("메뉴"), new MenuPrice(BigDecimal.ONE), savedMenuGroup));
+        final MenuProduct savedMenuProduct = menuProductRepository.save(new MenuProduct(savedMenu, savedProduct, new MenuProductQuantity(2)));
         orderLineItems.add(new OrderLineItem(null, null, savedMenu.getId(), 1));
         savedOrderTable = orderTableDao.save(new OrderTable(null, null, 5, false));
     }

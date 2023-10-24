@@ -58,7 +58,7 @@ class MenuServiceTest {
                 softly.assertThat(savedMenu.getId()).isNotNull();
                 softly.assertThat(savedMenu.getName()).isEqualTo(menu.getName());
                 softly.assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroupId());
             });
         }
 
@@ -72,7 +72,7 @@ class MenuServiceTest {
                 softly.assertThat(savedMenu.getId()).isNotNull();
                 softly.assertThat(savedMenu.getName()).isEqualTo(menu.getName());
                 softly.assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroupId());
             });
         }
 
