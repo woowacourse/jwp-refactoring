@@ -37,9 +37,6 @@ class MenuServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
     private MenuRepository menuRepository;
 
 
@@ -150,8 +147,8 @@ class MenuServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0).getName()).isEqualTo(후라이드_후라이드.getName());
-            softAssertions.assertThat(actual.get(1).getName()).isEqualTo(후라이드_양념치킨.getName());
+            softAssertions.assertThat(actual.get(0)).isEqualTo(후라이드_후라이드);
+            softAssertions.assertThat(actual.get(1)).isEqualTo(후라이드_양념치킨);
         });
     }
 }

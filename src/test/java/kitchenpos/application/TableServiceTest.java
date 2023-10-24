@@ -65,8 +65,8 @@ class TableServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0).getNumberOfGuests()).isEqualTo(expect1.getNumberOfGuests());
-            softAssertions.assertThat(actual.get(1).getNumberOfGuests()).isEqualTo(expect2.getNumberOfGuests());
+            softAssertions.assertThat(actual.get(0)).isEqualTo(expect1);
+            softAssertions.assertThat(actual.get(1)).isEqualTo(expect2);
         });
     }
 

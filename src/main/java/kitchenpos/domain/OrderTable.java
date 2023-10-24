@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -22,6 +23,9 @@ public class OrderTable {
     private int numberOfGuests;
 
     private boolean empty;
+
+    protected OrderTable() {
+    }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
@@ -61,10 +65,6 @@ public class OrderTable {
         this.empty = false;
     }
 
-    public void empty() {
-        this.empty = true;
-    }
-
     public Long getId() {
         return id;
     }
@@ -79,5 +79,18 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final OrderTable that = (OrderTable) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

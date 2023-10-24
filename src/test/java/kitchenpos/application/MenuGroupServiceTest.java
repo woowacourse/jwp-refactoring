@@ -50,8 +50,8 @@ class MenuGroupServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0).getName()).isEqualTo(expect1.getName());
-            softAssertions.assertThat(actual.get(1).getName()).isEqualTo(expect2.getName());
+            softAssertions.assertThat(actual.get(0)).isEqualTo(expect1);
+            softAssertions.assertThat(actual.get(1)).isEqualTo(expect2);
         });
     }
 }

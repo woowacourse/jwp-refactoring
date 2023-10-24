@@ -163,8 +163,8 @@ class OrderServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0).getOrderTable().getId()).isEqualTo(세명_테이블.getId());
-            softAssertions.assertThat(actual.get(1).getOrderTable().getId()).isEqualTo(네명_테이블.getId());
+            softAssertions.assertThat(actual.get(0)).isEqualTo(세명_테이블_주문);
+            softAssertions.assertThat(actual.get(1)).isEqualTo(네명_테이블_주문);
         });
     }
 
