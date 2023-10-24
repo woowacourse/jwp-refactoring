@@ -5,6 +5,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SuppressWarnings("NonAsciiCharacters")
+@DisplayName("상품 서비스 테스트")
 class ProductServiceTest extends ServiceTestConfig {
 
     @Autowired
