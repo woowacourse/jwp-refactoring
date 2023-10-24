@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -20,7 +23,9 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id", foreignKey = @ForeignKey(name = "order_table_table_group"))
     private TableGroup tableGroup;
 
-    private int numberOfGuests;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "number_of_guests"))
+    private NumberOfGuests numberOfGuests;
 
     private boolean empty;
 
@@ -28,19 +33,7 @@ public class OrderTable {
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable(final Long id) {
-        this.id = id;
-    }
-
-    public OrderTable(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public OrderTable(final boolean empty) {
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
         this.empty = empty;
     }
 
@@ -54,15 +47,11 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님 수는 음수일 수 없습니다.");
-        }
-
         if (isEmpty()) {
             throw new IllegalArgumentException("테이블이 비어있으면 손님 수를 변경할 수 없습니다.");
         }
 
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     public void changeEmpty(final boolean empty) {
@@ -94,7 +83,7 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public int getNumberOfGuests() {
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 

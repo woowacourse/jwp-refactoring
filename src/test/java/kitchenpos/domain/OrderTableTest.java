@@ -50,7 +50,7 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블의 손님 수를 변경할 때 손님 수가 음수이면 안 된다")
+    @DisplayName("테이블의 손님 수를 변경할 때 테이블이 비어 있다면 변경할 수 없다")
     void changeNumberOfGuests_emptyTable() {
         // given
         final OrderTable 두명_테이블 = new OrderTable(2, true);
@@ -62,10 +62,10 @@ class OrderTableTest {
     }
 
     @Test
-    @DisplayName("테이블의 손님 수를 변경할 때 테이블이 비어 있다면 변경할 수 없다")
+    @DisplayName("테이블의 손님 수를 변경할 때 손님 수가 음수이면 안 된다")
     void changeNumberOfGuests_negativeNumberOfGuests() {
         // given
-        final OrderTable 두명_테이블 = new OrderTable(2, true);
+        final OrderTable 두명_테이블 = new OrderTable(2, false);
         final int invalidNumberOfGuests = -1;
 
         // when & then

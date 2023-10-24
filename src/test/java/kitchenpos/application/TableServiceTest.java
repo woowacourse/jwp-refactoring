@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.NumberOfGuests;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -149,7 +150,7 @@ class TableServiceTest {
         final OrderTable actual = tableService.changeNumberOfGuests(두명_테이블.getId(), orderTable);
 
         // then
-        assertThat(actual.getNumberOfGuests()).isEqualTo(newNumberOfGuests);
+        assertThat(actual.getNumberOfGuests()).isEqualTo(new NumberOfGuests(newNumberOfGuests));
     }
 
     @Test
