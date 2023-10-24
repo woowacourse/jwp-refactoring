@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.exception.InvalidOrderTableChangeEmptyException;
 import kitchenpos.domain.exception.InvalidOrderTableChangeNumberOfGuestsException;
+import kitchenpos.domain.exception.InvalidOrderTableException;
 
 import javax.persistence.*;
 import java.util.List;
@@ -39,10 +40,17 @@ public class OrderTable {
                       final TableGroup tableGroup,
                       final int numberOfGuests,
                       final boolean empty) {
+        validate(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+    
+    private void validate(final int numberOfGuests) {
+        if(numberOfGuests<0) {
+            throw new InvalidOrderTableException("테이블의 고객 수가 0명 미만일 수 없습니다");
+        }
     }
     
     public void changeEmpty(final List<Order> orders, final boolean empty) {
@@ -65,6 +73,11 @@ public class OrderTable {
             throw new InvalidOrderTableChangeNumberOfGuestsException("빈 테이블의 손님 수를 변경할 수 없습니다");
         }
         this.numberOfGuests = numberOfGuests;
+    }
+    
+    public void detachFromTableGroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
     
     public Long getId() {
