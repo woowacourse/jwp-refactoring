@@ -1,16 +1,23 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class NumberOfGuests {
 
     public static final int ZERO = 0;
 
-    private final int value;
+    @Column(name = "number_of_guests")
+    private int value;
 
     public NumberOfGuests(final int value) {
         validate(value);
         this.value = value;
+    }
+
+    protected NumberOfGuests() {
     }
 
     private void validate(final int value) {
