@@ -9,6 +9,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderDto;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -19,8 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -28,6 +28,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+@SuppressWarnings("NonAsciiCharacters")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 @SpringBootTest
 class OrderServiceTest {
 
@@ -52,7 +54,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
-        OrderTable orderTable = new OrderTable(1L, null, 0 , false);
+        OrderTable orderTable = new OrderTable(1L, null, 0, false);
 
         Order order = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
@@ -83,7 +85,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
-        OrderTable orderTable = new OrderTable(1L, null, 0 ,false);
+        OrderTable orderTable = new OrderTable(1L, null, 0, false);
 
         Order order1 = new Order(1L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         Order order2 = new Order(2L, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);

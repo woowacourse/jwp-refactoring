@@ -67,7 +67,7 @@ class TableGroupServiceTest {
         // then
         assertThat(result.getOrderTables()).containsAll(orderTables);
     }
-    
+
     @Test
     void 비어있지_않은_테이블을_단체_지정하면_예외를_던진다() {
         // given
@@ -89,7 +89,7 @@ class TableGroupServiceTest {
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupDto))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
