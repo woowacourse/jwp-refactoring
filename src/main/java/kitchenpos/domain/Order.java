@@ -1,36 +1,64 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-public class Order {
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+@Entity
+@Table(name = "orders")
+public class Order extends BaseEntity{
+
+    @ManyToOne(optional = false)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_orders_to_order_table"))
+    private OrderTable orderTable;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order")
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+    public Order(final OrderTable orderTable) {
+        validateOrderTableIsNotEmpty(orderTable);
+        this.orderTable = orderTable;
+        this.orderStatus = OrderStatus.COOKING;
+        this.orderedTime = LocalDateTime.now();
+        orderTable.getOrders().add(this);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    private void validateOrderTableIsNotEmpty(final OrderTable orderTable) {
+        if (Objects.isNull(orderTable) || orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문을 등록할 수 없는 빈 테이블 입니다.");
+        }
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("이미 주문이 완료되었습니다.");
+        }
+
+        if (orderLineItems.size() == 0) {
+            throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
+        }
+
         this.orderStatus = orderStatus;
     }
 
@@ -38,15 +66,10 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    protected Order() {
     }
 }

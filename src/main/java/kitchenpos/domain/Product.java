@@ -1,33 +1,31 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
 
-public class Product {
-    private Long id;
+@Entity
+public class Product extends BaseEntity{
+
+    @Column(nullable = false)
     private String name;
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
+    public Product(final String name, final Price price) {
+        this.name = name;
+        this.price = price;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+    protected Product() {
     }
 }

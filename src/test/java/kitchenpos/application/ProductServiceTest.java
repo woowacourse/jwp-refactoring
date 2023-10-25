@@ -1,57 +1,44 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Product;
+import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.dao.ProductRepository;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
 class ProductServiceTest {
 
-    @Mock
-    private ProductDao productDao;
-    @InjectMocks
     private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
 
-    @Test
-    void 상품_가격은_NULL_일_수_없다() {
-        Product product = new Product();
-        product.setPrice(null);
-
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 상품_가격은_음수일_수_없다() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+    @BeforeEach
+    void setUp() {
+        productService = new ProductService(productRepository);
     }
 
     @Test
     void 상품_생성할_수_있다() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(100));
+        ProductCreateRequest request = new ProductCreateRequest("로제떡볶이", BigDecimal.valueOf(1000,2));
 
-        productService.create(product);
+        ProductResponse productResponse = productService.create(request);
 
-        verify(productDao).save(product);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            softAssertions.assertThat(request.getName()).isEqualTo(productResponse.getName());
+            softAssertions.assertThat(request.getPrice()).isEqualTo(productResponse.getPrice());
+        });
     }
 
     @Test
     void 전체_상품_조회할_수_있다() {
-        productService.list();
-
-        verify(productDao).findAll();
+        List<ProductResponse> responses = productService.list();
+        Assertions.assertThat(responses.size()).isGreaterThan(0);
     }
 }

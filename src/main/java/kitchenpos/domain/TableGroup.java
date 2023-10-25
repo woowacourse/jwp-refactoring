@@ -1,34 +1,25 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
-public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+@Entity
+public class TableGroup extends BaseEntity{
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
+    @Column(nullable = false)
+    private LocalDateTime createdDate = LocalDateTime.now();
+    @OneToMany(mappedBy = "tableGroup")
+    private List<OrderTable> orderTables = new ArrayList<>();
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

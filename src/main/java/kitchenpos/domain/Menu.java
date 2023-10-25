@@ -2,51 +2,49 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
-public class Menu {
-    private Long id;
+@Entity
+public class Menu extends BaseEntity{
+
+    @Column(nullable = false)
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
+    @Embedded
+    private Price price;
+    @ManyToOne(optional = false)
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
+    private MenuGroup menuGroup;
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
+    public Menu(final String name, final Price price, final MenuGroup menuGroup) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public Long getMenuGroup() {
+        return menuGroup.getId();
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    protected Menu() {
     }
 }

@@ -3,7 +3,7 @@ POST {{host}}/api/orders
 Content-Type: application/json
 
 {
-  "orderTableId": 1,
+  "orderTableId": 9,
   "orderLineItems": [
     {
       "menuId": 1,
