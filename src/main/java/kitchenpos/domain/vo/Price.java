@@ -29,7 +29,6 @@ public class Price {
     }
 
     private static void validate(final BigDecimal price) {
-
         if (price == null) {
             throw new IllegalArgumentException("메뉴 가격은 필수 항목입니다.");
         }

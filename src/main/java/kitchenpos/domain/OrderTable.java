@@ -65,7 +65,7 @@ public class OrderTable {
         if (!empty) {
             throw new IllegalArgumentException("이미 주문 상태인 테이블을 단체로 지정할 수 없습니다.");
         }
-        if (Objects.nonNull(tableGroup)) {
+        if (tableGroup != null) {
             throw new IllegalArgumentException("이미 단체에 속한 테이블을 단체로 지정할 수 없습니다.");
         }
     }
@@ -83,7 +83,7 @@ public class OrderTable {
     }
 
     private void validateAbleToUnGroup() {
-        if (tableGroup != null) {
+        if (tableGroup == null) {
             throw new IllegalArgumentException("테이블이 그룹에 이미 속해있지 않습니다.");
         }
         if (hasAnyOrderInProgress()) {
