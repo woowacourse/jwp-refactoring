@@ -54,6 +54,11 @@ public class OrderTable {
         this.empty = false;
     }
 
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }

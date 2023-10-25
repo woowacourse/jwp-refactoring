@@ -1,6 +1,7 @@
 package kitchenpos.order.application;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.order.application.dto.OrderTableEmptyRequest;
 import kitchenpos.order.application.dto.OrderTableGuestRequest;
@@ -38,7 +39,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
         if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                Arrays.asList(savedOrderTable), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+                Collections.singletonList(savedOrderTable), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new ExistsNotCompletionOrderException(orderTableId);
         }
 

@@ -1,16 +1,15 @@
 package kitchenpos.menu.application.dto;
 
-import java.math.BigDecimal;
+import java.util.Objects;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.application.dto.ProductResponse;
 
 public class MenuProductResponse {
 
-    private long id;
-    private long productId;
-    private long quantity;
+    private final Long id;
+    private final Long productId;
+    private final Long quantity;
 
-    private MenuProductResponse(final long id, final long productId, final long quantity) {
+    private MenuProductResponse(final Long id, final Long productId, final Long quantity) {
         this.id = id;
         this.productId = productId;
         this.quantity = quantity;
@@ -20,15 +19,32 @@ public class MenuProductResponse {
         return new MenuProductResponse(menuProduct.getSeq(), menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public long getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuProductResponse that = (MenuProductResponse) o;
+        return id == that.id && productId == that.productId && quantity == that.quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, productId, quantity);
     }
 }

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.domain.exception.MenuException.InvalidMenuNameException;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.exception.MenuException.InvalidMenuNameException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

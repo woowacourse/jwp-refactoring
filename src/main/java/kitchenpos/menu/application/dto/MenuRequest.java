@@ -2,6 +2,7 @@ package kitchenpos.menu.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MenuRequest {
@@ -48,5 +49,24 @@ public class MenuRequest {
 
     public int getProductSize() {
         return menuProductRequests.size();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuRequest that = (MenuRequest) o;
+        return Objects.equals(name, that.name) && Objects.equals(price, that.price)
+                && Objects.equals(menuGroupId, that.menuGroupId) && Objects.equals(menuProductRequests,
+                that.menuProductRequests);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price, menuGroupId, menuProductRequests);
     }
 }

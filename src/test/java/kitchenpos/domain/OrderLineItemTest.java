@@ -2,10 +2,10 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.order.domain.exception.OrderLineItemException.InvalidMenuException;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.exception.OrderLineItemException.InvalidMenuException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

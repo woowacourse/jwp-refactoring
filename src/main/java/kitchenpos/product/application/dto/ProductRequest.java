@@ -1,6 +1,7 @@
 package kitchenpos.product.application.dto;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import kitchenpos.product.domain.Product;
 
 public class ProductRequest {
@@ -26,5 +27,22 @@ public class ProductRequest {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProductRequest that = (ProductRequest) o;
+        return Objects.equals(name, that.name) && Objects.equals(price, that.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price);
     }
 }

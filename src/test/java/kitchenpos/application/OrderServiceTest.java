@@ -11,10 +11,11 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderRequest;
 import kitchenpos.order.application.dto.OrderStatusChangeRequest;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
@@ -24,7 +25,6 @@ import kitchenpos.order.domain.exception.OrderException.EmptyOrderTableException
 import kitchenpos.order.domain.exception.OrderException.NotExistsMenuException;
 import kitchenpos.order.domain.exception.OrderException.NotExistsOrderException;
 import kitchenpos.order.domain.exception.OrderTableException.NotExistsOrderTableException;
-import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
@@ -42,9 +42,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
+    private final OrderTable orderTable = new OrderTable(10);
+    private final Order order = Order.of(orderTable);
     @InjectMocks
     private OrderService orderService;
-
     @Mock
     private MenuRepository menuRepository;
     @Mock
@@ -53,10 +54,6 @@ class OrderServiceTest {
     private OrderLineItemRepository orderLineItemRepository;
     @Mock
     private OrderTableRepository orderTableRepository;
-
-
-    private final OrderTable orderTable = new OrderTable(10);
-    private final Order order = Order.of(orderTable);
 
     @BeforeEach
     void init() {

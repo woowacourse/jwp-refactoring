@@ -1,20 +1,26 @@
 package kitchenpos.order.application;
 
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.order.application.dto.OrderTablesRequest;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.exception.OrderTableException.NotExistsOrderTableException;
+import kitchenpos.order.domain.exception.TableGroupException.CannotAssignOrderTableException;
 import kitchenpos.order.domain.exception.TableGroupException.ExistsNotCompletionOrderException;
+import kitchenpos.order.domain.exception.TableGroupException.InsufficientOrderTableSizeException;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.order.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
+    private static final int LOWER_BOUND_ORDER_TABLE_SIZE = 2;
 
     private static final List<OrderStatus> CANNOT_UNGROUP_ORDER_STATUSES = List.of(OrderStatus.COOKING,
             OrderStatus.MEAL);
@@ -35,28 +41,43 @@ public class TableGroupService {
     public TableGroup create(final OrderTablesRequest orderTablesRequest) {
         List<OrderTable> orderTables = orderTableRepository.findAllById(orderTablesRequest.getOrderTableIds());
         validateTableGroup(orderTables, orderTablesRequest.getOrderTableIds());
-        return tableGroupRepository.save(TableGroup.from(orderTables));
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
+        for (OrderTable orderTable : orderTables) {
+            orderTable.group(savedTableGroup);
+        }
+        return savedTableGroup;
     }
 
     private void validateTableGroup(final List<OrderTable> orderTables, final List<Long> orderTableIds) {
         if (orderTables.size() != orderTableIds.size()) {
             throw new NotExistsOrderTableException();
         }
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < LOWER_BOUND_ORDER_TABLE_SIZE) {
+            throw new InsufficientOrderTableSizeException();
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new CannotAssignOrderTableException();
+            }
+        }
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.findByTableGroupId(tableGroupId);
 
-        validateUngroup(tableGroup);
+        validateUngroup(orderTables);
 
-        tableGroup.ungroup();
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
+
+        tableGroupRepository.deleteById(tableGroupId);
     }
 
-    private void validateUngroup(final TableGroup tableGroup) {
-        // 아래의 검증 로직을 객체 필드로 가져오면 쿼리 조회횟수가 많아져 성능이 떨어지기에 서비스에서 이를 처리
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                tableGroup.getOrderTables(), CANNOT_UNGROUP_ORDER_STATUSES)) {
+    private void validateUngroup(final List<OrderTable> orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, CANNOT_UNGROUP_ORDER_STATUSES)) {
             throw new ExistsNotCompletionOrderException();
         }
     }

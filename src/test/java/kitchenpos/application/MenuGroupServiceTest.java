@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menugroup.application.dto.MenuGroupRequest;
+import kitchenpos.menugroup.application.dto.MenuGroupResponse;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +42,7 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup2 = MenuGroup.from("wuga");
         when(menuGroupRepository.findAll()).thenReturn(List.of(menuGroup1, menuGroup2));
 
-        assertThat(menuGroupService.list()).containsExactlyInAnyOrder(menuGroup1, menuGroup2);
+        assertThat(menuGroupService.list()).containsExactlyInAnyOrder(MenuGroupResponse.from(menuGroup1),
+                MenuGroupResponse.from(menuGroup2));
     }
 }

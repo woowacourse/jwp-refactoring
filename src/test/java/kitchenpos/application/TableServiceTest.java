@@ -8,10 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
+import kitchenpos.order.application.TableService;
 import kitchenpos.order.application.dto.OrderTableEmptyRequest;
 import kitchenpos.order.application.dto.OrderTableGuestRequest;
-import kitchenpos.order.application.TableService;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
 import kitchenpos.order.domain.exception.OrderTableException.EmptyTableException;
@@ -31,15 +30,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
 
+    private final OrderTable orderTable = new OrderTable(0);
     @InjectMocks
     private TableService tableService;
-
     @Mock
     private OrderRepository orderRepository;
     @Mock
     private OrderTableRepository orderTableRepository;
-
-    private final OrderTable orderTable = new OrderTable(0);
 
     @Test
     @DisplayName("현재 저장된 주문 테이블을 확인할 수 있다.")
@@ -64,7 +61,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블이 어떤 테이블 그룹에 포함되어 있으면 예외가 발생한다.")
     void changeEmpty_fail_exists_tableGroup() {
         when(orderTableRepository.getById(1L)).thenReturn(orderTable);
-        orderTable.setTableGroup(TableGroup.from(List.of(new OrderTable(10), new OrderTable(10))));
+        orderTable.group(new TableGroup());
 
         OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 
@@ -77,7 +74,7 @@ class TableServiceTest {
     void changeEmpty_fail_not_completion() {
         when(orderTableRepository.getById(1L)).thenReturn(orderTable);
         when(orderRepository.existsByOrderTableInAndOrderStatusIn(any(), any())).thenReturn(true);
-        orderTable.setTableGroup(null);
+        orderTable.ungroup();
 
         OrderTableEmptyRequest orderTableEmptyRequest = new OrderTableEmptyRequest(true);
 

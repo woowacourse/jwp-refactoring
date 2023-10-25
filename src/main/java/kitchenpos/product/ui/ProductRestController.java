@@ -5,7 +5,6 @@ import java.util.List;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.application.dto.ProductRequest;
 import kitchenpos.product.application.dto.ProductResponse;
-import kitchenpos.product.domain.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
