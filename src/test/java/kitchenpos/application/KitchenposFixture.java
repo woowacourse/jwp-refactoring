@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.response.MenuGroupResponse;
 import kitchenpos.application.response.ProductResponse;
+import kitchenpos.application.response.TableResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -38,7 +39,7 @@ public class KitchenposFixture {
 
     public static OrderTable 주문테이블만들기(final TableService tableService, final boolean isEmpty) {
         final OrderTable orderTable = new OrderTable(new NumberOfGuests(6), isEmpty);
-        final Long orderTableId = tableService.create(new NumberOfGuests(6), isEmpty);
+        final TableResponse orderTableId = tableService.create(new NumberOfGuests(6), isEmpty);
         final Field field = ReflectionUtils.findField(OrderTable.class, "id", Long.class);
         assert field != null;
         field.setAccessible(true);

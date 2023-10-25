@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import java.util.Map;
 import kitchenpos.application.TableService;
 import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.application.response.TableResponse;
 import kitchenpos.domain.ordertable.NumberOfGuests;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,8 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<Long> create(@RequestBody final Map<String, Object> parameter) {
-        final Long created = tableService.create(
+    public ResponseEntity<TableResponse> create(@RequestBody final Map<String, Object> parameter) {
+        final TableResponse created = tableService.create(
                 new NumberOfGuests(Integer.parseInt(String.valueOf(parameter.get("numberOfGuests")))),
                 Boolean.parseBoolean(String.valueOf(parameter.get("empty")))
         );

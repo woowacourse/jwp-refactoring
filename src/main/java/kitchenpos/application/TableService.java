@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.application.response.TableResponse;
 import kitchenpos.dao.OrderCustomDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -22,9 +23,9 @@ public class TableService {
     }
 
     @Transactional
-    public Long create(final NumberOfGuests numberOfGuests, boolean empty) {
+    public TableResponse create(final NumberOfGuests numberOfGuests, boolean empty) {
         final OrderTable orderTable = new OrderTable(numberOfGuests, empty);
-        return orderTableDao.save(orderTable).getId();
+        return TableResponse.from(orderTableDao.save(orderTable));
     }
 
     public List<OrderTableResponse> list() {
