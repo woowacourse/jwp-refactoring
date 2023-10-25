@@ -1,5 +1,9 @@
-package kitchenpos.domain.table;
+package kitchenpos.application.table;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableMapper;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.OrderTableValidator;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.dto.request.UpdateOrderTableGuestsRequest;
@@ -15,17 +19,19 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TableService {
 
+    private final OrderTableMapper orderTableMapper;
     private final OrderTableRepository orderTableRepository;
     private final OrderTableValidator orderTableValidator;
 
-    public TableService(final OrderTableRepository orderTableRepository, OrderTableValidator orderTableValidator) {
+    public TableService(OrderTableMapper orderTableMapper, final OrderTableRepository orderTableRepository, OrderTableValidator orderTableValidator) {
+        this.orderTableMapper = orderTableMapper;
         this.orderTableRepository = orderTableRepository;
         this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
     public CreateOrderTableResponse create(final CreateOrderTableRequest request) {
-        OrderTable entity = OrderTableMapper.toOrderTable(request);
+        OrderTable entity = orderTableMapper.toOrderTable(request);
         return CreateOrderTableResponse.from(orderTableRepository.save(entity));
     }
 

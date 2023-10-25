@@ -1,5 +1,7 @@
-package kitchenpos.domain.table;
+package kitchenpos.application.table;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.tablegroup.TableGroupCreatedEvent;
 import kitchenpos.domain.tablegroup.TableUngroupedEvent;
 import org.springframework.stereotype.Component;

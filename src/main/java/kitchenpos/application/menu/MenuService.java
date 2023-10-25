@@ -1,5 +1,9 @@
-package kitchenpos.domain.menu;
+package kitchenpos.application.menu;
 
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuMapper;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.MenuValidator;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.response.CreateMenuResponse;
 import kitchenpos.dto.response.MenuResponse;
@@ -12,7 +16,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class MenuService {
-
     private final MenuMapper menuMapper;
     private final MenuRepository menuRepository;
     private final MenuValidator menuValidator;

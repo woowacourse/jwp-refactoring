@@ -1,5 +1,6 @@
-package kitchenpos.domain.tablegroup;
+package kitchenpos.application.tablegroup;
 
+import kitchenpos.domain.tablegroup.*;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.response.CreateTableGroupResponse;
 import org.springframework.context.ApplicationEventPublisher;

@@ -1,11 +1,11 @@
 package kitchenpos.domain.tablegroup;
 
+import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.dto.request.CreateTableGroupRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

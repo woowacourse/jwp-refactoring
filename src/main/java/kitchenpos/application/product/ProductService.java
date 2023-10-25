@@ -1,5 +1,8 @@
-package kitchenpos.domain.product;
+package kitchenpos.application.product;
 
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductMapper;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.CreateProductResponse;
 import kitchenpos.dto.response.ProductResponse;
@@ -12,15 +15,17 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class ProductService {
+    private final ProductMapper productMapper;
     private final ProductRepository productRepository;
 
-    public ProductService(final ProductRepository productRepository) {
+    public ProductService(ProductMapper productMapper, final ProductRepository productRepository) {
+        this.productMapper = productMapper;
         this.productRepository = productRepository;
     }
 
     @Transactional
     public CreateProductResponse create(final CreateProductRequest request) {
-        Product product = ProductMapper.toProduct(request);
+        Product product = productMapper.toProduct(request);
         return CreateProductResponse.from(productRepository.save(product));
     }
 

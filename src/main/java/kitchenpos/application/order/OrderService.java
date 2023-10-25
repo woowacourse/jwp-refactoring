@@ -1,5 +1,6 @@
-package kitchenpos.domain.order;
+package kitchenpos.application.order;
 
+import kitchenpos.domain.order.*;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.UpdateOrderStatusRequest;
 import kitchenpos.dto.response.CreateOrderResponse;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
-
     private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
