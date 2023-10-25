@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.common.event.ValidateMenuExistsEvent;
+import kitchenpos.common.event.ValidateOrderTableIsNotEmptyEvent;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -191,5 +193,55 @@ class OrderServiceTest extends ServiceTestContext {
             softly.assertThat(response.getId()).isNotNull();
             assertThat(response.getOrderStatus()).isEqualTo("COMPLETION");
         });
+    }
+
+    @Test
+    void 주문을_생성할_때_테이블이_비었는지_검증하는_이벤트를_발행한다() {
+        // given
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        menuGroupRepository.save(menuGroup);
+
+        Menu menu = MenuFixture.of(menuGroup.getId(), "name", BigDecimal.valueOf(1000L));
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+
+        // when
+        orderService.create(request);
+
+        // then
+        long eventOccurredCount = applicationEvents.stream(ValidateOrderTableIsNotEmptyEvent.class)
+                .count();
+
+        assertThat(eventOccurredCount).isEqualTo(1);
+    }
+
+    @Test
+    void 주문을_생성할_때_메뉴가_존재하는지_검증하는_이벤트를_발행한다() {
+        // given
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        menuGroupRepository.save(menuGroup);
+
+        Menu menu = MenuFixture.of(menuGroup.getId(), "name", BigDecimal.valueOf(1000L));
+        OrderTable orderTable = OrderTableFixture.of(null, 1, false);
+
+        menuRepository.save(menu);
+        orderTableRepository.save(orderTable);
+
+        CreateOrderRequest request = new CreateOrderRequest(orderTable.getId(),
+                List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+
+        // when
+        orderService.create(request);
+
+        // then
+        long eventOccurredCount = applicationEvents.stream(ValidateMenuExistsEvent.class)
+                .count();
+
+        assertThat(eventOccurredCount).isEqualTo(1);
     }
 }
