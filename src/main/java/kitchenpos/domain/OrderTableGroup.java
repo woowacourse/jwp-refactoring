@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-public class TableGroup {
+public class OrderTableGroup {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -20,11 +20,11 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    protected TableGroup() {
+    protected OrderTableGroup() {
 
     }
 
-    public TableGroup(OrderTables orderTables, LocalDateTime createdDate) {
+    public OrderTableGroup(OrderTables orderTables, LocalDateTime createdDate) {
         this.orderTables = orderTables;
         this.createdDate = createdDate;
     }

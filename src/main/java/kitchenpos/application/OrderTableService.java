@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.OrderTableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.response.OrderTableResponse;
@@ -28,8 +28,8 @@ public class OrderTableService {
 
     @Transactional
     public Long create(final Long tableGroupId, final int numberOfGuests) {
-        TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        OrderTable orderTable = new OrderTable(tableGroup, numberOfGuests);
+        OrderTableGroup orderTableGroup = tableGroupRepository.getById(tableGroupId);
+        OrderTable orderTable = new OrderTable(orderTableGroup, numberOfGuests);
         return orderTableRepository.save(orderTable).getId();
     }
 
