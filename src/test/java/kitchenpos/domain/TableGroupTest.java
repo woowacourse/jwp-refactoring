@@ -87,7 +87,7 @@ public class TableGroupTest {
             // when & then
             assertThatThrownBy(() -> tableGroup.appendOrderTables(orderTables))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("[ERROR] 빈 테이블이 생성되지 않았습니다.");
+                    .hasMessage("[ERROR] 이미 다른 테이블 그룹에 속하는 테이블입니다.");
         }
     }
 }

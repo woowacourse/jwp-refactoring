@@ -56,11 +56,18 @@ public class TableGroup {
 
     private void validateEmptyOrderTables(final List<OrderTable> orderTables) {
         orderTables.forEach(this::validateEmptyOrderTable);
+        orderTables.forEach(this::validateAlreadyJoinAnotherTableGroup);
     }
 
     private void validateEmptyOrderTable(final OrderTable orderTable) {
-        if (orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+        if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("[ERROR] 빈 테이블이 생성되지 않았습니다.");
+        }
+    }
+
+    private void validateAlreadyJoinAnotherTableGroup(final OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException("[ERROR] 이미 다른 테이블 그룹에 속하는 테이블입니다.");
         }
     }
 
