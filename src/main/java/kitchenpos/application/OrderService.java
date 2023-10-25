@@ -51,7 +51,7 @@ public class OrderService {
         final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         orderRepository.save(order);
 
-        return OrderResponse.toResponse(order);
+        return OrderResponse.from(order);
     }
 
     private OrderTable findOrderTable(final Long orderTableId) {
@@ -82,14 +82,14 @@ public class OrderService {
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
         return orders.stream()
-                .map(OrderResponse::toResponse)
+                .map(OrderResponse::from)
                 .collect(Collectors.toList());
     }
 
     public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
         final Order findOrder = findOrder(orderId);
         findOrder.changeOrderStatus(OrderStatus.valueOf(request.getOrderStatus()));
-        return OrderResponse.toResponse(orderRepository.save(findOrder));
+        return OrderResponse.from(orderRepository.save(findOrder));
     }
 
     private Order findOrder(final Long orderId) {

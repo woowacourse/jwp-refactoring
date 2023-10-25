@@ -64,7 +64,7 @@ class TableServiceTest extends ServiceTest {
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
             final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
 
-            final var expected = List.of(OrderTableResponse.toResponse(orderTable));
+            final var expected = List.of(OrderTableResponse.from(orderTable));
 
             // when
             final var actual = tableService.list();

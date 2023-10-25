@@ -43,7 +43,7 @@ public class MenuService {
         final Menu menu = new Menu(request.getName(), request.getPrice(), findMenuGroup, convertMenuProducts);
         menuRepository.save(menu);
 
-        return MenuResponse.toResponse(menu);
+        return MenuResponse.from(menu);
     }
 
     private MenuGroup findMenuGroup(final Long menuGroupId) {
@@ -64,7 +64,7 @@ public class MenuService {
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return menuRepository.findAll().stream()
-                .map(MenuResponse::toResponse)
+                .map(MenuResponse::from)
                 .collect(Collectors.toList());
     }
 }

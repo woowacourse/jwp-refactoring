@@ -27,7 +27,7 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse toResponse(final Menu menu) {
+    public static MenuResponse from(final Menu menu) {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
@@ -37,7 +37,7 @@ public class MenuResponse {
         );
     }
 
-    public static MenuResponse toResponse(final Menu menu, final List<MenuProduct> menuProducts) {
+    public static MenuResponse of(final Menu menu, final List<MenuProduct> menuProducts) {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),

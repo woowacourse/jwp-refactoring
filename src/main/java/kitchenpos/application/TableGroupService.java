@@ -42,7 +42,7 @@ public class TableGroupService {
         tableGroupRepository.save(tableGroup);
         tableGroup.appendOrderTables(orderTables);
 
-        return TableGroupResponse.toResponse(tableGroup);
+        return TableGroupResponse.from(tableGroup);
     }
 
     private List<OrderTable> findAllOrderTablesByIdIn(final TableGroupCreateRequest request) {

@@ -26,7 +26,7 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse toResponse(final Order order) {
+    public static OrderResponse from(final Order order) {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderTable().getId(),
@@ -36,7 +36,7 @@ public class OrderResponse {
         );
     }
 
-    public static OrderResponse toResponse(final Order order, final List<OrderLineItem> orderLineItems) {
+    public static OrderResponse of(final Order order, final List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
                 order.getOrderTable().getId(),

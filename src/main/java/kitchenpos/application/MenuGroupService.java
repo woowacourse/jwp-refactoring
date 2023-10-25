@@ -21,13 +21,13 @@ public class MenuGroupService {
     public MenuGroupResponse create(final MenuGroupCreateRequest request) {
         final MenuGroup menuGroup = new MenuGroup(request.getName());
         menuGroupRepository.save(menuGroup);
-        return MenuGroupResponse.toResponse(menuGroup);
+        return MenuGroupResponse.from(menuGroup);
     }
 
     public List<MenuGroupResponse> list() {
         final List<MenuGroup> menuGroups = menuGroupRepository.findAll();
         return menuGroups.stream()
-                .map(MenuGroupResponse::toResponse)
+                .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
     }
 }

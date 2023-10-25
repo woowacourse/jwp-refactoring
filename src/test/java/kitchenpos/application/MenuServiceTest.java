@@ -9,7 +9,6 @@ import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
@@ -88,7 +87,7 @@ class MenuServiceTest extends ServiceTest {
             // given
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
-            final var response = MenuResponse.toResponse(menu);
+            final var response = MenuResponse.from(menu);
             final var expected = List.of(response);
 
             // when

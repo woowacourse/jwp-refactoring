@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
@@ -134,7 +132,7 @@ class OrderServiceTest extends ServiceTest {
             final var orderLineItem = new OrderLineItem(menu, 5);
             final var order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
-            final var expected = List.of(OrderResponse.toResponse(order));
+            final var expected = List.of(OrderResponse.from(order));
 
             // when
             final var actual = orderService.list();
@@ -169,7 +167,7 @@ class OrderServiceTest extends ServiceTest {
 
             // when
             final var actual = orderService.changeOrderStatus(1L, request);
-            final var expected = OrderResponse.toResponse(orderRepository.findById(1L).get());
+            final var expected = OrderResponse.from(orderRepository.findById(1L).get());
 
             // then
             assertThat(actual).usingRecursiveComparison()

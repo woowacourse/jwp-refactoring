@@ -50,7 +50,7 @@ class MenuGroupServiceTest extends ServiceTest {
             // given
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
 
-            final var expected = List.of(MenuGroupResponse.toResponse(menuGroup));
+            final var expected = List.of(MenuGroupResponse.from(menuGroup));
 
             // when
             final var actual = menuGroupService.list();

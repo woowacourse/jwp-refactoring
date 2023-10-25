@@ -52,7 +52,7 @@ class ProductServiceTest extends ServiceTest {
             // given
             final var product = productRepository.save(new Product("상품_이름", BigDecimal.valueOf(1000)));
 
-            final var expected = List.of(ProductResponse.toResponse(product));
+            final var expected = List.of(ProductResponse.from(product));
 
             // when
             final var actual = productService.list();

@@ -21,7 +21,7 @@ public class TableGroupResponse {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupResponse toResponse(final TableGroup tableGroup) {
+    public static TableGroupResponse from(final TableGroup tableGroup) {
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), tableGroup.getOrderTables());
     }
 

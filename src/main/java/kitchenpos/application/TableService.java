@@ -37,7 +37,7 @@ public class TableService {
         final TableGroup findTableGroup = findTableGroup(request.getTableGroupId());
         final OrderTable orderTable = new OrderTable(findTableGroup, request.getNumberOfGuests(), request.isEmpty());
         orderTableRepository.save(orderTable);
-        return OrderTableResponse.toResponse(orderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     private TableGroup findTableGroup(final Long tableGroupId) {
@@ -49,7 +49,7 @@ public class TableService {
     public List<OrderTableResponse> list() {
         final List<OrderTable> orderTables = orderTableRepository.findAll();
         return orderTables.stream()
-                .map(OrderTableResponse::toResponse)
+                .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +57,7 @@ public class TableService {
         final OrderTable findOrderTable = findOrderTable(orderTableId);
         validateOrderStatusComplete(orderTableId);
         findOrderTable.changeEmpty(request.isEmpty());
-        return OrderTableResponse.toResponse(findOrderTable);
+        return OrderTableResponse.from(findOrderTable);
     }
 
     private OrderTable findOrderTable(final Long orderTableId) {
@@ -75,6 +75,6 @@ public class TableService {
                                                    final OrderTableChangeNumberRequest request) {
         final OrderTable findOrderTable = findOrderTable(orderTableId);
         findOrderTable.updateNumberOfGuests(request.getNumberOfGuests());
-        return OrderTableResponse.toResponse(findOrderTable);
+        return OrderTableResponse.from(findOrderTable);
     }
 }

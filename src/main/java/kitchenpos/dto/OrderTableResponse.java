@@ -21,7 +21,7 @@ public class OrderTableResponse {
         this.empty = empty;
     }
 
-    public static OrderTableResponse toResponse(final OrderTable orderTable) {
+    public static OrderTableResponse from(final OrderTable orderTable) {
         return new OrderTableResponse(
                 orderTable.getId(),
                 orderTable.getTableGroup().getId(),

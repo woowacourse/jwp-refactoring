@@ -22,13 +22,13 @@ public class ProductService {
     public ProductResponse create(final ProductCreateRequest request) {
         final Product product = new Product(request.getName(), request.getPrice());
         productRepository.save(product);
-        return ProductResponse.toResponse(product);
+        return ProductResponse.from(product);
     }
 
     public List<ProductResponse> list() {
         final List<Product> products = productRepository.findAll();
         return products.stream()
-                .map(ProductResponse::toResponse)
+                .map(ProductResponse::from)
                 .collect(Collectors.toList());
     }
 }
