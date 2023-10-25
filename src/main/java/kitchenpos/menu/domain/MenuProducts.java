@@ -5,6 +5,8 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,8 @@ import java.util.List;
 public class MenuProducts {
 
     @BatchSize(size = 100)
-    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "menu")
+    @JoinColumn(name = "menu_id", nullable = false, foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"))
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<MenuProduct> menuProductItems = new ArrayList<>();
 
     protected MenuProducts() {

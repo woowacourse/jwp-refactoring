@@ -47,7 +47,6 @@ class MenuProductsTest {
             softly.assertThat(actual.getMenuProductItems()).hasSize(1);
             final MenuProduct actualMenuProduct = actual.getMenuProductItems().get(0);
 
-            softly.assertThat(actualMenuProduct.getMenu()).isNull();
             softly.assertThat(actualMenuProduct.getProduct()).isEqualTo(product);
             softly.assertThat(actualMenuProduct.getQuantity()).isEqualTo(quantity);
         });

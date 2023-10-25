@@ -75,7 +75,6 @@ public class Menu {
     }
 
     public void addMenuProducts(final List<MenuProduct> requestMenuProducts) {
-        requestMenuProducts.forEach(menuProduct -> menuProduct.assignMenu(this));
         final MenuProducts newMenuProducts = new MenuProducts(requestMenuProducts);
         final Price requestTotalSum = menuProducts.getTotalPrice().sum(newMenuProducts.getTotalPrice());
         if (price.isGreaterThan(requestTotalSum)) {
