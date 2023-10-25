@@ -152,13 +152,13 @@ class OrdersServiceTest extends ServiceIntegrationTest {
     void 이미_식사를_완료한_주문을_변경을_할_수_없다() {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, false));
-        Order orders = 주문을_저장하고_반환받는다(savedOrderTable);
-        orders.changeOrderStatus(OrderStatus.COMPLETION);
-        orderRepository.save(orders);
+        Order order = 주문을_저장하고_반환받는다(savedOrderTable);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(order);
         OrderUpdateRequest request = new OrderUpdateRequest(OrderStatus.MEAL.name());
 
         // expect
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orders.getId(), request))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

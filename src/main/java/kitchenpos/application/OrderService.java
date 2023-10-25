@@ -40,10 +40,10 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = createOrderLineItemsByRequest(request.getOrderLineItemCreateRequests());
         OrderTable orderTable = findOrderTable(request.getOrderTableId());
 
-        Order orders = Order.of(orderLineItems);
-        orderTable.addOrder(orders);
+        Order order = Order.of(orderLineItems);
+        orderTable.addOrder(order);
 
-        return orderRepository.save(orders);
+        return orderRepository.save(order);
     }
 
     private List<OrderLineItem> createOrderLineItemsByRequest(List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
@@ -95,10 +95,10 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(Long orderId, OrderUpdateRequest request) {
         OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
-        Order orders = findOrder(orderId);
-        orders.changeOrderStatus(orderStatus);
+        Order order = findOrder(orderId);
+        order.changeOrderStatus(orderStatus);
 
-        return orders;
+        return order;
     }
 
     private Order findOrder(Long orderId) {

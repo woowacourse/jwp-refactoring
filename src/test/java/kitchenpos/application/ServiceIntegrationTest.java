@@ -81,10 +81,10 @@ public abstract class ServiceIntegrationTest {
         return orderService.create(request);
     }
 
-    protected Order 주문의_상태를_변환한다(Order orders, OrderStatus orderStatus) {
-        orders.changeOrderStatus(orderStatus);
+    protected Order 주문의_상태를_변환한다(Order order, OrderStatus orderStatus) {
+        order.changeOrderStatus(orderStatus);
 
-        return orderRepository.save(orders);
+        return orderRepository.save(order);
     }
 
     protected OrderLineItemCreateRequest orderLineItemToCreateRequest(OrderLineItem orderLineItem) {
