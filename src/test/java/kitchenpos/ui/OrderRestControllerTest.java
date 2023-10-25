@@ -127,6 +127,27 @@ class OrderRestControllerTest {
         resultActions.andExpect(status().isBadRequest());
     }
 
+    @DisplayName("입력받는 주문 항목 목록이 null이면 예외 처리한다.")
+    @Test
+    void create_FailWhenOrderLineItemMenuIdDuplicate() throws Exception {
+        // given
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+                1L,
+                OrderStatus.COOKING.name(),
+                List.of(new OrderLineItemCreateRequest(1L, 1),
+                        new OrderLineItemCreateRequest(1L, 2)
+                )
+        );
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(post("/api/orders")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(orderCreateRequest)));
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
     @DisplayName("주문 목록을 반환할 수 있다.")
     @Test
     void list() throws Exception {

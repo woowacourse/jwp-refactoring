@@ -1,5 +1,6 @@
 package kitchenpos.dto.request;
 
+import java.util.Objects;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -23,5 +24,22 @@ public class OrderLineItemCreateRequest {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final OrderLineItemCreateRequest that = (OrderLineItemCreateRequest) o;
+        return Objects.equals(menuId, that.menuId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(menuId);
     }
 }

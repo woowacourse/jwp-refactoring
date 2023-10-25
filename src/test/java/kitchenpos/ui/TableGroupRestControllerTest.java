@@ -55,6 +55,66 @@ class TableGroupRestControllerTest {
                 .andExpect(header().string(LOCATION, "/api/table-groups/1"));
     }
 
+    @DisplayName("테이블 Id 목록이 null이면 예외 처리한다.")
+    @Test
+    void create_FailWhenTableIdsNull() throws Exception {
+        // given
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tableGroupCreateRequest)));
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("테이블 Id 목록의 크키가 0이면 예외 처리한다.")
+    @Test
+    void create_FailWhenTableIdsSizeIsZero() throws Exception {
+        // given
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of());
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tableGroupCreateRequest)));
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("테이블 Id 목록의 크키가 1이면 예외 처리한다.")
+    @Test
+    void create_FailWhenTableIdsSizeIsOne() throws Exception {
+        // given
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(1L));
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tableGroupCreateRequest)));
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("테이블 Id 목록에 중복된 Id가 존재하면 예외 처리한다.")
+    @Test
+    void create_FailWhenTableIdsDuplicate() throws Exception {
+        // given
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(1L, 1L));
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tableGroupCreateRequest)));
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
     @DisplayName("단체를 주문 테이블에서 할당 해제할 수 있다.")
     @Test
     void unGroup() throws Exception {
