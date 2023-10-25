@@ -1,34 +1,40 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.ProductCreateRequest;
+import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductName;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.repositroy.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
-    private final ProductDao productDao;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    private final ProductRepository productRepository;
+
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductResponse create(final ProductCreateRequest request) {
+        final ProductName productName = new ProductName(request.getName());
+        final Price price = new Price(request.getPrice());
+        final Product product = productRepository.save(new Product(productName, price));
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(product);
+        return ProductResponse.from(product);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        return productRepository
+                .findAll()
+                .stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toUnmodifiableList());
     }
 }
