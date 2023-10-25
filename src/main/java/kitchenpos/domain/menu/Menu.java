@@ -2,6 +2,7 @@ package kitchenpos.domain.menu;
 
 import kitchenpos.domain.Product;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class Menu {
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
