@@ -1,45 +1,41 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
+import static kitchenpos.exception.ExceptionType.ORDER_TABLE_CANNOT_CHANGE_STATUS;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTable.Builder;
 import kitchenpos.dto.OrderTableDto;
+import kitchenpos.exception.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
+    private final OrderService orderService;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(
+        final OrderService orderService,
+        final OrderTableDao orderTableDao
+    ) {
+        this.orderService = orderService;
         this.orderTableDao = orderTableDao;
     }
 
     @Transactional
     public OrderTableDto create(final OrderTableDto orderTableDto) {
-        orderTableDto.setId(null);
-        orderTableDto.setTableGroupId(null);
+        OrderTable orderTable = new Builder()
+            .setNumberOfGuests(orderTableDto.getNumberOfGuests())
+            .setEmpty(orderTableDto.isEmpty())
+            .build();
 
-        OrderTable savedOrderTable = orderTableDao.save(toEntity(orderTableDto));
-        return OrderTableDto.from(savedOrderTable);
-    }
-
-    private OrderTable toEntity(OrderTableDto orderTableDto) {
-        return new OrderTable(
-            orderTableDto.getId(),
-            null,
-            orderTableDto.getNumberOfGuests(),
-            orderTableDto.isEmpty()
-        );
+        return OrderTableDto.from(orderTableDao.save(orderTable));
     }
 
     public List<OrderTableDto> list() {
@@ -51,41 +47,33 @@ public class TableService {
 
     @Transactional
     public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableDto orderTableDto) {
-        final OrderTable foundOrderTable = orderTableDao.findById(orderTableId)
-                                                        .orElseThrow(IllegalArgumentException::new);
+        final OrderTable foundOrderTable = findById(orderTableId);
 
-        if (Objects.nonNull(foundOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+        List<Order> cookingOrders = orderService.findByOrderTableIdAndOrderStatus(orderTableId, OrderStatus.COOKING);
+        List<Order> mealOrders = orderService.findByOrderTableIdAndOrderStatus(orderTableId, OrderStatus.MEAL);
+        if (!cookingOrders.isEmpty() || !mealOrders.isEmpty()) {
+            throw new CustomException(ORDER_TABLE_CANNOT_CHANGE_STATUS);
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        foundOrderTable.setEmpty(orderTableDto.isEmpty());
+        foundOrderTable.changeEmpty(orderTableDto.isEmpty());
 
         return OrderTableDto.from(foundOrderTable);
     }
 
+    private OrderTable findById(Long orderTableId) {
+        return orderTableDao.findById(orderTableId)
+                            .orElseThrow(IllegalArgumentException::new);
+    }
+
     @Transactional
-    public OrderTableDto changeNumberOfGuests(final Long orderTableId,
-        final OrderTableDto orderTableDto) {
-        final int numberOfGuests = orderTableDto.getNumberOfGuests();
+    public OrderTableDto changeNumberOfGuests(
+        final Long orderTableId,
+        final OrderTableDto orderTableDto
+    ) {
+        OrderTable orderTable = findById(orderTableId);
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.changeNumberOfGuests(orderTableDto.getNumberOfGuests());
 
-        final OrderTable foundOrderTable = orderTableDao.findById(orderTableId)
-                                                              .orElseThrow(IllegalArgumentException::new);
-
-        if (foundOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        foundOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return OrderTableDto.from(foundOrderTable);
+        return OrderTableDto.from(orderTable);
     }
 }

@@ -26,6 +26,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
         steps.createTable(OrderTableFixture.EMPTY_TABLE1.toDto());
         steps.createTable(OrderTableFixture.EMPTY_TABLE2.toDto());
         steps.createTable(OrderTableFixture.OCCUPIED_TABLE.toDto());
+        steps.createTable(OrderTableFixture.OCCUPIED_TABLE_OF_GROUP1.toDto());
         steps.createProduct(ProductFixture.FRIED_CHICKEN.toDto());
         steps.createMenu(MenuFixture.LUNCH_SPECIAL.toDto());
     }
@@ -33,7 +34,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void create_sucess() {
         // given
-        TableGroupDto expected = TableGroupFixture.TWO_TABLES.toDto();
+        TableGroupDto expected = TableGroupFixture.TABLE_GROUP_AVAILABLE.toDto();
 
         // when
         steps.createTableGroup(expected);

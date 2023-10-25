@@ -96,4 +96,8 @@ public class OrderService {
 
         return OrderDto.from(foundOrder);
     }
+
+    public List<Order> findByOrderTableIdAndOrderStatus(Long orderTableId, OrderStatus orderStatus) {
+        return orderDao.findByOrderTableIdAndOrderStatus(orderTableId, orderStatus);
+    }
 }

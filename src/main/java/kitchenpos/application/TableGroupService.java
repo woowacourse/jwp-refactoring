@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
+import static kitchenpos.exception.ExceptionType.TABLE_GROUP_NOT_FOUND;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -14,6 +14,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableDto;
 import kitchenpos.dto.TableGroupDto;
+import kitchenpos.exception.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -54,8 +55,7 @@ public class TableGroupService {
         }
 
         for (final OrderTableDto savedOrderTableDto : savedOrderTableDtos) {
-            if (!savedOrderTableDto.isEmpty() || Objects.nonNull(
-                savedOrderTableDto.getTableGroupId())) {
+            if (!savedOrderTableDto.isEmpty() || savedOrderTableDto.getTableGroupId() != null) {
                 throw new IllegalArgumentException();
             }
         }
@@ -124,5 +124,10 @@ public class TableGroupService {
             orderTableDto.getNumberOfGuests(),
             orderTableDto.isEmpty()
         );
+    }
+
+    public TableGroup findById(Long tableGroupId) {
+        return tableGroupDao.findById(tableGroupId)
+                            .orElseThrow(() -> new CustomException(TABLE_GROUP_NOT_FOUND, String.valueOf(tableGroupId)));
     }
 }

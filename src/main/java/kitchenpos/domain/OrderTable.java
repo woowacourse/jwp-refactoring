@@ -1,12 +1,16 @@
 package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static kitchenpos.exception.ExceptionType.EMPTY_ORDER_TABLE;
+import static kitchenpos.exception.ExceptionType.NUMBER_OF_GUESTS;
+import static kitchenpos.exception.ExceptionType.TABLE_GROUP_CANNOT_CHANGE_STATUS;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.CustomException;
 
 @Entity
 public class OrderTable {
@@ -30,6 +34,24 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeEmpty(boolean empty) {
+        if (tableGroup != null) {
+            throw new CustomException(TABLE_GROUP_CANNOT_CHANGE_STATUS);
+        }
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new CustomException(NUMBER_OF_GUESTS);
+        }
+        if (isEmpty()) {
+            throw new CustomException(EMPTY_ORDER_TABLE);
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
@@ -48,14 +70,6 @@ public class OrderTable {
 
     public void setTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
-    }
-
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public static class Builder {
