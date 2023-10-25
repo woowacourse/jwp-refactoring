@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.menu.application.MenuProductMapper;
+import kitchenpos.menu.application.dto.MenuProductQuantityDto;
 import kitchenpos.menu.domain.vo.MenuName;
 import kitchenpos.menu.domain.vo.MenuPrice;
 import kitchenpos.menu.domain.vo.MenuProducts;
@@ -47,16 +49,17 @@ public class Menu {
             String name,
             BigDecimal price,
             MenuGroup menuGroup,
-            MenuProducts menuProducts
+            List<MenuProductQuantityDto> menuProductQuantities,
+            MenuProductMapper menuProductMapper
     ) {
         this.menuName = new MenuName(name);
         this.menuPrice = new MenuPrice(price);
         this.menuGroup = menuGroup;
-        validate(menuProducts, menuPrice);
-        this.menuProducts = menuProducts;
+        this.menuProducts = menuProductMapper.toMenuProducts(menuProductQuantities);
+        validateMenuProducts(menuProducts, menuPrice);
     }
 
-    private void validate(MenuProducts menuProducts, MenuPrice menuPrice) {
+    private void validateMenuProducts(MenuProducts menuProducts, MenuPrice menuPrice) {
         if (menuProducts.isPriceLessThan(menuPrice.getPrice())) {
             throw new IllegalArgumentException("메뉴 가격이 상품 가격의 합보다 클 수 없습니다.");
         }

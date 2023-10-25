@@ -2,7 +2,6 @@ package kitchenpos.order.application;
 
 import static kitchenpos.test.fixture.MenuFixture.메뉴;
 import static kitchenpos.test.fixture.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.test.fixture.MenuProductFixture.메뉴_상품;
 import static kitchenpos.test.fixture.ProductFixture.상품;
 import static kitchenpos.test.fixture.TableFixture.테이블;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +12,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.menu.application.MenuProductMapper;
+import kitchenpos.menu.application.dto.MenuProductQuantityDto;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
@@ -51,6 +52,9 @@ class OrderServiceTest extends ServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
+    private MenuProductMapper menuProductMapper;
+
+    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Autowired
@@ -67,9 +71,13 @@ class OrderServiceTest extends ServiceTest {
             //given
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            Menu menu = menuRepository.save(
-                    메뉴("텐동", BigDecimal.valueOf(11000), menuGroup, List.of(메뉴_상품(product, 1)))
+            Menu menuFixture = 메뉴("텐동",
+                    BigDecimal.valueOf(11000),
+                    menuGroup,
+                    List.of(new MenuProductQuantityDto(product.getId(), 1)),
+                    menuProductMapper
             );
+            Menu menu = menuRepository.save(menuFixture);
 
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
             OrderCreateRequest request = new OrderCreateRequest(
@@ -106,9 +114,14 @@ class OrderServiceTest extends ServiceTest {
         void setUp() {
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            menu = menuRepository.save(
-                    메뉴("텐동", BigDecimal.valueOf(11000), menuGroup, List.of(메뉴_상품(product, 1)))
+            Menu menuFixture = 메뉴(
+                    "텐동",
+                    BigDecimal.valueOf(11000),
+                    menuGroup,
+                    List.of(new MenuProductQuantityDto(product.getId(), 1)),
+                    menuProductMapper
             );
+            menu = menuRepository.save(menuFixture);
         }
 
         @Test
@@ -205,9 +218,14 @@ class OrderServiceTest extends ServiceTest {
         void setUp() {
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            Menu menu = menuRepository.save(
-                    메뉴("텐동", BigDecimal.valueOf(11000), menuGroup, List.of(메뉴_상품(product, 1)))
+            Menu menuFixture = 메뉴(
+                    "텐동",
+                    BigDecimal.valueOf(11000),
+                    menuGroup,
+                    List.of(new MenuProductQuantityDto(product.getId(), 1)),
+                    menuProductMapper
             );
+            Menu menu = menuRepository.save(menuFixture);
 
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
             OrderCreateRequest request = new OrderCreateRequest(

@@ -2,9 +2,9 @@ package kitchenpos.menu.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.menu.application.dto.MenuProductQuantityDto;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.vo.MenuProducts;
-import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import org.springframework.stereotype.Component;
@@ -18,29 +18,29 @@ public class MenuProductMapper {
         this.productRepository = productRepository;
     }
 
-    public MenuProducts toMenuProducts(List<MenuProductRequest> menuProductRequests) {
-        List<MenuProduct> menuProducts = convertToMenuProducts(menuProductRequests);
+    public MenuProducts toMenuProducts(List<MenuProductQuantityDto> menuProductQuantities) {
+        List<MenuProduct> menuProducts = convertToMenuProducts(menuProductQuantities);
         return new MenuProducts(menuProducts);
     }
 
-    private List<MenuProduct> convertToMenuProducts(List<MenuProductRequest> menuProductRequests) {
-        return menuProductRequests.stream()
+    private List<MenuProduct> convertToMenuProducts(List<MenuProductQuantityDto> menuProductQuantities) {
+        return menuProductQuantities.stream()
                 .map(this::createMenuProduct)
                 .collect(Collectors.toList());
     }
 
-    private MenuProduct createMenuProduct(MenuProductRequest menuProductRequest) {
-        Product product = getProduct(menuProductRequest);
+    private MenuProduct createMenuProduct(MenuProductQuantityDto menuProductQuantity) {
+        Product product = getProduct(menuProductQuantity);
         return new MenuProduct(
                 product.getId(),
                 product.getName(),
                 product.getPrice(),
-                menuProductRequest.getQuantity()
+                menuProductQuantity.getQuantity()
         );
     }
 
-    private Product getProduct(MenuProductRequest menuProductRequest) {
-        return productRepository.findById(menuProductRequest.getProductId())
+    private Product getProduct(MenuProductQuantityDto menuProductQuantity) {
+        return productRepository.findById(menuProductQuantity.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 상품입니다."));
     }
 }

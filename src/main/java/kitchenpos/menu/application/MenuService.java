@@ -6,7 +6,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.domain.vo.MenuProducts;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,13 @@ public class MenuService {
 
     public MenuResponse create(MenuCreateRequest menuCreateRequest) {
         MenuGroup menuGroup = getMenuGroup(menuCreateRequest);
-        Menu menu = createMenu(menuCreateRequest, menuGroup);
+        Menu menu = new Menu(
+                menuCreateRequest.getName(),
+                menuCreateRequest.getPrice(),
+                menuGroup,
+                menuCreateRequest.toMenuProductQuantities(),
+                menuProductMapper
+        );
         menuRepository.save(menu);
         return MenuResponse.from(menu);
     }
@@ -48,15 +53,5 @@ public class MenuService {
     private MenuGroup getMenuGroup(MenuCreateRequest menuCreateRequest) {
         return menuGroupRepository.findById(menuCreateRequest.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않은 메뉴 그룹입니다."));
-    }
-
-    private Menu createMenu(MenuCreateRequest menuCreateRequest, MenuGroup menuGroup) {
-        MenuProducts menuProducts = menuProductMapper.toMenuProducts(menuCreateRequest.getMenuProducts());
-        return new Menu(
-                menuCreateRequest.getName(),
-                menuCreateRequest.getPrice(),
-                menuGroup,
-                menuProducts
-        );
     }
 }
