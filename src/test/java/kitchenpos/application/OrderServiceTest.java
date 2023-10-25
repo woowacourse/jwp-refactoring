@@ -1,12 +1,9 @@
 package kitchenpos.application;
 
 import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.MEAL;
 import static kitchenpos.fixture.MenuFixture.메뉴;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
-import static kitchenpos.fixture.OrderFixture.주문;
-import static kitchenpos.fixture.OrderLineItemFixture.주문_아이템;
 import static kitchenpos.fixture.OrderTableFixture.주문_테이블;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,20 +11,25 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.order.OrderCreateRequest;
+import kitchenpos.application.dto.order.OrderCreateRequest.OrderLineItemCreateRequest;
+import kitchenpos.application.dto.order.OrderCreateResponse;
+import kitchenpos.application.dto.order.OrderResponse;
+import kitchenpos.application.dto.order.OrderStatusRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.persistence.MenuGroupRepository;
+import kitchenpos.persistence.MenuRepository;
+import kitchenpos.persistence.OrderTableRepository;
+import kitchenpos.persistence.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,49 +44,43 @@ import org.springframework.test.context.jdbc.Sql;
 class OrderServiceTest {
 
     private final OrderService orderService;
-    private final OrderTableDao orderTableDao;
-    private final ProductDao productDao;
-    private final MenuProductDao menuProductDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuDao menuDao;
+    private final OrderTableRepository orderTableRepository;
+    private final ProductRepository productRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuRepository menuRepository;
 
     private Menu 저장된_메뉴;
     private OrderTable 저장된_주문_테이블;
 
-    public OrderServiceTest(final OrderService orderService,
-                            final OrderTableDao orderTableDao,
-                            final ProductDao productDao,
-                            final MenuProductDao menuProductDao,
-                            final MenuGroupDao menuGroupDao,
-                            final MenuDao menuDao) {
+    public OrderServiceTest(
+            final OrderService orderService,
+            final OrderTableRepository orderTableRepository,
+            final ProductRepository productRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuRepository menuRepository
+    ) {
         this.orderService = orderService;
-        this.orderTableDao = orderTableDao;
-        this.productDao = productDao;
-        this.menuProductDao = menuProductDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuDao = menuDao;
+        this.orderTableRepository = orderTableRepository;
+        this.productRepository = productRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuRepository = menuRepository;
     }
 
     @BeforeEach
     void setUp() {
         final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, false);
-        저장된_주문_테이블 = orderTableDao.save(주문_테이블);
+        저장된_주문_테이블 = orderTableRepository.save(주문_테이블);
 
         final MenuGroup 메뉴_그룹 = 메뉴_그룹(null, "양념 반 후라이드 반");
-        final MenuGroup 저장된_메뉴_그룹 = menuGroupDao.save(메뉴_그룹);
+        final MenuGroup 저장된_메뉴_그룹 = menuGroupRepository.save(메뉴_그룹);
 
-        final Product 저장된_양념_치킨 = productDao.save(상품(null, "양념 치킨", BigDecimal.valueOf(12000, 2)));
-        final Product 저장된_후라이드_치킨 = productDao.save(상품(null, "후라이드 치킨", BigDecimal.valueOf(10000, 2)));
-        final MenuProduct 메뉴_상품_1 = 메뉴_상품(null, null, 저장된_양념_치킨.getId(), 1);
-        final MenuProduct 메뉴_상품_2 = 메뉴_상품(null, null, 저장된_후라이드_치킨.getId(), 1);
+        final Product 저장된_양념_치킨 = productRepository.save(상품(null, "양념 치킨", BigDecimal.valueOf(12000, 2)));
+        final Product 저장된_후라이드_치킨 = productRepository.save(상품(null, "후라이드 치킨", BigDecimal.valueOf(10000, 2)));
+        final MenuProduct 메뉴_상품_1 = 메뉴_상품(null, null, 저장된_양념_치킨, 1);
+        final MenuProduct 메뉴_상품_2 = 메뉴_상품(null, null, 저장된_후라이드_치킨, 1);
 
-        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹.getId(), List.of(메뉴_상품_1, 메뉴_상품_2));
-        저장된_메뉴 = menuDao.save(메뉴);
-
-        메뉴_상품_1.setMenuId(저장된_메뉴.getId());
-        메뉴_상품_2.setMenuId(저장된_메뉴.getId());
-        menuProductDao.save(메뉴_상품_1);
-        menuProductDao.save(메뉴_상품_2);
+        final Menu 메뉴 = 메뉴(null, "메뉴", BigDecimal.valueOf(22000, 2), 저장된_메뉴_그룹, List.of(메뉴_상품_1, 메뉴_상품_2));
+        저장된_메뉴 = menuRepository.save(메뉴);
     }
 
     @Nested
@@ -93,64 +89,60 @@ class OrderServiceTest {
         @Test
         void 주문을_정상적으로_등록한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId(), 1));
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
 
             // when
-            final Order 저장된_주문 = orderService.create(주문);
+            final OrderCreateResponse 저장된_주문 = orderService.create(주문_요청값);
 
             // then
+            final OrderCreateResponse 예상_응답값 = OrderCreateResponse.of(
+                    new Order(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
+                            List.of(new OrderLineItem(저장된_메뉴, 1))));
+
             assertAll(
                     () -> assertThat(저장된_주문.getId()).isNotNull(),
                     () -> assertThat(저장된_주문).usingRecursiveComparison()
-                            .ignoringFields("id", "orderLineItems.seq")
-                            .isEqualTo(주문)
+                            .ignoringFields("id", "orderedTime", "orderLineItems.seq", "orderLineItems.orderId")
+                            .isEqualTo(예상_응답값)
             );
-        }
-
-        @Test
-        void 주문_메뉴_목록이_비어있으면_예외가_발생한다() {
-            // given
-            final List<OrderLineItem> 주문_메뉴 = Collections.emptyList();
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
-
-            // expected
-            assertThatThrownBy(() -> orderService.create(주문))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_메뉴_목록들_중_존재하지_않는_메뉴가_있으면_예외가_발생한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId() + 1, 1));
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId() + 1, 1)));
 
             // expected
-            assertThatThrownBy(() -> orderService.create(주문))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(주문_요청값))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("메뉴 정보가 올바르지 않습니다.");
         }
 
         @Test
         void 주문_테이블이_존재하지_않으면_예외가_발생한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId() + 1, 1));
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId() + 1, null, null, 주문_메뉴);
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId() + 1,
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
 
             // expected
-            assertThatThrownBy(() -> orderService.create(주문))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.create(주문_요청값))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문 테이블입니다.");
         }
 
         @Test
         void 주문_테이블이_빈_테이블이면_예외가_발생한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId() + 1, 1));
             final OrderTable 주문_테이블 = 주문_테이블(null, null, 2, true);
-            final OrderTable 저장된_주문_테이블 = orderTableDao.save(주문_테이블);
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
+            final OrderTable 저장된_주문_테이블 = orderTableRepository.save(주문_테이블);
+
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
 
             // expected
-            assertThatThrownBy(() -> orderService.create(주문))
+            assertThatThrownBy(() -> orderService.create(주문_요청값))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -158,16 +150,24 @@ class OrderServiceTest {
     @Test
     void 주문_목록을_정상적으로_조회한다() {
         // given
-        final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId(), 1));
-        final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
-        final Order 저장된_주문 = orderService.create(주문);
+        final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
+
+        orderService.create(주문_요청값);
 
         // when
-        final List<Order> 주문들 = orderService.list();
+        final List<OrderResponse> 주문들 = orderService.list();
 
         // then
+        final List<OrderResponse> 예상_응답값 = List.of(
+                OrderResponse.of(
+                        new Order(null, 저장된_주문_테이블, OrderStatus.COOKING, LocalDateTime.now(),
+                                List.of(new OrderLineItem(저장된_메뉴, 1))))
+        );
+
         assertThat(주문들).usingRecursiveComparison()
-                .isEqualTo(List.of(저장된_주문));
+                .ignoringFields("id", "orderedTime", "orderLineItems.seq", "orderLineItems.orderId")
+                .isEqualTo(예상_응답값);
     }
 
     @Nested
@@ -176,13 +176,14 @@ class OrderServiceTest {
         @Test
         void 주문_상태를_정상적으로_변경한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId(), 1));
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
-            final Order 저장된_주문 = orderService.create(주문);
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
+
+            final OrderCreateResponse 저장된_주문 = orderService.create(주문_요청값);
 
             // when
-            final Order 상태가_변경된_주문 = orderService.changeOrderStatus(저장된_주문.getId(),
-                    주문(null, null, COMPLETION.name(), null, null));
+            final OrderResponse 상태가_변경된_주문 = orderService.changeOrderStatus(저장된_주문.getId(),
+                    new OrderStatusRequest(COMPLETION));
 
             // then
             assertThat(상태가_변경된_주문.getOrderStatus()).isEqualTo(COMPLETION.name());
@@ -191,29 +192,32 @@ class OrderServiceTest {
         @Test
         void 주문이_존재하지_않으면_예외가_발생한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId(), 1));
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
-            final Order 저장된_주문 = orderService.create(주문);
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
+            final OrderCreateResponse 저장된_주문 = orderService.create(주문_요청값);
 
             // expected
             assertThatThrownBy(
-                    () -> orderService.changeOrderStatus(저장된_주문.getId() + 1,
-                            주문(null, null, COMPLETION.name(), null, null))
-            ).isInstanceOf(IllegalArgumentException.class);
+                    () -> orderService.changeOrderStatus(저장된_주문.getId() + 1, new OrderStatusRequest(COMPLETION))
+            )
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("존재하지 않는 주문입니다.");
         }
 
         @Test
         void 주문의_상태가_COMPLETION이면_예외가_발생한다() {
             // given
-            final List<OrderLineItem> 주문_메뉴 = List.of(주문_아이템(null, null, 저장된_메뉴.getId(), 1));
-            final Order 주문 = 주문(null, 저장된_주문_테이블.getId(), null, null, 주문_메뉴);
-            final Order 저장된_주문 = orderService.create(주문);
-            orderService.changeOrderStatus(저장된_주문.getId(), 주문(null, null, COMPLETION.name(), null, null));
+            final OrderCreateRequest 주문_요청값 = new OrderCreateRequest(저장된_주문_테이블.getId(),
+                    List.of(new OrderLineItemCreateRequest(저장된_메뉴.getId(), 1)));
+            final OrderCreateResponse 저장된_주문 = orderService.create(주문_요청값);
+            orderService.changeOrderStatus(저장된_주문.getId(), new OrderStatusRequest(COMPLETION));
 
             // expected
             assertThatThrownBy(
-                    () -> orderService.changeOrderStatus(저장된_주문.getId(), 주문(null, null, MEAL.name(), null, null))
-            ).isInstanceOf(IllegalArgumentException.class);
+                    () -> orderService.changeOrderStatus(저장된_주문.getId(), new OrderStatusRequest(COMPLETION))
+            )
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("이미 완료된 주문입니다.");
         }
     }
 }
