@@ -19,7 +19,7 @@ class MenuTest {
         assertDoesNotThrow(() -> menu.validateMenuPrice(new Price(BigDecimal.valueOf(32000))));
     }
 
-    @DisplayName("")
+    @DisplayName("메뉴의 가격이 상품 가격들의 합보다 크면 예외 처리한다.")
     @Test
     void validateMenuPrice_FailWhenGraterThanProductSum() {
         // given
