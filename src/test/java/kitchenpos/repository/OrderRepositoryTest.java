@@ -103,10 +103,11 @@ class OrderRepositoryTest extends RepositoryTestConfig {
         persistTableGroup(savedTableGroup);
 
         final Order order = Order.ofEmptyOrderLineItems(orderTableTwo);
-        order.addOrderLineItems(List.of(
+        final Order savedOrder = persistOrder(order);
+
+        savedOrder.addOrderLineItems(List.of(
                 OrderLineItem.withoutOrder(savedMenu, new Quantity(1))
         ));
-        persistOrder(order);
 
         em.flush();
         em.close();
@@ -119,7 +120,7 @@ class OrderRepositoryTest extends RepositoryTestConfig {
             softly.assertThat(actual).hasSize(1);
             final Order actualOrder = actual.get(0);
 
-            softly.assertThat(actualOrder).isEqualTo(order);
+            softly.assertThat(actualOrder).isEqualTo(savedOrder);
         });
     }
 

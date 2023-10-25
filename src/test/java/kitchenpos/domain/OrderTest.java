@@ -64,7 +64,7 @@ class OrderTest {
 
         // when
         order.addOrderLineItems(List.of(
-                new OrderLineItem(null, menu, new Quantity(10))
+                new OrderLineItem(menu, new Quantity(10))
         ));
 
         // then
@@ -75,7 +75,7 @@ class OrderTest {
 
             softly.assertThat(actualOrderLineItem)
                     .usingRecursiveComparison()
-                    .isEqualTo(new OrderLineItem(order, menu, new Quantity(10)));
+                    .isEqualTo(new OrderLineItem(menu, new Quantity(10)));
         });
     }
 

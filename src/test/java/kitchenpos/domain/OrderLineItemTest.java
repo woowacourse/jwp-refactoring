@@ -22,7 +22,7 @@ class OrderLineItemTest {
         final Order order = Order.ofEmptyOrderLineItems(orderTable);
 
         // expect
-        assertThatCode(() -> new OrderLineItem(order, menu, new Quantity(10)))
+        assertThatCode(() -> new OrderLineItem(menu, new Quantity(10)))
                 .doesNotThrowAnyException();
     }
 
@@ -48,12 +48,10 @@ class OrderLineItemTest {
         // when
         final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(10));
         final Order order = Order.ofEmptyOrderLineItems(OrderTable.withoutTableGroup(10, false));
-        orderLineItem.assignOrder(order);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(orderLineItem.getSeq()).isNull();
-            softly.assertThat(orderLineItem.getOrder()).isEqualTo(order);
             softly.assertThat(orderLineItem.getMenu()).isEqualTo(menu);
             softly.assertThat(orderLineItem.getQuantity()).isEqualTo(new Quantity(10));
         });

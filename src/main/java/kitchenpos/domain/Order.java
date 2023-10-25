@@ -73,7 +73,6 @@ public class Order {
     }
 
     public void addOrderLineItems(final List<OrderLineItem> requestOrderLineItems) {
-        requestOrderLineItems.forEach(orderLineItem -> orderLineItem.assignOrder(this));
         this.orderLineItems.addAll(requestOrderLineItems);
     }
 
