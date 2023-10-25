@@ -1,6 +1,7 @@
 package kitchenpos.application.dto;
 
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.menu.application.dto.MenuResponse;
 
 public class OrderLineItemResponse {
 

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,9 +6,11 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import kitchenpos.domain.BaseEntity;
+import kitchenpos.domain.Product;
 
 @Entity
-public class MenuProduct extends BaseEntity{
+public class MenuProduct extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_menu_product_to_menu"))

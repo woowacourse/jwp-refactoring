@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

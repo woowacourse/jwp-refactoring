@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,9 +9,11 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.BaseEntity;
+import kitchenpos.domain.Price;
 
 @Entity
-public class Menu extends BaseEntity{
+public class Menu extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
