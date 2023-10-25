@@ -116,10 +116,8 @@ class OrderServiceTest extends ServiceTest {
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         Order savedOrder = orderService.create(request);
 
-        savedOrder.setOrderStatus(OrderStatus.MEAL.name());
-
         // when
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
+        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.MEAL);
 
         // then
         assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
@@ -135,13 +133,10 @@ class OrderServiceTest extends ServiceTest {
         OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
         OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         Order savedOrder = orderService.create(request);
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
-
-        changedOrder.setOrderStatus(OrderStatus.MEAL.name());
+        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), OrderStatus.COMPLETION);
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(changedOrder.getId(), changedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(changedOrder.getId(), OrderStatus.MEAL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
