@@ -6,7 +6,6 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;

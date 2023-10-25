@@ -31,7 +31,7 @@ class MenuServiceTest extends ServiceTest {
 
             final var menuProductRequest1 = new MenuProductRequest(product1.getId(), 10L);
             final var menuProductRequest2 = new MenuProductRequest(product2.getId(), 5L);
-            final var menuCreateRequest= new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(5600), 1L,
+            final var menuCreateRequest = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(5600), 1L,
                     List.of(menuProductRequest1, menuProductRequest2));
 
             // when
@@ -61,7 +61,8 @@ class MenuServiceTest extends ServiceTest {
             // given
             menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
             final var menuProductRequest = new MenuProductRequest(999L, 1L);
-            final var menuCreateRequest = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L, List.of(menuProductRequest));
+            final var menuCreateRequest = new MenuCreateRequest("메뉴_이름", BigDecimal.valueOf(1000), 1L,
+                    List.of(menuProductRequest));
 
             // when & then
             assertThatThrownBy(() -> menuService.create(menuCreateRequest))
@@ -86,7 +87,8 @@ class MenuServiceTest extends ServiceTest {
         void 메뉴가_하나_이상_존재하면_메뉴_목록을_반환한다() {
             // given
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
+            final var menu = menuRepository.save(
+                    new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var response = MenuResponse.from(menu);
             final var expected = List.of(response);
 

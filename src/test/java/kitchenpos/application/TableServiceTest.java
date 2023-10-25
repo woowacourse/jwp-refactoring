@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
@@ -116,7 +115,8 @@ class TableServiceTest extends ServiceTest {
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
             final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 3, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
+            final var menu = menuRepository.save(
+                    new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var orderLineItem = new OrderLineItem(menu, 5L);
             orderRepository.save(new Order(orderTable, OrderStatus.MEAL, List.of(orderLineItem)));
             final var request = new OrderTableChangeEmptyRequest(true);

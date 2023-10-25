@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
@@ -13,7 +12,6 @@ import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
