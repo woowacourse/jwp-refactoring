@@ -8,11 +8,11 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.exception.MenuException.NotExistsProductException;
 import kitchenpos.domain.exception.MenuException.PriceMoreThanProductsException;
+import kitchenpos.domain.exception.MenuGroupException.NotExistsMenuGroupException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -40,18 +40,22 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
-        MenuGroup menuGroup = menuGroupRepository.getById(menuRequest.getMenuGroupId());
         List<Product> products = productRepository.findAllById(menuRequest.getProductIds());
+
         validate(menuRequest, products);
-        Menu menu = Menu.of(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
-        Menu savedMenu = menuRepository.save(menu);
-        List<MenuProduct> menuProducts = getMenuProducts(menu, menuRequest.getMenuProductRequests());
+
+        Menu savedMenu = menuRepository.save(
+                Menu.of(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId()));
+        List<MenuProduct> menuProducts = getMenuProducts(savedMenu, menuRequest.getMenuProductRequests());
 
         menuProductRepository.saveAll(menuProducts);
         return savedMenu;
     }
 
     private void validate(final MenuRequest menuRequest, final List<Product> products) {
+        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
+            throw new NotExistsMenuGroupException(menuRequest.getMenuGroupId());
+        }
         if (products.size() != menuRequest.getProductSize()) {
             throw new NotExistsProductException();
         }

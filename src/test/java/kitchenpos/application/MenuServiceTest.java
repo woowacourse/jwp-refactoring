@@ -56,13 +56,13 @@ class MenuServiceTest {
 
         menuGroup = MenuGroup.from("menuGroup1");
 
-        this.menu = Menu.of("menu", BigDecimal.valueOf(25000), menuGroup);
+        this.menu = Menu.of("menu", BigDecimal.valueOf(25000), 1L);
     }
 
     @Test
     @DisplayName("메뉴는 현재 존재하는 메뉴 그룹에 포함되어 있지 않으면 예외가 발생한다.")
     void create_fail_menuGroup() {
-        when(menuGroupRepository.getById(1L)).thenThrow(new NotExistsMenuGroupException(1L));
+        when(menuGroupRepository.existsById(1L)).thenReturn(false);
 
         List<MenuProductRequest> menuProductRequests = new ArrayList<>();
         menuProductRequests.add(new MenuProductRequest(1L, 10));
@@ -76,7 +76,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴의 상품 목록이 현재 존재하는 상품에 포함되어 있지 않으면 예외가 발생한다.")
     void create_fail_products() {
-        when(menuGroupRepository.getById(1L)).thenReturn(menuGroup);
+        when(menuGroupRepository.existsById(1L)).thenReturn(true);
         when(productRepository.findAllById(anyList())).thenReturn(List.of(product1));
 
         List<MenuProductRequest> menuProductRequests = new ArrayList<>();
@@ -91,7 +91,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴의 가격이 메뉴 상품의 가격 총합보다 더 크면 예외가 발생한다.")
     void create_fail_price() {
-        when(menuGroupRepository.getById(1L)).thenReturn(menuGroup);
+        when(menuGroupRepository.existsById(1L)).thenReturn(true);
         when(productRepository.findAllById(anyList())).thenReturn(Collections.emptyList());
 
         List<MenuProductRequest> menuProductRequests = new ArrayList<>();

@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import kitchenpos.domain.exception.MenuException.InvalidMenuNameException;
 import org.springframework.lang.NonNull;
 
@@ -22,26 +21,26 @@ public class Menu {
     private String name;
     @Embedded
     private Price price;
-    @ManyToOne
-    private MenuGroup menuGroup;
+    @Column
+    private Long menuGroupId;
 
     protected Menu() {
     }
 
     private Menu(final String name,
                  final Price price,
-                 final MenuGroup menuGroup) {
+                 final Long menuGroupId) {
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     public static Menu of(final String name,
                           final BigDecimal price,
-                          final MenuGroup menuGroup) {
+                          final Long menuGroupId) {
         validateName(name);
 
-        return new Menu(name, Price.from(price), menuGroup);
+        return new Menu(name, Price.from(price), menuGroupId);
     }
 
     private static void validateName(String name) {
@@ -63,6 +62,6 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
-        return menuGroup.getId();
+        return menuGroupId;
     }
 }
