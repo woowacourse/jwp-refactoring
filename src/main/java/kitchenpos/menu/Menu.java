@@ -1,7 +1,9 @@
 package kitchenpos.menu;
 
+import kitchenpos.menu.event.MenuCreatedEvent;
 import kitchenpos.product.Price;
 import kitchenpos.product.PriceConverter;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
@@ -15,7 +17,7 @@ import java.util.List;
 
 @Table(name = "menu")
 @Entity
-public class Menu {
+public class Menu extends AbstractAggregateRoot<Menu> {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -41,6 +43,7 @@ public class Menu {
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts);
         validateMenuProductsPrice(this.menuProducts);
+        registerEvent(new MenuCreatedEvent(menuGroupId));
     }
 
     private void validateMenuProductsPrice(MenuProducts menuProducts) {
