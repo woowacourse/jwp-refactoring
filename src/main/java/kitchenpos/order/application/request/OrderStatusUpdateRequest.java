@@ -1,4 +1,4 @@
-package kitchenpos.application.request;
+package kitchenpos.order.application.request;
 
 public class OrderStatusUpdateRequest {
 

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -10,7 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.vo.Quantity;
+import kitchenpos.menu.domain.Menu;
 
 @Entity
 @Table(name = "order_line_item")
