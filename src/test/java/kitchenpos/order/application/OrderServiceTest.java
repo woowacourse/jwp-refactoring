@@ -1,9 +1,8 @@
 package kitchenpos.order.application;
 
-import kitchenpos.order.application.OrderService;
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;

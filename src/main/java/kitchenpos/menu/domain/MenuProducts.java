@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import kitchenpos.domain.vo.Price;
 import org.hibernate.annotations.BatchSize;

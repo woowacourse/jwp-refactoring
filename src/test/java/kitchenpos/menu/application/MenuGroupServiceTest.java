@@ -1,6 +1,5 @@
-package kitchenpos.application.menugroup;
+package kitchenpos.menu.application;
 
-import kitchenpos.application.MenuGroupService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuGroupResponse;

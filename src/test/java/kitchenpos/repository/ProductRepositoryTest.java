@@ -1,6 +1,7 @@
 package kitchenpos.repository;
 
 import kitchenpos.config.RepositoryTestConfig;
+import kitchenpos.menu.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

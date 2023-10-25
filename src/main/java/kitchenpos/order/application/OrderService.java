@@ -1,6 +1,6 @@
 package kitchenpos.order.application;
 
-import kitchenpos.domain.Menu;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -9,7 +9,7 @@ import kitchenpos.domain.vo.Quantity;
 import kitchenpos.dto.OrderCreateOrderLineItemRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;

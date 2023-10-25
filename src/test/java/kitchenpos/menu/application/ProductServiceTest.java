@@ -1,6 +1,5 @@
-package kitchenpos.application.product;
+package kitchenpos.menu.application;
 
-import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;

@@ -1,8 +1,7 @@
-package kitchenpos.application.product;
+package kitchenpos.menu.application;
 
-import kitchenpos.application.ProductService;
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.dto.ProductResponse;

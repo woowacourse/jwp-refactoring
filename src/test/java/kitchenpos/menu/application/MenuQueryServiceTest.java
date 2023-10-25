@@ -1,11 +1,10 @@
-package kitchenpos.application.menu;
+package kitchenpos.menu.application;
 
-import kitchenpos.application.MenuService;
 import kitchenpos.config.ApplicationTestConfig;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.Product;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
