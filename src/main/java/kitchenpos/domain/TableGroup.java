@@ -44,16 +44,11 @@ public class TableGroup {
         if (Objects.isNull(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
-        for (final OrderTable savedOrderTable : orderTables) {
-            if (savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     private void setGroupForThis(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.changeGroup(this);
+            orderTable.group(this);
         }
     }
 

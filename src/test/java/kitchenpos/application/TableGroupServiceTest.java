@@ -62,16 +62,16 @@ class TableGroupServiceTest {
     @Autowired
     private MenuDao menuDao;
 
-    private OrderTable testTable1;
-    private OrderTable testTable2;
-    private OrderTable emptyTable;
+    private OrderTable emptyTable1;
+    private OrderTable emptyTable2;
+    private OrderTable notEmptyTable;
     private Menu testMenu;
 
     @BeforeEach
     void setup() {
-        testTable1 = orderTableDao.save(NOT_EMPTY_TABLE());
-        testTable2 = orderTableDao.save(NOT_EMPTY_TABLE());
-        emptyTable = orderTableDao.save(EMPTY_TABLE());
+        emptyTable1 = orderTableDao.save(EMPTY_TABLE());
+        emptyTable2 = orderTableDao.save(EMPTY_TABLE());
+        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
 
         final MenuGroup menuGroup = menuGroupDao.save(TEST_GROUP());
         final Product product = productDao.save(PIZZA());
@@ -91,8 +91,8 @@ class TableGroupServiceTest {
             // given
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
-                            new OrderTableId(testTable1.getId()),
-                            new OrderTableId(testTable2.getId())
+                            new OrderTableId(emptyTable1.getId()),
+                            new OrderTableId(emptyTable2.getId())
                     ));
 
             // when
@@ -105,7 +105,7 @@ class TableGroupServiceTest {
                         .stream()
                         .map(TableResponse::getId)
                         .collect(Collectors.toList());
-                softly.assertThat(tableIds).containsExactlyInAnyOrderElementsOf(List.of(testTable1.getId(), testTable2.getId()));
+                softly.assertThat(tableIds).containsExactlyInAnyOrderElementsOf(List.of(emptyTable1.getId(), emptyTable2.getId()));
             });
         }
 
@@ -114,7 +114,7 @@ class TableGroupServiceTest {
         void throwExceptionWhenTableIsNotCreated() {
             // given
             final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(
-                    new OrderTableId(testTable1.getId()),
+                    new OrderTableId(emptyTable1.getId()),
                     new OrderTableId(-1L)
             ));
 
@@ -130,8 +130,8 @@ class TableGroupServiceTest {
             // given
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
-                            new OrderTableId(testTable1.getId()),
-                            new OrderTableId(emptyTable.getId())
+                            new OrderTableId(emptyTable1.getId()),
+                            new OrderTableId(notEmptyTable.getId())
                     ));
 
             // when
@@ -144,13 +144,13 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹지정된 태이블로는 생성시 예외가 발생한다.")
         void throwExceptionWithAlreadyGroupedTable() {
             // given
-            tableGroupDao.save(new TableGroup(List.of(testTable1, testTable2)));
+            tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
 
             final OrderTable savedTable = orderTableDao.save(new OrderTable(0, true));
 
             final TableGroupCreateRequest request = new TableGroupCreateRequest(
                     List.of(
-                            new OrderTableId(testTable1.getId()),
+                            new OrderTableId(emptyTable1.getId()),
                             new OrderTableId(savedTable.getId())
                     ));
 
@@ -169,7 +169,7 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            testTableGroup = tableGroupDao.save(new TableGroup(List.of(testTable1, testTable2)));
+            testTableGroup = tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
         }
 
         @Test
@@ -181,8 +181,8 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(testTableGroup.getId());
 
             // then
-            final OrderTable actualTable1 = orderTableDao.findById(testTable1.getId()).get();
-            final OrderTable actualTable2 = orderTableDao.findById(testTable2.getId()).get();
+            final OrderTable actualTable1 = orderTableDao.findById(emptyTable1.getId()).get();
+            final OrderTable actualTable2 = orderTableDao.findById(emptyTable2.getId()).get();
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(actualTable1.getTableGroupId()).isNull();
                 softly.assertThat(actualTable2.getTableGroupId()).isNull();
@@ -194,7 +194,7 @@ class TableGroupServiceTest {
         @DisplayName("완료상태가 아닌 주문이 있는경우 그룹해제시 예외가 발생한다.")
         void throwExceptionWithUncompletedOrder(final String statusValue) {
             // given
-            final Order order = new Order.OrderFactory(testTable1)
+            final Order order = new Order.OrderFactory(emptyTable1)
                     .addMenu(testMenu, 1L)
                     .create();
             order.changeOrderStatus(OrderStatus.valueOf(statusValue));

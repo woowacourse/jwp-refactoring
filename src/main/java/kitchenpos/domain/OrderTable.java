@@ -30,12 +30,17 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeGroup(final TableGroup tableGroup) {
+    public void group(final TableGroup tableGroup) {
+        if (!empty || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException();
+        }
         this.tableGroup = tableGroup;
+        this.empty = false;
     }
 
     public void deleteGroup() {
         this.tableGroup = null;
+        this.empty = true;
     }
 
     public void changeEmpty(final boolean empty) {

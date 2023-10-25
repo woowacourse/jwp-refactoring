@@ -148,15 +148,15 @@ class TableServiceTest {
         @DisplayName("테이블 그룹에 속해있으면 상태를 변경할 수 없다.")
         void throwExceptionWithGroupedTable() {
             // given
-            final OrderTable otherTable = orderTableDao.save(NOT_EMPTY_TABLE());
-            final TableGroup tableGroup = new TableGroup(List.of(notEmptyTable, otherTable));
+            final OrderTable otherTable = orderTableDao.save(EMPTY_TABLE());
+            final TableGroup tableGroup = new TableGroup(List.of(emptyTable, otherTable));
             tableGroupDao.save(tableGroup);
 
             final TableChangeEmptyStatusRequest request = new TableChangeEmptyStatusRequest(true);
 
             // when
             // then
-            final Long tableId = notEmptyTable.getId();
+            final Long tableId = emptyTable.getId();
             Assertions.assertThatThrownBy(() -> tableService.changeEmpty(tableId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
