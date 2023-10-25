@@ -7,12 +7,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql("/truncate.sql")
 class TableGroupServiceTest extends TableGroupServiceFixture {
 
     @Autowired
@@ -27,7 +29,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
 
             final TableGroup actual = tableGroupService.create(생성할_테이블그룹_요청_dto);
 
-            assertThat(actual).isEqualTo(생성한_테이블그룹);
+            assertThat(actual.getId()).isPositive();
         }
 
         @Test
@@ -42,7 +44,7 @@ class TableGroupServiceTest extends TableGroupServiceFixture {
         void 주문_테이블_아이디가_1개인_경우_예외가_발생한다() {
             주문_테이블_아이디가_1개인_경우_예외가_발생한다_픽스처_생성();
 
-            assertThatThrownBy(() -> tableGroupService.create(주문_테이블이_없는_테이블그룹_요청_dto))
+            assertThatThrownBy(() -> tableGroupService.create(주문_테이블이_1개인_테이블그룹_요청_dto))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 

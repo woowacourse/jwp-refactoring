@@ -57,14 +57,16 @@ public class TableServiceFixture {
     }
 
     protected void 주문_테이블_아이디가_그룹_테이블에_포함되어_있다면_예외가_발생한다_픽스처_생성() {
-        final OrderTable 주문_테이블_1 = new OrderTable(3, false);
+        그룹테이블에_포함된_주문_테이블_1 = new OrderTable(3, false);
         final OrderTable 주문_테이블_2 = new OrderTable(3, false);
-        orderTableRepository.saveAll(List.of(주문_테이블_1, 주문_테이블_2));
 
-        final TableGroup 테이블_그룹 = new TableGroup(List.of(주문_테이블_1, 주문_테이블_2));
+        final TableGroup 테이블_그룹 = new TableGroup(List.of(그룹테이블에_포함된_주문_테이블_1, 주문_테이블_2));
         tableGroupRepository.save(테이블_그룹);
 
-        final Order 주문 = new Order(주문_테이블_1, OrderStatus.COMPLETION);
+        그룹테이블에_포함된_주문_테이블_1.setTableGroup(테이블_그룹);
+        orderTableRepository.saveAll(List.of(그룹테이블에_포함된_주문_테이블_1, 주문_테이블_2));
+
+        final Order 주문 = new Order(그룹테이블에_포함된_주문_테이블_1, OrderStatus.COMPLETION);
         orderRepository.save(주문);
 
         상태_변경_요청_dto = new PutOrderTableEmptyRequest(false);

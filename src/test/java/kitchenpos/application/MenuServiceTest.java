@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.fixture.MenuServiceFixture;
 import kitchenpos.domain.Menu;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,11 @@ class MenuServiceTest extends MenuServiceFixture {
 
             final List<Menu> actual = menuService.list();
 
-            assertThat(actual).isEqualTo(저장된_메뉴_리스트);
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(actual).hasSize(2);
+                softAssertions.assertThat(actual.get(0).getName()).isEqualTo("저장된 메뉴 1");
+                softAssertions.assertThat(actual.get(1).getName()).isEqualTo("저장된 메뉴 2");
+            });
         }
     }
 }

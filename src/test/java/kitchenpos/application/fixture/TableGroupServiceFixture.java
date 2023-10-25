@@ -50,7 +50,7 @@ public class TableGroupServiceFixture {
         orderTableRepository.saveAll(List.of(주문_테이블1, 주문_테이블2));
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
-        주문_테이블이_1개인_테이블그룹_요청_dto = new CreateTableGroupRequest(List.of(그룹화할_주문_테이블에_포함될_주문_테이블_1));
+        주문_테이블이_없는_테이블그룹_요청_dto = new CreateTableGroupRequest(List.of(그룹화할_주문_테이블에_포함될_주문_테이블_1));
     }
 
     protected void 주문_테이블_아이디가_1개인_경우_예외가_발생한다_픽스처_생성() {
@@ -58,7 +58,7 @@ public class TableGroupServiceFixture {
         orderTableRepository.save(주문_테이블1);
 
         final OrderTableDto 그룹화할_주문_테이블에_포함될_주문_테이블_1 = new OrderTableDto(주문_테이블1.getId());
-        주문_테이블이_없는_테이블그룹_요청_dto = new CreateTableGroupRequest(List.of(그룹화할_주문_테이블에_포함될_주문_테이블_1));
+        주문_테이블이_1개인_테이블그룹_요청_dto = new CreateTableGroupRequest(List.of(그룹화할_주문_테이블에_포함될_주문_테이블_1));
     }
 
     protected void 주문_테이블이_사용가능한_테이블인_경우_예외가_발생한다_픽스처_생성() {

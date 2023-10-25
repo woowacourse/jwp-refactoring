@@ -45,13 +45,13 @@ public class TableGroupService {
         return savedTableGroup;
     }
 
-    private List<OrderTable> findOrderTables(final CreateTableGroupRequest orderTableRequests) {
-        final List<Long> orderTableIds = orderTableRequests.getOrderTables()
+    private List<OrderTable> findOrderTables(final CreateTableGroupRequest orderTableRequest) {
+        final List<Long> orderTableIds = orderTableRequest.getOrderTables()
                                                            .stream()
                                                            .map(OrderTableDto::getId)
                                                            .collect(Collectors.toUnmodifiableList());
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdsIn(orderTableIds);
-        if (orderTableIds.size() != orderTables.size()) {
+        if (orderTableIds.size() != orderTables.size() || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
         return orderTables;

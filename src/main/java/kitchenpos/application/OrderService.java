@@ -43,6 +43,9 @@ public class OrderService {
     public Order create(final CreateOrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                                                           .orElseThrow(IllegalArgumentException::new);
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         final Order order = new Order(orderTable, OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
 

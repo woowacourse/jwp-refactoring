@@ -39,9 +39,6 @@ public class Order {
     }
 
     public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
