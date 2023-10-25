@@ -49,8 +49,7 @@ class OrderServiceTest {
     @Test
     void 주문을_생성한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
         OrderTable orderTable = new OrderTable(1L, null, 0 , false);
@@ -81,8 +80,7 @@ class OrderServiceTest {
     @Test
     void 주문을_전체_조회한다() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
         OrderTable orderTable = new OrderTable(1L, null, 0 ,false);
@@ -104,9 +102,7 @@ class OrderServiceTest {
     @CsvSource(value = {"COOKING:MEAL", "COOKING:COMPLETION", "MEAL:COMPLETION", "COOKING:COOKING", "MEAL:MEAL"}, delimiter = ':')
     void 주문_상태를_변경한다(OrderStatus fromStatus, OrderStatus toStatus) {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
         Order order = new Order(1L, fromStatus.name(), LocalDateTime.now(), orderLineItems);
@@ -131,9 +127,7 @@ class OrderServiceTest {
     @CsvSource(value = {"COMPLETION:MEAL", "COMPLETION:COOKING", "COMPLETION:COMPLETION"}, delimiter = ':')
     void 주문_상태를_변경하면_예외를_던진다(OrderStatus fromStatus, OrderStatus toStatus) {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
 
         Order order = new Order(1L, fromStatus.name(), LocalDateTime.now(), orderLineItems);
