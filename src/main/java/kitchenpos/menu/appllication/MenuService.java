@@ -53,7 +53,7 @@ public class MenuService {
         final List<Product> products = productRepository.findAllById(productIds);
 
         if (productIds.size() != products.size()) {
-            throw new IllegalArgumentException("없는 상품이 존재합니다.");
+            throw new IllegalArgumentException("[ERROR] 없는 상품이 존재합니다.");
         }
 
         final List<Long> quantities = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::quantity);

@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderedTableIds);
 
         if (orderedTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 주문 테이블이 있습니다.");
+            throw new IllegalArgumentException("[ERROR] 존재하지 않는 주문 테이블이 있습니다.");
         }
 
         final TableGroup tableGroup = TableGroup.createWithNowCreatedDate();

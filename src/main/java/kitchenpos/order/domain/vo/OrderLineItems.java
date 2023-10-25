@@ -22,7 +22,7 @@ public class OrderLineItems {
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("orderLineItems가 비어있습니다.");
+            throw new IllegalArgumentException("[ERROR] orderLineItems가 비어있습니다.");
         }
     }
 

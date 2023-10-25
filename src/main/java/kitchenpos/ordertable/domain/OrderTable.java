@@ -50,11 +50,11 @@ public class OrderTable {
 
     public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException("테이블 그룹이 null이 아닙니다.");
+            throw new IllegalArgumentException("[ERROR] 테이블 그룹이 null이 아닙니다.");
         }
 
         if (orders.hasCookingOrMealOrders()) {
-            throw new IllegalArgumentException("요리중이거나 식사중인 주문이 존재합니다.");
+            throw new IllegalArgumentException("[ERROR] 요리중이거나 식사중인 주문이 존재합니다.");
         }
 
         this.empty = empty;
@@ -62,11 +62,11 @@ public class OrderTable {
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님 수는 0 미만일 수 없습니다.");
+            throw new IllegalArgumentException("[ERROR] 손님 수는 0 미만일 수 없습니다.");
         }
 
         if (this.empty) {
-            throw new IllegalArgumentException("주문 테이블이 비어있어서 손님 수를 조정할 수 없습니다.");
+            throw new IllegalArgumentException("[ERROR] 주문 테이블이 비어있어서 손님 수를 조정할 수 없습니다.");
         }
 
         this.numberOfGuests = numberOfGuests;

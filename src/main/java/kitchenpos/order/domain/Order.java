@@ -57,7 +57,7 @@ public class Order {
 
     public void changeOrderStatus(final OrderStatus requestOrderStatus) {
         if (this.orderStatus == OrderStatus.COMPLETION) {
-            throw new IllegalArgumentException("이미 완료된 주문입니다.");
+            throw new IllegalArgumentException("[ERROR] 이미 완료된 주문입니다.");
         }
 
         this.orderStatus = requestOrderStatus;
@@ -65,7 +65,7 @@ public class Order {
 
     public void ungroupOrderTable() {
         if (this.orderStatus == OrderStatus.COOKING || this.orderStatus == OrderStatus.MEAL) {
-            throw new IllegalArgumentException("주문 상태가 요리중이거나 식사중일 경우 table group을 해제할 수 없습니다.");
+            throw new IllegalArgumentException("[ERROR] 주문 상태가 요리중이거나 식사중일 경우 table group을 해제할 수 없습니다.");
         }
 
         this.orderTable.ungroup();
@@ -83,7 +83,7 @@ public class Order {
 
     private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("order table이 비어있습니다.");
+            throw new IllegalArgumentException("[ERROR] order table이 비어있습니다.");
         }
     }
 

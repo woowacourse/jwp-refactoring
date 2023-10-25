@@ -61,7 +61,7 @@ public class OrderService {
         final List<Menu> menus = menuRepository.findAllById(menuIds);
 
         if (menuIds.size() != menus.size()) {
-            throw new IllegalArgumentException("없는 메뉴가 존재합니다.");
+            throw new IllegalArgumentException("[ERROR] 없는 메뉴가 존재합니다.");
         }
 
         final List<Long> quantities = orderLineItemCreateRequests.stream()
