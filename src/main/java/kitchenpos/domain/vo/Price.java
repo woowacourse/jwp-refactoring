@@ -45,10 +45,6 @@ public class Price {
         return new Price(sum);
     }
 
-    public boolean isBiggerThan(final Price other) {
-        return value.compareTo(other.value) > 0;
-    }
-
     public Price multiply(final long times) {
         return Price.from(value.multiply(BigDecimal.valueOf(times)));
     }
