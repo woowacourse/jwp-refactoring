@@ -28,7 +28,7 @@ public class OrderResponse {
                 order.getId(),
                 order.getOrderTableId(),
                 order.getOrderStatus(),
-                order.getOrderLineItems().stream()
+                order.getOrderLineItems().getValue().stream()
                         .map(OrderLineItemResponse::from)
                         .collect(Collectors.toUnmodifiableList())
         );

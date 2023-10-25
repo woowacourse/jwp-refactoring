@@ -3,13 +3,11 @@ package kitchenpos.domain;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity(name = "orders")
 public class Order {
@@ -21,8 +19,8 @@ public class Order {
     private String orderStatus;
     private final LocalDateTime orderedTime = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
@@ -35,12 +33,13 @@ public class Order {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
+        this.orderLineItems = new OrderLineItems();
     }
 
     public Order(final Long id,
                  final Long orderTableId,
                  final String orderStatus,
-                 final List<OrderLineItem> orderLineItems
+                 final OrderLineItems orderLineItems
     ) {
         this.id = id;
         this.orderTableId = orderTableId;
@@ -75,11 +74,11 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 
     public void addOrderLineItem(final OrderLineItem orderLineItem) {
-        orderLineItems.add(orderLineItem);
+        orderLineItems.addOrderLineItem(orderLineItem);
     }
 }
