@@ -67,7 +67,7 @@
 
 - [ ] setter 사용하지 않기
 - [x] 인덴트 1 이하로 유지하기
-- [ ] 메서드 10라인 이하로 유지하기
+- [x] 메서드 10라인 이하로 유지하기
 - [x] 원시값 포장 및 일급컬렉션 사용하기
 - [ ] 3개 이상의 인스턴스 변수 갖지 않기
 
@@ -78,7 +78,7 @@
 - [x] OrderService 메서드 추출
 - [x] DTO 도입
 - [x] OrderService create 메서드 추출
-- [ ] OrderService의 changeOrderStatus 검증로직 메서드 분리하여 메서드명으로 의도 표현
+- [x] OrderService의 changeOrderStatus 검증로직 메서드 분리하여 메서드명으로 의도 표현
 - [x] 도메인 패키지 양방향 참조 끊기
 
 ## 용어 사전
