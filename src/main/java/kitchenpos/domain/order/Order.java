@@ -53,7 +53,7 @@ public class Order extends BaseCreateTimeEntity {
     public void addOrderLineItems(final OrderLineItems orderLineItems) {
         for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
             this.orderLineItems.add(orderLineItem);
-            orderLineItem.setOrder(this);
+            orderLineItem.initOrder(this);
         }
     }
 

@@ -39,7 +39,7 @@ public class OrderLineItem {
         return menu;
     }
 
-    public void setOrder(final Order order) {
+    public void initOrder(final Order order) {
         this.order = order;
     }
 
