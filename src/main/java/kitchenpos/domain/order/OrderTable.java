@@ -5,12 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -23,10 +20,8 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // TODO id만 알고 있어도 됨
-    @ManyToOne
-    @JoinColumn(name = "table_group_id", foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
     @Column(nullable = false)
     private int numberOfGuests;
     @Column(nullable = false)
@@ -36,12 +31,12 @@ public class OrderTable {
     }
 
     public OrderTable(final Long id,
-                      final TableGroup tableGroup,
+                      final Long tableGroupId,
                       final int numberOfGuests,
                       final boolean empty) {
         validateNumberOfGuests(numberOfGuests);
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -55,7 +50,7 @@ public class OrderTable {
     public void placeOrder(final Order order) {
         validateAbleToOrder();
         // TODO OrderTable에서 orders를 조회할 일이 있는가? 없으면 제거하자.
-        // TODO 그런데 orders 중 진행중인 주문이 있는지 확인해야 비울 수 있다. -> Validator에서 검증해주자.
+        // TODO 그런데 orders 중 진행중인 주문이 있는지 확인해야 비울 수 있다. -> Validator에서 검증해주자? 모르겠다..
         orders.add(order);
     }
 
@@ -65,17 +60,18 @@ public class OrderTable {
         }
     }
 
-    public void group(final TableGroup tableGroup) {
+    // TODO TableGroup에서 하기?
+    public void group(final long tableGroupId) {
         validateAbleToGroup();
         changeEmpty(false);
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     private void validateAbleToGroup() {
         if (isNotEmpty()) {
             throw new IllegalArgumentException("이미 주문 상태인 테이블을 단체로 지정할 수 없습니다.");
         }
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("이미 단체에 속한 테이블을 단체로 지정할 수 없습니다.");
         }
     }
@@ -88,12 +84,12 @@ public class OrderTable {
 
     public void unGroup() {
         validateAbleToUnGroup();
-        this.tableGroup = null;
+        this.tableGroupId = null;
         changeEmpty(false);
     }
 
     private void validateAbleToUnGroup() {
-        if (Objects.isNull(tableGroup)) {
+        if (Objects.isNull(tableGroupId)) {
             throw new IllegalArgumentException("이미 개별 테이블이라 단체에서 분할할 수 없습니다.");
         }
         if (hasAnyOrderInProgress()) {
@@ -115,7 +111,7 @@ public class OrderTable {
     }
 
     private void validateAbleToChangeEmpty() {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException("단체로 지정된 테이블을 비울 수 없습니다.");
         }
         if (hasAnyOrderInProgress()) {
@@ -144,7 +140,7 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 }

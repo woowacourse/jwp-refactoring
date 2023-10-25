@@ -39,7 +39,7 @@ class TableServiceTest extends IntegrationTest {
         final OrderTable saved = tableService.create(new OrderTableCreateRequest(0, false));
 
         // expected
-        assertThat(saved.getTableGroup()).isNull();
+        assertThat(saved.getTableGroupId()).isNull();
     }
 
     @Test

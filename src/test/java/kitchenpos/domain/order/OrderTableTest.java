@@ -8,6 +8,7 @@ import static kitchenpos.fixture.OrderTableFixture.주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.vo.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class OrderTableTest {
     void 주문_테이블_비우기_실패_단체_소속() {
         // given
         final OrderTable tableInGroup = 빈_테이블_생성();
-        new TableGroup().addOrderTables(List.of(tableInGroup, 빈_테이블_생성()));
+        new TableGroup(1L).addOrderTables(List.of(tableInGroup, 빈_테이블_생성()));
 
         // expected
         assertThatThrownBy(() -> tableInGroup.changeEmpty(true))
@@ -98,10 +99,10 @@ class OrderTableTest {
         final List<OrderTable> tablesInGroup = List.of(빈_테이블_생성(), 빈_테이블_생성());
 
         // when
-        new TableGroup().addOrderTables(tablesInGroup);
+        new TableGroup(1L).addOrderTables(tablesInGroup);
 
         // then
-        assertThatThrownBy(() -> new TableGroup().addOrderTables(tablesInGroup))
+        assertThatThrownBy(() -> new TableGroup(2L).addOrderTables(tablesInGroup))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,7 +113,7 @@ class OrderTableTest {
         final List<OrderTable> tablesInGroup = List.of(주문_테이블_생성(), 빈_테이블_생성());
 
         // when
-        final TableGroup tableGroup = new TableGroup();
+        final TableGroup tableGroup = new TableGroup(1L);
 
         // then
         assertThatThrownBy(() -> tableGroup.addOrderTables(tablesInGroup))
@@ -132,7 +133,7 @@ class OrderTableTest {
     void 단체_테이블_분할_실패_주문_상태(String orderStatus) {
         // given
         final OrderTable table = 빈_테이블_생성();
-        table.group(new TableGroup());
+        table.group(1L);
 
         final OrderStatus unableStatusToSplit = OrderStatus.valueOf(orderStatus);
         final Order order = new Order(table, 주문항목_1개_메뉴_1000원_할인_치킨());

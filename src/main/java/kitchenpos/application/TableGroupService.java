@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -36,7 +37,10 @@ public class TableGroupService {
     }
 
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        orderTables.forEach(OrderTable::unGroup);
+        Objects.requireNonNull(tableGroupId);
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블 단체를 삭제할 수 없습니다."));
+
+        tableGroup.unGroup();
     }
 }

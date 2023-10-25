@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.fixture.RequestParser;
 import org.junit.jupiter.api.DisplayName;
@@ -76,7 +76,7 @@ class TableGroupServiceTest extends IntegrationTest {
         // then
         final List<OrderTable> tablesAfterUngroup = tableService.list();
         assertAll(() -> assertThat(tablesAfterUngroup)
-                        .map(OrderTable::getTableGroup)
+                        .map(OrderTable::getTableGroupId)
                         .allMatch(Objects::isNull),
                 () -> assertThat(tablesAfterUngroup)
                         .noneMatch(OrderTable::isEmpty));

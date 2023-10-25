@@ -1,15 +1,18 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.table;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.order.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.CollectionUtils;
@@ -24,15 +27,20 @@ public class TableGroup {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
     }
 
+    public TableGroup(Long id) {
+        this.id = id;
+    }
+
     public void addOrderTables(final List<OrderTable> orderTables) {
         validateOrderTablesSize(orderTables);
-        orderTables.forEach(orderTable -> orderTable.group(this));
+        orderTables.forEach(orderTable -> orderTable.group(this.id));
         this.orderTables = orderTables;
     }
 
@@ -52,5 +60,10 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public void unGroup() {
+        orderTables.forEach(OrderTable::unGroup);
+        orderTables.clear();
     }
 }
