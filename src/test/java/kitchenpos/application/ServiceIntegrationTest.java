@@ -89,7 +89,7 @@ public abstract class ServiceIntegrationTest {
 
     protected OrderLineItemCreateRequest orderLineItemToCreateRequest(OrderLineItem orderLineItem) {
         return new OrderLineItemCreateRequest(
-                orderLineItem.getMenu().getId(),
+                orderLineItem.getMenuId(),
                 orderLineItem.getQuantity()
         );
     }

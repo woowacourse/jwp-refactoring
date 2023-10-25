@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -60,21 +59,21 @@ public class OrderService {
     }
 
     private OrderLineItem createOrderLineItem(OrderLineItemCreateRequest orderLineItemCreateRequest) {
-        Menu menu = findMenu(orderLineItemCreateRequest.getMenuId());
+        validateMenuId(orderLineItemCreateRequest.getMenuId());
 
-        return OrderLineItem.of(menu, orderLineItemCreateRequest.getQuantity());
-    }
-
-    private Menu findMenu(Long menuId) {
-        validateMenuId(menuId);
-
-        return menuRepository.findById(menuId)
-                .orElseThrow(IllegalArgumentException::new);
+        return OrderLineItem.of(
+                orderLineItemCreateRequest.getMenuId(),
+                orderLineItemCreateRequest.getQuantity()
+        );
     }
 
     private void validateMenuId(Long menuId) {
         if (Objects.isNull(menuId)) {
             throw new IllegalArgumentException("메뉴의 ID 는 존재하지 않을 수 없습니다.");
+        }
+
+        if (!menuRepository.existsById(menuId)) {
+            throw new IllegalArgumentException("메뉴는 존재하지 않을 수 없습니다.");
         }
     }
 

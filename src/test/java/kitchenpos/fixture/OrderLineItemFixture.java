@@ -9,7 +9,7 @@ public class OrderLineItemFixture {
 
     public static OrderLineItem 메뉴을_가진_주문_항목_생성(Menu savedMenu, long quantity) {
         return OrderLineItem.of(
-                savedMenu,
+                savedMenu.getId(),
                 quantity
         );
     }
@@ -19,7 +19,7 @@ public class OrderLineItemFixture {
         Menu menu = Menu.of("존재하지 않는 메뉴", Long.MAX_VALUE, menuGroup.getId());
 
         return OrderLineItem.of(
-                menu,
+                menu.getId(),
                 1L
         );
     }
