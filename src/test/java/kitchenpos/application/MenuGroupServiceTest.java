@@ -1,47 +1,50 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.support.FixtureFactory;
+import java.util.List;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.dto.menugroup.MenuGroupRequest;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.support.DataCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class MenuGroupServiceTest {
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
+    @Autowired
+    private DataCleaner dataCleaner;
 
-    @InjectMocks
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
     private MenuGroupService menuGroupService;
+
+    @BeforeEach
+    void setUp() {
+        dataCleaner.clear();
+    }
 
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void create_menuGroup() {
         // given
-        final MenuGroup newMenuGroup = FixtureFactory.forSaveMenuGroup("메뉴 그룹");
-        final MenuGroup savedMenuGroup = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹");
-
-        given(menuGroupDao.save(newMenuGroup))
-                .willReturn(savedMenuGroup);
+        final MenuGroupRequest request = new MenuGroupRequest("메뉴 그룹");
 
         // when
-        final MenuGroup result = menuGroupService.create(newMenuGroup);
+        final MenuGroupResponse result = menuGroupService.create(request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(savedMenuGroup.getId());
-            softly.assertThat(result.getName()).isEqualTo(savedMenuGroup.getName());
+            softly.assertThat(result.getId()).isEqualTo(1L);
+            assertThat(result.getName()).isEqualTo(request.getName());
         });
     }
 
@@ -49,19 +52,13 @@ class MenuGroupServiceTest {
     @Test
     void find_all_menuGroup() {
         // given
-        final MenuGroup menuGroup1 = FixtureFactory.savedMenuGroup(1L, "메뉴 그룹1");
-        final MenuGroup menuGroup2 = FixtureFactory.savedMenuGroup(2L, "메뉴 그룹2");
-
-        final List<MenuGroup> menuGroups = List.of(menuGroup1, menuGroup2);
-
-        given(menuGroupDao.findAll())
-                .willReturn(menuGroups);
+        menuGroupRepository.save(new MenuGroup("메뉴 그룹1"));
+        menuGroupRepository.save(new MenuGroup("메뉴 그룹2"));
 
         // when
-        final List<MenuGroup> result = menuGroupService.list();
+        final List<MenuGroupResponse> result = menuGroupService.list();
 
         // then
-        assertThat(result).usingRecursiveComparison()
-                .isEqualTo(menuGroups);
+        assertThat(result).hasSize(2);
     }
 }

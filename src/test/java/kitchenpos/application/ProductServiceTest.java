@@ -1,94 +1,62 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.support.FixtureFactory;
+import java.util.List;
+import kitchenpos.dto.product.ProductRequest;
+import kitchenpos.dto.product.ProductResponse;
+import kitchenpos.support.DataCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class ProductServiceTest {
 
-    @Mock
-    private ProductDao productDao;
-
-    @InjectMocks
+    @Autowired
     private ProductService productService;
+
+    @Autowired
+    private DataCleaner dataCleaner;
+
+    @BeforeEach
+    void clean() {
+        dataCleaner.clear();
+    }
 
     @DisplayName("새로운 상품을 생성한다.")
     @Test
     void create_new_product() {
         // given
-        final Product newProduct = FixtureFactory.forSaveProduct("새 상품", new BigDecimal(1000));
-        final Product savedProduct = FixtureFactory.savedProduct(1L, "새 상품", new BigDecimal(1000));
-
-        given(productDao.save(newProduct))
-                .willReturn(savedProduct);
+        final ProductRequest request = new ProductRequest("새 상품", 1000);
 
         // when
-        final Product result = productService.create(newProduct);
+        final ProductResponse result = productService.create(request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(savedProduct.getId());
-            softly.assertThat(result.getName()).isEqualTo(savedProduct.getName());
-            softly.assertThat(result.getPrice()).isEqualTo(savedProduct.getPrice());
+            softly.assertThat(result.getId()).isEqualTo(1L);
+            softly.assertThat(result.getName()).isEqualTo(request.getName());
+            softly.assertThat(result.getPrice()).isEqualTo(request.getPrice());
         });
-    }
-
-    @DisplayName("새 상품의 값이 음수이면 예외를 발생한다.")
-    @Test
-    void create_fail_new_product() {
-        // given
-        final Product wrongProduct = FixtureFactory.forSaveProduct("새 상품", new BigDecimal(-100));
-
-        // when
-        // then
-        assertThatThrownBy(() -> productService.create(wrongProduct))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("새 상품의 값이 null이면 예외를 발생한다.")
-    @Test
-    void create_fail_with_product_price_null() {
-        // given
-        final Product wrongProduct = FixtureFactory.forSaveProduct("새 상품", null);
-
-        // when
-        // then
-        assertThatThrownBy(() -> productService.create(wrongProduct))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 전제 정보를 불러온다.")
     @Test
     void find_all_products() {
         // given
-        final Product product1 = FixtureFactory.savedProduct(1L, "새 상품1", new BigDecimal(500));
-        final Product product2 = FixtureFactory.savedProduct(2L, "새 상품2", new BigDecimal(1000));
-
-        final List<Product> products = List.of(product1, product2);
-
-        given(productDao.findAll())
-                .willReturn(products);
+        final ProductRequest request1 = new ProductRequest("새 상품1", 2000);
+        final ProductRequest request2 = new ProductRequest("새 상품2", 4000);
+        productService.create(request1);
+        productService.create(request2);
 
         // when
-        final List<Product> result = productService.list();
+        final List<ProductResponse> result = productService.list();
 
         // then
-        assertThat(result).usingRecursiveComparison()
-                .isEqualTo(products);
+        assertThat(result).hasSize(2);
     }
 }

@@ -1,56 +1,68 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.support.FixtureFactory;
+import java.util.List;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.TableGroup;
+import kitchenpos.dto.ordertable.OrderTableChangeGuestRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeStatusRequest;
+import kitchenpos.dto.ordertable.OrderTableRequest;
+import kitchenpos.dto.ordertable.OrderTableResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.support.DataCleaner;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class TableServiceTest {
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private DataCleaner dataCleaner;
 
-    @Mock
-    private OrderTableDao orderTableDao;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-    @InjectMocks
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
     private TableService tableService;
+
+    @BeforeEach
+    void setUp() {
+        dataCleaner.clear();
+    }
 
     @DisplayName("주문 테이블을 생성한다.")
     @Test
     void create_orderTable() {
         // given
-        final OrderTable forSaveOrderTable = FixtureFactory.forSaveOrderTable(10, false);
-
-        final OrderTable savedOrderTable = FixtureFactory.saveOrderTable(1L, null, 10, false);
-
-        given(orderTableDao.save(any()))
-                .willReturn(savedOrderTable);
+        final OrderTableRequest request = new OrderTableRequest(5, true);
 
         // when
-        final OrderTable result = tableService.create(forSaveOrderTable);
+        final OrderTableResponse result = tableService.create(request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(savedOrderTable.getId());
-            softly.assertThat(result.getTableGroupId()).isEqualTo(savedOrderTable.getTableGroupId());
-            softly.assertThat(result.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+            softly.assertThat(result.getId()).isEqualTo(1L);
+            softly.assertThat(result.getTableGroupId()).isNull();
+            softly.assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+            softly.assertThat(result.isEmpty()).isFalse();
         });
     }
 
@@ -58,48 +70,36 @@ class TableServiceTest {
     @Test
     void find_all_orderTable() {
         // given
-        final OrderTable orderTable1 = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
-
-        final OrderTable orderTable2 = FixtureFactory.saveOrderTable(2L, 2L, 10, false);
-
-        final List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-
-        given(orderTableDao.findAll())
-                .willReturn(orderTables);
+        orderTableRepository.save(new OrderTable(4));
+        orderTableRepository.save(new OrderTable(5));
 
         // when
-        final List<OrderTable> result = tableService.list();
+        final List<OrderTableResponse> result = tableService.list();
 
         // then
-        assertThat(result).usingRecursiveComparison()
-                .isEqualTo(orderTables);
+        assertThat(result).hasSize(2);
     }
 
     @DisplayName("주문 테이블의 상태를 변경할 수 있다.")
     @Test
     void change_orderTable_empty() {
         // given
-        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, null, 10, false);
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.of(orderTable));
-
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
-                .willReturn(false);
-
-        given(orderTableDao.save(orderTable))
-                .willReturn(changeOrderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
+        final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(1L, 2));
+        final Order order = new Order(savedOrderTable.getId(), new OrderLineItems(List.of()));
+        order.changeStatus(OrderStatus.COMPLETION.name());
+        orderRepository.save(order);
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
-        final OrderTable result = tableService.changeEmpty(orderTable.getId(), changeOrderTable);
+        final OrderTableResponse result = tableService.changeEmpty(savedOrderTable.getId(), request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(changeOrderTable.getId());
-            softly.assertThat(result.getTableGroupId()).isEqualTo(changeOrderTable.getTableGroupId());
-            softly.assertThat(result.getNumberOfGuests()).isEqualTo(changeOrderTable.getNumberOfGuests());
+            softly.assertThat(result.getId()).isEqualTo(savedOrderTable.getId());
+            softly.assertThat(result.getTableGroupId()).isNull();
+            softly.assertThat(result.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+            softly.assertThat(result.isEmpty()).isTrue();
         });
     }
 
@@ -108,77 +108,59 @@ class TableServiceTest {
     void change_orderTable_empty_fail_with_not_exist_orderTable() {
         // given
         final Long wrongOrderTableId = 0L;
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.empty());
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, changeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블에 테이블 그룹이 존재하면 주문 테이블의 상태를 변경할 수 없다.")
     @Test
     void change_orderTable_empty_fail_with_not_null_group() {
         // given
-        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.of(orderTable));
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave());
+        final OrderTable alreadyContainedOrderTable = orderTableRepository.save(new OrderTable(null, tableGroup, 5, false));
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(alreadyContainedOrderTable.getId(), request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 테이블 그룹에 속한 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블의 상태가 COOKING이거나 MEAL인 경우 주문 테이블의 상태를 변경할 수 없다.")
     @Test
     void change_orderTable_empty_fail_with_invalid_orderStatus() {
         // given
-        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, null, 10, false);
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, true);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.of(orderTable));
-
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any()))
-                .willReturn(true);
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
+        orderRepository.save(new Order(savedOrderTable.getId(), new OrderLineItems(List.of())));
+        final OrderTableChangeStatusRequest request = new OrderTableChangeStatusRequest(true);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), changeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("요리중이거나 식사중인 주문 테이블은 상태를 변경할 수 없습니다.");
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void change_number_of_guests() {
         // given
-        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, 1L, 1, false);
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.of(orderTable));
-
-        given(orderTableDao.save(any()))
-                .willReturn(changeOrderTable);
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
+        final OrderTableChangeGuestRequest request = new OrderTableChangeGuestRequest(3);
 
         // when
-        final OrderTable result = tableService.changeNumberOfGuests(orderTable.getId(), changeOrderTable);
+        final OrderTableResponse result = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(result.getId()).isEqualTo(changeOrderTable.getId());
-            softly.assertThat(result.getTableGroupId()).isEqualTo(changeOrderTable.getTableGroupId());
-            softly.assertThat(result.getNumberOfGuests()).isEqualTo(changeOrderTable.getNumberOfGuests());
+            softly.assertThat(result.getId()).isEqualTo(savedOrderTable.getId());
+            softly.assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
         });
     }
 
@@ -186,14 +168,14 @@ class TableServiceTest {
     @Test
     void change_number_of_guests_fail_with_number_of_guests_is_negative() {
         // given
-        final Long orderTableId = 1L;
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, -1, false);
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(4));
+        final OrderTableChangeGuestRequest wrongRequest = new OrderTableChangeGuestRequest(-1);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), wrongRequest))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("변경할 손님 수는 음수이면 안됩니다.");
     }
 
     @DisplayName("주문 테이블이 존재하지 않는 경우 손님 수를 변경할 수 없다.")
@@ -201,32 +183,26 @@ class TableServiceTest {
     void change_number_of_guests_fail_with_not_found_orderTable() {
         // given
         final Long wrongOrderTableId = 0L;
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 10, false);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.empty());
+        final OrderTableChangeGuestRequest request = new OrderTableChangeGuestRequest(-1);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongOrderTableId, changeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(wrongOrderTableId, request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("존재하지 않는 주문 테이블입니다.");
     }
 
     @DisplayName("주문 테이블이 비어있으면 손님 수를 변경할 수 없다.")
     @Test
     void change_number_of_guests_fail_with_empty_orderTable() {
         // given
-        final OrderTable orderTable = FixtureFactory.saveOrderTable(1L, 1L, 1, true);
-
-        final OrderTable changeOrderTable = FixtureFactory.saveOrderTable(1L, 1L, 3, false);
-
-        given(orderTableDao.findById(any()))
-                .willReturn(Optional.of(orderTable));
+        final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 4, true));
+        final OrderTableChangeGuestRequest request = new OrderTableChangeGuestRequest(5);
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeOrderTable))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("주문테이블이 비어있는 상태이면 손님 수를 변경할 수 없습니다.");
     }
 }
