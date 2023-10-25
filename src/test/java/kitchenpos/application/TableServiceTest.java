@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import com.sun.tools.javac.util.List;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -118,8 +119,9 @@ class TableServiceTest {
     @DisplayName("이미 그룹으로 지정된 테이블의 상태를 변경할 경우 예외가 발생한다.")
     void failToChangeTableStatusAlreadyGrouped() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        OrderTable emptyTable2 = new OrderTable(0, true);
+        OrderTable saveEmptyTable2 = orderTableRepository.save(emptyTable2);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(savedEmptyOrderTable, saveEmptyTable2));
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         OrderTable orderTable = new OrderTable(4, false);

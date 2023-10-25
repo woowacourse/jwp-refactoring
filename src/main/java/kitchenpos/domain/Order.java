@@ -33,7 +33,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {

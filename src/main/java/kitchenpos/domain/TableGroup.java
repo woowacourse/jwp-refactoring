@@ -25,7 +25,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
