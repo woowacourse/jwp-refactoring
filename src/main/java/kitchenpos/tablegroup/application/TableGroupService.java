@@ -3,10 +3,10 @@ package kitchenpos.tablegroup.application;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.product.ui.dto.TableGroupCreateRequest;
-import kitchenpos.product.ui.dto.TableGroupResponse;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +18,7 @@ import static kitchenpos.order.domain.OrderStatus.MEAL;
 @Transactional(readOnly = true)
 @Service
 public class TableGroupService {
+
     private final OrderRepository orderRepository;
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableService orderTableService;

@@ -1,4 +1,4 @@
-package kitchenpos.ordertable.ui.dto;
+package kitchenpos.ordertable.dto;
 
 public class OrderTableUpdateRequest {
 

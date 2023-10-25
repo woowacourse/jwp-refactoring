@@ -1,4 +1,4 @@
-package kitchenpos.product.ui.dto;
+package kitchenpos.tablegroup.dto;
 
 public class TableGroupOrderTableRequest {
 

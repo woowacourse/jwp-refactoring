@@ -1,4 +1,4 @@
-package kitchenpos.order.ui.dto;
+package kitchenpos.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.order.domain.OrderStatus;

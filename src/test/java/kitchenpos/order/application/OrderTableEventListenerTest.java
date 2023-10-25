@@ -3,7 +3,7 @@ package kitchenpos.order.application;
 import kitchenpos.EntityFactory;
 import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.ui.dto.OrderTableUpdateRequest;
+import kitchenpos.ordertable.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

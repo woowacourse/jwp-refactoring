@@ -1,4 +1,4 @@
-package kitchenpos.menu.ui.dto;
+package kitchenpos.menu.dto;
 
 import kitchenpos.menu.domain.MenuProduct;
 

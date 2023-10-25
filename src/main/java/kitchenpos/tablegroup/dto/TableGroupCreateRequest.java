@@ -1,4 +1,4 @@
-package kitchenpos.product.ui.dto;
+package kitchenpos.tablegroup.dto;
 
 import java.util.ArrayList;
 import java.util.List;
