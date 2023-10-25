@@ -1,4 +1,4 @@
-package kitchenpos.repositroy;
+package kitchenpos.repositroy.customRepositroy;
 
 import java.util.List;
 import kitchenpos.domain.menu.Menu;
