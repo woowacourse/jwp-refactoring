@@ -16,8 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.domain.vo.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "orders")
 @Entity
@@ -44,11 +44,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(
-            OrderTable orderTable,
-            OrderStatus orderStatus,
-            LocalDateTime orderedTime
-    ) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;

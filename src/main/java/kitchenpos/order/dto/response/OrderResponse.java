@@ -3,9 +3,9 @@ package kitchenpos.order.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.table.dto.response.OrderTableResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.table.dto.response.OrderTableResponse;
 
 public class OrderResponse {
 
