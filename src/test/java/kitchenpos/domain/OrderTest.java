@@ -15,7 +15,7 @@ import static org.junit.platform.commons.util.ReflectionUtils.HierarchyTraversal
 class OrderTest {
 
     public static final Order 주문_fixture = new Order(2L,
-            List.of(new OrderLineItem(1L, null, 1L, 1L), new OrderLineItem(2L, null, 2L, 1L))
+            List.of(new OrderLineItem(1L, 1L, 1L), new OrderLineItem(2L, 2L, 1L))
     );
 
     @Test
@@ -24,7 +24,7 @@ class OrderTest {
         Field id = ReflectionUtils.findFields(Order.class, field -> field.getName().equals("id"), TOP_DOWN).get(0);
         Order 주문_객체 = 주문_fixture;
         Order 다른_주문_객체 = new Order(3L,
-                List.of(new OrderLineItem(1L, null, 1L, 1L), new OrderLineItem(2L, null, 2L, 1L)));
+                List.of(new OrderLineItem(1L, 1L, 1L), new OrderLineItem(2L, 2L, 1L)));
 
         id.setAccessible(true);
         id.set(주문_객체, 1L);

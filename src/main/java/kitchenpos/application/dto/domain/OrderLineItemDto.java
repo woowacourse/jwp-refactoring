@@ -8,8 +8,8 @@ public class OrderLineItemDto {
     private Long menuId;
     private long quantity;
 
-    public static OrderLineItemDto from(final OrderLineItem orderLineItem) {
-        return new OrderLineItemDto(orderLineItem.getSeq(), orderLineItem.getOrder().getId(), orderLineItem.getMenuId(),
+    public static OrderLineItemDto from(final Long orderId, final OrderLineItem orderLineItem) {
+        return new OrderLineItemDto(orderLineItem.getSeq(), orderId, orderLineItem.getMenuId(),
                 orderLineItem.getQuantity());
     }
 

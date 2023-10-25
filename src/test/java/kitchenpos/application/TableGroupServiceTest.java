@@ -100,7 +100,7 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
+            OrderLineItem 주문_항목 = new OrderLineItem(null, 1L, 1);
             Order 주문 = new Order(테이블.getId(), List.of(주문_항목));
             주문.changeOrderStatus(COMPLETION);
             orderRepository.save(주문);
@@ -121,7 +121,7 @@ class TableGroupServiceTest extends ServiceTest {
             //given
             OrderTable 테이블 = 빈_테이블_생성();
 
-            OrderLineItem 주문_항목 = new OrderLineItem(null, null, 1L, 1);
+            OrderLineItem 주문_항목 = new OrderLineItem(null, 1L, 1);
             Order 주문 = new Order(테이블.getId(), List.of(주문_항목));
             orderRepository.save(주문);
 

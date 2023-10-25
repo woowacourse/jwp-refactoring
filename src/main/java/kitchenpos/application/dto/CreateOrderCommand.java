@@ -13,8 +13,8 @@ public class CreateOrderCommand {
         private int quantity;
 
 
-        public OrderLineItem toDomain(Order order) {
-            return new OrderLineItem(null, order, menuId, quantity);
+        public OrderLineItem toDomain() {
+            return new OrderLineItem(null, menuId, quantity);
         }
 
         public OrderLineItemRequest(final Long menuId, final int quantity) {
@@ -54,7 +54,7 @@ public class CreateOrderCommand {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItemRequests.stream()
-                .map(request -> request.toDomain(null))
+                .map(request -> request.toDomain())
                 .collect(Collectors.toList());
     }
 

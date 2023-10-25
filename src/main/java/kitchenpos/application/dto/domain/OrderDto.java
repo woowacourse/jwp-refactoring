@@ -13,8 +13,10 @@ public class OrderDto {
     private List<OrderLineItemDto> orderLineItems;
 
     public static OrderDto from(final Order order) {
-        List<OrderLineItemDto> orderLineItemDtos = order.getOrderLineItems().stream().map(OrderLineItemDto::from)
+        List<OrderLineItemDto> orderLineItemDtos = order.getOrderLineItems().stream()
+                .map(orderLineItem -> OrderLineItemDto.from(order.getId(), orderLineItem))
                 .collect(Collectors.toList());
+
         return new OrderDto(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
                 order.getOrderedTime().toString(), orderLineItemDtos);
     }

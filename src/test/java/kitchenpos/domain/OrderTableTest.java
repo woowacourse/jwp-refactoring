@@ -97,7 +97,7 @@ class OrderTableTest {
     void 주문할_수_있다() {
         //given
         OrderTable orderTable = new OrderTable(2, false);
-        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, null, 1L, 1L));
+        List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, 1L, 1L));
 
         //when
         Order order = orderTable.order(orderLineItems);
@@ -109,7 +109,7 @@ class OrderTableTest {
     }
 
     @Test
-    void 테이블이_빈_상태이면_주문할_수_없다() {
+    void 테이블이_빈_상태이면_주문할_수_없다() { // TODO: 채우기
         //given
 
         //when

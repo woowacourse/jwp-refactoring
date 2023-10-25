@@ -154,7 +154,7 @@ class TableServiceTest extends ServiceTest {
 
         private OrderLineItem 주문_상품_만들기() {
             final var 메뉴 = menuRepository.findAll().get(0);
-            return new OrderLineItem(null, null, 메뉴.getId(), 1);
+            return new OrderLineItem(null, 메뉴.getId(), 1);
         }
 
         @Test
