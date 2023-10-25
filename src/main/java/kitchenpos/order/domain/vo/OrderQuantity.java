@@ -1,20 +1,20 @@
-package kitchenpos.menu.domain.vo;
+package kitchenpos.order.domain.vo;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Quantity {
+public class OrderQuantity {
 
     private static final int MINIMUM_QUANTITY = 1;
 
     @Column(nullable = false)
     private long quantity;
 
-    protected Quantity() {
+    protected OrderQuantity() {
     }
 
-    public Quantity(long quantity) {
+    public OrderQuantity(long quantity) {
         validate(quantity);
         this.quantity = quantity;
     }

@@ -3,12 +3,11 @@ package kitchenpos.menu.domain.vo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.menu.domain.vo.Quantity;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-class QuantityTest {
+class MenuQuantityTest {
 
     @Nested
     class 수량_생성_시 {
@@ -19,10 +18,10 @@ class QuantityTest {
             long amount = 10;
 
             //when
-            Quantity quantity = new Quantity(amount);
+            MenuQuantity menuQuantity = new MenuQuantity(amount);
 
             //then
-            assertThat(quantity.getQuantity()).isEqualTo(amount);
+            assertThat(menuQuantity.getQuantity()).isEqualTo(amount);
         }
 
         @Test
@@ -31,7 +30,7 @@ class QuantityTest {
             long amount = 0;
 
             //when, then
-            assertThatThrownBy(() -> new Quantity(amount))
+            assertThatThrownBy(() -> new MenuQuantity(amount))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("최소 1개의 수량은 필요합니다.");
         }
