@@ -42,12 +42,9 @@ class OrderTableRepositoryTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(0));
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(1));
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(2));
+            softAssertions.assertThat(actual.get(0)).isEqualTo(orderTables.get(0));
+            softAssertions.assertThat(actual.get(1)).isEqualTo(orderTables.get(1));
+            softAssertions.assertThat(actual.get(2)).isEqualTo(orderTables.get(2));
         });
     }
 
@@ -63,14 +60,10 @@ class OrderTableRepositoryTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(4);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(0));
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(1));
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(2));
-            softAssertions.assertThat(actual.get(3)).usingRecursiveComparison()
-                          .isEqualTo(orderTables.get(3));
+            softAssertions.assertThat(actual.get(0)).isEqualTo(orderTables.get(0));
+            softAssertions.assertThat(actual.get(1)).isEqualTo(orderTables.get(1));
+            softAssertions.assertThat(actual.get(2)).isEqualTo(orderTables.get(2));
+            softAssertions.assertThat(actual.get(3)).isEqualTo(orderTables.get(3));
         });
     }
 }

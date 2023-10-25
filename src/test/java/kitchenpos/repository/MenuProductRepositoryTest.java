@@ -47,7 +47,6 @@ class MenuProductRepositoryTest {
         final List<MenuProduct> actual = menuProductRepository.findAllByMenuId(menu.getId());
 
         // then
-        assertThat(actual).usingRecursiveComparison()
-                          .isEqualTo(menu.getMenuProducts());
+        assertThat(actual).isEqualTo(menu.getMenuProducts());
     }
 }
