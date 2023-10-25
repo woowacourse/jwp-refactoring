@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,6 +12,7 @@ import java.util.Objects;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 @EntityListeners(AuditingEntityListener.class)
+@EnableJpaAuditing
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -26,7 +29,7 @@ public class Order {
     @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime orderedTime;
 
     @Embedded
@@ -40,7 +43,6 @@ public class Order {
         this.orderTable = orderTable;
         orderTable.placeOrder(this);
         this.orderStatus = COOKING;
-        this.orderedTime = LocalDateTime.now();
         orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.orderLineItems = new OrderLineItems(orderLineItems);
     }
