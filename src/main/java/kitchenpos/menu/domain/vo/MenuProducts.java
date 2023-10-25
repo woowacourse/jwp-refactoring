@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.menu.domain.MenuProduct;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected MenuProducts() {
@@ -27,14 +30,8 @@ public class MenuProducts {
 
     public boolean isPriceLessThan(BigDecimal price) {
         BigDecimal sum = menuProducts.stream()
-                .map(MenuProducts::calculatePrice)
+                .map(MenuProduct::calculatePrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return sum.compareTo(price) < 0;
-    }
-
-    private static BigDecimal calculatePrice(MenuProduct menuProduct) {
-        return menuProduct.getProduct()
-                .getPrice()
-                .multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
     }
 }

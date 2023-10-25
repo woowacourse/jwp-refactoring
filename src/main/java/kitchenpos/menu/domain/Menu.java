@@ -43,11 +43,23 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
+    public Menu(
+            String name,
+            BigDecimal price,
+            MenuGroup menuGroup,
+            MenuProducts menuProducts
+    ) {
         this.menuName = new MenuName(name);
         this.menuPrice = new MenuPrice(price);
         this.menuGroup = menuGroup;
+        validate(menuProducts, menuPrice);
         this.menuProducts = menuProducts;
+    }
+
+    private void validate(MenuProducts menuProducts, MenuPrice menuPrice) {
+        if (menuProducts.isPriceLessThan(menuPrice.getPrice())) {
+            throw new IllegalArgumentException("메뉴 가격이 상품 가격의 합보다 클 수 없습니다.");
+        }
     }
 
     public Long getId() {
@@ -68,13 +80,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts.getMenuProducts();
-    }
-
-    public void updateProducts(List<MenuProduct> products) {
-        MenuProducts menuProducts = new MenuProducts(products);
-        if (menuProducts.isPriceLessThan(getPrice())) {
-            throw new IllegalArgumentException("메뉴 가격이 상품 가격의 합보다 클 수 없습니다.");
-        }
-        this.menuProducts = menuProducts;
     }
 }

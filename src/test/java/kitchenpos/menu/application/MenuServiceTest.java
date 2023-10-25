@@ -8,14 +8,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.dto.request.MenuCreateRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.test.ServiceTest;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.Nested;
@@ -104,11 +103,9 @@ class MenuServiceTest extends ServiceTest {
                 softly.assertThat(menuResponse.getMenuGroupResponse().getId()).isEqualTo(menuGroup.getId());
                 softly.assertThat(menuResponse.getMenuGroupResponse().getName()).isEqualTo(menuGroup.getName());
                 softly.assertThat(menuResponse.getMenuProducts()).hasSize(1);
-                softly.assertThat(menuResponse.getMenuProducts().get(0).getProduct().getId())
-                        .isEqualTo(product.getId());
-                softly.assertThat(menuResponse.getMenuProducts().get(0).getProduct().getName())
-                        .isEqualTo(product.getName());
-                softly.assertThat(menuResponse.getMenuProducts().get(0).getProduct().getPrice())
+                softly.assertThat(menuResponse.getMenuProducts().get(0).getProductId()).isEqualTo(product.getId());
+                softly.assertThat(menuResponse.getMenuProducts().get(0).getProductName()).isEqualTo(product.getName());
+                softly.assertThat(menuResponse.getMenuProducts().get(0).getProductPrice())
                         .isEqualByComparingTo(product.getPrice());
                 softly.assertThat(menuResponse.getMenuProducts().get(0).getQuantity()).isOne();
             });

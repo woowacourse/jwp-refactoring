@@ -7,7 +7,6 @@ import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.domain.vo.MenuProducts;
 import kitchenpos.product.domain.Product;
 import kitchenpos.test.fixture.MenuFixture;
 import kitchenpos.test.fixture.MenuGroupFixture;
@@ -28,7 +27,7 @@ class MenuProductsTest {
             MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹("간식");
             Menu menu = MenuFixture.메뉴("탕후루", BigDecimal.valueOf(10000), menuGroup);
             Product product = ProductFixture.상품("탕후루", BigDecimal.valueOf(9000));
-            MenuProduct menuProduct = MenuProductFixture.메뉴_상품(menu, product, 1);
+            MenuProduct menuProduct = MenuProductFixture.메뉴_상품(product, 1);
             MenuProducts menuProducts = new MenuProducts(List.of(menuProduct));
 
             //when
@@ -44,7 +43,7 @@ class MenuProductsTest {
             MenuGroup menuGroup = MenuGroupFixture.메뉴_그룹("간식");
             Menu menu = MenuFixture.메뉴("탕후루", BigDecimal.valueOf(10000), menuGroup);
             Product product = ProductFixture.상품("탕후루", BigDecimal.valueOf(11000));
-            MenuProduct menuProduct = MenuProductFixture.메뉴_상품(menu, product, 1);
+            MenuProduct menuProduct = MenuProductFixture.메뉴_상품(product, 1);
             MenuProducts menuProducts = new MenuProducts(List.of(menuProduct));
 
             //when

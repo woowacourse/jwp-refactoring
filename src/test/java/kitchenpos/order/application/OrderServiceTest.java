@@ -16,20 +16,18 @@ import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.order.domain.vo.OrderStatus;
 import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.order.dto.response.OrderResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.test.ServiceTest;
 import kitchenpos.test.TestTransactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,9 +51,6 @@ class OrderServiceTest extends ServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Autowired
@@ -72,13 +67,16 @@ class OrderServiceTest extends ServiceTest {
             //given
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            Menu menu = menuRepository.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup));
-            menuProductRepository.save(메뉴_상품(menu, product, 1));
+            Menu menu = menuRepository.save(
+                    메뉴("텐동", BigDecimal.valueOf(11000), menuGroup, List.of(메뉴_상품(product, 1)))
+            );
 
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderCreateRequest request =
-                    new OrderCreateRequest(orderTable.getId(), null,
-                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(
+                    orderTable.getId(),
+                    null,
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
+            );
             OrderResponse orderResponseA = orderService.create(request);
             OrderResponse orderResponseB = orderService.create(request);
 
@@ -108,17 +106,20 @@ class OrderServiceTest extends ServiceTest {
         void setUp() {
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            menu = menuRepository.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup));
-            menuProductRepository.save(메뉴_상품(menu, product, 1));
+            menu = menuRepository.save(
+                    메뉴("텐동", BigDecimal.valueOf(11000), menuGroup, List.of(메뉴_상품(product, 1)))
+            );
         }
 
         @Test
         void 정상적인_주문이라면_주문을_추가한다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderCreateRequest request =
-                    new OrderCreateRequest(orderTable.getId(), null,
-                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(
+                    orderTable.getId(),
+                    null,
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
+            );
 
             //when
             LocalDateTime now = LocalDateTime.now();
@@ -154,9 +155,11 @@ class OrderServiceTest extends ServiceTest {
         void 주문_메뉴_목록에_메뉴가_존재하지_않으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderCreateRequest request =
-                    new OrderCreateRequest(orderTable.getId(), null,
-                            List.of(new OrderLineItemRequest(menu.getId() + 1, 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(
+                    orderTable.getId(),
+                    null,
+                    List.of(new OrderLineItemRequest(menu.getId() + 1, 1L))
+            );
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -166,8 +169,11 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_테이블이라면_예외를_던진다() {
             //given
-            OrderCreateRequest request = new OrderCreateRequest(-1L, null,
-                    List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(
+                    -1L,
+                    null,
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
+            );
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -178,9 +184,11 @@ class OrderServiceTest extends ServiceTest {
         void 테이블이_비어있으면_예외를_던진다() {
             //given
             OrderTable orderTable = orderTableRepository.save(테이블(0, true));
-            OrderCreateRequest request =
-                    new OrderCreateRequest(orderTable.getId(), null,
-                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(
+                    orderTable.getId(),
+                    null,
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
+            );
 
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
@@ -197,13 +205,16 @@ class OrderServiceTest extends ServiceTest {
         void setUp() {
             Product product = productRepository.save(상품("텐동", BigDecimal.valueOf(11000)));
             MenuGroup menuGroup = menuGroupRepository.save(메뉴_그룹("일식"));
-            Menu menu = menuRepository.save(메뉴("텐동", BigDecimal.valueOf(11000), menuGroup));
-            menuProductRepository.save(메뉴_상품(menu, product, 1));
+            Menu menu = menuRepository.save(
+                    메뉴("텐동", BigDecimal.valueOf(11000), menuGroup, List.of(메뉴_상품(product, 1)))
+            );
 
             OrderTable orderTable = orderTableRepository.save(테이블(10, false));
-            OrderCreateRequest request =
-                    new OrderCreateRequest(orderTable.getId(), null,
-                            List.of(new OrderLineItemRequest(menu.getId(), 1L)));
+            OrderCreateRequest request = new OrderCreateRequest(
+                    orderTable.getId(),
+                    null,
+                    List.of(new OrderLineItemRequest(menu.getId(), 1L))
+            );
             OrderResponse orderResponse = orderService.create(request);
             orderId = orderResponse.getId();
         }

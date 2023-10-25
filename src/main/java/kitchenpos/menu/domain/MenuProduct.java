@@ -1,14 +1,14 @@
 package kitchenpos.menu.domain;
 
+import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import kitchenpos.product.domain.Product;
+import kitchenpos.menu.domain.vo.MenuProductName;
+import kitchenpos.menu.domain.vo.MenuProductPrice;
 import kitchenpos.menu.domain.vo.MenuQuantity;
 
 @Entity
@@ -18,13 +18,14 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
+    @Column(nullable = false)
+    private Long productId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Embedded
+    private MenuProductName menuProductName;
+
+    @Embedded
+    private MenuProductPrice menuProductPrice;
 
     @Embedded
     private MenuQuantity menuQuantity;
@@ -32,22 +33,36 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this.menu = menu;
-        this.product = product;
+    public MenuProduct(
+            Long productId,
+            String productName,
+            BigDecimal productPrice,
+            long quantity
+    ) {
+        this.productId = productId;
+        this.menuProductName = new MenuProductName(productName);
+        this.menuProductPrice = new MenuProductPrice(productPrice);
         this.menuQuantity = new MenuQuantity(quantity);
+    }
+
+    public BigDecimal calculatePrice() {
+        return menuProductPrice.multiply(menuQuantity.getQuantity());
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getProductId() {
+        return productId;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getProductName() {
+        return menuProductName.getName();
+    }
+
+    public BigDecimal getProductPrice() {
+        return menuProductPrice.getPrice();
     }
 
     public long getQuantity() {
