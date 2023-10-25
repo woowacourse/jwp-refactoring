@@ -1,8 +1,8 @@
-package kitchenpos.ui;
+package kitchenpos.menugroup.presentation;
 
 import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
-import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.menugroup.presentation.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.http.ContentType.JSON;

@@ -1,11 +1,10 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;

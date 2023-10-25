@@ -2,9 +2,9 @@ package kitchenpos.menu.presentation;
 
 import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.menu.presentation.dto.MenuCreateRequest;
 import org.junit.jupiter.api.Test;
