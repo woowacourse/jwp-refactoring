@@ -16,16 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class OrderService {
+    private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
     private final OrderValidator orderValidator;
 
-    public OrderService(OrderRepository orderRepository, OrderValidator orderValidator) {
+    public OrderService(OrderMapper orderMapper, OrderRepository orderRepository, OrderValidator orderValidator) {
+        this.orderMapper = orderMapper;
         this.orderRepository = orderRepository;
         this.orderValidator = orderValidator;
     }
 
     public OrderResponse create(OrderCreateRequest request) {
-        Order order = request.toOrder();
+        Order order = orderMapper.toOrder(request);
         order.place(orderValidator);
         return OrderResponse.from(orderRepository.save(order));
     }
