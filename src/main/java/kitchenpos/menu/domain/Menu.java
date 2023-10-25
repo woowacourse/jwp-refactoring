@@ -1,16 +1,18 @@
 package kitchenpos.menu.domain;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.menu.exception.MenuPriceTooExpensiveException;
 
 @Entity
 public class Menu {
@@ -21,16 +23,16 @@ public class Menu {
 
     private String name;
 
-    @Embedded
-    private Price price;
+    private BigDecimal price;
 
     @Column(name = "menu_group_id")
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    private Menu(String name, Price price, Long menuGroupId,
+    private Menu(String name, BigDecimal price, Long menuGroupId,
             List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = price;
@@ -42,25 +44,11 @@ public class Menu {
     }
 
     public static Menu of(String name, BigDecimal price, Long menuGroupId,
-            List<MenuProduct> menuProducts) {
-        return new Menu(name, Price.from(price), menuGroupId, menuProducts);
-    }
-
-    public void changeMenuProducts(List<MenuProduct> menuProducts) {
-        validateSumBiggerThanSinglePrice(menuProducts);
-        this.menuProducts = menuProducts;
-    }
-
-    private void validateSumBiggerThanSinglePrice(List<MenuProduct> menuProducts) {
-        BigDecimal sum = menuProducts.stream()
-                .map(menuProduct -> menuProduct.getProduct().getPrice()
-                        .multiply(BigDecimal.valueOf(menuProduct.getQuantity())))
-                .reduce(BigDecimal::add)
-                .orElseThrow(RuntimeException::new);
-
-        if (price.isLessThan(sum)) {
-            throw new MenuPriceTooExpensiveException();
-        }
+            List<ProductIdAndQuantity> productIdAndQuantities) {
+        return new Menu(name, price, menuGroupId, productIdAndQuantities.stream()
+                .map(productIdAndQuantity -> new MenuProduct(productIdAndQuantity.getProductId(),
+                        productIdAndQuantity.getQuantity()))
+                .collect(toList()));
     }
 
     public Long getId() {
@@ -72,7 +60,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return price;
     }
 
     public Long getMenuGroupId() {
@@ -81,5 +69,24 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public static class ProductIdAndQuantity {
+
+        private final Long productId;
+        private final Long quantity;
+
+        public ProductIdAndQuantity(Long productId, Long quantity) {
+            this.productId = productId;
+            this.quantity = quantity;
+        }
+
+        public Long getProductId() {
+            return productId;
+        }
+
+        public Long getQuantity() {
+            return quantity;
+        }
     }
 }

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.exception.MenuNotFoundException;
+import kitchenpos.menu.domain.Menu.ProductIdAndQuantity;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.Orders;
@@ -18,9 +18,11 @@ import kitchenpos.order.dto.OrdersCreateRequest.OrderLineItemDto;
 import kitchenpos.order.dto.OrdersResponse;
 import kitchenpos.order.dto.OrdersStatusRequest;
 import kitchenpos.order.exception.CannotMakeOrderWithEmptyTableException;
+import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.order.exception.OrderStatusNotChangeableException;
 import kitchenpos.order.exception.RequestOrderLineItemIsEmptyException;
+import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
@@ -52,9 +54,12 @@ class OrderServiceTest {
             // given
             OrderTable orderTable = new OrderTable(4, false);
             MenuGroup menuGroup = new MenuGroup("menuGroup");
-            Menu menu = Menu.of("menu", new BigDecimal(2500), menuGroup, Collections.emptyList());
+            Product product = Product.of("product", new BigDecimal(2500));
             em.persist(orderTable);
             em.persist(menuGroup);
+            em.persist(product);
+            Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(),
+                    List.of(new ProductIdAndQuantity(product.getId(), 4L)));
             em.persist(menu);
             em.flush();
             em.clear();

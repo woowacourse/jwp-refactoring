@@ -27,7 +27,7 @@ public class MenuResponse {
     public static MenuResponse from(Menu menu) {
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(),
                 menu.getMenuGroupId(), menu.getMenuProducts().stream()
-                .map(MenuProductDto::from)
+                .map(menuProduct -> MenuProductDto.from(menuProduct, menu.getId()))
                 .collect(toList()));
     }
 
@@ -65,9 +65,9 @@ public class MenuResponse {
             this.quantity = quantity;
         }
 
-        public static MenuProductDto from(MenuProduct menuProduct) {
-            return new MenuProductDto(menuProduct.getSeq(), menuProduct.getMenu().getId(),
-                    menuProduct.getProduct().getId(), menuProduct.getQuantity());
+        public static MenuProductDto from(MenuProduct menuProduct, Long menuId) {
+            return new MenuProductDto(menuProduct.getSeq(), menuId,
+                    menuProduct.getProductId(), menuProduct.getQuantity());
         }
 
         public Long getSeq() {
