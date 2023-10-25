@@ -7,7 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import kitchenpos.domain.BaseEntity;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct extends BaseEntity {

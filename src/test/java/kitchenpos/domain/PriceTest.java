@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import kitchenpos.product.domain.Price;
 import org.junit.jupiter.api.Test;
 
 class PriceTest {

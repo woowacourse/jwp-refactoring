@@ -10,7 +10,7 @@ import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import org.assertj.core.api.Assertions;

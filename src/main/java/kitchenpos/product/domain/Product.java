@@ -1,12 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import kitchenpos.domain.BaseEntity;
 
 @Entity
-public class Product extends BaseEntity{
+public class Product extends BaseEntity {
 
     @Column(nullable = false)
     private String name;

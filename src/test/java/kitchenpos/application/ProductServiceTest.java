@@ -2,9 +2,10 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.ProductCreateRequest;
-import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.product.application.dto.ProductCreateRequest;
+import kitchenpos.product.application.dto.ProductResponse;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.application.ProductService;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
