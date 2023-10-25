@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.GuestsNumber;
+
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,32 +21,29 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     private TableGroup tableGroup;
 
-    private int numberOfGuests;
+    @Embedded
+    private GuestsNumber numberOfGuests;
 
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
     public OrderTable(final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new GuestsNumber(numberOfGuests);
         this.empty = empty;
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new GuestsNumber(numberOfGuests);
         this.empty = empty;
     }
 
     public void setEmpty(final boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
         this.empty = empty;
     }
 
@@ -52,7 +52,8 @@ public class OrderTable {
     }
 
     public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+        final GuestsNumber guestsNumber = new GuestsNumber(numberOfGuests);
+        this.numberOfGuests = guestsNumber;
     }
 
     public Long getId() {
@@ -64,7 +65,7 @@ public class OrderTable {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getValue();
     }
 
     public boolean isEmpty() {
