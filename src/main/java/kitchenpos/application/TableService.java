@@ -1,27 +1,21 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @Transactional
 public class TableService {
 
-    private final OrderRepository orderRepository;
+    private final OrderOrderTableService orderOrderTableService;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
-    ) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderOrderTableService orderOrderTableService, OrderTableRepository orderTableRepository) {
+        this.orderOrderTableService = orderOrderTableService;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -37,10 +31,7 @@ public class TableService {
     public void changeEmpty(final Long orderTableId, final boolean isEmpty) {
         final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
         savedOrderTable.validateTableGroupIdIsNull();
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("orderTable이 존재하면서 조리중 또는 식사중인 주문 테이블은 empty 상태를 변경 할 수 없습니다.");
-        }
+        orderOrderTableService.validateOrderTableIdAndOrderStatusIn(orderTableId);
         savedOrderTable.updateEmpty(isEmpty);
     }
 
