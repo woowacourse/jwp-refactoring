@@ -7,6 +7,7 @@ import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void Menu를_생성할_수_있다() {
         //given
-        final Product product = productRepository.save(new Product("디노 탕후루", new BigDecimal(4000)));
+        final Product product = productRepository.save(new Product("디노 탕후루", new ProductPrice(new BigDecimal(4000))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
 
         //when
@@ -56,7 +57,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void 메뉴_가격이_메뉴_상품의_가격_합계를_초과하면_예외가_발생한다() {
         //given
-        final Product product = productRepository.save(new Product("디노 탕후루", new BigDecimal(4000)));
+        final Product product = productRepository.save(new Product("디노 탕후루", new ProductPrice(new BigDecimal(4000))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
 
         //when, then

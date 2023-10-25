@@ -2,8 +2,8 @@ package kitchenpos.product.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.repository.ProductRepository;
-import kitchenpos.product.application.ProductService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,8 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void Product_를_조회할_수_있다() {
         //given
-        final Product chicken = new Product("치킨", new BigDecimal(20000));
-        final Product pizza = new Product("피자", new BigDecimal(20000));
+        final Product chicken = new Product("치킨", new ProductPrice(new BigDecimal(20000)));
+        final Product pizza = new Product("피자", new ProductPrice(new BigDecimal(20000)));
         productRepository.save(chicken);
         productRepository.save(pizza);
 

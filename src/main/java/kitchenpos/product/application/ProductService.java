@@ -1,6 +1,7 @@
 package kitchenpos.product.application;
 
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ public class ProductService {
     }
 
     public Long create(final String name, final BigDecimal price) {
-        return productRepository.save(new Product(name, price)).getId();
+        return productRepository.save(new Product(name, new ProductPrice(price))).getId();
     }
 
     @Transactional(readOnly = true)

@@ -13,8 +13,8 @@ class ProductsTest {
     @Test
     void validateSum() {
         //given
-        final Product 디노_찌개 = new Product("디노찌개", new BigDecimal(20000));
-        final Product 디노_찜 = new Product("디노찜", new BigDecimal(30000));
+        final Product 디노_찌개 = new Product("디노찌개", new ProductPrice(new BigDecimal(20000)));
+        final Product 디노_찜 = new Product("디노찜", new ProductPrice(new BigDecimal(30000)));
         final Products products = new Products(List.of(디노_찌개, 디노_찜));
 
         //when, then

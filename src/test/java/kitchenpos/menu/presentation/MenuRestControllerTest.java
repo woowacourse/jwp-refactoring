@@ -5,6 +5,7 @@ import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
+import kitchenpos.product.domain.ProductPrice;
 import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.menu.presentation.dto.MenuCreateRequest;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void Menu를_생성하면_201을_반환한다() {
         // given
-        final Product product = productRepository.save(new Product("디노 초코 케이크", new BigDecimal(25000)));
+        final Product product = productRepository.save(new Product("디노 초코 케이크", new ProductPrice(new BigDecimal(25000))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("디노 디저트"));
         final var 요청_준비 = RestAssured.given()
                 .body(new MenuCreateRequest("디노 케이크", new BigDecimal(25000),
