@@ -42,7 +42,7 @@ public class OrderService {
     public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(OrderTableNotFoundException::new);
-        final Order order = new Order(orderTable, getOrderLineItems(orderRequest.getOrderLineItems()));
+        final Order order = new Order(orderTable.getId(), getOrderLineItems(orderRequest.getOrderLineItems()));
 
         final Order savedOrder = orderRepository.save(order);
 
@@ -54,7 +54,7 @@ public class OrderService {
                 .map(orderLineItemRequest -> {
                     final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                             .orElseThrow(MenuNotFoundException::new);
-                    return new OrderLineItem(menu, orderLineItemRequest.getQuantity());
+                    return new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
                 }).collect(Collectors.toList()));
     }
 

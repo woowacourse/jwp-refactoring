@@ -21,10 +21,10 @@ class OrderTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 0, false);
         final Menu menu = new Menu("메뉴", null, null, null);
-        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu, 1)));
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 1)));
 
         //when&then
-        assertDoesNotThrow(() -> new Order(orderTable, orderLineItems));
+        assertDoesNotThrow(() -> new Order(orderTable.getId(), orderLineItems));
     }
 
     @Test
@@ -32,8 +32,8 @@ class OrderTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 0, false);
         final Menu menu = new Menu("메뉴", null, null, null);
-        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu, 1)));
-        final Order order = new Order(orderTable, orderLineItems);
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 1)));
+        final Order order = new Order(orderTable.getId(), orderLineItems);
 
         //when&then
         assertDoesNotThrow(() -> order.changeOrderStatus(OrderStatus.COMPLETION));
@@ -44,8 +44,8 @@ class OrderTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 0, false);
         final Menu menu = new Menu("메뉴", null, null, null);
-        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu, 1)));
-        final Order order = new Order(orderTable, orderLineItems);
+        final OrderLineItems orderLineItems = new OrderLineItems(List.of(new OrderLineItem(menu.getId(), 1)));
+        final Order order = new Order(orderTable.getId(), orderLineItems);
 
         order.changeOrderStatus(OrderStatus.COMPLETION);
         //when&then

@@ -89,7 +89,7 @@ class TableServiceTest extends ServiceBaseTest {
     void changeEmptyValidStatus(final OrderStatus orderStatus) {
         // given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 2, false));
-        final Order order = new Order(orderTable, null);
+        final Order order = new Order(orderTable.getId(), null);
         order.changeOrderStatus(orderStatus);
         orderRepository.save(order);
 

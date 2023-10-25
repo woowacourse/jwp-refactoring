@@ -1,6 +1,5 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.orderException.IllegalOrderStatusException;
 
 import javax.persistence.Embedded;
@@ -10,7 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -22,8 +20,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -36,13 +33,13 @@ public class Order {
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderLineItems orderLineItems) {
-        this(null, orderTable, orderLineItems);
+    public Order(final Long orderTableId, final OrderLineItems orderLineItems) {
+        this(null, orderTableId, orderLineItems);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderLineItems orderLineItems) {
+    public Order(final Long id, final Long orderTableId, final OrderLineItems orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
@@ -69,8 +66,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

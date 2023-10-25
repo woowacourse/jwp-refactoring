@@ -52,7 +52,7 @@ public class TableService {
     }
 
     private void validateOrderTableStatus(final OrderTable orderTable) {
-        orderRepository.findAllByOrderTable(orderTable)
+        orderRepository.findAllByOrderTableId(orderTable.getId())
                 .forEach(Order::validateOrderComplete);
     }
 

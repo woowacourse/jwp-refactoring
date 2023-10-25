@@ -16,7 +16,7 @@ class OrderLineItemsTest {
     @Test
     void create() {
         //given
-        final OrderLineItem orderLineItem = new OrderLineItem(new Menu("메뉴", null, null, null), 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
 
         //when&then
         assertDoesNotThrow(() -> new OrderLineItems(List.of(orderLineItem)));

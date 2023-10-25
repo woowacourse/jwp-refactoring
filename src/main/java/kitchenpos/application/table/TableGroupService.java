@@ -61,8 +61,9 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
+        final List<Long> orderTableIds = tableGroup.getOrderTables().stream().map(it -> it.getId()).collect(Collectors.toList());
 
-        orderRepository.findByOrderTableIn(tableGroup.getOrderTables())
+        orderRepository.findByOrderTableIdIn(orderTableIds)
                 .forEach(Order::validateOrderComplete);
 
         tableGroup.ungroup();
