@@ -4,8 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,12 +31,13 @@ public class Order {
     private OrderTable orderTable;
 
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
 
     protected Order() {
@@ -47,7 +51,7 @@ public class Order {
     ) {
         validate(orderTable, orderLineItems);
         this.orderTable = orderTable;
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = appendOrderLineItems(orderLineItems);
     }
@@ -80,11 +84,11 @@ public class Order {
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
         validateOrderStatusNotCompletion();
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     private void validateOrderStatusNotCompletion() {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.getOrderStatus())) {
             throw new IllegalArgumentException("[ERROR] 완료된 주문은 상태 변경이 불가능합니다.");
         }
     }
@@ -101,7 +105,7 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

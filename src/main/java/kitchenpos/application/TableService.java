@@ -19,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class TableService {
 
-    private static final List<String> INCLUDE_ORDER_STATUS_NAMES
-            = List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
+    private static final List<OrderStatus> INCLUDE_ORDER_STATUS = List.of(OrderStatus.COOKING, OrderStatus.MEAL);
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
@@ -66,7 +65,7 @@ public class TableService {
     }
 
     private void validateOrderStatusComplete(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, INCLUDE_ORDER_STATUS_NAMES)) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, INCLUDE_ORDER_STATUS)) {
             throw new IllegalArgumentException("[ERROR] 아직 모든 주문이 완료되지 않았습니다.");
         }
     }

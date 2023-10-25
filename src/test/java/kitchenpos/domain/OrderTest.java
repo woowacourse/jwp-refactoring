@@ -57,7 +57,7 @@ public class OrderTest {
             order.changeOrderStatus(OrderStatus.MEAL);
 
             // then
-            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
         }
     }
 
