@@ -71,20 +71,14 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final PutOrderStatusRequest orderStatusRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
                                                 .orElseThrow(IllegalArgumentException::new);
-        savedOrder.setOrderStatus(orderStatusRequest.getOrderStatus());
+        savedOrder.changeOrderStatus(orderStatusRequest.getOrderStatus());
         return savedOrder;
     }
 }

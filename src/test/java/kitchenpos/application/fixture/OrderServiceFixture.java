@@ -1,250 +1,164 @@
 package kitchenpos.application.fixture;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.infrastructure.persistence.JpaMenuGroupRepository;
+import kitchenpos.infrastructure.persistence.JpaMenuRepository;
+import kitchenpos.infrastructure.persistence.JpaOrderRepository;
+import kitchenpos.infrastructure.persistence.JpaOrderTableRepository;
+import kitchenpos.ui.dto.CreateOrderRequest;
+import kitchenpos.ui.dto.OrderLineItemDto;
+import kitchenpos.ui.dto.PutOrderStatusRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class OrderServiceFixture {
 
-    protected Order 요청된_주문;
-    protected Order 저장한_주문;
-    protected OrderTable 주문_생성시_사용하는_주문_테이블;
-    protected OrderLineItem 저장한_첫번째_주문항목;
-    protected OrderLineItem 저장한_두번째_주문항목;
-    protected Order 주문항목이_1개_미만인_주문;
-    protected Order 주문항목이_2개인_주문;
-    protected Order 유효하지_않은_주문_테이블_아이디를_갖는_주문;
-    protected OrderTable empty가_true인_주문_테이블;
-    protected List<Order> 저장된_주문_리스트;
-    protected Order 상태를_변경할_식사중인_주문;
-    protected Order 식사중에서_완료로_상태변경된_주문;
-    protected Order 완료_상태인_주문;
-    protected Order 잘못된_상태로_수정하고자_하는_주문;
-    protected long 잘못된_상태로_수정하고자_하는_주문_아이디;
+    @Autowired
+    private JpaOrderRepository orderRepository;
+
+    @Autowired
+    private JpaOrderTableRepository orderTableRepository;
+
+    @Autowired
+    private JpaMenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private JpaMenuRepository menuRepository;
+
     protected long 유효하지_않은_주문_아이디;
-    protected long 유효하지_않은_주문_테이블_아이디;
+    protected CreateOrderRequest 주문_생성_요청_dto;
+    protected CreateOrderRequest 주문항목이_1개_미만인_주문_생성_요청_dto;
+    protected CreateOrderRequest 주문항목이_2개인_주문_생성_요청_dto;
+    protected CreateOrderRequest 유효하지_않은_주문_테이블_아이디를_갖는_주문_생성_요청_dto;
+    protected CreateOrderRequest 주문_불가능_상태의_주문_테이블_생성_요청_dto;
+    protected Order 조회할_주문_1;
+    protected Order 조회할_주문_2;
+    protected Order 식사중에서_완료로_상태를_변경할_주문;
+    protected PutOrderStatusRequest 주문_상태_변경_요청_dto;
+    protected PutOrderStatusRequest 완료_상태인_주문_변경_요청_dto;
+    protected PutOrderStatusRequest 잘못된_상태로_수정하고자_하는_주문_변경_요청_dto;
+    protected Order COMPLETION_상태의_주문;
 
     protected void 메뉴를_주문한다_픽스처_생성() {
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
+        final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
+        menuGroupRepository.save(메뉴_그룹_1);
 
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        menuRepository.save(메뉴);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
+        final OrderTable 주문_테이블 = new OrderTable(3, false);
+        orderTableRepository.save(주문_테이블);
 
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
+        final OrderLineItemDto 주문_항목_아이템_생성_dto = new OrderLineItemDto(메뉴.getId(), 3);
 
-        저장한_주문 = new Order();
-        저장한_주문.setOrderTableId(요청된_주문.getOrderTableId());
-        저장한_주문.setOrderedTime(LocalDateTime.now());
-        저장한_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        주문_생성_요청_dto = new CreateOrderRequest(주문_테이블.getId(), List.of(주문_항목_아이템_생성_dto));
     }
 
     protected void 주문_항목이_1개_미만이면_예외가_발생한다_픽스처_생성() {
-        주문항목이_1개_미만인_주문 = new Order();
-        주문항목이_1개_미만인_주문.setOrderLineItems(Collections.EMPTY_LIST);
+        final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
+        menuGroupRepository.save(메뉴_그룹_1);
+
+        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        menuRepository.save(메뉴);
+
+        final OrderTable 주문_테이블 = new OrderTable(3, false);
+        orderTableRepository.save(주문_테이블);
+
+        주문항목이_1개_미만인_주문_생성_요청_dto = new CreateOrderRequest(주문_테이블.getId(), Collections.EMPTY_LIST);
     }
 
     protected void 주문_항목에서_입력받은_메뉴가_올바른_메뉴가_아니라면_예외가_발생한다_픽스처_생성() {
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        final OrderTable 주문_테이블 = new OrderTable(3, false);
+        orderTableRepository.save(주문_테이블);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
+        final OrderLineItemDto 주문_항목_아이템_생성_dto = new OrderLineItemDto(-999L, 3);
 
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
-
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
-
-        주문항목이_2개인_주문 = new Order();
-        주문항목이_2개인_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        주문항목이_2개인_주문_생성_요청_dto = new CreateOrderRequest(주문_테이블.getId(), List.of(주문_항목_아이템_생성_dto));
     }
 
     protected void 유효하지_않은_주문_테이블_아이디라면_예외가_발생한다_픽스처_생성() {
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
+        menuGroupRepository.save(메뉴_그룹_1);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
+        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        menuRepository.save(메뉴);
 
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
+        final OrderLineItemDto 주문_항목_아이템_생성_dto = new OrderLineItemDto(메뉴.getId(), 3);
 
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
-
-        유효하지_않은_주문_테이블_아이디 = -999L;
-        유효하지_않은_주문_테이블_아이디를_갖는_주문 = new Order();
-        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderTableId(유효하지_않은_주문_테이블_아이디);
-        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        유효하지_않은_주문_테이블_아이디를_갖는_주문_생성_요청_dto = new CreateOrderRequest(-999L, List.of(주문_항목_아이템_생성_dto));
     }
 
     protected void 주문_테이블_아이디에_해당하는_주문_테이블이_empty_table이라면_예외가_발생한다_픽스처_생성() {
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
+        final MenuGroup 메뉴_그룹_1 = new MenuGroup("메뉴 그룹 1");
+        menuGroupRepository.save(메뉴_그룹_1);
 
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        final Menu 메뉴 = new Menu(메뉴_그룹_1, new Price(BigDecimal.valueOf(10_000)), "치킨");
+        menuRepository.save(메뉴);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
+        final OrderTable 주문_테이블 = new OrderTable(3, true);
+        orderTableRepository.save(주문_테이블);
 
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
+        final OrderLineItemDto 주문_항목_아이템_생성_dto = new OrderLineItemDto(메뉴.getId(), 3);
 
-        empty가_true인_주문_테이블 = new OrderTable();
-        empty가_true인_주문_테이블.setId(1L);
-        empty가_true인_주문_테이블.setEmpty(true);
-        유효하지_않은_주문_테이블_아이디를_갖는_주문 = new Order();
-        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderTableId(empty가_true인_주문_테이블.getId());
-        유효하지_않은_주문_테이블_아이디를_갖는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        주문_불가능_상태의_주문_테이블_생성_요청_dto = new CreateOrderRequest(주문_테이블.getId(), List.of(주문_항목_아이템_생성_dto));
     }
 
     protected void 모든_주문내역을_조회한다_픽스처_생성() {
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
+        final OrderTable 주문_테이블_1 = new OrderTable(3, true);
+        final OrderTable 주문_테이블_2 = new OrderTable(2, true);
+        orderTableRepository.saveAll(List.of(주문_테이블_1, 주문_테이블_2));
 
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
-
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
-
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
-
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
-
-        저장한_주문 = new Order();
-        저장한_주문.setOrderTableId(요청된_주문.getOrderTableId());
-        저장한_주문.setOrderedTime(LocalDateTime.now());
-        저장한_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
-
-        저장된_주문_리스트 = List.of(저장한_주문);
+        조회할_주문_1 = new Order(주문_테이블_1, OrderStatus.COOKING);
+        조회할_주문_2 = new Order(주문_테이블_2, OrderStatus.COOKING);
+        orderRepository.saveAll(List.of(조회할_주문_1, 조회할_주문_2));
     }
 
     protected void 주문_상태를_변경한다_픽스처_생성() {
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.MEAL);
+        orderRepository.save(식사중에서_완료로_상태를_변경할_주문);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
+        주문_상태_변경_요청_dto = new PutOrderStatusRequest(OrderStatus.COMPLETION.name());
+    }
 
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
+    protected void 완료된_상태의_주문을_완료된_상태로_변경하는_경우_예외가_발생한다_픽스처_생성() {
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        상태를_변경할_식사중인_주문 = new Order();
-        상태를_변경할_식사중인_주문.setId(1L);
-        상태를_변경할_식사중인_주문.setOrderStatus("MEAL");
-        상태를_변경할_식사중인_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        상태를_변경할_식사중인_주문.setOrderedTime(LocalDateTime.now());
-        상태를_변경할_식사중인_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        COMPLETION_상태의_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.COMPLETION);
+        orderRepository.save(COMPLETION_상태의_주문);
 
-        식사중에서_완료로_상태변경된_주문 = new Order();
-
-        식사중에서_완료로_상태변경된_주문.setOrderStatus("COMPLETION");
-        식사중에서_완료로_상태변경된_주문.setId(상태를_변경할_식사중인_주문.getId());
-        식사중에서_완료로_상태변경된_주문.setOrderTableId(상태를_변경할_식사중인_주문.getOrderTableId());
-        식사중에서_완료로_상태변경된_주문.setOrderedTime(상태를_변경할_식사중인_주문.getOrderedTime());
-        식사중에서_완료로_상태변경된_주문.setOrderLineItems(상태를_변경할_식사중인_주문.getOrderLineItems());
+        주문_상태_변경_요청_dto = new PutOrderStatusRequest(OrderStatus.COMPLETION.name());
     }
 
     protected void 유효하지_않은_주문_번호를_입력한_경우_예외가_발생한다_픽스처_생성() {
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
+        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.MEAL);
+        orderRepository.save(식사중에서_완료로_상태를_변경할_주문);
 
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
-
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
-
-        유효하지_않은_주문_아이디 = -999L;
-        완료_상태인_주문 = new Order();
-        완료_상태인_주문.setId(1L);
-        완료_상태인_주문.setOrderStatus("COMPLETION");
-        완료_상태인_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        완료_상태인_주문.setOrderedTime(LocalDateTime.now());
-        완료_상태인_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        완료_상태인_주문_변경_요청_dto = new PutOrderStatusRequest(OrderStatus.COMPLETION.name());
     }
 
     protected void order_status가_잘못_입력된_경우_예외가_발생한다_픽스처_생성() {
-        주문_생성시_사용하는_주문_테이블 = new OrderTable();
-        주문_생성시_사용하는_주문_테이블.setId(1L);
-        주문_생성시_사용하는_주문_테이블.setEmpty(false);
+        final OrderTable 주문_상태를_변경할_주문_테이블 = new OrderTable(3, true);
+        orderTableRepository.save(주문_상태를_변경할_주문_테이블);
 
-        final Menu 메뉴 = new Menu();
-        메뉴.setId(1L);
+        식사중에서_완료로_상태를_변경할_주문 = new Order(주문_상태를_변경할_주문_테이블, OrderStatus.MEAL);
+        orderRepository.save(식사중에서_완료로_상태를_변경할_주문);
 
-        저장한_첫번째_주문항목 = new OrderLineItem();
-        저장한_두번째_주문항목 = new OrderLineItem();
-        저장한_첫번째_주문항목.setMenuId(메뉴.getId());
-        저장한_두번째_주문항목.setMenuId(메뉴.getId());
-
-        요청된_주문 = new Order();
-        요청된_주문.setOrderTableId(주문_생성시_사용하는_주문_테이블.getId());
-        요청된_주문.setOrderedTime(LocalDateTime.now());
-        요청된_주문.setOrderLineItems(List.of(저장한_첫번째_주문항목, 저장한_두번째_주문항목));
-
-        잘못된_상태로_수정하고자_하는_주문_아이디 = 1L;
-        잘못된_상태로_수정하고자_하는_주문 = new Order();
-        잘못된_상태로_수정하고자_하는_주문.setOrderTableId(잘못된_상태로_수정하고자_하는_주문_아이디);
-        잘못된_상태로_수정하고자_하는_주문.setOrderStatus("INVALID STATUS");
-        잘못된_상태로_수정하고자_하는_주문.setOrderedTime(LocalDateTime.now());
-        잘못된_상태로_수정하고자_하는_주문.setOrderLineItems(요청된_주문.getOrderLineItems());
+        잘못된_상태로_수정하고자_하는_주문_변경_요청_dto = new PutOrderStatusRequest("INVALID");
     }
 }
