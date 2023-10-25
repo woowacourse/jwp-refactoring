@@ -48,8 +48,8 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        final List<OrderTable> savedOrderTables = orderTableRepository.findByTableGroup(tableGroup);
-        final OrderTables orderTables = new OrderTables(savedOrderTables);
+        final OrderTables orderTables = new OrderTables(tableGroup.getOrderTables());
+
         orderTables.ungroup();
     }
 }

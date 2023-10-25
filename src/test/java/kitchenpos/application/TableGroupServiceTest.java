@@ -151,8 +151,6 @@ class TableGroupServiceTest {
 
         given(tableGroupRepository.getById(any()))
             .willReturn(tableGroup);
-        given(orderTableRepository.findByTableGroup(any()))
-            .willReturn(orderTables);
 
         // when
         // then
@@ -173,8 +171,6 @@ class TableGroupServiceTest {
 
         given(tableGroupRepository.getById(any()))
             .willReturn(tableGroup);
-        given(orderTableRepository.findByTableGroup(tableGroup))
-            .willReturn(orderTables);
 
         // when
         // then
