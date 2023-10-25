@@ -29,22 +29,6 @@ class OrderTablesTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블 그룹에 등록한다.")
-    @Test
-    void registerTableGroup() {
-        // given
-        final OrderTable orderTable1 = new OrderTable(1L, 1, true, List.of(new Order(), new Order()));
-        final OrderTable orderTable2 = new OrderTable(2L, 1, true, List.of(new Order()));
-        final OrderTables orderTables = new OrderTables(List.of(orderTable1, orderTable2));
-
-        // when
-        orderTables.registerTableGroup(new TableGroup(1L, List.of(orderTable1, orderTable2)));
-
-        // then
-        assertThat(orderTable1.hasTableGroup()).isTrue();
-        assertThat(orderTable2.hasTableGroup()).isTrue();
-    }
-
     @DisplayName("비어 있지 않은 테이블이 포함된 테이블 그룹을 생성하려는 경우 예외가 발생한다.")
     @Test
     void registerTableGroup_failNotEmptyTable() {

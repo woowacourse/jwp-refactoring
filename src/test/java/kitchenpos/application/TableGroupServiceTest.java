@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableIdRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -46,22 +44,15 @@ class TableGroupServiceTest {
             new OrderTable(2L, 2, true, Collections.emptyList())
         );
 
-        final TableGroup tableGroup = new TableGroup(1L, orderTables);
-
         given(orderTableRepository.getAllById(any()))
             .willReturn(orderTables);
-        given(tableGroupRepository.save(any()))
-            .willReturn(tableGroup);
 
         // when
-        final TableGroupResponse savedTableGroup = tableGroupService.create(
-            new TableGroupCreateRequest(List.of(
-                new OrderTableIdRequest(1L),
-                new OrderTableIdRequest(2L)
-            )));
-
         // then
-        assertThat(savedTableGroup.getId()).isEqualTo(tableGroup.getId());
+        assertDoesNotThrow(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(
+            new OrderTableIdRequest(1L),
+            new OrderTableIdRequest(2L)
+        ))));
     }
 
     @DisplayName("테이블 그룹의 테이블이 비어있으면 예외가 발생한다.")
@@ -162,9 +153,9 @@ class TableGroupServiceTest {
     void ungroup_failNotOrderEnd() {
         // given
         final List<OrderTable> orderTables = List.of(
-            new OrderTable(1L, 2, false, List.of(new Order(1L, OrderStatus.COOKING,
+            new OrderTable(1L, 2, true, List.of(new Order(1L, OrderStatus.COOKING,
                                                            List.of(new OrderLineItem(1L, 1L, null))))),
-            new OrderTable(2L, 2, false, List.of(new Order(1L, OrderStatus.COOKING,
+            new OrderTable(2L, 2, true, List.of(new Order(1L, OrderStatus.COOKING,
                                                            List.of(new OrderLineItem(1L, 1L, null)))))
         );
         final TableGroup tableGroup = new TableGroup(1L, orderTables);

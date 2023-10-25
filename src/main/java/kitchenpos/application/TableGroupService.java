@@ -32,9 +32,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
         validateEmptyOrderTables(orderTableIds);
         final List<OrderTable> savedOrderTables = orderTableRepository.getAllById(orderTableIds);
-        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave(savedOrderTables));
-        final OrderTables orderTables = new OrderTables(savedOrderTables);
-        orderTables.registerTableGroup(tableGroup);
+        final TableGroup tableGroup = TableGroup.forSave(savedOrderTables);
 
         return TableGroupResponse.from(tableGroup);
     }
