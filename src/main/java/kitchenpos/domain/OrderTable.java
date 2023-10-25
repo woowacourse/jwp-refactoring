@@ -36,6 +36,28 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < MIN_CHANGING_NUMBER_OF_GUEST) {
+            throw new IllegalArgumentException("변경될 인원수는 0보다 커야 합니다");
+        }
+        if (isEmpty()) {
+            throw new IllegalArgumentException("빈테이블은 인원수를 변경할 수 없습니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void changeEmptyStatus(boolean empty) {
+        if (hasTableGroup()) {
+            throw new IllegalArgumentException("그룹으로 지정된 테이블의 상태를 변경할 수 없습니다.");
+        }
+        this.empty = empty;
+    }
+
+    public void setTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
     public Long getId() {
         return id;
     }
@@ -50,25 +72,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setNumberOfGuests(int numberOfGuests) {
-        validate(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    private void validate(int numberOfGuests) {
-        if (numberOfGuests < MIN_CHANGING_NUMBER_OF_GUEST) {
-            throw new IllegalArgumentException("변경될 인원수는 0보다 커야 합니다");
-        }
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
     }
 
     public boolean hasTableGroup() {

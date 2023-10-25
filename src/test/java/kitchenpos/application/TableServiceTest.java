@@ -133,7 +133,8 @@ class TableServiceTest {
 
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(saveTable.getId(), changeEmptyRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("그룹으로 지정된 테이블의 상태를 변경할 수 없습니다.");
     }
 
     @ParameterizedTest
@@ -199,6 +200,7 @@ class TableServiceTest {
 
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedEmptyOrderTable.getId(), changeNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("빈테이블은 인원수를 변경할 수 없습니다.");
     }
 }

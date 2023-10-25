@@ -40,15 +40,11 @@ public class TableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.hasTableGroup()) {
-            throw new IllegalArgumentException();
-        }
-
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException("조리 중이거나 식사 중인 주문의 상태를 변경할 수 없습니다.");
         }
 
-        savedOrderTable.setEmpty(changeEmptyRequest.isEmpty());
+        savedOrderTable.changeEmptyStatus(changeEmptyRequest.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
@@ -58,11 +54,7 @@ public class TableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(changeNumberOfGuestsRequest.getNumberOfGuests());
+        savedOrderTable.changeNumberOfGuests(changeNumberOfGuestsRequest.getNumberOfGuests());
 
         return orderTableRepository.save(savedOrderTable);
     }
