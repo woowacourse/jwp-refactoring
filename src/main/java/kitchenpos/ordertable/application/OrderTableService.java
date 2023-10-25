@@ -1,9 +1,6 @@
 package kitchenpos.ordertable.application;
 
-import java.util.Arrays;
 import javax.transaction.Transactional;
-import kitchenpos.order.OrderStatus;
-import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.ordertable.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.ordertable.application.dto.OrderTableChangeGuestRequest;
 import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
@@ -11,18 +8,19 @@ import kitchenpos.ordertable.application.dto.OrderTableResponse;
 import kitchenpos.ordertable.application.dto.OrderTablesResponse;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
+import kitchenpos.ordertable.domain.OrderTableValidator;
 import kitchenpos.ordertable.exception.OrderTableException;
-import kitchenpos.ordertable.exception.OrderTableException.CannotChangeEmptyStateByOrderStatusException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrderTableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public OrderTableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableService(final OrderTableRepository orderTableRepository,
+                             final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     @Transactional
@@ -41,16 +39,7 @@ public class OrderTableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableException.NotFoundOrderTableException::new);
-
-        if (savedOrderTable.isExistTableGroup()) {
-            throw new OrderTableException.AlreadyExistTableGroupException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new CannotChangeEmptyStateByOrderStatusException();
-        }
-
+        orderTableValidator.validateChangeEmpty(orderTableId, savedOrderTable);
         savedOrderTable.changeEmptyStatus(request.getEmpty());
 
         return OrderTableResponse.from(savedOrderTable);
