@@ -42,12 +42,6 @@ public class TableGroup {
     }
 
     public void addOrderTables(final List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.tableGroup())) {
-                throw new IllegalArgumentException("[ERROR] 비어있지 않거나 테이블 그룹을 가진 주문 테이블이 존재합니다.");
-            }
-        }
-
         orderTables.forEach(orderTable -> {
             orderTable.changeEmpty(false);
             orderTable.setTableGroup(this);

@@ -1,6 +1,7 @@
 package kitchenpos.tablegroup.application;
 
 import java.util.List;
+import java.util.Objects;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
@@ -35,6 +36,9 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderedTableIds);
         validateNotExistOrderTable(orderedTableIds, savedOrderTables);
+        for (final OrderTable orderTable : savedOrderTables) {
+            orderTable.validateNotEmptyOrNonNullTableGroup();
+        }
 
         final TableGroup tableGroup = TableGroup.createWithNowCreatedDate();
         tableGroup.addOrderTables(savedOrderTables);

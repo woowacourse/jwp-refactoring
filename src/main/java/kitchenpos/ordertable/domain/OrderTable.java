@@ -77,6 +77,12 @@ public class OrderTable {
         this.empty = false;
     }
 
+    public void validateNotEmptyOrNonNullTableGroup() {
+        if (!this.empty || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("[ERROR] 비어있지 않거나 테이블 그룹을 가진 주문 테이블이 존재합니다.");
+        }
+    }
+
     public void addOrder(final Order order) {
         this.orders.add(order);
     }
