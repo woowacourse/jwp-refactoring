@@ -50,18 +50,18 @@ public class TableService {
             final Long orderTableId,
             final ChangeOrderTableEmptyRequest changeEmtpyRequest
     ) {
-        final OrderTable savedOrderTable =
+        final OrderTable orderTable =
                 orderTableRepository.findById(orderTableId)
                                     .orElseThrow(() -> new NotFoundOrderTableException("해당 주문 테이블이 존재하지 않습니다."));
 
-        validateOrder(orderTableId, savedOrderTable);
-        savedOrderTable.updateEmpty(changeEmtpyRequest.isEmpty());
+        validateOrder(orderTableId, orderTable);
+        orderTable.updateEmpty(changeEmtpyRequest.isEmpty());
 
-        return OrderTableResponse.from(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
-    private void validateOrder(final Long orderTableId, final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+    private void validateOrder(final Long orderTableId, final OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
