@@ -25,7 +25,7 @@ public class OrderResponse {
 
     public static OrderResponse from(Order order, List<OrderLineItem> orderLineItems) {
         List<OrderLineItemResponse> orderLineItemResponses = orderLineItems.stream()
-                .map(each -> OrderLineItemResponse.from(order, each))
+                .map(each -> OrderLineItemResponse.from(order.getId(), each))
                 .collect(Collectors.toList());
 
         return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
