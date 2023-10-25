@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.table.TableGroupService;
+import kitchenpos.application.tableGroup.TableGroupService;
 import kitchenpos.application.table.TableService;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;

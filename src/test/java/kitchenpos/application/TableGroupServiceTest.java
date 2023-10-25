@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.application.order.OrderService;
-import kitchenpos.application.table.TableGroupService;
+import kitchenpos.application.tableGroup.TableGroupService;
 import kitchenpos.application.table.TableService;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menuGroup.MenuGroup;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderRequest;
