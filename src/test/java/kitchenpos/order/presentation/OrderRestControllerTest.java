@@ -1,6 +1,7 @@
 package kitchenpos.order.presentation;
 
 import io.restassured.RestAssured;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.menu.domain.Menu;
@@ -48,7 +49,7 @@ class OrderRestControllerTest extends ControllerTest {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드"));
-        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new BigDecimal(17000), menuGroup.getId()));
+        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new MenuPrice(new BigDecimal(17000)), menuGroup.getId()));
         final var 요청_준비 = RestAssured.given()
                 .body(new OrderCreateRequest(List.of(menu.getId()), List.of(2), orderTable.getId()))
                 .contentType(JSON);
@@ -83,7 +84,7 @@ class OrderRestControllerTest extends ControllerTest {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드"));
-        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new BigDecimal(17000), menuGroup.getId()));
+        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new MenuPrice(new BigDecimal(17000)), menuGroup.getId()));
         final Long orderId = orderService.create(List.of(menu.getId()), List.of(2), orderTable.getId());
 
         final var 요청_준비 = RestAssured.given()

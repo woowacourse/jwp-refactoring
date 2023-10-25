@@ -1,6 +1,7 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.Products;
@@ -47,7 +48,7 @@ public class MenuService {
         final Products products = new Products(findProducts);
         products.validateSum(counts, price);
 
-        final Menu menu = menuRepository.save(new Menu(name, price, menuGroupId));
+        final Menu menu = menuRepository.save(new Menu(name, new MenuPrice(price), menuGroupId));
         saveMenuProduct(counts, findProducts, menu);
         return menu.getId();
     }

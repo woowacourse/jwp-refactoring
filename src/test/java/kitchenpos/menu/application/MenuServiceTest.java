@@ -2,6 +2,7 @@ package kitchenpos.menu.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
@@ -69,7 +70,7 @@ class MenuServiceTest extends ServiceTest {
     void Menu를_조회할_수_있다() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("탕후루"));
-        final Menu menu = new Menu("디노 세트", new BigDecimal(8000), menuGroup.getId());
+        final Menu menu = new Menu("디노 세트", new MenuPrice(new BigDecimal(8000)), menuGroup.getId());
         menuRepository.save(menu);
 
         //when

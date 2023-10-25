@@ -2,6 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -48,7 +49,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드"));
-        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new BigDecimal(17000), menuGroup.getId()));
+        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new MenuPrice(new BigDecimal(17000)), menuGroup.getId()));
 
         //when
         final Long orderId = orderService.create(List.of(menu.getId()), List.of(2), orderTable.getId());
@@ -61,7 +62,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문_항목_사이즈가_맞지_않으면_예외가_발생한다() {
         //given
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드"));
-        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new BigDecimal(17000), menuGroup.getId()));
+        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new MenuPrice(new BigDecimal(17000)), menuGroup.getId()));
 
         //when, then
         assertThatThrownBy(() -> orderService.create(List.of(menu.getId(), 2L), List.of(2), null))
@@ -75,7 +76,7 @@ class OrderServiceTest extends ServiceTest {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, true));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("후라이드"));
-        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new BigDecimal(17000), menuGroup.getId()));
+        final Menu menu = menuRepository.save(new Menu("디노공룡메뉴", new MenuPrice(new BigDecimal(17000)), menuGroup.getId()));
 
         //when, then
         assertThatThrownBy(() -> orderService.create(List.of(menu.getId()), List.of(2), orderTable.getId()))
