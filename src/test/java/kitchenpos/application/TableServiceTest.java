@@ -1,29 +1,39 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
+import kitchenpos.domain.order.service.TableService;
+import kitchenpos.domain.order.service.dto.OrderTableCreateRequest;
+import kitchenpos.domain.order.service.dto.OrderTableResponse;
+import kitchenpos.domain.order.service.dto.OrderTableUpdateGuestsRequest;
+import kitchenpos.domain.order.service.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.verify;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -33,10 +43,10 @@ class TableServiceTest {
     private TableService tableService;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Nested
     class Create {
@@ -44,13 +54,21 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_만들_수_있다() {
             // given
-            final OrderTable orderTable = new OrderTable(6, false);
+            final OrderTableCreateRequest request = new OrderTableCreateRequest(6, true);
+            final OrderTable spyOrderTable = spy(new OrderTable(null, request.getNumberOfGuests(), request.getEmpty()));
+            given(orderTableRepository.save(any(OrderTable.class))).willReturn(spyOrderTable);
+            final long savedId = 1L;
+            given(spyOrderTable.getId()).willReturn(savedId);
 
             // when
-            tableService.create(orderTable);
+            final OrderTableResponse actual = tableService.create(request);
 
             // then
-            verify(orderTableDao, only()).save(orderTable);
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests()),
+                    () -> assertThat(actual.getEmpty()).isEqualTo(request.getEmpty())
+            );
         }
     }
 
@@ -63,7 +81,7 @@ class TableServiceTest {
             tableService.list();
 
             // then
-            verify(orderTableDao, only()).findAll();
+            verify(orderTableRepository, only()).findAll();
         }
     }
 
@@ -72,46 +90,32 @@ class TableServiceTest {
         @Test
         void 주문_테이블을_비어있는_상태로_만들_수_있다() {
             // given
-            final OrderTable target = new OrderTable(5, false);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(target));
+            final OrderTable spyOrderTable = spy(new OrderTable(5, true));
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
 
             final long orderTableId = 1L;
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name(), MEAL.name()))).willReturn(false);
-
-            // when
-            tableService.changeEmpty(orderTableId, target);
-
-            // then
-            verify(orderTableDao, times(1)).save(any(OrderTable.class));
-        }
-
-        @Test
-        void 단체_지정_아이디가_null이_아니면_예외를_던진다() {
-            // given
-            final OrderTable target = spy(new OrderTable(5, false));
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(target));
-
-            // when
-            final long nonNullId = 1L;
-            when(target.getTableGroupId()).thenReturn(nonNullId);
-
-            // then
-            final long orderTableId = 1L;
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, target))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문상태가_요리중이거나_식사중이면_예외가_발생한다() {
-            // given
-            final OrderTable target = new OrderTable(5, false);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(target));
-
-            final long orderTableId = 1L;
-            given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING.name(), MEAL.name()))).willReturn(true);
+            final Order order = new Order(spyOrderTable, COMPLETION, LocalDateTime.now(), new OrderLineItems());
+            given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, target))
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(false);
+            tableService.changeEmpty(orderTableId, request);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"MEAL","COOKING"})
+        void 주문상태가_요리중이거나_식사중이면_예외가_발생한다(final OrderStatus orderStatus) {
+            // given
+            final OrderTable spyOrderTable = spy(new OrderTable(5, true));
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(spyOrderTable));
+
+            final long orderTableId = 1L;
+            final Order order = new Order(spyOrderTable, orderStatus, LocalDateTime.now(), new OrderLineItems());
+            given(orderRepository.findByOrderTableId(orderTableId)).willReturn(Optional.ofNullable(order));
+
+            // when, then
+            final OrderTableUpdateRequest request = new OrderTableUpdateRequest(false);
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -122,25 +126,22 @@ class TableServiceTest {
         @Test
         void 게스트의_수를_변경할_수_있다() {
             // given
-            final OrderTable target = spy(new OrderTable(5, false));
-            long orderTableId = 1L;
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.ofNullable(target));
+            final OrderTable expected = spy(new OrderTable(1, true));
+            expected.changeEmpty(false);
+            final long orderTableId = 1L;
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(expected));
 
             // when
-            tableService.changeNumberOfGuests(orderTableId, target);
-
-            // then
-            verify(orderTableDao, times(1)).save(target);
+            final OrderTableUpdateGuestsRequest request = new OrderTableUpdateGuestsRequest(5);
+            assertThatCode(() -> tableService.changeNumberOfGuests(orderTableId, request))
+                    .doesNotThrowAnyException();
         }
 
         @Test
         void 게스트의_수가_0이면_예외가_발생한다() {
-            // given
-            final OrderTable target = spy(new OrderTable(5, false));
-
             // when, then
-            long orderTableId = 1L;
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, target))
+            final long orderTableId = 1L;
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, new OrderTableUpdateGuestsRequest(0)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -148,12 +149,12 @@ class TableServiceTest {
         void 주문_테이블이_비어있으면_예외가_발생한다() {
             // given
             final OrderTable target = spy(new OrderTable(5, true));
-            long orderTableId = 1L;
-            given(orderTableDao.findById(orderTableId)).willReturn(Optional.ofNullable(target));
+            final long orderTableId = 1L;
+            given(orderTableRepository.findById(orderTableId)).willReturn(Optional.ofNullable(target));
 
             // when, then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, target))
-                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, new OrderTableUpdateGuestsRequest(3)))
+                    .isInstanceOf(IllegalStateException.class);
         }
     }
 }

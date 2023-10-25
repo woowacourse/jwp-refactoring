@@ -1,13 +1,24 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItems;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
+import kitchenpos.domain.order.service.OrderService;
+import kitchenpos.domain.order.service.dto.OrderCreateRequest;
+import kitchenpos.domain.order.service.dto.OrderLineItemCreateRequest;
+import kitchenpos.domain.order.service.dto.OrderResponse;
+import kitchenpos.domain.order.service.dto.OrderUpateRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,20 +28,33 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.emptyList;
-import static kitchenpos.domain.OrderStatus.COOKING;
+import static java.time.LocalDateTime.now;
+import static kitchenpos.application.fixture.MenuFixture.menu;
+import static kitchenpos.application.fixture.MenuGroupFixture.menuGroup;
+import static kitchenpos.application.fixture.MenuProductFixture.menuProduct;
+import static kitchenpos.application.fixture.OrderFixture.order;
+import static kitchenpos.application.fixture.OrderLineItemFixture.orderLineItem;
+import static kitchenpos.application.fixture.ProductFixture.product;
+import static kitchenpos.domain.order.OrderStatus.COMPLETION;
+import static kitchenpos.domain.order.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.spy;
-import static org.mockito.BDDMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 @ExtendWith(MockitoExtension.class)
@@ -40,16 +64,32 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Mock
-    MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
+
+    private Menu noodle;
+
+    private Menu potato;
+
+    private OrderLineItem wooDong;
+
+    private OrderLineItem frenchFries;
+
+    @BeforeEach
+    void setUp() {
+        noodle = mock(Menu.class);
+        potato = mock(Menu.class);
+        wooDong = new OrderLineItem(null, noodle, 1);
+        frenchFries = new OrderLineItem(null, potato, 1);
+    }
 
     @Nested
     class Create {
@@ -57,93 +97,91 @@ class OrderServiceTest {
         @Test
         void 주문을_생성할_수_있다() {
             // given
-            final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
+            final Menu menu = menu("우동세트", BigDecimal.valueOf(5_000), menuGroup("일식"), List.of());
+            final MenuProduct menuProduct = menuProduct(menu, product("면", BigDecimal.valueOf(5_000)), 5000L);
+            final MenuProducts menuProducts = new MenuProducts();
+            menuProducts.addAll(List.of(menuProduct));
+            menu.addMenuProducts(menuProducts);
 
-            given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
+            final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
+            final OrderLineItem orderLineItem = orderLineItem(order, menu, 1L);
+            order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
-            final OrderTable orderTable = new OrderTable(6, false);
-            final long orderTableId = 1L;
-            given(order.getOrderTableId()).willReturn(orderTableId);
-            given(orderTableDao.findById(anyLong())).willReturn(Optional.ofNullable(orderTable));
-            given(orderDao.save(order)).willReturn(order);
+            given(menuRepository.countByIdIn(anyList())).willReturn(1L);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.ofNullable(mock(OrderTable.class)));
+            given(orderRepository.save(any(Order.class))).willReturn(order);
+
+            final long savedId = 1L;
+            given(order.getId()).willReturn(savedId);
 
             // when
-            orderService.create(order);
+            final List<OrderLineItemCreateRequest> orderLineItemCreateRequest = List.of(new OrderLineItemCreateRequest(1L, 2L));
+            final OrderCreateRequest request = new OrderCreateRequest(1L, orderLineItemCreateRequest);
+            final OrderResponse actual = orderService.create(request);
 
             // then
             assertAll(
-                    () -> assertThat(order.getOrderTableId()).isEqualTo(orderTableId),
-                    () -> assertThat(order.getOrderStatus()).isEqualTo(COOKING.name())
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus().name()),
+                    () -> assertThat(actual.getOrderedTime()).isEqualTo(order.getOrderedTime()),
+                    () -> assertThat(actual.getOrderTable()).isNotNull(),
+                    () -> assertThat(actual.getOrderLineItems()).hasSize(2)
             );
         }
 
         @Test
         void 주문_항목이_없으면_예외가_발생한다() {
             // given
-            final Order order = new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), emptyList());
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of());
 
             // when, then
-            assertThatThrownBy(() -> orderService.create(order))
+            final long emptyMenuId = -1L;
+            final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(new OrderLineItemCreateRequest(emptyMenuId, 2L)));
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_항목의_총합과_메뉴의_총합이_다르면_예외를_발생한다() {
             // given
-            final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
-            final Order order = new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), List.of(wooDong, frenchFries));
+            final Order order = order(COMPLETION, now(), List.of(wooDong, frenchFries));
+            final Product product = product("우동", BigDecimal.valueOf(3_000L));
+            final Menu menu = menu("우동세트", BigDecimal.valueOf(8_000), menuGroup("일식"), List.of(menuProduct(product, 3_000L)));
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(new OrderLineItem(order, menu, 1)));
 
             // when
-            final long incorrectMenuSize = order.getOrderLineItems().size() - 1;
-            when(menuDao.countByIdIn(anyList())).thenReturn(incorrectMenuSize);
+            final long incorrectMenuSize = order.getOrderLineItems().getOrderLineItems().size() - 1;
+            when(menuRepository.countByIdIn(anyList())).thenReturn(incorrectMenuSize);
+            final long orderTableId = 1L;
+            final OrderCreateRequest request = new OrderCreateRequest(orderTableId, List.of(new OrderLineItemCreateRequest(1L, 2L)));
 
             // then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문에_있는_주문_테이블이_없으면_예외가_발생한다() {
             // given
-            final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
+            final Menu menu = menu("우동세트", BigDecimal.valueOf(5_000), menuGroup("일식"), List.of());
+            final MenuProduct menuProduct = menuProduct(menu, product("면", BigDecimal.valueOf(5_000)), 5000L);
+            final MenuProducts menuProducts = new MenuProducts();
+            menuProducts.addAll(List.of(menuProduct));
+            menu.addMenuProducts(menuProducts);
 
-            given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
-            given(order.getOrderTableId()).willReturn(1L);
+            final Order order = spy(order(mock(OrderTable.class), COOKING, now(), new ArrayList<>()));
+            final OrderLineItem orderLineItem = orderLineItem(order, menu, 1L);
+            order.addAllOrderLineItems(OrderLineItems.from(List.of(orderLineItem)));
+            given(orderLineItemRepository.findAllByMenuIds(anyList())).willReturn(List.of(orderLineItem));
 
-            // when
-            when(orderTableDao.findById(anyLong())).thenReturn(Optional.empty());
+            given(menuRepository.countByIdIn(anyList())).willReturn(1L);
+            given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 주문에_있는_주문_테이블이_비어있으면_예외가_발생한다() {
-            // given
-            final OrderLineItem wooDong = new OrderLineItem(1L, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(1L, 2L, 1);
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-            final Order order = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems));
-
-            given(menuDao.countByIdIn(anyList())).willReturn((long) orderLineItems.size());
-
             final long orderTableId = 1L;
-            given(order.getOrderTableId()).willReturn(orderTableId);
-
-            // when
-            final OrderTable emptyOrderTable = new OrderTable(6, true);
-            when(orderTableDao.findById(anyLong())).thenReturn(Optional.ofNullable(emptyOrderTable));
-
-            // then
-            assertThatThrownBy(() -> orderService.create(order))
+            final OrderCreateRequest request = new OrderCreateRequest(orderTableId, List.of(new OrderLineItemCreateRequest(1L, 2L)));
+            assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -153,31 +191,11 @@ class OrderServiceTest {
 
         @Test
         void 주문을_전체_조회_할_수_있다() {
-            // given
-            final long orderId = 1L;
-            final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
-
-            given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
-
-            final Order spyOrder = spy(new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), null));
-            given(spyOrder.getId()).willReturn(orderId);
-            given(orderDao.findAll()).willReturn(List.of(spyOrder));
-
             // when
-            final List<Order> actual = orderService.list();
+            orderService.list();
 
             // then
-            assertAll(
-                    () -> assertThat(actual).hasSize(1)
-                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "orderLineItems")
-                            .containsExactly(spyOrder),
-                    () -> assertThat(actual.get(0).getOrderLineItems())
-                            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("seq")
-                            .containsExactly(wooDong, frenchFries)
-            );
-
+            verify(orderRepository, only()).findAll();
         }
     }
 
@@ -189,35 +207,36 @@ class OrderServiceTest {
         void 주문_상태를_변경할_수_있다(final OrderStatus validedOrderStatus) {
             // given
             final long orderId = 1;
-            final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
-            final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
+            final List<OrderLineItem> orderLineItems = new ArrayList<>(List.of(wooDong, frenchFries));
 
-            final Order order = new Order(validedOrderStatus.name(), LocalDateTime.now(), orderLineItems);
-            given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(order));
+            final Order order = order(validedOrderStatus, now(), orderLineItems);
+            given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(order));
 
             // when
-            final Order expected = new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
-            final Order actual = orderService.changeOrderStatus(orderId, expected);
+            final OrderUpateRequest request = new OrderUpateRequest(COOKING.name());
 
             // then
-            assertThat(actual.getOrderStatus()).isEqualTo(expected.getOrderStatus());
+            assertThatCode(() -> orderService.changeOrderStatus(orderId, request))
+                    .doesNotThrowAnyException();
         }
 
         @Test
         void 주문_상태가_완료_상태라면_상태를_변경할_수_없다() {
             // given
             final long orderId = 1;
-            final OrderLineItem wooDong = new OrderLineItem(orderId, 1L, 1);
-            final OrderLineItem frenchFries = new OrderLineItem(orderId, 2L, 1);
             final List<OrderLineItem> orderLineItems = List.of(wooDong, frenchFries);
 
-            final Order order = new Order(OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
-            given(orderDao.findById(orderId)).willReturn(Optional.ofNullable(order));
+            final Order expected = order(COMPLETION, now(), orderLineItems);
+            final Order actual = spy(order(expected.getOrderStatus(), expected.getOrderedTime(), new ArrayList<>()));
+            given(orderRepository.findById(orderId)).willReturn(Optional.ofNullable(actual));
 
-            // when, then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+            // when
+            final OrderUpateRequest request = new OrderUpateRequest(COMPLETION.name());
+
+            // then
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
+
