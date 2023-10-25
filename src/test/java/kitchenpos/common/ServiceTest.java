@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @DisplayNameGeneration(ReplaceUnderscores.class)
 @TestExecutionListeners(value = {ServiceTestExecutionListener.class,}, mergeMode = MergeMode.MERGE_WITH_DEFAULTS)
-public class ServiceTest {
+public abstract class ServiceTest {
 
     @Autowired
     protected MenuGroupService menuGroupService;
