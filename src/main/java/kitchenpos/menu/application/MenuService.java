@@ -1,12 +1,14 @@
 package kitchenpos.menu.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.dto.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuRequest;
+import kitchenpos.menu.application.dto.MenuResponse;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.exception.MenuException.NotExistsProductException;
@@ -39,7 +41,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         List<Product> products = productRepository.findAllById(menuRequest.getProductIds());
 
         validate(menuRequest, products);
@@ -49,7 +51,8 @@ public class MenuService {
         List<MenuProduct> menuProducts = getMenuProducts(savedMenu, menuRequest.getMenuProductRequests());
 
         menuProductRepository.saveAll(menuProducts);
-        return savedMenu;
+
+        return MenuResponse.of(savedMenu, menuProducts);
     }
 
     private void validate(final MenuRequest menuRequest, final List<Product> products) {
@@ -89,7 +92,12 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        List<MenuResponse> menuResponses = new ArrayList<>();
+        List<Menu> menus = menuRepository.findAll();
+        for (Menu menu : menus) {
+            menuResponses.add(MenuResponse.of(menu, menuProductRepository.findByMenu(menu)));
+        }
+        return menuResponses;
     }
 }
