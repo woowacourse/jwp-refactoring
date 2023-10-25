@@ -4,19 +4,22 @@ import kitchenpos.application.MenuService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Name;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -28,10 +31,9 @@ class MenuServiceTest extends ApplicationTestConfig {
     @BeforeEach
     void setUp() {
         menuService = new MenuService(
-                menuDao,
-                menuGroupDao,
-                menuProductDao,
-                productDao
+                menuRepository,
+                menuGroupRepository,
+                productRepository
         );
     }
 
@@ -43,84 +45,46 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void success_create_menu_when_MenuProductsIsEmpty() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
-            final BigDecimal zeroPrice = BigDecimal.ZERO;
-            final Menu expected = new Menu(
+            final MenuCreateRequest request = new MenuCreateRequest(
                     "테스트용 메뉴명",
-                    zeroPrice,
+                    new BigDecimal("0"),
                     savedMenuGroup.getId(),
                     Collections.emptyList()
             );
 
             // when
-            final Menu actual = menuService.create(expected);
+            final MenuResponse actual = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-                softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
-                softly.assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
-                softly.assertThat(actual.getMenuProducts()).isEqualTo(expected.getMenuProducts());
+                softly.assertThat(actual.getName()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
+                softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
+                softly.assertThat(actual.getMenuProducts())
+                        .usingRecursiveComparison()
+                        .isEqualTo(Collections.emptyList());
             });
-        }
-
-        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 가격이 null 일 경우 예외가 발생한다.")
-        @Test
-        void throwException_when_create_Menu_IfMenuPriceIsNull() {
-            // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-
-            // when
-            final Menu expected = new Menu(
-                    "테스트용 메뉴명",
-                    null,
-                    savedMenuGroup.getId(),
-                    Collections.emptyList()
-            );
-
-            // then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 가격이 음수일 경우 예외가 발생한다.")
-        @ParameterizedTest
-        @ValueSource(strings = {"-1", "-10", "-100", "-1000000"})
-        void throwException_when_create_Menu_IfMenuPriceIsNegative(final String negativePriceValue) {
-            // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-
-            // when
-            final Menu expected = new Menu(
-                    "테스트용 메뉴명",
-                    new BigDecimal(negativePriceValue),
-                    savedMenuGroup.getId(),
-                    Collections.emptyList()
-            );
-
-            // then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 메뉴 상품 목록들의 가격 합보다 메뉴의 가격이 높을 경우 예외가 발생한다.")
         @Test
         void throwException_when_create_Menu_IfMenuProductsPriceSum_IsGreaterThanMenuPrice() {
             // given
-            final MenuGroup unsavedMenuGroup = new MenuGroup("테스트용 메뉴 그룹명");
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             // when
-            final Menu expected = new Menu(
+            final MenuCreateRequest request = new MenuCreateRequest(
                     "테스트용 메뉴명",
                     new BigDecimal("10000"),
-                    unsavedMenuGroup.getId(),
+                    savedMenuGroup.getId(),
                     Collections.emptyList()
             );
 
             // then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -133,18 +97,18 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_create_Menu_IfMenuGroupIsNotExists() {
             // given
-            final MenuGroup unsavedMenuGroup = new MenuGroup("테스트용 메뉴 그룹명");
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
             // when
-            final Menu expected = new Menu(
+            final MenuCreateRequest request = new MenuCreateRequest(
                     "테스트용 메뉴명",
                     new BigDecimal("10000"),
-                    unsavedMenuGroup.getId(),
+                    savedMenuGroup.getId(),
                     Collections.emptyList()
             );
 
             // then
-            assertThatThrownBy(() -> menuService.create(expected))
+            assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -157,63 +121,41 @@ class MenuServiceTest extends ApplicationTestConfig {
         @Test
         void success_create_menu_with_MenuProducts() {
             // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
-            final Long menuIdIsNotProblem = null;
-            final List<MenuProduct> menuProducts = new ArrayList<>();
+            final List<MenuProductCreateRequest> menuProductCreateRequests = new ArrayList<>();
             for (int count = 1; count <= 10; count++) {
-                final Product savedProduct = productDao.save(new Product("테스트용 상품명", new BigDecimal("10000")));
-                menuProducts.add(new MenuProduct(menuIdIsNotProblem, savedProduct.getId(), 10));
+                final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000")));
+                menuProductCreateRequests.add(new MenuProductCreateRequest(savedProduct.getId(), 10));
             }
 
-            final Menu expected = new Menu(
+            final MenuCreateRequest request = new MenuCreateRequest(
                     "테스트용 메뉴명",
-                    BigDecimal.ZERO,
+                    new BigDecimal("10000"),
                     savedMenuGroup.getId(),
-                    menuProducts
+                    menuProductCreateRequests
             );
 
             // when
-            final Menu actual = menuService.create(expected);
+            final MenuResponse actual = menuService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getName()).isEqualTo(expected.getName());
-                softly.assertThat(actual.getPrice()).isEqualByComparingTo(expected.getPrice());
-                softly.assertThat(actual.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
-                softly.assertThat(actual.getMenuProducts())
-                        .usingRecursiveComparison()
-                        .ignoringExpectedNullFields()
-                        .isEqualTo(expected.getMenuProducts());
+                softly.assertThat(actual.getName()).isEqualTo(request.getName());
+                softly.assertThat(actual.getPrice()).isEqualByComparingTo(request.getPrice());
+                softly.assertThat(actual.getMenuGroup().getId()).isEqualTo(request.getMenuGroupId());
             });
         }
 
-        @DisplayName("[EXCEPTION] 등록할 신규 메뉴에 메뉴 상품 목록 중 상품이 등록되어 있지 않으면 예외가 발생한다")
-        @Test
-        void throwException_when_create_Menu_IfMenuProduct_ProductIsNotExists() {
-            // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-
-            final Long menuIdIsNotProblem = null;
-            final List<MenuProduct> unsavedMenuProducts = List.of(
-                    new MenuProduct(menuIdIsNotProblem, 1L, 10),
-                    new MenuProduct(menuIdIsNotProblem, 2L, 10),
-                    new MenuProduct(menuIdIsNotProblem, 3L, 10),
-                    new MenuProduct(menuIdIsNotProblem, 4L, 10),
-                    new MenuProduct(menuIdIsNotProblem, 5L, 10)
-            );
-
-            final Menu expected = new Menu(
-                    "테스트용 메뉴명",
-                    BigDecimal.ZERO,
-                    savedMenuGroup.getId(),
-                    unsavedMenuProducts
-            );
-
-            // then
-            assertThatThrownBy(() -> menuService.create(expected))
-                    .isInstanceOf(IllegalArgumentException.class);
+        private List<MenuProductCreateRequest> convertToMenuProductCreateRequest(final Menu menu) {
+            return menu.getMenuProducts()
+                    .getMenuProductItems()
+                    .stream()
+                    .map(menuProduct -> new MenuProductCreateRequest(
+                            menuProduct.getProduct().getId(),
+                            menuProduct.getQuantity().getValue()
+                    )).collect(Collectors.toList());
         }
     }
 }

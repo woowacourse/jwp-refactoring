@@ -9,6 +9,13 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.Name;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableEmptyUpdateRequest;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.TableNumberOfGuestsUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,10 +26,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -35,47 +39,69 @@ class TableServiceTest extends ApplicationTestConfig {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("[SUCCESS] 주문 테이블을 등록한다.")
     @Test
     void success_create() {
         // given
-        final OrderTable expected = new OrderTable(null, 5, false);
+        final OrderTableCreateRequest request = new OrderTableCreateRequest(5, false);
 
         // when
-        final OrderTable actual = tableService.create(expected);
+        final OrderTableResponse actual = tableService.create(request);
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual.getId()).isPositive();
-            softly.assertThat(actual.getTableGroupId()).isNull();
-            softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
-            softly.assertThat(actual.isEmpty()).isEqualTo(expected.isEmpty());
+            softly.assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+            softly.assertThat(actual.isEmpty()).isEqualTo(request.isEmpty());
         });
     }
 
     @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
-    @DisplayName("비어있는 상태로 변경")
+    @DisplayName("빈 상태 변경")
     @Nested
     class ChangeEmptyNestedTest {
 
-        @DisplayName("[SUCCESS] 주문 테이블을 비어있는 상태로 변경한다.")
+        @DisplayName("[SUCCESS] 주문 상태를 고려하며 주문 테이블의 빈 상태를 변경한다.")
         @Test
-        void success_changeEmpty() {
+        void success_changeEmpty_when_order_isExists() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 5, true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
+            final Order savedOrderStatus = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            savedOrderStatus.changeOrderStatus(OrderStatus.COMPLETION);
 
             // when
-            final OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
+            final OrderTableResponse actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
 
             // then
+            final OrderTableResponse expected = OrderTableResponse.from(savedOrderTable);
+
             assertSoftly(softly -> {
-                softly.assertThat(actual.getId()).isEqualTo(savedOrderTable.getId());
-                softly.assertThat(actual.getTableGroupId()).isEqualTo(savedOrderTable.getTableGroupId());
-                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(savedOrderTable.getNumberOfGuests());
+                softly.assertThat(actual.getId()).isEqualTo(expected.getId());
+                softly.assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
+                softly.assertThat(actual.isEmpty()).isTrue();
+            });
+        }
+
+        @DisplayName("[SUCCESS] 주문이 없는 주문 테이블의 빈 상태를 변경한다.")
+        @Test
+        void success_changeEmpty_when_order_isNotExists() {
+            // given
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
+
+            // when
+            final OrderTableResponse actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true));
+
+            // then
+            final OrderTableResponse expected = OrderTableResponse.from(savedOrderTable);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getId()).isEqualTo(expected.getId());
+                softly.assertThat(actual.getTableGroupId()).isEqualTo(expected.getTableGroupId());
+                softly.assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
                 softly.assertThat(actual.isEmpty()).isTrue();
             });
         }
@@ -84,19 +110,17 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_changeEmpty_orderTable_isIn_tableGroup() {
             // given
-            final OrderTable savedOrderTableWithFiveGuests = orderTableDao.save(new OrderTable(null, 5, true));
+            final OrderTable savedOrderTableWithFiveGuests = orderTableRepository.save(OrderTable.withoutTableGroup(5, true));
             final List<OrderTable> savedOrderTables = List.of(
                     savedOrderTableWithFiveGuests,
-                    orderTableDao.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, false))
             );
-            final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
-            for (final OrderTable savedOrderTable : savedOrderTables) {
-                savedOrderTable.setTableGroupId(savedTableGroup.getId());
-                orderTableDao.save(savedOrderTable);
-            }
+            tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
+
+            savedOrderTables.forEach(orderTable -> orderRepository.save(Order.ofEmptyOrderLineItems(orderTable)));
 
             // expect
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), savedOrderTableWithFiveGuests))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableWithFiveGuests.getId(), new OrderTableEmptyUpdateRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -105,24 +129,22 @@ class TableServiceTest extends ApplicationTestConfig {
         @MethodSource("getOrderStatusWithoutCompletion")
         void throwException_when_changeEmpty_orderStatus_isCookieOrMeal(final OrderStatus orderStatus) {
             // given
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-            final Menu savedMenu = menuDao.save(new Menu(
-                    "테스트용 메뉴명",
-                    BigDecimal.ZERO,
-                    savedMenuGroup.getId(),
-                    Collections.emptyList()
-            ));
-            final List<OrderLineItem> orderLineItems = List.of(new OrderLineItem(null, savedMenu.getId(), 10));
-            final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, 5, false));
-            orderDao.save(new Order(
-                    savedOrderTable.getId(),
-                    orderStatus.name(),
-                    LocalDateTime.now(),
-                    orderLineItems
-            ));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
+            final Menu savedMenu = menuRepository.save(
+                    Menu.withEmptyMenuProducts(
+                            new Name("테스트용 메뉴명"),
+                            Price.from("0"),
+                            savedMenuGroup
+                    )
+            );
+            final List<OrderLineItem> orderLineItems = List.of(OrderLineItem.withoutOrder(savedMenu, new Quantity(10)));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
+            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            savedOrder.addOrderLineItems(orderLineItems);
+            savedOrder.changeOrderStatus(orderStatus);
 
             // expect
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTableEmptyUpdateRequest(true)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -137,17 +159,16 @@ class TableServiceTest extends ApplicationTestConfig {
     @Nested
     class ChangeNumberOfGuestsNestedTest {
 
-
         @DisplayName("[EXCEPTION] 손님 수를 0 미만으로 수정할 경우 예외가 발생한다.")
         @ParameterizedTest
         @ValueSource(ints = {-1, -2, -10, -100})
-        void throwException_when_changeNumberOfGuests_orderTable_numberOfGuests_isLessThanZero(final int zeroOrNegativeValue) {
+        void throwException_when_changeNumberOfGuests_orderTable_numberOfGuests_isLessThanZero(final int negativeValue) {
             // given
-            final OrderTable orderTable = new OrderTable(null, zeroOrNegativeValue, false);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, true));
+            final TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(negativeValue);
 
             // expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -155,11 +176,11 @@ class TableServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_changeNumberOfGuests_orderTableIsEmpty() {
             // given
-            final OrderTable orderTable = new OrderTable(null, 10, true);
-            final OrderTable savedOrderTable = tableService.create(orderTable);
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, true));
+            final TableNumberOfGuestsUpdateRequest request = new TableNumberOfGuestsUpdateRequest(10);
 
             // expect
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

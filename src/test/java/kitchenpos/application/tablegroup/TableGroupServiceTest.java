@@ -11,6 +11,12 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.vo.Name;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -38,9 +43,9 @@ class TableGroupServiceTest extends ApplicationTestConfig {
     @BeforeEach
     void setUp() {
         tableGroupService = new TableGroupService(
-                orderDao,
-                orderTableDao,
-                tableGroupDao
+                orderRepository,
+                orderTableRepository,
+                tableGroupRepository
         );
     }
 
@@ -53,25 +58,23 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void success_create() {
             // given
             final List<OrderTable> savedOrderTables = List.of(
-                    orderTableDao.save(new OrderTable(null, 5, true)),
-                    orderTableDao.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
 
             // when
-            final TableGroup expected = new TableGroup(LocalDateTime.now(), savedOrderTables);
-            final TableGroup actual = tableGroupService.create(expected);
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+            final TableGroupResponse actual = tableGroupService.create(request);
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getId()).isPositive();
-                softly.assertThat(actual.getCreatedDate()).isEqualTo(expected.getCreatedDate());
+                softly.assertThat(actual.getCreatedDate()).isBefore(LocalDateTime.now());
                 softly.assertThat(actual.getOrderTables())
                         .usingRecursiveComparison()
                         .ignoringExpectedNullFields()
-                        .isEqualTo(List.of(
-                                new OrderTable(actual.getId(), 5, false),
-                                new OrderTable(actual.getId(), 10, false)
-                        ));
+                        .isEqualTo(OrderTableResponse.from(savedOrderTables));
             });
         }
 
@@ -81,12 +84,13 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void throwException_when_orderTablesHasSizeLessThan2(final List<OrderTable> notEnoughOrderTables) {
             // given
             final List<OrderTable> savedOrderTables = notEnoughOrderTables.stream()
-                    .map(orderTableDao::save)
+                    .map(orderTableRepository::save)
                     .collect(Collectors.toList());
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -94,7 +98,7 @@ class TableGroupServiceTest extends ApplicationTestConfig {
             return Stream.of(
                     Arguments.arguments(List.of()),
                     Arguments.arguments(List.of(
-                            new OrderTable(null, 5, true)
+                            OrderTable.withoutTableGroup(5, true)
                     ))
             );
         }
@@ -103,16 +107,14 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_orderTablesSize_isNotEqualTo_findOrderTablesSize() {
             // given
-            final OrderTable unsavedOrderTable = new OrderTable(null, 5, true);
-            final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, 10, true));
+            final OrderTable unsavedOrderTable = OrderTable.withoutTableGroup(5, false);
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
 
-            final TableGroup tableGroup = new TableGroup(
-                    LocalDateTime.now(),
-                    List.of(unsavedOrderTable, savedOrderTable)
-            );
+            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(unsavedOrderTable, savedOrderTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
             // expect
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -120,16 +122,16 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @Test
         void throwException_when_orderTable_isNotEmpty() {
             // given
-            final OrderTable savedOrderTableNotEmpty = orderTableDao.save(new OrderTable(null, 5, false));
-            final OrderTable savedOrderTableEmpty = orderTableDao.save(new OrderTable(null, 10, true));
+            final OrderTable savedOrderTableEmpty = orderTableRepository.save(OrderTable.withoutTableGroup(10, false));
 
-            final TableGroup tableGroup = new TableGroup(
-                    LocalDateTime.now(),
-                    List.of(savedOrderTableNotEmpty, savedOrderTableEmpty)
-            );
+            // when
+            final OrderTable savedOrderTableNotEmpty = orderTableRepository.save(OrderTable.withoutTableGroup(5, false));
 
-            // expect
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableEmpty, savedOrderTableNotEmpty));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+
+            // then
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -138,26 +140,19 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void throwException_when_orderTable_hasAlreadyTableGroup() {
             // given
             final List<OrderTable> savedOrderTables = List.of(
-                    orderTableDao.save(new OrderTable(null, 5, true)),
-                    orderTableDao.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
+            tableGroupRepository.save(TableGroup.withOrderTables(savedOrderTables));
 
-            final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedOrderTables));
-            for (OrderTable savedOrderTable : savedOrderTables) {
-                savedOrderTable.setTableGroupId(savedTableGroup.getId());
-                orderTableDao.save(savedOrderTable);
-            }
+            // expect
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
 
-            // when
-            final TableGroup tableGroup = new TableGroup(
-                    LocalDateTime.now(),
-                    savedOrderTables
-            );
-
-            // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
+
     }
 
     @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
@@ -170,27 +165,25 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         void success_ungroup() {
             // given
             final List<OrderTable> savedOrderTables = List.of(
-                    orderTableDao.save(new OrderTable(null, 5, true)),
-                    orderTableDao.save(new OrderTable(null, 10, true))
+                    orderTableRepository.save(OrderTable.withoutTableGroup(5, true)),
+                    orderTableRepository.save(OrderTable.withoutTableGroup(10, true))
             );
 
-            final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
-            final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+            final List<Long> savedOrderTableIds = collectOrderTableIds(savedOrderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             // when
             tableGroupService.ungroup(savedTableGroup.getId());
 
             // then
-            final List<Long> savedOrderTableIds = savedOrderTables.stream()
-                    .map(OrderTable::getId)
-                    .collect(Collectors.toList());
-            final List<OrderTable> actual = orderTableDao.findAllByIdIn(savedOrderTableIds);
+            final List<OrderTable> actual = orderTableRepository.findAllByIdIn(savedOrderTableIds);
 
             assertThat(actual).usingRecursiveComparison()
                     .ignoringExpectedNullFields()
                     .isEqualTo(List.of(
-                            new OrderTable(null, 5, false),
-                            new OrderTable(null, 10, false)
+                            OrderTable.withoutTableGroup(5, false),
+                            OrderTable.withoutTableGroup(10, false)
                     ));
         }
 
@@ -199,13 +192,14 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         @MethodSource("getOrderStatusWithoutCompletion")
         void throwException_when_orderStatus_isCookingOrMeal(final OrderStatus orderStatus) {
             // given
-            final Product savedProduct = productDao.save(new Product("테스트용 상품명", new BigDecimal("10000")));
+            final Product savedProduct = productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000")));
             final Menu savedMenu = createMenu(savedProduct);
             final OrderTable savedOrderTableWithFiveGuests = createOrder(orderStatus, savedMenu, 5);
             final OrderTable savedOrderTableWithTenGuests = createOrder(orderStatus, savedMenu, 10);
-            final TableGroup savedTableGroup = tableGroupService.create(
-                    new TableGroup(LocalDateTime.now(), List.of(savedOrderTableWithFiveGuests, savedOrderTableWithTenGuests))
-            );
+
+            final List<Long> savedOrderTableIds = collectOrderTableIds(List.of(savedOrderTableWithTenGuests, savedOrderTableWithFiveGuests));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(savedOrderTableIds);
+            final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -219,29 +213,35 @@ class TableGroupServiceTest extends ApplicationTestConfig {
         }
 
         private OrderTable createOrder(final OrderStatus orderStatus, final Menu menu, final int numberOfGuests) {
-            final OrderTable savedOrderTable = orderTableDao.save(new OrderTable(null, numberOfGuests, true));
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-            final Order savedOrder = orderDao.save(
-                    new Order(savedOrderTable.getId(),
-                            orderStatus.name(),
-                            LocalDateTime.now(),
-                            List.of(orderLineItem)));
-            orderLineItemDao.save(new OrderLineItem(savedOrder.getId(), orderLineItem.getMenuId(), orderLineItem.getQuantity()));
+            final OrderTable savedOrderTable = orderTableRepository.save(OrderTable.withoutTableGroup(numberOfGuests, true));
+            final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(1));
+            final Order savedOrder = orderRepository.save(Order.ofEmptyOrderLineItems(savedOrderTable));
+            savedOrder.addOrderLineItems(List.of(orderLineItem));
+            savedOrder.changeOrderStatus(orderStatus);
 
             return savedOrderTable;
         }
 
         private Menu createMenu(final Product savedProduct) {
-            final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
-            final MenuProduct menuProduct = new MenuProduct(null, savedProduct.getId(), 10);
-            final Menu savedMenu = menuDao.save(
-                    new Menu("테스트용 메뉴명",
-                            new BigDecimal("10000"),
-                            savedMenuGroup.getId(),
-                            List.of(menuProduct)));
-            menuProductDao.save(new MenuProduct(savedMenu.getId(), menuProduct.getProductId(), menuProduct.getQuantity()));
+            final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
+            final Menu savedMenu = menuRepository.save(
+                    Menu.withEmptyMenuProducts(
+                            new Name("테스트용 메뉴명"),
+                            Price.ZERO,
+                            savedMenuGroup
+                    )
+            );
+            final MenuProduct menuProduct = MenuProduct.withoutMenu(savedProduct, new Quantity(10));
+            savedMenu.addMenuProducts(List.of(menuProduct));
 
             return savedMenu;
         }
+
+    }
+
+    private List<Long> collectOrderTableIds(final List<OrderTable> savedOrderTables) {
+        return savedOrderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 }

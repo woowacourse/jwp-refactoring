@@ -6,11 +6,14 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Name;
+import kitchenpos.domain.vo.Price;
+import kitchenpos.domain.vo.Quantity;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +26,9 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
     @BeforeEach
     void setUp() {
         menuService = new MenuService(
-                menuDao,
-                menuGroupDao,
-                menuProductDao,
-                productDao
+                menuRepository,
+                menuGroupRepository,
+                productRepository
         );
     }
 
@@ -34,35 +36,39 @@ class MenuQueryServiceTest extends ApplicationTestConfig {
     @Test
     void success_findAll() {
         // given
-        final MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("테스트용 메뉴 그룹명"));
+        final MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(new Name("테스트용 메뉴 그룹명")));
 
-        final Long menuIdIsNotProblem = null;
-        final List<MenuProduct> menuProducts = new ArrayList<>();
-        for (int count = 1; count <= 10; count++) {
-            final Product savedProduct = productDao.save(new Product("테스트용 상품명", new BigDecimal("10000")));
-            menuProducts.add(new MenuProduct(menuIdIsNotProblem, savedProduct.getId(), 10));
-        }
+        final List<MenuProduct> unsavedMenuProducts = new ArrayList<>(List.of(
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10)),
+                MenuProduct.withoutMenu(productRepository.save(new Product(new Name("테스트용 상품명"), Price.from("10000"))), new Quantity(10))
+        ));
 
-        final Menu menu = new Menu(
-                "테스트용 메뉴명",
-                BigDecimal.ZERO,
-                savedMenuGroup.getId(),
-                menuProducts
+        final Menu menu = Menu.withEmptyMenuProducts(
+                new Name("테스트용 메뉴명"),
+                Price.from("0"),
+                savedMenuGroup
         );
+        menu.addMenuProducts(unsavedMenuProducts);
 
         // when
-        final Menu expected = menuService.create(menu);
-        final List<Menu> actual = menuService.list();
+        final Menu savedMenu = menuRepository.save(menu);
+        final MenuResponse expected = MenuResponse.from(savedMenu);
+        final List<MenuResponse> actual = menuService.list();
 
         // then
         assertSoftly(softly -> {
             softly.assertThat(actual).hasSize(1);
-            final Menu actualMenu = actual.get(0);
+            final MenuResponse actualMenu = actual.get(0);
 
             softly.assertThat(actualMenu.getId()).isEqualTo(expected.getId());
             softly.assertThat(actualMenu.getName()).isEqualTo(expected.getName());
             softly.assertThat(actualMenu.getPrice()).isEqualTo(expected.getPrice());
-            softly.assertThat(actualMenu.getMenuGroupId()).isEqualTo(expected.getMenuGroupId());
+            softly.assertThat(actualMenu.getMenuGroup())
+                    .usingRecursiveComparison()
+                    .isEqualTo(expected.getMenuGroup());
             softly.assertThat(actualMenu.getMenuProducts())
                     .usingRecursiveComparison()
                     .isEqualTo(expected.getMenuProducts());
