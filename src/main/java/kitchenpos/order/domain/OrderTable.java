@@ -9,8 +9,8 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.BaseEntity;
-import kitchenpos.domain.TableGroup;
+import suppoert.domain.BaseEntity;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable extends BaseEntity {

@@ -2,7 +2,7 @@ package kitchenpos.menu.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import kitchenpos.domain.BaseEntity;
+import suppoert.domain.BaseEntity;
 
 @Entity
 public class MenuGroup extends BaseEntity {

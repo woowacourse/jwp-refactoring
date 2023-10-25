@@ -9,7 +9,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.BaseEntity;
+import suppoert.domain.BaseEntity;
 import kitchenpos.product.domain.Price;
 
 @Entity

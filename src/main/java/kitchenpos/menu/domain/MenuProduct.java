@@ -6,7 +6,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import kitchenpos.domain.BaseEntity;
+import suppoert.domain.BaseEntity;
 import kitchenpos.product.domain.Product;
 
 @Entity

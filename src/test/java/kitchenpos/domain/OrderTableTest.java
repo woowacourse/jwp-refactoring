@@ -9,6 +9,7 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.product.domain.Price;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

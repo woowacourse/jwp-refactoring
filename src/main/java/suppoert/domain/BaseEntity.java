@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package suppoert.domain;
 
 import java.util.Objects;
 import javax.persistence.GeneratedValue;

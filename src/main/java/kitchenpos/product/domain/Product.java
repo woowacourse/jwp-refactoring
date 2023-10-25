@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import kitchenpos.domain.BaseEntity;
+import suppoert.domain.BaseEntity;
 
 @Entity
 public class Product extends BaseEntity {
