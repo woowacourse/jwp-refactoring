@@ -3,9 +3,9 @@ package kitchenpos.common;
 import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestContext;
-import org.springframework.test.context.support.AbstractTestExecutionListener;
+import org.springframework.test.context.TestExecutionListener;
 
-public class ServiceTestExecutionListener extends AbstractTestExecutionListener {
+public class ServiceTestExecutionListener implements TestExecutionListener {
 
     private static final List<String> INCLUDE_ID_TABLE_NAMES
             = List.of("MENU", "MENU_GROUP", "ORDERS", "ORDER_TABLE", "PRODUCT", "TABLE_GROUP");
