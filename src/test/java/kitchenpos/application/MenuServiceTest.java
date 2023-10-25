@@ -38,7 +38,7 @@ class MenuServiceTest extends ServiceTest {
         product = new Product("product", new BigDecimal(PRODUCT_PRICE));
         product = testFixtureBuilder.buildProduct(product);
 
-        menuProduct = new MenuProduct(product.getId(), 1);
+        menuProduct = new MenuProduct(product, 1);
     }
 
     @DisplayName("메뉴 생성 테스트")

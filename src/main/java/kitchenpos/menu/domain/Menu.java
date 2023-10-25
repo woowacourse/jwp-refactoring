@@ -36,10 +36,21 @@ public class Menu {
     }
 
     public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        this.name = name;
         this.price = new Price(price);
+        validatePriceLessThenProductsSum(menuProducts, price);
+        this.name = name;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    private void validatePriceLessThenProductsSum(final List<MenuProduct> menuProducts, final BigDecimal price) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -60,10 +71,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void addMenuProduct(final MenuProduct menuProduct) {
-        this.menuProducts = new ArrayList<>(this.menuProducts);
-        this.menuProducts.add(menuProduct);
     }
 }

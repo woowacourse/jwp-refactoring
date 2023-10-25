@@ -39,9 +39,9 @@ class OrderServiceTest extends ServiceTest {
         menuGroup = testFixtureBuilder.buildMenuGroup(menuGroup);
 
         menus = new ArrayList<>();
-        Menu menu1 = new Menu("name", new BigDecimal(100), menuGroup.getId(), Collections.emptyList());
+        Menu menu1 = new Menu("name", new BigDecimal(0), menuGroup.getId(), Collections.emptyList());
         menus.add(testFixtureBuilder.buildMenu(menu1));
-        Menu menu2 = new Menu("name", new BigDecimal(100), menuGroup.getId(), Collections.emptyList());
+        Menu menu2 = new Menu("name", new BigDecimal(0), menuGroup.getId(), Collections.emptyList());
         menus.add(testFixtureBuilder.buildMenu(menu2));
 
         orderTable = new OrderTable(null, 3, false);
