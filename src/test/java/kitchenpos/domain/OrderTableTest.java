@@ -149,4 +149,37 @@ public class OrderTableTest {
     @Nested
     class ungroup_실패_테스트 {
     }
+
+    @Nested
+    class findTableGroupId_성공_테스트 {
+
+        @Test
+        void 단체_테이블이_존재하면_해당_ID를_반환한다() {
+            // given
+            final var orderTable = new OrderTable(new TableGroup(1L), 3, true);
+
+            // when
+            final var actual = orderTable.findTableGroupId();
+
+            // then
+            assertThat(actual).isEqualTo(1L);
+        }
+
+        @Test
+        void 단쳬_테이블이_존재하지_않으면_NULL을_반환한다() {
+            // given
+            final var orderTable = new OrderTable(null, 3, true);
+
+            // when
+            final var actual = orderTable.findTableGroupId();
+
+            // then
+            assertThat(actual).isNull();
+        }
+    }
+
+    @Nested
+    class findTableGroupId_실패_테스트 {
+
+    }
 }

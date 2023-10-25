@@ -35,6 +35,10 @@ public class TableGroup {
     protected TableGroup() {
     }
 
+    public TableGroup(final Long id) {
+        this.id = id;
+    }
+
     public static TableGroup create() {
         return new TableGroup();
     }

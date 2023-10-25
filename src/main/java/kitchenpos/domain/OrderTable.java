@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -71,6 +72,13 @@ public class OrderTable {
     public void ungroup() {
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    public Long findTableGroupId() {
+        if (Objects.isNull(this.tableGroup)) {
+            return null;
+        }
+        return this.tableGroup.getId();
     }
 
     public Long getId() {

@@ -23,25 +23,16 @@ public class TableService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                        final TableGroupRepository tableGroupRepository) {
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupRepository = tableGroupRepository;
     }
 
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        final TableGroup findTableGroup = TableGroup.create();
-        final OrderTable orderTable = new OrderTable(findTableGroup, request.getNumberOfGuests(), request.isEmpty());
+        final OrderTable orderTable = new OrderTable(null, request.getNumberOfGuests(), request.isEmpty());
         orderTableRepository.save(orderTable);
         return OrderTableResponse.from(orderTable);
-    }
-
-    private TableGroup findTableGroup(final Long tableGroupId) {
-        return tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 테이블 그룹입니다."));
     }
 
     @Transactional(readOnly = true)
