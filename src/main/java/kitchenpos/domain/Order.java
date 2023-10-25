@@ -96,6 +96,10 @@ public class Order {
         }
     }
 
+    public boolean isNotCompletion() {
+        return this.orderStatus != OrderStatus.COMPLETION;
+    }
+
     public void applyOrderLineItem(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }

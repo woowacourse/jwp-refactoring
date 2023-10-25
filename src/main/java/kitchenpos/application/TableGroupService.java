@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -72,8 +73,12 @@ public class TableGroupService {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
+        final List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
+        orders.forEach(this::validateCompletion);
+    }
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, INCLUDE_ORDER_STATUS)) {
+    private void validateCompletion(final Order order) {
+        if (order.isNotCompletion()) {
             throw new IllegalArgumentException("[ERROR] 아직 모든 주문이 완료되지 않았습니다.");
         }
     }
