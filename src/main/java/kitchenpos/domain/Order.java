@@ -40,6 +40,13 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException("계산 완료된 주문은 주문 상태를 변경할 수 없습니다.");
+        }
+        this.orderStatus = orderStatus.name();
+    }
+
     public Long getId() {
         return id;
     }

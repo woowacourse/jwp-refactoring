@@ -76,19 +76,13 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(Long orderId, OrderStatus orderStatus) {
-        final Order savedOrder = orderDao.findById(orderId)
+        Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrder.setOrderStatus(orderStatus.name());
-
+        savedOrder.changeOrderStatus(orderStatus);
         orderDao.save(savedOrder);
 
         savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
         return savedOrder;
     }
 }
