@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.CHICKEN_MENU_PRODUCT;
 import static kitchenpos.fixture.MenuFixture.CHICKEN_MENU_PRODUCT_REQUEST;
 import static kitchenpos.fixture.MenuFixture.CHICKEN_SET_MENU_REQUEST;
 import static kitchenpos.fixture.MenuFixture.createChickenSetMenuById;
@@ -11,10 +10,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,18 +24,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
 
     @BeforeEach
     void setUp() {
-        productDao.save(createChickenProductById(null));
-        menuGroupDao.save(createChickenSetMenuGroupById(null));
+        productRepository.save(createChickenProductById(null));
+        menuGroupRepository.save(createChickenSetMenuGroupById(null));
     }
 
     @Nested
@@ -141,6 +139,7 @@ class MenuServiceTest {
 
         // then
         assertThat(menus)
+                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(createdMenu1, createdMenu2));
     }

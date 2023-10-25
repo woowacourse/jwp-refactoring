@@ -5,12 +5,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.exception.InvalidOrderException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,22 +22,19 @@ public class OrderValidatorTest {
     private OrderValidator orderValidator;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private Menu menu;
     private MenuGroup menuGroup;
@@ -46,13 +42,13 @@ public class OrderValidatorTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-        final Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        menu = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
-                List.of(new MenuProduct(null, null, product.getId(), 1))));
-        menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
-        final TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 6, false));
+        menuGroup = menuGroupRepository
+                .save(new MenuGroup("메뉴그룹"));
+        final Product product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menu = menuRepository.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
+                List.of(new MenuProduct(null, product.getId(), 1))));
+        final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), null));
+        orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 6, false));
     }
 
     @Test
@@ -84,7 +80,7 @@ public class OrderValidatorTest {
         // given
         final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
         orderTable.changeEmpty(true);
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
         final Order order = new Order(orderTable.getId(), List.of(orderLineItem));
 
         // when & then

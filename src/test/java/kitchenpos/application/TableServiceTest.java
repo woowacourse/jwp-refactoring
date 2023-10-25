@@ -9,14 +9,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.dto.OrderTableNumberOfGuestsChangeRequest;
 import kitchenpos.dto.OrderTableRequest;
@@ -31,13 +31,13 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void create_메서드는_주문_테이블을_생성한다() {
@@ -53,7 +53,7 @@ class TableServiceTest {
     @Test
     void list_메서드는_모든_주문_테이블을_조회한다() {
         // given
-        final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
+        final OrderTable orderTable = orderTableRepository.save(EMPTY_TABLE);
 
         // when
         final List<OrderTable> tables = tableService.list();
@@ -94,12 +94,10 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_그룹에_속해있으면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
+            final OrderTable orderTable = orderTableRepository.save(EMPTY_TABLE);
             final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(orderTable));
-            final TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
+            final TableGroup createdTableGroup = tableGroupRepository.save(tableGroup);
 
-            orderTable.setTableGroupId(createdTableGroup.getId());
-            orderTableDao.save(orderTable);
             final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             // when & then
@@ -110,10 +108,10 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_주문_상태가_요리중이라면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
+            final OrderTable orderTable = orderTableRepository.save(EMPTY_TABLE);
             final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1)));
-            orderDao.save(order);
+            orderRepository.save(order);
             final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             // when & then
@@ -124,10 +122,10 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_주문_상태가_식사중이라면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(EMPTY_TABLE);
+            final OrderTable orderTable = orderTableRepository.save(EMPTY_TABLE);
             final Order order = new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(),
                     List.of(new OrderLineItem(null, 1L, 1)));
-            orderDao.save(order);
+            orderRepository.save(order);
             final OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(false);
 
             // when & then
@@ -142,7 +140,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블의_손님수를_변경한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(createTableById(null));
+            final OrderTable orderTable = orderTableRepository.save(createTableById(null));
 
             // when
             final OrderTableNumberOfGuestsChangeRequest request = new OrderTableNumberOfGuestsChangeRequest(10);
@@ -166,7 +164,7 @@ class TableServiceTest {
         @Test
         void 주문_테이블이_주문_불가능한_상태이면_예외가_발생한다() {
             // given
-            final OrderTable orderTable = orderTableDao.save(createTableByEmpty(true));
+            final OrderTable orderTable = orderTableRepository.save(createTableByEmpty(true));
 
             // when & then
             final OrderTableNumberOfGuestsChangeRequest request = new OrderTableNumberOfGuestsChangeRequest(10);

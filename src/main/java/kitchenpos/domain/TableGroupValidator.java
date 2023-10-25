@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -11,10 +11,10 @@ import org.springframework.util.CollectionUtils;
 public class TableGroupValidator {
     private static final int ORDER_TABLE_MIN_SIZE = 2;
 
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableGroupValidator(final OrderTableDao orderTableDao) {
-        this.orderTableDao = orderTableDao;
+    public TableGroupValidator(final OrderTableRepository orderTableRepository) {
+        this.orderTableRepository = orderTableRepository;
     }
 
     public void validate(final TableGroup tableGroup) {
@@ -33,7 +33,7 @@ public class TableGroupValidator {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();

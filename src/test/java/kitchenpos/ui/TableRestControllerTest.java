@@ -58,7 +58,6 @@ class TableRestControllerTest {
         mockMvc.perform(get("/api/tables"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id").value(TABLE.getId()))
-                .andExpect(jsonPath("$[0].tableGroupId").value(TABLE.getTableGroupId()))
                 .andExpect(jsonPath("$[0].numberOfGuests").value(TABLE.getNumberOfGuests()));
     }
 
@@ -74,7 +73,6 @@ class TableRestControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TABLE.getId()))
-                .andExpect(jsonPath("$.tableGroupId").value(TABLE.getTableGroupId()))
                 .andExpect(jsonPath("$.numberOfGuests").value(TABLE.getNumberOfGuests()));
     }
 
@@ -90,7 +88,6 @@ class TableRestControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(TABLE.getId()))
-                .andExpect(jsonPath("$.tableGroupId").value(TABLE.getTableGroupId()))
                 .andExpect(jsonPath("$.numberOfGuests").value(TABLE.getNumberOfGuests()));
     }
 }

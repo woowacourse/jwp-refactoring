@@ -2,24 +2,24 @@ package kitchenpos.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.InvalidOrderException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderValidator {
-    private final MenuDao menuDao;
-    private final OrderTableDao orderTableDao;
+    private final MenuRepository menuRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderValidator(final MenuDao menuDao, final OrderTableDao orderTableDao) {
-        this.menuDao = menuDao;
-        this.orderTableDao = orderTableDao;
+    public OrderValidator(final MenuRepository menuRepository, final OrderTableRepository orderTableRepository) {
+        this.menuRepository = menuRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     public void validate(final Order order) {
         validateOrderLineItemHasDistinctMenu(order.getOrderLineItems());
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(() -> new InvalidOrderException("주문 테이블이 존재하지 않습니다."));
         validateOrderTableIsEmpty(orderTable);
     }
@@ -28,7 +28,7 @@ public class OrderValidator {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new InvalidOrderException("주문 항목의 메뉴는 중복될 수 없습니다.");
         }
     }

@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 class ProductServiceTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -37,14 +37,15 @@ class ProductServiceTest {
     @Test
     void list_메서드는_모든_상품을_조회한다() {
         // given
-        final Product chicken = productDao.save(CHICKEN_NON_ID);
-        final Product coke = productDao.save(COKE_NON_ID);
+        final Product chicken = productRepository.save(CHICKEN_NON_ID);
+        final Product coke = productRepository.save(COKE_NON_ID);
 
         // when
         final List<Product> products = productService.list();
 
         // then
         assertThat(products)
+                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(chicken, coke));
     }

@@ -2,8 +2,8 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.exception.InvalidMenuException;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 public class MenuValidator {
     private static final int ZERO = 0;
 
-    private final MenuGroupDao menuGroupDao;
-    private final ProductDao productDao;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
-    public MenuValidator(final MenuGroupDao menuGroupDao, final ProductDao productDao) {
-        this.menuGroupDao = menuGroupDao;
-        this.productDao = productDao;
+    public MenuValidator(final MenuGroupRepository menuGroupRepository, final ProductRepository productRepository) {
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     public void validate(final Menu menu) {
@@ -25,7 +25,7 @@ public class MenuValidator {
     }
 
     private void validateMenuGroupIsExist(final Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new InvalidMenuException("존재하지 않는 메뉴 그룹 아이디입니다.");
         }
     }
@@ -34,7 +34,7 @@ public class MenuValidator {
                                                        final List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }

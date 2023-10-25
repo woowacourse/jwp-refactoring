@@ -1,15 +1,27 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import kitchenpos.exception.InvalidOrderException;
 
+@Entity(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
     private String orderStatus;
+
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
@@ -24,7 +36,7 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus,
                  final List<OrderLineItem> orderLineItems) {
-        this(id, orderTableId, orderStatus, null, orderLineItems);
+        this(id, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
@@ -34,20 +46,20 @@ public class Order {
 
     public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
-        validateOrderTableId(orderTableId);
+//        validateOrderTableId(orderTableId);
         validateOrderLineItems(orderLineItems);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderedTime = orderedTime.truncatedTo(ChronoUnit.MICROS);
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 
-    private void validateOrderTableId(final Long orderTableId) {
-        if (orderTableId == null) {
-            throw new InvalidOrderException("주문 테이블의 Id는 null일 수 없습니다.");
-        }
-    }
+//    private void validateOrderTableId(final Long orderTableId) {
+//        if (orderTableId == null) {
+//            throw new InvalidOrderException("주문 테이블의 Id는 null일 수 없습니다.");
+//        }
+//    }
 
     private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
         if (orderLineItems.isEmpty()) {
@@ -95,10 +107,10 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new OrderLineItems(orderLineItems);
     }
 }

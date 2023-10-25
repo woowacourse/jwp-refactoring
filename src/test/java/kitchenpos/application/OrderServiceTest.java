@@ -6,15 +6,9 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -24,6 +18,12 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
@@ -40,25 +40,22 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private Menu menu;
     private MenuGroup menuGroup;
@@ -67,13 +64,13 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-        final Product product = productDao.save(new Product("치킨", BigDecimal.valueOf(10000)));
-        menu = menuDao.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
-                List.of(new MenuProduct(null, null, product.getId(), 1))));
-        menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
-        tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), null));
-        orderTable = orderTableDao.save(new OrderTable(tableGroup.getId(), 6, false));
+        menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
+        final Product product = productRepository.save(new Product("치킨", BigDecimal.valueOf(10000)));
+        menu = menuRepository.save(new Menu("치킨 세트 메뉴", new BigDecimal(20000), menuGroup.getId(),
+                List.of(new MenuProduct(null, product.getId(), 1))));
+//        menuProductRepository.save(new MenuProduct(null, product.getId(), 1));
+        tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now(), null));
+        orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 6, false));
     }
 
     @Nested
@@ -173,7 +170,7 @@ class OrderServiceTest {
             // given
             final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
             orderTable.changeEmpty(true);
-            orderTableDao.save(orderTable);
+            orderTableRepository.save(orderTable);
             final OrderRequest order = new OrderRequest(
                     orderTable.getId(),
                     List.of(orderLineItemRequest)
@@ -204,6 +201,7 @@ class OrderServiceTest {
         final List<Order> orders = orderService.list();
 
         // then
+        System.out.println(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         assertThat(orders)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(createdOrder1, createdOrder2));
@@ -232,16 +230,11 @@ class OrderServiceTest {
         @Test
         void 존재하지_않는_주문의_상태를_변경하면_예외가_발생한다() {
             // given
-            final OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 1);
-            final Order uncreatedOrder = new Order(
-                    orderTable.getId(),
-                    OrderStatus.MEAL.name(),
-                    List.of(orderLineItem)
-            );
+            final long nonExistOrderId = 99L;
 
             // when & then
             final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("MEAL");
-            assertThatThrownBy(() -> orderService.changeOrderStatus(uncreatedOrder.getId(), orderStatusChangeRequest))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(nonExistOrderId, orderStatusChangeRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -255,7 +248,7 @@ class OrderServiceTest {
                     LocalDateTime.now(),
                     List.of(orderLineItem)
             );
-            final Order completedOrder = orderDao.save(order);
+            final Order completedOrder = orderRepository.save(order);
 
             // when & then
             final OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("MEAL");
