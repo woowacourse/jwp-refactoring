@@ -1,12 +1,11 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import static javax.persistence.CascadeType.REMOVE;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -18,17 +17,8 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", cascade = REMOVE)
-    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId) {
@@ -59,7 +49,4 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
 }
