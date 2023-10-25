@@ -20,8 +20,8 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Convert(converter = ProductPriceConverter.class)
-    private ProductPrice price;
+    @Convert(converter = PriceConverter.class)
+    private Price price;
 
     public Product() {
     }
@@ -29,7 +29,7 @@ public class Product {
     public Product(String name, BigDecimal price) {
         this.id = null;
         this.name = name;
-        this.price = new ProductPrice(price);
+        this.price = new Price(price);
     }
 
     public BigDecimal multiplyWithQuantity(long quantity) {

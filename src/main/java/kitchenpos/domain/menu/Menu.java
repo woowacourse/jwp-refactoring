@@ -1,5 +1,8 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.product.Price;
+import kitchenpos.domain.product.PriceConverter;
+
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -20,8 +23,8 @@ public class Menu {
 
     private String name;
 
-    @Convert(converter = MenuPriceConverter.class)
-    private MenuPrice price;
+    @Convert(converter = PriceConverter.class)
+    private Price price;
 
     private Long menuGroupId;
 
@@ -34,7 +37,7 @@ public class Menu {
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = null;
         this.name = name;
-        this.price = new MenuPrice(price);
+        this.price = new Price(price);
         this.menuGroupId = menuGroupId;
         this.menuProducts = new MenuProducts(menuProducts);
         validateMenuProductsPrice(this.menuProducts);
