@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import kitchenpos.domain.table.NumberOfGuests;
 import org.junit.jupiter.api.DisplayName;
