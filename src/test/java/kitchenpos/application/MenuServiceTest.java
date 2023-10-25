@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
 import com.sun.tools.javac.util.List;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
-import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class MenuServiceTest {
     private Product savedProduct;
     private MenuGroup savedMenuGroup;
     private MenuProduct savedMenuProduct;
-    private MenuResponse savedMenuResponse;
+    private Menu savedMenu;
 
     @BeforeEach
     void setup() {
@@ -57,7 +57,7 @@ class MenuServiceTest {
 
         MenuProductRequest menuProductRequest = new MenuProductRequest(savedProduct.getId(), 2L);
         MenuRequest menuRequest = new MenuRequest("두마리치킨", BigDecimal.valueOf(20000L), savedMenuGroup.getId(), List.of(menuProductRequest));
-        savedMenuResponse = menuService.create(menuRequest);
+        savedMenu = menuService.create(menuRequest);
     }
 
     @Test
@@ -65,10 +65,10 @@ class MenuServiceTest {
     void succeedInRegisteringMenu() {
         //given & when & then
         assertSoftly(softly -> {
-            softly.assertThat(savedMenuResponse.getId()).isNotNull();
-            softly.assertThat(savedMenuResponse.getName()).isEqualTo("두마리치킨");
-            softly.assertThat(savedMenuResponse.getMenuGroupId()).isEqualTo(savedMenuGroup.getId());
-            softly.assertThat(savedMenuResponse.getMenuProducts()).hasSize(1);
+            softly.assertThat(savedMenu.getId()).isNotNull();
+            softly.assertThat(savedMenu.getName()).isEqualTo("두마리치킨");
+            softly.assertThat(savedMenu.getMenuGroupId()).isEqualTo(savedMenuGroup.getId());
+            softly.assertThat(savedMenu.getMenuProducts()).hasSize(1);
         });
     }
 

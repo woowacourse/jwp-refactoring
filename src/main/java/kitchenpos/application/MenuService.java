@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
-import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +41,7 @@ public class MenuService {
 
 
     @Transactional
-    public MenuResponse create(MenuRequest menuRequest) {
+    public Menu create(MenuRequest menuRequest) {
         if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴 그룹입니다.");
         }
@@ -59,7 +58,7 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return MenuResponse.of(savedMenu);
+        return savedMenu;
     }
 
 

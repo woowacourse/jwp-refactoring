@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.menugroup.MenuGroupRequest;
-import kitchenpos.dto.menugroup.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ class MenuGroupServiceTest {
         MenuGroupRequest menuGroup = new MenuGroupRequest(menuGroupName);
 
         // when
-        MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         // then
         assertSoftly(softly -> {
@@ -48,6 +48,6 @@ class MenuGroupServiceTest {
         menuGroupService.create(menuGroupB);
 
         // then
-        assertThat(menuGroupService.list().getMenuGroupsResponse()).hasSize(2);
+        assertThat(menuGroupService.list()).hasSize(2);
     }
 }

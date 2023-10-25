@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Product;
 import kitchenpos.dto.product.ProductRequest;
-import kitchenpos.dto.product.ProductResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,12 +28,12 @@ class ProductServiceTest {
         ProductRequest request = new ProductRequest("치킨", BigDecimal.valueOf(17000L));
 
         //when
-        ProductResponse response = productService.create(request);
+        Product savedProduct = productService.create(request);
 
         //then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(response.getId()).isNotNull();
-            softly.assertThat(response.getName()).isEqualTo("치킨");
+            softly.assertThat(savedProduct.getId()).isNotNull();
+            softly.assertThat(savedProduct.getName()).isEqualTo("치킨");
         });
     }
 
@@ -59,6 +59,6 @@ class ProductServiceTest {
         productService.create(productB);
 
         //when & then
-        assertThat(productService.list().getProducts()).hasSize(2);
+        assertThat(productService.list()).hasSize(2);
     }
 }
