@@ -13,6 +13,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuDto;
 import kitchenpos.dto.MenuProductDto;
+import kitchenpos.exception.CustomException;
+import kitchenpos.exception.ExceptionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,5 +86,10 @@ public class MenuService {
         }
 
         return menuDtos;
+    }
+
+    public Menu findById(Long menuId) {
+        return menuDao.findById(menuId)
+                      .orElseThrow(() -> new CustomException(ExceptionType.MENU_NOT_FOUND));
     }
 }

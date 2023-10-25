@@ -1,6 +1,7 @@
 package kitchenpos.fixture;
 
 import java.util.function.Consumer;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableDto;
 
 public enum OrderTableFixture {
@@ -39,5 +40,13 @@ public enum OrderTableFixture {
         table.setEmpty(empty);
         table.setTableGroupId(tableGroupId);
         return table;
+    }
+
+    public OrderTable toEntity() {
+        return new OrderTable.Builder()
+            .setTableGroup(null)
+            .setNumberOfGuests(numberOfGuests)
+            .setEmpty(empty)
+            .build();
     }
 }

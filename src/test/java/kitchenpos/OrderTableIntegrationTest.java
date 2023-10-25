@@ -126,7 +126,7 @@ class OrderTableIntegrationTest extends IntegrationTest {
         OrderTableDto table = OrderTableFixture.computeDefaultOrderTableDto(arg -> {
             arg.setId(1L);
         });
-        OrderDto orderDto = OrderFixture.computeDefaultOrder(arg -> {
+        OrderDto orderDto = OrderFixture.computeDefaultOrderDto(arg -> {
             arg.setOrderStatus(orderStatus.name());
             arg.setOrderTableId(table.getId());
         });

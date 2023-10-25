@@ -31,7 +31,7 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문을 등록할 수 있다.")
     void create_success() {
         // given
-        OrderDto expected = OrderFixture.ORDER_1.toEntity();
+        OrderDto expected = OrderFixture.ORDER_1.toDto();
 
         // when
         steps.createOrder(expected);
@@ -51,7 +51,7 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문 목록을 조회할 수 있다.")
     void listOrders_success() {
         // given
-        steps.createOrder(OrderFixture.ORDER_1.toEntity());
+        steps.createOrder(OrderFixture.ORDER_1.toDto());
 
         // when
         List<OrderDto> actual = RestAssured.given().log().all()
@@ -68,7 +68,7 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus_success() {
         // given
-        OrderDto orderDto = OrderFixture.ORDER_1.toEntity();
+        OrderDto orderDto = OrderFixture.ORDER_1.toDto();
         steps.createOrder(orderDto);
 
         // when
@@ -84,7 +84,7 @@ class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문 상태가 이미 Completion이면 변경할 수 없다.")
     void changeOrderStatus_failure() {
         // given
-        OrderDto orderDto = OrderFixture.ORDER_1.toEntity();
+        OrderDto orderDto = OrderFixture.ORDER_1.toDto();
         steps.createOrder(orderDto);
         orderDto.setOrderStatus("COMPLETION");
         steps.changeOrderStatus(orderDto.getId(), orderDto);

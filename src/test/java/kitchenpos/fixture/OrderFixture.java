@@ -1,7 +1,11 @@
 package kitchenpos.fixture;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderDto;
 import kitchenpos.dto.OrderLineItemDto;
 
@@ -10,14 +14,19 @@ public enum OrderFixture {
     ORDER_1(1L, 1L, "COOKING", null, List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toDto())),
     ;
 
-    private final Long id;
-    private final Long orderTableId;
-    private final String orderStatus;
-    private final String orderedTime;
-    private final List<OrderLineItemDto> orderLineItemDtos;
+    public final Long id;
+    public final Long orderTableId;
+    public final String orderStatus;
+    public final String orderedTime;
+    public final List<OrderLineItemDto> orderLineItemDtos;
 
-    OrderFixture(Long id, Long orderTableId, String orderStatus, String orderedTime,
-        List<OrderLineItemDto> orderLineItemDtos) {
+    OrderFixture(
+        Long id,
+        Long orderTableId,
+        String orderStatus,
+        String orderedTime,
+        List<OrderLineItemDto> orderLineItemDtos
+    ) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -25,7 +34,7 @@ public enum OrderFixture {
         this.orderLineItemDtos = orderLineItemDtos;
     }
 
-    public static OrderDto computeDefaultOrder(Consumer<OrderDto> consumer) {
+    public static OrderDto computeDefaultOrderDto(Consumer<OrderDto> consumer) {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(1L);
         orderDto.setOrderTableId(1L);
@@ -36,7 +45,7 @@ public enum OrderFixture {
         return orderDto;
     }
 
-    public OrderDto toEntity() {
+    public OrderDto toDto() {
         OrderDto orderDto = new OrderDto();
         orderDto.setId(id);
         orderDto.setOrderTableId(orderTableId);
@@ -46,7 +55,16 @@ public enum OrderFixture {
         return orderDto;
     }
 
-    private enum OrderLineItemFixture {
+    public Order toEntity() {
+        return new Order.Builder()
+            .orderTable(OrderTableFixture.OCCUPIED_TABLE.toEntity())
+            .orderLineItems(List.of(OrderLineItemFixture.ORDER_LINE_ITEM_1.toEntity()))
+            .orderStatus(OrderStatus.COOKING)
+            .orderedTime(LocalDateTime.now())
+            .build();
+    }
+
+    public enum OrderLineItemFixture {
 
         ORDER_LINE_ITEM_1(1L, 1L, 1L, 1L),
         ;
@@ -63,13 +81,20 @@ public enum OrderFixture {
             this.quantity = quantity;
         }
 
-        private OrderLineItemDto toDto() {
+        public OrderLineItemDto toDto() {
             OrderLineItemDto orderLineItemDto = new OrderLineItemDto();
             orderLineItemDto.setSeq(seq);
             orderLineItemDto.setOrderId(orderId);
             orderLineItemDto.setMenuId(menuId);
             orderLineItemDto.setQuantity(quantity);
             return orderLineItemDto;
+        }
+
+        public OrderLineItem toEntity() {
+            return new OrderLineItem.Builder()
+                .menu(MenuFixture.LUNCH_SPECIAL.toEntity())
+                .quantity(quantity)
+                .build();
         }
     }
 }

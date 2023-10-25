@@ -26,10 +26,14 @@ public class TableGroup {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables == null ? new ArrayList<>() : orderTables;
+        for (OrderTable orderTable : this.orderTables) {
+            orderTable.setTableGroup(this);
+        }
     }
 
     public void addOrderTable(OrderTable orderTable) {
         orderTables.add(orderTable);
+        orderTable.setTableGroup(this);
     }
 
     public Long getId() {
