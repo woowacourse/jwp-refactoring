@@ -1,5 +1,8 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.Test;
 
 import static java.time.LocalDateTime.now;

@@ -1,6 +1,6 @@
-package kitchenpos.domain.menu.service.dto;
+package kitchenpos.domain.product.service.dto;
 
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 
 public class ProductResponse {
 

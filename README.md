@@ -68,5 +68,5 @@
 - [x] Transaction readonly를 적용한다.
 
 ### 3단계
-- [ ] 패키지를 product, table, menu, order 로 분리한다.
+- [x] 패키지를 product, table, menu, order 로 분리한다.
 - [ ] 각각의 패키지간 참조를 간접 참조로 변경한다.

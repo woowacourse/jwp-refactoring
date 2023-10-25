@@ -1,8 +1,8 @@
 package kitchenpos.application.fixture;
 
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.OrderTables;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTables;
+import kitchenpos.domain.table.TableGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;

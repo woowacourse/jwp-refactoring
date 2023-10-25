@@ -5,8 +5,8 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
+import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

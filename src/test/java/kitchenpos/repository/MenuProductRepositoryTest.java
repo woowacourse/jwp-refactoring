@@ -4,8 +4,8 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuProductRepository;
+import kitchenpos.domain.product.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

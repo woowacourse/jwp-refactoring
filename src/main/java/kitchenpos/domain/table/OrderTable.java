@@ -1,4 +1,4 @@
-package kitchenpos.domain.order;
+package kitchenpos.domain.table;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
