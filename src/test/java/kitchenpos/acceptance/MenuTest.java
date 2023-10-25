@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.Acceptance;
+import kitchenpos.AcceptanceTest;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-class MenuTest extends Acceptance {
+class MenuTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;

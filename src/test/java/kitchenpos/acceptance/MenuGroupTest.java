@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.Acceptance;
+import kitchenpos.AcceptanceTest;
 import kitchenpos.dto.request.CreateMenuGroupRequest;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import static kitchenpos.fixture.MenuGroupFixture.REQUEST;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-class MenuGroupTest extends Acceptance {
+class MenuGroupTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;

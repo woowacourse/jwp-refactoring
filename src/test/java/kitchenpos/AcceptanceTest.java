@@ -9,5 +9,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 @ExtendWith(DatabaseClearExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class Acceptance {
+public class AcceptanceTest {
 }

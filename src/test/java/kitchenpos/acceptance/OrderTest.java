@@ -5,7 +5,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.Acceptance;
+import kitchenpos.AcceptanceTest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-class OrderTest extends Acceptance {
+class OrderTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;

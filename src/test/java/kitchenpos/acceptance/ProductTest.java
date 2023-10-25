@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.Acceptance;
+import kitchenpos.AcceptanceTest;
 import kitchenpos.dto.request.CreateProductRequest;
 import kitchenpos.dto.response.CreateProductResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-class ProductTest extends Acceptance {
+class ProductTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;

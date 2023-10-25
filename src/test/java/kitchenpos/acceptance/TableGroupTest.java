@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.Acceptance;
+import kitchenpos.AcceptanceTest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import static kitchenpos.fixture.TableGroupFixture.REQUEST;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-class TableGroupTest extends Acceptance {
+class TableGroupTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;

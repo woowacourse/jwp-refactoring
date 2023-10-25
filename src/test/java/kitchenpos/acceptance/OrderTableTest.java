@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.Acceptance;
+import kitchenpos.AcceptanceTest;
 import kitchenpos.dto.request.CreateOrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import org.assertj.core.api.Assertions;
@@ -16,7 +16,7 @@ import static kitchenpos.fixture.OrderTableFixture.REQUEST;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SuppressWarnings("NonAsciiCharacters")
-class OrderTableTest extends Acceptance {
+class OrderTableTest extends AcceptanceTest {
 
     @LocalServerPort
     private int port;
