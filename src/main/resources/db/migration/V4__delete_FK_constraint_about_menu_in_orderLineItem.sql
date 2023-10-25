@@ -1,0 +1,1 @@
+alter table order_line_item drop constraint fk_order_line_item_to_menu;
