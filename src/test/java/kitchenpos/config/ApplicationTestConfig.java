@@ -10,9 +10,11 @@ import kitchenpos.repository.ProductRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/truncate.sql")
+@Import(JpaAuditingConfig.class)
 @DataJpaTest
 public abstract class ApplicationTestConfig {
 

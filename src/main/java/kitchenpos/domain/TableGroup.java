@@ -1,23 +1,20 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
+import kitchenpos.common.BaseEntity;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class TableGroup {
+public class TableGroup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private LocalDateTime createdDate;
 
     @Embedded
     private OrderTables orderTables;
@@ -25,13 +22,12 @@ public class TableGroup {
     protected TableGroup() {
     }
 
-    protected TableGroup(final LocalDateTime createdDate, final OrderTables orderTables) {
-        this(null, createdDate, orderTables);
+    protected TableGroup(final OrderTables orderTables) {
+        this(null, orderTables);
     }
 
-    protected TableGroup(final Long id, final LocalDateTime createdDate, final OrderTables orderTables) {
+    protected TableGroup(final Long id, final OrderTables orderTables) {
         this.id = id;
-        this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
@@ -46,7 +42,7 @@ public class TableGroup {
             throw new IllegalArgumentException("비어있지 않은 주문 테이블을 단체 지정할 수 없습니다.");
         }
 
-        final TableGroup tableGroup = new TableGroup(LocalDateTime.now(), OrderTables.empty());
+        final TableGroup tableGroup = new TableGroup(OrderTables.empty());
         requestOrderTables.forEach(requestOrderTable -> requestOrderTable.changeOrderTableEmpty(false));
         tableGroup.addOrderTables(requestOrderTables);
 
@@ -61,10 +57,6 @@ public class TableGroup {
 
     public Long getId() {
         return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
     }
 
     public OrderTables getOrderTables() {

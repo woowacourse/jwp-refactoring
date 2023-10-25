@@ -6,9 +6,6 @@ import kitchenpos.domain.vo.Quantity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -22,7 +19,7 @@ class OrderLineItemTest {
         final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
 
         final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);;
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new OrderLineItems(new ArrayList<>()));
+        final Order order = Order.ofEmptyOrderLineItems(orderTable);
 
         // expect
         assertThatCode(() -> new OrderLineItem(order, menu, new Quantity(10)))
