@@ -16,22 +16,15 @@ class OrderTest {
     @Test
     @DisplayName("주문을 생성할 수 있다. 이때 주문 상태는 cooking, 주문 시간은 주문을 생성한 시간이 된다.")
     void init_success() {
-        Order order = Order.of(new OrderTable(10), List.of(OrderLineItem.of(1L, 10)));
+        Order order = Order.of(new OrderTable(10));
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
     }
 
     @Test
-    @DisplayName("주문에 상품 항목이 비어있으면 주문을 생성할 수 없다.")
-    void init_fail1() {
-        assertThatThrownBy(() -> Order.of(new OrderTable(10), Collections.EMPTY_LIST))
-                .isInstanceOf(EmptyOrderLineItemsException.class);
-    }
-
-    @Test
     @DisplayName("주문을 변경할 수 있다.")
     void changeOrderStatus_success() {
-        Order order = Order.of(new OrderTable(10), List.of(OrderLineItem.of(1L, 10)));
+        Order order = Order.of(new OrderTable(10));
         OrderStatus lastOrderStatus = order.getOrderStatus();
 
         order.changeOrderStatus(OrderStatus.MEAL);
@@ -46,7 +39,7 @@ class OrderTest {
     @Test
     @DisplayName("주문이 완료된 경우에는 주문을 변경할 수 없다.")
     void changeOrderStatus_fail2() {
-        Order order = Order.of(new OrderTable(10), List.of(OrderLineItem.of(1L, 10)));
+        Order order = Order.of(new OrderTable(10));
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))

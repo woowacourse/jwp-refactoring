@@ -19,13 +19,16 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.exception.OrderException.CompletionOrderException;
+import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
 import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
 import kitchenpos.domain.exception.OrderException.NotExistsMenuException;
 import kitchenpos.domain.exception.OrderException.NotExistsOrderException;
 import kitchenpos.domain.exception.OrderTableException.NotExistsOrderTableException;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,13 +50,13 @@ class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
+    private OrderLineItemRepository orderLineItemRepository;
+    @Mock
     private OrderTableRepository orderTableRepository;
 
 
-    private final OrderLineItem orderLineItem1 = OrderLineItem.of(1L, 10);
-    private final OrderLineItem orderLineItem2 = OrderLineItem.of(1L, 10);
     private final OrderTable orderTable = new OrderTable(10);
-    private final Order order = Order.of(orderTable, List.of(orderLineItem1, orderLineItem2));
+    private final Order order = Order.of(orderTable);
 
     @BeforeEach
     void init() {
@@ -74,7 +77,11 @@ class OrderServiceTest {
 
         orderService.create(orderRequest);
 
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+        SoftAssertions.assertSoftly(softAssertions -> {
+            assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+            verify(orderLineItemRepository, times(1)).saveAll(any());
+            verify(orderRepository, times(1)).save(any());
+        });
     }
 
     @Test
@@ -90,6 +97,18 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(NotExistsMenuException.class);
+    }
+
+    @Test
+    @DisplayName("주문을 생성할 때 주문 항목의 메뉴가 하나도 없으면 예외가 발생한다.")
+    void create_fail_orderLineItems_empty() {
+        when(orderTableRepository.getById(1L)).thenReturn(orderTable);
+
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
+
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+                .isInstanceOf(EmptyOrderLineItemsException.class);
     }
 
     @Test

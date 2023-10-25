@@ -24,10 +24,4 @@ public class OrderRequest {
     public List<OrderLineItemRequest> getOrderLineItemsRequest() {
         return orderLineItemsRequest;
     }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItemsRequest.stream()
-                .map(OrderLineItemRequest::toEntity)
-                .collect(Collectors.toList());
-    }
 }

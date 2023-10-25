@@ -1,8 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -12,14 +10,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import kitchenpos.domain.exception.OrderException.CompletionOrderException;
-import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.util.CollectionUtils;
 
 @Entity
 @Table(name = "orders")
@@ -37,29 +32,19 @@ public class Order {
     @Column
     @CreatedDate
     private LocalDateTime orderedTime;
-    @OneToMany(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "seq")
-    private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
 
     private Order(final OrderTable orderTable,
-                  final OrderStatus orderStatus,
-                  final List<OrderLineItem> orderLineItems) {
+                  final OrderStatus orderStatus) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
-        this.orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
     }
 
-    public static Order of(final OrderTable orderTable,
-                           final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new EmptyOrderLineItemsException();
-        }
+    public static Order of(final OrderTable orderTable) {
 
-        return new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        return new Order(orderTable, OrderStatus.COOKING);
     }
 
     public Long getId() {
@@ -83,9 +68,5 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.domain.exception.OrderLineItemException.InvalidMenuException;
 import org.springframework.lang.NonNull;
@@ -18,6 +19,7 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
     @Column
     @NonNull
@@ -28,14 +30,15 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    private OrderLineItem(final Long menuId, final long quantity) {
+    private OrderLineItem(final Order order, final Long menuId, final long quantity) {
+        this.order = order;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public static OrderLineItem of(final Long menuId, final long quantity) {
+    public static OrderLineItem of(final Order order, final Long menuId, final long quantity) {
         validateMenuId(menuId);
-        return new OrderLineItem(menuId, quantity);
+        return new OrderLineItem(order, menuId, quantity);
     }
 
     private static void validateMenuId(Long menuId) {
