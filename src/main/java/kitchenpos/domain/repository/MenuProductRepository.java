@@ -14,4 +14,6 @@ public interface MenuProductRepository {
     List<MenuProduct> findAll();
 
     List<MenuProduct> findAllByMenuId(Long menuId);
+
+    List<MenuProduct> saveAll(List<MenuProduct> menuProducts);
 }

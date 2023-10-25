@@ -15,16 +15,11 @@ public class CreateMenuRequest {
 
     private BigDecimal price;
 
-    public CreateMenuRequest(final Long id, final Long menuGroupId, final List<MenuProductDto> menuProductDtos, final String name, final BigDecimal price) {
-        this.id = id;
+    public CreateMenuRequest(final Long menuGroupId, final List<MenuProductDto> menuProductDtos, final String name, final BigDecimal price) {
         this.menuGroupId = menuGroupId;
         this.menuProductDtos = menuProductDtos;
         this.name = name;
         this.price = price;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Long getMenuGroupId() {

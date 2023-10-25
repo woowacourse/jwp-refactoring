@@ -1,9 +1,11 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embeddable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Embeddable
 public enum OrderStatus {
     COOKING, MEAL, COMPLETION;
 

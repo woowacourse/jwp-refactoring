@@ -29,7 +29,8 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(final Product product, final long quantity) {
+    public MenuProduct(final Menu menu, final Product product, final long quantity) {
+        this.menu = menu;
         this.product = product;
         this.quantity = quantity;
     }

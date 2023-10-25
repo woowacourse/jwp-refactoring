@@ -35,4 +35,9 @@ public class MenuProductRepositoryImpl implements MenuProductRepository {
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
         return jpaMenuProductRepository.findByMenuId(menuId);
     }
+
+    @Override
+    public List<MenuProduct> saveAll(final List<MenuProduct> menuProducts) {
+        return jpaMenuProductRepository.saveAll(menuProducts);
+    }
 }

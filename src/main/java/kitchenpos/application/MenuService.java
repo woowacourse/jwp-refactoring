@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Products;
 import kitchenpos.domain.repository.MenuGroupRepository;
@@ -43,15 +42,18 @@ public class MenuService {
                                                        .orElseThrow(() -> new IllegalArgumentException(
                                                                "존재하지 않는 메뉴 그룹입니다."
                                                        ));
+        final Menu menu = Menu.of(menuGroup, menuRequest.getName(), menuRequest.getPrice());
+        final Menu savedMenu = menuRepository.save(menu);
+
         final Products products = findProducts(menuRequest);
-        final MenuProducts menuProducts = new MenuProducts(new ArrayList<>());
+        final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
             final Product product = products.findProductById(menuProductDto.getProductId());
-            final MenuProduct menuProduct = new MenuProduct(product, menuProductDto.getQuantity());
-            menuProducts.add(menuProductRepository.save(menuProduct));
+            final MenuProduct menuProduct = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
+            menuProducts.add(menuProduct);
         }
-        final Menu menu = Menu.of(menuGroup, menuProducts, menuRequest.getName(), menuRequest.getPrice());
-        return menuRepository.save(menu);
+        menuProductRepository.saveAll(menuProducts);
+        return savedMenu;
     }
 
     private Products findProducts(final CreateMenuRequest menuRequest) {

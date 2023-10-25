@@ -39,33 +39,20 @@ public class Menu {
 
     public Menu(
             final MenuGroup menuGroup,
-            final List<MenuProduct> menuProducts,
             final Price price,
             final String name
     ) {
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
         this.price = price;
         this.name = name;
     }
 
     public static Menu of(
             final MenuGroup menuGroup,
-            final MenuProducts menuProducts,
             final String name,
             final BigDecimal price
     ) {
-        validatePrice(menuProducts, price);
-        return new Menu(menuGroup, menuProducts.getAll(), new Price(price), name);
-    }
-
-    private static void validatePrice(final MenuProducts menuProducts, final BigDecimal price) {
-        final Price menuPrice = new Price(price);
-        final Price sum = menuProducts.calculateTotalPrice();
-
-        if (menuPrice.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        return new Menu(menuGroup, new Price(price), name);
     }
 
     public void setMenuProducts(final List<MenuProduct> savedMenuProducts) {
