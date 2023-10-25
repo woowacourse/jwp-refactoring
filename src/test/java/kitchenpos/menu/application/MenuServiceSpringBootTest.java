@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -51,8 +52,9 @@ class MenuServiceSpringBootTest {
 
         //then
         assertSoftly(softly -> {
-            assertThat(menuRepository.findById(menu.getId())).isNotEmpty();
-            assertThat(menuProductRepository.findAllByMenuId(menu.getId())).hasSize(2);
+            Optional<Menu> menuOptional = menuRepository.findById(menu.getId());
+            assertThat(menuOptional).isNotEmpty();
+            assertThat(menuOptional.get().getMenuProducts()).hasSize(2);
         });
     }
 }

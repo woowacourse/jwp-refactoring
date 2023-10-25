@@ -12,7 +12,6 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;// TODO : Menu에서 List<MenuProduct>를 가지도록 하는 것이 좋지 않을까
     private Long productId;
     @Embedded
     private MenuQuantity quantity;
@@ -20,10 +19,7 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long menuId,
-                       final Long productId,
-                       final MenuQuantity quantity) {
-        this.menuId = menuId;
+    public MenuProduct(final Long productId, final MenuQuantity quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
@@ -32,16 +28,16 @@ public class MenuProduct {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public Long getProductId() {
         return productId;
     }
 
     public MenuQuantity getQuantity() {
         return quantity;
+    }
+
+    public long getQuantityValue() {
+        return quantity.getQuantity();
     }
 
     @Override

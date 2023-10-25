@@ -125,7 +125,7 @@ class OrderServiceTest {
             final OrderTable orderTable = new OrderTable(new NumberOfGuests(0), Empty.EMPTY);
             final OrderRequest request = new OrderRequest(1L, orderLineItemDtos);
             final Order order = new Order(1L, OrderStatus.COOKING, LocalDateTime.now(), Collections.emptyList());
-            final Menu menu = new Menu(new MenuName("menuName"), new MenuPrice(BigDecimal.TEN), 1L);
+            final Menu menu = new Menu(new MenuName("menuName"), new MenuPrice(BigDecimal.TEN), 1L, Collections.emptyList());
             given(menuRepository.countByIdIn(any())).willReturn(3L);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));

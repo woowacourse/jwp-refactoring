@@ -12,6 +12,4 @@ public interface MenuProductRepository extends Repository<MenuProduct, Long> {
     Optional<MenuProduct> findById(Long id);
 
     List<MenuProduct> findAll();
-
-    List<MenuProduct> findAllByMenuId(Long menuId);
 }
