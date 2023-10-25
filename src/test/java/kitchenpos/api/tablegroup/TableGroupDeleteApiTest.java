@@ -1,4 +1,4 @@
-package kitchenpos.api.table;
+package kitchenpos.api.tablegroup;
 
 import kitchenpos.api.config.ApiTestConfig;
 import org.junit.jupiter.api.DisplayName;

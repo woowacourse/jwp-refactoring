@@ -1,4 +1,4 @@
-package kitchenpos.api.menu;
+package kitchenpos.api.menugroup;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.menugroup.application.dto.request.MenuGroupCreateRequest;

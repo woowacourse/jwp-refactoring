@@ -1,4 +1,4 @@
-package kitchenpos.api.table;
+package kitchenpos.api.ordertable;
 
 import kitchenpos.api.config.ApiTestConfig;
 import kitchenpos.ordertable.application.dto.response.OrderTableResponse;
