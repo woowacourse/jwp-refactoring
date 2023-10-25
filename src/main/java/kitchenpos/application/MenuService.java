@@ -9,6 +9,8 @@ import kitchenpos.domain.MenuProductQuantity;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuProductResponse;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -39,7 +42,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         if (Objects.isNull(request.getName())
                 || Objects.isNull(request.getPrice())
                 || Objects.isNull(request.getMenuGroupId())
@@ -76,7 +79,7 @@ public class MenuService {
             menuProductRepository.save(menuProduct);
         }
 
-        return savedMenu;
+        return convertToResponse(savedMenu);
     }
 
     private Product findProductById(final Long productId) {
@@ -89,7 +92,29 @@ public class MenuService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private MenuResponse convertToResponse(final Menu savedMenu) {
+        return new MenuResponse(
+                savedMenu.getId(),
+                savedMenu.getName(),
+                savedMenu.getPrice(),
+                savedMenu.getMenuGroup().getId(),
+                menuProductRepository.findAllByMenuId(savedMenu.getId()).stream()
+                        .map(this::convertToResponse)
+                        .collect(Collectors.toList()));
+    }
+
+    private MenuProductResponse convertToResponse(final MenuProduct menuProduct) {
+        return new MenuProductResponse(
+                menuProduct.getSeq(),
+                menuProduct.getMenu().getId(),
+                menuProduct.getProduct().getId(),
+                menuProduct.getQuantity()
+        );
     }
 }

@@ -58,7 +58,7 @@ public class Menu {
         return price.getPrice();
     }
 
-    public Long getMenuGroup() {
-        return menuGroup.getId();
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 }

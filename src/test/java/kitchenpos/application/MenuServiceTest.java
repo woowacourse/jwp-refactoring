@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
 import kitchenpos.dto.request.MenuProductRequest;
 import kitchenpos.dto.request.MenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,13 +52,13 @@ class MenuServiceTest {
         @Test
         void 메뉴가_정상적으로_등록된다() {
             final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.ONE, savedMenuGroupId, menuProducts);
-            final Menu savedMenu = menuService.create(menu);
+            final MenuResponse response = menuService.create(menu);
 
             assertSoftly(softly -> {
-                softly.assertThat(savedMenu.getId()).isNotNull();
-                softly.assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-                softly.assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(response.getId()).isNotNull();
+                softly.assertThat(response.getName()).isEqualTo(menu.getName());
+                softly.assertThat(response.getPrice()).isEqualByComparingTo(menu.getPrice());
+                softly.assertThat(response.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
             });
         }
 
@@ -66,13 +66,13 @@ class MenuServiceTest {
         @ValueSource(ints = {0, 1, 255})
         void 메뉴_이름은_255자_이하이다(int length) {
             final MenuRequest menu = new MenuRequest("메".repeat(length), BigDecimal.ONE, savedMenuGroupId, menuProducts);
-            final Menu savedMenu = menuService.create(menu);
+            final MenuResponse response = menuService.create(menu);
 
             assertSoftly(softly -> {
-                softly.assertThat(savedMenu.getId()).isNotNull();
-                softly.assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-                softly.assertThat(savedMenu.getPrice()).isEqualByComparingTo(menu.getPrice());
-                softly.assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroupId());
+                softly.assertThat(response.getId()).isNotNull();
+                softly.assertThat(response.getName()).isEqualTo(menu.getName());
+                softly.assertThat(response.getPrice()).isEqualByComparingTo(menu.getPrice());
+                softly.assertThat(response.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
             });
         }
 
@@ -157,13 +157,13 @@ class MenuServiceTest {
 
     @Test
     void 메뉴의_목록을_조회한다() {
-        final List<Menu> expected = menuService.list();
+        final List<MenuResponse> expected = menuService.list();
         for (int i = 0; i < 3; i++) {
             final MenuRequest menu = new MenuRequest("메뉴" + i, BigDecimal.ONE, savedMenuGroupId, menuProducts);
             expected.add(menuService.create(menu));
         }
 
-        final List<Menu> result = menuService.list();
+        final List<MenuResponse> result = menuService.list();
 
         assertThat(result).hasSize(expected.size());
     }
