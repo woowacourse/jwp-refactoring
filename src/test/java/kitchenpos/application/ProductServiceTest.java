@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.CreateProductRequest;
+import kitchenpos.dto.CreateProductRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
