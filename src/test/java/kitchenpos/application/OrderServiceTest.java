@@ -7,15 +7,15 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuFixtures;
 import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
-import kitchenpos.fixture.OrderLineItemFixtures;
+import kitchenpos.request.OrderCreateRequest;
+import kitchenpos.request.OrderLineItemDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static kitchenpos.fixture.MenuGroupFixtures.한마리_메뉴;
 import static kitchenpos.fixture.ProductFixtures.양념치킨_17000원;
@@ -44,14 +44,10 @@ class OrderServiceTest extends ServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
-        OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
-        Order order = OrderFixtures.create(
-                savedOrderTable.getId(),
-                LocalDateTime.now(),
-                List.of(orderLineItem)
-        );
+        OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
+        OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(request);
 
         // then
         assertAll(
@@ -68,15 +64,10 @@ class OrderServiceTest extends ServiceTest {
     void create_EmptyOrderLineItem_ExceptionThrown() {
         // given
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
-
-        Order order = OrderFixtures.create(
-                savedOrderTable.getId(),
-                LocalDateTime.now(),
-                Collections.emptyList()
-        );
+        OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,15 +78,11 @@ class OrderServiceTest extends ServiceTest {
         OrderTable savedEmptyTable = orderTableDao.save(new OrderTable(5, true));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
-        OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
-        Order order = OrderFixtures.create(
-                savedEmptyTable.getId(),
-                LocalDateTime.now(),
-                List.of(orderLineItem)
-        );
+        OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
+        OrderCreateRequest request = getOrderCreateRequest(savedEmptyTable.getId(), List.of(orderLineItem));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -106,14 +93,10 @@ class OrderServiceTest extends ServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
-        OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
-        Order order = OrderFixtures.create(
-                savedOrderTable.getId(),
-                LocalDateTime.now(),
-                List.of(orderLineItem)
-        );
-        orderService.create(order);
-        orderService.create(order);
+        OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
+        OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
+        orderService.create(request);
+        orderService.create(request);
 
         // when
         List<Order> orders = orderService.list();
@@ -129,14 +112,9 @@ class OrderServiceTest extends ServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
-        OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
-        Order savedOrder = orderService.create(
-                OrderFixtures.create(
-                        savedOrderTable.getId(),
-                        LocalDateTime.now(),
-                        List.of(orderLineItem)
-                )
-        );
+        OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
+        OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
+        Order savedOrder = orderService.create(request);
 
         savedOrder.setOrderStatus(OrderStatus.MEAL.name());
 
@@ -154,14 +132,9 @@ class OrderServiceTest extends ServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(5, false));
 
         Menu savedMenu = menuDao.save(createMenu("양념치킨", 17_000));
-        OrderLineItem orderLineItem = OrderLineItemFixtures.create(savedMenu.getId(), 1);
-        Order savedOrder = orderService.create(
-                OrderFixtures.create(
-                        savedOrderTable.getId(),
-                        LocalDateTime.now(),
-                        List.of(orderLineItem)
-                )
-        );
+        OrderLineItem orderLineItem = new OrderLineItem(savedMenu.getId(), 1);
+        OrderCreateRequest request = getOrderCreateRequest(savedOrderTable.getId(), List.of(orderLineItem));
+        Order savedOrder = orderService.create(request);
         savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
 
@@ -182,5 +155,13 @@ class OrderServiceTest extends ServiceTest {
                 menuGroup,
                 List.of(menuProduct)
         );
+    }
+
+    private OrderCreateRequest getOrderCreateRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        List<OrderLineItemDto> orderLineItemDtos = orderLineItems.stream()
+                .map(orderLineItem -> new OrderLineItemDto(orderLineItem.getMenuId(), orderLineItem.getQuantity()))
+                .collect(Collectors.toList());
+
+        return new OrderCreateRequest(orderTableId, orderLineItemDtos);
     }
 }

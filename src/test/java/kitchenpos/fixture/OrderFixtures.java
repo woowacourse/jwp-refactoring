@@ -21,12 +21,13 @@ public class OrderFixtures {
             LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(
+                null,
+                orderTableId,
+                orderStatus,
+                orderedTime,
+                orderLineItems
+        );
     }
 
 }

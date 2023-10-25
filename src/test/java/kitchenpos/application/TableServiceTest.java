@@ -4,7 +4,10 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
-import kitchenpos.fixture.*;
+import kitchenpos.fixture.MenuFixtures;
+import kitchenpos.fixture.MenuGroupFixtures;
+import kitchenpos.fixture.MenuProductFixtures;
+import kitchenpos.fixture.OrderFixtures;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -185,7 +188,7 @@ class TableServiceTest extends ServiceTest {
                 orderTable.getId(),
                 orderStatus.name(),
                 LocalDateTime.now(),
-                List.of(OrderLineItemFixtures.create(menu.getId(), 1))
+                List.of(new OrderLineItem(menu.getId(), 1))
         );
     }
 

@@ -7,7 +7,6 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuProductFixtures;
 import kitchenpos.fixture.OrderFixtures;
-import kitchenpos.fixture.OrderLineItemFixtures;
 import kitchenpos.request.MenuCreateRequest;
 import kitchenpos.request.MenuProductDto;
 import kitchenpos.request.OrderTableCreateRequest;
@@ -149,7 +148,7 @@ class TableGroupServiceTest extends ServiceTest {
                 orderTable.getId(),
                 orderStatus.name(),
                 LocalDateTime.now(),
-                List.of(OrderLineItemFixtures.create(menu.getId(), 1))
+                List.of(new OrderLineItem(menu.getId(), 1))
         );
     }
 }
