@@ -6,16 +6,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.TableGroupDto;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,61 +40,52 @@ public class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 
-    private OrderTable savedOrderTable1;
-    private OrderTable savedOrderTable2;
-    private TableGroup savedTableGroup;
-
-    @BeforeEach
-    void setUp() {
-        savedOrderTable1 = new OrderTable();
-        savedOrderTable1.setId(1L);
-        savedOrderTable1.setEmpty(true);
-
-        savedOrderTable2 = new OrderTable();
-        savedOrderTable2.setId(2L);
-        savedOrderTable2.setEmpty(true);
-
-        savedTableGroup = new TableGroup();
-        savedTableGroup.setId(1L);
-        savedTableGroup.setCreatedDate(LocalDateTime.now());
-    }
-
     @Test
     void 주문_테이블들의_정보를_받아서_테이블_그룹_정보를_등록할_수_있다() {
         //given
-        TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        OrderTable 빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블1();
+        OrderTable 빈_신규_테이블2 = OrderTableFixture.빈_신규_테이블2();
+        OrderTable 그룹핑된_신규_테이블1 = OrderTableFixture.그룹핑된_신규_테이블1();
+        OrderTable 그룹핑된_신규_테이블2 = OrderTableFixture.그룹핑된_신규_테이블2();
+        TableGroup 테이블_그룹1 = TableGroupFixture.테이블_그룹1();
 
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(savedOrderTable1, savedOrderTable2));
-        given(tableGroupDao.save(any(TableGroup.class))).willReturn(savedTableGroup);
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(빈_신규_테이블1, 빈_신규_테이블2));
+        given(tableGroupDao.save(any(TableGroup.class))).willReturn(테이블_그룹1);
+        given(orderTableDao.save(any(OrderTable.class)))
+                .willReturn(그룹핑된_신규_테이블1)
+                .willReturn(그룹핑된_신규_테이블2);
+
+        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
+        OrderTableDto orderTableDto2 = new OrderTableDto(빈_신규_테이블2.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2));
 
         //when
-        TableGroup response = tableGroupService.create(tableGroupRequest);
+        TableGroupDto response = tableGroupService.create(tableGroupRequest);
 
         //then
         assertThat(response.getCreatedDate()).isNotNull();
-        assertThat(response.getOrderTables().get(0).getTableGroupId()).isEqualTo(savedTableGroup.getId());
+        assertThat(response.getOrderTables().get(0).getTableGroupId()).isEqualTo(테이블_그룹1.getId());
         assertThat(response.getOrderTables().get(0).isEmpty()).isFalse();
-        assertThat(response.getOrderTables().get(1).getTableGroupId()).isEqualTo(savedTableGroup.getId());
+        assertThat(response.getOrderTables().get(1).getTableGroupId()).isEqualTo(테이블_그룹1.getId());
         assertThat(response.getOrderTables().get(1).isEmpty()).isFalse();
     }
 
     @Test
     void 입력한_주문_테이블_정보가_없는_경우_예외처리한다() {
         //given
-        TableGroup tableGroupRequest = new TableGroup();
+        TableGroupDto tableGroupRequest = new TableGroupDto(Collections.emptyList());
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @Test
     void 입력한_주문_테이블_정보가_하나인_경우_예외처리한다() {
         //given
-        TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(List.of(savedOrderTable1));
+        OrderTable 빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블1();
+        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -102,13 +95,15 @@ public class TableGroupServiceTest {
     @Test
     void 등록되지_않은_주문_테이블_정보를_입력한_경우_예외처리한다() {
         //given
-        OrderTable unsavedOrderTableRequest = new OrderTable();
-        unsavedOrderTableRequest.setEmpty(true);
+        OrderTable 빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블1();
+        OrderTable 빈_신규_테이블2 = OrderTableFixture.빈_신규_테이블2();
 
-        TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(List.of(savedOrderTable1, savedOrderTable2, unsavedOrderTableRequest));
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(빈_신규_테이블1, 빈_신규_테이블2));
 
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(savedOrderTable1, savedOrderTable2));
+        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
+        OrderTableDto orderTableDto2 = new OrderTableDto(빈_신규_테이블2.getId());
+        OrderTableDto unsavedOrderTableDto = new OrderTableDto(null, null, 0, true);
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2, unsavedOrderTableDto));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -118,12 +113,15 @@ public class TableGroupServiceTest {
     @Test
     void 그룹을_지으려는_등록된_테이블_상태가_empty가_아닌_경우_예외처리한다() {
         //given
-        TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        OrderTable 빈_신규_테이블1 = OrderTableFixture.빈_신규_테이블1();
+        OrderTable 비지않은_신규_테이블 = OrderTableFixture.비지않은_신규_테이블();
 
-        savedOrderTable2.setEmpty(false);
-        given(orderTableDao.findAllByIdIn(List.of(savedOrderTable1.getId(), savedOrderTable2.getId())))
-                .willReturn(List.of(savedOrderTable1, savedOrderTable2));
+        given(orderTableDao.findAllByIdIn(List.of(빈_신규_테이블1.getId(), 비지않은_신규_테이블.getId())))
+                .willReturn(List.of(빈_신규_테이블1, 비지않은_신규_테이블));
+
+        OrderTableDto orderTableDto1 = new OrderTableDto(빈_신규_테이블1.getId());
+        OrderTableDto orderTableDto2 = new OrderTableDto(비지않은_신규_테이블.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -133,13 +131,14 @@ public class TableGroupServiceTest {
     @Test
     void 그룹을_지으려는_등록된_테이블_상태가_이미_다른_그룹에_지정된_경우_예외처리한다() {
         //given
-        savedOrderTable1.setTableGroupId(2L);
-        savedOrderTable2.setTableGroupId(2L);
+        OrderTable 그룹핑된_신규_테이블1 = OrderTableFixture.그룹핑된_신규_테이블1();
+        OrderTable 그룹핑된_신규_테이블2 = OrderTableFixture.그룹핑된_신규_테이블2();
 
-        TableGroup tableGroupRequest = new TableGroup();
-        tableGroupRequest.setOrderTables(List.of(savedOrderTable1, savedOrderTable2));
+        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(그룹핑된_신규_테이블1, 그룹핑된_신규_테이블2));
 
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(List.of(savedOrderTable1, savedOrderTable2));
+        OrderTableDto orderTableDto1 = new OrderTableDto(그룹핑된_신규_테이블1.getId());
+        OrderTableDto orderTableDto2 = new OrderTableDto(그룹핑된_신규_테이블2.getId());
+        TableGroupDto tableGroupRequest = new TableGroupDto(List.of(orderTableDto1, orderTableDto2));
 
         //when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
@@ -151,30 +150,20 @@ public class TableGroupServiceTest {
         //given
         Long requestedTableGroupId = 1L;
 
-        savedOrderTable1.setTableGroupId(requestedTableGroupId);
-        savedOrderTable2.setTableGroupId(requestedTableGroupId);
-
-        Order savedOrder1 = new Order();
-        savedOrder1.setId(1L);
-        savedOrder1.setOrderTableId(savedOrderTable1.getId());
-        savedOrder1.setOrderStatus(OrderStatus.COMPLETION.name());
-
-        Order savedOrder2 = new Order();
-        savedOrder2.setId(2L);
-        savedOrder2.setOrderTableId(savedOrderTable2.getId());
-        savedOrder2.setOrderStatus(OrderStatus.COMPLETION.name());
+        OrderTable 그룹핑된_신규_테이블1 = OrderTableFixture.그룹핑된_신규_테이블1();
+        OrderTable 그룹핑된_신규_테이블2 = OrderTableFixture.그룹핑된_신규_테이블2();
 
         given(orderTableDao.findAllByTableGroupId(requestedTableGroupId))
-                .willReturn(List.of(savedOrderTable1, savedOrderTable2));
+                .willReturn(List.of(그룹핑된_신규_테이블1, 그룹핑된_신규_테이블2));
 
         //when
         tableGroupService.ungroup(requestedTableGroupId);
 
         //then
-        assertThat(savedOrderTable1.getTableGroupId()).isNull();
-        assertThat(savedOrderTable1.isEmpty()).isFalse();
-        assertThat(savedOrderTable2.getTableGroupId()).isNull();
-        assertThat(savedOrderTable2.isEmpty()).isFalse();
+        assertThat(그룹핑된_신규_테이블1.getTableGroupId()).isNull();
+        assertThat(그룹핑된_신규_테이블1.isEmpty()).isFalse();
+        assertThat(그룹핑된_신규_테이블2.getTableGroupId()).isNull();
+        assertThat(그룹핑된_신규_테이블2.isEmpty()).isFalse();
     }
 
     @Test
@@ -182,23 +171,13 @@ public class TableGroupServiceTest {
         //given
         Long requestedTableGroupId = 1L;
 
-        savedOrderTable1.setTableGroupId(requestedTableGroupId);
-        savedOrderTable2.setTableGroupId(requestedTableGroupId);
-
-        Order savedOrder1 = new Order();
-        savedOrder1.setId(1L);
-        savedOrder1.setOrderTableId(savedOrderTable1.getId());
-        savedOrder1.setOrderStatus(OrderStatus.COOKING.name());
-
-        Order savedOrder2 = new Order();
-        savedOrder2.setId(2L);
-        savedOrder2.setOrderTableId(savedOrderTable2.getId());
-        savedOrder2.setOrderStatus(OrderStatus.COOKING.name());
+        OrderTable 그룹핑된_신규_테이블1 = OrderTableFixture.그룹핑된_신규_테이블1();
+        OrderTable 그룹핑된_신규_테이블2 = OrderTableFixture.그룹핑된_신규_테이블2();
 
         given(orderTableDao.findAllByTableGroupId(requestedTableGroupId))
-                .willReturn(List.of(savedOrderTable1, savedOrderTable2));
+                .willReturn(List.of(그룹핑된_신규_테이블1, 그룹핑된_신규_테이블2));
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                List.of(savedOrderTable1.getId(), savedOrderTable2.getId()),
+                List.of(그룹핑된_신규_테이블1.getId(), 그룹핑된_신규_테이블2.getId()),
                 List.of(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
                 )).willReturn(true);
 
