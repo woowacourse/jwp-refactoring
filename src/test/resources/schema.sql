@@ -117,5 +117,5 @@ where exists (
 
 alter table order_line_item alter column name set data type varchar(255);
 alter table order_line_item alter column name set not null;
-alter table order_line_item alter column price set data type decmial(19, 2);
+alter table order_line_item alter column price set data type decimal(19, 2);
 alter table order_line_item alter column price set not null;
