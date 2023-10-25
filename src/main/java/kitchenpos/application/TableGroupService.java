@@ -31,12 +31,8 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final List<Long> orderTableIds) {
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-        if (orderTableIds.size() != savedOrderTables.size()) {
+        if (savedOrderTables.size() < 2 || orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
