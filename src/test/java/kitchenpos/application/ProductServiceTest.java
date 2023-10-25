@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.application.dto.product.ProductCreateRequest;
-import kitchenpos.application.dto.product.ProductCreateResponse;
-import kitchenpos.application.dto.product.ProductResponse;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,10 +32,10 @@ class ProductServiceTest {
         @Test
         void 상품을_정상적으로_등록한다() {
             // given
-            final ProductCreateRequest 등록할_상품 = new ProductCreateRequest("상품", BigDecimal.valueOf(10000, 2));
+            final Product 등록할_상품 = 상품(null, "상품", BigDecimal.valueOf(10000, 2));
 
             // when
-            final ProductCreateResponse 등록된_상품 = productService.create(등록할_상품);
+            final Product 등록된_상품 = productService.create(등록할_상품);
 
             // then
             assertAll(
@@ -51,7 +49,17 @@ class ProductServiceTest {
         @Test
         void 상품의_가격이_0보다_작으면_예외가_발생한다() {
             // given
-            final ProductCreateRequest 등록할_상품 = new ProductCreateRequest("상품", BigDecimal.valueOf(-10000));
+            final Product 등록할_상품 = 상품(null, "상품", BigDecimal.valueOf(-10000));
+
+            // expected
+            assertThatThrownBy(() -> productService.create(등록할_상품))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 상품의_가격이_없으면_예외가_발생한다() {
+            // given
+            final Product 등록할_상품 = 상품(null, "상품", null);
 
             // expected
             assertThatThrownBy(() -> productService.create(등록할_상품))
@@ -62,18 +70,14 @@ class ProductServiceTest {
     @Test
     void 상품_목록을_정상적으로_조회한다() {
         // given
-        productService.create(new ProductCreateRequest("상품1", BigDecimal.valueOf(10000, 2)));
-        productService.create(new ProductCreateRequest("상품2", BigDecimal.valueOf(20000, 2)));
+        final Product 상품1 = productService.create(상품(null, "상품1", BigDecimal.valueOf(10000)));
+        final Product 상품2 = productService.create(상품(null, "상품2", BigDecimal.valueOf(20000)));
 
         // when
-        final List<ProductResponse> 상품들 = productService.list();
+        final List<Product> 상품들 = productService.list();
 
         // then
-        final ProductResponse 상품1_응답값 = ProductResponse.of(new Product("상품1", BigDecimal.valueOf(10000, 2)));
-        final ProductResponse 상품2_응답값 = ProductResponse.of(new Product("상품2", BigDecimal.valueOf(20000, 2)));
-
         assertThat(상품들).usingRecursiveComparison()
-                .ignoringFields("id")
-                .isEqualTo(List.of(상품1_응답값, 상품2_응답값));
+                .isEqualTo(List.of(상품1, 상품2));
     }
 }
