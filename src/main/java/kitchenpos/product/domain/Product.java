@@ -43,6 +43,15 @@ public class Product {
         }
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePrice(Money price) {
+        validate(price);
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }

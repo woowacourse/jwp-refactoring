@@ -2,6 +2,7 @@ package kitchenpos.ui.v1.integration;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
@@ -13,6 +14,7 @@ import kitchenpos.order.dto.OrderUpdateRequest;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.dto.OrderTableUpdateRequest;
 import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductUpdateRequest;
 import kitchenpos.support.DatabaseCleanupExtension;
 import kitchenpos.tablegroup.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -66,6 +68,17 @@ public abstract class V1IntegrationTest {
         return mockMvc.perform(post("/api/v1/products")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)));
+    }
+
+    ResultActions 상품_수정(Long productId, ProductUpdateRequest request) throws Exception {
+        return mockMvc.perform(patch("/api/v1/products/{id}", productId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)));
+    }
+
+    ResultActions 모든_상품_조회() throws Exception {
+        return mockMvc.perform(get("/api/v1/products")
+            .contentType(MediaType.APPLICATION_JSON));
     }
 
     ResultActions 메뉴_그룹_생성(MenuGroupCreateRequest request) throws Exception {

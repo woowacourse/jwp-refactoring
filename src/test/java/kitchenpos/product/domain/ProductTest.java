@@ -54,4 +54,47 @@ class ProductTest {
             assertThat(product.getPrice().getAmount()).isNotNegative();
         }
     }
+
+    @Nested
+    class updatePrice {
+
+        @Test
+        void 가격이_null_이면_예외() {
+            // given
+            Product product = new Product(1L, "맥주", Money.ZERO);
+
+            Money price = null;
+
+            // when & then
+            assertThatThrownBy(() -> product.changePrice(price))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("상품의 가격은 null이 될 수 없습니다.");
+        }
+
+        @Test
+        void 가격이_0보다_작으면_예외() {
+            // given
+            Product product = new Product(1L, "맥주", Money.ZERO);
+
+            Money price = Money.from(-1);
+
+            // when & then
+            assertThatThrownBy(() -> product.changePrice(price))
+                .isInstanceOf(KitchenPosException.class)
+                .hasMessage("상품의 가격은 0보다 작을 수 없습니다.");
+        }
+
+        @ParameterizedTest
+        @ValueSource(longs = {0, 1, 1000})
+        void 가격이_0_이상이면_성공(long value) {
+            // given
+            Product product = new Product(1L, "맥주", Money.ZERO);
+
+            // when
+            product.changePrice(Money.from(value));
+
+            // then
+            assertThat(product.getPrice()).isEqualTo(Money.from(value));
+        }
+    }
 }
