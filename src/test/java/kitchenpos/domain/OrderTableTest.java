@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

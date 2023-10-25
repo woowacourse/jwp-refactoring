@@ -1,10 +1,10 @@
-package kitchenpos.application.dto;
+package kitchenpos.order.application.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 
 public class OrderResponse {
 

@@ -1,14 +1,15 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.BaseEntity;
 import kitchenpos.menu.domain.Menu;
 
 @Entity
-public class OrderLineItem extends BaseEntity{
+public class OrderLineItem extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_order_line_item_to_orders"))

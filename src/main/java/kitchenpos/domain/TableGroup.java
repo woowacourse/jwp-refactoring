@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import kitchenpos.order.domain.OrderTable;
 
 @Entity
 public class TableGroup extends BaseEntity{
