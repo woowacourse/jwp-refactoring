@@ -173,7 +173,7 @@ class OrderServiceTest {
 
     private Order persistOrder(final Menu persistMenu, final OrderStatus orderStatus) {
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        final OrderLineItem persistOrderLineItem = new OrderLineItem(persistMenu, 1L);
+        final OrderLineItem persistOrderLineItem = new OrderLineItem(persistMenu.getId(), 1L);
 
         return orderRepository.save(
                 new Order(persistOrderTable.getId(), orderStatus, LocalDateTime.now(), List.of(persistOrderLineItem))

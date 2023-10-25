@@ -165,7 +165,7 @@ class TableServiceTest {
 
     private OrderTable persistOrderTable(final String invalidOrderStatus, final Menu persistMenu) {
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu, 1L);
+        final OrderLineItem orderLineItem = new OrderLineItem(persistMenu.getId(), 1L);
         final OrderStatus orderStatus = OrderStatus.valueOf(invalidOrderStatus);
         final Order order = new Order(
                 persistOrderTable.getId(),

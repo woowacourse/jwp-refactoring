@@ -162,8 +162,8 @@ class TableGroupServiceTest {
             final OrderTable persistOrderTable1,
             final OrderTable persistOrderTable2
     ) {
-        final OrderLineItem persistOrderLineItem1 = new OrderLineItem(persistMenu, 1L);
-        final OrderLineItem persistOrderLineItem2 = new OrderLineItem(persistMenu, 1L);
+        final OrderLineItem persistOrderLineItem1 = new OrderLineItem(persistMenu.getId(), 1L);
+        final OrderLineItem persistOrderLineItem2 = new OrderLineItem(persistMenu.getId(), 1L);
         final Order order1 = new Order(
                 persistOrderTable1.getId(),
                 orderStatus,

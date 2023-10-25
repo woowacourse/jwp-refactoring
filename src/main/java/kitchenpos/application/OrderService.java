@@ -54,7 +54,7 @@ public class OrderService {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                                             .orElseThrow(MenuNotFoundException::new);
 
-            orderLineItems.add(new OrderLineItem(menu, orderLineItemRequest.getQuantity()));
+            orderLineItems.add(new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity()));
         }
 
         return orderLineItems;

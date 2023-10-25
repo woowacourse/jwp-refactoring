@@ -25,6 +25,6 @@ class OrderLineItemTest {
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
 
         // when & then
-        assertThatCode(() -> new OrderLineItem(menu, 1L)).doesNotThrowAnyException();
+        assertThatCode(() -> new OrderLineItem(menu.getId(), 1L)).doesNotThrowAnyException();
     }
 }

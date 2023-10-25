@@ -31,7 +31,7 @@ class OrderLineItemsTest {
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.MEAL;
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1L);
         final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when
@@ -53,7 +53,7 @@ class OrderLineItemsTest {
         final Menu menu = Menu.of("메뉴", BigDecimal.TEN, List.of(menuProduct), menuGroup.getId());
         final OrderTable orderTable = new OrderTable(0, false);
         final OrderStatus orderStatus = OrderStatus.MEAL;
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1L);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 1L);
         final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now(), List.of(orderLineItem));
 
         // when & then
