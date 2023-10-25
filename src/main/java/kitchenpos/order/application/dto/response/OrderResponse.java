@@ -9,19 +9,6 @@ import java.util.stream.Collectors;
 
 public class OrderResponse {
 
-    /*
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = LAZY)
-    private OrderTable orderTable;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
-     */
     private Long id;
     private Long orderTableId;
     private String oderStatus;
