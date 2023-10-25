@@ -3,8 +3,8 @@ package kitchenpos.application.support.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.OrderTableDto;
-import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.request.OrderTableRequest;
+import kitchenpos.application.dto.request.TableGroupCreateRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -16,20 +16,12 @@ public class TableGroupTestSupport {
 
     public static final class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long id = ++autoCount;
         private LocalDateTime createdDate = LocalDateTime.now();
         private List<OrderTable> orderTables = List.of(
-                OrderTableTestSupport.builder().tableGroupId(id).build(),
-                OrderTableTestSupport.builder().tableGroupId(id).build(),
-                OrderTableTestSupport.builder().tableGroupId(id).build()
+                OrderTableTestSupport.builder().build(),
+                OrderTableTestSupport.builder().build(),
+                OrderTableTestSupport.builder().build()
         );
-
-        public Builder id(final Long id) {
-            this.id = id;
-            return this;
-        }
 
         public Builder createdDate(final LocalDateTime createdDate) {
             this.createdDate = createdDate;
@@ -42,18 +34,14 @@ public class TableGroupTestSupport {
         }
 
         public TableGroup build() {
-            final var result = new TableGroup();
-            result.setId(id);
-            result.setCreatedDate(createdDate);
-            result.setOrderTables(orderTables);
-            return result;
+            return new TableGroup(createdDate);
         }
 
         public TableGroupCreateRequest buildToTableGroupCreateRequest() {
-            final List<OrderTableDto> orderTableDtos = orderTables.stream()
-                    .map(it -> new OrderTableDto(it.getId()))
+            final List<OrderTableRequest> orderTableRequests = orderTables.stream()
+                    .map(it -> new OrderTableRequest(it.getId()))
                     .collect(Collectors.toList());
-            return new TableGroupCreateRequest(orderTableDtos);
+            return new TableGroupCreateRequest(orderTableRequests);
         }
     }
 }

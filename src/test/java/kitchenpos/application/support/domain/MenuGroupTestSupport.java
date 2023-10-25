@@ -1,6 +1,7 @@
 package kitchenpos.application.support.domain;
 
-import kitchenpos.application.dto.MenuGroupCreateRequest;
+import java.util.UUID;
+import kitchenpos.application.dto.request.MenuGroupCreateRequest;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupTestSupport {
@@ -11,15 +12,7 @@ public class MenuGroupTestSupport {
 
     public static class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long id = ++autoCount;
-        private String name = "메뉴 그룹 이름" + id;
-
-        public Builder id(final Long id) {
-            this.id = id;
-            return this;
-        }
+        private String name = "허브 잔뜩 들어간 메뉴 그룹" + UUID.randomUUID().toString().substring(0, 5);
 
         public Builder name(final String name) {
             this.name = name;
@@ -27,10 +20,7 @@ public class MenuGroupTestSupport {
         }
 
         public MenuGroup build() {
-            final var result = new MenuGroup();
-            result.setId(id);
-            result.setName(name);
-            return result;
+            return new MenuGroup(name);
         }
 
         public MenuGroupCreateRequest buildToMenuGroupCreateRequest() {

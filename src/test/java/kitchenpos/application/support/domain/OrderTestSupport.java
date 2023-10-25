@@ -1,14 +1,14 @@
 package kitchenpos.application.support.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.application.dto.OrderLineItemDto;
+import kitchenpos.application.dto.request.OrderCreateRequest;
+import kitchenpos.application.dto.request.OrderLineItemRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 public class OrderTestSupport {
 
@@ -18,29 +18,21 @@ public class OrderTestSupport {
 
     public static class Builder {
 
-        private static Long autoCount = 0L;
-
-        private Long id = ++autoCount;
-        private Long orderTableId = OrderTableTestSupport.builder().build().getId();
-        private String orderStatus = OrderStatus.COOKING.name();
+        private OrderTable orderTable = OrderTableTestSupport.builder().build();
+        private OrderStatus orderStatus = OrderStatus.COOKING;
         private LocalDateTime orderedTime = LocalDateTime.now();
         private List<OrderLineItem> orderLineItems = List.of(
-                OrderLineItemTestSupport.builder().OrderId(id).build(),
-                OrderLineItemTestSupport.builder().OrderId(id).build(),
-                OrderLineItemTestSupport.builder().OrderId(id).build()
+                OrderLineItemTestSupport.builder().build(),
+                OrderLineItemTestSupport.builder().build(),
+                OrderLineItemTestSupport.builder().build()
         );
 
-        public Builder id(final Long id) {
-            this.id = id;
+        public Builder orderTable(final OrderTable orderTable) {
+            this.orderTable = orderTable;
             return this;
         }
 
-        public Builder orderTableId(final Long orderTableId) {
-            this.orderTableId = orderTableId;
-            return this;
-        }
-
-        public Builder orderStatus(final String orderStatus) {
+        public Builder orderStatus(final OrderStatus orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }
@@ -56,21 +48,15 @@ public class OrderTestSupport {
         }
 
         public Order build() {
-            final var result = new Order();
-            result.setId(id);
-            result.setOrderTableId(orderTableId);
-            result.setOrderStatus(orderStatus);
-            result.setOrderedTime(orderedTime);
-            result.setOrderLineItems(orderLineItems);
-            return result;
+            return new Order(orderTable,orderedTime);
         }
 
         public OrderCreateRequest buildToOrderCreateRequest() {
-            final List<OrderLineItemDto> orderLineItemDtos = orderLineItems.stream()
-                    .map(it -> new OrderLineItemDto(it.getMenuId(), it.getQuantity()))
+            final List<OrderLineItemRequest> orderLineItemRequests = orderLineItems.stream()
+                    .map(it -> new OrderLineItemRequest(it.getMenu().getId(), it.getQuantity()))
                     .collect(Collectors.toList());
 
-            return new OrderCreateRequest(orderTableId, orderLineItemDtos);
+            return new OrderCreateRequest(orderTable.getId(), orderLineItemRequests);
         }
     }
 }
