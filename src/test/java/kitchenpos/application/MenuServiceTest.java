@@ -4,160 +4,75 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.fixtures.domain.MenuFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
+import static kitchenpos.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuService menuService;
+    private ProductRepository productRepository;
 
-    private MenuGroup savedMenuGroup;
-    private Product savedProduct;
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    private MenuGroup 메뉴_그룹;
+    private Product 상품;
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = saveMenuGroup("메뉴 그룹");
-        savedProduct = saveProduct("상품", 100_000);
+        this.메뉴_그룹 = menuGroupRepository.save(새로운_메뉴_그룹("메뉴 그룹"));
+        this.상품 = productRepository.save(새로운_상품(null, "상품", new BigDecimal(10000)));
     }
 
-    @DisplayName("create 메소드는 ")
-    @Nested
-    class CreateMethod {
+    @Test
+    void 등록된_상품들을_메뉴로_등록한다() {
+        final MenuProductCreateRequest 메뉴_상품_생성_요청 = new MenuProductCreateRequest(상품.getId(), 3L);
+        final MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
-        @DisplayName("메뉴를 생성한다.")
-        @Test
-        void Should_CreateMenu() {
-            // given
-            final MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
+        final Menu menu = menuService.create(메뉴_생성_요청);
 
-            final Menu menu = new MenuFixture.MenuRequestBuilder()
-                    .name("치킨")
-                    .price(20_000)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
-
-            // when
-            final Menu actual = menuService.create(menu);
-
-            // then
-            assertAll(() -> {
-                assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getName()).isEqualTo(menu.getName());
-                assertThat(actual.getPrice().doubleValue()).isEqualTo(menu.getPrice().doubleValue());
-            });
-        }
-
-        @DisplayName("메뉴 가격이 null이라면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_PriceOfMenuIsNull() {
-            // given
-            final MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
-
-           final Menu menu = new MenuFixture.MenuRequestBuilder()
-                    .price(null)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-
-        @DisplayName("메뉴의 메뉴 그룹이 존재하지 않는다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_MenuGroupDoesNotExist() {
-            // given
-            final MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
-
-            final Menu menu = new MenuFixture.MenuRequestBuilder()
-                    .menuGroupId(savedMenuGroup.getId() + 1)
-                    .menuProducts(menuProduct)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("메뉴의 메뉴 상품 리스트 중 존재하지 않은 상품이 있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_ProductDoesNotExistInMenuProductList() {
-            // given
-            final MenuProduct notSavedMenuProduct = createMenuProduct(savedProduct.getId() + 1, 1L);
-
-            final Menu menu = new MenuFixture.MenuRequestBuilder()
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(notSavedMenuProduct)
-                    .build();
-
-            // when
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("메뉴의 모든 메뉴 상품 목록에 대해 '상품 가격 * 메뉴 상품 수량' 의 합이 메뉴의 가격보다 크다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_MenuPriceIsBiggerThanSumOfProductOfProductPriceAndQuantity() {
-            // given
-            final MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 1L);
-
-            final Menu menu = new MenuFixture.MenuRequestBuilder()
-                    .price(1_000_000)
-                    .menuGroupId(savedMenuGroup.getId())
-                    .menuProducts(menuProduct)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        assertSoftly(softly -> {
+            softly.assertThat(menu.getId()).isNotNull();
+            softly.assertThat(menu.getName().getName()).isEqualTo("메뉴");
+        });
     }
 
-    @DisplayName("list 메소드는")
-    @Nested
-    class ListMethod {
+    @Test
+    void 메뉴_가격이_0원_이상이어야_한다() {
+        MenuProductCreateRequest 메뉴_상품_생성_요청 = new MenuProductCreateRequest(상품.getId(), 3L);
+        MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal(-1), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
-        @DisplayName("저장된 전체 메뉴 리스트를 조회한다.")
-        @Test
-        void Should_ReturnAllMenuList() {
-            // given
-            final MenuGroup menuGroup = saveMenuGroup("메뉴 그룹");
+        assertThatThrownBy(() -> menuService.create(메뉴_생성_요청))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("금액은 0 이상이어야 합니다.");
+    }
 
-            final Product product = saveProduct("상품", 1_000_000);
-            final MenuProduct menuProduct = createMenuProduct(product.getId(), 1L);
+    @Test
+    void 메뉴의_목록을_조회한다() {
+        final MenuProductCreateRequest 메뉴_상품_생성_요청 = new MenuProductCreateRequest(상품.getId(), 3L);
+        final MenuCreateRequest 메뉴_생성_요청 = new MenuCreateRequest("메뉴", new BigDecimal("30000.00"), 메뉴_그룹.getId(), List.of(메뉴_상품_생성_요청));
 
-            int expected = 4;
-            for (int i = 0; i < expected; i++) {
-                final Menu menu = new MenuFixture.MenuRequestBuilder()
-                        .name("menu " + i)
-                        .menuGroupId(menuGroup.getId())
-                        .menuProducts(menuProduct)
-                        .build();
-                menuService.create(menu);
-            }
+        menuService.create(메뉴_생성_요청);
 
-            // when
-            final List<Menu> actual = menuService.list();
+        final List<Menu> menus = menuService.findAll();
 
-            // then
-            assertAll(() -> {
-                assertThat(actual).hasSize(expected);
-            });
-        }
+        assertThat(menus).hasSize(1);
     }
 }

@@ -1,52 +1,92 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+
+@EntityListeners(AuditingEntityListener.class)
+@Entity
+@Table(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    @Embedded
+    private OrderLineItems orderLineItems = new OrderLineItems();
+
+    protected Order() {
+    }
+
+    public Order(final OrderTable orderTable,
+                 final List<OrderLineItem> orderLineItems) {
+        this.orderTable = orderTable;
+        orderTable.placeOrder(this);
+        this.orderStatus = COOKING;
+        orderLineItems.forEach(orderLineItem -> orderLineItem.setOrder(this));
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (!orderStatus.isInProgress()) {
+            throw new IllegalArgumentException("조리가 끝난 주문은 상태를 변경할 수 없습니다.");
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    public boolean isInProgress() {
+        return orderStatus.isInProgress();
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Order order = (Order) o;
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

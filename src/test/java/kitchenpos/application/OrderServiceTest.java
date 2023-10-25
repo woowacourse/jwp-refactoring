@@ -1,213 +1,91 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
-import kitchenpos.fixtures.domain.OrderFixture;
+import kitchenpos.repository.*;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixtures.domain.MenuProductFixture.createMenuProduct;
-import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
-import static kitchenpos.fixtures.domain.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
-class OrderServiceTest extends ServiceTest{
-
-    @Autowired
-    private OrderService orderService;
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderDao orderDao;
+    private MenuGroupRepository menuGroupRepository;
 
-    private OrderTable savedOrderTable;
-    private MenuGroup savedMenuGroup;
-    private Product savedProduct;
-    private Menu savedMenu;
+    @Autowired
+    private MenuRepository menuRepository;
 
-    private OrderLineItem createdOrderLineItem;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    private MenuGroup 메뉴_그룹;
+    private Menu 메뉴;
+    private OrderTable 주문_테이블;
 
     @BeforeEach
     void setUp() {
-        savedOrderTable = saveOrderTable(10, false);
-        savedMenuGroup = saveMenuGroup("메뉴 그룹");
-        savedProduct = saveProduct("상품", 5_000);
-        savedMenu = saveMenu("메뉴", 10_000, savedMenuGroup, List.of(
-                createMenuProduct(savedProduct.getId(), 10)
-        ));
-        createdOrderLineItem = createOrderLineItem(savedMenu.getId(), 10);
+        메뉴_그룹 = menuGroupRepository.save(새로운_메뉴_그룹("메뉴 그룹"));
+        메뉴 = menuRepository.save(새로운_메뉴("메뉴", new BigDecimal("30000.00"), 메뉴_그룹));
+        주문_테이블 = orderTableRepository.save(새로운_주문_테이블(null, 1, false));
     }
 
-    @DisplayName("create 메소드는")
-    @Nested
-    class CreateMethod {
+    @Test
+    void 주문을_등록한다() {
+        final OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1L);
+        final OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of(주문_항목_생성_요청));
 
-        @DisplayName("주문을 생성한다.")
-        @Test
-        void Should_CreateOrder() {
-            // given
-            final Order order = new OrderFixture.OrderRequestBuilder()
-                    .orderTableId(savedOrderTable.getId())
-                    .addOrderLineItem(createdOrderLineItem)
-                    .build();
+        final Order order = orderService.create(주문_생성_요청);
 
-            // when
-            final Order actual = orderService.create(order);
-
-            // then
-            assertAll(() -> {
-                assertThat(actual.getId()).isNotNull();
-                assertThat(actual.getOrderStatus()).isEqualTo(order.getOrderStatus());
-                assertThat(actual.getOrderedTime()).isEqualTo(order.getOrderedTime());
-            });
-        }
-
-        @DisplayName("주문의 주문 항목이 비어있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderLineItemsIsEmpty() {
-            // given
-            final Order order = new OrderFixture.OrderRequestBuilder()
-                    .orderTableId(savedOrderTable.getId())
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("주문의 주문 항목의 메뉴가 존재하지 않다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_MenuDoesNotExist() {
-            // given
-            final OrderLineItem orderLineItemHasNotSavedMenu = createOrderLineItem(savedMenu.getId() + 1, 1L);
-
-            final Order order = new OrderFixture.OrderRequestBuilder()
-                    .orderTableId(savedOrderTable.getId())
-                    .addOrderLineItem(orderLineItemHasNotSavedMenu)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("주문의 주문 테이블이 존재하지 않다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderTableDoesNotExist() {
-            // given
-            final Order order = new OrderFixture.OrderRequestBuilder()
-                    .orderTableId(savedOrderTable.getId() + 1)
-                    .addOrderLineItem(createdOrderLineItem)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("주문의 주문 테이블이 빈 테이블이라면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderTableIsEmpty() {
-            // given
-            final OrderTable emptyOrderTable = saveOrderTable(10, true);
-
-            final Order order = new OrderFixture.OrderRequestBuilder()
-                    .orderTableId(emptyOrderTable.getId())
-                    .addOrderLineItem(createdOrderLineItem)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> orderService.create(order))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        assertThat(order.getId()).isNotNull();
     }
 
-    @DisplayName("list 메소드는")
-    @Nested
-    class ListMethod {
+    @Test
+    void 주문_항목이_없으면_등록할_수_없다() {
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(주문_테이블.getId(), List.of());
 
-        @DisplayName("저장된 모든 주문 목록을 조회한다.")
-        @Test
-        void Should_ReturnAllOrderList() {
-            // given
-            final int expected = 3;
-            for (int i = 0; i < expected; i++) {
-                final Order order = createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                        List.of(createdOrderLineItem));
-                orderDao.save(order);
-            }
-
-            // when
-            final List<Order> actual = orderService.list();
-
-            // then
-            assertThat(actual).hasSize(expected);
-        }
+        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("changeOrderStatus 메소드는")
-    @Nested
-    class ChangeOrderStatusMethod {
+    @Test
+    void 생성하려는_주문이_속한_주문_테이블이_존재하지_않으면_예외를_반환한다() {
+        OrderLineItemCreateRequest 주문_항목_생성_요청 = new OrderLineItemCreateRequest(메뉴.getId(), 1L);
+        OrderCreateRequest 주문_생성_요청 = new OrderCreateRequest(Long.MIN_VALUE, List.of(주문_항목_생성_요청));
 
-        @DisplayName("주문의 주문 상태를 변경한다.")
-        @ValueSource(strings = {"MEAL", "COMPLETION"})
-        @ParameterizedTest
-        void Should_ChangeOrderStatus(final String after) {
-            // given
-            final Order oldOrder = orderDao.save(
-                    createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                            List.of(createdOrderLineItem)));
+        assertThatThrownBy(() -> orderService.create(주문_생성_요청))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-            final Order request = new OrderFixture.OrderRequestBuilder()
-                    .orderStatus(after)
-                    .build();
+    @Test
+    void 주문_목록을_조회한다() {
+        Order 주문1 = orderRepository.save(새로운_주문(주문_테이블, List.of(새로운_주문_항목(메뉴, 1))));
+        Order 주문2 = orderRepository.save(새로운_주문(주문_테이블, List.of(새로운_주문_항목(메뉴, 1))));
 
-            // when
-            final Order actual = orderService.changeOrderStatus(oldOrder.getId(), request);
+        List<Order> orders = orderService.findAll();
 
-            // then
-            assertThat(actual.getOrderStatus()).isEqualTo(after);
-        }
+        assertThat(orders).hasSize(2);
+    }
 
-        @DisplayName("주문이 존재하지 않다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderDoesNotExist() {
-            // given
-            final Order order = orderDao.save(createOrder(savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-                    List.of(createdOrderLineItem)));
-
-            final Order orderRequest = new OrderFixture.OrderRequestBuilder()
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId() + 1, orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("주문의 상태가 COMPLETION 이라면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderStatusIsCompletion() {
-            // given
-            final Order completionOrder = orderDao.save(
-                    createOrder(savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-                            List.of(createdOrderLineItem)));
-
-            final Order request = new OrderFixture.OrderRequestBuilder()
-                    .orderStatus(OrderStatus.COOKING)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(completionOrder.getId(), request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+    @Test
+    void 존재하지_않는_주문의_상태를_변경할_수_없다() {
+        assertThatThrownBy(() -> orderService.changeOrderStatus(Long.MIN_VALUE, null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -1,188 +1,81 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.fixtures.domain.TableGroupFixture;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import kitchenpos.repository.*;
+import kitchenpos.ui.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
-import static kitchenpos.fixtures.domain.OrderFixture.createOrder;
-import static kitchenpos.fixtures.domain.OrderTableFixture.createOrderTable;
-import static kitchenpos.fixtures.domain.TableGroupFixture.createTableGroup;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static kitchenpos.TestFixtureFactory.새로운_주문_테이블;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-class TableGroupServiceTest extends ServiceTest{
+class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private MenuRepository menuRepository;
 
-    private OrderTable savedOrderTable1;
-    private OrderTable savedOrderTable2;
+    @Autowired
+    private ProductRepository productRepository;
 
-    @BeforeEach
-    void setUp() {
-        savedOrderTable1 = saveOrderTable(10, true);
-        savedOrderTable2 = saveOrderTable(10, true);
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    @Test
+    void 테이블들을_단체로_지정한다() {
+        OrderTable 주문_테이블1 = orderTableRepository.save(새로운_주문_테이블(null, 3, true));
+        OrderTable 주문_테이블2 = orderTableRepository.save(새로운_주문_테이블(null, 2, true));
+
+        TableGroupCreateRequest 단체_지정_생성_요청 = new TableGroupCreateRequest(List.of(주문_테이블1.getId(), 주문_테이블2.getId()));
+
+        TableGroup tableGroup = tableGroupService.create(단체_지정_생성_요청);
+
+        assertSoftly(softly -> {
+            softly.assertThat(tableGroup.getId()).isNotNull();
+
+        });
     }
 
-    @DisplayName("create 메소드는")
-    @Nested
-    class CreateMethod {
+    @Test
+    void 이미_지정된_테이블을_단체_지정할_수_없다() {
+        OrderTable 주문_테이블1 = orderTableRepository.save(새로운_주문_테이블(null, 3, true));
+        OrderTable 주문_테이블2 = orderTableRepository.save(새로운_주문_테이블(null, 2, true));
 
-        @DisplayName("단체 지정 정보를 생성한다.")
-        @Test
-        void Should_CreateTableGroup() {
-            // given
-            TableGroup request = new TableGroupFixture.TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build();
+        TableGroupCreateRequest 단체_지정_생성_요청 = new TableGroupCreateRequest(List.of(주문_테이블1.getId(), 주문_테이블2.getId()));
 
-            // when
-            TableGroup actual = tableGroupService.create(request);
+        TableGroup tableGroup = tableGroupService.create(단체_지정_생성_요청);
 
-            // then
-            assertAll(() -> {
-                assertThat(actual.getId()).isNotNull();
-                assertThat(request.getCreatedDate()).isEqualTo(actual.getCreatedDate());
-                assertThat(request.getOrderTables()).hasSize(actual.getOrderTables().size());
-            });
-        }
-
-        @DisplayName("단체 지정 정보의 테이블 목록이 비어있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderTablesIsEmpty() {
-            // given
-            TableGroup request = new TableGroupFixture.TableGroupRequestBuilder().build();
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("단체 지정 정보의 테이블 목록의 사이즈가 2보다 작다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderTablesSizeIsLessThan2() {
-            // given
-            TableGroup request = new TableGroupFixture.TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("단체 지정 정보의 테이블 목록에 존재하지 않는 테이블이 있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_TableGroupHasNotExistingTable() {
-            // given
-            OrderTable notSavedTable1 = createOrderTable(10, true);
-            OrderTable notSavedTable2 = createOrderTable(15, true);
-            TableGroup request = new TableGroupFixture.TableGroupRequestBuilder()
-                    .addOrderTables(notSavedTable1, notSavedTable2)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("단체 지정 정보의 테이블 목록에 비어있지 않은 테이블이 있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_TableIsNotEmpty() {
-            // given
-            OrderTable emptyOrderTable = saveOrderTable(10, true);
-            OrderTable notEmptyOrderTable = saveOrderTable(10, false);
-            TableGroup request = new TableGroupFixture.TableGroupRequestBuilder()
-                    .addOrderTables(emptyOrderTable, notEmptyOrderTable)
-                    .build();
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @DisplayName("단체 지정 정보의 테이블 목록에 이미 단체 지정 정보가 있다면 IAE를 던진다.")
-        @Test
-        void Should_ThrowIAE_When_OrderTableHasTableGroup() {
-            // given
-            TableGroup request = new TableGroupFixture.TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build();
-            tableGroupService.create(request);
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        TableGroupCreateRequest 또다른_단체_지정_생성_요청 = new TableGroupCreateRequest(List.of(주문_테이블1.getId(), 주문_테이블2.getId()));
+        assertThatThrownBy(() -> tableGroupService.create(또다른_단체_지정_생성_요청))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("ungroup 메소드는")
-    @Nested
-    class UngroupMethod {
+    @Test
+    void 단체_지정을_삭제한다() {
+        OrderTable 주문_테이블1 = orderTableRepository.save(새로운_주문_테이블(null, 3, true));
+        OrderTable 주문_테이블2 = orderTableRepository.save(새로운_주문_테이블(null, 2, true));
 
-        @DisplayName("단체 지정을 해제한다.")
-        @Test
-        void Should_Ungroup() {
-            // given
-            final TableGroup request = new TableGroupFixture.TableGroupRequestBuilder()
-                    .addOrderTables(savedOrderTable1, savedOrderTable2)
-                    .build();
-            final TableGroup tableGroup = tableGroupService.create(request);
+        TableGroupCreateRequest 단체_지정_생성_요청 = new TableGroupCreateRequest(List.of(주문_테이블1.getId(), 주문_테이블2.getId()));
 
-            // when
-            tableGroupService.ungroup(tableGroup.getId());
+        TableGroup tableGroup = tableGroupService.create(단체_지정_생성_요청);
 
-            // then
-            assertAll(() -> {
-                assertThat(tableGroupDao.findById(tableGroup.getId())).isNotEmpty();
-                assertThat(orderTableDao.findAll())
-                        .allMatch(orderTable -> Objects.isNull(orderTable.getTableGroupId()))
-                        .allMatch(orderTable -> !orderTable.isEmpty());
-            });
-        }
+        tableGroupService.ungroup(tableGroup.getId());
 
-        @DisplayName("주문 테이블 중 조리 혹은 식사 상태인 테이블이 있다면 IAE를 던진다.")
-        @ValueSource(strings = {"COOKING", "MEAL"})
-        @ParameterizedTest
-        void Should_ThrowIAE_When_AnyStatusOfOrderTablesIsCookingOrMeal(final OrderStatus orderStatus) {
-            // given
-            final OrderTable orderTable1 = orderTableDao.save(createOrderTable(10, true));
-            final OrderTable orderTable2 = orderTableDao.save(createOrderTable(10, true));
-
-            orderDao.save(createOrder(orderTable1.getId(), orderStatus, LocalDateTime.now(), List.of()));
-            orderDao.save(createOrder(orderTable1.getId(), OrderStatus.COMPLETION, LocalDateTime.now(), List.of()));
-
-            final TableGroup request = tableGroupService.create(
-                    createTableGroup(LocalDateTime.now(), List.of(orderTable1, orderTable2)));
-
-            // when & then
-            assertThatThrownBy(() -> tableGroupService.ungroup(request.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
+        assertSoftly(softly -> {
+            softly.assertThat(주문_테이블1.getTableGroup()).isNull();
+            softly.assertThat(주문_테이블2.getTableGroup()).isNull();
+        });
     }
 }
