@@ -56,7 +56,7 @@ public class Menu {
     }
 
     private void addMenuProduct(final MenuProduct menuProduct) {
-        menuProduct.groupedBy(this);
+        menuProduct.setMenu(this);
         this.menuProducts.add(menuProduct);
     }
 

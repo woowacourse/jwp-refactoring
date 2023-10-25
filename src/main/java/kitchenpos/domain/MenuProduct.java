@@ -55,7 +55,7 @@ public class MenuProduct {
         return quantity;
     }
 
-    public void groupedBy(final Menu menu) {
+    public void setMenu(final Menu menu) {
         this.menu = menu;
     }
 }

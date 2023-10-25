@@ -35,7 +35,7 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public void dependOn(final Order order) {
+    public void setOrder(final Order order) {
         this.order = order;
     }
 

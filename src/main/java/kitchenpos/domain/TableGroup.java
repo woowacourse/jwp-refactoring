@@ -67,7 +67,7 @@ public class TableGroup {
     }
 
     private void addOrderTable(final OrderTable orderTable) {
-        orderTable.groupedBy(this);
+        orderTable.setTableGroup(this);
         orderTables.add(orderTable);
     }
 

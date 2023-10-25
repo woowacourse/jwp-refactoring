@@ -64,7 +64,7 @@ public class Order {
     }
 
     private void addOrderLineItem(final OrderLineItem orderLineItem) {
-        orderLineItem.dependOn(this);
+        orderLineItem.setOrder(this);
         this.orderLineItems.add(orderLineItem);
     }
 

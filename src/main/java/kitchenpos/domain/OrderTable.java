@@ -38,7 +38,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void groupedBy(final TableGroup tableGroup) {
+    public void setTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
         this.empty = false;
     }
