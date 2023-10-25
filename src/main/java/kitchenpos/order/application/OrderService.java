@@ -41,11 +41,11 @@ public class OrderService {
 
     @Transactional
     public Long create(final OrderCreateRequest request) {
-        final List<OrderCreateRequest.OrderLineItemCreate> orderLineItemCreates = request.getOrderLineItemCreates();
+        final List<OrderCreateRequest.MenuSnapShot> menuSnapShots = request.getMenuSnapShots();
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-        if (CollectionUtils.isEmpty(orderLineItemCreates)) {
+        if (CollectionUtils.isEmpty(menuSnapShots)) {
             throw new IllegalArgumentException();
         }
 
@@ -55,9 +55,10 @@ public class OrderService {
         final Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
         final Order savedOrder = orderRepository.save(order);
 
-        for (final OrderCreateRequest.OrderLineItemCreate orderLineItem : orderLineItemCreates) {
-            final Menu menu = menuRepository.findById(orderLineItem.getMenuId()).orElseThrow(IllegalArgumentException::new);
-            savedOrder.addOrderLineItem(new OrderLineItem(menu.getId(), orderLineItem.getQuantity()));
+        for (final OrderCreateRequest.MenuSnapShot menuSnapShot : menuSnapShots) {
+            final Menu menu = menuRepository.findById(menuSnapShot.getMenuId()).orElseThrow(IllegalArgumentException::new);
+            OrderSnapShotValidator.validate(menu,menuSnapShot);
+            savedOrder.addOrderLineItem(new OrderLineItem(menu.getId(), menuSnapShot.getQuantity()));
         }
 
         return savedOrder.getId();

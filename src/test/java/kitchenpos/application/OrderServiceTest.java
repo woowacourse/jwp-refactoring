@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -56,7 +57,18 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreate() {
             //given
-            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), menus.stream().map(menu -> new OrderCreateRequest.OrderLineItemCreate(menu.getId(), 2L)).collect(Collectors.toList()));
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                    menus.stream()
+                            .map(menu -> new OrderCreateRequest.MenuSnapShot(
+                                    menu.getId(),
+                                    menu.getName(),
+                                    menu.getPrice(),
+                                    menu.getMenuProducts()
+                                            .stream()
+                                            .map(menuProduct -> new OrderCreateRequest.MenuSnapShot.ProductSnapShot(menuProduct.getSeq(), menuProduct.getProduct().getId(), menuProduct.getProduct().getName(), menuProduct.getProduct().getPrice(), menuProduct.getQuantity()))
+                                            .collect(Collectors.toList()),
+                                    2L))
+                            .collect(Collectors.toList()));
 
             //when
             final Long id = orderService.create(request);
@@ -66,6 +78,35 @@ class OrderServiceTest extends ServiceTest {
                 softly.assertThat(id).isNotNull();
             });
         }
+
+        @DisplayName("주문 도중 메뉴의 정보가 바뀌면 실패한다.")
+        @Test
+        void orderCreateFailWhenChangeMenuInformation() throws IllegalAccessException, NoSuchFieldException {
+            //given
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                    menus.stream()
+                            .map(menu -> new OrderCreateRequest.MenuSnapShot(
+                                    menu.getId(),
+                                    menu.getName(),
+                                    menu.getPrice(),
+                                    menu.getMenuProducts()
+                                            .stream()
+                                            .map(menuProduct -> new OrderCreateRequest.MenuSnapShot.ProductSnapShot(menuProduct.getSeq(), menuProduct.getProduct().getId(), menuProduct.getProduct().getName(), menuProduct.getProduct().getPrice(), menuProduct.getQuantity()))
+                                            .collect(Collectors.toList()),
+                                    2L))
+                            .collect(Collectors.toList()));
+
+            final Menu menu = menus.get(0);
+            Field nameField = menu.getClass().getDeclaredField("name");
+            nameField.setAccessible(true);
+            nameField.set(menu, "change menu name");
+            testFixtureBuilder.buildMenu(menu);
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
 
         @DisplayName("주문 항목이 비어있으면 실패한다.")
         @Test
@@ -82,7 +123,14 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenNotExistMenu() {
             //given
-            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), List.of(new OrderCreateRequest.OrderLineItemCreate(-1L, 2L)));
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                    List.of(new OrderCreateRequest.MenuSnapShot(
+                            -1L,
+                            "not exists menu",
+                            new BigDecimal(0),
+                            Collections.emptyList(),
+                            1L
+                    )));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -93,7 +141,17 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void orderCreateFailWhenNotExistOrderTable() {
             //given
-            final OrderCreateRequest request = new OrderCreateRequest(-1L, menus.stream().map(menu -> new OrderCreateRequest.OrderLineItemCreate(menu.getId(), 2L)).collect(Collectors.toList()));
+            final Menu menu = menus.get(0);
+            final OrderCreateRequest request = new OrderCreateRequest(-1L,
+                    List.of(new OrderCreateRequest.MenuSnapShot(
+                            menu.getId(),
+                            menu.getName(),
+                            menu.getPrice(),
+                            menu.getMenuProducts().stream()
+                                    .map(menuProduct -> new OrderCreateRequest.MenuSnapShot.ProductSnapShot(menuProduct.getSeq(), menuProduct.getProduct().getId(), menuProduct.getProduct().getName(), menuProduct.getProduct().getPrice(), menuProduct.getQuantity()))
+                                    .collect(Collectors.toList()),
+                            1L
+                    )));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -107,8 +165,17 @@ class OrderServiceTest extends ServiceTest {
             orderTable = new OrderTable(null, 3, true);
             orderTable = testFixtureBuilder.buildOrderTable(orderTable);
 
-            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), menus.stream().map(menu -> new OrderCreateRequest.OrderLineItemCreate(menu.getId(), 2L)).collect(Collectors.toList()));
-
+            final Menu menu = menus.get(0);
+            final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
+                    List.of(new OrderCreateRequest.MenuSnapShot(
+                            menu.getId(),
+                            menu.getName(),
+                            menu.getPrice(),
+                            menu.getMenuProducts().stream()
+                                    .map(menuProduct -> new OrderCreateRequest.MenuSnapShot.ProductSnapShot(menuProduct.getSeq(), menuProduct.getProduct().getId(), menuProduct.getProduct().getName(), menuProduct.getProduct().getPrice(), menuProduct.getQuantity()))
+                                    .collect(Collectors.toList()),
+                            1L
+                    )));
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
