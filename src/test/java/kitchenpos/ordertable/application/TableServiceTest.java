@@ -2,7 +2,7 @@ package kitchenpos.ordertable.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.order.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -75,7 +75,7 @@ class TableServiceTest extends ServiceTest {
     void 주문_상태가_COOKING이나MEAL이면_예외가_발생한다(OrderStatus orderStatus) {
         //given
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 0, true));
-        orderRepository.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable.getId(), orderStatus, LocalDateTime.now()));
 
         //when, then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), false))

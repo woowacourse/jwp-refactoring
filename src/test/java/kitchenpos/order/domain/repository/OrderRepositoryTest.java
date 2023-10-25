@@ -1,6 +1,7 @@
 package kitchenpos.order.domain.repository;
 
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,10 @@ class OrderRepositoryTest {
     @Test
     void existsByOrderTableIdAndOrderStatusIn() {
         //given
-        orderRepository.save(new Order(1L, "COOKING", LocalDateTime.now()));
+        orderRepository.save(new Order(1L, OrderStatus.COOKING, LocalDateTime.now()));
 
         //when
-        final boolean result = orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of("COOKING"));
+        final boolean result = orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.COOKING));
 
         //then
         assertThat(result).isTrue();
@@ -32,10 +33,10 @@ class OrderRepositoryTest {
     @Test
     void existsByOrderTableIdAndOrderStatusInIfNotMatchOrderStatus() {
         //given
-        orderRepository.save(new Order(1L, "COOKING", LocalDateTime.now()));
+        orderRepository.save(new Order(1L, OrderStatus.COOKING, LocalDateTime.now()));
 
         //when
-        final boolean result = orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of("MEAL"));
+        final boolean result = orderRepository.existsByOrderTableIdAndOrderStatusIn(1L, List.of(OrderStatus.MEAL));
 
         //then
         assertThat(result).isFalse();
@@ -44,10 +45,10 @@ class OrderRepositoryTest {
     @Test
     void existsByOrderTableIdInAndOrderStatusIn() {
         //given
-        orderRepository.save(new Order(1L, "COOKING", LocalDateTime.now()));
+        orderRepository.save(new Order(1L, OrderStatus.COOKING, LocalDateTime.now()));
 
         //when
-        final boolean result = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(1L), List.of("COOKING"));
+        final boolean result = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(1L), List.of(OrderStatus.COOKING));
 
         //then
         assertThat(result).isTrue();
@@ -56,10 +57,10 @@ class OrderRepositoryTest {
     @Test
     void existsByOrderTableIdInAndOrderStatusInIfNotMatchOrderTableId() {
         //given
-        orderRepository.save(new Order(1L, "COOKING", LocalDateTime.now()));
+        orderRepository.save(new Order(1L, OrderStatus.COOKING, LocalDateTime.now()));
 
         //when
-        final boolean result = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(3L), List.of("COOKING"));
+        final boolean result = orderRepository.existsByOrderTableIdInAndOrderStatusIn(List.of(3L), List.of(OrderStatus.COOKING));
 
         //then
         assertThat(result).isFalse();

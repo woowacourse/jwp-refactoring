@@ -6,7 +6,7 @@ import kitchenpos.order.application.OrderService;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;

@@ -2,7 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -40,7 +40,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalStateException("주문 테이블이 존재하지 않습니다."));
         orderTable.validateIsNotEmpty();
 
-        final Order savedOrder = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now()));
+        final Order savedOrder = orderRepository.save(new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now()));
         saveOrderLineItems(menuIds, quantities, savedOrder);
         return savedOrder.getId();
     }
@@ -66,6 +66,6 @@ public class OrderService {
             throw new IllegalArgumentException("이미 완료된 주문입니다.");
         }
         final OrderStatus orderStatus = OrderStatus.from(status);
-        savedOrder.changeOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus);
     }
 }

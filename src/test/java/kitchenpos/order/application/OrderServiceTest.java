@@ -5,7 +5,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuPrice;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
@@ -89,7 +89,7 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
-        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         //when
         final List<Order> orders = orderService.list();
@@ -103,7 +103,7 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
-        final Order order = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
+        final Order order = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now()));
 
         //when
         orderService.changeOrderStatus(order.getId(), OrderStatus.COMPLETION.name());
@@ -118,7 +118,7 @@ class OrderServiceTest extends ServiceTest {
         //given
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(tableGroup.getId(), 0, false));
-        final Order order = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now()));
+        final Order order = orderRepository.save(new Order(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now()));
 
         //when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), OrderStatus.COOKING.name()))

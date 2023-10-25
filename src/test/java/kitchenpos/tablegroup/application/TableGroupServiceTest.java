@@ -2,11 +2,10 @@ package kitchenpos.tablegroup.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.order.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.tablegroup.application.TableGroupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -70,7 +69,7 @@ class TableGroupServiceTest extends ServiceTest {
         final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, 0, true));
         final Long tableGroupId = tableGroupService.create(List.of(orderTable.getId(), orderTable1.getId()));
 
-        final Order order = new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now());
+        final Order order = new Order(orderTable.getId(), orderStatus, LocalDateTime.now());
         orderRepository.save(order);
 
         //when, then

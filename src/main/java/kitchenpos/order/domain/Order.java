@@ -1,7 +1,11 @@
 package kitchenpos.order.domain;
 
+import org.aspectj.weaver.ast.Or;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +22,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST})
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
@@ -26,7 +31,7 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -37,10 +42,10 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.name();
     }
 
-    public void changeOrderStatus(String orderStatus) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
