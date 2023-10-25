@@ -8,11 +8,19 @@ import kitchenpos.common.ServiceTest;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ProductServiceTest extends ServiceTest {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Nested
     class create_성공_테스트 {

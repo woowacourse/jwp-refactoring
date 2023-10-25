@@ -16,12 +16,36 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableInTableGroupDto;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableGroupService tableGroupService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Nested
     class create_성공_테스트 {

@@ -13,11 +13,27 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuServiceTest extends ServiceTest {
+
+    @Autowired
+    private MenuService menuService;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Nested
     class create_성공_테스트 {

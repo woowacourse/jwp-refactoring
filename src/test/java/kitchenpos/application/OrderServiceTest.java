@@ -17,11 +17,39 @@ import kitchenpos.dto.OrderChangeStatusRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemInOrderDto;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest extends ServiceTest {
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Nested
     class create_성공_테스트 {
@@ -158,7 +186,6 @@ class OrderServiceTest extends ServiceTest {
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
             orderLineItemRepository.save(orderLineItem);
 
-            final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
             final var request = new OrderChangeStatusRequest("COOKING");
 
             // when

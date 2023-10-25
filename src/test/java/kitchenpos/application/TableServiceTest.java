@@ -18,11 +18,35 @@ import kitchenpos.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.OrderTableChangeNumberRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableService tableService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Nested
     class create_성공_테스트 {

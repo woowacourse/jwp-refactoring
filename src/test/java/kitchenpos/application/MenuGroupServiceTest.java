@@ -7,11 +7,19 @@ import kitchenpos.common.ServiceTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings("NonAsciiCharacters")
 class MenuGroupServiceTest extends ServiceTest {
+
+    @Autowired
+    private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Nested
     class create_성공_테스트 {
