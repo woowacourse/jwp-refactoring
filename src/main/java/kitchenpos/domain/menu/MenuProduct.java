@@ -40,6 +40,12 @@ public class MenuProduct {
         return price.multiply(this.quantity);
     }
 
+    public long totalPriceToLong() {
+        final Price price = product.getPrice();
+
+        return price.multiply(this.quantity).value().longValue();
+    }
+
     public Menu getMenu() {
         return menu;
     }

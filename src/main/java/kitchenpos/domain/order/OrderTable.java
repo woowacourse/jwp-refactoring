@@ -59,7 +59,6 @@ public class OrderTable {
         }
     }
 
-    // TODO TableGroup에서 하기?
     public void group(final long tableGroupId) {
         validateAbleToGroup();
         changeEmpty(false);

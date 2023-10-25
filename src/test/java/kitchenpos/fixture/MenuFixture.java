@@ -19,6 +19,6 @@ public class MenuFixture {
         final List<MenuProduct> menuProducts = products.stream()
                 .map(product -> new MenuProduct(product, 1))
                 .collect(Collectors.toList());
-        return new Menu(name, price, menuGroup, menuProducts);
+        return new Menu(1L, name, price, menuGroup, menuProducts);
     }
 }

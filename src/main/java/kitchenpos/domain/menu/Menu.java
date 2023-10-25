@@ -5,6 +5,7 @@ import static javax.persistence.FetchType.LAZY;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -35,16 +36,25 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(final String name,
+    public Menu(final Long id,
+                final String name,
                 final BigDecimal price,
                 final MenuGroup menuGroup,
                 final List<MenuProduct> menuProducts) {
+        this.id = id;
         this.name = MenuName.from(name);
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
         menuProducts.forEach(menuProduct -> menuProduct.register(this));
         this.menuProducts = new MenuProducts(menuProducts);
         validateTotalPrice();
+    }
+
+    public Menu(final String name,
+                final BigDecimal price,
+                final MenuGroup menuGroup,
+                final List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
     private void validateTotalPrice() {
@@ -71,5 +81,9 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return new ArrayList<>(menuProducts.getMenuProducts());
+    }
+
+    public Map<Product, Long> getQuantityByProduct() {
+        return menuProducts.getQuantityByProduct();
     }
 }

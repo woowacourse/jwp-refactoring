@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.vo.OrderStatus;
 
 public class OrderFixture {
@@ -40,7 +40,7 @@ public class OrderFixture {
         final BigDecimal price = BigDecimal.valueOf(7000);
         final MenuGroup menuGroup = new MenuGroup("양식");
         final Product product = 치킨_8000원();
-        final Menu menu = new Menu("1000원 할인 치킨", price, menuGroup, List.of(new MenuProduct(product, 1L)));
+        final Menu menu = new Menu(1L, "1000원 할인 치킨", price, menuGroup, List.of(new MenuProduct(product, 1L)));
         return List.of(new OrderLineItem(menu, 1L));
     }
 }

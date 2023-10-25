@@ -2,6 +2,7 @@ package kitchenpos.domain.menu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -43,5 +44,10 @@ public class MenuProducts {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public Map<Product, Long> getQuantityByProduct() {
+        return menuProducts.stream()
+                .collect(Collectors.toMap(MenuProduct::getProduct, MenuProduct::totalPriceToLong));
     }
 }

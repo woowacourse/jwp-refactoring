@@ -25,10 +25,17 @@ public class Product {
     protected Product() {
     }
 
-    public Product(final String name, final BigDecimal price) {
+    public Product(final Long id,
+                   final String name,
+                   final BigDecimal price) {
+        this.id = id;
         validateName(name);
         this.name = name;
         this.price = Price.from(price);
+    }
+
+    public Product(final String name, final BigDecimal price) {
+        this(null, name, price);
     }
 
     private void validateName(final String name) {
