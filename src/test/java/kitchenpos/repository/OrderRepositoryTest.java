@@ -1,9 +1,10 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.vo.NumberOfGuests;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.ordertable.vo.NumberOfGuests;
 import kitchenpos.repository.config.RepositoryTestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

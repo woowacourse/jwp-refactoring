@@ -1,10 +1,10 @@
 package kitchenpos.api.product;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.vo.Price;
-import kitchenpos.application.dto.request.ProductCreateRequest;
-import kitchenpos.application.dto.response.ProductResponse;
+import kitchenpos.product.Product;
+import kitchenpos.common.vo.Price;
+import kitchenpos.product.application.dto.request.ProductCreateRequest;
+import kitchenpos.product.application.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

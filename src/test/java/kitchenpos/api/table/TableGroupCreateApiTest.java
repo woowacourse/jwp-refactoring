@@ -1,9 +1,9 @@
 package kitchenpos.api.table;
 
 import kitchenpos.api.config.ApiTestConfig;
-import kitchenpos.application.dto.request.TableGroupCreateRequest;
-import kitchenpos.application.dto.response.OrderTableInTableGroupResponse;
-import kitchenpos.application.dto.response.TableGroupResponse;
+import kitchenpos.tablegroup.application.dto.request.TableGroupCreateRequest;
+import kitchenpos.ordertable.application.dto.response.OrderTableInTableGroupResponse;
+import kitchenpos.tablegroup.application.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

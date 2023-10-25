@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
 import kitchenpos.application.config.ServiceTestConfig;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.application.dto.request.OrderChangeStatusRequest;
-import kitchenpos.application.dto.request.OrderCreateRequest;
-import kitchenpos.application.dto.request.OrderLineItemCreateRequest;
-import kitchenpos.application.dto.response.OrderResponse;
+import kitchenpos.menu.Menu;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.ordertable.OrderTable;
+import kitchenpos.order.application.dto.request.OrderChangeStatusRequest;
+import kitchenpos.order.application.dto.request.OrderCreateRequest;
+import kitchenpos.order.application.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.order.application.dto.response.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
