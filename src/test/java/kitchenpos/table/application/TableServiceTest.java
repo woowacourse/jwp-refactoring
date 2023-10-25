@@ -109,7 +109,7 @@ class TableServiceTest {
             Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(),
                     List.of(new ProductIdAndQuantity(product.getId(), 4L)));
             em.persist(menu);
-            Order order = Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
+            Order order = Order.of(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                     List.of(new MenuIdQuantityAndPrice(menu.getId(), 1L, menu.getPrice())));
             em.persist(order);
             em.flush();

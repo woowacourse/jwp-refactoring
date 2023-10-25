@@ -22,10 +22,10 @@ import kitchenpos.order.exception.CannotMakeOrderWithEmptyTableException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.order.exception.OrderStatusNotChangeableException;
+import kitchenpos.order.exception.OrderTableNotFoundException;
 import kitchenpos.order.exception.RequestOrderLineItemIsEmptyException;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.exception.OrderTableNotFoundException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -148,7 +148,7 @@ class OrderServiceTest {
             Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(),
                     List.of(new ProductIdAndQuantity(product.getId(), 4L)));
             em.persist(menu);
-            Order order = Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
+            Order order = Order.of(orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
                     List.of(new MenuIdQuantityAndPrice(menu.getId(), 1L, menu.getPrice())));
             em.persist(order);
             em.flush();
@@ -186,7 +186,7 @@ class OrderServiceTest {
             Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(),
                     List.of(new ProductIdAndQuantity(product.getId(), 4L)));
             em.persist(menu);
-            Order order = Order.of(orderTable, OrderStatus.COMPLETION, LocalDateTime.now(),
+            Order order = Order.of(orderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
                     List.of(new MenuIdQuantityAndPrice(menu.getId(), 1L, menu.getPrice())));
             em.persist(order);
             em.flush();

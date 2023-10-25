@@ -12,16 +12,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import kitchenpos.order.exception.OrderStatusNotChangeableException;
-import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "Orders")
 @Entity
@@ -31,9 +28,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    @Column(name = "order_table_id")
+    private Long orderTableId;
 
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
@@ -46,9 +42,9 @@ public class Order {
     @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    private Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+    private Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -57,10 +53,10 @@ public class Order {
     protected Order() {
     }
 
-    public static Order of(OrderTable orderTable, OrderStatus orderStatus,
+    public static Order of(Long orderTableId, OrderStatus orderStatus,
             LocalDateTime orderedTime,
             List<MenuIdQuantityAndPrice> menuIdQuantityAndPrices) {
-        return new Order(orderTable, orderStatus, orderedTime, menuIdQuantityAndPrices.stream()
+        return new Order(orderTableId, orderStatus, orderedTime, menuIdQuantityAndPrices.stream()
                 .map(menuIdQuantityAndPrice -> new OrderLineItem(menuIdQuantityAndPrice.getMenuId(),
                         menuIdQuantityAndPrice.getQuantity(),
                         menuIdQuantityAndPrice.getOrderedPrice()))
@@ -87,8 +83,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

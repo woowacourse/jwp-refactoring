@@ -1,4 +1,4 @@
-package kitchenpos.table.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -17,15 +17,15 @@ import kitchenpos.order.domain.Order.MenuIdQuantityAndPrice;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.TableGroupRequest;
-import kitchenpos.table.dto.TableGroupRequest.OrderTableDto;
-import kitchenpos.table.dto.TableGroupResponse;
 import kitchenpos.table.exception.OrderTableCannotBeGroupedException;
-import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.table.exception.RequestOrderTableCountNotEnoughException;
-import kitchenpos.table.exception.TableGroupNotFoundException;
-import kitchenpos.table.exception.UnCompletedOrderExistsException;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableGroupRequest.OrderTableDto;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
+import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
+import kitchenpos.tablegroup.exception.RequestOrderTableCountNotEnoughException;
+import kitchenpos.tablegroup.exception.TableGroupNotFoundException;
+import kitchenpos.tablegroup.exception.UnCompletedOrderExistsException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -186,11 +186,11 @@ class TableGroupServiceTest {
             Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(),
                     List.of(new ProductIdAndQuantity(product.getId(), 4L)));
             em.persist(menu);
-            Order order = Order.of(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
-                    List.of(new MenuIdQuantityAndPrice(menu.getId(), 1L, menu.getPrice())));
             em.persist(tableGroup);
             em.persist(orderTable1);
             em.persist(orderTable2);
+            Order order = Order.of(orderTable1.getId(), OrderStatus.COOKING, LocalDateTime.now(),
+                    List.of(new MenuIdQuantityAndPrice(menu.getId(), 1L, menu.getPrice())));
             em.persist(order);
             orderTable1.addToTableGroup(tableGroup.getId());
             orderTable2.addToTableGroup(tableGroup.getId());

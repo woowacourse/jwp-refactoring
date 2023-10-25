@@ -1,4 +1,4 @@
-package kitchenpos.table.dto;
+package kitchenpos.tablegroup.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.List;

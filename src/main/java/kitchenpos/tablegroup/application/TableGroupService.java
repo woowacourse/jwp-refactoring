@@ -1,27 +1,28 @@
-package kitchenpos.table.application;
+package kitchenpos.tablegroup.application;
 
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.dto.TableGroupRequest;
-import kitchenpos.table.dto.TableGroupRequest.OrderTableDto;
-import kitchenpos.table.dto.TableGroupResponse;
-import kitchenpos.table.exception.RequestOrderTableCountNotEnoughException;
-import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.table.exception.TableGroupNotFoundException;
-import kitchenpos.table.exception.UnCompletedOrderExistsException;
 import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.repository.OrderTableRepository;
-import kitchenpos.table.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.dto.TableGroupRequest;
+import kitchenpos.tablegroup.dto.TableGroupRequest.OrderTableDto;
+import kitchenpos.tablegroup.dto.TableGroupResponse;
+import kitchenpos.tablegroup.exception.OrderTableNotFoundException;
+import kitchenpos.tablegroup.exception.RequestOrderTableCountNotEnoughException;
+import kitchenpos.tablegroup.exception.TableGroupNotFoundException;
+import kitchenpos.tablegroup.exception.UnCompletedOrderExistsException;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
+@Transactional
 public class TableGroupService {
 
     private final OrderRepository orderRepository;
@@ -36,7 +37,6 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupResponse create(TableGroupRequest request) {
         validateOrderTableCountFromRequest(request);
         List<OrderTable> orderTables = validateOrderTableExistence(request);
@@ -65,7 +65,6 @@ public class TableGroupService {
         return orderTables;
     }
 
-    @Transactional
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
@@ -74,8 +73,11 @@ public class TableGroupService {
     }
 
     private void validateEveryOrderInGroupCompleted(TableGroup tableGroup) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
-        List<Order> orders = orderRepository.findAllByOrderTableIn(orderTables);
+        List<Long> orderTableIds = orderTableRepository.findAllByTableGroupId(tableGroup.getId())
+                .stream()
+                .map(OrderTable::getId)
+                .collect(toList());
+        List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
 
         boolean isUncompletedOrderExists = orders.stream()
                 .anyMatch(Order::isOrderUnCompleted);
