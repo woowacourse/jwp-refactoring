@@ -10,7 +10,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public Long create(final TableGroupRequest request) {
+    public Long create(final TableGroupCreateRequest request) {
         final List<Long> orderTableIds = request.getTableIds();
 
         final OrderTables orderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));

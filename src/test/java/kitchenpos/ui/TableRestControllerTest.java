@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -16,9 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.dto.request.TableGuestUpdateRequest;
-import kitchenpos.dto.request.TableRequest;
+import kitchenpos.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.dto.request.TableUpdateGuestRequest;
+import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.response.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,7 @@ class TableRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final TableRequest tableRequest = new TableRequest(2, true);
+        final TableCreateRequest tableCreateRequest = new TableCreateRequest(2, true);
 
         given(tableService.create(any()))
                 .willReturn(1L);
@@ -56,7 +55,7 @@ class TableRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/tables")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tableRequest)));
+                .content(objectMapper.writeValueAsString(tableCreateRequest)));
 
         // then
         resultActions.andExpect(status().isCreated())
@@ -68,12 +67,12 @@ class TableRestControllerTest {
     @ValueSource(strings = {"0", "-1"})
     void create_failWhenNumberOfGuestInvalid(final Integer numberOfGuests) throws Exception {
         // given
-        final TableRequest tableRequest = new TableRequest(numberOfGuests, true);
+        final TableCreateRequest tableCreateRequest = new TableCreateRequest(numberOfGuests, true);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/tables")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tableRequest)));
+                .content(objectMapper.writeValueAsString(tableCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -103,7 +102,7 @@ class TableRestControllerTest {
     @Test
     void changeEmpty() throws Exception{
         // given
-        final TableEmptyUpdateRequest updateRequest = new TableEmptyUpdateRequest(false);
+        final TableUpdateEmptyRequest updateRequest = new TableUpdateEmptyRequest(false);
         final TableResponse tableResponse = TableResponse.from(new OrderTable(2, false));
 
         given(tableService.changeEmpty(anyLong(), any()))
@@ -122,7 +121,7 @@ class TableRestControllerTest {
     @Test
     void changeNumberOfGuests() throws Exception{
         // given
-        final TableGuestUpdateRequest updateRequest = new TableGuestUpdateRequest(0);
+        final TableUpdateGuestRequest updateRequest = new TableUpdateGuestRequest(0);
         final TableResponse tableResponse = TableResponse.from(new OrderTable(2, false));
 
         given(tableService.changeNumberOfGuests(anyLong(), any()))

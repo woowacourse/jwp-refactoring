@@ -2,15 +2,15 @@ package kitchenpos.dto.request;
 
 import javax.validation.constraints.NotNull;
 
-public class TableEmptyUpdateRequest {
+public class TableUpdateEmptyRequest {
 
     @NotNull(message = "테이블의 빈 상태 정보를 입력해 주세요.")
     private boolean empty;
 
-    protected TableEmptyUpdateRequest() {
+    protected TableUpdateEmptyRequest() {
     }
 
-    public TableEmptyUpdateRequest(final boolean empty) {
+    public TableUpdateEmptyRequest(final boolean empty) {
         this.empty = empty;
     }
 

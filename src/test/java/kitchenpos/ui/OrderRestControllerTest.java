@@ -15,9 +15,9 @@ import java.util.List;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,11 +45,11 @@ class OrderRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 1L,
                 OrderStatus.COOKING.name(),
-                List.of(new OrderLineItemRequest(1L, 1),
-                        new OrderLineItemRequest(2L, 1)
+                List.of(new OrderLineItemCreateRequest(1L, 1),
+                        new OrderLineItemCreateRequest(2L, 1)
                 )
         );
 
@@ -59,7 +59,7 @@ class OrderRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/orders")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderRequest)));
+                .content(objectMapper.writeValueAsString(orderCreateRequest)));
 
         // then
         resultActions.andExpect(status().isCreated())
@@ -70,18 +70,18 @@ class OrderRestControllerTest {
     @Test
     void create_FailWhenOrderTableIdNull() throws Exception {
         // given
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 null,
                 OrderStatus.COOKING.name(),
-                List.of(new OrderLineItemRequest(1L, 1),
-                        new OrderLineItemRequest(2L, 1)
+                List.of(new OrderLineItemCreateRequest(1L, 1),
+                        new OrderLineItemCreateRequest(2L, 1)
                 )
         );
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/orders")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderRequest)));
+                .content(objectMapper.writeValueAsString(orderCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -91,18 +91,18 @@ class OrderRestControllerTest {
     @Test
     void create_FailWhenOrderStatusNull() throws Exception {
         // given
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 1L,
                 null,
-                List.of(new OrderLineItemRequest(1L, 1),
-                        new OrderLineItemRequest(2L, 1)
+                List.of(new OrderLineItemCreateRequest(1L, 1),
+                        new OrderLineItemCreateRequest(2L, 1)
                 )
         );
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/orders")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderRequest)));
+                .content(objectMapper.writeValueAsString(orderCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -112,7 +112,7 @@ class OrderRestControllerTest {
     @Test
     void create_FailWhenOrderLineItemsNull() throws Exception {
         // given
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 1L,
                 OrderStatus.COOKING.name(),
                 null
@@ -121,7 +121,7 @@ class OrderRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/orders")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderRequest)));
+                .content(objectMapper.writeValueAsString(orderCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -151,7 +151,7 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         // given
-        final OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(OrderStatus.COOKING.name());
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.COOKING.name());
         final OrderResponse orderResponse = OrderResponse.from(new Order(2L, OrderStatus.COOKING.name()));
 
         given(orderService.changeOrderStatus(1L, updateRequest))
@@ -170,7 +170,7 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus_FailWhenStatusNull() throws Exception {
         // given
-        final OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(null);
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(null);
 
         // when
         final ResultActions resultActions = mockMvc.perform(put("/api/orders/{orderId}/order-status", 1)

@@ -10,8 +10,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequset;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,40 +36,40 @@ public class MenuService {
     }
 
     @Transactional
-    public Long create(final MenuRequset request) {
+    public Long create(final MenuCreateRequest request) {
         validateMenuGroup(request);
-        final List<MenuProductRequest> menuProductRequests = request.getMenuProductRequests();
+        final List<MenuProductCreateRequest> menuProductCreateRequests = request.getMenuProductRequests();
 
         final Menu menu = new Menu(request.getName(), new Price(request.getPrice()), request.getMenuGroupId());
-        validateMenuPrice(menuProductRequests, menu);
+        validateMenuPrice(menuProductCreateRequests, menu);
 
         final Menu savedMenu = menuRepository.save(menu);
-        saveMenuProduct(menuProductRequests, savedMenu);
+        saveMenuProduct(menuProductCreateRequests, savedMenu);
         return savedMenu.getId();
     }
 
-    private void validateMenuGroup(final MenuRequset request) {
+    private void validateMenuGroup(final MenuCreateRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
     }
 
-    private void validateMenuPrice(final List<MenuProductRequest> menuProductRequests, final Menu menu) {
+    private void validateMenuPrice(final List<MenuProductCreateRequest> menuProductCreateRequests, final Menu menu) {
         Price sum = Price.ZERO;
-        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
+        for (final MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
+            final Product product = productRepository.findById(menuProductCreateRequest.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-            sum = sum.add(product.getPrice().multiply(menuProductRequest.getQuantity()));
+            sum = sum.add(product.getPrice().multiply(menuProductCreateRequest.getQuantity()));
         }
         menu.validateMenuPrice(sum);
     }
 
-    private void saveMenuProduct(final List<MenuProductRequest> menuProductRequests, final Menu savedMenu) {
-        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
+    private void saveMenuProduct(final List<MenuProductCreateRequest> menuProductCreateRequests, final Menu savedMenu) {
+        for (final MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
             final MenuProduct menuProduct = new MenuProduct(
                     savedMenu,
-                    menuProductRequest.getProductId(),
-                    menuProductRequest.getQuantity()
+                    menuProductCreateRequest.getProductId(),
+                    menuProductCreateRequest.getQuantity()
             );
             MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
             savedMenu.addMenuProduct(savedMenuProduct);

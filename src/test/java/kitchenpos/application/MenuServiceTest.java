@@ -21,8 +21,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequset;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,13 +57,13 @@ class MenuServiceTest {
         final Product product2 = new Product(101L, "양념 치킨", new Price(BigDecimal.valueOf(17000)));
 
         final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
-        final MenuRequset menuRequest = new MenuRequset(
+        final MenuCreateRequest menuRequest = new MenuCreateRequest(
                 "후라이드 양념 세트",
                 BigDecimal.valueOf(30000),
                 menuGroup.getId(),
                 List.of(
-                        new MenuProductRequest(product1.getId(), 1),
-                        new MenuProductRequest(product2.getId(), 1)
+                        new MenuProductCreateRequest(product1.getId(), 1),
+                        new MenuProductCreateRequest(product2.getId(), 1)
                 ));
         final Menu menu = new Menu(1L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), menuGroup.getId());
 
@@ -95,13 +95,13 @@ class MenuServiceTest {
     @Test
     void create_FailWhenMenuGroupNotExist() {
         // given
-        final MenuRequset menuRequest = new MenuRequset(
+        final MenuCreateRequest menuRequest = new MenuCreateRequest(
                 "후라이드 양념 세트",
                 BigDecimal.valueOf(30000),
                 99L,
                 List.of(
-                        new MenuProductRequest(10L, 1),
-                        new MenuProductRequest(11L, 1)
+                        new MenuProductCreateRequest(10L, 1),
+                        new MenuProductCreateRequest(11L, 1)
                 ));
         final Menu menu = new Menu(1L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), null);
 

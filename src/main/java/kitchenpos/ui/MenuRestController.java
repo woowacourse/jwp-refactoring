@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.MenuService;
-import kitchenpos.dto.request.MenuRequset;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class MenuRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final MenuRequset request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid final MenuCreateRequest request) {
         final Long menuId = menuService.create(request);
         return ResponseEntity.created(URI.create("/api/menus/" + menuId)).build();
     }

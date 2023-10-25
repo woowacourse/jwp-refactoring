@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,14 +34,14 @@ class ProductServiceTest {
     @Test
     void create() {
         // given
-        final ProductRequest productRequest = new ProductRequest("후라이드 치킨", BigDecimal.valueOf(16000));
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("후라이드 치킨", BigDecimal.valueOf(16000));
         final Product product = new Product(100L, "후라이드 치킨", new Price(BigDecimal.valueOf(16000)));
 
         given(productRepository.save(any()))
                 .willReturn(product);
 
         // when & then
-        assertThat(productService.create(productRequest)).isEqualTo(product.getId());
+        assertThat(productService.create(productCreateRequest)).isEqualTo(product.getId());
         then(productRepository).should(times(1)).save(any());
     }
 

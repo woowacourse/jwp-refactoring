@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,14 +32,14 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("치킨");
+        final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("치킨");
         final MenuGroup menuGroup = new MenuGroup(10L, "치킨");
 
         given(menuGroupRepository.save(any()))
                 .willReturn(menuGroup);
 
         // when & then
-        assertThat(menuGroupService.create(menuGroupRequest)).isEqualTo(menuGroup.getId());
+        assertThat(menuGroupService.create(menuGroupCreateRequest)).isEqualTo(menuGroup.getId());
         then(menuGroupRepository).should(times(1)).save(any());
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class ProductRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final ProductRequest productRequest = new ProductRequest("후라이드 치킨", BigDecimal.valueOf(17000));
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("후라이드 치킨", BigDecimal.valueOf(17000));
 
         given(productService.create(any()))
                 .willReturn(1L);
@@ -55,7 +55,7 @@ class ProductRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/products")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productRequest)));
+                .content(objectMapper.writeValueAsString(productCreateRequest)));
 
         // then
         resultActions.andExpect(status().isCreated())
@@ -68,7 +68,7 @@ class ProductRestControllerTest {
     @ValueSource(strings = {" "})
     void create_FailWhenRequestNameIsBlank(final String name) throws Exception {
         // given
-        final ProductRequest productRequest = new ProductRequest(name, BigDecimal.valueOf(17000));
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, BigDecimal.valueOf(17000));
 
         given(productService.create(any()))
                 .willReturn(1L);
@@ -76,7 +76,7 @@ class ProductRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/products")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productRequest)));
+                .content(objectMapper.writeValueAsString(productCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -88,12 +88,12 @@ class ProductRestControllerTest {
     @ValueSource(strings = {"-1"})
     void create_FailWhenRequestPriceIsInvalid(final BigDecimal price) throws Exception {
         // given
-        final ProductRequest productRequest = new ProductRequest("치킨", price);
+        final ProductCreateRequest productCreateRequest = new ProductCreateRequest("치킨", price);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/products")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(productRequest)));
+                .content(objectMapper.writeValueAsString(productCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());

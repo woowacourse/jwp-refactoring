@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(List.of(1L, 2L, 3L));
+        final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(1L, 2L, 3L));
 
         given(tableGroupService.create(any()))
                 .willReturn(1L);
@@ -48,7 +48,7 @@ class TableGroupRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tableGroupRequest)));
+                .content(objectMapper.writeValueAsString(tableGroupCreateRequest)));
 
         // then
         resultActions.andExpect(status().isCreated())

@@ -2,15 +2,15 @@ package kitchenpos.dto.request;
 
 import javax.validation.constraints.Min;
 
-public class TableGuestUpdateRequest {
+public class TableUpdateGuestRequest {
 
     @Min(0)
     private int numberOfGuests;
 
-    protected TableGuestUpdateRequest() {
+    protected TableUpdateGuestRequest() {
     }
 
-    public TableGuestUpdateRequest(final int numberOfGuests) {
+    public TableUpdateGuestRequest(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 

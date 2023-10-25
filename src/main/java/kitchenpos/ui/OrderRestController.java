@@ -4,8 +4,8 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.OrderService;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class OrderRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final OrderRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid final OrderCreateRequest request) {
         final Long orderId = orderService.create(request);
         return ResponseEntity.created(URI.create("/api/orders/" + orderId)).build();
     }
@@ -39,7 +39,7 @@ public class OrderRestController {
     @PutMapping("/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody @Valid final OrderStatusUpdateRequest request
+            @RequestBody @Valid final OrderUpdateStatusRequest request
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, request));
     }

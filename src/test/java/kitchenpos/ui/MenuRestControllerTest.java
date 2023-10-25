@@ -15,8 +15,8 @@ import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Price;
-import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequset;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,11 +48,11 @@ class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuRequset menuRequset = new MenuRequset(
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "반반 치킨세트",
                 BigDecimal.valueOf(30000),
                 1L,
-                List.of(new MenuProductRequest(1L, 1), new MenuProductRequest(2L, 1))
+                List.of(new MenuProductCreateRequest(1L, 1), new MenuProductCreateRequest(2L, 1))
         );
 
         given(menuService.create(any()))
@@ -61,7 +61,7 @@ class MenuRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menus")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuRequset)));
+                .content(objectMapper.writeValueAsString(menuCreateRequest)));
 
         // then
         resultActions.andExpect(status().isCreated())
@@ -74,17 +74,17 @@ class MenuRestControllerTest {
     @ValueSource(strings = {" "})
     void create_FailWhenRequestNameIsBlank(final String name) throws Exception {
         // given
-        final MenuRequset menuRequset = new MenuRequset(
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 name,
                 BigDecimal.valueOf(30000),
                 1L,
-                List.of(new MenuProductRequest(1L, 1), new MenuProductRequest(2L, 1))
+                List.of(new MenuProductCreateRequest(1L, 1), new MenuProductCreateRequest(2L, 1))
         );
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menus")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuRequset)));
+                .content(objectMapper.writeValueAsString(menuCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -96,17 +96,17 @@ class MenuRestControllerTest {
     @ValueSource(strings = {"-1"})
     void create_FailWhenRequestPriceIsInvalid(final BigDecimal price) throws Exception {
         // given
-        final MenuRequset menuRequset = new MenuRequset(
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "반반 치킨세트",
                 price,
                 1L,
-                List.of(new MenuProductRequest(1L, 1), new MenuProductRequest(2L, 1))
+                List.of(new MenuProductCreateRequest(1L, 1), new MenuProductCreateRequest(2L, 1))
         );
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menus")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuRequset)));
+                .content(objectMapper.writeValueAsString(menuCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -116,17 +116,17 @@ class MenuRestControllerTest {
     @Test
     void create_FailWhenRequestMenuGroupIdIsNull() throws Exception {
         // given
-        final MenuRequset menuRequset = new MenuRequset(
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "반반 치킨세트",
                 BigDecimal.valueOf(30000),
                 null,
-                List.of(new MenuProductRequest(1L, 1), new MenuProductRequest(2L, 1))
+                List.of(new MenuProductCreateRequest(1L, 1), new MenuProductCreateRequest(2L, 1))
         );
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menus")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuRequset)));
+                .content(objectMapper.writeValueAsString(menuCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());
@@ -136,7 +136,7 @@ class MenuRestControllerTest {
     @Test
     void create_FailWhenRequestMenuProductsIsNull() throws Exception {
         // given
-        final MenuRequset menuRequset = new MenuRequset(
+        final MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
                 "반반 치킨세트",
                 BigDecimal.valueOf(30000),
                 1L,
@@ -146,7 +146,7 @@ class MenuRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menus")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuRequset)));
+                .content(objectMapper.writeValueAsString(menuCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());

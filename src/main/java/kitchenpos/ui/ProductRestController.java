@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.ProductService;
-import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +23,7 @@ public class ProductRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final ProductRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid final ProductCreateRequest request) {
         final Long productId = productService.create(request);
         return ResponseEntity.created(URI.create("/api/products/" + productId)).build();
     }

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class MenuGroupRestControllerTest {
     @Test
     void create() throws Exception {
         // given
-        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("반반 치킨세트");
+        final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("반반 치킨세트");
 
         given(menuGroupService.create(any()))
                 .willReturn(1L);
@@ -52,7 +52,7 @@ class MenuGroupRestControllerTest {
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuGroupRequest)));
+                .content(objectMapper.writeValueAsString(menuGroupCreateRequest)));
 
         // then
         resultActions.andExpect(status().isCreated())
@@ -65,12 +65,12 @@ class MenuGroupRestControllerTest {
     @ValueSource(strings = {" "})
     void create_FailWhenRequestNameIsBlank(final String name) throws Exception {
         // given
-        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest(name);
+        final MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(name);
 
         // when
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
                 .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menuGroupRequest)));
+                .content(objectMapper.writeValueAsString(menuGroupCreateRequest)));
 
         // then
         resultActions.andExpect(status().isBadRequest());

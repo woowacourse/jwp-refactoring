@@ -3,7 +3,7 @@ package kitchenpos.dto.request;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-public class OrderLineItemRequest {
+public class OrderLineItemCreateRequest {
 
     @NotNull(message = "메뉴 id를 입력해 주세요.")
     private final Long menuId;
@@ -12,7 +12,7 @@ public class OrderLineItemRequest {
     @Min(1)
     private final long quantity;
 
-    public OrderLineItemRequest(final Long menuId, final long quantity) {
+    public OrderLineItemCreateRequest(final Long menuId, final long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }

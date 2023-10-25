@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.dto.request.MenuProductRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
 
 @Entity
 public class MenuProduct {
@@ -42,7 +42,7 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public static MenuProduct from(final MenuProductRequest request) {
+    public static MenuProduct from(final MenuProductCreateRequest request) {
         return new MenuProduct(null, request.getProductId(), request.getQuantity());
     }
 

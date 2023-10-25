@@ -6,13 +6,13 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TableGroupRequestTest {
+class TableGroupCreateRequestTest {
 
     @DisplayName("테이블 Id 목록이 null이면 예외 처리한다.")
     @Test
     void validateTableGroup() {
         // when & then
-        assertThatThrownBy(() -> new TableGroupRequest(null))
+        assertThatThrownBy(() -> new TableGroupCreateRequest(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 수가 올바르지 않습니다.");
     }
@@ -21,7 +21,7 @@ class TableGroupRequestTest {
     @Test
     void validateTableGroupWhenSizeUnderTwo() {
         // when & then
-        assertThatThrownBy(() -> new TableGroupRequest(List.of(1L)))
+        assertThatThrownBy(() -> new TableGroupCreateRequest(List.of(1L)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 수가 올바르지 않습니다.");
     }

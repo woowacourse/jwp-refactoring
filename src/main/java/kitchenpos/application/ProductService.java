@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Long create(final ProductRequest request) {
+    public Long create(final ProductCreateRequest request) {
         final Product product = new Product(request.getName(), new Price(request.getPrice()));
         final Product saveProduct = productRepository.save(product);
 

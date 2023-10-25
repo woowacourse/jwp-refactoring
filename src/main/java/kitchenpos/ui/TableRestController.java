@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.TableService;
-import kitchenpos.dto.request.TableEmptyUpdateRequest;
-import kitchenpos.dto.request.TableGuestUpdateRequest;
-import kitchenpos.dto.request.TableRequest;
+import kitchenpos.dto.request.TableUpdateEmptyRequest;
+import kitchenpos.dto.request.TableUpdateGuestRequest;
+import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.response.TableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,7 @@ public class TableRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final TableRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid final TableCreateRequest request) {
         final Long tableId = tableService.create(request);
         return ResponseEntity.created(URI.create("/api/tables/" + tableId)).build();
     }
@@ -40,7 +40,7 @@ public class TableRestController {
     @PutMapping("/{orderTableId}/empty")
     public ResponseEntity<TableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody @Valid final TableEmptyUpdateRequest request
+            @RequestBody @Valid final TableUpdateEmptyRequest request
     ) {
         return ResponseEntity.ok().body(tableService.changeEmpty(orderTableId, request));
     }
@@ -48,7 +48,7 @@ public class TableRestController {
     @PutMapping("/{orderTableId}/number-of-guests")
     public ResponseEntity<TableResponse> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody @Valid final TableGuestUpdateRequest request
+            @RequestBody @Valid final TableUpdateGuestRequest request
     ) {
         return ResponseEntity.ok().body(tableService.changeNumberOfGuests(orderTableId, request));
     }

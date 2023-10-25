@@ -6,7 +6,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-public class MenuRequset {
+public class MenuCreateRequest {
 
     @NotBlank(message = "이름을 입력해 주세요")
     private final String name;
@@ -19,13 +19,13 @@ public class MenuRequset {
     private final Long menuGroupId;
 
     @NotNull(message = "메뉴에 사용되는 상품을 입력해 주세요.")
-    private final List<MenuProductRequest> menuProductRequests;
+    private final List<MenuProductCreateRequest> menuProductRequests;
 
-    public MenuRequset(
+    public MenuCreateRequest(
             final String name,
             final BigDecimal price,
             final Long menuGroupId,
-            final List<MenuProductRequest> menuProductRequests
+            final List<MenuProductCreateRequest> menuProductRequests
     ) {
         this.name = name;
         this.price = price;
@@ -45,7 +45,7 @@ public class MenuRequset {
         return menuGroupId;
     }
 
-    public List<MenuProductRequest> getMenuProductRequests() {
+    public List<MenuProductCreateRequest> getMenuProductRequests() {
         return menuProductRequests;
     }
 }

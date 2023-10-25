@@ -23,9 +23,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.request.OrderLineItemRequest;
-import kitchenpos.dto.request.OrderRequest;
-import kitchenpos.dto.request.OrderStatusUpdateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderUpdateStatusRequest;
 import kitchenpos.dto.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,11 +62,11 @@ class OrderServiceTest {
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
         final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 orderTable.getId(),
                 OrderStatus.COOKING.name(),
-                List.of(new OrderLineItemRequest(menu1.getId(), 1),
-                        new OrderLineItemRequest(menu2.getId(), 1))
+                List.of(new OrderLineItemCreateRequest(menu1.getId(), 1),
+                        new OrderLineItemCreateRequest(menu2.getId(), 1))
         );
 
         final Order order = new Order(1L, null, OrderStatus.COOKING.name());
@@ -93,7 +93,7 @@ class OrderServiceTest {
                 .willReturn(updatedOrder);
 
         // when & then
-        assertThat(orderService.create(orderRequest)).isEqualTo(updatedOrder.getId());
+        assertThat(orderService.create(orderCreateRequest)).isEqualTo(updatedOrder.getId());
         then(menuRepository).should(times(1)).countByIdIn(any());
         then(orderTableRepository).should(times(1)).findById(anyLong());
         then(orderRepository).should(times(1)).save(any());
@@ -108,10 +108,10 @@ class OrderServiceTest {
 
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 100L,
                 OrderStatus.COOKING.name(),
-                List.of(new OrderLineItemRequest(menu1.getId(), 1))
+                List.of(new OrderLineItemCreateRequest(menu1.getId(), 1))
         );
 
         final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
@@ -121,7 +121,7 @@ class OrderServiceTest {
         order.addOrderLineItem(orderLineItem2);
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(orderRequest))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("상품이 존재하지 않습니다.");
     }
@@ -135,11 +135,11 @@ class OrderServiceTest {
         final Menu menu1 = new Menu(10L, "후라이드 양념 세트", new Price(BigDecimal.valueOf(30000)), 1L);
         final Menu menu2 = new Menu(11L, "후라이드 간장 세트", new Price(BigDecimal.valueOf(30000)), 1L);
 
-        final OrderRequest orderRequest = new OrderRequest(
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 100L,
                 OrderStatus.COOKING.name(),
-                List.of(new OrderLineItemRequest(menu1.getId(), 1),
-                        new OrderLineItemRequest(menu2.getId(), 1))
+                List.of(new OrderLineItemCreateRequest(menu1.getId(), 1),
+                        new OrderLineItemCreateRequest(menu2.getId(), 1))
         );
 
         final OrderLineItem orderLineItem1 = new OrderLineItem(order, menu1.getId(), 1);
@@ -165,7 +165,7 @@ class OrderServiceTest {
                 .willReturn(Optional.of(orderTable));
 
         // when & then
-        assertThatThrownBy(() -> orderService.create(orderRequest))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블의 상태가 비어 있습니다.");
     }
@@ -195,7 +195,7 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         final Order order = new Order(1L, null, OrderStatus.COOKING.name());
-        final OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
         final Order updatedOrder = new Order(1L, null, OrderStatus.MEAL.name());
 
         given(orderRepository.findById(1L))
@@ -216,7 +216,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_FailWhenOrderNotExist() {
         // given
-        final OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(OrderStatus.MEAL.name());
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.MEAL.name());
         final Order order = new Order(1L, null, OrderStatus.MEAL.name());
 
         // when & then
@@ -229,7 +229,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatus_FailWhenOrderStatusAlreadyCompletion() {
         // given
-        final OrderStatusUpdateRequest updateRequest = new OrderStatusUpdateRequest(OrderStatus.COMPLETION.name());
+        final OrderUpdateStatusRequest updateRequest = new OrderUpdateStatusRequest(OrderStatus.COMPLETION.name());
         final Order order = new Order(1L, null, OrderStatus.COMPLETION.name());
 
         given(orderRepository.findById(1L))

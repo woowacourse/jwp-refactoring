@@ -3,7 +3,7 @@ package kitchenpos.dto.request;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
-public class OrderRequest {
+public class OrderCreateRequest {
 
     @NotNull(message = "테이블 Id를 입력해 주세요.")
     private final Long orderTableId;
@@ -12,12 +12,12 @@ public class OrderRequest {
     private final String orderStatus;
 
     @NotNull(message = "주문 항목을 입력해 주세요")
-    private final List<OrderLineItemRequest> orderLineItemRequests;
+    private final List<OrderLineItemCreateRequest> orderLineItemRequests;
 
-    public OrderRequest(
+    public OrderCreateRequest(
             final Long orderTableId,
             final String orderStatus,
-            final List<OrderLineItemRequest> orderLineItemRequests
+            final List<OrderLineItemCreateRequest> orderLineItemRequests
     ) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -32,7 +32,7 @@ public class OrderRequest {
         return orderStatus;
     }
 
-    public List<OrderLineItemRequest> getOrderLineItemRequests() {
+    public List<OrderLineItemCreateRequest> getOrderLineItemRequests() {
         return orderLineItemRequests;
     }
 }
