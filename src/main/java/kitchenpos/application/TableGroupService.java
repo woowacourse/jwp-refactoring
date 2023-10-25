@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableInTableGroupDto;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
@@ -46,7 +46,7 @@ public class TableGroupService {
 
     private List<OrderTable> findAllOrderTablesByIdIn(final TableGroupCreateRequest request) {
         final List<Long> orderTableIds = request.getOrderTables().stream()
-                .map(OrderTableRequest::getId)
+                .map(OrderTableInTableGroupDto::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);

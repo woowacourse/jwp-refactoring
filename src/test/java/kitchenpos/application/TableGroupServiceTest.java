@@ -14,7 +14,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableInTableGroupDto;
 import kitchenpos.dto.TableGroupCreateRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Nested;
@@ -32,8 +32,8 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableRepository.save(new OrderTable(null, 3, true));
             orderTableRepository.save(new OrderTable(null, 2, true));
 
-            final var orderTableRequest1 = new OrderTableRequest(1L);
-            final var orderTableRequest2 = new OrderTableRequest(2L);
+            final var orderTableRequest1 = new OrderTableInTableGroupDto(1L);
+            final var orderTableRequest2 = new OrderTableInTableGroupDto(2L);
             final var request = new TableGroupCreateRequest(List.of(orderTableRequest1, orderTableRequest2));
 
             // when
@@ -52,9 +52,9 @@ class TableGroupServiceTest extends ServiceTest {
             orderTableRepository.save(new OrderTable(null, 3, true));
             orderTableRepository.save(new OrderTable(null, 2, true));
 
-            final var orderTableRequest1 = new OrderTableRequest(1L);
-            final var orderTableRequest2 = new OrderTableRequest(2L);
-            final var orderTableRequest3 = new OrderTableRequest(3L);
+            final var orderTableRequest1 = new OrderTableInTableGroupDto(1L);
+            final var orderTableRequest2 = new OrderTableInTableGroupDto(2L);
+            final var orderTableRequest3 = new OrderTableInTableGroupDto(3L);
             final var request = new TableGroupCreateRequest(
                     List.of(orderTableRequest1, orderTableRequest2, orderTableRequest3));
 
