@@ -56,13 +56,13 @@ public class OrderService {
     private void setupOrderLineItems(CreateOrderRequest request, Order order) {
         List<OrderLineItem> orderLineItems = request.getOrderLineItems()
                 .stream()
-                .map(each -> createOrderLineItem(order, each))
+                .map(this::createOrderLineItem)
                 .collect(Collectors.toList());
 
         order.setupOrderLineItems(orderLineItems);
     }
 
-    private OrderLineItem createOrderLineItem(Order order, OrderLineItemRequest orderLineItemRequest) {
+    private OrderLineItem createOrderLineItem(OrderLineItemRequest orderLineItemRequest) {
         Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                 .orElseThrow(MenuNotFoundException::new);
 
