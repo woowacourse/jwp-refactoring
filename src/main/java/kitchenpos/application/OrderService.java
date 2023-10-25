@@ -1,9 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -12,6 +8,10 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.dto.order.OrderRequest;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -41,20 +41,21 @@ public class OrderService {
 
     @Transactional
     public Order create(OrderRequest orderRequest) {
-        OrderTable orderTable = getOrderTable(orderRequest);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈테이블은 주문을 등록할 수 없습니다.");
-        }
-
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order order = new Order(getOrderTable(orderRequest), OrderStatus.COOKING.name(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
-        setOrderLineItems(orderRequest.getOrderLineItems(), savedOrder);
+        setOrderLineItems(orderRequest, savedOrder);
 
         return savedOrder;
     }
 
     private OrderTable getOrderTable(OrderRequest orderRequest) {
+        OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에는 주문을 등록할 수 없습니다."));
+
+        return orderTable;
+    }
+
+    private void setOrderLineItems(OrderRequest orderRequest, Order savedOrder) {
         if (CollectionUtils.isEmpty(orderRequest.getOrderLineItems())) {
             throw new IllegalArgumentException("빈 주문 항목으로는 주문을 등록할 수 없습니다.");
         }
@@ -62,14 +63,9 @@ public class OrderService {
                 .anyMatch(orderLineItem -> !menuRepository.existsById(orderLineItem.getMenuId()))) {
             throw new IllegalArgumentException("등록되지 않은 메뉴에는 주문을 등록할 수 없습니다.");
         }
-        OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블에는 주문을 등록할 수 없습니다."));
-        return orderTable;
-    }
 
-    private void setOrderLineItems(List<OrderLineItemRequest> orderLineItemsRequest, Order savedOrder) {
         List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (OrderLineItemRequest orderLineItemRequest : orderLineItemsRequest) {
+        for (OrderLineItemRequest orderLineItemRequest : orderRequest.getOrderLineItems()) {
             Menu savedMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
             OrderLineItem orderLineItem = new OrderLineItem(savedOrder, savedMenu, orderLineItemRequest.getQuantity());
@@ -86,11 +82,9 @@ public class OrderService {
     public Order changeOrderStatus(Long orderId, ChangeOrderStatusRequest changeOrderStatusRequest) {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 주문은 주문 상태를 바꿀 수 없습니다."));
-        if (savedOrder.isCompletionStatus()) {
-            throw new IllegalArgumentException("완료 상태의 주문은 상태 변경이 불가능합니다.");
-        }
+
         OrderStatus orderStatus = OrderStatus.valueOf(changeOrderStatusRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
 

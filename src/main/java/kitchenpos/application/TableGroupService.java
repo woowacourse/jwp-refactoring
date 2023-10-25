@@ -66,7 +66,7 @@ public class TableGroupService {
 
         for (OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.changeEmptyStatus(false);
         }
     }
 }

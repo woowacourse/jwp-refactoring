@@ -37,9 +37,23 @@ public class Order {
     }
 
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+        validate(orderTable);
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    private void validate(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈테이블은 주문을 등록할 수 없습니다.");
+        }
+    }
+
+    public void changeOrderStatus(String orderStatus) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException("완료 상태의 주문은 상태 변경이 불가능합니다.");
+        }
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -62,16 +76,7 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
-
-    public boolean isCompletionStatus() {
-        return this.orderStatus.equals(OrderStatus.COMPLETION.name());
-    }
-
 }
