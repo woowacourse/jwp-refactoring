@@ -2,7 +2,6 @@ package kitchenpos.table.domain;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.LocalDateTime;
 import kitchenpos.table.exception.CannotChangeGroupedTableEmptyException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -16,8 +15,7 @@ class OrderTableTest {
     void 단체_테이블에_속한_테이블을_빈_테이블로_변경_시_예외를_반환한다() {
         // given
         OrderTable orderTable = new OrderTable(4, false);
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        orderTable.addToTableGroup(tableGroup);
+        orderTable.addToTableGroup(1L);
 
         // when, then
         assertThrows(CannotChangeGroupedTableEmptyException.class,

@@ -3,12 +3,9 @@ package kitchenpos.table.domain;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import kitchenpos.table.exception.CannotChangeEmptyTableNumberOfGuestsException;
 import kitchenpos.table.exception.CannotChangeGroupedTableEmptyException;
 import kitchenpos.table.exception.OrderTableCannotBeGroupedException;
@@ -20,9 +17,9 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     @Column(name = "number_of_guests")
     private int numberOfGuests;
@@ -45,13 +42,13 @@ public class OrderTable {
         return id;
     }
 
-    public void addToTableGroup(TableGroup tableGroup) {
+    public void addToTableGroup(Long tableGroupId) {
         validateCanBeAddedToNewTableGroup();
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     private void validateCanBeAddedToNewTableGroup() {
-        if (isEmpty() || Objects.nonNull(this.tableGroup)) {
+        if (isEmpty() || Objects.nonNull(tableGroupId)) {
             throw new OrderTableCannotBeGroupedException();
         }
     }
@@ -64,14 +61,14 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
-        if (Objects.nonNull(tableGroup)) {
+        if (Objects.nonNull(tableGroupId)) {
             throw new CannotChangeGroupedTableEmptyException();
         }
         this.empty = empty;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

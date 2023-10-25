@@ -42,7 +42,7 @@ public class TableGroupService {
         List<OrderTable> orderTables = validateOrderTableExistence(request);
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         for (OrderTable orderTable : orderTables) {
-            orderTable.addToTableGroup(tableGroup);
+            orderTable.addToTableGroup(tableGroup.getId());
         }
         return TableGroupResponse.of(tableGroup, orderTables);
     }

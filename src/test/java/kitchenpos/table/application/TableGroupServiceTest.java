@@ -124,12 +124,12 @@ class TableGroupServiceTest {
             OrderTable orderTable2 = new OrderTable(2, false);
             OrderTable orderTable3 = new OrderTable(3, false);
             TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-            orderTable1.addToTableGroup(tableGroup);
-            orderTable2.addToTableGroup(tableGroup);
             em.persist(orderTable1);
             em.persist(orderTable2);
             em.persist(orderTable3);
             em.persist(tableGroup);
+            orderTable1.addToTableGroup(tableGroup.getId());
+            orderTable2.addToTableGroup(tableGroup.getId());
             em.flush();
             em.clear();
             TableGroupRequest request = new TableGroupRequest(
@@ -170,16 +170,16 @@ class TableGroupServiceTest {
         @Test
         void 주문이_완료되지_않은_테이블의_단체_테이블을_해제하면_예외를_반환한다() {
             // given
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             OrderTable orderTable1 = new OrderTable(1, false);
             OrderTable orderTable2 = new OrderTable(2, false);
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             Orders orders = new Orders(orderTable1, OrderStatus.COOKING, LocalDateTime.now());
-            orderTable1.addToTableGroup(tableGroup);
-            orderTable2.addToTableGroup(tableGroup);
+            em.persist(tableGroup);
             em.persist(orderTable1);
             em.persist(orderTable2);
-            em.persist(tableGroup);
             em.persist(orders);
+            orderTable1.addToTableGroup(tableGroup.getId());
+            orderTable2.addToTableGroup(tableGroup.getId());
             em.flush();
             em.clear();
 
