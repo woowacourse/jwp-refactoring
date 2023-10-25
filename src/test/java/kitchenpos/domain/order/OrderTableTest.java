@@ -70,8 +70,9 @@ class OrderTableTest {
         final OrderTable orderTable = 주문_테이블_생성();
 
         // when
-        final Order order = new Order(orderTable, 주문항목_1개_메뉴_1000원_할인_치킨());
+        final Order order = new Order(1L, 주문항목_1개_메뉴_1000원_할인_치킨());
         order.changeOrderStatus(MEAL);
+        orderTable.placeOrder(order);
 
         // then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
@@ -85,8 +86,10 @@ class OrderTableTest {
         final OrderTable orderTable = 주문_테이블_생성();
 
         // when
-        final Order order = new Order(orderTable, 주문항목_1개_메뉴_1000원_할인_치킨());
+        final Order order = new Order(1L, 주문항목_1개_메뉴_1000원_할인_치킨());
         order.changeOrderStatus(COOKING);
+        orderTable.placeOrder(order);
+
         // then
         assertThatThrownBy(() -> orderTable.changeEmpty(true))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -136,8 +139,9 @@ class OrderTableTest {
         table.group(1L);
 
         final OrderStatus unableStatusToSplit = OrderStatus.valueOf(orderStatus);
-        final Order order = new Order(table, 주문항목_1개_메뉴_1000원_할인_치킨());
+        final Order order = new Order(1L, 주문항목_1개_메뉴_1000원_할인_치킨());
         order.changeOrderStatus(unableStatusToSplit);
+        table.placeOrder(order);
 
         // then
         assertThatThrownBy(table::unGroup)

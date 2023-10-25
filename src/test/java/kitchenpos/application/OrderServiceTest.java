@@ -11,13 +11,15 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.EntityManager;
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.vo.OrderStatus;
 import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.fixture.RequestParser;
@@ -38,6 +40,9 @@ class OrderServiceTest extends IntegrationTest {
     private MenuGroupService menuGroupService;
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("주문 등록 시 전달받은 정보를 새 id로 저장한다.")
@@ -115,13 +120,14 @@ class OrderServiceTest extends IntegrationTest {
         final Menu menu = menuService.create(RequestParser.of("치킨 할인", BigDecimal.ONE, menuGroup, List.of(chicken)));
 
         final Order order = orderService.create(RequestParser.of(orderTable, List.of(menu)));
+        entityManager.flush();
 
         // when
         final Order orderForMeal = orderService.changeOrderStatus(order.getId(), MEAL.name());
 
         // then
         assertThat(orderForMeal).usingRecursiveComparison()
-                .ignoringFields("orderStatus")
+                .ignoringFieldsOfTypes(OrderStatus.class)
                 .isEqualTo(order);
         assertThat(orderForMeal.getOrderStatus()).isEqualTo(MEAL);
     }

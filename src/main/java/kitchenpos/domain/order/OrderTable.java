@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +17,7 @@ public class OrderTable {
 
     private static final int NUMBER_OF_GUESTS_MIN = 0;
 
-    @OneToMany(mappedBy = "orderTable")
+    @OneToMany(mappedBy = "orderTableId", cascade = ALL)
     private final List<Order> orders = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,11 +47,8 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    // TODO 양방향 의존
     public void placeOrder(final Order order) {
         validateAbleToOrder();
-        // TODO OrderTable에서 orders를 조회할 일이 있는가? 없으면 제거하자.
-        // TODO 그런데 orders 중 진행중인 주문이 있는지 확인해야 비울 수 있다. -> Validator에서 검증해주자? 모르겠다..
         orders.add(order);
     }
 

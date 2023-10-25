@@ -36,14 +36,15 @@ public class OrderService {
     }
 
     public Order create(final OrderCreateRequest request) {
-        final OrderTable orderTable = findOrderTable(request.getOrderTableId());
+        final long orderTableId = request.getOrderTableId();
+        final OrderTable orderTable = findOrderTable(orderTableId);
         final List<OrderLineItemCreateRequest> orderLineItemRequests = request.getOrderLineItems();
         validateMenuToOrder(orderLineItemRequests);
 
-        return orderRepository.save(new Order(
-                orderTable,
-                createOrderLineItems(orderLineItemRequests))
-        );
+        final List<OrderLineItem> orderLineItems = createOrderLineItems(orderLineItemRequests);
+        final Order order = new Order(orderTableId, orderLineItems);
+        orderTable.placeOrder(order);
+        return order;
     }
 
     private OrderTable findOrderTable(final long orderTableId) {
