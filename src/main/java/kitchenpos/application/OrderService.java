@@ -51,7 +51,7 @@ public class OrderService {
                 .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
         if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목과 메뉴 수량이 일치하지 않습니다.");
         }
     }
 
