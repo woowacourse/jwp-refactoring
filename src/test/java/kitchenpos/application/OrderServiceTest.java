@@ -59,7 +59,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void init() {
-        orderTable.setEmpty(false);
+        orderTable.changeEmpty(false);
     }
 
     @Test
@@ -127,7 +127,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문을 생성할 때 주문 테이블이 빈 테이블이면 예외가 발생한다.")
     void create_fail_empty_orderTable() {
-        orderTable.setEmpty(true);
+        orderTable.changeEmpty(true);
         when(menuRepository.countByIdIn(List.of(1L, 1L))).thenReturn(2L);
         when(orderTableRepository.getById(1L)).thenReturn(orderTable);
 

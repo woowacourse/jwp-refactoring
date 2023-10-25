@@ -39,7 +39,7 @@ class OrderTableTest {
     @DisplayName("테이블 그룹이 있으면 주문 테이블의 상태를 변경할 수 없다.")
     void changeEmpty_fail() {
         OrderTable orderTable = new OrderTable(10);
-        orderTable.setTableGroup(new TableGroup());
+        orderTable.group(new TableGroup());
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
                 .isInstanceOf(ExistsTableGroupException.class);

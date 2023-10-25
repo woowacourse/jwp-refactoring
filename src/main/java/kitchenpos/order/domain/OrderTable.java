@@ -66,19 +66,11 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

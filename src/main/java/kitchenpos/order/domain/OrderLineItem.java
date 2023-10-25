@@ -56,10 +56,6 @@ public class OrderLineItem {
         return order.getId();
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
-    }
-
     public Long getMenuId() {
         return menuId;
     }

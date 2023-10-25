@@ -127,7 +127,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블이 빈 테이블인 경우 예외가 발생한다.")
     void changeNumberOfGuests_fail_empty_table() {
         when(orderTableRepository.getById(orderTable.getId())).thenReturn(orderTable);
-        orderTable.setEmpty(true);
+        orderTable.changeEmpty(true);
 
         OrderTableGuestRequest orderTableGuestRequest = new OrderTableGuestRequest(10);
 

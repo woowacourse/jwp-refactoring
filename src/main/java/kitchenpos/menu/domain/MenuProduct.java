@@ -41,10 +41,6 @@ public class MenuProduct {
         return menu;
     }
 
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
-    }
-
     public Long getProductId() {
         return productId;
     }
