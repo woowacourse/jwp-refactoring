@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal price;
 
     protected Price() {
