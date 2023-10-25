@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +31,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @SuppressWarnings("NonAsciiCharacters")
 class TableServiceTest {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private TableService tableService;
@@ -65,6 +70,9 @@ class TableServiceTest {
         final OrderTable expect1 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable expect2 = orderTableRepository.save(new OrderTable(4, true));
 
+        em.flush();
+        em.clear();
+
         // when
         final List<OrderTable> actual = tableService.list();
 
@@ -81,6 +89,9 @@ class TableServiceTest {
     void changeEmpty() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
+
+        em.flush();
+        em.clear();
 
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 
@@ -114,6 +125,9 @@ class TableServiceTest {
         final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
         그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
+        em.flush();
+        em.clear();
+
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 
         // when & then
@@ -130,6 +144,9 @@ class TableServiceTest {
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
         orderRepository.save(new Order(두명_테이블, orderStatus));
 
+        em.flush();
+        em.clear();
+
         final ChangeOrderTableEmptyRequest orderTable = new ChangeOrderTableEmptyRequest(false);
 
         // when & then
@@ -143,6 +160,9 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
+
+        em.flush();
+        em.clear();
 
         int newNumberOfGuests = 10;
         final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
@@ -159,6 +179,9 @@ class TableServiceTest {
     void changeNumberOfGuests_invalidNumberOfGuests() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, false));
+
+        em.flush();
+        em.clear();
 
         final int invalidNumberOfGuests = -1;
         final ChangeNumberOfGuestsRequest invalidOrderTable = new ChangeNumberOfGuestsRequest(invalidNumberOfGuests);
@@ -188,9 +211,12 @@ class TableServiceTest {
     @DisplayName("테이블의 손님 수를 변경할 때 테이블이 비어있으면 예외가 발생한다")
     void changeNumberOfGuests_emptyTable() {
         // given
-        int newNumberOfGuests = 10;
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
 
+        em.flush();
+        em.clear();
+
+        int newNumberOfGuests = 10;
         final ChangeNumberOfGuestsRequest orderTable = new ChangeNumberOfGuestsRequest(newNumberOfGuests);
 
         // when & then

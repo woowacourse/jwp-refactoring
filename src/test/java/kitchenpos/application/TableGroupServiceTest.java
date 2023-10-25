@@ -17,6 +17,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +31,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @SuppressWarnings("NonAsciiCharacters")
 class TableGroupServiceTest {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -48,6 +53,9 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
+
+        em.flush();
+        em.clear();
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
@@ -77,6 +85,10 @@ class TableGroupServiceTest {
     void create_oneOrderTable() {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
+
+        em.flush();
+        em.clear();
+
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디));
 
@@ -92,9 +104,11 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
 
+        em.flush();
+        em.clear();
+
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 존재하지_않는_테이블_아이디 = new CreateTableGroupOrderTableRequest(10L);
-
         final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 존재하지_않는_테이블_아이디));
 
         // when & then
@@ -109,6 +123,9 @@ class TableGroupServiceTest {
         // given
         final OrderTable 두명_테이블 = orderTableRepository.save(new OrderTable(2, true));
         final OrderTable 네명_테이블_사용중 = orderTableRepository.save(new OrderTable(4, false));
+
+        em.flush();
+        em.clear();
 
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 사용중인_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블_사용중.getId());
@@ -130,6 +147,9 @@ class TableGroupServiceTest {
         final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
         그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
 
+        em.flush();
+        em.clear();
+
         final CreateTableGroupOrderTableRequest 두명_테이블_아이디 = new CreateTableGroupOrderTableRequest(두명_테이블.getId());
         final CreateTableGroupOrderTableRequest 그룹화된_네명_테이블_아이디 = new CreateTableGroupOrderTableRequest(네명_테이블.getId());
         final CreateTableGroupRequest invalidTableGroup = new CreateTableGroupRequest(List.of(두명_테이블_아이디, 그룹화된_네명_테이블_아이디));
@@ -148,6 +168,9 @@ class TableGroupServiceTest {
         final OrderTable 네명_테이블 = orderTableRepository.save(new OrderTable(4, true));
         final TableGroup 그룹화된_세명_네명_테이블 = tableGroupRepository.save(new TableGroup());
         그룹화된_세명_네명_테이블.initOrderTables(List.of(세명_테이블, 네명_테이블));
+
+        em.flush();
+        em.clear();
 
         // when
         tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId());
@@ -175,6 +198,9 @@ class TableGroupServiceTest {
 
         orderRepository.save(new Order(세명_테이블, orderStatus));
         orderRepository.save(new Order(네명_테이블, orderStatus));
+
+        em.flush();
+        em.clear();
 
         // when & then
         assertThatThrownBy(() -> tableGroupService.ungroup(그룹화된_세명_네명_테이블.getId()))
