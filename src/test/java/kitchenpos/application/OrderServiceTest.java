@@ -26,7 +26,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.order.OrderLineItemRequest;
+import kitchenpos.application.dto.order.OrderLineItemRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

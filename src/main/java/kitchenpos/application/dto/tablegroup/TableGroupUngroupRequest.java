@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto.tablegroup;
+package kitchenpos.application.dto.tablegroup;
 
 public class TableGroupUngroupRequest {
 

@@ -1,6 +1,6 @@
 package kitchenpos.support.fixture.dto;
 
-import kitchenpos.ui.dto.menu.MenuGroupCreateRequest;
+import kitchenpos.application.dto.menu.MenuGroupCreateRequest;
 
 public class MenuGroupCreateRequestFixture {
 

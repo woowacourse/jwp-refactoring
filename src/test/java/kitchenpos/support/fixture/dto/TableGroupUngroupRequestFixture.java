@@ -1,6 +1,6 @@
 package kitchenpos.support.fixture.dto;
 
-import kitchenpos.ui.dto.tablegroup.TableGroupUngroupRequest;
+import kitchenpos.application.dto.tablegroup.TableGroupUngroupRequest;
 
 public class TableGroupUngroupRequestFixture {
 

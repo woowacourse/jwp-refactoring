@@ -12,9 +12,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.order.OrderCreateRequest;
-import kitchenpos.ui.dto.order.OrderLineItemRequest;
-import kitchenpos.ui.dto.order.OrderStatusChangeRequest;
+import kitchenpos.application.dto.order.OrderCreateRequest;
+import kitchenpos.application.dto.order.OrderLineItemRequest;
+import kitchenpos.application.dto.order.OrderStatusChangeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

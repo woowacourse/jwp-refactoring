@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto.order;
+package kitchenpos.application.dto.order;
 
 public class OrderLineItemRequest {
 

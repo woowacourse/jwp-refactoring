@@ -17,7 +17,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.ordertable.OrderTableCreateRequest;
+import kitchenpos.application.dto.ordertable.OrderTableCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

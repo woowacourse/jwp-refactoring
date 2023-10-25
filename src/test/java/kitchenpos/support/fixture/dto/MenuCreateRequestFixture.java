@@ -3,7 +3,7 @@ package kitchenpos.support.fixture.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.ui.dto.menu.MenuCreateRequest;
+import kitchenpos.application.dto.menu.MenuCreateRequest;
 
 public class MenuCreateRequestFixture {
 

@@ -1,7 +1,7 @@
-package kitchenpos.ui.dto.tablegroup;
+package kitchenpos.application.dto.tablegroup;
 
 import java.util.List;
-import kitchenpos.ui.dto.ordertable.OrderTableIdDto;
+import kitchenpos.application.dto.ordertable.OrderTableIdDto;
 
 public class TableGroupCreateRequest {
 

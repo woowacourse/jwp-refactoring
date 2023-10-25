@@ -1,8 +1,8 @@
 package kitchenpos.support.fixture.dto;
 
 import java.util.List;
-import kitchenpos.ui.dto.order.OrderCreateRequest;
-import kitchenpos.ui.dto.order.OrderLineItemRequest;
+import kitchenpos.application.dto.order.OrderCreateRequest;
+import kitchenpos.application.dto.order.OrderLineItemRequest;
 
 public class OrderCreateRequestFixture {
 

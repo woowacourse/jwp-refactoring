@@ -9,7 +9,7 @@ import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.product.ProductCreateRequest;
+import kitchenpos.application.dto.product.ProductCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

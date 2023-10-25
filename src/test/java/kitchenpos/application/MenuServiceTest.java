@@ -20,7 +20,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.support.ServiceTest;
-import kitchenpos.ui.dto.menu.MenuCreateRequest;
+import kitchenpos.application.dto.menu.MenuCreateRequest;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
