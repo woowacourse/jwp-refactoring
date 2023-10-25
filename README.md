@@ -92,3 +92,11 @@
 
 ### 4. 주문
 - Order, OrderLineItem, OrderTable, TableGroup
+
+## 변경된 패키지 간 의존 관계
+```mermaid
+    graph TD;
+        Menu --> |ID참조| MenuGroup;
+        Menu --> |ID참조| Product;
+        Order -->|ID참조| Menu;
+```
