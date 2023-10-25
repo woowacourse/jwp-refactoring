@@ -57,10 +57,7 @@ public class OrderService {
     }
 
     private Map<Long, Menu> findMenus(final OrderRequest orderRequest) {
-        final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
+        final List<Long> menuIds = orderRequest.getMenuIds();
         final List<Menu> menus = menuRepository.findByIdIn(menuIds);
         if (menuIds.size() != menus.size()) {
             throw new IllegalArgumentException();

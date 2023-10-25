@@ -2,6 +2,7 @@ package kitchenpos.ui.request;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class OrderRequest {
     private final Long orderTableId;
@@ -19,6 +20,12 @@ public class OrderRequest {
 
     public List<OrderLineItemRequest> getOrderLineItemRequests() {
         return orderLineItemRequests;
+    }
+
+    public List<Long> getMenuIds() {
+        return orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
     }
 
     @Override

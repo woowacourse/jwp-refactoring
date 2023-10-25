@@ -37,10 +37,7 @@ public class TableGroupService {
     }
 
     private List<OrderTable> findOrderTables(final TableGroupRequest tableGroupRequest) {
-        final List<Long> orderTableIds = tableGroupRequest.getOrderTables()
-                .stream()
-                .map(OrderTableIdRequest::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
         final List<OrderTable> findOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateExistAllOrderTables(orderTableIds, findOrderTables);
         return findOrderTables;
