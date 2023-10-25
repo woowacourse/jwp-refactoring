@@ -24,4 +24,18 @@ public enum OrderStatus {
     public boolean isComplete() {
         return this.equals(COMPLETION);
     }
+
+    public static Optional<OrderStatus> find(final String orderStatusName) {
+        return Arrays.stream(OrderStatus.values())
+                     .filter(orderStatus -> orderStatus.toString().equals(orderStatusName))
+                     .findFirst();
+    }
+
+    public String getName() {
+        return this.toString();
+    }
+
+    public boolean isComplete() {
+        return this.equals(COMPLETION);
+    }
 }
