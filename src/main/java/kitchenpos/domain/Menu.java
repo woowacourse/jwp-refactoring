@@ -11,8 +11,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.Price;
 
@@ -29,9 +27,8 @@ public class Menu {
     @Embedded
     private Price price;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id", nullable = false)
-    private MenuGroup menuGroup;
+    @Column(nullable = false)
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private final List<MenuProduct> menuProducts = new ArrayList<>();
@@ -42,32 +39,32 @@ public class Menu {
     private Menu(
             String name,
             Price price,
-            MenuGroup menuGroup
+            Long menuGroupId
     ) {
-        this(null, name, price, menuGroup);
+        this(null, name, price, menuGroupId);
     }
 
     private Menu(
             Long id,
             String name,
             Price price,
-            MenuGroup menuGroup
+            Long menuGroupId
     ) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     public static Menu of(
             String name,
             Long price,
-            MenuGroup menuGroup
+            Long menuGroupId
     ) {
         return new Menu(
                 name,
                 Price.from(price),
-                menuGroup
+                menuGroupId
         );
     }
 
@@ -104,8 +101,8 @@ public class Menu {
         return price.getValue();
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

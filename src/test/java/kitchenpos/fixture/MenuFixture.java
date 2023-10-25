@@ -16,7 +16,7 @@ public class MenuFixture {
         Menu menu = Menu.of(
                 "메뉴",
                 price,
-                savedMenuGroup
+                savedMenuGroup.getId()
         );
 
         menu.addAllMenuProducts(List.of(menuProduct));
@@ -30,7 +30,7 @@ public class MenuFixture {
         Menu menu = Menu.of(
                 "메뉴",
                 price,
-                MenuGroupFixture.후추와_함께하는_메뉴()
+                MenuGroupFixture.후추와_함께하는_메뉴().getId()
         );
 
         menu.addAllMenuProducts(List.of(menuProduct));

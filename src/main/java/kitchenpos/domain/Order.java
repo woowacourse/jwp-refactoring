@@ -38,7 +38,7 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "orders", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     protected Order() {
@@ -65,10 +65,10 @@ public class Order {
     public static Order of(
             List<OrderLineItem> orderLineItems
     ) {
-        Order orders = new Order(LocalDateTime.now());
-        orders.addAllOrderLineItems(orderLineItems);
+        Order order = new Order(LocalDateTime.now());
+        order.addAllOrderLineItems(orderLineItems);
 
-        return orders;
+        return order;
     }
 
     public void registerOrderTable(OrderTable orderTable) {
