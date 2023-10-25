@@ -23,7 +23,11 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
-
+    dependencies {
+        runtimeOnly 'com.h2database:h2'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
     tasks.named('test') {
         useJUnitPlatform()
     }
