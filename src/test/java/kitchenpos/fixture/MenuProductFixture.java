@@ -1,11 +1,10 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuProductFixture {
 
-    public static MenuProduct menuProduct(Product product, long quantity) {
-        return new MenuProduct(product, quantity);
+    public static MenuProduct menuProduct(Long productId, long quantity) {
+        return new MenuProduct(productId, quantity);
     }
 }

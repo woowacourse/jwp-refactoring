@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemFixture {
     public static OrderLineItem orderLineItem(Long menuId, long quantity) {
