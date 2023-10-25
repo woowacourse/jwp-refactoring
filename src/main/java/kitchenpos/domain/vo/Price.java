@@ -9,8 +9,8 @@ import javax.persistence.Embeddable;
 public class Price {
 
     private static final int LESS_THAN_PARAMETER = -1;
-    private static final int GREATER_THAN_PARAMETER = 1;
     private static final int EQUAL_PARAMETER = 0;
+    private static final int GREATER_THAN_PARAMETER = 1;
 
     public static final Price ZERO = new Price(BigDecimal.ZERO);
 
