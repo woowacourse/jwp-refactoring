@@ -50,7 +50,7 @@ public class Menu {
 
     private void validateMenuProducts(final List<MenuProduct> menuProducts) {
         final Price sum = menuProducts.stream()
-                .map(it -> it.getProduct().getPrice().multiply(it.getQuantity()))
+                .map(MenuProduct::calculatePrice)
                 .reduce(ZERO_PRICE, Price::add);
         if (price.isBiggerThan(sum)) {
             throw new IllegalArgumentException();

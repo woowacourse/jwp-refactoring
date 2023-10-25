@@ -31,6 +31,10 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public Price calculatePrice() {
+        return product.getPrice().multiply(quantity);
+    }
+
     public Long getSeq() {
         return seq;
     }
