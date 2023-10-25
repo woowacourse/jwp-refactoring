@@ -29,9 +29,9 @@ public class TableRestController {
 
     @GetMapping("/api/tables")
     public ResponseEntity<List<OrderTableResponse>> list() {
-        final List<OrderTableResponse> all = tableService.list();
+        final List<OrderTableResponse> allOrderTable = tableService.list();
         return ResponseEntity.ok()
-                .body(all);
+                .body(allOrderTable);
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")

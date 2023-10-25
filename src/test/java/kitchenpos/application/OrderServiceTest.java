@@ -95,8 +95,8 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 모든_주문을_조회한다() {
-        final List<Order> all = orderRepository.findAll();
-        final List<OrderResponse> expected = all.stream()
+        final List<Order> allOrder = orderRepository.findAll();
+        final List<OrderResponse> expected = allOrder.stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
 

@@ -54,8 +54,8 @@ public class TableService {
 
     @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
-        final List<OrderTable> all = orderTableRepository.findAll();
-        return all.stream()
+        final List<OrderTable> allOrderTable = orderTableRepository.findAll();
+        return allOrderTable.stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());
     }
