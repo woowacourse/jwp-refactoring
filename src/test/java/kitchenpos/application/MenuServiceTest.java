@@ -32,9 +32,6 @@ class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
-    @Autowired
-    private MenuService menuService;
-
     private MenuGroup 메뉴_그룹;
     private Product 상품;
 

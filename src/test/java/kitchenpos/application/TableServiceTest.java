@@ -36,9 +36,6 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    @Autowired
-    private TableService tableService;
-
     @Test
     void 테이블을_등록한다() {
         OrderTableCreateRequest 주문_테이블_생성_요청 = new OrderTableCreateRequest(1, false);

@@ -19,9 +19,6 @@ class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ProductService productService;
-
     @Test
     void 상품을_등록한다() {
         ProductCreateRequest 상품_생성_요청 = new ProductCreateRequest("상품", new BigDecimal("10000.00"));

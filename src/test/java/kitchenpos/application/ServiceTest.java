@@ -13,25 +13,25 @@ import java.sql.SQLException;
 public class ServiceTest {
 
     @Autowired
-    private DatabaseCleaner databaseCleaner;
+    protected DatabaseCleaner databaseCleaner;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    protected MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuService menuService;
+    protected MenuService menuService;
 
     @Autowired
-    private OrderService orderService;
+    protected OrderService orderService;
 
     @Autowired
-    private ProductService productService;
+    protected ProductService productService;
 
     @Autowired
-    private TableGroupService tableGroupService;
+    protected TableGroupService tableGroupService;
 
     @Autowired
-    private TableService tableService;
+    protected TableService tableService;
 
     @BeforeEach
     void cleanTables() throws SQLException {

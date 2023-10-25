@@ -33,9 +33,6 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    @Autowired
-    private TableGroupService tableGroupService;
-
     @Test
     void 테이블들을_단체로_지정한다() {
         OrderTable 주문_테이블1 = orderTableRepository.save(새로운_주문_테이블(null, 3, true));

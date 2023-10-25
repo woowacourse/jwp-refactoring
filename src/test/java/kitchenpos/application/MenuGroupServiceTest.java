@@ -17,9 +17,6 @@ class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
-    @Autowired
-    private MenuGroupService menuGroupService;
-
     @Test
     void 메뉴_그룹을_등록한다() {
         final MenuGroupCreateRequest 메뉴_그룹_생성_요청 = new MenuGroupCreateRequest("메뉴 그룹");

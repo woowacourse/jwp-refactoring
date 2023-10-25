@@ -35,9 +35,6 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    @Autowired
-    private OrderService orderService;
-
     private MenuGroup 메뉴_그룹;
     private Menu 메뉴;
     private OrderTable 주문_테이블;
