@@ -1,6 +1,7 @@
 package kitchenpos.ordertable.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +34,28 @@ class OrderTableTest {
 
         // then
         assertThat(orderTable.numberOfGuests()).isOne();
+    }
+
+    @Test
+    @DisplayName("고객 수를 변경할 때, 바꾸려는 고객 수가 0 미만이면 예외를 던진다.")
+    void numberOfGuestsLessThanZeroException() {
+        // given
+        final OrderTable orderTable = new OrderTable(3, false);
+
+        // when, then
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> orderTable.changeNumberOfGuests(-1));
+    }
+
+    @Test
+    @DisplayName("고객 수를 변경할 때, 주문 테이블이 비어있으면 예외를 던진다.")
+    void emptyOrderTableException() {
+        // given
+        final OrderTable orderTable = new OrderTable(3, true);
+
+        // when, then
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> orderTable.changeNumberOfGuests(1));
     }
 
     @Test
