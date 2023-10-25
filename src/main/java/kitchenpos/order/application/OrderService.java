@@ -5,7 +5,7 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.domain.vo.Quantity;
+import kitchenpos.menu.domain.vo.Quantity;
 import kitchenpos.dto.OrderCreateOrderLineItemRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;

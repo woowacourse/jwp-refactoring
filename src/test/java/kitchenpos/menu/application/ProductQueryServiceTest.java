@@ -2,8 +2,8 @@ package kitchenpos.menu.application;
 
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.menu.domain.Product;
-import kitchenpos.domain.vo.Name;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.menu.domain.vo.Name;
+import kitchenpos.menu.domain.vo.Price;
 import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

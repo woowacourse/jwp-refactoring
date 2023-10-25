@@ -1,23 +1,23 @@
-package kitchenpos.domain.vo;
+package kitchenpos.menu.domain.vo;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class Quantity {
+public class Name {
 
-    @Column(name = "quantity", nullable = false)
-    private long value;
+    @Column(name = "name", nullable = false)
+    private String value;
 
-    protected Quantity() {
+    protected Name() {
     }
 
-    public Quantity(final long value) {
+    public Name(final String value) {
         this.value = value;
     }
 
-    public long getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -25,8 +25,8 @@ public class Quantity {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Quantity quantity = (Quantity) o;
-        return value == quantity.value;
+        final Name name = (Name) o;
+        return Objects.equals(value, name.value);
     }
 
     @Override

@@ -1,10 +1,9 @@
-package kitchenpos.domain.vo;
+package kitchenpos.menu.domain.vo;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityTest {
 

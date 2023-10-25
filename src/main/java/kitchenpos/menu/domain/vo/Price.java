@@ -1,4 +1,4 @@
-package kitchenpos.domain.vo;
+package kitchenpos.menu.domain.vo;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

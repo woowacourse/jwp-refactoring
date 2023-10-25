@@ -1,6 +1,5 @@
 package kitchenpos.table.application;
 
-import kitchenpos.table.application.TableGroupService;
 import kitchenpos.config.ApplicationTestConfig;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
@@ -11,9 +10,9 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.menu.domain.Product;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.domain.vo.Name;
-import kitchenpos.domain.vo.Price;
-import kitchenpos.domain.vo.Quantity;
+import kitchenpos.menu.domain.vo.Name;
+import kitchenpos.menu.domain.vo.Price;
+import kitchenpos.menu.domain.vo.Quantity;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;

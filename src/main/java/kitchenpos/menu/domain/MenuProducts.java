@@ -1,6 +1,6 @@
 package kitchenpos.menu.domain;
 
-import kitchenpos.domain.vo.Price;
+import kitchenpos.menu.domain.vo.Price;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.CascadeType;
