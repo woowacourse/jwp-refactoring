@@ -1,10 +1,13 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.InvalidChangeOrderTableNumberOfGuests;
+import kitchenpos.application.exception.NotFoundOrderTableException;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidUpdateNumberOfGuestsException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -181,7 +184,8 @@ class TableServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidUpdateNumberOfGuestsException.class)
+                    .hasMessage("방문한 손님 수는 음수가 될 수 없습니다.");
         }
 
         @Test
@@ -192,7 +196,8 @@ class TableServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(unsavedId, changeNumberOfGuestsRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotFoundOrderTableException.class)
+                    .hasMessage("해당 주문 테이블이 존재하지 않습니다.");
         }
 
         @Test
@@ -203,7 +208,8 @@ class TableServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), changeNumberOfGuestsRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidChangeOrderTableNumberOfGuests.class)
+                    .hasMessage("주문 테이블이 빈 상태라면 사용자 수를 변경할 수 없습니다.");
         }
     }
 }

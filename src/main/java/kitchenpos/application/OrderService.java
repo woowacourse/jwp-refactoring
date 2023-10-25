@@ -104,9 +104,6 @@ public class OrderService {
 
         final OrderStatus orderStatus = OrderStatus.valueOf(changeStatusRequest.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
-
-        orderRepository.save(savedOrder);
-
         savedOrder.updateOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return OrderResponse.from(savedOrder);

@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.InvalidUpdateNumberOfGuestsException;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -40,6 +42,19 @@ public class OrderTable {
         this.empty = false;
     }
 
+    public void updateTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void updateEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -48,24 +63,18 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void updateTableGroup(final TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void updateNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
+    private void validateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new InvalidUpdateNumberOfGuestsException("방문한 손님 수는 음수가 될 수 없습니다.");
+        }
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void updateEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     @Override
