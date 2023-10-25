@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -40,5 +41,54 @@ public class PriceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("[ERROR] 금액이 없거나, 음수입니다.");
         }
+    }
+
+    @Nested
+    class createZero_실패_테스트 {
+    }
+
+    @Nested
+    class plus_성공_테스트 {
+
+        @Test
+        void 더하기를_할_수_있다() {
+            // given
+            final var price1 = Price.from(BigDecimal.valueOf(100L));
+            final var price2 = Price.from(BigDecimal.valueOf(500L));
+
+            final var expected = Price.from(BigDecimal.valueOf(600L));
+
+            // when
+            final var actual = price1.plus(price2);
+
+            // then
+            assertThat(actual).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class plus_실패_테스트 {
+    }
+
+    @Nested
+    class multiply_성공_테스트 {
+
+        @Test
+        void 곱하기를_할_수_있다() {
+            // given
+            final var price = Price.from(BigDecimal.valueOf(100L));
+
+            final var expected = Price.from(BigDecimal.valueOf(500L));
+
+            // when
+            final var actual = price.multiply(5L);
+
+            // then
+            assertThat(actual).isEqualTo(expected);
+        }
+    }
+
+    @Nested
+    class multiply_실패_테스트 {
     }
 }

@@ -21,7 +21,7 @@ public class MenuProductTest {
             final var product = new Product("상품", BigDecimal.valueOf(1000L));
             final var menuProduct = new MenuProduct(product, 5L);
 
-            final var expected = BigDecimal.valueOf(1000L * 5L);
+            final var expected = Price.from(BigDecimal.valueOf(1000L * 5L));
 
             // when
             final var actual = menuProduct.calculatePrice();

@@ -55,7 +55,7 @@ public class Menu {
             final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts
     ) {
-        validateMenuPriceSum(price, menuProducts);
+        validateMenuPriceSum(Price.from(price), menuProducts);
         this.id = id;
         this.name = name;
         this.price = Price.from(price);
@@ -63,11 +63,11 @@ public class Menu {
         this.menuProducts = appendMenuProducts(menuProducts);
     }
 
-    private void validateMenuPriceSum(final BigDecimal price, final List<MenuProduct> menuProducts) {
-        final BigDecimal sum = menuProducts.stream()
+    private void validateMenuPriceSum(final Price price, final List<MenuProduct> menuProducts) {
+        final Price sum = menuProducts.stream()
                 .map(MenuProduct::calculatePrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (price.compareTo(sum) > 0) {
+                .reduce(Price.createZero(), Price::plus);
+        if (price.isGreaterThan(sum)) {
             throw new IllegalArgumentException("[ERROR] 총 금액이 각 상품의 합보다 큽니다.");
         }
     }
@@ -89,8 +89,8 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price.getPrice();
+    public Price getPrice() {
+        return price;
     }
 
     public MenuGroup getMenuGroup() {
