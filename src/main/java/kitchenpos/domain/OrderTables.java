@@ -14,7 +14,7 @@ public class OrderTables {
 
     private static final int MIN_TABLE_GROUP_SIZE = 2;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = REMOVE)
+    @OneToMany(mappedBy = "orderTableGroup", cascade = REMOVE)
     private List<OrderTable> values;
 
     protected OrderTables() {
