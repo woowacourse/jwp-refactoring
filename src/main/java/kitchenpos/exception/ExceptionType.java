@@ -28,10 +28,14 @@ public enum ExceptionType {
     // table group
     TABLE_GROUP_NOT_FOUND(404,"존재하지 않는 테이블 그룹입니다."),
     TABLE_GROUP_CANNOT_CHANGE_STATUS(400, "테이블 그룹에 속한 테이블은 상태를 변경할 수 없습니다."),
+    INVALID_TABLES_COUNT_OF_TABLE_GROUP(400, "테이블 그룹에 속한 테이블은 2개 이상이어야 합니다."),
+    DUPLICATED_TABLES_OF_TABLE_GROUP(400, "테이블 그룹에 속한 테이블은 중복될 수 없습니다."),
+    ALREADY_ASSIGNED_TABLE_GROUP(400, "테이블 그룹에 속한 테이블은 다른 테이블 그룹에 속할 수 없습니다."),
+    NOT_EMPTY_ORDER_TABLE_IN_TABLE_GROUP(400, "테이블 그룹에 속한 테이블은 비어있어야 합니다."),
+    PROCESSING_ORDER_TABLE_CANNOT_UNGROUP(400, "조리중 또는 식사중인 테이블은 그룹을 지을 수 없습니다."),
 
-    // table
-    NUMBER_OF_GUESTS(400, "손님 수는 0보다 작을 수 없습니다.")
-    ;
+    // table,
+    NUMBER_OF_GUESTS(400, "손님 수는 0보다 작을 수 없습니다.");
 
     private final int status;
     private final String message;

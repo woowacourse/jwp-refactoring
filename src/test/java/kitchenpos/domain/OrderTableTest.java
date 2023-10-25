@@ -39,7 +39,7 @@ class OrderTableTest {
     @DisplayName("주문 테이블이 그룹이면 상태를 변경할 수 없다")
     void change_empty_fail1() {
         // given
-        TableGroup tableGroup = TableGroupFixture.TWO_TABLES.toEntity();
+        TableGroup tableGroup = TableGroupFixture.TABLE_GROUP_AVAILABLE.toEntity();
 
         // when & then
         tableGroup.getOrderTables().forEach(orderTable ->

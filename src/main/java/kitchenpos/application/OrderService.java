@@ -100,4 +100,8 @@ public class OrderService {
     public List<Order> findByOrderTableIdAndOrderStatus(Long orderTableId, OrderStatus orderStatus) {
         return orderDao.findByOrderTableIdAndOrderStatus(orderTableId, orderStatus);
     }
+
+    public List<Order> findByOrderTableIdInAndOrderStatusIn(List<Long> orderTableId, List<OrderStatus> orderStatus) {
+        return orderDao.findByOrderTableIdInAndOrderStatusIn(orderTableId, orderStatus);
+    }
 }

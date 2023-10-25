@@ -52,6 +52,11 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void ungroup() {
+        tableGroup = null;
+        empty = false;
+    }
+
     public Long getId() {
         return id;
     }
@@ -69,6 +74,7 @@ public class OrderTable {
     }
 
     public void setTableGroup(TableGroup tableGroup) {
+        this.empty = false;
         this.tableGroup = tableGroup;
     }
 

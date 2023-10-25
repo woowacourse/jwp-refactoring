@@ -13,9 +13,7 @@ public interface OrderDao extends Repository<Order, Long> {
 
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
-
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
+    List<Order> findByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<OrderStatus> orderStatuses);
 
     List<Order> findByOrderTableIdAndOrderStatus(Long orderTableId, OrderStatus orderStatus);
 }

@@ -85,12 +85,11 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void upgroup_success() {
         // given
-        TableGroupDto tableGroupDto = TableGroupFixture.TWO_TABLES.toDto();
+        TableGroupDto tableGroupDto = TableGroupFixture.TABLE_GROUP_AVAILABLE.toDto();
         steps.createTableGroup(tableGroupDto);
-        TableGroupDto created = TableGroupFixture.TWO_TABLES.toDto();
 
         // when
-        steps.upgroup(created.getId());
+        steps.upgroup(1L);
         ExtractableResponse<Response> response = sharedContext.getResponse();
 
         // then

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static java.util.stream.Collectors.toList;
 import static kitchenpos.exception.ExceptionType.ORDER_TABLE_CANNOT_CHANGE_STATUS;
+import static kitchenpos.exception.ExceptionType.ORDER_TABLE_NOT_FOUND;
 
 import java.util.List;
 import kitchenpos.dao.OrderTableDao;
@@ -60,9 +61,9 @@ public class TableService {
         return OrderTableDto.from(foundOrderTable);
     }
 
-    private OrderTable findById(Long orderTableId) {
+    public OrderTable findById(Long orderTableId) {
         return orderTableDao.findById(orderTableId)
-                            .orElseThrow(IllegalArgumentException::new);
+                            .orElseThrow(() -> new CustomException(ORDER_TABLE_NOT_FOUND));
     }
 
     @Transactional

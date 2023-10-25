@@ -11,7 +11,7 @@ public class TableGroupDto {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableDto> orderTableDtos;
+    private List<OrderTableDto> orderTables;
 
     public static TableGroupDto from(TableGroup entity) {
         List<OrderTableDto> orderTableDtos = entity.getOrderTables()
@@ -42,11 +42,11 @@ public class TableGroupDto {
     }
 
     public List<OrderTableDto> getOrderTables() {
-        return orderTableDtos;
+        return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTableDto> orderTableDtos) {
-        this.orderTableDtos = orderTableDtos;
+    public void setOrderTables(final List<OrderTableDto> orderTables) {
+        this.orderTables = orderTables;
     }
 
     @Override

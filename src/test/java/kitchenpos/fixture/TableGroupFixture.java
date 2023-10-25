@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableDto;
