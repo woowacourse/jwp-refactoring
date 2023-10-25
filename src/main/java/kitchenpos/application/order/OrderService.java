@@ -75,4 +75,9 @@ public class OrderService {
 
         return OrderResponse.from(savedOrder);
     }
+
+    public void validateOrderStatus(final Long orderTableId) {
+        orderRepository.findAllByOrderTableId(orderTableId)
+                .forEach(Order::validateOrderComplete);
+    }
 }
