@@ -1,9 +1,8 @@
 package kitchenpos.domain.tableGroup;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTables;
+import kitchenpos.exception.orderTableException.InvalidOrderTableException;
+import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,29 +19,15 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @Embedded
-    private OrderTables orderTables;
-
-    protected TableGroup() {
-    }
-
-    public TableGroup(final OrderTables orderTables) {
-        this(null, orderTables);
-    }
-
-    public TableGroup(final Long id, final OrderTables orderTables) {
-        changeOrderTableTableGroup(orderTables);
-        this.id = id;
+    public TableGroup() {
+        this.id = null;
         this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables;
     }
 
-    public void ungroup() {
-        orderTables.ungroup();
-    }
-
-    private void changeOrderTableTableGroup(final OrderTables orderTables) {
-        orderTables.getOrderTables().forEach(orderTable -> orderTable.changeTableGroup(this.getId()));
+    public void validate(final List<Long> orderTableIds) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+            throw new InvalidOrderTableException();
+        }
     }
 
     public Long getId() {
@@ -52,8 +37,5 @@ public class TableGroup {
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables.getOrderTables();
-    }
 }
+

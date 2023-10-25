@@ -1,17 +1,13 @@
 package kitchenpos.application.tableGroup;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
-import kitchenpos.domain.table.OrderTables;
+import kitchenpos.common.GroupOrderTablesEvent;
+import kitchenpos.common.UngroupOrderTableEvent;
 import kitchenpos.domain.tableGroup.TableGroup;
 import kitchenpos.domain.tableGroup.TableGroupRepository;
-import kitchenpos.dto.request.OrderTableIdRequest;
 import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
-import kitchenpos.exception.orderTableException.InvalidOrderTableException;
 import kitchenpos.exception.tableGroupException.TableGroupNotFoundException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,50 +18,34 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
-    private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public TableGroupService(
             final TableGroupRepository tableGroupRepository,
-            final OrderTableRepository orderTableRepository,
-            final OrderRepository orderRepository
-    ) {
+            final ApplicationEventPublisher eventPublisher) {
         this.tableGroupRepository = tableGroupRepository;
-        this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final TableGroup tableGroup = new TableGroup(getOrderTables(tableGroupRequest));
-
+        final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
+                .map(it -> it.getId())
+                .collect(Collectors.toList());
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.validate(orderTableIds);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+
+        eventPublisher.publishEvent(new GroupOrderTablesEvent(tableGroupRequest.getOrderTables(), savedTableGroup.getId()));
 
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    private OrderTables getOrderTables(final TableGroupRequest tableGroupRequest) {
-        final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
-                .map(OrderTableIdRequest::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> orderTables = orderTableRepository.findByIdIn(orderTableIds);
-        if (orderTables.size() != orderTableIds.size()) {
-            throw new InvalidOrderTableException();
-        }
-
-        return new OrderTables(orderTables);
-    }
-
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        final List<Long> orderTableIds = tableGroup.getOrderTables().stream().map(it -> it.getId()).collect(Collectors.toList());
 
-        orderRepository.findByOrderTableIdIn(orderTableIds)
-                .forEach(Order::validateOrderComplete);
-
-        tableGroup.ungroup();
+        eventPublisher.publishEvent(new UngroupOrderTableEvent(tableGroup.getId()));
     }
 }

@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.application.order.OrderService;
-import kitchenpos.application.tableGroup.TableGroupService;
 import kitchenpos.application.table.TableService;
+import kitchenpos.application.tableGroup.TableGroupService;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menuGroup.MenuGroup;
@@ -18,7 +18,7 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.exception.orderException.IllegalOrderStatusException;
 import kitchenpos.exception.orderTableException.InvalidOrderTableException;
-import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroup;
+import kitchenpos.exception.tableGroupException.DuplicateCreateTableGroupException;
 import kitchenpos.exception.tableGroupException.TableGroupNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class TableGroupServiceTest extends ServiceBaseTest {
@@ -58,11 +57,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         //then
-        assertAll(
-                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
-                () -> assertThat(tableGroupResponse.getOrderTables().get(0).isEmpty()).isFalse(),
-                () -> assertThat(tableGroupResponse.getOrderTables().get(1).isEmpty()).isFalse()
-        );
+        assertThat(tableGroupResponse.getId()).isNotNull();
     }
 
     @Test
@@ -121,7 +116,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
 
         //when&then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(DuplicateCreateTableGroup.class)
+                .isInstanceOf(DuplicateCreateTableGroupException.class)
                 .hasMessage("이미 지정된 테이블은 단체 지정할 수 없습니다.");
     }
 

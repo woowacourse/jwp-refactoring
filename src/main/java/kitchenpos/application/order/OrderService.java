@@ -1,5 +1,7 @@
 package kitchenpos.application.order;
 
+import kitchenpos.common.ValidateOrderTableOrderStatusEvent;
+import kitchenpos.common.ValidateOrderTablesOrderStatusEvent;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
@@ -15,6 +17,7 @@ import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.menuException.MenuNotFoundException;
 import kitchenpos.exception.orderException.OrderNotFoundException;
 import kitchenpos.exception.orderTableException.OrderTableNotFoundException;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +79,15 @@ public class OrderService {
         return OrderResponse.from(savedOrder);
     }
 
-    public void validateOrderStatus(final Long orderTableId) {
-        orderRepository.findAllByOrderTableId(orderTableId)
+    @EventListener
+    public void validateOrderStatus(final ValidateOrderTableOrderStatusEvent validateOrderTableOrderStatusEvent) {
+        orderRepository.findAllByOrderTableId(validateOrderTableOrderStatusEvent.getOrderTableId())
+                .forEach(Order::validateOrderComplete);
+    }
+
+    @EventListener
+    public void validateOrdersStatus(final ValidateOrderTablesOrderStatusEvent validateOrderTablesOrderStatusEvent) {
+        orderRepository.findByOrderTableIdIn(validateOrderTablesOrderStatusEvent.getOrderTableIds())
                 .forEach(Order::validateOrderComplete);
     }
 }

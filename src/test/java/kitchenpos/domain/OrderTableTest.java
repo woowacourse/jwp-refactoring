@@ -1,13 +1,10 @@
 package kitchenpos.domain;
 
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.tableGroup.TableGroup;
 import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,7 +44,7 @@ class OrderTableTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
         final OrderTable orderTable2 = new OrderTable(null, 3, false);
-        final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(orderTable, orderTable2)));
+        final TableGroup tableGroup = new TableGroup();
 
         //when
         orderTable.changeTableGroup(tableGroup.getId());
@@ -64,7 +61,7 @@ class OrderTableTest {
         //given
         final OrderTable orderTable = new OrderTable(null, 3, false);
         final OrderTable orderTable2 = new OrderTable(null, 3, false);
-        final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(orderTable, orderTable2)));
+        final TableGroup tableGroup = new TableGroup();
         orderTable.changeTableGroup(tableGroup.getId());
 
         //when
