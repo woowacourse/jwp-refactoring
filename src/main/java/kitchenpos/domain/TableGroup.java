@@ -45,6 +45,14 @@ public class TableGroup {
         }
     }
 
+    public void ungroup() {
+        for (OrderTable orderTable : this.orderTables) {
+            orderTable.setTableGroup(null);
+            orderTable.changeEmptyStatus(false);
+        }
+
+    }
+
     public Long getId() {
         return id;
     }

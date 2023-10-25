@@ -51,11 +51,10 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
 
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+        TableGroup savedTableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
-        List<OrderTable> orderTables = tableGroup.getOrderTables();
 
-        List<Long> orderTableIds = orderTables.stream()
+        List<Long> orderTableIds = savedTableGroup.getOrderTables().stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
@@ -64,9 +63,6 @@ public class TableGroupService {
             throw new IllegalArgumentException("조리 중이거나 식사 중인 주문 그룹을 해제할 수 없습니다.");
         }
 
-        for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.changeEmptyStatus(false);
-        }
+        savedTableGroup.ungroup();
     }
 }
