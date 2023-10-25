@@ -55,7 +55,6 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         order.changeOrderStatus(request.getOrderStatus());
-
         return OrderResponse.from(order);
     }
 }

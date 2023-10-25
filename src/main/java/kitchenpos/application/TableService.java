@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.table.OrderTableCreateRequest;
@@ -15,11 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
+
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
