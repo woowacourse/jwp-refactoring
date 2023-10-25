@@ -1,8 +1,8 @@
-package kitchenpos.menu.ui;
+package kitchenpos.menugroup.ui;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menugroup.application.MenuGroupService;
 import kitchenpos.menu.application.request.MenuGroupCreateRequest;
 import kitchenpos.menu.application.response.MenuGroupResponse;
 import org.springframework.http.ResponseEntity;
