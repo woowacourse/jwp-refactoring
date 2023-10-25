@@ -9,15 +9,12 @@ public class OrderLineItemResponse {
     @JsonProperty
     private final Long seq;
     @JsonProperty
-    private final Long orderId;
-    @JsonProperty
     private final Long menuId;
     @JsonProperty
     private final long quantity;
 
-    public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    public OrderLineItemResponse(final Long seq, final Long menuId, final long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
     }
@@ -25,7 +22,7 @@ public class OrderLineItemResponse {
     public static List<OrderLineItemResponse> from(final List<OrderLineItem> orderLineItems) {
         return orderLineItems
                 .stream()
-                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(), orderLineItem.getOrderId(),
+                .map(orderLineItem -> new OrderLineItemResponse(orderLineItem.getSeq(),
                         orderLineItem.getMenuId(), orderLineItem.getQuantity()))
                 .collect(Collectors.toList());
     }

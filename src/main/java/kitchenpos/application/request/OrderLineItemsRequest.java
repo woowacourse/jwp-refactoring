@@ -22,7 +22,7 @@ public class OrderLineItemsRequest {
     }
 
     public OrderLineItem toEntity() {
-        return new OrderLineItem(null, null, menuId, quantity);
+        return new OrderLineItem(null, menuId, quantity);
     }
 
     @Override

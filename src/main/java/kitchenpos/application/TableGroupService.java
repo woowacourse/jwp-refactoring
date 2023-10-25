@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.dao.OrderCustomDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupCustomDao;
 import kitchenpos.domain.OrderStatus;
@@ -14,15 +14,14 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
-    private final OrderCustomDao orderDao;
+    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupCustomDao tableGroupDao;
 
-    public TableGroupService(final OrderCustomDao orderDao, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
                              final TableGroupCustomDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;

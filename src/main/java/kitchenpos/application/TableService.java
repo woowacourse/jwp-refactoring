@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableResponse;
-import kitchenpos.dao.OrderCustomDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderCustomDao orderDao;
+    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderCustomDao orderDao, final OrderTableDao orderTableDao) {
+    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
     }

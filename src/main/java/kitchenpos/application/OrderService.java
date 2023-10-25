@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderCustomDao;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final MenuDao menuDao;
-    private final OrderCustomDao orderCustomDao;
+    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
-    public OrderService(final MenuDao menuDao, final OrderCustomDao orderCustomDao, final OrderTableDao orderTableDao) {
+    public OrderService(final MenuDao menuDao, final OrderDao orderDao, final OrderTableDao orderTableDao) {
         this.menuDao = menuDao;
-        this.orderCustomDao = orderCustomDao;
+        this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
     }
 
@@ -40,7 +40,7 @@ public class OrderService {
                 .stream().map(OrderLineItemsRequest::toEntity)
                 .collect(Collectors.toList());
 
-        return OrderResponse.from(orderCustomDao.save(
+        return OrderResponse.from(orderDao.save(
                 new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems)
         ));
     }
@@ -66,16 +66,16 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderCustomDao.findAll();
+        final List<Order> orders = orderDao.findAll();
         return OrderResponse.from(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId) {
-        final Order savedOrder = orderCustomDao.findMandatoryById(orderId);
+        final Order savedOrder = orderDao.findMandatoryById(orderId);
         savedOrder.transitionToNextStatus();
 
-        orderCustomDao.save(savedOrder);
+        orderDao.save(savedOrder);
 
         return OrderResponse.from(savedOrder);
     }

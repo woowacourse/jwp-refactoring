@@ -47,8 +47,8 @@ class OrderRestControllerTest {
         );
         final OrderRequest orderRequest = new OrderRequest(1L, orderLineItemsRequests);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 1L, 4L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1L, 2L, 7L);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L, 4L);
+        final OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2L, 7L);
 
         when(orderService.create(1L, orderLineItemsRequests))
                 .thenReturn(
@@ -66,8 +66,8 @@ class OrderRestControllerTest {
     @Test
     @DisplayName("PUT /api/orders/{orderId}/order-status")
     void changeStatusOfOrder() throws Exception {
-        final OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(1L, 3L, 3L, 3L);
-        final OrderLineItemResponse orderLineItemResponse2 = new OrderLineItemResponse(2L, 3L, 3L, 3L);
+        final OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(1L, 3L, 3L);
+        final OrderLineItemResponse orderLineItemResponse2 = new OrderLineItemResponse(2L, 3L, 3L);
         final OrderResponse orderResponse = new OrderResponse(3L, 3L, OrderStatus.MEAL, LocalDateTime.now(),
                 List.of(orderLineItemResponse, orderLineItemResponse2));
         when(orderService.changeOrderStatus(3L)).thenReturn(orderResponse);

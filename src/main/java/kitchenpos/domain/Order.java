@@ -1,8 +1,10 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
@@ -14,8 +16,8 @@ public class Order {
     private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @MappedCollection(idColumn = "ORDER_ID", keyColumn = "SEQ")
-    private List<OrderLineItem> orderLineItems;
+    @MappedCollection(idColumn = "ORDER_ID")
+    private Set<OrderLineItem> orderLineItems;
 
     public Order(final Long id, final Long orderTableId, final OrderStatus orderStatus, final LocalDateTime orderedTime,
                  final List<OrderLineItem> orderLineItems) {
@@ -23,7 +25,7 @@ public class Order {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = new HashSet<>(orderLineItems);
     }
 
     public Long getId() {
@@ -47,6 +49,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return new ArrayList<>(orderLineItems);
     }
 }
