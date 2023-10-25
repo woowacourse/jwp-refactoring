@@ -6,6 +6,7 @@ import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
+import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.service.MenuService;
 import kitchenpos.domain.menu.service.dto.MenuCreateRequest;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.only;
@@ -50,6 +52,9 @@ class MenuServiceTest {
 
     @Mock
     private MenuGroupRepository menuGroupRepository;
+
+    @Mock
+    private MenuProductRepository menuProductRepository;
 
     @Nested
     class Create {
@@ -72,6 +77,7 @@ class MenuServiceTest {
             given(menuRepository.save(any(Menu.class))).willReturn(expected);
             final long savedId = 1L;
             given(expected.getId()).willReturn(savedId);
+            given(menuProductRepository.findAllById(anyList())).willReturn(List.of(wooDong, frenchFries));
 
             // when
             final MenuCreateRequest request = new MenuCreateRequest("우동", 1L, 1L, List.of(1L, 2L));
