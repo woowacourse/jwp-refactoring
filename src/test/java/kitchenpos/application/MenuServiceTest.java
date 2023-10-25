@@ -109,8 +109,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_NonExistProduct_ExceptionThrown() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(
-                두마리_메뉴);
+        MenuGroup menuGroup = menuGroupDao.save(두마리_메뉴);
         Product product = productDao.save(후라이드치킨_16000원);
         Product nonSavedProduct = 양념치킨_17000원;
 
