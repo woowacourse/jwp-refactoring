@@ -1,72 +1,41 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderDto;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+
+    private final ApplicationEventPublisher eventPublisher;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
 
-    public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
-    ) {
-        this.menuDao = menuDao;
+    public OrderService(ApplicationEventPublisher eventPublisher, OrderDao orderDao, OrderLineItemDao orderLineItemDao) {
+        this.eventPublisher = eventPublisher;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
     }
 
     @Transactional
     public OrderDto create(final OrderDto orderDto) {
-        final List<OrderLineItem> orderLineItems = orderDto.getOrderLineItems();
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+        for (final OrderLineItem orderLineItem : orderDto.getOrderLineItems()) {
+            orderLineItemDao.save(orderLineItem);
         }
 
-        final OrderTable orderTable = orderTableDao.findById(orderDto.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
-
-        orderDao.save(order);
-
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-
-        Order saved = new Order(order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), savedOrderLineItems);
-
-        return OrderDto.from(saved);
+        Order order = new Order(orderDto.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderDto.getOrderLineItems());
+        eventPublisher.publishEvent(order);
+        return OrderDto.from(order);
     }
 
     public List<OrderDto> list() {
@@ -81,18 +50,17 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto changeOrderStatus(final Long orderId, final OrderDto order) {
+    public OrderDto changeOrderStatus(final Long orderId, final OrderDto orderDto) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(orderDto.getOrderStatus());
         savedOrder.changeStatus(orderStatus);
 
-        orderDao.save(savedOrder);
-
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
-        Order saved = new Order(savedOrder.getId(), savedOrder.getOrderStatus(), savedOrder.getOrderedTime(), orderLineItems);
+        Order order = new Order(savedOrder.getId(), savedOrder.getOrderStatus(), savedOrder.getOrderedTime(), orderLineItems);
 
-        return OrderDto.from(saved);
+        orderDao.save(order);
+        return OrderDto.from(order);
     }
 }
