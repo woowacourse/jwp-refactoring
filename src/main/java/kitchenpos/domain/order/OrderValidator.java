@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,7 +25,7 @@ public class OrderValidator {
             throw new IllegalArgumentException("주문 테이블이 존재하지 않습니다.");
         }
 
-        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        Set<OrderLineItem> orderLineItems = order.getOrderLineItems();
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException("주문 항목이 존재하지 않습니다.");
         }

@@ -5,8 +5,8 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table("ORDERS")
 public class Order {
@@ -15,10 +15,10 @@ public class Order {
     private final Long orderTableId;
     private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
-    @MappedCollection(idColumn = "ORDER_ID", keyColumn = "SEQ")
-    private final List<OrderLineItem> orderLineItems;
+    @MappedCollection(idColumn = "ORDER_ID")
+    private final Set<OrderLineItem> orderLineItems;
 
-    private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    private Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, Set<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -42,7 +42,7 @@ public class Order {
         private Long orderTableId;
         private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
-        private List<OrderLineItem> orderLineItems = new ArrayList<>();
+        private Set<OrderLineItem> orderLineItems = new HashSet<>();
 
         private OrderBuilder() {
         }
@@ -67,7 +67,7 @@ public class Order {
             return this;
         }
 
-        public OrderBuilder orderLineItems(List<OrderLineItem> orderLineItems) {
+        public OrderBuilder orderLineItems(Set<OrderLineItem> orderLineItems) {
             this.orderLineItems = orderLineItems;
             return this;
         }
@@ -93,7 +93,7 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public Set<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,10 +23,10 @@ public class OrderMapper {
                 .build();
     }
 
-    private List<OrderLineItem> getOrderLineItems(List<CreateOrderRequest.CreateOrderLineItem> orderLineItems) {
+    private Set<OrderLineItem> getOrderLineItems(List<CreateOrderRequest.CreateOrderLineItem> orderLineItems) {
         return orderLineItems.stream()
                 .map(this::toOrderLineItem)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private OrderLineItem toOrderLineItem(CreateOrderRequest.CreateOrderLineItem request) {

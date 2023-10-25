@@ -22,7 +22,7 @@ public class MenuMapper {
                 .menuProducts(createMenuRequest.getMenuProducts()
                         .stream()
                         .map(menuProductMapper::toMenuProduct)
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toSet()))
                 .build();
     }
 }

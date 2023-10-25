@@ -4,8 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Menu {
 
@@ -14,10 +14,10 @@ public class Menu {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
-    private final List<MenuProduct> menuProducts;
+    @MappedCollection(idColumn = "MENU_ID")
+    private final Set<MenuProduct> menuProducts;
 
-    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu(Long id, String name, BigDecimal price, Long menuGroupId, Set<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -25,7 +25,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu updateMenuProducts(List<MenuProduct> savedMenuProducts) {
+    public Menu updateMenuProducts(Set<MenuProduct> savedMenuProducts) {
         return new Menu(id, name, price, menuGroupId, savedMenuProducts);
     }
 
@@ -38,7 +38,7 @@ public class Menu {
         private String name;
         private BigDecimal price;
         private Long menuGroupId;
-        private List<MenuProduct> menuProducts = new ArrayList<>();
+        private Set<MenuProduct> menuProducts = new HashSet<>();
 
         private MenuBuilder() {
         }
@@ -63,7 +63,7 @@ public class Menu {
             return this;
         }
 
-        public MenuBuilder menuProducts(List<MenuProduct> menuProducts) {
+        public MenuBuilder menuProducts(Set<MenuProduct> menuProducts) {
             this.menuProducts = menuProducts;
             return this;
         }
@@ -89,7 +89,7 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public Set<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 }
