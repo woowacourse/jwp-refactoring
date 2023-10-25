@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.dto.response.OrderTableResponse;
@@ -14,27 +12,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.domain.OrderStatus.*;
 import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.OrderStatus.MEAL;
 
 @Service
 public class OrderTableService {
 
     private final TableGroupRepository tableGroupRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
 
-    public OrderTableService(TableGroupRepository tableGroupRepository, OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
+    public OrderTableService(TableGroupRepository tableGroupRepository, OrderTableRepository orderTableRepository) {
         this.tableGroupRepository = tableGroupRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
     }
 
     @Transactional
-    public Long create(final Long tableGroupId, final int numberOfGuests, final List<Long> orderIds) {
+    public Long create(final Long tableGroupId, final int numberOfGuests) {
         TableGroup tableGroup = tableGroupRepository.getById(tableGroupId);
-        List<Order> orders = orderRepository.findAllByIdIn(orderIds);
-        OrderTable orderTable = new OrderTable(tableGroup, orders, numberOfGuests);
+        OrderTable orderTable = new OrderTable(tableGroup, numberOfGuests);
         return orderTableRepository.save(orderTable).getId();
     }
 

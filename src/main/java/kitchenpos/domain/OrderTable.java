@@ -1,8 +1,6 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
@@ -16,25 +14,21 @@ public class OrderTable {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
     private int numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
     }
 
-    public OrderTable(TableGroup tableGroup, List<Order> orders, int numberOfGuests, boolean empty) {
+    public OrderTable(TableGroup tableGroup, int numberOfGuests) {
         this.tableGroup = tableGroup;
-        this.orders = orders;
         this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
     }
 
-    public OrderTable(TableGroup tableGroup, List<Order> orders, int numberOfGuests) {
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.tableGroup = tableGroup;
-        this.orders = orders;
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     public void updateEmpty(boolean isEmpty) {
@@ -44,10 +38,6 @@ public class OrderTable {
 
     public Long getId() {
         return id;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
     public TableGroup getTableGroup() {
