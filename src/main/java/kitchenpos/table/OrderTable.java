@@ -35,16 +35,8 @@ public class OrderTable {
         if (this.grouped) {
             throw new IllegalArgumentException("그룹된 테이블을 비울 수 없습니다.");
         }
-//        if (orders.inCookingOrMeal()) {
-//            throw new IllegalArgumentException("조리중 또는 식사중인 테이블은 비울 수 없습니다.");
-//        }
-
         this.empty = empty;
     }
-
-//    public boolean hasCookingOrMealOrder() {
-//        return orders.inCookingOrMeal();
-//    }
 
     public void changeNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests <= 0) {

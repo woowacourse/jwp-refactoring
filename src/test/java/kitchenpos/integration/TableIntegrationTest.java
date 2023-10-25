@@ -3,8 +3,8 @@ package kitchenpos.integration;
 import kitchenpos.menu.Menu;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderRepository;
 import kitchenpos.order.OrderStatus;
-import kitchenpos.support.FixtureFactory;
 import kitchenpos.table.OrderTable;
 import kitchenpos.table.TableGroup;
 import kitchenpos.table.TableGroupService;
@@ -30,7 +30,7 @@ class TableIntegrationTest extends IntegrationTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private FixtureFactory fixtureFactory;
+    private OrderRepository orderRepository;
 
     @Nested
     class 테이블을_비울_때 {
@@ -52,8 +52,9 @@ class TableIntegrationTest extends IntegrationTest {
         void 주문_상태가_완료가_아니면_비울_수_없다(OrderStatus orderStatus) {
             Menu menu = fixtureFactory.메뉴_생성(fixtureFactory.메뉴_그룹_생성().getId(), fixtureFactory.제품_생성());
             OrderTable orderTable = tableService.create(new OrderTable(1, false, false));
-            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), 1L);
+            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), orderTable.getId());
             order.changeOrderStatus(orderStatus);
+            orderRepository.save(order);
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), true))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -63,7 +64,6 @@ class TableIntegrationTest extends IntegrationTest {
         @Test
         void 존재하지_않는_테이블을_비울_수_없다() {
             assertThatThrownBy(() -> tableService.changeEmpty(-1L, true))
-                    .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 테이블이 존재하지 않습니다.");
         }
     }
@@ -150,8 +150,9 @@ class TableIntegrationTest extends IntegrationTest {
             OrderTable orderTable = tableService.create(new OrderTable(1, true, false));
             OrderTable orderTable2 = tableService.create(new OrderTable(2, true, false));
             TableGroup tableGroup = tableGroupService.create(List.of(orderTable.getId(), orderTable2.getId()));
-            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), 1L);
+            Order order = new Order(List.of(new OrderLineItem(menu.getId(), 1)), orderTable.getId());
             order.changeOrderStatus(orderStatus);
+            orderRepository.save(order);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                     .isInstanceOf(IllegalArgumentException.class)

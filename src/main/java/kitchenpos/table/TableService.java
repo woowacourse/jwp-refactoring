@@ -1,5 +1,6 @@
 package kitchenpos.table;
 
+import kitchenpos.table.validator.TableChangeEmptyValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,10 +8,16 @@ import java.util.List;
 
 @Service
 public class TableService {
-    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    private final OrderTableRepository orderTableRepository;
+    private final TableChangeEmptyValidator tableChangeEmptyValidator;
+
+    public TableService(
+            OrderTableRepository orderTableRepository,
+            TableChangeEmptyValidator tableChangeEmptyValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.tableChangeEmptyValidator = tableChangeEmptyValidator;
     }
 
     @Transactional
@@ -25,9 +32,9 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
+        final OrderTable savedOrderTable = orderTableRepository.getById(orderTableId);
 
+        tableChangeEmptyValidator.validate(orderTableId);
         savedOrderTable.changeEmpty(empty);
 
         return savedOrderTable;

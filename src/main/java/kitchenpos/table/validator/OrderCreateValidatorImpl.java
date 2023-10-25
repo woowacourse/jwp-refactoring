@@ -1,9 +1,10 @@
-package kitchenpos.table;
+package kitchenpos.table.validator;
 
 import kitchenpos.menu.MenuRepository;
 import kitchenpos.order.Order;
 import kitchenpos.order.OrderCreateValidator;
 import kitchenpos.order.OrderLineItem;
+import kitchenpos.table.OrderTableRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
