@@ -31,8 +31,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "order_table_id", nullable = false)
-    @JoinColumn(table = "orderTable", name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_to_order_table"))
+    @JoinColumn(nullable = false, table = "orderTable", name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_to_order_table"))
     private long orderTableId;
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)

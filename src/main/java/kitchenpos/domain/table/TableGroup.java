@@ -1,16 +1,16 @@
 package kitchenpos.domain.table;
 
+import static javax.persistence.CascadeType.ALL;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.order.OrderTable;
 import org.springframework.data.annotation.CreatedDate;
@@ -27,8 +27,7 @@ public class TableGroup {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDate;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "table_group_id")
+    @OneToMany(mappedBy = "tableGroupId", cascade = ALL)
     private List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {

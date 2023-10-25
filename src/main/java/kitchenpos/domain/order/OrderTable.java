@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -22,7 +24,7 @@ public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "table_group_id")
+    @JoinColumn(nullable = false, table = "table_group", name = "table_group_id", foreignKey = @ForeignKey(name = "fk_order_table_to_table_group"))
     private Long tableGroupId;
     @Column(nullable = false)
     private int numberOfGuests;
