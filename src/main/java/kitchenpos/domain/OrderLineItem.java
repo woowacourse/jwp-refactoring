@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
 
 @Entity
@@ -22,6 +24,12 @@ public class OrderLineItem {
     private Order order;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private Price price;
+
+    @Column(nullable = false)
     private Long menuId;
 
     @Embedded
@@ -30,22 +38,35 @@ public class OrderLineItem {
     protected OrderLineItem(){
     }
 
-    private OrderLineItem(Long menuId, Quantity quantity) {
-        this(null, null, menuId, quantity);
+    private OrderLineItem(String name, Price price, Long menuId, Quantity quantity) {
+        this(null, null, name, price, menuId, quantity);
     }
 
-    private OrderLineItem(Long seq, Order order, Long menuId, Quantity quantity) {
+    public OrderLineItem(
+            Long seq,
+            Order order,
+            String name,
+            Price price,
+            Long menuId,
+            Quantity quantity
+    ) {
         this.seq = seq;
         this.order = order;
+        this.name = name;
+        this.price = price;
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
     public static OrderLineItem of(
+            String name,
+            BigDecimal price,
             Long menuId,
             Long quantity
     ) {
         return new OrderLineItem(
+                name,
+                Price.from(price),
                 menuId,
                 Quantity.from(quantity)
         );
@@ -69,6 +90,14 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity.getValue();
+    }
+
+    public BigDecimal getPrice() {
+        return price.getValue();
+    }
+
+    public String getName() {
+        return name;
     }
 
 }
