@@ -1,25 +1,23 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableDto;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
+    private final ApplicationEventPublisher eventPublisher;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(ApplicationEventPublisher eventPublisher, OrderTableDao orderTableDao) {
+        this.eventPublisher = eventPublisher;
         this.orderTableDao = orderTableDao;
     }
 
@@ -45,15 +43,9 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
         OrderTable orderTable = new OrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroupId(), savedOrderTable.getNumberOfGuests(), orderTableDto.isEmpty());
-
-        OrderTable saved = orderTableDao.save(orderTable);
-        return OrderTableDto.from(saved);
+        eventPublisher.publishEvent(orderTable);
+        return OrderTableDto.from(orderTableDao.save(orderTable));
     }
 
     @Transactional
