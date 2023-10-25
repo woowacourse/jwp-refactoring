@@ -2,14 +2,15 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.step.MenuGroupStep;
+import kitchenpos.ui.request.MenuGroupCreateRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.일식;
-import static kitchenpos.fixture.MenuGroupFixture.한식;
+import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_일식;
+import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_한식;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청;
 import static kitchenpos.step.MenuGroupStep.메뉴_그룹_조회_요청;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,33 +22,32 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void 메뉴_그룹을_생성한다() {
-        final MenuGroup menuGroup = 일식();
-
-        ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(menuGroup);
+        final MenuGroupCreateRequest request = MENU_GROUP_REQUEST_일식;
+        ExtractableResponse<Response> response = 메뉴_그룹_생성_요청(request);
 
         assertThat(response.statusCode()).isEqualTo(CREATED.value());
-        assertThat(response.jsonPath().getString("name")).isEqualTo(menuGroup.getName());
+        assertThat(response.jsonPath().getString("name")).isEqualTo(request.getName());
     }
 
     @Test
     void 메뉴_그룹을_조회한다() {
-        final List<MenuGroup> menuGroups = List.of(일식(), 한식());
-        menuGroups.forEach(MenuGroupStep::메뉴_그룹_생성_요청);
+        final List<MenuGroupCreateRequest> requests = List.of(MENU_GROUP_REQUEST_일식, MENU_GROUP_REQUEST_한식);
+        requests.forEach(MenuGroupStep::메뉴_그룹_생성_요청);
 
         final ExtractableResponse<Response> response = 메뉴_그룹_조회_요청();
-        final List<MenuGroup> result = response.jsonPath().getList("", MenuGroup.class);
+        final List<MenuGroupResponse> result = response.jsonPath().getList("", MenuGroupResponse.class);
 
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
-                () -> assertThat(result.size()).isEqualTo(menuGroups.size()),
+                () -> assertThat(result.size()).isEqualTo(requests.size()),
                 () -> assertThat(result.get(0))
                         .usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(menuGroups.get(0)),
+                        .isEqualTo(requests.get(0)),
                 () -> assertThat(result.get(1))
                         .usingRecursiveComparison()
                         .ignoringFields("id")
-                        .isEqualTo(menuGroups.get(1))
+                        .isEqualTo(requests.get(1))
         );
     }
 }

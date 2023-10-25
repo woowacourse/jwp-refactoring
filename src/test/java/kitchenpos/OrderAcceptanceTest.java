@@ -2,28 +2,34 @@ package kitchenpos;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.MenuProductCreateRequest;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemCreateRequest;
+import kitchenpos.ui.request.OrderUpdateOrderStatusRequest;
+import kitchenpos.ui.request.TableCreateRequest;
+import kitchenpos.ui.request.TableGroupCreateRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
+import kitchenpos.ui.response.OrderResponse;
+import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.ui.response.TableResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.일식;
-import static kitchenpos.fixture.OrderTableFixture.NOT_EMPTY_테이블;
-import static kitchenpos.fixture.ProductFixture.스키야키;
-import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_아이디_반환;
+import static kitchenpos.step.MenuGroupStep.MENU_GROUP_REQUEST_일식;
+import static kitchenpos.step.MenuGroupStep.메뉴_그룹_생성_요청하고_메뉴_그룹_반환;
+import static kitchenpos.step.MenuStep.MENU_CREATE_REQUEST_스키야키;
 import static kitchenpos.step.MenuStep.메뉴_생성_요청하고_아이디_반환;
 import static kitchenpos.step.OrderStep.주문_상태_변경_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청;
 import static kitchenpos.step.OrderStep.주문_생성_요청하고_주문_반환;
 import static kitchenpos.step.OrderStep.주문_조회_요청;
-import static kitchenpos.step.ProductStep.상품_생성_요청하고_아이디_반환;
+import static kitchenpos.step.ProductStep.PRODUCT_CREATE_REQUEST_스키야키;
+import static kitchenpos.step.ProductStep.상품_생성_요청하고_상품_반환;
+import static kitchenpos.step.TableGroupStep.테이블_그룹_삭제_요청;
+import static kitchenpos.step.TableGroupStep.테이블_그룹_생성_요청하고_아이디_반환;
 import static kitchenpos.step.TableStep.테이블_생성_요청하고_테이블_반환;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -38,143 +44,90 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_생성한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
-
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
-
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final Long orderTableId = savedOrderTable.getId();
+            final ExtractableResponse<Response> response = 주문_생성_요청(
+                    new OrderCreateRequest(
+                            orderTableId,
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
+                    ));
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(CREATED.value()),
-                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId()),
-                    () -> assertThat(response.jsonPath().getList("orderLineItems", OrderLineItem.class))
-                            .usingRecursiveComparison()
-                            .comparingOnlyFields("menuId", "quantity")
-                            .isEqualTo(order.getOrderLineItems())
+                    () -> assertThat(response.jsonPath().getLong("orderTableId")).isEqualTo(savedOrderTable.getId())
             );
         }
 
         @Test
         void 주문_항목은_반드시_1개_이상이어야_한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
-
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
-
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            final OrderLineItem orderLineItem = new OrderLineItem();
-
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final ExtractableResponse<Response> response = 주문_생성_요청(
+                    new OrderCreateRequest(
+                            savedOrderTable.getId(),
+                            List.of()
+                    )
+            );
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
 
         @Test
         void 동일한_메뉴는_1개의_주문항목으로_표시되어야_한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
-
-            final OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setQuantity(1L);
-            orderLineItem1.setMenuId(menuId);
-
-            final OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setQuantity(1L);
-            orderLineItem2.setMenuId(menuId);
-
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final Long orderTableId = savedOrderTable.getId();
+            final ExtractableResponse<Response> response = 주문_생성_요청(new OrderCreateRequest(
+                    orderTableId,
+                    List.of(
+                            new OrderLineItemCreateRequest(menuId, 1L),
+                            new OrderLineItemCreateRequest(menuId, 1L)
+                    )
+            ));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
 
         @Test
         void 주문을_생성하려면_주문하는_테이블이_존재해야_한다() {
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
-
-            final OrderLineItem orderLineItem1 = new OrderLineItem();
-            orderLineItem1.setQuantity(1L);
-            orderLineItem1.setMenuId(menuId);
-
-            final OrderLineItem orderLineItem2 = new OrderLineItem();
-            orderLineItem2.setQuantity(1L);
-            orderLineItem2.setMenuId(menuId);
-
-            final Order order = new Order();
-            order.setOrderLineItems(List.of(orderLineItem1, orderLineItem2));
-
-            final ExtractableResponse<Response> response = 주문_생성_요청(order);
+            final ExtractableResponse<Response> response = 주문_생성_요청(new OrderCreateRequest(
+                    1L,
+                    List.of(new OrderLineItemCreateRequest(menuId, 1L))
+            ));
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }
@@ -185,37 +138,27 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문을_조회한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
-
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
-
-            final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
-
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
-
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(order);
+            final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
+                    new OrderCreateRequest(
+                            savedOrderTable.getId(),
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
+                    )
+            );
 
             final ExtractableResponse<Response> response = 주문_조회_요청();
-            final List<Order> result = response.jsonPath().getList("", Order.class);
+            final List<OrderResponse> result = response.jsonPath().getList("", OrderResponse.class);
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
@@ -232,83 +175,90 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         @Test
         void 주문_상태를_변경한다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
+                    new OrderCreateRequest(
+                            savedOrderTable.getId(),
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
+                    )
+            );
 
-            final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
-
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
-
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
-
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(order);
-            savedOrder.setOrderStatus("COOKING");
-
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder);
-            final Order result = response.jsonPath().getObject("", Order.class);
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COMPLETION"));
+            final OrderResponse result = response.jsonPath().getObject("", OrderResponse.class);
 
             assertAll(
                     () -> assertThat(response.statusCode()).isEqualTo(OK.value()),
-                    () -> assertThat(result)
-                            .usingRecursiveComparison()
-                            .isEqualTo(savedOrder)
+                    () -> assertThat(result.getOrderStatus()).isEqualTo("COMPLETION")
             );
         }
 
         @Test
         void 주문_상태가_COMPLETION인_테이블_상태는_변경할_수_없다() {
-            final OrderTable orderTable = NOT_EMPTY_테이블();
-            final OrderTable savedOrderTable = 테이블_생성_요청하고_테이블_반환(orderTable);
+            final TableResponse savedOrderTable = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, false));
 
-            final MenuGroup menuGroup = 일식();
-            final Long menuGroupId = 메뉴_그룹_생성_요청하고_아이디_반환(menuGroup);
-            final Long productId = 상품_생성_요청하고_아이디_반환(스키야키());
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
 
-            final MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(productId);
-            menuProduct.setQuantity(1L);
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
 
-            final Menu menu = new Menu();
-            menu.setName("스키야키");
-            menu.setPrice(BigDecimal.valueOf(11_900));
-            menu.setMenuGroupId(menuGroupId);
-            menu.setMenuProducts(List.of(menuProduct));
+            final OrderResponse savedOrder = 주문_생성_요청하고_주문_반환(
+                    new OrderCreateRequest(
+                            savedOrderTable.getId(),
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
+                    )
+            );
 
-            final Long menuId = 메뉴_생성_요청하고_아이디_반환(menu);
+            주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COMPLETION"));
 
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setQuantity(2L);
-            orderLineItem.setMenuId(menuId);
+            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder.getId(), new OrderUpdateOrderStatusRequest("COMPLETION"));
 
-            final Order order = new Order();
-            order.setOrderTableId(savedOrderTable.getId());
-            order.setOrderLineItems(List.of(orderLineItem));
+            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+        }
 
-            final Order savedOrder = 주문_생성_요청하고_주문_반환(order);
-            savedOrder.setOrderStatus("COMPLETION");
+        @Test
+        void 주문_상태가_식사중이거나_조리중인_테이블은_그룹을_해제할_수_없다() {
+            final TableResponse table1 = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, true));
+            final TableResponse table2 = 테이블_생성_요청하고_테이블_반환(new TableCreateRequest(5, true));
 
-            주문_상태_변경_요청(savedOrder);
+            final Long tableGroupId = 테이블_그룹_생성_요청하고_아이디_반환(new TableGroupCreateRequest(List.of(table1.getId(), table2.getId())));
 
-            savedOrder.setOrderStatus("COOKING");
-            final ExtractableResponse<Response> response = 주문_상태_변경_요청(savedOrder);
+            final MenuGroupResponse menuGroup = 메뉴_그룹_생성_요청하고_메뉴_그룹_반환(MENU_GROUP_REQUEST_일식);
+            final ProductResponse product = 상품_생성_요청하고_상품_반환(PRODUCT_CREATE_REQUEST_스키야키);
+
+            final Long menuId = 메뉴_생성_요청하고_아이디_반환(
+                    MENU_CREATE_REQUEST_스키야키(
+                            BigDecimal.valueOf(11_900),
+                            menuGroup.getId(),
+                            List.of(new MenuProductCreateRequest(product.getId(), 1L))
+                    )
+            );
+
+            주문_생성_요청(
+                    new OrderCreateRequest(
+                            table1.getId(),
+                            List.of(new OrderLineItemCreateRequest(menuId, 2L))
+                    )
+            );
+
+            final ExtractableResponse<Response> response = 테이블_그룹_삭제_요청(tableGroupId);
 
             assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
         }

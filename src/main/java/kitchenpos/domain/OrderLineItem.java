@@ -1,40 +1,70 @@
 package kitchenpos.domain;
 
-public class OrderLineItem {
+import kitchenpos.common.BaseDate;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import static javax.persistence.FetchType.LAZY;
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class OrderLineItem extends BaseDate {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long seq;
-    private Long orderId;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
     private Long menuId;
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public void setSeq(final Long seq) {
+    public OrderLineItem(final Long seq, final Order order, final Long menuId, final long quantity) {
         this.seq = seq;
+        this.order = order;
+        this.menuId = menuId;
+        this.quantity = quantity;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this(null, null, menuId, quantity);
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public OrderLineItem() {
+    }
+
+    public void setOrder(final Order order) {
+        this.order = order;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Long getSeq() { 
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    @Override
+    public String toString() {
+        return "OrderLineItem{" +
+                "seq=" + seq +
+                ", order=" + order +
+                ", menuId=" + menuId +
+                ", quantity=" + quantity +
+                '}';
     }
 }

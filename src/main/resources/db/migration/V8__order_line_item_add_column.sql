@@ -1,0 +1,4 @@
+ALTER TABLE order_line_item
+    ADD created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE order_line_item
+    ADD updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
