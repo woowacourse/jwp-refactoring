@@ -19,7 +19,7 @@ public class CreateOrderTableRequest {
         return empty;
     }
 
-    public OrderTable toEntity() {
+    public OrderTable toOrderTable() {
         return new OrderTable(numberOfGuests, empty);
     }
 }

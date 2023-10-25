@@ -35,18 +35,22 @@ public class MenuService {
 
     @Transactional
     public Menu create(final CreateMenuRequest request) {
-        final MenuGroup savedMenuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                                                            .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
+        final MenuGroup savedMenuGroup =
+                menuGroupRepository.findById(request.getMenuGroupId())
+                                   .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
 
-        final List<MenuProduct> menuProducts = processMenuProducts(request);
+        return saveMenu(request, savedMenuGroup);
+    }
 
+    private Menu saveMenu(final CreateMenuRequest request, final MenuGroup savedMenuGroup) {
         final Menu menu = new Menu(request.getName(), request.getPrice(), savedMenuGroup);
-        menu.addMenuProducts(new MenuProducts(menuProducts));
+        final MenuProducts menuProducts = getMenuProducts(request);
+        menu.addMenuProducts(menuProducts);
 
         return menuRepository.save(menu);
     }
 
-    private List<MenuProduct> processMenuProducts(final CreateMenuRequest request) {
+    private MenuProducts getMenuProducts(final CreateMenuRequest request) {
         final List<MenuProduct> menuProducts = new ArrayList<>();
         for (final CreateMenuProductRequest createMenuProductRequest : request.getMenuProducts()) {
             final Product product = productRepository.findById(createMenuProductRequest.getProductId())
@@ -54,7 +58,8 @@ public class MenuService {
 
             menuProducts.add(new MenuProduct(product, createMenuProductRequest.getQuantity()));
         }
-        return menuProducts;
+
+        return new MenuProducts(menuProducts);
     }
 
     public List<Menu> list() {

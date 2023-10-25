@@ -19,7 +19,7 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroup create(final CreateMenuGroupRequest request) {
-        final MenuGroup menuGroup = request.toEntity();
+        final MenuGroup menuGroup = request.toMenuGroup();
 
         return menuGroupRepository.save(menuGroup);
     }

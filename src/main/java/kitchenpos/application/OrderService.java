@@ -37,27 +37,31 @@ public class OrderService {
 
     @Transactional
     public Order create(final CreateOrderRequest request) {
-        final OrderTable orderTable = validateRequestAndProcessOrderTable(request);
-        final List<OrderLineItem> orderLineItems = processOrderLineItems(request);
+        validateOrderLineItems(request);
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+                                   .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
+        return saveOrder(request, orderTable);
+    }
+
+    private void validateOrderLineItems(final CreateOrderRequest request) {
+        final List<CreateOrderLineItemRequest> createOrderLineItemRequests = request.getOrderLineItems();
+        if (createOrderLineItemRequests.isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
+        }
+    }
+
+    private Order saveOrder(final CreateOrderRequest request, final OrderTable orderTable) {
         final Order order = Order.createNewOrder(orderTable);
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
+
         final Order savedOrder = orderRepository.save(order);
         savedOrder.addOrderLineItems(new OrderLineItems(orderLineItems));
 
         return savedOrder;
     }
 
-    private OrderTable validateRequestAndProcessOrderTable(final CreateOrderRequest request) {
-        final List<CreateOrderLineItemRequest> createOrderLineItemRequests = request.getOrderLineItems();
-        if (createOrderLineItemRequests.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 비어있습니다.");
-        }
-
-        return orderTableRepository.findById(request.getOrderTableId())
-                                   .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
-    }
-
-    private List<OrderLineItem> processOrderLineItems(final CreateOrderRequest request) {
+    private List<OrderLineItem> getOrderLineItems(final CreateOrderRequest request) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (final CreateOrderLineItemRequest createOrderLineItemRequest : request.getOrderLineItems()) {
             final Menu findMenu = menuRepository.findById(createOrderLineItemRequest.getMenuId())
@@ -80,6 +84,7 @@ public class OrderService {
                                                 .orElseThrow(IllegalArgumentException::new);
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
+
         savedOrder.changeOrderStatus(orderStatus);
 
         return savedOrder;

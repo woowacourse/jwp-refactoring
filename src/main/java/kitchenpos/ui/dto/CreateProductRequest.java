@@ -25,7 +25,7 @@ public class CreateProductRequest {
         return price;
     }
 
-    public Product toEntity() {
+    public Product toProduct() {
         return new Product(name, price);
     }
 }
