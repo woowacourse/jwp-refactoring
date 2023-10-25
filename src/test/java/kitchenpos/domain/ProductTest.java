@@ -4,6 +4,8 @@ import static kitchenpos.support.TestFixtureFactory.새로운_상품;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.common.exception.PriceException;
+import kitchenpos.menu.exception.ProductException;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

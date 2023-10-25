@@ -6,12 +6,13 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.PriceException;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductException;
-import kitchenpos.domain.ProductRepository;
-import kitchenpos.dto.request.ProductCreateRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.common.exception.PriceException;
+import kitchenpos.menu.domain.Product;
+import kitchenpos.menu.exception.ProductException;
+import kitchenpos.menu.domain.ProductRepository;
+import kitchenpos.menu.dto.request.ProductCreateRequest;
+import kitchenpos.menu.dto.response.ProductResponse;
+import kitchenpos.menu.application.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
