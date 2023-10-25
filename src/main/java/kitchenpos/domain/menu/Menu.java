@@ -1,5 +1,7 @@
 package kitchenpos.domain.menu;
 
+import static javax.persistence.FetchType.LAZY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,7 @@ public class Menu {
     private MenuName name;
     @Embedded
     private Price price;
-    // TODO 불필요한 의존성 끊기
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = LAZY)
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
     private MenuGroup menuGroup;
     @Embedded
