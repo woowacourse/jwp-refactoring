@@ -1,19 +1,22 @@
 package kitchenpos.application.request;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TableGroupCreateRequest {
 
-    private List<Long> tableIds;
+    private List<OrderTableRequest> orderTables;
 
     protected TableGroupCreateRequest() {
     }
 
-    public TableGroupCreateRequest(List<Long> tableIds) {
-        this.tableIds = tableIds;
+    public TableGroupCreateRequest(List<OrderTableRequest> orderTables) {
+        this.orderTables = orderTables;
     }
 
-    public List<Long> getTableIds() {
-        return tableIds;
+    public List<Long> getOrderTables() {
+        return orderTables.stream()
+                .map(OrderTableRequest::getId)
+                .collect(Collectors.toList());
     }
 }

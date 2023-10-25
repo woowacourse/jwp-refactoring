@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
+import kitchenpos.application.request.OrderTableRequest;
 import kitchenpos.application.request.TableGroupCreateRequest;
 import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.domain.Order;
@@ -46,7 +47,7 @@ class TableGroupServiceTest {
         @Test
         void 정상적으로_그룹화한다() {
             TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
-                    List.of(orderTableA.getId(), orderTableB.getId()));
+                    List.of(new OrderTableRequest(orderTableA.getId()), new OrderTableRequest(orderTableB.getId())));
 
             TableGroupResponse response = tableGroupService.create(tableGroupCreateRequest);
 
@@ -55,7 +56,7 @@ class TableGroupServiceTest {
 
         @Test
         void 주문_테이블_수가_2보다_작으면_예외가_발생한다() {
-            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(orderTableA.getId()));
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(new OrderTableRequest(orderTableA.getId())));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -64,7 +65,7 @@ class TableGroupServiceTest {
 
         @Test
         void 주문_테이블을_찾을_수_없으면_예외가_발생한다() {
-            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(-1L, -2L));
+            TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(List.of(new OrderTableRequest(-1L), new OrderTableRequest(-2L)));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -76,7 +77,7 @@ class TableGroupServiceTest {
             OrderTable notEmptyOrderTableA = orderTableRepository.save(OrderTableFixture.createOrderTable(null, false, 4));
             OrderTable notEmptyOrderTableB = orderTableRepository.save(OrderTableFixture.createOrderTable(null, false, 2));
             TableGroupCreateRequest tableGroupCreateRequest =
-                    new TableGroupCreateRequest(List.of(notEmptyOrderTableA.getId(), notEmptyOrderTableB.getId()));
+                    new TableGroupCreateRequest(List.of(new OrderTableRequest(notEmptyOrderTableA.getId()), new OrderTableRequest(notEmptyOrderTableB.getId())));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -94,7 +95,7 @@ class TableGroupServiceTest {
             orderRepository.save(orderA);
             orderRepository.save(orderB);
             TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
-                    List.of(orderTableA.getId(), orderTableB.getId()));
+                    List.of(new OrderTableRequest(orderTableA.getId()), new OrderTableRequest(orderTableB.getId())));
             TableGroupResponse response = tableGroupService.create(tableGroupCreateRequest);
 
             assertDoesNotThrow(() -> tableGroupService.ungroup(response.getId()));
@@ -105,7 +106,7 @@ class TableGroupServiceTest {
             Order order = Order.builder().orderTable(orderTableA).orderStatus(OrderStatus.MEAL).build();
             orderRepository.save(order);
             TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
-                    List.of(orderTableA.getId(), orderTableB.getId()));
+                    List.of(new OrderTableRequest(orderTableA.getId()), new OrderTableRequest(orderTableB.getId())));
             TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))

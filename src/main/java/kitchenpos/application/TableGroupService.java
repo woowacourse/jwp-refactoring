@@ -30,7 +30,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
-        List<Long> tableIds = tableGroupCreateRequest.getTableIds();
+        List<Long> tableIds = tableGroupCreateRequest.getOrderTables();
 
         List<OrderTable> foundOrderTables = orderTableRepository.findAllByIdIn(tableIds);
         if (foundOrderTables.isEmpty() || foundOrderTables.size() < 2) {

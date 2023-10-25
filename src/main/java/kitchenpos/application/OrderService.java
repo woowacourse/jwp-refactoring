@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.request.OrderCreateRequest;
+import kitchenpos.application.request.OrderStatusUpdateRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -86,7 +87,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(Long orderId, String orderStatusRequest) {
+    public OrderResponse changeOrderStatus(Long orderId, OrderStatusUpdateRequest orderStatusUpdateRequest) {
         Order foundOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 주문을 찾을 수 없습니다."));
 
@@ -94,6 +95,7 @@ public class OrderService {
             throw new IllegalArgumentException("완료된 주문의 상태를 변경할 수 없습니다.");
         }
 
+        String orderStatusRequest = orderStatusUpdateRequest.getOrderStatus();
         OrderStatus orderStatus = OrderStatus.from(orderStatusRequest);
         foundOrder.updateStatus(orderStatus);
         return OrderResponse.from(foundOrder);

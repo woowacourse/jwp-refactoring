@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderLineItemDto;
 import kitchenpos.application.request.OrderCreateRequest;
+import kitchenpos.application.request.OrderStatusUpdateRequest;
 import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -143,7 +144,7 @@ class OrderServiceTest {
 
             OrderResponse updatedOrderResponse = orderService.changeOrderStatus(
                     orderResponse.getId(),
-                    "COMPLETION"
+                    new OrderStatusUpdateRequest("COMPLETION")
             );
 
             assertThat(updatedOrderResponse.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
@@ -155,9 +156,9 @@ class OrderServiceTest {
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                     List.of(orderLineItemDto));
             OrderResponse orderResponse = orderService.create(orderCreateRequest);
-            orderService.changeOrderStatus(orderResponse.getId(), "COMPLETION");
+            orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest("COMPLETION"));
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), "COMPLETION"))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest("COMPLETION")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("완료된 주문의 상태를 변경할 수 없습니다.");
         }
@@ -166,7 +167,7 @@ class OrderServiceTest {
         void 주문을_찾을_수_없으면_예외가_발생한다() {
             Long wrongOrderId = -1L;
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, "COMPLETION"))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(wrongOrderId, new OrderStatusUpdateRequest("COMPLETION")))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("일치하는 주문을 찾을 수 없습니다.");
         }
@@ -180,7 +181,7 @@ class OrderServiceTest {
                     List.of(orderLineItemDto));
             OrderResponse orderResponse = orderService.create(orderCreateRequest);
 
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), status))
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusUpdateRequest(status)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("일치하는 주문 상태를 찾을 수 없습니다.");
         }

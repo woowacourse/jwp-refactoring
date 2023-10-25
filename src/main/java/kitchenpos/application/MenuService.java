@@ -52,7 +52,7 @@ public class MenuService {
     }
 
     private List<MenuProduct> getMenuProducts(MenuCreateRequest menuCreateRequest, Menu menu) {
-        return menuCreateRequest.getProductQuantityDtos().stream()
+        return menuCreateRequest.getMenuProducts().stream()
                 .map(productQuantityDto -> createMenuProduct(menu, productQuantityDto))
                 .collect(Collectors.toList());
     }
