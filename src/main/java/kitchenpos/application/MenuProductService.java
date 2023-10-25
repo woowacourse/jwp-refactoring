@@ -26,7 +26,7 @@ public class MenuProductService {
     public Long create(final Long menuId, final Long productId, Long quantity) {
         final Menu menu = menuRepository.getById(menuId);
         final Product product = productRepository.getById(productId);
-        return menuProductRepository.save(new MenuProduct(menu, product, quantity)).getId();
+        return menuProductRepository.save(new MenuProduct(menu, product.getId(), quantity)).getId();
     }
 
 }

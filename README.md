@@ -92,14 +92,24 @@
 ## 의존성 리팩터링
 * 변경 전 : Menu(N) -> (1)MenuGroup (단방향, 직접 참조)
 * 변경 후 : Menu(N) -> (1)MenuGroup (단방향, 간접 참조)
-  * Menu는 MenuGroup을 간접 참조로 변경
+  * Menu는 MenuGroup을 간접 참조한다.
     * Menu가 생성될 때 MenuGroup이 생성되지 않는다. 
     * Menu가 삭제될 때 MenuGroup이 삭제되지 않아야 한다.
     * Menu가 속한 MenuGroup을 알 수 있어야 한다.
+
 * 변경 전 : Menu(1) <-> (N)MenuProduct (양방향, 직접 참조)
 * 변경 후 : Menu(1) <- (N)MenuProduct (단방향, 직접 참조)
   * 양방향 사이클(Cycle) 제거
     * Menu가 MenuProduct를 의존하지 않는다.
-  * MenuProduct는 Menu를 직접 참조로 의존한다.
+  * MenuProduct는 Menu를 직접 참조한다.
     * MenuProduct 매핑 테이블은 Menu가 생성될 때 같이 생성된다.
     * MenuProduct 매핑 테이블은 Menu가 삭제될 때 같이 삭제된다.
+
+* 변경 전 : MenuProduct(N) -> (1)Product (단방향, 직접 참조)
+* 변경 전 : MenuProduct(N) -> (1)Product (단방향, 간접 참조)
+  * MenuProduct는 Product를 간접 참조한다.
+    * MenuProduct가 생성될 때 Product가 생성되지 않는다.
+    * MenuProduct가 삭제될 때 Product가 삭제되지 않는다.
+    * 메뉴와는 별도의 도메인이기 때문에 지연 로딩을 사용하여 트랜잭션의 깊이(depth)를 늘리지 않는다.
+
+* 
