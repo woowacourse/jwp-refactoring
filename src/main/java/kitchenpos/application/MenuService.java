@@ -5,7 +5,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Products;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -22,18 +21,15 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
-    private final MenuProductRepository menuProductRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository,
-            final MenuProductRepository menuProductRepository
+            final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
-        this.menuProductRepository = menuProductRepository;
     }
 
     public Long create(
@@ -58,8 +54,8 @@ public class MenuService {
 
     private void saveMenuProduct(final List<Integer> counts, final List<Product> findProducts, Menu menu) {
         for (int index = 0; index < findProducts.size(); index++) {
-            final MenuProduct menuProduct = new MenuProduct(menu.getId(), findProducts.get(index).getId(), counts.get(index));
-            menuProductRepository.save(menuProduct);
+            final MenuProduct menuProduct = new MenuProduct(menu, findProducts.get(index).getId(), counts.get(index));
+            menu.addMenuProduct(menuProduct);
         }
     }
 

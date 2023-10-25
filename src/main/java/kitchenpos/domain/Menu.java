@@ -1,10 +1,14 @@
 package kitchenpos.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +20,8 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
+    @OneToMany(mappedBy = "menu", cascade = {CascadeType.PERSIST})
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
@@ -35,6 +41,10 @@ public class Menu {
 
     public String getName() {
         return name;
+    }
+
+    public void addMenuProduct(MenuProduct menuProduct) {
+        this.menuProducts.add(menuProduct);
     }
 }
 
