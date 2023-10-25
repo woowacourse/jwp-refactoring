@@ -12,9 +12,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.request.MenuProductRequest;
+import kitchenpos.application.request.OrderLineItemsRequest;
 import kitchenpos.application.response.MenuResponse;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.dao.MenuCustomDao;
 import kitchenpos.dao.OrderCustomDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -24,7 +24,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.product.Price;
-import kitchenpos.application.request.OrderLineItemsRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import({ProductService.class, MenuService.class, MenuCustomDao.class,
+@Import({ProductService.class, MenuService.class,
         MenuGroupService.class, OrderService.class, TableService.class, OrderCustomDao.class})
 class OrderServiceTest {
 

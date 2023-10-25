@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.application.response.MenuGroupResponse;
-import kitchenpos.dao.MenuCustomDao;
 import kitchenpos.domain.product.Name;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import({MenuGroupService.class, MenuCustomDao.class})
+@Import({MenuGroupService.class})
 class MenuGroupServiceTest {
 
     @Autowired

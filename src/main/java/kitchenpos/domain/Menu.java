@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import kitchenpos.domain.product.Price;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Embedded;
@@ -13,8 +16,8 @@ public class Menu {
     @Embedded.Empty
     private Price price;
     private Long menuGroupId;
-    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
-    private List<MenuProduct> menuProducts;
+    @MappedCollection(idColumn = "MENU_ID")
+    private Set<MenuProduct> menuProducts;
 
     public Menu(final Long id, final String name, final Price price, final Long menuGroupId,
                 final List<MenuProduct> menuProducts) {
@@ -22,7 +25,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new HashSet<>(menuProducts);
     }
 
     public Long getId() {
@@ -42,6 +45,6 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 }

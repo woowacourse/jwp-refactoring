@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.dao.MenuCustomDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.product.Price;
@@ -22,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.context.annotation.Import;
 
 @DataJdbcTest
-@Import({MenuService.class, MenuGroupService.class, ProductService.class, MenuCustomDao.class})
+@Import({MenuService.class, MenuGroupService.class, ProductService.class})
 class MenuServiceTest {
 
     @Autowired
@@ -107,8 +105,7 @@ class MenuServiceTest {
     @DisplayName("조건에 맞다면 메뉴 정보를 저장한 후, 메뉴의 각 상품 정보를 저장한다.")
     void successfullySaved(
             @Autowired MenuGroupService menuGroupService,
-            @Autowired ProductService productService,
-            @Autowired MenuProductDao menuProductDao
+            @Autowired ProductService productService
     ) {
         // given : 메뉴 그룹
         final Long menuGroupId = 메뉴그룹만들기(menuGroupService).getId();
@@ -128,7 +125,7 @@ class MenuServiceTest {
 
         final MenuResponse savedManu = menuService.create("메뉴!", new Price(new BigDecimal("4000")), menuGroupId, menuProductRequests);
 
-        assertThat(menuProductDao.findAllByMenuId(savedManu.getId()))
+        assertThat(savedManu).extracting("menuProducts").asList()
                 .as("메뉴를 저장하면 메뉴 상품도 따라 저장된다.")
                 .hasSize(2);
     }

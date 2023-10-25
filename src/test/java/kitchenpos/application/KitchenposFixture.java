@@ -24,7 +24,7 @@ public class KitchenposFixture {
     }
 
     public static MenuProduct 메뉴상품만들기(final Product savedProduct, final long quantity) {
-        return new MenuProduct(999L, null, savedProduct.getId(), quantity);
+        return new MenuProduct(999L, savedProduct.getId(), quantity);
     }
 
     public static Product 상품만들기(final String name, final String price, final ProductService productService) {

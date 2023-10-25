@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.request.MenuProductRequest;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.dao.MenuCustomDao;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -17,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
-    private final MenuCustomDao menuDao;
+    private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuCustomDao menuDao,
+            final MenuDao menuDao,
             final MenuGroupDao menuGroupDao,
             final ProductDao productDao
     ) {

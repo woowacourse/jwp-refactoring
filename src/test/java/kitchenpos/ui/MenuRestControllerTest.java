@@ -44,7 +44,7 @@ class MenuRestControllerTest {
         final MenuRequest menuRequest = new MenuRequest("준팍", new BigDecimal("4000"), 1L, menuProductRequests);
 
         final MenuResponse menuResponse = new MenuResponse(1L, "준팍", new Price(new BigDecimal("4000")), 1L,
-                List.of(new MenuProductResponse(1L, 1L, 1L, 4L), new MenuProductResponse(1L, 1L, 1L, 4L)));
+                List.of(new MenuProductResponse(1L, 1L, 4L), new MenuProductResponse(1L, 1L, 4L)));
 
         when(menuService.create("준팍", new Price(new BigDecimal("4000")), 1L, menuProductRequests))
                 .thenReturn(menuResponse);

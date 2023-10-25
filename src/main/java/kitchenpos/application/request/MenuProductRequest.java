@@ -21,7 +21,7 @@ public class MenuProductRequest {
     }
 
     public MenuProduct toEntity() {
-        return new MenuProduct(null, null, productId, quantity);
+        return new MenuProduct(null, productId, quantity);
     }
 
     @Override

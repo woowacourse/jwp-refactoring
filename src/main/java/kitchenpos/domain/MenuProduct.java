@@ -1,18 +1,17 @@
 package kitchenpos.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 
 public class MenuProduct {
     @Id
     private Long seq;
-    private Long menuId;
-    private Long productId;
+    private AggregateReference<Product, Long> productId;
     private long quantity;
 
-    public MenuProduct(final Long seq, final Long menuId, final Long productId, final long quantity) {
+    public MenuProduct(final Long seq,final Long productId, final long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.productId = () -> productId;
         this.quantity = quantity;
     }
 
@@ -20,12 +19,8 @@ public class MenuProduct {
         return seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
     public Long getProductId() {
-        return productId;
+        return productId.getId();
     }
 
     public long getQuantity() {
