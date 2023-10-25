@@ -30,16 +30,16 @@ public class Order {
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final OrderLineItems orderLineItems) {
-        this(null, orderTable, orderStatus, orderLineItems);
+    public Order(final OrderTable orderTable, final OrderLineItems orderLineItems) {
+        this(null, orderTable, orderLineItems);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus, final OrderLineItems orderLineItems) {
+    public Order(final Long id, final OrderTable orderTable, final OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
         this.orderLineItems = orderLineItems;
+        this.orderStatus = OrderStatus.COOKING;
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

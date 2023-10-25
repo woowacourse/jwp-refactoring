@@ -18,8 +18,7 @@ public class OrderMapper {
     }
 
     public static Order mapToOrder(final OrderCreateRequest orderCreateRequest, final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable, OrderStatus.valueOf(orderCreateRequest.getOrderStatus()),
-                new OrderLineItems(orderLineItems));
+        return new Order(orderTable, new OrderLineItems(orderLineItems));
     }
 
     public static OrderStatus mapToOrderStatus(final OrderStatusChangeRequest orderStatusChangeRequest) {
@@ -30,7 +29,7 @@ public class OrderMapper {
         final List<OrderLineItemResponse> orderLineItems = order.getOrderLineItems()
                 .getValues()
                 .stream()
-                .map(it -> new OrderLineItemResponse(it.getSeq(), it.getOrder().getId(), it.getMenu().getId(), it.getQuantity()))
+                .map(it -> new OrderLineItemResponse(it.getSeq(), it.getMenu().getId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new OrderResponse(order.getId(), order.getOrderTable().getId(),
                 order.getOrderStatus().name(), order.getOrderedTime(), orderLineItems);

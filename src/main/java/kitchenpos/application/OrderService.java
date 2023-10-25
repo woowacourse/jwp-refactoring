@@ -64,7 +64,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
         final OrderStatus orderStatus = OrderMapper.mapToOrderStatus(orderStatusChangeRequest);
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -72,6 +72,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
         savedOrder.changeOrderStatus(orderStatus);
-        return savedOrder;
+        return OrderMapper.mapToResponse(orderRepository.save(savedOrder));
     }
 }

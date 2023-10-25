@@ -45,6 +45,5 @@ class ProductIntegrationTest extends InitIntegrationTest {
                 () -> assertThat(responses.get(0).getName()).isEqualTo(DEFAULT_PRODUCT_NAME),
                 () -> assertThat(responses.get(0).getPrice()).isEqualByComparingTo(DEFAULT_PRODUCT_PRICE)
         );
-
     }
 }

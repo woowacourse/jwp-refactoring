@@ -9,7 +9,7 @@ import java.util.List;
 public class OrderLineItems {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true, mappedBy = "order")
+            orphanRemoval = true)
     private List<OrderLineItem> values;
 
     public OrderLineItems() {

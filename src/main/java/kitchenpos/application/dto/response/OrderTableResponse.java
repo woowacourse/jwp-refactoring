@@ -4,16 +4,14 @@ import java.util.Objects;
 
 public class OrderTableResponse {
     private Long id;
-    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
     public OrderTableResponse() {
     }
 
-    public OrderTableResponse(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTableResponse(final Long id, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -23,20 +21,16 @@ public class OrderTableResponse {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final OrderTableResponse that = (OrderTableResponse) o;
-        return getNumberOfGuests() == that.getNumberOfGuests() && isEmpty() == that.isEmpty() && Objects.equals(getId(), that.getId()) && Objects.equals(getTableGroupId(), that.getTableGroupId());
+        return getNumberOfGuests() == that.getNumberOfGuests() && isEmpty() == that.isEmpty() && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTableGroupId(), getNumberOfGuests(), isEmpty());
+        return Objects.hash(getId(), getNumberOfGuests(), isEmpty());
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

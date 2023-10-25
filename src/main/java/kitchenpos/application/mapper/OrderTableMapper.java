@@ -15,7 +15,6 @@ public class OrderTableMapper {
     }
 
     public static OrderTableResponse mapToResponse(final OrderTable orderTable) {
-        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroup().getId(),
-                orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        return new OrderTableResponse(orderTable.getId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 }
