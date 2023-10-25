@@ -42,10 +42,8 @@ public class OrderService {
     }
 
     private List<OrderLineItem> createOrderLineItems(final OrderRequest orderRequest) {
+        orderRequest.validate();
         final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
-        }
         final Map<Long, Menu> menus = findMenus(orderRequest);
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {

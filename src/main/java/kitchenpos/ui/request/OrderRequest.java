@@ -1,5 +1,7 @@
 package kitchenpos.ui.request;
 
+import org.springframework.util.CollectionUtils;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,6 +14,12 @@ public class OrderRequest {
                         final List<OrderLineItemRequest> orderLineItemRequests) {
         this.orderTableId = orderTableId;
         this.orderLineItemRequests = orderLineItemRequests;
+    }
+
+    public void validate() {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getOrderTableId() {
