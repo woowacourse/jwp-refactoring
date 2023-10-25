@@ -39,7 +39,7 @@ public class Order {
     }
 
     public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
-        if (orderTable.isEmpty()) {
+        if (!orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
         this.orderTable = orderTable;
@@ -54,13 +54,12 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public void setOrderStatus(final String orderStatusName) {
-        final OrderStatus orderStatus = OrderStatus.find(orderStatusName)
-                                                   .orElseThrow(() -> new IllegalArgumentException("잘못된 상태입니다."));
+    public void changeOrderStatus(final String orderStatusName) {
         if (orderStatus.isComplete()) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.find(orderStatusName)
+                                      .orElseThrow(() -> new IllegalArgumentException("잘못된 상태입니다."));
     }
 
     public Long getId() {
