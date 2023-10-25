@@ -49,7 +49,7 @@ public class MenuFixture {
     private static BigDecimal 메뉴_가격_계산(final List<Product> products) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final Product product : products) {
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(DEFAULT_QUANTITY)));
+            sum = sum.add(product.getPriceValue().multiply(BigDecimal.valueOf(DEFAULT_QUANTITY)));
         }
 
         return sum;

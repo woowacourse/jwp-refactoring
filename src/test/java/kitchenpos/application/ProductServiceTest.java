@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidPriceValue;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.product.ProductRequest;
@@ -56,7 +57,8 @@ class ProductServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidPriceValue.class)
+                    .hasMessage("상품의 가격은 음수가될 수 없습니다.");
         }
 
         @Test
@@ -67,7 +69,8 @@ class ProductServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidPriceValue.class)
+                    .hasMessage("상품의 가격은 음수가될 수 없습니다.");
         }
     }
 
