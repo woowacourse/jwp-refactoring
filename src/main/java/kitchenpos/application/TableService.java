@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TableService {
@@ -37,14 +38,25 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final PutOrderTableEmptyRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                                                                .orElseThrow(IllegalArgumentException::new);
+        validateCompletion(orderTableId);
+        validateTableGroupInvolve(savedOrderTable);
+        savedOrderTable.setEmpty(orderTableRequest.getEmpty());
+        return orderTableRepository.save(savedOrderTable);
+    }
+
+    private void validateCompletion(final Long orderTableId) {
         final boolean isNotComplete = orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, OrderStatus.notCompleteStatuses()
         );
         if (isNotComplete) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.setEmpty(orderTableRequest.getEmpty());
-        return orderTableRepository.save(savedOrderTable);
+    }
+
+    private void validateTableGroupInvolve(final OrderTable orderTable) {
+        if (Objects.nonNull(orderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
