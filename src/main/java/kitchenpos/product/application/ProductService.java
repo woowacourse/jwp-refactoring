@@ -1,11 +1,11 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.request.ProductCreateRequest;
-import kitchenpos.application.response.ProductResponse;
-import kitchenpos.domain.Product;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.product.application.response.ProductResponse;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,4 @@
-package kitchenpos.application.request;
+package kitchenpos.product.application.request;
 
 public class ProductCreateRequest {
 

@@ -5,8 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.request.ProductCreateRequest;
-import kitchenpos.application.response.ProductResponse;
+import kitchenpos.product.application.request.ProductCreateRequest;
+import kitchenpos.product.application.response.ProductResponse;
+import kitchenpos.product.application.ProductService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

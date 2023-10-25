@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import kitchenpos.domain.vo.Price;
+import kitchenpos.dto.vo.Price;
 
 @Entity
 @Table(name = "product")
