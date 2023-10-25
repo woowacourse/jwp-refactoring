@@ -27,7 +27,7 @@ public class Price {
     }
 
     public Price add(final Price otherPrice) {
-        final BigDecimal addValue = value.add(otherPrice.getValue());
+        final BigDecimal addValue = value.add(otherPrice.value);
 
         return new Price(addValue);
     }
