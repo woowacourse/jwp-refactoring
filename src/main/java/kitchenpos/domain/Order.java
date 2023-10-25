@@ -16,8 +16,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity(name = "orders")
@@ -27,9 +25,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_table_id", nullable = false)
-    private OrderTable orderTable;
+    @Column(nullable = false)
+    private Long orderTableId;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -45,34 +42,36 @@ public class Order {
     }
 
     private Order(
+            Long orderTableId,
             LocalDateTime orderedTime
     ) {
-        this(null, null, COOKING, orderedTime);
+        this(null, orderTableId, COOKING, orderedTime);
     }
 
     private Order(
             Long id,
-            OrderTable orderTable,
+            Long orderTableId,
             OrderStatus orderStatus,
             LocalDateTime orderedTime
     ) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
     public static Order of(
+            Long orderTableId,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = new Order(LocalDateTime.now());
+        Order order = new Order(orderTableId, LocalDateTime.now());
         order.addAllOrderLineItems(orderLineItems);
 
         return order;
     }
 
-    public void registerOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
+    public void registerOrderTable(Long orderTableId) {
+        this.orderTableId = orderTableId;
     }
 
     public void addAllOrderLineItems(List<OrderLineItem> orderLineItems) {
@@ -104,8 +103,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

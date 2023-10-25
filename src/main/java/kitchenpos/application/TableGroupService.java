@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.ui.request.TableGroupCreateRequest;
@@ -16,13 +17,16 @@ import org.springframework.util.CollectionUtils;
 public class TableGroupService {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
             OrderTableRepository orderTableRepository,
+            OrderRepository orderRepository,
             TableGroupRepository tableGroupRepository
     ) {
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
@@ -63,9 +67,23 @@ public class TableGroupService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         validateTableGroupId(tableGroupId);
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        orderTables.forEach(this::ungroupOrderTable);
+    }
 
-        orderTableRepository.findAllByTableGroupId(tableGroupId)
-                .forEach(OrderTable::breakupTableGroup);
+    private void ungroupOrderTable(OrderTable orderTable) {
+        validateOrderStatusInOrderTable(orderTable);
+        orderTable.breakupTableGroup();
+    }
+
+    private void validateOrderStatusInOrderTable(OrderTable orderTable) {
+        boolean canNotBreakup = orderRepository.findAllByOrderTableId(orderTable.getId())
+                .stream()
+                .anyMatch(order -> order.isCooking() || order.isMeal());
+
+        if (canNotBreakup) {
+            throw new IllegalArgumentException("요리 중이거나 식사 중인 주문이 포함된 주문 테이블을 테이블 그룹에서 제외 시킬 수 없습니다.");
+        }
     }
 
     private void validateTableGroupId(Long tableGroupId) {

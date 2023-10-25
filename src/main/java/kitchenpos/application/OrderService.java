@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
@@ -37,11 +37,14 @@ public class OrderService {
 
     @Transactional
     public Order create(OrderCreateRequest request) {
-        List<OrderLineItem> orderLineItems = createOrderLineItemsByRequest(request.getOrderLineItemCreateRequests());
+        List<OrderLineItem> orderLineItems = createOrderLineItemsByRequest(
+                request.getOrderLineItemCreateRequests()
+        );
         OrderTable orderTable = findOrderTable(request.getOrderTableId());
 
-        Order order = Order.of(orderLineItems);
-        orderTable.addOrder(order);
+        validateOrderTableEmpty(orderTable);
+
+        Order order = Order.of(orderTable.getId(), orderLineItems);
 
         return orderRepository.save(order);
     }
@@ -85,6 +88,12 @@ public class OrderService {
     private void validateOrderTableId(Long orderTableId) {
         if (Objects.isNull(orderTableId)) {
             throw new IllegalArgumentException("주문 테이블의 ID 는 존재하지 않을 수 없습니다.");
+        }
+    }
+
+    private void validateOrderTableEmpty(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("주문 테이블이 주문 불가 상태입니다.");
         }
     }
 

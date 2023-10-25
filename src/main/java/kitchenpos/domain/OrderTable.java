@@ -1,17 +1,12 @@
 package kitchenpos.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.NumberOfGuests;
 
 @Entity
@@ -29,9 +24,6 @@ public class OrderTable {
 
     @Column(nullable = false)
     private boolean empty;
-
-    @OneToMany(mappedBy = "orderTable", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private final List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -62,15 +54,6 @@ public class OrderTable {
         );
     }
 
-    public void addOrder(Order orders) {
-        if (isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        this.orders.add(orders);
-        orders.registerOrderTable(this);
-    }
-
     public void registerTableGroup(Long tableGroupId) {
         if (!isEmpty()) {
             throw new IllegalArgumentException("주문이 가능한 주문 테이블은 테이블 그룹에 포함될 수 없습니다.");
@@ -85,13 +68,6 @@ public class OrderTable {
     }
 
     public void breakupTableGroup() {
-        boolean canNotBreakup = orders.stream()
-                .anyMatch(order -> order.isCooking() || order.isMeal());
-
-        if (canNotBreakup) {
-            throw new IllegalArgumentException();
-        }
-
         empty = false;
         tableGroupId = null;
     }
@@ -102,14 +78,7 @@ public class OrderTable {
 
     public void changeEmpty(boolean empty) {
         if (isAlreadyContainsTableGroup()) {
-            throw new IllegalArgumentException();
-        }
-
-        boolean canNotChangeEmpty = orders.stream()
-                .anyMatch(order -> order.isCooking() || order.isMeal());
-
-        if (canNotChangeEmpty) {
-            throw new IllegalArgumentException("주문 테이블의 주문 가능 여부를 변경할 수 없습니다.");
+            throw new IllegalArgumentException("테이블 그룹에 이미 속해있는 경우 주문 가능 상태를 바꿀 수 없습니다.");
         }
 
         this.empty = empty;
@@ -137,10 +106,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 
 }

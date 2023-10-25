@@ -15,29 +15,22 @@ public class OrderFixture {
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(orderLineItems);
-        savedOrderTable.addOrder(order);
-
-        return order;
+        return Order.of(savedOrderTable.getId(), orderLineItems);
     }
 
     public static Order 요리중인_주문_생성(
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(orderLineItems);
-        savedOrderTable.addOrder(order);
-
-        return order;
+        return Order.of(savedOrderTable.getId(), orderLineItems);
     }
 
     public static Order 식사중인_주문_생성(
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(orderLineItems);
+        Order order = Order.of(savedOrderTable.getId(), orderLineItems);
         order.changeOrderStatus(MEAL);
-        savedOrderTable.addOrder(order);
 
         return order;
     }
@@ -46,9 +39,8 @@ public class OrderFixture {
             OrderTable savedOrderTable,
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(orderLineItems);
+        Order order = Order.of(savedOrderTable.getId(), orderLineItems);
         order.changeOrderStatus(COMPLETION);
-        savedOrderTable.addOrder(order);
 
         return order;
     }
@@ -56,11 +48,7 @@ public class OrderFixture {
     public static Order 존재하지_않는_주문_테이블을_가진_주문_생성(
             List<OrderLineItem> orderLineItems
     ) {
-        Order order = Order.of(orderLineItems);
-        OrderTable orderTable = OrderTable.of(0, false);
-        orderTable.addOrder(order);
-
-        return order;
+        return Order.of(Long.MAX_VALUE, orderLineItems);
     }
 
 }
