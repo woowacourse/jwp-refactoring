@@ -9,4 +9,6 @@ import java.util.List;
 public interface OrderTableRepository extends CrudRepository<OrderTable, Long> {
 
     List<OrderTable> findAll();
+
+    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

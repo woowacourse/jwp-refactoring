@@ -3,29 +3,20 @@ package kitchenpos.dto.response;
 import kitchenpos.domain.tablegroup.TableGroup;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class CreateTableGroupResponse {
     private final Long id;
     private final LocalDateTime createdDate;
-    private final List<OrderTableResponse> orderTables;
 
-    private CreateTableGroupResponse(Long id, LocalDateTime createdDate, List<OrderTableResponse> orderTables) {
+    private CreateTableGroupResponse(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     public static CreateTableGroupResponse from(TableGroup tableGroup) {
         return builder()
                 .id(tableGroup.getId())
                 .createdDate(tableGroup.getCreatedDate())
-                .orderTables(tableGroup.getOrderTables().stream()
-                        .map(OrderTableResponse::from)
-                        .collect(Collectors.toList())
-                )
                 .build();
     }
 
@@ -41,14 +32,9 @@ public class CreateTableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTables() {
-        return orderTables;
-    }
-
     public static final class CreateTableGroupResponseBuilder {
         private Long id;
         private LocalDateTime createdDate;
-        private List<OrderTableResponse> orderTables = new ArrayList<>();
 
         private CreateTableGroupResponseBuilder() {
         }
@@ -63,13 +49,8 @@ public class CreateTableGroupResponse {
             return this;
         }
 
-        public CreateTableGroupResponseBuilder orderTables(List<OrderTableResponse> orderTables) {
-            this.orderTables = orderTables;
-            return this;
-        }
-
         public CreateTableGroupResponse build() {
-            return new CreateTableGroupResponse(id, createdDate, orderTables);
+            return new CreateTableGroupResponse(id, createdDate);
         }
     }
 }

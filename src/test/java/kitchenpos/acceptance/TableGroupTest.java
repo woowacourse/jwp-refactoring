@@ -35,7 +35,7 @@ class TableGroupTest extends Acceptance {
         // when
         ExtractableResponse<Response> response = RestAssured.given()
                 .body(REQUEST.주문_테이블_그룹_생성_요청(orderTable, orderTable2))
-                .contentType("application/json")
+                .contentType(ContentType.JSON)
                 .when().post("/api/table-groups")
                 .then().log().all()
                 .statusCode(201)
@@ -45,8 +45,6 @@ class TableGroupTest extends Acceptance {
         assertSoftly(softly -> {
             softly.assertThat(response.header("Location")).isNotBlank();
             softly.assertThat(response.body().jsonPath().getLong("id")).isNotNull();
-            softly.assertThat(response.body().jsonPath().getLong("orderTables[0].id")).isEqualTo(orderTable);
-            softly.assertThat(response.body().jsonPath().getLong("orderTables[1].id")).isEqualTo(orderTable2);
         });
     }
 

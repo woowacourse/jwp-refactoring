@@ -36,12 +36,12 @@ public class OrderTable {
         return new OrderTableBuilder();
     }
 
-    public OrderTable fillTable() {
-        return new OrderTable(id, tableGroupId, numberOfGuests, false);
+    public OrderTable group(Long tableGroupId) {
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public OrderTable ungroup() {
-        return new OrderTable(id, tableGroupId, numberOfGuests, true);
+        return new OrderTable(id, null, numberOfGuests, empty);
     }
 
     public OrderTable updateEmpty(boolean empty) {

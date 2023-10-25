@@ -2,34 +2,43 @@ package kitchenpos.domain.tablegroup;
 
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.response.CreateTableGroupResponse;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import static kitchenpos.dto.request.CreateTableGroupRequest.CreateOrderTable;
 
 @Service
 public class TableGroupService {
 
-    private final TableGroupMapper tableGroupMapper;
-    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
     private final TableGroupValidator tableGroupValidator;
+    private final ApplicationEventPublisher publisher;
 
-    public TableGroupService(TableGroupMapper tableGroupMapper,
-                             final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository,
-                             TableGroupValidator tableGroupValidator) {
-        this.tableGroupMapper = tableGroupMapper;
-        this.orderTableRepository = orderTableRepository;
+    public TableGroupService(
+            final TableGroupRepository tableGroupRepository,
+            final TableGroupValidator tableGroupValidator,
+            final ApplicationEventPublisher publisher) {
         this.tableGroupRepository = tableGroupRepository;
         this.tableGroupValidator = tableGroupValidator;
+        this.publisher = publisher;
     }
 
     @Transactional
     public CreateTableGroupResponse create(final CreateTableGroupRequest request) {
-        final TableGroup tableGroup = tableGroupMapper.toTableGroup(request);
-        TableGroup updated = tableGroup.fillTables();
-        return CreateTableGroupResponse.from(tableGroupRepository.save(updated));
+        final TableGroup tableGroup = tableGroupRepository.save(TableGroup.builder()
+                .createdDate(LocalDateTime.now())
+                .build());
+
+        tableGroupValidator.validateCreate(request);
+        publisher.publishEvent(new TableGroupCreatedEvent(tableGroup.getId(), request.getOrderTables().stream()
+                .map(CreateOrderTable::getId)
+                .collect(Collectors.toList())));
+
+        return CreateTableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 
     @Transactional
@@ -37,8 +46,6 @@ public class TableGroupService {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
         tableGroupValidator.validateUngroup(tableGroup);
-        tableGroup.getOrderTables().stream()
-                .map(OrderTable::ungroup)
-                .forEach(orderTableRepository::save);
+        publisher.publishEvent(new TableUngroupedEvent(tableGroup.getId()));
     }
 }
