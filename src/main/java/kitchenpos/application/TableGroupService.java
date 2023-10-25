@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTables;
 import kitchenpos.domain.table.TableGroup;
@@ -12,21 +12,21 @@ import java.util.List;
 
 @Service
 public class TableGroupService {
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderTableDao orderTableDao,
-            final TableGroupDao tableGroupDao
+            final OrderTableRepository orderTableRepository,
+            final TableGroupRepository tableGroupRepository
     ) {
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroup create(final List<Long> tableIds) {
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(tableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(tableIds);
 
         if (tableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
@@ -35,12 +35,12 @@ public class TableGroupService {
         OrderTables orderTables = new OrderTables(savedOrderTables);
         TableGroup tableGroup = orderTables.group();
 
-        return tableGroupDao.save(tableGroup);
+        return tableGroupRepository.save(tableGroup);
     }
 
     @Transactional
     public TableGroup ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블 그룹이 존재하지 않습니다."));
 
         tableGroup.unGroup();

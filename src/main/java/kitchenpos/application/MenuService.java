@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.menu.Menu;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,30 +10,30 @@ import java.util.List;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     public Menu create(final Menu menu) {
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
 
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     @Transactional
     public List<Menu> list() {
 
-        return menuDao.findAll();
+        return menuRepository.findAll();
     }
 }

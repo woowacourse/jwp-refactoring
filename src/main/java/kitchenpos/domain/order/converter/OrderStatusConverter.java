@@ -1,4 +1,4 @@
-package kitchenpos.ui.converter;
+package kitchenpos.domain.order.converter;
 
 import kitchenpos.domain.order.OrderStatus;
 import org.springframework.core.convert.converter.Converter;

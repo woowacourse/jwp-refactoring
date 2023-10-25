@@ -1,6 +1,6 @@
 package kitchenpos.domain.order.service;
 
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.table.OrderTable;
@@ -19,12 +19,12 @@ class OrderCreateServiceTest {
     private OrderCreateService orderCreateService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void 주문_테이블이_비어있으면_주문할_수_없다() {
         // given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(3, true, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true, false));
         List<OrderLineItem> orderLineItems = List.of(
                 new OrderLineItem(1L, 1)
         );

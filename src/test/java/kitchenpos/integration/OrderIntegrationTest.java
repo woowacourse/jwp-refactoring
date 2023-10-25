@@ -1,10 +1,10 @@
 package kitchenpos.integration;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -30,28 +30,28 @@ class OrderIntegrationTest extends IntegrationTest {
     private OrderService orderService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Test
     void 주문_전체_조회_시_주문_항목을_같이_조회할_수_있다() {
-        Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-        Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
+        Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
+        Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
                 new MenuProduct(product, 1)
         )));
         List<OrderLineItem> orderLineItems = List.of(
                 new OrderLineItem(menu.getId(), 1)
         );
-        OrderTable orderTable = orderTableDao.save(new OrderTable(3, false, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false, false));
 
         Order order = new Order(orderLineItems);
         Order saved = orderService.create(orderTable.getId(), order);
@@ -76,9 +76,9 @@ class OrderIntegrationTest extends IntegrationTest {
 
         @Test
         void 메뉴가_존재하지_않는_주문항목이_있는_주문은_저장할_수_없다() {
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-            Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
+            Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
+            Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
                     new MenuProduct(product, 1)
             )));
             List<OrderLineItem> orderLineItems = List.of(
@@ -93,19 +93,19 @@ class OrderIntegrationTest extends IntegrationTest {
 
         @Test
         void 빈_주문_테이블에서_주문할_수_없다() {
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-            Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
+            Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
+            Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
                     new MenuProduct(product, 1)
             )));
-            Menu menu2 = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
+            Menu menu2 = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
                     new MenuProduct(product, 1)
             )));
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1),
                     new OrderLineItem(menu2.getId(), 1)
             );
-            OrderTable orderTable = orderTableDao.save(new OrderTable(3, true, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(3, true, false));
 
             assertThatThrownBy(() -> orderService.create(orderTable.getId(), new Order(orderLineItems)))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -114,9 +114,9 @@ class OrderIntegrationTest extends IntegrationTest {
 
         @Test
         void 존재하지_않는_테이블에서_주문할_수_없다() {
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-            Menu menu = menuDao.save(
+            Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
+            Menu menu = menuRepository.save(
                     new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(),
                             List.of(new MenuProduct(product, 1)))
             );
@@ -133,15 +133,15 @@ class OrderIntegrationTest extends IntegrationTest {
 
         @Test
         void 요리중_상태로_변경한다() {
-            Product product = productDao.save(new Product("상품", BigDecimal.valueOf(1000)));
-            MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹"));
-            Menu menu = menuDao.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
+            Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(1000)));
+            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹"));
+            Menu menu = menuRepository.save(new Menu("메뉴", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(
                     new MenuProduct(product, 1)
             )));
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1)
             );
-            OrderTable orderTable = orderTableDao.save(new OrderTable(3, false, false));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(3, false, false));
 
             Order order = new Order(orderLineItems);
             Order saved = orderService.create(orderTable.getId(), order);

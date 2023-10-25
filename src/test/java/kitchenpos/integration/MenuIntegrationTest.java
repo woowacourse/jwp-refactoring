@@ -2,7 +2,7 @@ package kitchenpos.integration;
 
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -24,12 +24,12 @@ class MenuIntegrationTest extends IntegrationTest {
     private ProductService productService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void 메뉴가_영속화되면_메뉴프로덕트도_영속화된다() {
         // given
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
         MenuProduct menuProduct = new MenuProduct(product, 1L);
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));
@@ -44,7 +44,7 @@ class MenuIntegrationTest extends IntegrationTest {
     void 메뉴_조회시_메뉴프로덕트도_조회된다() {
 
         // given
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("메뉴그룹1"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴그룹1"));
         Product product = productService.create(new Product("상품1", BigDecimal.valueOf(1000)));
         MenuProduct menuProduct = new MenuProduct(product, 1L);
         Menu menu = new Menu("메뉴1", BigDecimal.valueOf(1000), menuGroup.getId(), List.of(menuProduct));

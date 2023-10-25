@@ -1,7 +1,7 @@
 package kitchenpos.domain.order.service;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.table.OrderTable;
 import org.springframework.stereotype.Component;
@@ -9,21 +9,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderCreateService {
 
-    private final OrderTableDao orderTableDao;
-    private final OrderDao orderDao;
+    private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public OrderCreateService(OrderTableDao orderTableDao, OrderDao orderDao) {
-        this.orderTableDao = orderTableDao;
-        this.orderDao = orderDao;
+    public OrderCreateService(OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
+        this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     public Order create(Long tableId, Order order) {
 
-        OrderTable orderTable = orderTableDao.findById(tableId)
+        OrderTable orderTable = orderTableRepository.findById(tableId)
                 .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         orderTable.createdOrder(order);
 
-        return orderDao.save(order);
+        return orderRepository.save(order);
     }
 }

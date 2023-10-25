@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
@@ -15,16 +15,16 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
     private final OrderCreateService orderCreateService;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
+            final MenuRepository menuRepository,
+            final OrderRepository orderRepository,
             OrderCreateService orderCreateService) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
         this.orderCreateService = orderCreateService;
     }
 
@@ -36,7 +36,7 @@ public class OrderService {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("한번의 주문에서 중복 메뉴를 주문할 수 없습니다.");
         }
 
@@ -44,12 +44,12 @@ public class OrderService {
     }
 
     public List<Order> list() {
-        return orderDao.findAll();
+        return orderRepository.findAll();
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
-        final Order savedOrder = orderDao.findById(orderId)
+        final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("주문이 존재하지 않습니다."));
 
         savedOrder.changeOrderStatus(orderStatus);
