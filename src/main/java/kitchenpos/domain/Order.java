@@ -1,5 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exception.InvalidOrderLineItemsToOrder;
+import kitchenpos.domain.exception.InvalidOrderTableToOrder;
+import org.springframework.util.CollectionUtils;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -28,7 +33,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<OrderLineItem> orderLineItems;
 
     public Order() {}
@@ -41,6 +46,51 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public Order(
+            final OrderTable orderTable,
+            final String orderStatus,
+            final LocalDateTime now,
+            final List<OrderLineItem> orderLineItems
+    ) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = now;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public static Order of(
+            final OrderTable orderTable,
+            final String orderStatus,
+            final LocalDateTime now,
+            final List<OrderLineItem> orderLineItems
+    ) {
+        validateOrderTable(orderTable);
+        validateOrderLineItems(orderLineItems);
+
+        final Order order = new Order(orderTable, orderStatus, now, orderLineItems);
+        addOrderLineItems(orderLineItems, order);
+
+        return order;
+    }
+
+    private static void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new InvalidOrderTableToOrder("주문 테이블이 비어 있어 주문이 불가능합니다.");
+        }
+    }
+
+    private static void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new InvalidOrderLineItemsToOrder("주문 항목이 없습니다.");
+        }
+    }
+
+    private static void addOrderLineItems(final List<OrderLineItem> orderLineItems, final Order order) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.updateOrder(order);
+        }
     }
 
     public Long getId() {
@@ -63,7 +113,7 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 

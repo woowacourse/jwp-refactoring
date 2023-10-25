@@ -4,11 +4,11 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
-import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @DataJpaTest
@@ -56,7 +57,7 @@ class OrderLineItemRepositoryTest {
         final Product product = productRepository.save(ProductFixture.상품_엔티티_생성());
         menus = menuRepository.saveAll(MenuFixture.메뉴_엔티티들_생성(3, menuGroup, List.of(product)));
         final OrderTable orderTable = orderTableRepository.save(OrderTableFixture.주문_테이블_엔티티_생성());
-        order = orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(orderTable, menus.get(0)));
+        order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now()));
     }
 
     @Test
@@ -70,12 +71,9 @@ class OrderLineItemRepositoryTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(3);
-            softAssertions.assertThat(actual.get(0)).usingRecursiveComparison()
-                          .isEqualTo(orderLineItems.get(0));
-            softAssertions.assertThat(actual.get(1)).usingRecursiveComparison()
-                          .isEqualTo(orderLineItems.get(1));
-            softAssertions.assertThat(actual.get(2)).usingRecursiveComparison()
-                          .isEqualTo(orderLineItems.get(2));
+            softAssertions.assertThat(actual.get(0)).isEqualTo(orderLineItems.get(0));
+            softAssertions.assertThat(actual.get(1)).isEqualTo(orderLineItems.get(1));
+            softAssertions.assertThat(actual.get(2)).isEqualTo(orderLineItems.get(2));
         });
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.NotFoundOrDuplicateMenuToOrderExcpetion;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -7,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exception.InvalidOrderLineItemsToOrder;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
@@ -98,7 +100,8 @@ class OrderServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NotFoundOrDuplicateMenuToOrderExcpetion.class)
+                    .hasMessage("존재하지 않는 혹은 중복된 메뉴를 주문 항목으로 설정했습니다.");
         }
 
         @Test
@@ -108,7 +111,31 @@ class OrderServiceTest extends ServiceTestConfig {
 
             // when & then
             assertThatThrownBy(() -> orderService.create(orderRequest))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(InvalidOrderLineItemsToOrder.class)
+                    .hasMessage("주문 항목이 없습니다.");
+        }
+
+        @Test
+        void 주문_등록시_존재하지_않은_메뉴로_주문_항목이_있다면_예외룰_반환한다() {
+            // given
+            final Menu unsavedMenu = MenuFixture.메뉴_엔티티_생성(menuGroup, products);
+            final OrderRequest orderRequest = OrderFixture.조리_상태의_주문_요청_dto_생성(orderTable, List.of(unsavedMenu));
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(NotFoundOrDuplicateMenuToOrderExcpetion.class)
+                    .hasMessage("존재하지 않는 혹은 중복된 메뉴를 주문 항목으로 설정했습니다.");
+        }
+
+        @Test
+        void 주문_등록시_중복되는_메뉴로_주문_항목이_있다면_예외룰_반환한다() {
+            // given
+            final OrderRequest orderRequest = OrderFixture.조리_상태의_주문_요청_dto_생성(orderTable, List.of(menu, menu));
+
+            // when & then
+            assertThatThrownBy(() -> orderService.create(orderRequest))
+                    .isInstanceOf(NotFoundOrDuplicateMenuToOrderExcpetion.class)
+                    .hasMessage("존재하지 않는 혹은 중복된 메뉴를 주문 항목으로 설정했습니다.");
         }
     }
 

@@ -51,7 +51,7 @@ public class OrderLineItem {
         return order;
     }
 
-    public void setOrder(final Order order) {
+    public void updateOrder(final Order order) {
         this.order = order;
     }
 

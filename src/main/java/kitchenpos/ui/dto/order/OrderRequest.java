@@ -1,6 +1,7 @@
 package kitchenpos.ui.dto.order;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
@@ -25,7 +26,12 @@ public class OrderRequest {
         return orderLineItems;
     }
 
-    public Order toEntity(final OrderTable orderTable, final OrderStatus orderStatus, final LocalDateTime now) {
-        return new Order(orderTable, orderStatus.name(), now);
+    public Order toEntity(
+            final OrderTable orderTable,
+            final OrderStatus orderStatus,
+            final LocalDateTime now,
+            final List<OrderLineItem> orderLineItems
+    ) {
+        return Order.of(orderTable, orderStatus.name(), now, orderLineItems);
     }
 }
