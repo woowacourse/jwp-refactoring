@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.dto.OrderTableRequest;
@@ -16,7 +17,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.OrderBuilder;
 import support.fixture.TableBuilder;
 
 import java.util.List;
@@ -109,12 +109,11 @@ class TableServiceTest {
         @DisplayName("Table의 주문 상태가 COOKING 또는 MEAL일 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_order_status_is_cooking_or_meal(final OrderStatus orderStatus) {
             // given
-            final OrderTable table = orderTableRepository.save(new TableBuilder().build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            orderRepository.save(new OrderBuilder()
-                    .setOrderTable(table)
-                    .setOrderStatus(orderStatus)
-                    .build());
+            final Order order = new Order(table);
+            order.updateOrderStatus(orderStatus);
+            orderRepository.save(order);
 
             final OrderTableRequest request = new OrderTableRequest(null, 0, true);
 
@@ -128,14 +127,14 @@ class TableServiceTest {
         void should_change_empty_when_order_status_is_completed() {
             // given
             final boolean emptyStatus = true;
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(!emptyStatus)
-                    .build());
 
-            orderRepository.save(new OrderBuilder()
-                    .setOrderTable(table)
-                    .setOrderStatus(OrderStatus.COMPLETION)
-                    .build());
+            final OrderTable table = new OrderTable(0);
+            table.setEmpty(!emptyStatus);
+            orderTableRepository.save(table);
+
+            final Order order = new Order(table);
+            order.updateOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(order);
 
             // when
             final OrderTableRequest request = new OrderTableRequest(null, 0, emptyStatus);

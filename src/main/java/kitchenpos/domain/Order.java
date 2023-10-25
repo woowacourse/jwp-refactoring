@@ -29,11 +29,12 @@ public class Order {
     @Column(updatable = false)
     private LocalDateTime orderedTime;
 
-    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final OrderLineItems orderLineItems) {
+    public Order(final OrderTable orderTable) {
         this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
+        this.orderStatus = OrderStatus.COOKING;
+        this.orderLineItems = new OrderLineItems();
     }
+
 
     protected Order() {
     }
@@ -51,7 +52,14 @@ public class Order {
     }
 
     public void updateOrderStatus(final OrderStatus orderStatus) {
+        validateChangeableStatus();
         this.orderStatus = orderStatus;
+    }
+
+    private void validateChangeableStatus() {
+        if (orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public OrderLineItems getOrderLineItems() {

@@ -1,7 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
-import kitchenpos.domain.repository.*;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.dto.OrderRequest;
+import kitchenpos.domain.dto.OrderRequest.OrderLineItemRequest;
+import kitchenpos.domain.dto.OrderResponse;
+import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,10 +16,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.*;
+import support.fixture.TableBuilder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,10 +33,6 @@ class OrderServiceTest {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private MenuRepository menuRepository;
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-    @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
@@ -37,24 +41,24 @@ class OrderServiceTest {
     @DisplayName("모든 주문 목록을 조회한다.")
     void listTest() {
         // given
-        final OrderTable orderTable = orderTableRepository.findById(1L).get();
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0));
 
-        final Order order = new OrderBuilder()
-                .setOrderTable(orderTable)
-                .build();
+        orderRepository.save(new Order(orderTable));
 
-        final List<Order> expect = orderRepository.findAll();
-        expect.add(order);
-
-        orderRepository.save(order);
+        final List<Order> orders = orderRepository.findAll();
+        final List<Long> expect = orders.stream()
+                .map(Order::getId)
+                .collect(Collectors.toList());
 
         // when
-        final List<Order> actual = orderService.list();
+        final List<OrderResponse> orderResponses = orderService.list();
+        final List<Long> actual = orderResponses.stream()
+                .map(OrderResponse::getId)
+                .collect(Collectors.toList());
 
         // then
         assertThat(actual)
                 .usingRecursiveComparison()
-                .ignoringFields("id", "orderTable", "orderLineItems")
                 .isEqualTo(expect);
     }
 
@@ -66,38 +70,26 @@ class OrderServiceTest {
         @DisplayName("생성된 주문의 상태는 COOKING이고 OrderLineItem의 OrderId는 생성된 주문의 id이다.")
         void createOrderTest() {
             // given
-            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(null, 0, false));
 
-            final Menu menu = menuRepository.save(new MenuBuilder()
-                    .setMenuGroup(menuGroup)
-                    .build());
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                    .setMenu(menu)
-                    .setQuantity(1)
-                    .build();
-
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
-
-            final Order order = new OrderBuilder()
-                    .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTable(table)
-                    .build();
+            final OrderRequest request = new OrderRequest(table.getId(), null, List.of(orderLineItemRequest));
 
             // when
-            final Order savedOrder = orderService.create(order);
+            final OrderResponse response = orderService.create(request);
 
             // then
-            assertEquals(OrderStatus.COOKING, savedOrder.getOrderStatus());
+            assertEquals(OrderStatus.COOKING.name(), response.getOrderStatus());
 
-            final Long orderLineItemId = savedOrder.getOrderLineItems().getValues().get(0).getSeq();
-            orderLineItemRepository.findById(orderLineItemId)
-                    .ifPresentOrElse(
-                            actual -> assertEquals(savedOrder.getId(), actual.getOrder().getId()),
-                            () -> fail("OrderLineItem이 존재하지 않습니다.")
-                    );
+            response.getOrderLineItemIds()
+                    .forEach(orderLineItemId -> {
+                        orderLineItemRepository.findById(orderLineItemId)
+                                .ifPresentOrElse(
+                                        actual -> assertEquals(response.getId(), actual.getOrder().getId()),
+                                        () -> fail("OrderLineItem이 존재하지 않습니다.")
+                                );
+                    });
         }
 
         @Test
@@ -108,99 +100,39 @@ class OrderServiceTest {
                     .setEmpty(false)
                     .build());
 
-            final Order order = new OrderBuilder()
-                    .setOrderLineItems(Collections.emptyList())
-                    .setOrderTable(table)
-                    .build();
+            final OrderRequest request = new OrderRequest(table.getId(), null, Collections.emptyList());
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> orderService.create(order));
-        }
-
-        @Test
-        @DisplayName("저장되지 않은 OrderLineItem이 존재할 경우 IllegalArgumentException이 발생한다.")
-        void should_throw_when_OrderLineItem_is_not_saved() {
-            // given
-            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
-
-            final Menu menu = new MenuBuilder()
-                    .setMenuGroup(menuGroup)
-                    .build();
-
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                    .setMenu(menu)
-                    .setQuantity(1)
-                    .build();
-
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
-
-            final Order order = new OrderBuilder()
-                    .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTable(table)
-                    .build();
-
-            // when & then
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> orderService.create(order));
+                    () -> orderService.create(request));
         }
 
         @Test
         @DisplayName("주문 테이블이 존재하지 않을 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderTable_is_not_saved() {
             // given
-            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+            final OrderTable notSavedOrderTable = new OrderTable(0);
 
-            final Menu menu = menuRepository.save(new MenuBuilder()
-                    .setMenuGroup(menuGroup)
-                    .build());
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                    .setMenu(menu)
-                    .setQuantity(1)
-                    .build();
-
-            final OrderTable notSavedOrderTable = new TableBuilder().build();
-
-            final Order order = new OrderBuilder()
-                    .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTable(notSavedOrderTable)
-                    .build();
+            final OrderRequest request = new OrderRequest(notSavedOrderTable.getId(), null, List.of(orderLineItemRequest));
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> orderService.create(order));
+                    () -> orderService.create(request));
         }
 
         @Test
         @DisplayName("주문 테이블이 비어있는 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_OrderTable_is_empty() {
             // given
-            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+            final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
 
-            final Menu menu = menuRepository.save(new MenuBuilder()
-                    .setMenuGroup(menuGroup)
-                    .build());
-
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                    .setMenu(menu)
-                    .setQuantity(1)
-                    .build();
-
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(true)
-                    .build());
-
-            final Order order = new OrderBuilder()
-                    .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTable(table)
-                    .build();
+            final OrderRequest request = new OrderRequest(null, null, List.of(orderLineItemRequest));
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> orderService.create(order));
+                    () -> orderService.create(request));
         }
     }
 
@@ -213,28 +145,14 @@ class OrderServiceTest {
         @DisplayName("주문 상태를 변경한다.")
         void changeOrderStatusTest(final OrderStatus orderStatus) {
             // given
-            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Menu menu = menuRepository.save(new MenuBuilder()
-                    .setMenuGroup(menuGroup)
-                    .build());
+            final Order order = orderRepository.save(new Order(table));
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                    .setMenu(menu)
-                    .setQuantity(1).build();
-
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
-
-            final Order order = orderRepository.save(new OrderBuilder()
-                    .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTable(table)
-                    .build());
+            final OrderRequest request = new OrderRequest(null, orderStatus, null);
 
             // when
-            order.updateOrderStatus(orderStatus);
-            orderService.changeOrderStatus(order.getId(), order);
+            orderService.changeOrderStatus(order.getId(), request);
 
             // then
             orderRepository.findById(order.getId())
@@ -248,30 +166,17 @@ class OrderServiceTest {
         @DisplayName("완료된 주문의 상태를 변경할 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_change_orderStatus_completion() {
             // given
-            final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroupBuilder().build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            final Menu menu = menuRepository.save(new MenuBuilder()
-                    .setMenuGroup(menuGroup)
-                    .build());
+            final Order order = new Order(table);
+            order.updateOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(order);
 
-            final OrderLineItem orderLineItem = new OrderLineItemBuilder()
-                    .setMenu(menu)
-                    .setQuantity(1)
-                    .build();
-
-            final OrderTable table = orderTableRepository.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
-
-            final Order order = orderRepository.save(new OrderBuilder()
-                    .setOrderLineItems(List.of(orderLineItem))
-                    .setOrderTable(table)
-                    .setOrderStatus(OrderStatus.COMPLETION)
-                    .build());
+            final OrderRequest request = new OrderRequest(null, OrderStatus.MEAL, null);
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> orderService.changeOrderStatus(order.getId(), order));
+                    () -> orderService.changeOrderStatus(order.getId(), request));
         }
     }
 }

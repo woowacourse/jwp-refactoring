@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.*;
 import kitchenpos.domain.dto.TableGroupRequest;
 import kitchenpos.domain.dto.TableGroupResponse;
 import kitchenpos.domain.repository.OrderRepository;
@@ -18,7 +15,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.OrderBuilder;
 import support.fixture.TableBuilder;
 import support.fixture.TableGroupBuilder;
 
@@ -201,30 +197,29 @@ class TableGroupServiceTest {
 
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
-        @DisplayName("주문 상태가 COOKING 또는 MEAL일 경우 IllegalArgumentException이 발생한다.")
+        @DisplayName("주문 상태가 COMPLETION이 아닐 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_order_status_is_cooking_or_meal(final OrderStatus orderStatus) {
             // given
-            final OrderTable table1 = orderTableRepository.save(new TableBuilder().build());
-            final OrderTable table2 = orderTableRepository.save(new TableBuilder().build());
+            final OrderTable table1 = orderTableRepository.save(new OrderTable(0));
+            final OrderTable table2 = orderTableRepository.save(new OrderTable(0));
 
-            final TableGroup tableGroup = tableGroupRepository.save(new TableGroupBuilder()
-                    .setOrderTables(List.of(table1, table2))
-                    .build());
+            final Order order1 = new Order(table1);
+            final Order order2 = new Order(table2);
+
+            order1.updateOrderStatus(orderStatus);
+            order2.updateOrderStatus(orderStatus);
+
+            orderRepository.save(order1);
+            orderRepository.save(order2);
+
+            final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(table1, table2)));
+            tableGroupRepository.save(tableGroup);
 
             table1.setTableGroup(tableGroup);
             table2.setTableGroup(tableGroup);
 
             orderTableRepository.save(table1);
             orderTableRepository.save(table2);
-
-            orderRepository.save(new OrderBuilder()
-                    .setOrderTable(table1)
-                    .setOrderStatus(orderStatus)
-                    .build());
-            orderRepository.save(new OrderBuilder()
-                    .setOrderTable(table2)
-                    .setOrderStatus(orderStatus)
-                    .build());
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
