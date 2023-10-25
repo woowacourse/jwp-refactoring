@@ -45,7 +45,7 @@ public class OrderMapper {
                                         .orElseThrow(() -> new IllegalArgumentException("orderId 가 NULL 입니다")),
                                 orderLineItem.getMenuId()
                                         .orElseThrow(() -> new IllegalArgumentException("menuId 가 NULL 입니다")),
-                                orderLineItem.getQuantity()
+                                orderLineItem.getQuantity().getValue()
                         )
                 )
                 .collect(Collectors.toList());

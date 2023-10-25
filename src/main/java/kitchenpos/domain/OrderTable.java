@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.Objects;
 import java.util.Optional;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,8 +22,8 @@ public class OrderTable {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    @Column(nullable = false)
-    private int numberOfGuests;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
 
     @Column(nullable = false)
     private boolean empty;
@@ -33,7 +34,7 @@ public class OrderTable {
     private OrderTable(
             final Long id,
             final TableGroup tableGroup,
-            final int numberOfGuests,
+            final NumberOfGuests numberOfGuests,
             final boolean empty
     ) {
         this.id = id;
@@ -47,7 +48,7 @@ public class OrderTable {
             final int numberOfGuests,
             final boolean empty
     ) {
-        this(null, tableGroup, numberOfGuests, empty);
+        this(null, tableGroup, new NumberOfGuests(numberOfGuests), empty);
     }
 
     public void updateTableGroup(final TableGroup group) {
@@ -57,19 +58,12 @@ public class OrderTable {
 
     public void updateNumberOfGuests(final int numberOfGuests) {
         validateEmptyForUpdateNumberOfGuests();
-        validateNumberOfGuests(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
     private void validateEmptyForUpdateNumberOfGuests() {
         if (this.empty) {
             throw new IllegalArgumentException("테이블은 비어있을 수 없습니다.");
-        }
-    }
-
-    private void validateNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("인원 수는 음수일 수 없습니다.");
         }
     }
 
@@ -95,7 +89,7 @@ public class OrderTable {
         return Optional.ofNullable(tableGroup.getId());
     }
 
-    public int getNumberOfGuests() {
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 

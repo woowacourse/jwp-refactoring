@@ -27,7 +27,7 @@ public class OrderTableMapper {
         return new OrderTableResponse(
                 orderTable.getId(),
                 orderTable.getTableGroupId().orElse(null),
-                orderTable.getNumberOfGuests(),
+                orderTable.getNumberOfGuests().getValue(),
                 orderTable.isEmpty()
         );
     }

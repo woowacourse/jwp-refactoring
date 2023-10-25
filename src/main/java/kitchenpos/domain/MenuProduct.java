@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.Optional;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,8 +24,8 @@ public class MenuProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false)
-    private Long quantity;
+    @Embedded
+    private Quantity quantity;
 
     protected MenuProduct() {
     }
@@ -34,7 +34,7 @@ public class MenuProduct {
             final Long seq,
             final Menu menu,
             final Product product,
-            final Long quantity
+            final Quantity quantity
     ) {
         this.seq = seq;
         this.menu = menu;
@@ -47,7 +47,7 @@ public class MenuProduct {
             final Product product,
             final Long quantity
     ) {
-        this(null, menu, product, quantity);
+        this(null, menu, product, new Quantity(quantity));
     }
 
     public void updateMenu(final Menu menu) {
@@ -55,7 +55,7 @@ public class MenuProduct {
     }
 
     public Price caculateTotalPrice() {
-        return product.multiplyPrice(quantity);
+        return product.multiplyPrice(quantity.getValue());
     }
 
     public Long getSeq() {
@@ -76,7 +76,7 @@ public class MenuProduct {
         return Optional.ofNullable(product.getId());
     }
 
-    public long getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 

@@ -1,13 +1,14 @@
 package kitchenpos.domain;
 
 import java.util.Optional;
-import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
 
 @Entity
 public class OrderLineItem {
@@ -24,8 +25,8 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    @Column(nullable = false)
-    private long quantity;
+    @Embedded
+    private Quantity quantity;
 
     protected OrderLineItem() {
     }
@@ -34,7 +35,7 @@ public class OrderLineItem {
             final Long seq,
             final Order order,
             final Menu menu,
-            final long quantity
+            final Quantity quantity
     ) {
         this.seq = seq;
         this.order = order;
@@ -47,7 +48,7 @@ public class OrderLineItem {
             final Menu menu,
             final long quantity
     ) {
-        this(null, order, menu, quantity);
+        this(null, order, menu, new Quantity(quantity));
     }
 
     public void updateOrder(final Order order) {
@@ -80,7 +81,7 @@ public class OrderLineItem {
         return Optional.ofNullable(menu.getId());
     }
 
-    public long getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 }

@@ -15,7 +15,7 @@ public class MenuProductMapper {
                 menuProduct.getSeq(),
                 menuProduct.getMenuId().orElse(null),
                 menuProduct.getProductId().orElse(null),
-                menuProduct.getQuantity()
+                menuProduct.getQuantity().getValue()
         );
     }
 
