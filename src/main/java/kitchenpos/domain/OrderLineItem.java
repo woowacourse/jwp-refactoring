@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,6 +25,15 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MENU_ID")
     private Menu menu;
+
+    private String originalMenuName;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "original_menu_price"))
+    private Price originalMenuPrice;
+
+    private Long originalMenuGroupId;
+
     private long quantity;
 
     public OrderLineItem() {
@@ -29,6 +41,9 @@ public class OrderLineItem {
 
     public OrderLineItem(final Menu menu, final long quantity) {
         this.menu = menu;
+        this.originalMenuName = menu.getName();
+        this.originalMenuPrice = menu.getPrice();
+        this.originalMenuGroupId = menu.getMenuGroup().getId();
         this.quantity = quantity;
     }
 
@@ -46,6 +61,18 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public String getOriginalMenuName() {
+        return originalMenuName;
+    }
+
+    public Price getOriginalMenuPrice() {
+        return originalMenuPrice;
+    }
+
+    public Long getOriginalMenuGroupId() {
+        return originalMenuGroupId;
     }
 
     public void setOrder(final Order order) {
