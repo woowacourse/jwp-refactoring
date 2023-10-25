@@ -26,7 +26,8 @@ public class TableService {
     public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = OrderTable.forSave(request.getNumberOfGuests(), request.isEmpty(),
                                                          Collections.emptyList());
-        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+
+        return OrderTableResponse.from(orderTable);
     }
 
     public List<OrderTableResponse> list() {
@@ -40,7 +41,7 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.getById(orderTableId);
         orderTable.changeEmpty(request.getEmpty());
 
-        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
@@ -49,6 +50,6 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.getById(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        return OrderTableResponse.from(orderTableRepository.save(orderTable));
+        return OrderTableResponse.from(orderTable);
     }
 }

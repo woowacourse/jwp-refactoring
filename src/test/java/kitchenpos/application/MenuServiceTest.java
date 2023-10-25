@@ -17,6 +17,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +37,9 @@ class MenuServiceTest {
     @Mock
     private MenuProductRepository menuProductRepository;
 
+    @Mock
+    private ProductRepository productRepository;
+
     @InjectMocks
     private MenuService menuService;
 
@@ -52,15 +56,15 @@ class MenuServiceTest {
 
         final MenuProduct menuProduct1 = new MenuProduct(1L, product1, 1L);
         final MenuProduct menuProduct2 = new MenuProduct(2L, product2, 2L);
-        given(menuProductRepository.getAllById(List.of(1L, 2L)))
-            .willReturn(List.of(menuProduct1, menuProduct2));
+        given(productRepository.getById(any()))
+            .willReturn(product1, product2);
 
         final Menu menu = new Menu(1L, "메뉴", List.of(menuProduct1, menuProduct2));
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 
         // when
-        final MenuCreateRequest request = new MenuCreateRequest("메뉴", 10000, menuGroupId, List.of(
+        final MenuCreateRequest request = new MenuCreateRequest("메뉴", 30, menuGroupId, List.of(
             new MenuProductCreateRequest(1L, 1),
             new MenuProductCreateRequest(2L, 2)
         ));
@@ -97,7 +101,7 @@ class MenuServiceTest {
         given(menuGroupRepository.existsById(any(Long.class)))
             .willReturn(true);
 
-        given(menuProductRepository.getAllById(any()))
+        given(productRepository.getById(any()))
             .willThrow(IllegalArgumentException.class);
 
         // when

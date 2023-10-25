@@ -45,9 +45,10 @@ public class OrderService {
     }
 
     private void validateAllExistOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItemIds) {
-        final boolean existsAll = orderLineItemIds.stream()
+        final List<Long> menuIds = orderLineItemIds.stream()
             .map(OrderLineItemCreateRequest::getMenuId)
-            .allMatch(menuRepository::existsById);
+            .collect(Collectors.toList());
+        final boolean existsAll = menuRepository.countByIds(menuIds) == orderLineItemIds.size();
 
         if (!existsAll) {
             throw new IllegalArgumentException("존재하지 않는 주문 항목이 포함되어 있습니다.");

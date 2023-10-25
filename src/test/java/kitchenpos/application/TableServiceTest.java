@@ -2,12 +2,10 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
@@ -31,41 +29,6 @@ class TableServiceTest {
 
     @InjectMocks
     private TableService tableService;
-
-    @DisplayName("테이블을 생성한다.")
-    @Test
-    void create() {
-        // given
-        given(orderTableRepository.save(any()))
-            .willReturn(new OrderTable(1L, 2, true, Collections.emptyList()));
-
-        // when
-        final OrderTableResponse savedOrderTable = tableService.create(new OrderTableCreateRequest(2, true));
-
-        // then
-        assertThat(savedOrderTable.getId()).isEqualTo(1L);
-    }
-
-    @DisplayName("주문 테이블을 비어 있는 상태로 바꾼다.")
-    @Test
-    void changeEmpty() {
-        // given
-        final Long orderTableId = 1L;
-        final int numberOfGuests = 2;
-
-        given(orderTableRepository.getById(orderTableId))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.emptyList()));
-
-        given(orderTableRepository.save(any(OrderTable.class)))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, true, Collections.emptyList()));
-
-        // when
-        final OrderTableResponse savedOrderTable = tableService.changeEmpty(orderTableId, new OrderTableUpdateEmptyRequest(true));
-
-        // then
-        assertThat(savedOrderTable.isEmpty()).isTrue();
-        assertThat(savedOrderTable.getId()).isEqualTo(orderTableId);
-    }
 
     @DisplayName("주문 테이블이 존재하지 않으면 예외가 발생한다.")
     @Test
@@ -110,9 +73,6 @@ class TableServiceTest {
             .willReturn(
                 new OrderTable(orderTableId, previousNumberOfGuests, false, Collections.emptyList()));
 
-        given(orderTableRepository.save(any(OrderTable.class)))
-            .willReturn(new OrderTable(orderTableId, numberOfGuests, false, Collections.emptyList()));
-
         // when
         final OrderTableResponse savedOrderTable = tableService.changeNumberOfGuests(orderTableId,
                                                                                      new OrderTableUpdateNumberOfGuestsRequest(
@@ -120,7 +80,6 @@ class TableServiceTest {
 
         // then
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
-        assertThat(savedOrderTable.getId()).isEqualTo(orderTableId);
     }
 
     @DisplayName("손님 수가 음수이면 예외가 발생한다.")

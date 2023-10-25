@@ -52,9 +52,8 @@ class OrderServiceTest {
         final Order order = new Order(1L, OrderStatus.COOKING, orderLineItems);
         final OrderTable orderTable = new OrderTable(1L, 10, false, Collections.emptyList());
 
-        given(menuRepository.existsById(any()))
-            .willReturn(true)
-            .willReturn(true);
+        given(menuRepository.countByIds(any()))
+            .willReturn(2L);
         given(orderTableRepository.getById(any()))
             .willReturn(orderTable);
         given(orderRepository.save(any()))
@@ -86,9 +85,8 @@ class OrderServiceTest {
     @Test
     void create_differentMenuSize() {
         // given
-        given(menuRepository.existsById(any()))
-            .willReturn(true)
-            .willReturn(false);
+        given(menuRepository.countByIds(any()))
+            .willReturn(1L);
 
         // when
         // then
@@ -103,9 +101,8 @@ class OrderServiceTest {
     void create_failNotExistOrderTable() {
         // given
         final long notExistOrderTable = 0L;
-        given(menuRepository.existsById(any()))
-            .willReturn(true)
-            .willReturn(true);
+        given(menuRepository.countByIds(any()))
+            .willReturn(2L);
         given(orderTableRepository.getById(notExistOrderTable))
             .willThrow(IllegalArgumentException.class);
 
@@ -123,9 +120,8 @@ class OrderServiceTest {
         // given
         given(orderTableRepository.getById(any()))
             .willReturn(new OrderTable(1L, 10, true, Collections.emptyList()));
-        given(menuRepository.existsById(any()))
-            .willReturn(true)
-            .willReturn(true);
+        given(menuRepository.countByIds(any()))
+            .willReturn(2L);
         given(menuRepository.getById(any()))
             .willReturn(new Menu(1L, "후라이드", Collections.emptyList()))
             .willReturn(new Menu(2L, "양념", Collections.emptyList()));
