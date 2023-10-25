@@ -62,7 +62,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuGroup.addMenu(menu);
         menuRepository.save(menu);
 
-        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), "COOKING", List.of(
+        final OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(), List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L)
         ));
 
@@ -88,7 +88,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuRepository.save(menu);
 
         orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
-        final OrderCreateRequest request = new OrderCreateRequest(1L, "COOKING", List.of(
+        final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
         ));
@@ -112,7 +112,7 @@ class OrderServiceAcceptanceTest extends AcceptanceTest {
         menuRepository.save(menu);
 
         orderTableRepository.save(OrderTable.forSave(4, false, Collections.emptyList()));
-        final OrderCreateRequest request = new OrderCreateRequest(1L, "COOKING", List.of(
+        final OrderCreateRequest request = new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(menu.getId(), 1L),
             new OrderLineItemCreateRequest(Long.MAX_VALUE, 1L)
         ));

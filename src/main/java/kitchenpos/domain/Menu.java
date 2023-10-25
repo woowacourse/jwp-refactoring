@@ -69,4 +69,8 @@ public class Menu {
     public List<MenuProduct> getMenuProducts() {
         return new ArrayList<>(menuProducts.getMenuProducts());
     }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
 }

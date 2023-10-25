@@ -5,16 +5,19 @@ import java.util.List;
 public class MenuCreateRequest {
 
     private String name;
+    private int price;
     private Long menuGroupId;
-    private List<Long> menuProductIds;
+    private List<MenuProductCreateRequest> menuProducts;
 
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(final String name, final Long menuGroupId, final List<Long> menuProductIds) {
+    public MenuCreateRequest(final String name, final int price, final Long menuGroupId,
+                             final List<MenuProductCreateRequest> menuProducts) {
         this.name = name;
+        this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductIds = menuProductIds;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -25,7 +28,7 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<Long> getMenuProductIds() {
-        return menuProductIds;
+    public List<MenuProductCreateRequest> getMenuProducts() {
+        return menuProducts;
     }
 }

@@ -1,0 +1,816 @@
+DELETE http://localhost:8080/api/table-groups/1
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T141001.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140958.201.json
+
+###
+
+DELETE http://localhost:8080/api/table-groups/1
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140949.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140946.201.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140941.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140844.201.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140808.500.json
+
+###
+
+PUT http://localhost:8080/api/tables/2/empty
+Content-Type: application/json
+Content-Length: 20
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "empty": false
+}
+
+<> 2023-10-25T140743.200.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+Content-Length: 20
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "empty": false
+}
+
+<> 2023-10-25T140739.200.json
+
+###
+
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+Content-Length: 42
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+<> 2023-10-25T140734.201.json
+
+###
+
+POST http://localhost:8080/api/tables
+Content-Type: application/json
+Content-Length: 42
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+
+<> 2023-10-25T140733.201.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140720.201.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140534.500.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+Content-Length: 20
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "empty": false
+}
+
+<> 2023-10-25T140531.200.json
+
+###
+
+GET http://localhost:8080/api/menus
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140525.200.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140523.201.json
+
+###
+
+GET http://localhost:8080/api/menus
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140521.200.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140519.201.json
+
+###
+
+GET http://localhost:8080/api/menu-groups
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140516.200.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+Content-Length: 28
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2023-10-25T140514.201.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+Content-Length: 101
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTableId": 2,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2023-10-25T140507.500.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140435.500.json
+
+###
+
+GET http://localhost:8080/api/products
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140432.200.json
+
+###
+
+POST http://localhost:8080/api/products
+Content-Type: application/json
+Content-Length: 46
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+
+<> 2023-10-25T140430.201.json
+
+###
+
+PUT http://localhost:8080/api/orders/1/order-status
+Content-Type: application/json
+Content-Length: 33
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderStatus": "COMPLETION"
+}
+
+<> 2023-10-25T140424.200.json
+
+###
+
+PUT http://localhost:8080/api/orders/1/order-status
+Content-Type: application/json
+Content-Length: 27
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderStatus": "MEAL"
+}
+
+<> 2023-10-25T140422.200.json
+
+###
+
+GET http://localhost:8080/api/orders
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140420.200.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+Content-Length: 101
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2023-10-25T140418.201.json
+
+###
+
+PUT http://localhost:8080/api/tables/1/empty
+Content-Type: application/json
+Content-Length: 20
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "empty": false
+}
+
+<> 2023-10-25T140414.200.json
+
+###
+
+PUT http://localhost:8080/api/orders/1/order-status
+Content-Type: application/json
+Content-Length: 27
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderStatus": "MEAL"
+}
+
+<> 2023-10-25T140050.500.json
+
+###
+
+GET http://localhost:8080/api/orders
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140046.200.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+Content-Length: 101
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2023-10-25T140040.500.json
+
+###
+
+GET http://localhost:8080/api/menus
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140037.200.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-25T140034.201.json
+
+###
+
+GET http://localhost:8080/api/menu-groups
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140030.200.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+Content-Length: 28
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2023-10-25T140029.201.json
+
+###
+
+GET http://localhost:8080/api/tables
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-25T140013.404.json
+
+###
+
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+Content-Length: 101
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+
+<> 2023-10-24T234332.500.json
+
+###
+
+GET http://localhost:8080/api/menus
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-24T234326.200.json
+
+###
+
+GET http://localhost:8080/api/menus
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-24T233805.200.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-24T233802.201.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-24T233725.500.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-24T233515.500.json
+
+###
+
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Content-Length: 158
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+
+<> 2023-10-24T233231.500.json
+
+###
+
+GET http://localhost:8080/api/menu-groups
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+<> 2023-10-24T233225.200.json
+
+###
+
+POST http://localhost:8080/api/menu-groups
+Content-Type: application/json
+Content-Length: 28
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "name": "추천메뉴"
+}
+
+<> 2023-10-24T233221.201.json
+
+###
+
+DELETE http://localhost:8080/api/table-groups/1
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-24T233209.201.json
+
+###
+
+POST http://localhost:8080/api/table-groups
+Content-Type: application/json
+Content-Length: 79
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.8.1)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+
+<> 2023-10-24T233201.500.json
+
+###
+

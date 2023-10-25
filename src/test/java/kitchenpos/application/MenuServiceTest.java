@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.MenuCreateRequest;
+import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -59,7 +60,10 @@ class MenuServiceTest {
             .willReturn(menu);
 
         // when
-        final MenuCreateRequest request = new MenuCreateRequest("메뉴", menuGroupId, List.of(1L, 2L));
+        final MenuCreateRequest request = new MenuCreateRequest("메뉴", 10000, menuGroupId, List.of(
+            new MenuProductCreateRequest(1L, 1),
+            new MenuProductCreateRequest(2L, 2)
+        ));
         final MenuResponse created = menuService.create(request);
 
         // then
@@ -79,7 +83,10 @@ class MenuServiceTest {
         // when
         // then
         assertThatThrownBy(
-            () -> menuService.create(new MenuCreateRequest("메뉴", notExistedMemberGroupId, List.of(1L, 2L)))
+            () -> menuService.create(new MenuCreateRequest("메뉴", 10000, notExistedMemberGroupId, List.of(
+                new MenuProductCreateRequest(1L, 1),
+                new MenuProductCreateRequest(2L, 2)
+            )))
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -95,7 +102,9 @@ class MenuServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> menuService.create(new MenuCreateRequest("메뉴", 1L, List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(new MenuCreateRequest("메뉴", 10000, 1L, List.of(
+            new MenuProductCreateRequest(1L, 1),
+            new MenuProductCreateRequest(2L, 2)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 }

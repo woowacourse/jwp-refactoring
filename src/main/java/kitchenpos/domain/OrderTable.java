@@ -45,12 +45,12 @@ public class OrderTable {
         return new OrderTable(null, numberOfGuests, empty, orders);
     }
 
-    public void changeEmpty() {
-        if (hasProceedingOrder()) {
+    public void changeEmpty(final boolean empty) {
+        if (empty && hasProceedingOrder()) {
             throw new IllegalArgumentException("주문이 완료되지 않은 테이블은 빈 테이블로 설정할 수 없습니다.");
         }
 
-        this.empty = true;
+        this.empty = empty;
     }
 
     public boolean hasProceedingOrder() {

@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableIdRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.Order;
@@ -54,7 +55,10 @@ class TableGroupServiceTest {
 
         // when
         final TableGroupResponse savedTableGroup = tableGroupService.create(
-            new TableGroupCreateRequest(List.of(1L, 2L)));
+            new TableGroupCreateRequest(List.of(
+                new OrderTableIdRequest(1L),
+                new OrderTableIdRequest(2L)
+            )));
 
         // then
         assertThat(savedTableGroup.getId()).isEqualTo(tableGroup.getId());
@@ -81,8 +85,9 @@ class TableGroupServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(1L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(
+            new OrderTableIdRequest(1L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 개수가 저장된 테이블 개수와 다르면 예외가 발생한다.")
@@ -96,8 +101,10 @@ class TableGroupServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(
+            new OrderTableIdRequest(1L),
+            new OrderTableIdRequest(2L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("포함된 테이블들이 비어있지 않으면 예외가 발생한다.")
@@ -114,8 +121,10 @@ class TableGroupServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(
+            new OrderTableIdRequest(1L),
+            new OrderTableIdRequest(2L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블들의 tableGroupId 가 null 이 아니면 예외가 발생한다.")
@@ -124,8 +133,10 @@ class TableGroupServiceTest {
         // given
         // when
         // then
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(1L, 2L))))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(List.of(
+            new OrderTableIdRequest(1L),
+            new OrderTableIdRequest(2L)
+        )))).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹을 해제한다.")

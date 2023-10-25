@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
+import kitchenpos.application.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderTableRepository;
@@ -35,9 +36,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableUpdateEmptyRequest request) {
         final OrderTable orderTable = orderTableRepository.getById(orderTableId);
-        orderTable.changeEmpty();
+        orderTable.changeEmpty(request.getEmpty());
 
         return OrderTableResponse.from(orderTableRepository.save(orderTable));
     }

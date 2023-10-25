@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
+import kitchenpos.application.dto.OrderTableUpdateEmptyRequest;
 import kitchenpos.application.dto.OrderTableUpdateNumberOfGuestsRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -59,7 +60,7 @@ class TableServiceTest {
             .willReturn(new OrderTable(orderTableId, numberOfGuests, true, Collections.emptyList()));
 
         // when
-        final OrderTableResponse savedOrderTable = tableService.changeEmpty(orderTableId);
+        final OrderTableResponse savedOrderTable = tableService.changeEmpty(orderTableId, new OrderTableUpdateEmptyRequest(true));
 
         // then
         assertThat(savedOrderTable.isEmpty()).isTrue();
@@ -76,7 +77,7 @@ class TableServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(notExistedTableId))
+        assertThatThrownBy(() -> tableService.changeEmpty(notExistedTableId, new OrderTableUpdateEmptyRequest(true)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -93,7 +94,7 @@ class TableServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, new OrderTableUpdateEmptyRequest(true)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

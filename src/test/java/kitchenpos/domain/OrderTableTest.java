@@ -18,7 +18,7 @@ class OrderTableTest {
                                                                                                                null)))));
 
         // when
-        orderTable.changeEmpty();
+        orderTable.changeEmpty(true);
 
         // then
         assertThat(orderTable.isEmpty()).isTrue();
@@ -34,7 +34,7 @@ class OrderTableTest {
 
         // when
         // then
-        assertThatThrownBy(orderTable::changeEmpty).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderTable.changeEmpty(true)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블에 주문을 추가한다.")

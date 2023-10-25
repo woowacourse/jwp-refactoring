@@ -61,7 +61,7 @@ class OrderServiceTest {
             .willReturn(order);
 
         // when
-        final OrderResponse created = orderService.create(new OrderCreateRequest(orderTable.getId(), "COOKING", List.of(
+        final OrderResponse created = orderService.create(new OrderCreateRequest(orderTable.getId(), List.of(
             new OrderLineItemCreateRequest(1L, 1L),
             new OrderLineItemCreateRequest(2L, 2L)
         )));
@@ -75,7 +75,7 @@ class OrderServiceTest {
     @Test
     void create_emptyOrderLineItems() {
         // given
-        final OrderCreateRequest cooking = new OrderCreateRequest(1L, "COOKING", Collections.emptyList());
+        final OrderCreateRequest cooking = new OrderCreateRequest(1L, Collections.emptyList());
 
         // when
         // then
@@ -92,7 +92,7 @@ class OrderServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(1L, 1L),
             new OrderLineItemCreateRequest(2L, 2L)
         )))).isInstanceOf(IllegalArgumentException.class);
@@ -111,7 +111,7 @@ class OrderServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(notExistOrderTable, "COOKING", List.of(
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(notExistOrderTable, List.of(
             new OrderLineItemCreateRequest(1L, 1L),
             new OrderLineItemCreateRequest(2L, 2L)
         )))).isInstanceOf(IllegalArgumentException.class);
@@ -132,7 +132,7 @@ class OrderServiceTest {
 
         // when
         // then
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, "COOKING", List.of(
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(1L, List.of(
             new OrderLineItemCreateRequest(1L, 1L),
             new OrderLineItemCreateRequest(2L, 2L)
         )))).isInstanceOf(IllegalArgumentException.class);

@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableIdRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
@@ -26,12 +28,13 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
-        validateEmptyOrderTables(request.getOrderTableIds());
-        final List<OrderTable> savedOrderTables = orderTableRepository.getAllById(request.getOrderTableIds());
+        final List<Long> orderTableIds = request.getOrderTables().stream().map(OrderTableIdRequest::getId)
+            .collect(Collectors.toList());
+        validateEmptyOrderTables(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableRepository.getAllById(orderTableIds);
         final TableGroup tableGroup = tableGroupRepository.save(TableGroup.forSave(savedOrderTables));
         final OrderTables orderTables = new OrderTables(savedOrderTables);
         orderTables.registerTableGroup(tableGroup);
-        orderTableRepository.saveAll(orderTables.getOrderTables());
 
         return TableGroupResponse.from(tableGroup);
     }
