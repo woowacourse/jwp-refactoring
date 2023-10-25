@@ -1,19 +1,20 @@
 package kitchenpos.repositroy;
 
+import static kitchenpos.fixture.MenuFixture.메뉴;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품들;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.fixture.MenusFixture.메뉴;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품들;
 import static kitchenpos.fixture.ProductFixture.상품;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.PersistenceUnitUtil;
 import kitchenpos.config.QuerydslConfig;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu_group.MenuGroup;
 import kitchenpos.domain.product.Product;
@@ -72,15 +73,16 @@ class MenuRepositoryTest {
         final PersistenceUnitUtil persistenceUnitUtil = entityManagerFactory.getPersistenceUnitUtil();
 
         // when
-        menuRepository.findAllByFetch();
+        final List<Menu> result = menuRepository.findAllByFetch();
 
         // then
         SoftAssertions.assertSoftly(softly -> {
-            assertThat(persistenceUnitUtil.isLoaded(product1)).isTrue();
-            assertThat(persistenceUnitUtil.isLoaded(product2)).isTrue();
-            assertThat(persistenceUnitUtil.isLoaded(menuProduct1)).isTrue();
-            assertThat(persistenceUnitUtil.isLoaded(menuProduct2)).isTrue();
-            assertThat(persistenceUnitUtil.isLoaded(menuGroup)).isTrue();
+            softly.assertThat(result).hasSize(1);
+            softly.assertThat(persistenceUnitUtil.isLoaded(product1)).isTrue();
+            softly.assertThat(persistenceUnitUtil.isLoaded(product2)).isTrue();
+            softly.assertThat(persistenceUnitUtil.isLoaded(menuProduct1)).isTrue();
+            softly.assertThat(persistenceUnitUtil.isLoaded(menuProduct2)).isTrue();
+            softly.assertThat(persistenceUnitUtil.isLoaded(menuGroup)).isTrue();
         });
     }
 }

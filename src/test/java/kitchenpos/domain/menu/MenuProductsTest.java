@@ -1,7 +1,7 @@
 package kitchenpos.domain.menu;
 
 import static kitchenpos.exception.MenuException.NoMenuProductsException;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

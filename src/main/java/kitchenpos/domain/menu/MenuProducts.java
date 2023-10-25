@@ -1,5 +1,7 @@
 package kitchenpos.domain.menu;
 
+import static kitchenpos.exception.MenuException.NoMenuProductsException;
+
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -7,7 +9,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.Price;
-import kitchenpos.exception.MenuException.NoMenuNameException;
 
 @Embeddable
 public class MenuProducts {
@@ -27,7 +28,7 @@ public class MenuProducts {
 
     private void validateMenuProducts(final List<MenuProduct> menuProducts) {
         if (Objects.isNull(menuProducts) || menuProducts.isEmpty()) {
-            throw new NoMenuNameException();
+            throw new NoMenuProductsException();
         }
     }
 

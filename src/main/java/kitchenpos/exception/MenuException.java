@@ -10,14 +10,12 @@ public abstract class MenuException extends BaseException {
     }
 
     public static class NoMenuNameException extends MenuException {
-
         public NoMenuNameException() {
             super("메뉴의 이름은 필수입니다.", HttpStatus.BAD_REQUEST);
         }
     }
 
     public static class OverPriceException extends MenuException {
-
         public OverPriceException(final Price price) {
             super("메뉴의 가격은 메뉴 상품의 총 가격인 " + price.getPrice() + "보다 같거나 낮아야합니다.", HttpStatus.BAD_REQUEST);
         }
@@ -52,6 +50,12 @@ public abstract class MenuException extends BaseException {
     public static class NoMenuProductException extends MenuException {
         public NoMenuProductException() {
             super("메뉴 상품으로 등록하려는 상품은 필수 입니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static class NotFoundException extends MenuException {
+        public NotFoundException(final Long id) {
+            super(id + "ID 에 해당하는 메뉴를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
     }
 }

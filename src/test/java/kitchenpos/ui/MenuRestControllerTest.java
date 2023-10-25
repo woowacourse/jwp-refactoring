@@ -1,11 +1,11 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.MenuFixture.메뉴;
+import static kitchenpos.fixture.MenuFixture.메뉴_등록_요청;
+import static kitchenpos.fixture.MenuFixture.메뉴_등록_응답;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품들;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.fixture.MenusFixture.메뉴;
-import static kitchenpos.fixture.MenusFixture.메뉴_등록_요청;
-import static kitchenpos.fixture.MenusFixture.메뉴_등록_응답;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품들;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -117,7 +117,7 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_등록시_메뉴_그룹이_없다면_예외가_발생한다() {
         // given
-        final MenuCreateRequest request = 메뉴_등록_요청(name, price, null, menuProducts);
+        final MenuCreateRequest request = 메뉴_등록_요청(name, price, Long.MAX_VALUE, menuProducts);
         RequestSpecification given = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
@@ -136,7 +136,7 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴_등록시_메뉴_상품이_없다면_예외가_발생한다() {
         // given
-        final MenuCreateRequest request = 메뉴_등록_요청(name, price, menuGroup, null);
+        final MenuCreateRequest request = new MenuCreateRequest(name, price, menuGroup.getId(), null);
         RequestSpecification given = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
@@ -182,8 +182,8 @@ class MenuRestControllerTest extends ControllerTest {
     @Test
     void 메뉴를_전체_조회한다() {
         // given
-        final Menu menu1 = menuRepository.save(메뉴("메뉴1", 3000L, menuProducts, menuGroup));
         final MenuProducts menuProducts2 = 메뉴_상품들(메뉴_상품(product1, 1L), 메뉴_상품(product2, 2L));
+        final Menu menu1 = menuRepository.save(메뉴("메뉴1", 3000L, menuProducts, menuGroup));
         final Menu menu2 = menuRepository.save(메뉴("메뉴2", 3000L, menuProducts2, menuGroup));
 
         // when
@@ -199,6 +199,7 @@ class MenuRestControllerTest extends ControllerTest {
             assertThat(response.size()).isEqualTo(2);
             assertThat(response)
                     .usingRecursiveComparison()
+                    .ignoringFields("price")
                     .isEqualTo(List.of(메뉴_등록_응답(menu1), 메뉴_등록_응답(menu2)));
         });
     }

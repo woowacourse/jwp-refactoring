@@ -1,10 +1,10 @@
 package kitchenpos.domain.menu;
 
+import static kitchenpos.fixture.MenuFixture.메뉴_가격;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품;
+import static kitchenpos.fixture.MenuFixture.메뉴_상품들;
+import static kitchenpos.fixture.MenuFixture.메뉴_이름;
 import static kitchenpos.fixture.MenuGroupFixture.메뉴_그룹;
-import static kitchenpos.fixture.MenusFixture.메뉴_가격;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품;
-import static kitchenpos.fixture.MenusFixture.메뉴_상품들;
-import static kitchenpos.fixture.MenusFixture.메뉴_이름;
 import static kitchenpos.fixture.ProductFixture.상품;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

@@ -71,7 +71,7 @@ public class Menu {
 
     private void validateMenuPrice(final Price menuPrice, final MenuProducts menuProducts) {
         final Price totalPrice = menuProducts.getTotalPrice();
-        if(menuPrice.isMoreThan(totalPrice)) {
+        if (menuPrice.isMoreThan(totalPrice)) {
             throw new MenuException.OverPriceException(totalPrice);
         }
     }

@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.request.ProductCreateRequest;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.repositroy.ProductRepository;
 import kitchenpos.domain.product.Product;
+import kitchenpos.repositroy.ProductRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ class ProductServiceTest implements ServiceTest {
         final ProductResponse savedProduct = productService.create(request);
 
         // then
-        SoftAssertions.assertSoftly(softly-> {
+        SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(savedProduct.getId()).isNotNull();
             softly.assertThat(savedProduct.getProductName()).isEqualTo("후라이드치킨");
             softly.assertThat(savedProduct.getProductPrice()).isEqualTo(BigDecimal.valueOf(1000).setScale(2));

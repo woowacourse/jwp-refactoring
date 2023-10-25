@@ -1,7 +1,6 @@
 package kitchenpos.repositroy;
 
 import kitchenpos.domain.product.Product;
-import kitchenpos.exception.ProductException;
 import kitchenpos.exception.ProductException.NotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -51,8 +51,8 @@ class MenuGroupServiceTest implements ServiceTest {
         assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(
-                    메뉴_그룹_응답(menuGroup1),
-                    메뉴_그룹_응답(menuGroup2)
-        ));
+                        메뉴_그룹_응답(menuGroup1),
+                        메뉴_그룹_응답(menuGroup2)
+                ));
     }
 }
