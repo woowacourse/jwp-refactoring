@@ -2,6 +2,7 @@ package kitchenpos.tablegroup.domain;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.order.OrderStatus;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
@@ -40,7 +41,11 @@ public class TableGroupValidator {
         }
     }
 
-    public void validateUnGroup(final List<Long> orderTableIds) {
+    public void validateUnGroup(final List<OrderTable> orderTables) {
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new TableGroupException.CannotUngroupStateByOrderStatusException();

@@ -52,11 +52,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        tableGroupValidator.validateUnGroup(orderTableIds);
+        tableGroupValidator.validateUnGroup(orderTables);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.unGroup();
