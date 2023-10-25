@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -29,24 +31,35 @@ public class Order {
     private List<OrderLineItem> orderLineItems;
 
     @Enumerated(EnumType.STRING)
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
     private LocalDateTime orderedTime;
 
     public Order() {
     }
 
-    public Order(final OrderTable orderTable, final String orderStatus) {
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
         this.orderLineItems = orderLineItems;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final String orderStatusName) {
+        final OrderStatus orderStatus = OrderStatus.find(orderStatusName)
+                                                   .orElseThrow(() -> new IllegalArgumentException("잘못된 상태입니다."));
+        if (orderStatus.isComplete()) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
     }
 
@@ -63,7 +76,7 @@ public class Order {
     }
 
     public String getOrderStatus() {
-        return orderStatus;
+        return orderStatus.getName();
     }
 
     public LocalDateTime getOrderedTime() {
