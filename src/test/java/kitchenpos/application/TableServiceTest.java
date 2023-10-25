@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableNumberOfGuests;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableCreateRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.repository.OrderTableRepository;
@@ -135,25 +136,25 @@ class TableServiceTest {
 
         @Test
         void 테이블의_방문_손님_수를_정상적으로_변경한다() {
-            final OrderTable newOrderTable = new OrderTable(null, null, 5, false);
-            final OrderTableResponse response = tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable);
+            final OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(5);
+            final OrderTableResponse response = tableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
             assertThat(response.getNumberOfGuests()).isEqualTo(5);
         }
 
         @Test
         void 테이블의_방문_손님_수가_0보다_작으면_예외가_발생한다() {
-            final OrderTable newOrderTable = new OrderTable(null, null, -1, false);
+            final OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(-1);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 테이블이_존재하지_않으면_예외가_발생한다() {
-            final OrderTable newOrderTable = new OrderTable(null, null, 5, false);
+            final OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(5);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId() + 1, newOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId() + 1, request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -161,9 +162,9 @@ class TableServiceTest {
         void 테이블이_비어있는_상태면_예외가_발생한다() {
             final OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
             final OrderTableResponse savedOrderTable = tableService.create(orderTableCreateRequest);
-            final OrderTable newOrderTable = new OrderTable(null, null, 5, false);
+            final OrderTableChangeNumberOfGuestsRequest request = new OrderTableChangeNumberOfGuestsRequest(5);
 
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), newOrderTable))
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
