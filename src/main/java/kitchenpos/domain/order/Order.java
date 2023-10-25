@@ -12,7 +12,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "ORDERS")
 public class Order extends AbstractAggregateRoot<Order> {
@@ -22,8 +24,8 @@ public class Order extends AbstractAggregateRoot<Order> {
     private AggregateReference<OrderTable, Long> orderTable;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @MappedCollection(idColumn = "ORDER_ID", keyColumn = "SEQ")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @MappedCollection(idColumn = "ORDER_ID")
+    private Set<OrderLineItem> orderLineItems = new HashSet<>();
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
@@ -40,7 +42,7 @@ public class Order extends AbstractAggregateRoot<Order> {
         this.orderTable = AggregateReference.to(orderTable);
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = new ArrayList<>(orderLineItems);
+        this.orderLineItems = new HashSet<>(orderLineItems);
     }
 
     public static Order createWithoutId(Long orderTableId, List<OrderLineItem> orderLineItems, OrderValidator orderValidator) {
@@ -79,6 +81,6 @@ public class Order extends AbstractAggregateRoot<Order> {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return new ArrayList<>(orderLineItems);
     }
 }

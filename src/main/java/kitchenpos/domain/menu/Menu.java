@@ -11,8 +11,10 @@ import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class Menu extends AbstractAggregateRoot<Menu> {
     @Id
@@ -22,8 +24,8 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     @Column("MENU_GROUP_ID")
     private AggregateReference<MenuGroup, Long> menuGroup;
 
-    @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @MappedCollection(idColumn = "MENU_ID")
+    private Set<MenuProduct> menuProducts;
 
     public Menu(String name, BigDecimal price, Long menuGroup) {
         this(name, price, menuGroup, new ArrayList<>());
@@ -39,7 +41,7 @@ public class Menu extends AbstractAggregateRoot<Menu> {
         this.name = name;
         this.price = new Money(price);
         this.menuGroup = AggregateReference.to(menuGroup);
-        this.menuProducts = new ArrayList<>(menuProducts);
+        this.menuProducts = new HashSet<>(menuProducts);
     }
 
     public static Menu createWithoutId(String name, BigDecimal price, Long menuGroup, List<MenuProduct> menuProducts, MenuValidator menuValidator) {
@@ -65,7 +67,7 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 
     @Override
