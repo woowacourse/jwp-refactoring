@@ -4,10 +4,14 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.Order.MenuIdQuantityAndPrice;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderCreateRequest.OrderLineItemDto;
 import kitchenpos.order.dto.OrderResponse;
@@ -44,7 +48,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItems();
+        List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItemDtos();
         validateOrderLineItemIsNotEmpty(orderLineItemDtos);
 
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
@@ -52,15 +56,20 @@ public class OrderService {
 
         validateOrderTableNotEmpty(orderTable);
 
-        Order order = orderRepository.save(
-                new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
-
-        for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            orderLineItemRepository.save(new OrderLineItem(order,
-                    menuRepository.findById(orderLineItemDto.getMenuId())
-                            .orElseThrow(MenuNotFoundException::new),
-                    orderLineItemDto.getQuantity()));
+        List<Long> menuIds = orderLineItemDtos.stream()
+                .map(OrderLineItemDto::getMenuId)
+                .collect(toList());
+        Map<Long, Menu> menuById = menuRepository.findAllByIdIn(menuIds).stream()
+                .collect(Collectors.toMap(Menu::getId, Function.identity()));
+        if (menuIds.size() != menuById.size()) {
+            throw new MenuNotFoundException();
         }
+
+        Order order = Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now(),
+                orderLineItemDtos.stream()
+                        .map(dto -> new MenuIdQuantityAndPrice(dto.getMenuId(), dto.getQuantity(),
+                                menuById.get(dto.getMenuId()).getPrice()))
+                        .collect(toList()));
 
         return OrderResponse.from(order);
     }

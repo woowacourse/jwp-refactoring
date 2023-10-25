@@ -1,9 +1,13 @@
 package kitchenpos.order.domain;
 
+import static java.util.stream.Collectors.toList;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,8 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.exception.OrderStatusNotChangeableException;
+import kitchenpos.table.domain.OrderTable;
 
 @Table(name = "Orders")
 @Entity
@@ -38,16 +42,29 @@ public class Order {
     @Column(name = "ordered_time")
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    private Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+            List<OrderLineItem> orderLineItems) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
     protected Order() {
+    }
+
+    public static Order of(OrderTable orderTable, OrderStatus orderStatus,
+            LocalDateTime orderedTime,
+            List<MenuIdQuantityAndPrice> menuIdQuantityAndPrices) {
+        return new Order(orderTable, orderStatus, orderedTime, menuIdQuantityAndPrices.stream()
+                .map(menuIdQuantityAndPrice -> new OrderLineItem(menuIdQuantityAndPrice.getMenuId(),
+                        menuIdQuantityAndPrice.getQuantity(),
+                        menuIdQuantityAndPrice.getOrderedPrice()))
+                .collect(toList()));
     }
 
     public void changeOrderStatus(String orderStatus) {
@@ -84,5 +101,30 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public static class MenuIdQuantityAndPrice {
+
+        private final Long menuId;
+        private final Long quantity;
+        private final BigDecimal orderedPrice;
+
+        public MenuIdQuantityAndPrice(Long menuId, Long quantity, BigDecimal orderedPrice) {
+            this.menuId = menuId;
+            this.quantity = quantity;
+            this.orderedPrice = orderedPrice;
+        }
+
+        public Long getMenuId() {
+            return menuId;
+        }
+
+        public Long getQuantity() {
+            return quantity;
+        }
+
+        public BigDecimal getOrderedPrice() {
+            return orderedPrice;
+        }
     }
 }

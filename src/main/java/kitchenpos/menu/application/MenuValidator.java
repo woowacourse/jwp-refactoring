@@ -1,5 +1,7 @@
 package kitchenpos.menu.application;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +55,7 @@ public class MenuValidator {
                 .map(MenuProductDto::getProductId)
                 .collect(Collectors.toList());
         Map<Long, Product> productById = productRepository.findAllByIdIn(productIds).stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
+                .collect(toMap(Product::getId, Function.identity()));
         validateRequestedProductExists(productIds, productById);
         return accumulatePriceByQuantity(menuProductDtos, productById);
     }

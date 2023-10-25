@@ -4,12 +4,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
-import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.Menu.ProductIdAndQuantity;
+import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.Order.MenuIdQuantityAndPrice;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.TableGroupRequest;
@@ -173,7 +179,15 @@ class TableGroupServiceTest {
             TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             OrderTable orderTable1 = new OrderTable(1, false);
             OrderTable orderTable2 = new OrderTable(2, false);
-            Order order = new Order(orderTable1, OrderStatus.COOKING, LocalDateTime.now());
+            MenuGroup menuGroup = new MenuGroup("menuGroup");
+            Product product = Product.of("product", new BigDecimal(2500));
+            em.persist(menuGroup);
+            em.persist(product);
+            Menu menu = Menu.of("menu", new BigDecimal(10_000), menuGroup.getId(),
+                    List.of(new ProductIdAndQuantity(product.getId(), 4L)));
+            em.persist(menu);
+            Order order = Order.of(orderTable1, OrderStatus.COOKING, LocalDateTime.now(),
+                    List.of(new MenuIdQuantityAndPrice(menu.getId(), 1L, menu.getPrice())));
             em.persist(tableGroup);
             em.persist(orderTable1);
             em.persist(orderTable2);

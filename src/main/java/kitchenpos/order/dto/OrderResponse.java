@@ -4,8 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderResponse {
 
@@ -64,7 +64,7 @@ public class OrderResponse {
         }
 
         public static OrderLineItemDto from(OrderLineItem orderLineItem) {
-            return new OrderLineItemDto(orderLineItem.getSeq(), orderLineItem.getMenu().getId(),
+            return new OrderLineItemDto(orderLineItem.getSeq(), orderLineItem.getMenuId(),
                     orderLineItem.getQuantity());
         }
 
