@@ -11,7 +11,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -23,18 +22,15 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -55,10 +51,9 @@ public class MenuService {
     }
 
     private List<MenuProduct> extractMenuProducts(final List<MenuProductRequest> menuProductRequests) {
-        final List<MenuProduct> menuProducts = menuProductRequests.stream()
+        return menuProductRequests.stream()
                 .map(it -> new MenuProduct(findProductById(it.getProductId()), it.getQuantity()))
                 .collect(Collectors.toList());
-        return menuProductRepository.saveAll(menuProducts);
     }
 
     private Product findProductById(final long productId) {
