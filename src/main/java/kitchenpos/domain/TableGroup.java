@@ -59,7 +59,7 @@ public class TableGroup {
     }
 
     private void validateEmptyOrderTable(final OrderTable orderTable) {
-        if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+        if (orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException("[ERROR] 빈 테이블이 생성되지 않았습니다.");
         }
     }

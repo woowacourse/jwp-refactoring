@@ -20,8 +20,8 @@ public class TableGroupTest {
         void 주문_테이블을_추가할_수_있다() {
             // given
             final var tableGroup = new TableGroup();
-            final var orderTable1 = new OrderTable(null, 5, true);
-            final var orderTable2 = new OrderTable(null, 3, true);
+            final var orderTable1 = new OrderTable(null, 5, false);
+            final var orderTable2 = new OrderTable(null, 3, false);
             final var orderTables = List.of(orderTable1, orderTable2);
 
             // when
@@ -65,8 +65,8 @@ public class TableGroupTest {
         void 빈_테이블을_추가하는게_아니라면_에러를_반환한다() {
             // given
             final var tableGroup = new TableGroup();
-            final var orderTable1 = new OrderTable(null, 5, false);
-            final var orderTable2 = new OrderTable(null, 3, false);
+            final var orderTable1 = new OrderTable(null, 5, true);
+            final var orderTable2 = new OrderTable(null, 3, true);
             final var orderTables = List.of(orderTable1, orderTable2);
 
             // when & then

@@ -53,8 +53,8 @@ class TableGroupServiceTest extends ServiceTest {
         @Test
         void 단체_주문을_생성할_수_있다() {
             // given
-            orderTableRepository.save(new OrderTable(null, 3, true));
-            orderTableRepository.save(new OrderTable(null, 2, true));
+            orderTableRepository.save(new OrderTable(null, 3, false));
+            orderTableRepository.save(new OrderTable(null, 2, false));
 
             final var orderTableRequest1 = new OrderTableInTableGroupDto(1L);
             final var orderTableRequest2 = new OrderTableInTableGroupDto(2L);
