@@ -6,7 +6,10 @@ import java.math.BigDecimal;
 public class Price {
 
     @Column(name = "price")
-    private final BigDecimal value;
+    private BigDecimal value;
+
+    public Price() {
+    }
 
     public Price(final BigDecimal value) {
         validateMoreThanZero(value);
