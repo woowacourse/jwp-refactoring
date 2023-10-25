@@ -16,7 +16,7 @@ public class MenuMapper {
         final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
                 .getValues()
                 .stream()
-                .map(it -> new MenuProductResponse(it.getSeq(), it.getMenu().getId(), it.getProduct().getId(), it.getQuantity()))
+                .map(it -> new MenuProductResponse(it.getSeq(), it.getProduct().getId(), it.getQuantity()))
                 .collect(Collectors.toList());
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(), menuProductResponses);
     }

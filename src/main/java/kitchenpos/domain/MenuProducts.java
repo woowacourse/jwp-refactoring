@@ -12,9 +12,12 @@ public class MenuProducts {
 
     @OneToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true, mappedBy = "menu")
+            orphanRemoval = true)
     @Column(name = "menuProducts")
-    private final List<MenuProduct> values;
+    private List<MenuProduct> values;
+
+    public MenuProducts() {
+    }
 
     public MenuProducts(final List<MenuProduct> values) {
         this.values = values;
