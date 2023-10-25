@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,8 +38,6 @@ public class MenuService {
 
     @Transactional
     public Menu create(MenuCreateRequest request) {
-        Price price = new Price(request.getPrice());
-
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -49,6 +46,20 @@ public class MenuService {
                 .map(it -> new MenuProduct(it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());
 
+        Price price = new Price(request.getPrice());
+        validatePrice(price, menuProducts);
+
+        Menu savedMenu = menuDao.save(new Menu(request.getName(), price, request.getMenuGroupId()));
+
+        savedMenu.assignProducts(menuProducts);
+        for (MenuProduct menuProduct : savedMenu.getMenuProducts()) {
+            menuProductDao.save(menuProduct);
+        }
+
+        return savedMenu;
+    }
+
+    private void validatePrice(Price price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             Product product = productDao.findById(menuProduct.getProductId())
@@ -56,23 +67,9 @@ public class MenuService {
             sum = sum.add(
                     product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
-
         if (price.isBiggerThan(sum)) {
             throw new IllegalArgumentException();
         }
-
-        Menu menu = new Menu(request.getName(), request.getPrice(), request.getMenuGroupId(), menuProducts);
-        Menu savedMenu = menuDao.save(menu);
-
-        Long menuId = savedMenu.getId();
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
     }
 
     public List<Menu> list() {

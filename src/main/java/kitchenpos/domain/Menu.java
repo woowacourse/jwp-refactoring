@@ -10,16 +10,23 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public Menu(String name, Price price, Long menuGroupId) {
+        this(null, name, price, menuGroupId, null);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
-        this.price = new Price(price);
+        this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public void assignProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
+        for (MenuProduct menuProduct : this.menuProducts) {
+            menuProduct.setMenuId(this.id);
+        }
     }
 
     public Long getId() {
