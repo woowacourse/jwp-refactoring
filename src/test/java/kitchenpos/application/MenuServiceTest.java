@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -16,7 +15,7 @@ import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.menu.MenuProductDto;
 import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuResponse;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -31,7 +30,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -60,7 +59,6 @@ class MenuServiceTest extends ServiceTestConfig {
         private MenuGroup menuGroup;
         private List<Product> products;
         private Menu menu;
-        private List<MenuProduct> menuProducts;
         private List<MenuProductDto> menuProductDtos;
 
         @BeforeEach
@@ -68,9 +66,8 @@ class MenuServiceTest extends ServiceTestConfig {
             menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
-            final MenuProduct menuProduct1 = menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(0), menu));
-            final MenuProduct menuProduct2 = menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(1), menu));
-            menuProducts = List.of(menuProduct1, menuProduct2);
+            menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(0), menu));
+            menuProductRepository.save(MenuProductFixture.메뉴_상품_생성(products.get(1), menu));
             menuProductDtos = products.stream()
                                       .map(product -> new MenuProductDto(product.getId(), 1L))
                                       .collect(Collectors.toList());

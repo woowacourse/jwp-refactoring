@@ -1,6 +1,11 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.vo.Price;
+
+import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -24,7 +29,9 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price"))
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
@@ -37,7 +44,7 @@ public class Menu {
 
     public Menu(
             final String name,
-            final BigDecimal price,
+            final Price price,
             final MenuGroup menuGroup
     ) {
         this.name = name;
@@ -47,7 +54,7 @@ public class Menu {
 
     public Menu(
             final String name,
-            final BigDecimal price,
+            final Price price,
             final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts
     ) {
@@ -57,23 +64,40 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(
+    public static Menu of(
             final String name,
-            final BigDecimal price,
-            final Long menuGroupId,
+            final Price price,
+            final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts
     ) {
-        this.name = name;
-        this.price = price;
-        this.menuProducts = menuProducts;
+        final Menu menu = new Menu(name, price, menuGroup, menuProducts);
+
+        validateMenuProduct(menuProducts, price);
+        addMenuProducts(menuProducts, menu);
+
+        return menu;
+    }
+
+    private static void validateMenuProduct(final List<MenuProduct> menuProducts, final Price price) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = menuProduct.getProduct();
+            sum = sum.add(product.getPriceValue().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.compareTo(new Price(sum))) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static void addMenuProducts(final List<MenuProduct> menuProducts, final Menu menu) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.updateMenu(menu);
+        }
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void updateId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -81,7 +105,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public MenuGroup getMenuGroup() {

@@ -4,6 +4,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.vo.Price;
 import kitchenpos.ui.dto.menu.MenuProductDto;
 import kitchenpos.ui.dto.menu.MenuRequest;
 import org.springframework.lang.Nullable;
@@ -25,9 +26,10 @@ public class MenuFixture {
             메뉴_이름 += number.toString();
         }
 
-        final Menu 메뉴 = new Menu(메뉴_이름, 메뉴_가격_계산(products), menuGroup);
-        final List<MenuProduct> 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products, 메뉴);
-        메뉴.updateMenuProducts(메뉴_상품들);
+
+
+        final List<MenuProduct> 메뉴_상품들 = 메뉴_상품_엔티티들_생성(products);
+        final Menu 메뉴 = Menu.of(메뉴_이름, new Price(메뉴_가격_계산(products)), menuGroup, 메뉴_상품들);
 
         return 메뉴;
     }
@@ -55,15 +57,14 @@ public class MenuFixture {
         return sum;
     }
 
-    private static List<MenuProduct> 메뉴_상품_엔티티들_생성(final List<Product> products, final Menu menu) {
+    private static List<MenuProduct> 메뉴_상품_엔티티들_생성(final List<Product> products) {
         return products.stream()
-                       .map(product -> 메뉴_상품_엔티티_생성(product, menu))
+                       .map(product -> 메뉴_상품_엔티티_생성(product))
                        .collect(Collectors.toList());
     }
 
-    private static MenuProduct 메뉴_상품_엔티티_생성(final Product product, final Menu menu) {
+    private static MenuProduct 메뉴_상품_엔티티_생성(final Product product) {
         final MenuProduct menuProduct = new MenuProduct(product, DEFAULT_QUANTITY);
-        menuProduct.updateMenu(menu);
 
         return menuProduct;
     }

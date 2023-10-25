@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exception.NotFoundMenuGroupException;
+import kitchenpos.application.exception.NotFoundProductException;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -8,16 +10,15 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuProductDto;
+import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,44 +42,40 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final BigDecimal price = menuRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductDto menuProductDto : menuProductDtos) {
-            final Product product = productRepository.findById(menuProductDto.getProductId())
-                                                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPriceValue().multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
-                                                       .orElseThrow(IllegalArgumentException::new);
-        final Menu savedMenu = menuRepository.save(menuRequest.toEntity(menuGroup));
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductDto menuProductDto : menuProductDtos) {
-            final Product product = productRepository.findById(menuProductDto.getProductId())
-                                                     .orElseThrow(IllegalArgumentException::new);
-            final MenuProduct menuProduct = menuProductDto.toEntity(product);
-            menuProduct.updateMenu(savedMenu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
-        savedMenu.updateMenuProducts(savedMenuProducts);
+        final MenuGroup menuGroup =
+                menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                                   .orElseThrow(() -> new NotFoundMenuGroupException("해당 메뉴 그룹이 존재하지 않습니다."));
+        final List<MenuProduct> menuProducts = convertToMenuProducts(menuRequest.getMenuProducts());
+        final Menu menu = menuRequest.toEntity(menuGroup, menuProducts);
+        final Menu savedMenu = menuRepository.save(menu);
 
         return MenuResponse.from(savedMenu);
+    }
+
+    private List<MenuProduct> convertToMenuProducts(final List<MenuProductDto> menuProductDtos) {
+        final Map<Long, Product> products = findAllProduct(menuProductDtos);
+
+        final List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductDto menuProductDto : menuProductDtos) {
+            final Product product = products.get(menuProductDto.getProductId());
+            menuProducts.add(menuProductDto.toEntity(product));
+        }
+
+        return menuProducts;
+    }
+
+    private Map<Long, Product> findAllProduct(final List<MenuProductDto> menuProductDtos) {
+        final List<Long> productIds = menuProductDtos.stream()
+                                                     .map(MenuProductDto::getProductId)
+                                                     .collect(Collectors.toList());
+        final Map<Long, Product> products = productRepository.findAllByIdIn(productIds).stream()
+                                                             .collect(Collectors.toMap(Product::getId, product -> product));
+
+        if (products.size() != productIds.size()) {
+            throw new NotFoundProductException("존재하지 않는 상품이 있습니다.");
+        }
+
+        return products;
     }
 
     public List<MenuResponse> list() {
