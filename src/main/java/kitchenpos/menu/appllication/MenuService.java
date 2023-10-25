@@ -44,13 +44,11 @@ public class MenuService {
                 request.price(),
                 menuGroup
         );
-        menu.addMenuProducts(createMenuProducts(request));
+        menu.addMenuProducts(createMenuProducts(request.menuProducts()));
         return menuRepository.save(menu).id();
     }
 
-    private List<MenuProduct> createMenuProducts(final MenuCreateRequest request) {
-        final List<MenuProductCreateRequest> menuProductCreateRequests = request.menuProducts();
-
+    private List<MenuProduct> createMenuProducts(final List<MenuProductCreateRequest> menuProductCreateRequests) {
         final List<Long> productIds = parseProcess(menuProductCreateRequests, MenuProductCreateRequest::productId);
         final List<Product> products = productRepository.findAllById(productIds);
 
