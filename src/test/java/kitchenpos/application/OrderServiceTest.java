@@ -74,7 +74,7 @@ class OrderServiceTest {
         final Product product = productRepository.save(
             new Product("테스트 상품", BigDecimal.valueOf(10000)));
 
-        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 2);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 2L);
         final Menu menu = Menu.of(
             "테스트 메뉴",
             BigDecimal.valueOf(10000),

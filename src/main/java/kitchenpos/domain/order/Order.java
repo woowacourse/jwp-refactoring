@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -24,7 +23,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_table_id")
     private Long orderTableId;
 
     @Enumerated(value = EnumType.STRING)
@@ -40,17 +38,16 @@ public class Order {
     }
 
     private Order(final Long orderTableId, final OrderStatus orderStatus,
-        final LocalDateTime orderedTime) {
+        final LocalDateTime orderedTime, final List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
     public static Order of(final Long orderTableId,
         final OrderTableChangeService orderTableChangeService,
         final List<OrderLineItem> orderLineItems) {
-        final Order order = new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now());
-
         if (orderTableChangeService.isNotEmpty(orderTableId)) {
             throw new EmptyOrderTableException();
         }
@@ -59,8 +56,7 @@ public class Order {
             throw new EmptyOrderLineItemsException();
         }
 
-        order.orderLineItems.addAll(orderLineItems);
-        return order;
+        return new Order(orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

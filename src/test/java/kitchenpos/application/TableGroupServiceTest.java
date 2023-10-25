@@ -174,7 +174,7 @@ class TableGroupServiceTest {
         final Product product = productRepository.save(
             new Product("테스트상품", BigDecimal.valueOf(1000)));
 
-        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1L);
 
         final Menu menu = menuRepository.save(Menu.of("테스트메뉴", BigDecimal.valueOf(500), menuGroup,
             List.of(menuProduct)));

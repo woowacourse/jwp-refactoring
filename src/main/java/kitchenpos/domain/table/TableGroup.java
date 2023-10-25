@@ -43,17 +43,16 @@ public class TableGroup {
             throw new InvalidOrderTablesException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            if (orderTable.isEmpty()) {
-                throw new GroupAlreadyExistsException();
-            }
+        if (orderTables.stream()
+            .anyMatch(OrderTable::isEmpty)) {
+            throw new GroupAlreadyExistsException();
         }
 
         return tableGroup;
     }
 
     public void ungroup(final OrderStatusChecker orderStatusChecker) {
-        if (orderStatusChecker.checkUngroupableTableGroup(id)) {
+        if (orderStatusChecker.checkEnableUngroupingTableGroup(id)) {
             throw new UngroupingNotPossibleException();
         }
         orderTables = new ArrayList<>();

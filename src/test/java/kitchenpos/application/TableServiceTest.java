@@ -12,11 +12,9 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuProductRepository;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItemRepository;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTableChangeService;
@@ -54,12 +52,6 @@ class TableServiceTest {
 
     @Autowired
     private MenuRepository menuRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private OrderTableChangeService orderTableChangeService;
@@ -170,18 +162,15 @@ class TableServiceTest {
         final OrderTable savedOrderTable = createOrderTable(false, 2);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트 메뉴그룹"));
         final Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(2000)));
-        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1L);
         final Menu menu = menuRepository.save(Menu.of("테스트 메뉴", BigDecimal.valueOf(1000), menuGroup,
             List.of(menuProduct)));
-        menuProductRepository.save(menuProduct);
 
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), 2);
         final Order order = Order.of(savedOrderTable.getId(), orderTableChangeService,
             List.of(orderLineItem));
         order.changeOrderStatus(OrderStatus.COOKING);
         orderRepository.save(order);
-
-        orderLineItemRepository.save(orderLineItem);
 
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId()))

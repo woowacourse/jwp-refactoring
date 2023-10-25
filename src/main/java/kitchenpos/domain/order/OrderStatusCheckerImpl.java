@@ -17,19 +17,19 @@ public class OrderStatusCheckerImpl implements OrderStatusChecker {
     }
 
     @Override
-    public void validateOrderStatusChangeable(final List<Long> orderIds) {
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderIds,
+    public void validateOrderStatusChangeable(final List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
             Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new InvalidOrderStatusChangeException();
         }
     }
 
     @Override
-    public boolean checkUngroupableTableGroup(final Long tableGroupId) {
+    public boolean checkEnableUngroupingTableGroup(final Long tableGroupId) {
         final Set<Order> findOrders = orderRepository.findAllByTableGroupId(tableGroupId);
 
         return findOrders.stream()
-            .anyMatch(orderTable -> orderTable.isSameStatus(OrderStatus.COOKING)
-                || orderTable.isSameStatus(OrderStatus.MEAL));
+            .anyMatch(order -> order.isSameStatus(OrderStatus.COOKING)
+                || order.isSameStatus(OrderStatus.MEAL));
     }
 }

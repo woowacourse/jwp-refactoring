@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface OrderStatusChecker {
 
-    void validateOrderStatusChangeable(final List<Long> orderIds);
+    void validateOrderStatusChangeable(final List<Long> orderTableIds);
 
-    boolean checkUngroupableTableGroup(final Long tableGroupId);
+    boolean checkEnableUngroupingTableGroup(final Long tableGroupId);
 }
