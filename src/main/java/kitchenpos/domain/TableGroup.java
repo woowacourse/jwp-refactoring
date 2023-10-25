@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableGroup {
@@ -29,6 +30,10 @@ public class TableGroup {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void ungroup() {
+        orderTables = new ArrayList<>();
     }
 
     public Long getId() {

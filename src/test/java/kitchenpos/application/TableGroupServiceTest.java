@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -133,6 +134,8 @@ class TableGroupServiceTest {
                 .willReturn(orderTables);
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
+        given(tableGroupDao.findById(tableGroup.getId()))
+                .willReturn(Optional.of(tableGroup));
 
         // when
         tableGroupService.ungroup(tableGroup.getId());
