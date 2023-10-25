@@ -2,15 +2,15 @@ package kitchenpos.application;
 
 import kitchenpos.EntityFactory;
 import kitchenpos.order.application.OrderService;
-import kitchenpos.table.application.OrderTableService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.table.ui.dto.OrderTableCreateRequest;
-import kitchenpos.table.ui.dto.OrderTableResponse;
-import kitchenpos.table.ui.dto.OrderTableUpdateRequest;
 import kitchenpos.order.ui.dto.OrderUpdateRequest;
+import kitchenpos.ordertable.application.OrderTableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableChangeEmptyEvent;
+import kitchenpos.ordertable.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.ui.dto.OrderTableResponse;
+import kitchenpos.ordertable.ui.dto.OrderTableUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,12 +18,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+@RecordApplicationEvents
 @SpringBootTest
 class OrderTableServiceTest {
 
@@ -34,6 +37,9 @@ class OrderTableServiceTest {
 
     @Autowired
     private EntityFactory entityFactory;
+
+    @Autowired
+    private ApplicationEvents events;
 
     @Test
     @DisplayName("주문 테이블을 생성할 수 있다")
@@ -46,9 +52,9 @@ class OrderTableServiceTest {
 
         //then
         assertSoftly(softAssertions -> {
-            assertThat(orderTable.getId()).isNotNull();
-            assertThat(orderTable.getTableGroupId()).isNull();
-            assertThat(orderTable.getNumberOfGuests()).isEqualTo(5);
+            softAssertions.assertThat(orderTable.getId()).isNotNull();
+            softAssertions.assertThat(orderTable.getTableGroupId()).isNull();
+            softAssertions.assertThat(orderTable.getNumberOfGuests()).isEqualTo(5);
         });
     }
 
@@ -73,7 +79,10 @@ class OrderTableServiceTest {
             final OrderTableResponse changedOrderTable = orderTableService.changeEmpty(orderTable.getId(), request);
 
             //then
-            assertThat(changedOrderTable.isEmpty()).isTrue();
+            assertSoftly(softAssertions -> {
+                assertThat(changedOrderTable.isEmpty()).isTrue();
+                assertThat(events.stream(OrderTableChangeEmptyEvent.class)).hasSize(1);
+            });
         }
 
         @Test
@@ -94,7 +103,7 @@ class OrderTableServiceTest {
             //given
             final OrderTable orderTable1 = entityFactory.saveOrderTable();
             final OrderTable orderTable2 = entityFactory.saveOrderTable();
-            final TableGroup tableGroup = entityFactory.saveTableGroup(orderTable1, orderTable2);
+            entityFactory.saveTableGroup(orderTable1, orderTable2);
 
             final OrderTableUpdateRequest request = new OrderTableUpdateRequest(4, true);
 

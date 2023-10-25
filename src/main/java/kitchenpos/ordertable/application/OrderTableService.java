@@ -1,30 +1,29 @@
-package kitchenpos.table.application;
+package kitchenpos.ordertable.application;
 
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.ui.dto.OrderTableCreateRequest;
-import kitchenpos.table.ui.dto.OrderTableResponse;
-import kitchenpos.table.ui.dto.OrderTableUpdateRequest;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableChangeEmptyEvent;
+import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.ordertable.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.ui.dto.OrderTableResponse;
+import kitchenpos.ordertable.ui.dto.OrderTableUpdateRequest;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.order.domain.OrderStatus.COOKING;
-import static kitchenpos.order.domain.OrderStatus.MEAL;
-
 @Transactional(readOnly = true)
 @Service
 public class OrderTableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher publisher;
 
-    public OrderTableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableService(final OrderTableRepository orderTableRepository,
+                             final ApplicationEventPublisher publisher) {
         this.orderTableRepository = orderTableRepository;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -42,12 +41,9 @@ public class OrderTableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableUpdateRequest request) {
         final OrderTable orderTable = findByIdOrThrow(orderTableId);
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, List.of(COOKING, MEAL))) {
-            throw new IllegalArgumentException("주문 테이블이 조리 중이거나 식사 중입니다.");
-        }
-
         orderTable.changeEmpty(request.isEmpty());
+
+        publisher.publishEvent(new OrderTableChangeEmptyEvent(orderTableId));
         return OrderTableResponse.from(orderTable);
     }
 

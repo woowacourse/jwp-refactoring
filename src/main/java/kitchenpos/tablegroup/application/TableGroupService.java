@@ -1,12 +1,12 @@
 package kitchenpos.tablegroup.application;
 
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.application.OrderTableService;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
+import kitchenpos.ordertable.application.OrderTableService;
+import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.product.ui.dto.TableGroupCreateRequest;
 import kitchenpos.product.ui.dto.TableGroupResponse;
+import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

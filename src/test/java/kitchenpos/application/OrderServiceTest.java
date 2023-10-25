@@ -9,7 +9,7 @@ import kitchenpos.order.ui.dto.OrderCreateRequest;
 import kitchenpos.order.ui.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.ui.dto.OrderUpdateRequest;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -54,9 +53,9 @@ class OrderServiceTest {
 
             //then
             assertSoftly(softAssertions -> {
-                assertThat(order.getId()).isNotNull();
-                assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-                assertThat(order.getOrderedTime()).isNotNull();
+                softAssertions.assertThat(order.getId()).isNotNull();
+                softAssertions.assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+                softAssertions.assertThat(order.getOrderedTime()).isNotNull();
             });
         }
 
@@ -144,8 +143,8 @@ class OrderServiceTest {
 
             //then
             assertSoftly(softAssertions -> {
-                assertThat(saved.getId()).isEqualTo(order.getId());
-                assertThat(saved.getOrderStatus()).isEqualTo(orderStatus);
+                softAssertions.assertThat(saved.getId()).isEqualTo(order.getId());
+                softAssertions.assertThat(saved.getOrderStatus()).isEqualTo(orderStatus);
             });
         }
 
