@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import kitchenpos.application.table.dto.CreateTableGroupResponse;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.ui.ControllerTest;
 import kitchenpos.ui.table.dto.CreateTableGroupRequest;
@@ -25,7 +26,9 @@ class TableGroupRestControllerTest extends ControllerTest {
         String request = objectMapper.writeValueAsString(createTableGroupRequest);
 
         TableGroup tableGroup = 테이블_그룹(1L);
-        CreateTableGroupResponse createTableGroupResponse = CreateTableGroupResponse.from(tableGroup);
+        OrderTable orderTable = new OrderTable(1L, tableGroup, 0, true);
+        CreateTableGroupResponse createTableGroupResponse =
+                CreateTableGroupResponse.from(tableGroup, List.of(orderTable));
         given(tableGroupService.create(any())).willReturn(createTableGroupResponse);
         String response = objectMapper.writeValueAsString(createTableGroupResponse);
 

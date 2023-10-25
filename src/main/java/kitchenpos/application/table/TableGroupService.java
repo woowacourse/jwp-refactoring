@@ -1,5 +1,7 @@
 package kitchenpos.application.table;
 
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLES_CAN_NOT_LESS_THAN_TWO;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.table.dto.CreateTableGroupCommand;
@@ -10,9 +12,11 @@ import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.domain.table.TableGroupRepository;
 import kitchenpos.domain.table.TableUngroupedEvent;
+import kitchenpos.exception.table.TableGroupException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -34,17 +38,25 @@ public class TableGroupService {
     @Transactional
     public CreateTableGroupResponse create(CreateTableGroupCommand command) {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdInOrElseThrow(command.orderTableIds());
-        TableGroup tableGroup = new TableGroup(orderTables);
-        return CreateTableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        validateOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup();
+        orderTables.forEach(it -> it.group(tableGroup));
+        return CreateTableGroupResponse.from(tableGroupRepository.save(tableGroup), orderTables);
+    }
+
+    private void validateOrderTables(List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new TableGroupException(ORDER_TABLES_CAN_NOT_LESS_THAN_TWO);
+        }
     }
 
     @Transactional
     public void ungroup(UngroupTableGroupCommand command) {
-        TableGroup tableGroup = tableGroupRepository.getById(command.tableGroupId());
-        List<Long> orderTableIds = tableGroup.orderTables().stream()
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(command.tableGroupId());
+        List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::id)
                 .collect(Collectors.toList());
         publisher.publishEvent(new TableUngroupedEvent(orderTableIds));
-        tableGroup.ungroup();
+        orderTables.forEach(OrderTable::ungroup);
     }
 }

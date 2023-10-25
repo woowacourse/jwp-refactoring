@@ -3,6 +3,8 @@ package kitchenpos.domain.table;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -11,6 +13,36 @@ import kitchenpos.exception.BaseExceptionType;
 import org.junit.jupiter.api.Test;
 
 class OrderTableTest {
+
+    @Test
+    void 비어있지_않은_주문테이블에_그룹을_지정하면_예외가_발생한다() {
+        // given
+        TableGroup tableGroup = new TableGroup();
+        OrderTable orderTable = new OrderTable(0, false);
+
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderTable.group(tableGroup)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_EMPTY);
+    }
+
+    @Test
+    void 지정된_그룹이_있는_주문테이블에_그룹을_지정하면_에외가_발생한다() {
+        // given
+        OrderTable orderTable = new OrderTable(null, new TableGroup(), 0, true);
+        TableGroup tableGroup = new TableGroup();
+
+        // when
+        BaseExceptionType exceptionType = assertThrows(BaseException.class, () ->
+                orderTable.group(tableGroup)
+        ).exceptionType();
+
+        // then
+        assertThat(exceptionType).isEqualTo(ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP);
+    }
 
     @Test
     void 그룹을_해제하면_테이블_그룹은_null이_되고_비어있는지_여부는_false가_된다() {

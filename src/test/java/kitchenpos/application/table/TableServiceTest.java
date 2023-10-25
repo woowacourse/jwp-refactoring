@@ -78,6 +78,7 @@ class TableServiceTest extends IntegrationTest {
             // given
             OrderTable 주문테이블 = 주문테이블(0, true);
             테이블그룹저장(테이블그룹(주문테이블, 주문테이블(0, true)));
+            주문테이블저장(주문테이블);
             ChangeOrderTableEmptyCommand command = new ChangeOrderTableEmptyCommand(주문테이블.id(), true);
 
             // when

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 
 public class CreateTableGroupResponse {
@@ -21,11 +22,11 @@ public class CreateTableGroupResponse {
         this.orderTableResponses = orderTableResponses;
     }
 
-    public static CreateTableGroupResponse from(TableGroup tableGroup) {
+    public static CreateTableGroupResponse from(TableGroup tableGroup, List<OrderTable> orderTables) {
         return new CreateTableGroupResponse(
                 tableGroup.id(),
                 tableGroup.createdDate(),
-                tableGroup.orderTables().stream()
+                orderTables.stream()
                         .map(OrderTableResponse::from)
                         .collect(Collectors.toList())
         );

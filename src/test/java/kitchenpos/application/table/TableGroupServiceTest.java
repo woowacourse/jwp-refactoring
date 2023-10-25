@@ -130,6 +130,8 @@ class TableGroupServiceTest extends IntegrationTest {
         OrderTable 주문테이블1 = 주문테이블(0, true);
         OrderTable 주문테이블2 = 주문테이블(0, true);
         TableGroup 테이블그룹 = 테이블그룹저장(테이블그룹(주문테이블1, 주문테이블2));
+        주문테이블저장(주문테이블1);
+        주문테이블저장(주문테이블2);
         주문저장(주문(주문테이블1, COOKING, 주문항목(맛있는_메뉴_저장(), 1)));
         UngroupTableGroupCommand command = new UngroupTableGroupCommand(테이블그룹.id());
 
@@ -156,6 +158,5 @@ class TableGroupServiceTest extends IntegrationTest {
 
         // then
         assertThat(result).isPresent();
-        assertThat(result.get().orderTables()).isEmpty();
     }
 }

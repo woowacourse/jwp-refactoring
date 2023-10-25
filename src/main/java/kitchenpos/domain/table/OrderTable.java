@@ -5,6 +5,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_EMPTY_GROUPED_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE;
 import static kitchenpos.exception.table.OrderTableExceptionType.NUMBER_OF_GUESTS_CAN_NOT_NEGATIVE;
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_EMPTY;
+import static kitchenpos.exception.table.TableGroupExceptionType.ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.exception.table.OrderTableException;
+import kitchenpos.exception.table.TableGroupException;
 
 @Entity
 public class OrderTable {
@@ -50,6 +53,17 @@ public class OrderTable {
         return new OrderTable(0, true);
     }
 
+    public void group(TableGroup tableGroup) {
+        if (!empty) {
+            throw new TableGroupException(ORDER_TABLE_CAN_NOT_EMPTY);
+        }
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new TableGroupException(ORDER_TABLE_CAN_NOT_HAVE_TABLE_GROUP);
+        }
+        this.tableGroup = tableGroup;
+        empty = false;
+    }
+
     public void ungroup() {
         tableGroup = null;
         empty = false;
@@ -70,14 +84,6 @@ public class OrderTable {
             throw new OrderTableException(CAN_NOT_CHANGE_NUMBER_OF_GUESTS_EMPTY_ORDER_TABLE);
         }
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
     }
 
     public Long id() {

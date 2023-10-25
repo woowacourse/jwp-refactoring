@@ -55,21 +55,6 @@ public class ControllerTest {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    protected Menu 메뉴(Long id) {
-        MenuProduct menuProduct = new MenuProduct(
-                new Product(1L, "상품", new Price(BigDecimal.ONE)),
-                2
-        );
-
-        return new Menu(
-                id,
-                "후라이드+후라이드",
-                new Price(BigDecimal.valueOf(1)),
-                new MenuGroup(1L, "추천메뉴"),
-                new MenuProducts(List.of(menuProduct))
-        );
-    }
-
     protected CreateMenuResponse 메뉴_응답() {
         MenuGroup menuGroup = new MenuGroup(1L, "메뉴그룹");
         Product product = new Product(1L, "상품", new Price(BigDecimal.ONE));
@@ -98,9 +83,7 @@ public class ControllerTest {
     }
 
     protected TableGroup 테이블_그룹(Long id) {
-        OrderTable orderTable1 = new OrderTable(1L, null, 0, true);
-        OrderTable orderTable2 = new OrderTable(2L, null, 0, true);
-        return new TableGroup(id, null, List.of(orderTable1, orderTable2));
+        return new TableGroup(id, null);
     }
 
     protected OrderTable 주문_테이블(Long id) {

@@ -126,7 +126,10 @@ public class IntegrationTest {
     }
 
     protected TableGroup 테이블그룹(OrderTable... 주문테이블) {
-        return new TableGroup(Arrays.asList(주문테이블));
+        TableGroup tableGroup = new TableGroup();
+        Arrays.stream(주문테이블)
+                .forEach(it -> it.group(tableGroup));
+        return tableGroup;
     }
 
     protected Product 상품저장(Product 상품) {
