@@ -6,7 +6,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
 import kitchenpos.request.MenuCreateRequest;
 import kitchenpos.request.MenuProductDto;
 import kitchenpos.request.OrderTableCreateRequest;
@@ -122,7 +121,13 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
         Menu menu = menuService.create(getMenuCreateRequest("양념치킨", 17_000));
-        Order order = createOrder(orderTable1, orderStatus, menu);
+        Order order = new Order(
+                null,
+                orderTable1.getId(),
+                orderStatus.name(),
+                LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1))
+        );
         Order savedOrder = orderDao.save(order);
 
         // when, then
@@ -140,15 +145,6 @@ class TableGroupServiceTest extends ServiceTest {
                 BigDecimal.valueOf(price),
                 menuGroup.getId(),
                 MenuProductDto.of(List.of(menuProduct))
-        );
-    }
-
-    private Order createOrder(OrderTable orderTable, OrderStatus orderStatus, Menu menu) {
-        return OrderFixtures.create(
-                orderTable.getId(),
-                orderStatus.name(),
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 1))
         );
     }
 }

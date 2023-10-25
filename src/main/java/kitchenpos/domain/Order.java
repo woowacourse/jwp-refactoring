@@ -10,10 +10,6 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, null, null, orderLineItems);
-    }
-
     public Order(
             Long id,
             Long orderTableId,
@@ -26,6 +22,22 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalArgumentException("주문 항목이 포함되어 있지 않습니다.");
+        }
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("비어 있는 테이블은 주문을 생성할 수 없습니다.");
+        }
+        return new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+    }
+
+    public void assignOrderToTable() {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.assignMenuId(this.id);
+        }
     }
 
     public Long getId() {

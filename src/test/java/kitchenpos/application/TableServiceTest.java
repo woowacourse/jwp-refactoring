@@ -7,7 +7,6 @@ import kitchenpos.domain.*;
 import kitchenpos.fixture.MenuFixtures;
 import kitchenpos.fixture.MenuGroupFixtures;
 import kitchenpos.fixture.MenuProductFixtures;
-import kitchenpos.fixture.OrderFixtures;
 import kitchenpos.request.OrderTableCreateRequest;
 import kitchenpos.request.TableGroupCreateRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +78,13 @@ class TableServiceTest extends ServiceTest {
         Menu menu = createMenu("양념1마리", 17_000);
         menuDao.save(menu);
 
-        Order order = createOrder(orderTable, OrderStatus.COMPLETION, menu);
+        Order order = new Order(
+                null,
+                orderTable.getId(),
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1))
+        );
         orderDao.save(order);
 
         // when
@@ -102,8 +107,13 @@ class TableServiceTest extends ServiceTest {
 
         Menu menu = createMenu("양념1마리", 17_000);
         menuDao.save(menu);
-
-        Order order = createOrder(orderTable1, OrderStatus.COMPLETION, menu);
+        Order order = new Order(
+                null,
+                orderTable1.getId(),
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1))
+        );
         orderDao.save(order);
 
         // when, then
@@ -122,8 +132,13 @@ class TableServiceTest extends ServiceTest {
 
         Menu menu = createMenu("양념1마리", 17_000);
         menuDao.save(menu);
-
-        Order order = createOrder(orderTable, orderStatus, menu);
+        Order order = new Order(
+                null,
+                orderTable.getId(),
+                orderStatus.name(),
+                LocalDateTime.now(),
+                List.of(new OrderLineItem(menu.getId(), 1))
+        );
         orderDao.save(order);
 
         // when, then
@@ -182,14 +197,4 @@ class TableServiceTest extends ServiceTest {
                 List.of(menuProduct)
         );
     }
-
-    private Order createOrder(OrderTable orderTable, OrderStatus orderStatus, Menu menu) {
-        return OrderFixtures.create(
-                orderTable.getId(),
-                orderStatus.name(),
-                LocalDateTime.now(),
-                List.of(new OrderLineItem(menu.getId(), 1))
-        );
-    }
-
 }

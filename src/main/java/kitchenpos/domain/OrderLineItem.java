@@ -48,4 +48,8 @@ public class OrderLineItem {
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
     }
+
+    public void assignMenuId(Long id) {
+        this.menuId = id;
+    }
 }
