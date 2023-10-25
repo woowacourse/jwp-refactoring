@@ -40,6 +40,22 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public void ungroupById(final long tableGroupId) {
+        if (tableGroup.getId().equals(tableGroupId)) {
+            tableGroup = null;
+            empty = false;
+        }
+    }
+
+    public void group(final TableGroup tableGroup) {
+        this.empty = false;
+        this.tableGroup = tableGroup;
+    }
+
     public void setEmpty(final boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
@@ -66,10 +82,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests.getValue();
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     @Override

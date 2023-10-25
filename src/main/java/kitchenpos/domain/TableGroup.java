@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -31,6 +32,11 @@ public class TableGroup {
     }
 
     public TableGroup(final List<OrderTable> orderTables) {
+        for (final OrderTable savedOrderTable : orderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup().getId())) {
+                throw new IllegalArgumentException();
+            }
+        }
         this.orderTables = orderTables;
         this.createdDate = LocalDateTime.now();
     }
