@@ -20,10 +20,6 @@ public class MenuProduct {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu;
-
     @Embedded
     private MenuProductQuantity quantity;
 
@@ -55,9 +51,5 @@ public class MenuProduct {
 
     public Long getQuantity() {
         return quantity.getValue();
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 }

@@ -35,7 +35,8 @@ public class Order {
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order", cascade = PERSIST, orphanRemoval = true)
+    @OneToMany(cascade = PERSIST, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false, updatable = false)
     private List<OrderLineItem> orderLineItems;
 
     @Column(name = "ordered_time", nullable = false, updatable = false)
@@ -53,7 +54,6 @@ public class Order {
         this.id = id;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
-        getOrderLineItems().forEach(orderLineItem -> orderLineItem.setOrder(this));
         this.orderedTime = orderedTime;
         this.orderTable = orderTable;
         orderTable.addOrder(this);
