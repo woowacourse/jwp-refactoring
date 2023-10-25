@@ -1,10 +1,10 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import java.util.stream.Collectors;
-import kitchenpos.application.request.MenuGroupCreateRequest;
-import kitchenpos.application.response.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.menu.application.request.MenuGroupCreateRequest;
+import kitchenpos.menu.application.response.MenuGroupResponse;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
