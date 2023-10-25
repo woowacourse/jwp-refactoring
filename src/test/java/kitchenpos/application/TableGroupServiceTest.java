@@ -1,10 +1,21 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.TableGroupCreateRequest;
+import kitchenpos.application.dto.TableGroupCreateRequest.OrderTableId;
+import kitchenpos.application.dto.TableGroupResponse;
+import kitchenpos.application.dto.TableResponse;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -18,9 +29,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static kitchenpos.fixture.MenuGroupFixtures.TEST_GROUP;
+import static kitchenpos.fixture.OrderTableFixtures.EMPTY_TABLE;
+import static kitchenpos.fixture.OrderTableFixtures.NOT_EMPTY_TABLE;
+import static kitchenpos.fixture.ProductFixtures.PIZZA;
 
 @Transactional
 @SpringBootTest
@@ -38,20 +53,32 @@ class TableGroupServiceTest {
     @Autowired
     private OrderDao orderDao;
 
-    private OrderTable testTable1;
-    private OrderTable testTable2;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    private OrderTable emptyTable1;
+    private OrderTable emptyTable2;
+    private OrderTable notEmptyTable;
+    private Menu testMenu;
 
     @BeforeEach
     void setup() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setEmpty(true);
-        testTable1 = orderTableDao.save(orderTable1);
+        emptyTable1 = orderTableDao.save(EMPTY_TABLE());
+        emptyTable2 = orderTableDao.save(EMPTY_TABLE());
+        notEmptyTable = orderTableDao.save(NOT_EMPTY_TABLE());
 
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setEmpty(true);
-        testTable2 = orderTableDao.save(orderTable2);
+        final MenuGroup menuGroup = menuGroupDao.save(TEST_GROUP());
+        final Product product = productDao.save(PIZZA());
+        final Menu menu = new Menu.MenuFactory("test menu", product.getPrice(), menuGroup)
+                .addProduct(product, 1L)
+                .create();
+        testMenu = menuDao.save(menu);
     }
 
     @Nested
@@ -62,20 +89,23 @@ class TableGroupServiceTest {
         @DisplayName("테이블 그룹 생성에 성공한다")
         void success() {
             // given
-            final TableGroup tableGroupRequest = new TableGroup();
-            tableGroupRequest.setOrderTables(List.of(testTable1, testTable2));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            new OrderTableId(emptyTable1.getId()),
+                            new OrderTableId(emptyTable2.getId())
+                    ));
 
             // when
-            final TableGroup response = tableGroupService.create(tableGroupRequest);
+            final TableGroupResponse response = tableGroupService.create(request);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(response.getId()).isNotNull();
-                final List<Long> tableIds = response.getOrderTables()
+                final List<Long> tableIds = response.getTableResponses()
                         .stream()
-                        .map(OrderTable::getId)
+                        .map(TableResponse::getId)
                         .collect(Collectors.toList());
-                softly.assertThat(tableIds).containsExactlyInAnyOrderElementsOf(List.of(testTable1.getId(), testTable2.getId()));
+                softly.assertThat(tableIds).containsExactlyInAnyOrderElementsOf(List.of(emptyTable1.getId(), emptyTable2.getId()));
             });
         }
 
@@ -83,30 +113,30 @@ class TableGroupServiceTest {
         @DisplayName("생성되지 않은 태이블로 그룹생성시 예외가 발생한다.")
         void throwExceptionWhenTableIsNotCreated() {
             // given
-            final TableGroup tableGroupRequest = new TableGroup();
-            final OrderTable notCreatedTable = new OrderTable();
-            notCreatedTable.setId(-1L);
-            tableGroupRequest.setOrderTables(List.of(testTable1, notCreatedTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(List.of(
+                    new OrderTableId(emptyTable1.getId()),
+                    new OrderTableId(-1L)
+            ));
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("비어있지 않는 테이블로는 그룹을 생성시 예외가 발생한다.")
+        @DisplayName("비어있는 테이블로는 그룹을 생성시 예외가 발생한다.")
         void throwExceptionWithEmptyTable() {
             // given
-            final TableGroup tableGroupRequest = new TableGroup();
-            final OrderTable notEmptyTable = new OrderTable();
-            notEmptyTable.setEmpty(false);
-            final OrderTable savedNotEmptyTable = orderTableDao.save(notEmptyTable);
-            tableGroupRequest.setOrderTables(List.of(testTable1, savedNotEmptyTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            new OrderTableId(emptyTable1.getId()),
+                            new OrderTableId(notEmptyTable.getId())
+                    ));
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -114,21 +144,19 @@ class TableGroupServiceTest {
         @DisplayName("이미 그룹지정된 태이블로는 생성시 예외가 발생한다.")
         void throwExceptionWithAlreadyGroupedTable() {
             // given
-            final TableGroup otherTableGroup = new TableGroup();
-            otherTableGroup.setCreatedDate(LocalDateTime.now());
-            final TableGroup savedOtherTableGroup = tableGroupDao.save(otherTableGroup);
+            tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
 
-            final OrderTable groupedTable = new OrderTable();
-            groupedTable.setEmpty(true);
-            groupedTable.setTableGroupId(savedOtherTableGroup.getId());
-            final OrderTable savedGroupedTable = orderTableDao.save(groupedTable);
+            final OrderTable savedTable = orderTableDao.save(new OrderTable(0, true));
 
-            final TableGroup tableGroupRequest = new TableGroup();
-            tableGroupRequest.setOrderTables(List.of(testTable1, savedGroupedTable));
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(
+                    List.of(
+                            new OrderTableId(emptyTable1.getId()),
+                            new OrderTableId(savedTable.getId())
+                    ));
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            Assertions.assertThatThrownBy(() -> tableGroupService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -141,18 +169,7 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setup() {
-            final TableGroup tableGroup = new TableGroup();
-            tableGroup.setOrderTables(List.of(testTable1, testTable2));
-            tableGroup.setCreatedDate(LocalDateTime.now());
-            testTableGroup = tableGroupDao.save(tableGroup);
-
-            testTable1.setId(null);
-            testTable1.setTableGroupId(testTableGroup.getId());
-            testTable1 = orderTableDao.save(testTable1);
-
-            testTable2.setId(null);
-            testTable2.setTableGroupId(testTableGroup.getId());
-            testTable2 = orderTableDao.save(testTable2);
+            testTableGroup = tableGroupDao.save(new TableGroup(List.of(emptyTable1, emptyTable2)));
         }
 
         @Test
@@ -164,8 +181,8 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(testTableGroup.getId());
 
             // then
-            final OrderTable actualTable1 = orderTableDao.findById(testTable1.getId()).get();
-            final OrderTable actualTable2 = orderTableDao.findById(testTable2.getId()).get();
+            final OrderTable actualTable1 = orderTableDao.findById(emptyTable1.getId()).get();
+            final OrderTable actualTable2 = orderTableDao.findById(emptyTable2.getId()).get();
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(actualTable1.getTableGroupId()).isNull();
                 softly.assertThat(actualTable2.getTableGroupId()).isNull();
@@ -175,12 +192,12 @@ class TableGroupServiceTest {
         @ParameterizedTest(name = "테이블 주문 상태 : {0}")
         @ValueSource(strings = {"COOKING", "MEAL"})
         @DisplayName("완료상태가 아닌 주문이 있는경우 그룹해제시 예외가 발생한다.")
-        void throwExceptionWithUncompletedOrder(final String status) {
+        void throwExceptionWithUncompletedOrder(final String statusValue) {
             // given
-            final Order order = new Order();
-            order.setOrderStatus(status);
-            order.setOrderedTime(LocalDateTime.now());
-            order.setOrderTableId(testTable1.getId());
+            final Order order = new Order.OrderFactory(emptyTable1)
+                    .addMenu(testMenu, 1L)
+                    .create();
+            order.changeOrderStatus(OrderStatus.valueOf(statusValue));
             orderDao.save(order);
 
             // when

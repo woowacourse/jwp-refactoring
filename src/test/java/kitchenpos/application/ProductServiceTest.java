@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -15,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static kitchenpos.fixture.ProductFixtures.PIZZA;
 
 @Transactional
 @SpringBootTest
@@ -23,6 +26,9 @@ class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
     @Nested
     @DisplayName("상품 생성 테스트")
@@ -32,15 +38,17 @@ class ProductServiceTest {
         @DisplayName("상품 생성에 성공한다.")
         void success() {
             // given
-            final Product productRequest = new Product();
-            productRequest.setName("테스트 상품");
-            productRequest.setPrice(BigDecimal.valueOf(1000));
+            final ProductCreateRequest request = new ProductCreateRequest("테스트 상품", BigDecimal.valueOf(1000));
 
             // when
-            final Product createdProduct = productService.create(productRequest);
+            final ProductResponse response = productService.create(request);
 
             // then
-            assertThat(createdProduct.getPrice()).isNotNull();
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(response.getId()).isNotNull();
+                softly.assertThat(response.getName()).isEqualTo(request.getName());
+                softly.assertThat(response.getPrice()).isEqualByComparingTo(request.getPrice());
+            });
         }
 
         @ParameterizedTest(name = "입력값 : {0}")
@@ -48,13 +56,11 @@ class ProductServiceTest {
         @DisplayName("상품의 가격이 잘못되면 예외를 발생시킨다.")
         void throwExceptionWithWrongPrice(final BigDecimal price) {
             // given
-            final Product productRequest = new Product();
-            productRequest.setName("테스트 상품");
-            productRequest.setPrice(price);
+            final ProductCreateRequest request = new ProductCreateRequest("테스트 상품", price);
 
             // when
             // then
-            Assertions.assertThatThrownBy(() -> productService.create(productRequest))
+            Assertions.assertThatThrownBy(() -> productService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -63,19 +69,18 @@ class ProductServiceTest {
     @DisplayName("모든 상품을 조회한다.")
     void getProductList() {
         // given
-        final Product productRequest = new Product();
-        productRequest.setName("테스트 상품");
-        productRequest.setPrice(BigDecimal.valueOf(1000));
-        final Product testProduct = productService.create(productRequest);
+        final Product testProduct = productDao.save(PIZZA());
+        final ProductResponse expectedLastResponse = ProductResponse.from(testProduct);
 
         // when
-        final List<Product> products = productService.list();
+        final List<ProductResponse> response = productService.list();
 
         // then
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(products).isNotEmpty();
-            final Product createdProduct = products.get(products.size() - 1);
-            softly.assertThat(createdProduct.getId()).isEqualTo(testProduct.getId());
+            softly.assertThat(response).isNotEmpty();
+            final ProductResponse actualLastProduct = response.get(response.size() - 1);
+            softly.assertThat(actualLastProduct).usingRecursiveComparison()
+                    .isEqualTo(expectedLastResponse);
         });
     }
 }
