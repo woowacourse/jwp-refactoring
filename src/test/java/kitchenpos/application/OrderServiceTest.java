@@ -5,11 +5,11 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.ui.dto.OrderCreateRequest;
 import kitchenpos.order.ui.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.ui.dto.OrderUpdateRequest;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -117,7 +117,7 @@ class OrderServiceTest {
             //when, then
             assertThatThrownBy(() -> orderService.create(request))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("주문 테이블이 없거나 빈 주문 테이블입니다.");
+                    .hasMessage("빈 주문 테이블입니다.");
         }
     }
 

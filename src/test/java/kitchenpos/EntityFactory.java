@@ -1,20 +1,20 @@
 package kitchenpos;
 
-import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.product.domain.repository.ProductRepository;
-import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.product.domain.Price;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +58,7 @@ public class EntityFactory {
         final Menu menu = saveMenu();
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
-        final Order request = new Order(orderTable, List.of(orderLineItem));
+        final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);
     }
 
@@ -67,7 +67,7 @@ public class EntityFactory {
         final Menu menu = saveMenu();
         final OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
 
-        final Order request = new Order(orderTable, List.of(orderLineItem));
+        final Order request = new Order(orderTable.getId(), List.of(orderLineItem));
         return orderRepository.save(request);
     }
 

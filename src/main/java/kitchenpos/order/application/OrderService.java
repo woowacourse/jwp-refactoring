@@ -1,13 +1,13 @@
 package kitchenpos.order.application;
 
 import kitchenpos.menu.application.MenuService;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.ui.dto.OrderCreateRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.ui.dto.OrderUpdateRequest;
 import kitchenpos.table.application.OrderTableService;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,13 +32,15 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        menuService.validateExistenceByIds(request.getMenuIds());
-
         final OrderTable orderTable = orderTableService.findByIdOrThrow(request.getOrderTableId());
-        final Order order = new Order(orderTable, request.getOrderLineItems());
 
-        final Order saved = orderRepository.save(order);
-        return OrderResponse.from(saved);
+        menuService.validateExistenceByIds(request.getMenuIds());
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 주문 테이블입니다.");
+        }
+
+        final Order order = new Order(orderTable.getId(), request.getOrderLineItems());
+        return OrderResponse.from(orderRepository.save(order));
     }
 
     public List<OrderResponse> list() {
