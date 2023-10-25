@@ -35,7 +35,7 @@ class OrderTest {
             final var product = new Product("후라이드", BigDecimal.valueOf(1000));
             final var menuGroup = new MenuGroup("메뉴 그룹");
             final var menu = new Menu("메뉴", BigDecimal.valueOf(1000), List.of(new MenuProduct(product, 1L)), menuGroup);
-            final var orderLineItems = List.of(new OrderLineItem(menu, 1L));
+            final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
 
             // when
             final ThrowingCallable action = () -> new Order(orderTable, orderLineItems, LocalDateTime.now());
@@ -64,7 +64,7 @@ class OrderTest {
             final var product = new Product("후라이드", BigDecimal.valueOf(1000));
             final var menuGroup = new MenuGroup("메뉴 그룹");
             final var menu = new Menu("메뉴", BigDecimal.valueOf(1000), List.of(new MenuProduct(product, 1L)), menuGroup);
-            final var orderLineItems = List.of(new OrderLineItem(menu, 1L));
+            final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
 
             // when
             final var order = new Order(orderTable, orderLineItems, LocalDateTime.now());
@@ -85,7 +85,7 @@ class OrderTest {
             final var product = new Product("후라이드", BigDecimal.valueOf(1000));
             final var menuGroup = new MenuGroup("메뉴 그룹");
             final var menu = new Menu("메뉴", BigDecimal.valueOf(1000), List.of(new MenuProduct(product, 1L)), menuGroup);
-            final var orderLineItems = List.of(new OrderLineItem(menu, 1L));
+            final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
             final var order = new Order(null, orderTable, before, orderLineItems, LocalDateTime.now());
 
             // when
@@ -103,7 +103,7 @@ class OrderTest {
             final var product = new Product("후라이드", BigDecimal.valueOf(1000));
             final var menuGroup = new MenuGroup("메뉴 그룹");
             final var menu = new Menu("메뉴", BigDecimal.valueOf(1000), List.of(new MenuProduct(product, 1L)), menuGroup);
-            final var orderLineItems = List.of(new OrderLineItem(menu, 1L));
+            final var orderLineItems = List.of(new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice()));
             final var order = new Order(null, orderTable, before, orderLineItems, LocalDateTime.now());
 
             // when

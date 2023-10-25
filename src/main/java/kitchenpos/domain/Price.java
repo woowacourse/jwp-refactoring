@@ -19,10 +19,6 @@ public class Price {
         this.value = value;
     }
 
-    public Price(final Price price) {
-        this.value = price.value;
-    }
-
     private void validate(final BigDecimal value) {
         validatePositive(value);
         validateScaleLessThanMaximum(value);

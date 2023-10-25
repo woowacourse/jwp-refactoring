@@ -145,7 +145,7 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
             final var order = orderDao.save(new Order(1L, table, OrderStatus.COMPLETION, List.of(orderLineItem), null));
@@ -165,7 +165,7 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
             final var order = orderDao.save(new Order(1L, table, OrderStatus.MEAL, List.of(orderLineItem), null));
@@ -186,7 +186,7 @@ class OrderServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = menuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = orderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
             final var order = orderDao.save(new Order(1L, table, previous, List.of(orderLineItem), null));

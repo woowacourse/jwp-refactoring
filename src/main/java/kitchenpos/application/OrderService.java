@@ -51,7 +51,7 @@ public class OrderService {
 
     private OrderLineItem createOrderLineItem(final OrderLineItemCreateRequest orderLineItemCreateRequest) {
         final Menu menu = findMenuById(orderLineItemCreateRequest);
-        return new OrderLineItem(menu, orderLineItemCreateRequest.getQuantity());
+        return new OrderLineItem(menu.getId(), orderLineItemCreateRequest.getQuantity(), menu.getName(), menu.getPrice());
     }
 
     private Menu findMenuById(final OrderLineItemCreateRequest orderLineItemCreateRequest) {

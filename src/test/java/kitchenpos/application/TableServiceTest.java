@@ -104,7 +104,7 @@ class TableServiceTest {
             // given
             final var menuGroup = new MenuGroup(1L, "메뉴 그룹");
             final var menu = fakeMenuDao.save(MenuFactory.createMenuOf("메뉴", BigDecimal.valueOf(0), menuGroup));
-            final var orderLineItem = new OrderLineItem(menu, 1L);
+            final var orderLineItem = new OrderLineItem(menu.getId(), 1L, menu.getName(), menu.getPrice());
             final var table = fakeOrderTableDao.save(OrderTableFactory.createOrderTableOf(0, false));
 
             final var order = fakeOrderDao.save(new Order(1L, table, orderStatus, List.of(orderLineItem), null));

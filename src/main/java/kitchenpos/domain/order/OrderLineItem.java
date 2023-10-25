@@ -1,12 +1,14 @@
 package kitchenpos.domain.order;
 
+import java.math.BigDecimal;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.Price;
 
 @Entity
 public class OrderLineItem {
@@ -18,8 +20,14 @@ public class OrderLineItem {
     @ManyToOne(optional = false)
     private Order order;
 
-    @ManyToOne(optional = false)
-    private Menu menu;
+    @Column(name = "menu_id", nullable = false)
+    private Long menuId;
+
+    @Embedded
+    private OrderLineItemName name;
+
+    @Embedded
+    private Price price;
 
     @Embedded
     private OrderLineItemQuantity quantity;
@@ -27,19 +35,21 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(final Menu menu, final Long quantity) {
-        this(null, menu, quantity);
+    public OrderLineItem(final Long menuId, final Long quantity, final String menuName, final BigDecimal menuPrice) {
+        this(null, menuId, quantity, menuName, menuPrice);
     }
 
-    public OrderLineItem(final Order order, final Menu menu, final Long quantity) {
-        this(null, order, menu, quantity);
+    public OrderLineItem(final Order order, final Long menuId, final Long quantity, final String menuName, final BigDecimal menuPrice) {
+        this(null, order, menuId, quantity, menuName, menuPrice);
     }
 
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final Long quantity) {
+    public OrderLineItem(final Long seq, final Order order, final Long menuId, final Long quantity, final String menuName, final BigDecimal menuPrice) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.menuId = menuId;
         this.quantity = new OrderLineItemQuantity(quantity);
+        this.name = new OrderLineItemName(menuName);
+        this.price = new Price(menuPrice);
     }
 
     public Long getSeq() {
@@ -50,12 +60,20 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public Long getMenuId() {
+        return menuId;
     }
 
     public Long getQuantity() {
         return quantity.getValue();
+    }
+
+    public String getName() {
+        return name.getValue();
+    }
+
+    public BigDecimal getPrice() {
+        return price.getValue();
     }
 
     public void setOrder(final Order order) {
