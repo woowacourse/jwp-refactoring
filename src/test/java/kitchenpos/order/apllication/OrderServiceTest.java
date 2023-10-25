@@ -186,8 +186,6 @@ class OrderServiceTest {
         @Test
         @DisplayName("현재 주문이 존재하지 않을 시 예외 처리")
         void orderNotExistException() {
-            // given
-
             // when, then
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> orderService.changeOrderStatus(-1L, OrderStatus.COMPLETION));
