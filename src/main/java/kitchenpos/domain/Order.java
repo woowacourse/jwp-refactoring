@@ -28,12 +28,12 @@ public class Order {
     }
 
     public void changeStatus(OrderStatus orderStatus) {
-        validateStatus(orderStatus);
+        validateStatus();
         this.orderStatus = orderStatus.name();
     }
 
-    private void validateStatus(OrderStatus orderStatus) {
-        if (Objects.equals(orderStatus.name(), OrderStatus.COMPLETION.name())) {
+    private void validateStatus() {
+        if (Objects.equals(orderStatus, OrderStatus.COMPLETION.name())) {
             throw new IllegalArgumentException();
         }
     }
