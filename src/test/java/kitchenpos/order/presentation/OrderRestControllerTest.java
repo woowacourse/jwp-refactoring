@@ -1,7 +1,7 @@
-package kitchenpos.ui;
+package kitchenpos.order.presentation;
 
 import io.restassured.RestAssured;
-import kitchenpos.application.OrderService;
+import kitchenpos.order.application.OrderService;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
@@ -12,8 +12,8 @@ import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderStatusChangeRequest;
+import kitchenpos.order.presentation.dto.OrderCreateRequest;
+import kitchenpos.order.presentation.dto.OrderStatusChangeRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

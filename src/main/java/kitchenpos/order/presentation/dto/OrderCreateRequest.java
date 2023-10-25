@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.order.presentation.dto;
 
 import org.springframework.util.CollectionUtils;
 

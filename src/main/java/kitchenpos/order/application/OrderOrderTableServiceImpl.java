@@ -1,7 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
+import kitchenpos.application.OrderOrderTableService;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
