@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.test.ServiceIntegrateTest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;

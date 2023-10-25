@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.IDENTITY;

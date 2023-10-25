@@ -4,7 +4,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 
 import static java.time.LocalDateTime.now;
-import static kitchenpos.domain.OrderStatus.*;
+import static kitchenpos.domain.OrderStatus.COOKING;
 
 public class OrderFixture {
 
