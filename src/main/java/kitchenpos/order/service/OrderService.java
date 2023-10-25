@@ -3,9 +3,7 @@ package kitchenpos.order.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.exception.MenuNotFoundException;
-import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.common.event.ValidateMenuExistsEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -18,6 +16,7 @@ import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
 import kitchenpos.table.repository.OrderTableRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderService {
 
-    private final MenuRepository menuRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-            OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+    public OrderService(ApplicationEventPublisher eventPublisher,
+            OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+        this.eventPublisher = eventPublisher;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -63,10 +62,8 @@ public class OrderService {
     }
 
     private OrderLineItem createOrderLineItem(OrderLineItemRequest orderLineItemRequest) {
-        Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                .orElseThrow(MenuNotFoundException::new);
-
-        return new OrderLineItem(menu.getId(), orderLineItemRequest.getQuantity());
+        eventPublisher.publishEvent(new ValidateMenuExistsEvent(orderLineItemRequest.getMenuId()));
+        return new OrderLineItem(orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity());
     }
 
     public List<OrderResponse> findAll() {

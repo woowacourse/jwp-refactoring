@@ -9,6 +9,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
+import kitchenpos.menu.exception.MenuNotFoundException;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.exception.ProductNotFoundException;
@@ -69,5 +70,10 @@ public class MenuService {
         return menus.stream()
                 .map(each -> MenuResponse.from(each, each.getMenuProducts()))
                 .collect(Collectors.toList());
+    }
+
+    public void validateMenuExists(Long menuId) {
+        menuRepository.findById(menuId)
+                .orElseThrow(MenuNotFoundException::new);
     }
 }
