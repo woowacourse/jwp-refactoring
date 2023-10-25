@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.order.OrderTableValidatorImpl;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
@@ -27,6 +28,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,6 +39,8 @@ class OrderTableServiceTest {
     private OrderTableService orderTableService;
     @Mock
     private OrderRepository orderRepository;
+    @Mock
+    private OrderTableValidatorImpl orderTableValidator;
     @Mock
     private OrderTableRepository orderTableRepository;
 
@@ -111,7 +115,7 @@ class OrderTableServiceTest {
             final OrderTable orderTable = mock(OrderTable.class);
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
             given(orderTable.getTableGroupId()).willReturn(null);
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
+            doThrow(IllegalArgumentException.class).when(orderTableValidator).validate(any(), any());
 
             // when, then
             assertThatThrownBy(() -> orderTableService.changeEmpty(1L, null))
@@ -125,7 +129,6 @@ class OrderTableServiceTest {
             final OrderTable orderTable = new OrderTable(new NumberOfGuests(3), Empty.NOT_EMPTY);
 
             given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
-            given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
 
             // when
             orderTableService.changeEmpty(anyLong(), new ChangeEmptyRequest(true));

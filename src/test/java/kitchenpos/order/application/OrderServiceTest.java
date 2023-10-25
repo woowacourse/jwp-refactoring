@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,8 +44,6 @@ import static org.mockito.Mockito.verify;
 class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
-    @Mock
-    private ApplicationEventPublisher publisher;
     @Mock
     private MenuRepository menuRepository;
     @Mock

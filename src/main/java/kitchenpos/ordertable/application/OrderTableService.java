@@ -1,7 +1,5 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.order.OrderStatus;
-import kitchenpos.order.application.OrderRepository;
 import kitchenpos.ordertable.Empty;
 import kitchenpos.ordertable.NumberOfGuests;
 import kitchenpos.ordertable.OrderTable;
@@ -18,12 +16,14 @@ import java.util.Objects;
 @Service
 @Transactional
 public class OrderTableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableValidator orderTableValidator;
 
-    public OrderTableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableService(
+            final OrderTableRepository orderTableRepository,
+            final OrderTableValidator orderTableValidator) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableValidator = orderTableValidator;
     }
 
     public OrderTable create(final OrderTableRequest request) {
@@ -51,11 +51,8 @@ public class OrderTableService {
         if (Objects.nonNull(orderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
         }
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId,
-                Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        orderTableValidator.validate(orderTableId, Arrays.asList("COOKING", "MEAL"));
+
         return orderTable;
     }
 

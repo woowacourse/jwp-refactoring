@@ -13,7 +13,6 @@ import kitchenpos.order.application.request.OrderRequest;
 import kitchenpos.order.application.request.OrderStatusRequest;
 import kitchenpos.ordertable.OrderTable;
 import kitchenpos.ordertable.application.OrderTableRepository;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +24,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class OrderService {
-    private final ApplicationEventPublisher publisher;
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(final ApplicationEventPublisher publisher,
-                        final OrderRepository orderRepository,
+    public OrderService(final OrderRepository orderRepository,
                         final MenuRepository menuRepository,
                         final OrderTableRepository orderTableRepository) {
-        this.publisher = publisher;
         this.orderRepository = orderRepository;
         this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
