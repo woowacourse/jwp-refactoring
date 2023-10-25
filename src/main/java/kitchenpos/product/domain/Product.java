@@ -6,8 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.menu.domain.vo.Price;
 import kitchenpos.product.domain.vo.ProductName;
+import kitchenpos.product.domain.vo.ProductPrice;
 
 @Entity
 public class Product {
@@ -20,14 +20,14 @@ public class Product {
     private ProductName productName;
 
     @Embedded
-    private Price price;
+    private ProductPrice productPrice;
 
     protected Product() {
     }
 
     public Product(String name, BigDecimal price) {
         this.productName = new ProductName(name);
-        this.price = new Price(price);
+        this.productPrice = new ProductPrice(price);
     }
 
     public Long getId() {
@@ -39,6 +39,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return productPrice.getPrice();
     }
 }

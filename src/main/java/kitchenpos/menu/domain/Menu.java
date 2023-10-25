@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.menu.domain.vo.MenuName;
+import kitchenpos.menu.domain.vo.MenuPrice;
 import kitchenpos.menu.domain.vo.MenuProducts;
-import kitchenpos.menu.domain.vo.Price;
 
 @Entity
 public class Menu {
@@ -25,7 +25,7 @@ public class Menu {
     private MenuName menuName;
 
     @Embedded
-    private Price price;
+    private MenuPrice menuPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id", nullable = false)
@@ -39,13 +39,13 @@ public class Menu {
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         this.menuName = new MenuName(name);
-        this.price = new Price(price);
+        this.menuPrice = new MenuPrice(price);
         this.menuGroup = menuGroup;
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
         this.menuName = new MenuName(name);
-        this.price = new Price(price);
+        this.menuPrice = new MenuPrice(price);
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
@@ -59,7 +59,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getPrice();
+        return menuPrice.getPrice();
     }
 
     public MenuGroup getMenuGroup() {

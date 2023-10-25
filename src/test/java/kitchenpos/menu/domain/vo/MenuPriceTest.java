@@ -4,12 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.menu.domain.vo.Price;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("NonAsciiCharacters")
-class PriceTest {
+class MenuPriceTest {
 
     @Nested
     class 가격_생성_시 {
@@ -20,10 +19,10 @@ class PriceTest {
             BigDecimal originPrice = BigDecimal.valueOf(11000);
 
             //when
-            Price price = new Price(originPrice);
+            MenuPrice menuPrice = new MenuPrice(originPrice);
 
             //then
-            assertThat(price.getPrice()).isEqualByComparingTo(originPrice);
+            assertThat(menuPrice.getPrice()).isEqualByComparingTo(originPrice);
         }
 
         @Test
@@ -32,7 +31,7 @@ class PriceTest {
             BigDecimal price = null;
 
             //when, then
-            assertThatThrownBy(() -> new Price(price))
+            assertThatThrownBy(() -> new MenuPrice(price))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("상품 가격이 존재하지 않습니다.");
         }
@@ -43,7 +42,7 @@ class PriceTest {
             BigDecimal price = BigDecimal.valueOf(-1);
 
             //when, then
-            assertThatThrownBy(() -> new Price(price))
+            assertThatThrownBy(() -> new MenuPrice(price))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("상품 가격이 0보다 작을 수 없습니다.");
         }

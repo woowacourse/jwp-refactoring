@@ -5,15 +5,15 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Price {
+public class MenuPrice {
 
     @Column(nullable = false)
     private BigDecimal price;
 
-    protected Price() {
+    protected MenuPrice() {
     }
 
-    public Price(BigDecimal price) {
+    public MenuPrice(BigDecimal price) {
         validate(price);
         this.price = price;
     }
