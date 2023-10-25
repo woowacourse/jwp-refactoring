@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +11,6 @@ import java.util.Objects;
 import static kitchenpos.domain.OrderStatus.COOKING;
 
 @EntityListeners(AuditingEntityListener.class)
-@EnableJpaAuditing
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -30,6 +28,7 @@ public class Order {
     private OrderStatus orderStatus;
 
     @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime orderedTime;
 
     @Embedded
