@@ -17,4 +17,9 @@ public class OrderTableEventListener {
     public void ungroupOrderTables(UngroupOrderTablesEvent event) {
         tableService.ungroupByTableGroup(event.getTableGroupId());
     }
+
+    @EventListener
+    public void validateOrderTableIsNotEmpty(ValidateOrderTableIsNotEmptyEvent event) {
+        tableService.validateNotEmpty(event.getOrderTableId());
+    }
 }

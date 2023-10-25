@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.common.event.ValidateMenuExistsEvent;
+import kitchenpos.common.event.ValidateOrderTableIsNotEmptyEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -13,9 +14,6 @@ import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.response.OrderResponse;
 import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.exception.OrderTableNotFoundException;
-import kitchenpos.table.repository.OrderTableRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +24,10 @@ public class OrderService {
 
     private final ApplicationEventPublisher eventPublisher;
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
 
-    public OrderService(ApplicationEventPublisher eventPublisher,
-            OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+    public OrderService(ApplicationEventPublisher eventPublisher, OrderRepository orderRepository) {
         this.eventPublisher = eventPublisher;
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -44,9 +39,7 @@ public class OrderService {
     }
 
     private Order saveOrder(CreateOrderRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(OrderTableNotFoundException::new);
-        orderTable.validateIsNotEmpty();
+        eventPublisher.publishEvent(new ValidateOrderTableIsNotEmptyEvent(request.getOrderTableId()));
         Order order = new Order(request.getOrderTableId(), OrderStatus.COOKING, LocalDateTime.now());
 
         return orderRepository.save(order);

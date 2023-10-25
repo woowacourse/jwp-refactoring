@@ -114,4 +114,10 @@ public class TableService {
             throw new OrderTableCountNotEnoughException();
         }
     }
+
+    public void validateNotEmpty(Long orderTableId) {
+        OrderTable orderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(OrderTableNotFoundException::new);
+        orderTable.validateIsNotEmpty();
+    }
 }
