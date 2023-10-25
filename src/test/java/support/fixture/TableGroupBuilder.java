@@ -1,22 +1,27 @@
 package support.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableGroupBuilder {
 
-    private final TableGroup tableGroup;
+    private List<OrderTable> orderTables;
 
-    public TableGroupBuilder(final List<OrderTable> tables) {
-        this.tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(tables);
+    public TableGroupBuilder() {
+        this.orderTables = new ArrayList<>();
+    }
+
+    public TableGroupBuilder setOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
+        return this;
     }
 
     public TableGroup build() {
-        return tableGroup;
+        final OrderTables orderTables = new OrderTables(this.orderTables);
+        return new TableGroup(orderTables);
     }
 }

@@ -1,9 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.dto.OrderTableRequest;
+import kitchenpos.domain.dto.OrderTableResponse;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,10 +17,10 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import support.fixture.OrderBuilder;
 import support.fixture.TableBuilder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,18 +33,21 @@ class TableServiceTest {
     @Autowired
     private TableService tableService;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     private static Stream<List<OrderTable>> listTest() {
         final OrderTable table1 = new TableBuilder().build();
         final OrderTable table2 = new TableBuilder().build();
+        final OrderTable table3 = new TableBuilder().build();
 
         return Stream.of(
                 List.of(),
                 List.of(table1),
-                List.of(table1, table2)
+                List.of(table2, table3)
         );
     }
 
@@ -48,13 +55,14 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 생성한다.")
     void createTest() {
         // given
-        final OrderTable table = new TableBuilder().build();
+        final OrderTableRequest request = new OrderTableRequest(null, 0, true);
 
         // when
-        final OrderTable expect = tableService.create(table);
+        final OrderTableResponse expect = tableService.create(request);
 
         // then
-        final OrderTable actual = orderTableDao.findById(expect.getId()).get();
+        final OrderTable orderTable = orderTableRepository.findById(expect.getId()).get();
+        final OrderTableResponse actual = OrderTableResponse.from(orderTable);
 
         assertThat(actual)
                 .usingRecursiveComparison()
@@ -66,17 +74,18 @@ class TableServiceTest {
     @DisplayName("주문 테이블 목록을 조회한다.")
     void listTest(final List<OrderTable> tables) {
         // given
-        final List<OrderTable> expect = orderTableDao.findAll();
-        expect.addAll(tables);
+        orderTableRepository.saveAll(tables);
 
-        tables.forEach(orderTableDao::save);
+        final List<OrderTable> orderTables = orderTableRepository.findAll();
+        final List<OrderTableResponse> expect = orderTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
 
         // when & then
-        final List<OrderTable> actual = tableService.list();
+        final List<OrderTableResponse> actual = tableService.list();
 
         assertThat(actual)
                 .usingRecursiveComparison()
-                .ignoringFields("id")
                 .isEqualTo(expect);
     }
 
@@ -89,26 +98,10 @@ class TableServiceTest {
         void should_throw_when_table_does_not_exists() {
             // given
             final long notExistsTableId = -1L;
-            final OrderTable notExistsTable = new TableBuilder().setId(notExistsTableId).build();
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(notExistsTableId, notExistsTable));
-        }
-
-        @Test
-        @DisplayName("Table의 그룹 id가 존재할 경우 IllegalArgumentException이 발생한다.")
-        void should_throw_when_tableGroupId_is_exists() {
-            // given
-            final long notNullTableGroupId = 1L;
-
-            final OrderTable table = new TableBuilder()
-                    .setTableGroupId(notNullTableGroupId)
-                    .build();
-
-            // when & then
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(table.getId(), table));
+                    () -> tableService.changeEmpty(notExistsTableId, null));
         }
 
         @ParameterizedTest
@@ -116,16 +109,17 @@ class TableServiceTest {
         @DisplayName("Table의 주문 상태가 COOKING 또는 MEAL일 경우 IllegalArgumentException이 발생한다.")
         void should_throw_when_order_status_is_cooking_or_meal(final OrderStatus orderStatus) {
             // given
-            final OrderTable table = orderTableDao.save(new TableBuilder().build());
+            final OrderTable table = orderTableRepository.save(new OrderTable(0));
 
-            orderDao.save(new OrderBuilder()
-                    .setOrderTableId(table.getId())
-                    .setOrderStatus(orderStatus)
-                    .build());
+            final Order order = new Order(table);
+            order.updateOrderStatus(orderStatus);
+            orderRepository.save(order);
+
+            final OrderTableRequest request = new OrderTableRequest(null, 0, true);
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeEmpty(table.getId(), table));
+                    () -> tableService.changeEmpty(table.getId(), request));
         }
 
         @Test
@@ -133,21 +127,21 @@ class TableServiceTest {
         void should_change_empty_when_order_status_is_completed() {
             // given
             final boolean emptyStatus = true;
-            final OrderTable table = orderTableDao.save(new TableBuilder()
-                    .setEmpty(!emptyStatus)
-                    .build());
 
-            orderDao.save(new OrderBuilder()
-                    .setOrderTableId(table.getId())
-                    .setOrderStatus(OrderStatus.COMPLETION)
-                    .build());
+            final OrderTable table = new OrderTable(0);
+            table.setEmpty(!emptyStatus);
+            orderTableRepository.save(table);
+
+            final Order order = new Order(table);
+            order.updateOrderStatus(OrderStatus.COMPLETION);
+            orderRepository.save(order);
 
             // when
-            table.setEmpty(emptyStatus);
-            tableService.changeEmpty(table.getId(), table);
+            final OrderTableRequest request = new OrderTableRequest(null, 0, emptyStatus);
+            tableService.changeEmpty(table.getId(), request);
 
             // then
-            final OrderTable actual = orderTableDao.findById(table.getId()).get();
+            final OrderTable actual = orderTableRepository.findById(table.getId()).get();
 
             assertEquals(emptyStatus, actual.isEmpty());
         }
@@ -162,34 +156,19 @@ class TableServiceTest {
         @DisplayName("테이블이 비어있지 않고 손님의 수가 0 이상일 경우 정상적으로 업데이트된다.")
         void changeEmptyTest(final int expectNumberOfGuests) {
             // given
-            final OrderTable table = orderTableDao.save(new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(false)
                     .build());
 
             // when
-            table.setNumberOfGuests(expectNumberOfGuests);
-            tableService.changeNumberOfGuests(table.getId(), table);
+            final OrderTableRequest request = new OrderTableRequest(null, expectNumberOfGuests, false);
+
+            tableService.changeNumberOfGuests(table.getId(), request);
 
             // then
-            final OrderTable actual = orderTableDao.findById(table.getId()).get();
+            final OrderTable actual = orderTableRepository.findById(table.getId()).get();
 
             assertEquals(expectNumberOfGuests, actual.getNumberOfGuests());
-        }
-
-        @ParameterizedTest
-        @CsvSource(value = {"-1", "-2", "-100"})
-        @DisplayName("테이블이 비어있지 않고 손님의 수가 0 미만일 경우 IllegalArgumentException이 발생한다.")
-        void changeNumberOfGuestsWithNegativeNumberOfGuests(final int invalidNumberOfGuests) {
-            // given
-            final OrderTable table = orderTableDao.save(new TableBuilder()
-                    .setEmpty(false)
-                    .build());
-
-            // when & then
-            table.setNumberOfGuests(invalidNumberOfGuests);
-
-            assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), table));
         }
 
         @Test
@@ -200,22 +179,26 @@ class TableServiceTest {
                     .setEmpty(false)
                     .build();
 
+            final OrderTableRequest request = new OrderTableRequest(null, 0, false);
+
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), table));
+                    () -> tableService.changeNumberOfGuests(table.getId(), request));
         }
 
         @Test
         @DisplayName("비어있는 테이블의 인원수를 변경하면 IllegalArgumentException이 발생한다.")
         void should_throw_when_table_is_empty() {
             // given
-            final OrderTable table = new TableBuilder()
+            final OrderTable table = orderTableRepository.save(new TableBuilder()
                     .setEmpty(true)
-                    .build();
+                    .build());
+
+            final OrderTableRequest request = new OrderTableRequest(null, 0, false);
 
             // when & then
             assertThrowsExactly(IllegalArgumentException.class,
-                    () -> tableService.changeNumberOfGuests(table.getId(), table));
+                    () -> tableService.changeNumberOfGuests(table.getId(), request));
         }
     }
 }

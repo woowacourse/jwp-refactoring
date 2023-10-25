@@ -6,21 +6,20 @@ public class MenuGroupBuilder {
 
     private static int sequence = 1;
 
-    private final MenuGroup menuGroup;
+    private String name;
 
     public MenuGroupBuilder() {
-        this.menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹" + sequence);
+        this.name = "메뉴그룹" + sequence;
 
         sequence++;
     }
 
     public MenuGroupBuilder setName(final String name) {
-        menuGroup.setName(name);
+        this.name = name;
         return this;
     }
 
     public MenuGroup build() {
-        return menuGroup;
+        return new MenuGroup(name);
     }
 }

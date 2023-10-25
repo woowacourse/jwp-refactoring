@@ -1,45 +1,22 @@
 package support.fixture;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import kitchenpos.domain.OrderTable;
 
 public class OrderBuilder {
 
-    private final Order order;
+    private OrderTable orderTable;
 
     public OrderBuilder() {
-        this.order = new Order();
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderLineItems(Collections.emptyList());
+        this.orderTable = null;
     }
 
-    public OrderBuilder setOrderedTime(final LocalDateTime orderTime) {
-        order.setOrderedTime(orderTime);
-        return this;
-    }
-
-    public OrderBuilder setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        order.setOrderLineItems(orderLineItems);
-        return this;
-    }
-
-    public OrderBuilder setOrderTableId(final Long orderTableId) {
-        order.setOrderTableId(orderTableId);
-        return this;
-    }
-
-    public OrderBuilder setOrderStatus(final OrderStatus orderStatus) {
-        order.setOrderStatus(orderStatus.name());
+    public OrderBuilder setOrderTable(final OrderTable orderTable) {
+        this.orderTable = orderTable;
         return this;
     }
 
     public Order build() {
-        return order;
+        return new Order(orderTable);
     }
 }
