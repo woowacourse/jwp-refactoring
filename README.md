@@ -132,3 +132,9 @@
     * Order가 OrderLineItem을 참조하면 다중성이 생김
       * 쿼리 또는 비즈니스 로직을 수행할 때 복잡해질 수 밖에 없음
 
+* 변경 전 : OrderLineItem(N) -> (1)Menu (단방향, 직접 참조)
+* 변경 후 : OrderLineItem(N) -> (1)Menu (단방향, 간접 참조)
+  * OrderLineItem은 Menu를 간접 참조 한다.
+    * OrderLineItem이 생성될 때 Menu가 생성되지 않는다.
+    * OrderLineItem이 삭제될 때 Menu가 삭제되지 않는다.
+    * 메뉴와는 별도의 도메인이기 때문에 지연 로딩을 사용하여 트랜잭션의 깊이(depth)를 늘리지 않는다.
