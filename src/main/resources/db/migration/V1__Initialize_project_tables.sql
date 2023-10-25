@@ -1,3 +1,4 @@
+SET MODE MYSQL;
 create table menu
 (
     id            bigint         not null auto_increment,

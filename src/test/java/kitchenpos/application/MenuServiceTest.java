@@ -85,7 +85,7 @@ class MenuServiceTest extends ServiceTest {
 
         @ParameterizedTest
         @ValueSource(longs = {0, 1})
-        void 메뉴가격이_상품가격합_이하여야한다(Long subtrahend) {
+        void 메뉴가격이_상품가격합_이하여야한다(Long 차감수) {
             //given
             MenuGroup 메뉴_그룹 = 메뉴_그룹_만들기();
             final var 존재하는_상품_목록 = productRepository.findAll().subList(0, 2);
@@ -95,7 +95,7 @@ class MenuServiceTest extends ServiceTest {
                     .map(product -> new CreateMenuProductCommand(product.getId(), 1))
                     .collect(Collectors.toList());
 
-            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(가격_합 - subtrahend), 메뉴_그룹.getId(),
+            CreateMenuCommand 커맨드 = new CreateMenuCommand("메뉴명", BigDecimal.valueOf(가격_합 - 차감수), 메뉴_그룹.getId(),
                     상품_요청_목록);
 
             //when
@@ -137,12 +137,6 @@ class MenuServiceTest extends ServiceTest {
     private MenuGroup 메뉴_그룹_만들기() {
         MenuGroup 저장할_그룹 = new MenuGroup("메뉴그룹");
         return menuGroupRepository.save(저장할_그룹);
-    }
-
-    private List<MenuProduct> 상품_만들기() {
-        var 상품_아이디 = productRepository.findAll().get(0).getId();
-        MenuProduct 메뉴_상품 = new MenuProduct(null, null, 상품_아이디, 1L);
-        return List.of(메뉴_상품);
     }
 
     private List<CreateMenuProductCommand> 상품_요청_만들기() {

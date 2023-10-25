@@ -1,11 +1,14 @@
 package kitchenpos.domain.menu;
 
 import java.util.Objects;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import kitchenpos.domain.Money;
 
 @Entity
 public class MenuProduct {
@@ -14,33 +17,31 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    private Menu menu;
-
     private Long productId;
+
+    @Column(name = "product_name")
+    private String name;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "product_price"))
+    private Money price;
 
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long seq, final Menu menu, final Long productId, final long quantity) {
+    public MenuProduct(final Long seq, final Long productId, final String name, final Money price,
+                       final long quantity) {
         this.seq = seq;
-        this.menu = menu;
         this.productId = productId;
+        this.name = name;
+        this.price = price;
         this.quantity = quantity;
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
     }
 
     public Long getProductId() {

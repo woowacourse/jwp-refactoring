@@ -95,7 +95,8 @@
 
 ## 3단계 요구사항
 - 메뉴 정보가 변경되더라도 주문 항목이 변경되지 않게 구현한다.
-  - [ ] MenuProduct에 Product 정보 저장하기
-  - [ ] flyway 활용하기
+  - [x] MenuProduct에 Product 정보 저장하기
+  - [x] flyway 활용하기
 - 클래스 사이, 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
   - [ ] Order, OrderLineItem 단방향으로 바꾸기
+  - [x] MenuProduct, Menu 단방향으로 바꾸기

@@ -12,15 +12,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.product.Product;
 import org.springframework.util.CollectionUtils;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
-import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.CascadeType.REMOVE;
+import static javax.persistence.CascadeType.ALL;
 
 @Entity
 public class Menu {
@@ -33,9 +32,11 @@ public class Menu {
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "price"))
     private Money price;
+
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu", cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = ALL, orphanRemoval = true)
+    @JoinColumn(name = "menu_id", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -55,7 +56,8 @@ public class Menu {
         this.menuGroupId = menuGroupId;
     }
 
-    public Menu(final Long id, final String name, final Money price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public Menu(final Long id, final String name, final Money price, final Long menuGroupId,
+                final List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = requireNonNull(name, "메뉴 이름은 null일 수 없습니다.");
         this.price = requireNonNull(price, "메뉴 가격은 null일 수 없습니다.");
@@ -87,8 +89,9 @@ public class Menu {
             throw new IllegalArgumentException("메뉴에 속한 상품은 null이나 비어있을 수 없습니다.");
         }
         validatePrice(Money.ZERO, productToQuantity);
-        final List<MenuProduct> menuProducts = productToQuantity.entrySet().stream()
-                .map(entry -> new MenuProduct(null, this, entry.getKey().getId(), entry.getValue()))
+        final List<MenuProduct> menuProducts = productToQuantity.keySet().stream()
+                .map(product -> new MenuProduct(null, product.getId(), product.getName(), product.getPrice(),
+                        productToQuantity.get(product)))
                 .collect(Collectors.toList());
         this.menuProducts = menuProducts;
     }

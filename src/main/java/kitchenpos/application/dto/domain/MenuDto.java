@@ -13,8 +13,11 @@ public class MenuDto {
     private List<MenuProductDto> menuProducts;
 
     public static MenuDto from(final Menu menu) {
-        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice().getValue(),
-                menu.getMenuProducts().stream().map(MenuProductDto::from).collect(Collectors.toList()));
+        List<MenuProductDto> menuProductDtos = menu.getMenuProducts().stream()
+                .map(menuProduct -> MenuProductDto.from(menu.getId(), menuProduct))
+                .collect(Collectors.toList());
+
+        return new MenuDto(menu.getId(), menu.getName(), menu.getPrice().getValue(), menuProductDtos);
     }
 
     public MenuDto(final Long id, final String name, final BigDecimal price, final List<MenuProductDto> menuProducts) {

@@ -10,8 +10,8 @@ public class MenuProductDto {
     private long quantity;
 
 
-    public static MenuProductDto from(final MenuProduct menuProduct) {
-        return new MenuProductDto(menuProduct.getSeq(), menuProduct.getMenu().getId(), menuProduct.getProductId(),
+    public static MenuProductDto from(final Long menuId, final MenuProduct menuProduct) {
+        return new MenuProductDto(menuProduct.getSeq(), menuId, menuProduct.getProductId(),
                 menuProduct.getQuantity());
     }
 
