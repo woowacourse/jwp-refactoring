@@ -88,3 +88,11 @@
 | 단체 지정    | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목    | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사    | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+## 의존성 리팩터링
+* Menu -> MenuGroup (직접 참조)
+  * 간접 참조로 변경
+    * Menu가 생성될 때 MenuGroup이 생성되지 않는다. 
+    * Menu가 삭제될 때 MenuGroup이 삭제되지 않아야 한다.
+    * Menu가 속한 MenuGroup을 알 수 있어야 한다.
+* 
