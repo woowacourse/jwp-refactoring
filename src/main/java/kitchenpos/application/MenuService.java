@@ -34,11 +34,11 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final String name, final Price price, final Long menuGroupId, final List<MenuProductRequest> menuProductRequests) {
         validateMenuGroupId(menuGroupId);
+        validatePrice(price, menuProductRequests);
 
         final List<MenuProduct> menuProducts = menuProductRequests
                 .stream().map(MenuProductRequest::toEntity)
                 .collect(Collectors.toList());
-        validatePrice(price, menuProductRequests);
 
         return MenuResponse.from(menuDao.save(new Menu(null, name, price, menuGroupId, menuProducts)));
     }
