@@ -40,7 +40,7 @@ public class MenuService {
                 findMenuGroup(request.getMenuGroupId())
         );
 
-        List<MenuProduct> menuProducts = request.getMenuProductCreateRequests()
+        List<MenuProduct> menuProducts = request.getMenuProducts()
                 .stream()
                 .map(this::createMenuProduct)
                 .collect(Collectors.toList());

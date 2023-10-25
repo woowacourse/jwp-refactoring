@@ -7,7 +7,7 @@ public class MenuCreateRequest {
     private String name;
     private Long price;
     private Long menuGroupId;
-    private List<MenuProductCreateRequest> menuProductCreateRequests;
+    private List<MenuProductCreateRequest> menuProducts;
 
     public MenuCreateRequest() {
     }
@@ -21,7 +21,7 @@ public class MenuCreateRequest {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductCreateRequests = menuProductCreateRequests;
+        this.menuProducts = menuProductCreateRequests;
     }
 
     public String getName() {
@@ -36,8 +36,8 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductCreateRequest> getMenuProductCreateRequests() {
-        return menuProductCreateRequests;
+    public List<MenuProductCreateRequest> getMenuProducts() {
+        return menuProducts;
     }
 
 }
