@@ -9,7 +9,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderChangeStatusRequest;
 import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderLineItemInOrderDto;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
@@ -36,8 +36,8 @@ public class OrderService {
     }
 
     public OrderResponse create(final OrderCreateRequest request) {
-        final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
-        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+        final List<OrderLineItemInOrderDto> orderLineItemInOrderDtos = request.getOrderLineItems();
+        final List<OrderLineItem> orderLineItems = orderLineItemInOrderDtos.stream()
                 .map(this::convertOrderLineItem)
                 .collect(Collectors.toList());
         validateOrderLineItems(orderLineItems);
@@ -55,7 +55,7 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("[ERROR] 존재하지 않는 주문 테이블입니다."));
     }
 
-    private OrderLineItem convertOrderLineItem(final OrderLineItemRequest request) {
+    private OrderLineItem convertOrderLineItem(final OrderLineItemInOrderDto request) {
         final Menu menu = findMenu(request.getMenuId());
         return new OrderLineItem(menu, request.getQuantity());
     }

@@ -15,7 +15,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderChangeStatusRequest;
 import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderLineItemInOrderDto;
 import kitchenpos.dto.OrderResponse;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class OrderServiceTest extends ServiceTest {
             final var order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineitem)));
             orderLineItemRepository.save(new OrderLineItem(order, menu, 5));
 
-            final var orderLineItemRequest = new OrderLineItemRequest(1L, 5L);
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
             final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when
@@ -61,7 +61,7 @@ class OrderServiceTest extends ServiceTest {
             final var orderLineItem = new OrderLineItem(menu, 5);
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
 
-            final var orderLineItemRequest = new OrderLineItemRequest(1L, 5L);
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
             final var orderCreateRequest = new OrderCreateRequest(2L, List.of(orderLineItemRequest));
 
             // when & then
@@ -76,7 +76,7 @@ class OrderServiceTest extends ServiceTest {
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
             orderTableRepository.save(new OrderTable(tableGroup, 3, false));
 
-            final var orderLineItemRequest = new OrderLineItemRequest(999L, 5L);
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(999L, 5L);
             final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when & then
@@ -96,8 +96,8 @@ class OrderServiceTest extends ServiceTest {
             final var orderLineItem2 = new OrderLineItem(menu, 3);
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem1, orderLineItem2)));
 
-            final var orderLineItemRequest1 = new OrderLineItemRequest(1L, 5L);
-            final var orderLineItemRequest2 = new OrderLineItemRequest(1L, 3L);
+            final var orderLineItemRequest1 = new OrderLineItemInOrderDto(1L, 5L);
+            final var orderLineItemRequest2 = new OrderLineItemInOrderDto(1L, 3L);
             final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest1, orderLineItemRequest2));
 
             // when & then
@@ -158,7 +158,7 @@ class OrderServiceTest extends ServiceTest {
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, List.of(orderLineItem)));
             orderLineItemRepository.save(orderLineItem);
 
-            final var orderLineItemRequest = new OrderLineItemRequest(1L, 5L);
+            final var orderLineItemRequest = new OrderLineItemInOrderDto(1L, 5L);
             final var request = new OrderChangeStatusRequest("COOKING");
 
             // when
