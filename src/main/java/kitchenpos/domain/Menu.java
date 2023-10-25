@@ -2,13 +2,11 @@ package kitchenpos.domain;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
@@ -26,8 +24,8 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    @Embedded
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -41,6 +39,7 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
+        this.menuProducts = new MenuProducts();
     }
 
     public void validateMenuPrice(final Price productSum) {
@@ -65,11 +64,11 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
     public void addMenuProduct(final MenuProduct menuProduct) {
-        this.menuProducts.add(menuProduct);
+        this.menuProducts.addProduct(menuProduct);
     }
 }
