@@ -4,15 +4,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import kitchenpos.menu.application.MenuMapper;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.application.dto.MenuCreateRequest;
 import kitchenpos.menu.application.dto.MenuCreateRequest.MenuProductRequest;
 import kitchenpos.menu.application.dto.MenuResponse;
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.menu.application.MenuService;
-import kitchenpos.menu.domain.Menu;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 class MenuServiceTest {
 
     private MenuService menuService;
+    private MenuMapper menuMapper;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
@@ -36,7 +38,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository, productRepository);
+        menuService = new MenuService(menuRepository,
+                new MenuMapper(menuRepository, menuGroupRepository, menuProductRepository, productRepository));
     }
 
     @Test

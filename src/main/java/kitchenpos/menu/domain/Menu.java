@@ -1,16 +1,14 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import suppoert.domain.BaseEntity;
 import kitchenpos.product.domain.Price;
+import suppoert.domain.BaseEntity;
 
 @Entity
 public class Menu extends BaseEntity {
@@ -22,13 +20,28 @@ public class Menu extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_menu_to_menu_group"))
     private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu(final String name, final Price price, final MenuGroup menuGroup) {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+        this.menuProducts = new MenuProducts();
+    }
+
+    /*
+    국물 떡볶이 세트 (국물 떡볶이 1인분, 순대 1인분) 8000원
+    국물 떡볶이 6000원
+    순대 3000원
+    세트 메뉴가 단품을 시킨것 보다 가격이 높은지 검증
+    */
+    public void addMenuProduct(MenuProduct menuProduct) {
+        long total = menuProducts.calculateTotalPrice() + menuProduct.calculatePrice();
+        if (price.getPrice().intValue() > total) {
+            throw new IllegalArgumentException("메뉴 가격은 단품을 가격보다 높을 수 없습니다.");
+        }
+        menuProducts.add(menuProduct);
     }
 
     public String getName() {
@@ -43,7 +56,7 @@ public class Menu extends BaseEntity {
         return menuGroup.getId();
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
