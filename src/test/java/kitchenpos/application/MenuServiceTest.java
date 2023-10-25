@@ -51,7 +51,7 @@ class MenuServiceTest {
     void setUp() {
         menuGroup = new MenuGroup(2L, "한마리메뉴");
 
-        menuProduct = new MenuProduct(1L, 1L, 2L, 2);
+        menuProduct = new MenuProduct(1L, 2L, 2);
 
         menu = new Menu(1L, "menu", BigDecimal.valueOf(2000), menuGroup.getId(), List.of(menuProduct));
 
@@ -159,7 +159,7 @@ class MenuServiceTest {
     void 메뉴를_전체_조회한다() {
         Menu menu2 = new Menu(2L, "menu2", BigDecimal.valueOf(4000), null, null);
 
-        MenuProduct menuProduct2 = new MenuProduct(1L, 2L, 2L, 1L);
+        MenuProduct menuProduct2 = new MenuProduct(1L, 2L, 1L);
 
         given(menuDao.findAll())
                 .willReturn(List.of(menu, menu2));
