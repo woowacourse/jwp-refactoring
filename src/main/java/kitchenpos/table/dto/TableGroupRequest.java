@@ -5,15 +5,15 @@ import java.util.List;
 
 public class TableGroupRequest {
 
-    private List<OrderTableDto> orderTables;
+    private List<OrderTableDto> orderTableDtos;
 
     @JsonCreator
-    public TableGroupRequest(List<OrderTableDto> orderTables) {
-        this.orderTables = orderTables;
+    public TableGroupRequest(List<OrderTableDto> orderTableDtos) {
+        this.orderTableDtos = orderTableDtos;
     }
 
-    public List<OrderTableDto> getOrderTables() {
-        return orderTables;
+    public List<OrderTableDto> getOrderTableDtos() {
+        return orderTableDtos;
     }
 
     public static class OrderTableDto {

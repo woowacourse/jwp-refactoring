@@ -123,8 +123,9 @@ class TableGroupServiceTest {
             OrderTable orderTable1 = new OrderTable(1, false);
             OrderTable orderTable2 = new OrderTable(2, false);
             OrderTable orderTable3 = new OrderTable(3, false);
-            TableGroup tableGroup = TableGroup.of(LocalDateTime.now(),
-                    List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+            orderTable1.addToTableGroup(tableGroup);
+            orderTable2.addToTableGroup(tableGroup);
             em.persist(orderTable1);
             em.persist(orderTable2);
             em.persist(orderTable3);
@@ -149,8 +150,7 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable1 = new OrderTable(1, false);
             OrderTable orderTable2 = new OrderTable(2, false);
-            TableGroup tableGroup = TableGroup.of(LocalDateTime.now(),
-                    List.of(orderTable1, orderTable2));
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now());
             em.persist(orderTable1);
             em.persist(orderTable2);
             em.persist(tableGroup);
@@ -172,10 +172,10 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable1 = new OrderTable(1, false);
             OrderTable orderTable2 = new OrderTable(2, false);
-            TableGroup tableGroup = TableGroup.of(LocalDateTime.now(),
-                    List.of(orderTable1, orderTable2));
-            Orders orders = new Orders(orderTable1, OrderStatus.COOKING,
-                    LocalDateTime.now());
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+            Orders orders = new Orders(orderTable1, OrderStatus.COOKING, LocalDateTime.now());
+            orderTable1.addToTableGroup(tableGroup);
+            orderTable2.addToTableGroup(tableGroup);
             em.persist(orderTable1);
             em.persist(orderTable2);
             em.persist(tableGroup);

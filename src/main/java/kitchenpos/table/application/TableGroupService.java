@@ -38,39 +38,49 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(TableGroupRequest request) {
-        // 오더테이블 리스트가 비었거나 사이즈가 2 미만이면 예외
-        List<OrderTableDto> orderTableDtos = request.getOrderTables();
+        validateOrderTableCountFromRequest(request);
+        List<OrderTable> orderTables = validateOrderTableExistence(request);
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        for (OrderTable orderTable : orderTables) {
+            orderTable.addToTableGroup(tableGroup);
+        }
+        return TableGroupResponse.of(tableGroup, orderTables);
+    }
+
+    private void validateOrderTableCountFromRequest(TableGroupRequest request) {
+        List<OrderTableDto> orderTableDtos = request.getOrderTableDtos();
         if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
             throw new RequestOrderTableCountNotEnoughException();
         }
+    }
 
-        // 요청으로 들어온 오더테이블이 실제 존재하는지 확인
-        List<OrderTable> orderTables = request.getOrderTables().stream()
-                .map(orderTable -> orderTableRepository.findById(orderTable.getId())
-                        .orElseThrow(OrderTableNotFoundException::new))
+    private List<OrderTable> validateOrderTableExistence(TableGroupRequest request) {
+        List<Long> orderTableIds = request.getOrderTableDtos().stream()
+                .map(OrderTableDto::getId)
                 .collect(toList());
-
-        TableGroup tableGroup = tableGroupRepository.save(
-                TableGroup.of(LocalDateTime.now(), orderTables));
-
-        return TableGroupResponse.from(tableGroup);
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        if (orderTables.size() != orderTableIds.size()) {
+            throw new OrderTableNotFoundException();
+        }
+        return orderTables;
     }
 
     @Transactional
     public void ungroup(Long tableGroupId) {
         TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(TableGroupNotFoundException::new);
-        List<OrderTable> orderTables = tableGroup.getOrderTables();
+        validateEveryOrderInGroupCompleted(tableGroup);
+        tableGroupRepository.delete(tableGroup);
+    }
 
-        // 테이블 그룹에 해당하는 주문 테이블을 가져온다
+    private void validateEveryOrderInGroupCompleted(TableGroup tableGroup) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
         List<Orders> orders = orderRepository.findAllByOrderTableIn(orderTables);
 
-        // 그룹 내의 주문 테이블 중 cooking 또는 meal 상태인 테이블이 있으면 언그룹이 불가능하다
         boolean isUncompletedOrderExists = orders.stream()
                 .anyMatch(Orders::isOrderUnCompleted);
         if (isUncompletedOrderExists) {
             throw new UnCompletedOrderExistsException();
         }
-        tableGroupRepository.delete(tableGroup);
     }
 }
