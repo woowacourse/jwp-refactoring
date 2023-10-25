@@ -1,25 +1,21 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.order.domain;
 
-import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.exception.OrderException;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.OrderTableRepository;
 import kitchenpos.ordertable.exception.OrderTableException.NotFoundOrderTableException;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTableEventListener {
+public class OrderValidator {
 
     private final OrderTableRepository orderTableRepository;
 
-    public OrderTableEventListener(final OrderTableRepository orderTableRepository) {
+    public OrderValidator(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @EventListener
-    public void validateOrderTable(final OrderCreateValidationEvent orderCreateValidationEvent) {
-        final Long orderTableId = orderCreateValidationEvent.getOrderTableId();
+    public void validateCreate(final Long orderTableId) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NotFoundOrderTableException::new);
 

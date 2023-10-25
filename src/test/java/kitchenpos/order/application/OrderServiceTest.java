@@ -27,7 +27,6 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemsResponse;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
-import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
@@ -95,27 +94,6 @@ class OrderServiceTest extends ServiceTest {
                 softly.assertThat(response.getOrderedTime()).isNotNull();
                 softly.assertThat(response.getOrderLineItems()).isNotNull();
             });
-        }
-
-        @Test
-        @DisplayName("주문 생성 이벤트가 발행된다.")
-        void publishOrderCreateEvent() {
-            // given
-            final OrderCreateRequest orderCreateRequest = ORDER1_CREATE_REQUEST();
-            final MenuGroup menuGroup = new MenuGroup(MENU_GROUP1_NAME);
-            final MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-            final Product savedProduct1 = productRepository.save(PRODUCT1());
-            final Product savedProduct2 = productRepository.save(PRODUCT2());
-            final MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), MENU_PRODUCT1_QUANTITY);
-            final MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), MENU_PRODUCT2_QUANTITY);
-            menuRepository.save(new Menu(MENU1_NAME, MENU1_PRICE, savedMenuGroup, List.of(menuProduct1, menuProduct2)));
-            orderTableRepository.save(new OrderTable(ORDER_TABLE1_NUMBER_OF_GUESTS, false));
-
-            // when
-            orderService.create(orderCreateRequest);
-
-            // then
-            assertThat(applicationEvents.stream(OrderCreateValidationEvent.class).count()).isEqualTo(1);
         }
     }
 

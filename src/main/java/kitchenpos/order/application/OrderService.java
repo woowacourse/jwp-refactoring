@@ -12,25 +12,24 @@ import kitchenpos.order.application.dto.OrderCreateRequest;
 import kitchenpos.order.application.dto.OrderLineItemRequest;
 import kitchenpos.order.application.dto.OrderResponse;
 import kitchenpos.order.application.dto.OrdersResponse;
-import kitchenpos.order.application.event.OrderCreateValidationEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.exception.OrderException;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final OrderValidator orderValidator;
 
     public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository,
-                        final ApplicationEventPublisher eventPublisher) {
+                        final OrderValidator orderValidator) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.eventPublisher = eventPublisher;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
@@ -41,7 +40,7 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         final Long orderTableId = request.getOrderTableId();
-        eventPublisher.publishEvent(new OrderCreateValidationEvent(orderTableId));
+        orderValidator.validateCreate(orderTableId);
 
         final Order order = Order.from(orderTableId, orderLineItemRequests.size(), menuRepository.countByIdIn(menuIds));
         final Order savedOrder = orderRepository.save(order);
@@ -55,7 +54,8 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             final Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(NotFoundMenuException::new);
-            final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), orderLineItemRequest.getQuantity());
+            final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(),
+                    orderLineItemRequest.getQuantity());
             orderLineItem.confirmOrder(savedOrder);
         }
     }
