@@ -1,12 +1,20 @@
 package kitchenpos.ui.request;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 public class MenuCreateRequest {
 
+    @NotNull
     private String name;
+
+    @NotNull
     private Long price;
+
+    @NotNull
     private Long menuGroupId;
+
+    @NotNull
     private List<MenuProductCreateRequest> menuProducts;
 
     public MenuCreateRequest() {

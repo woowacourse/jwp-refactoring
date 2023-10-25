@@ -1,8 +1,12 @@
 package kitchenpos.ui.request;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductCreateRequest {
 
+    @NotNull
     private String name;
+    @NotNull
     private Long price;
 
     public ProductCreateRequest() {

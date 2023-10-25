@@ -1,8 +1,12 @@
 package kitchenpos.ui.request;
 
+import javax.validation.constraints.NotNull;
+
 public class OrderTableCreateRequest {
 
+    @NotNull
     private Integer numberOfGuests;
+    @NotNull
     private boolean empty;
 
     public OrderTableCreateRequest() {

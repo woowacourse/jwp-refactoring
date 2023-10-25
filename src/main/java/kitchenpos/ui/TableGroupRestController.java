@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import java.net.URI;
+import javax.validation.Valid;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.TableGroupCreateRequest;
@@ -21,7 +22,7 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroup> create(@RequestBody TableGroupCreateRequest request) {
+    public ResponseEntity<TableGroup> create(@RequestBody @Valid TableGroupCreateRequest request) {
         TableGroup response = tableGroupService.create(request);
         URI uri = URI.create("/api/table-groups/" + response.getId());
 
