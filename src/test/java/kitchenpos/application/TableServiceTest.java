@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.빈_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -19,19 +18,14 @@ class TableServiceTest extends IntegrationTest {
 
     @Autowired
     private TableService tableService;
-    @Autowired
-    private TableGroupService tableGroupService;
 
     @Test
     @DisplayName("주문 테이블 등록 시 전달받은 정보를 새 id로 저장한다.")
     void 주문_테이블_등록_성공_저장() {
         // given
-        final OrderTable orderTable = 빈_테이블_생성();
-
-        // when
         final OrderTable saved = tableService.create(new OrderTableCreateRequest(0, true));
 
-        // then
+        // expected
         assertThat(tableService.list())
                 .map(OrderTable::getId)
                 .filteredOn(id -> Objects.equals(id, saved.getId()))
