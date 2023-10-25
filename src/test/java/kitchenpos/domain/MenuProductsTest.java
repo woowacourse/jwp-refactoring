@@ -17,8 +17,8 @@ class MenuProductsTest {
     void create() {
         //given
         final Product product = new Product("이름", new Price(new BigDecimal(1000)));
-        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
+        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
+        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
 
         //when && then
         Assertions.assertDoesNotThrow(() -> new MenuProducts(List.of(menuProduct1, menuProduct2), new BigDecimal(1000)));
@@ -28,8 +28,8 @@ class MenuProductsTest {
     void validateSum() {
         //given
         final Product product = new Product("이름", new Price(new BigDecimal(1000)));
-        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
+        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
+        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1L);
 
         //when && then
         assertThatThrownBy(() -> new MenuProducts(List.of(menuProduct1, menuProduct2), new BigDecimal(10000)))

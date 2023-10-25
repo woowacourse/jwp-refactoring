@@ -22,11 +22,11 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(final Long productId, final String name, final Price price, final long quantity) {
+    public MenuProduct(final Long productId, final String name, final Price price, final Long quantity) {
         this(null, productId, name, price, quantity);
     }
 
-    public MenuProduct(Long seq, Long productId, String name, Price price, long quantity) {
+    public MenuProduct(final Long seq, final Long productId, final String name, final Price price, final Long quantity) {
         this.seq = seq;
         this.productId = productId;
         this.name = name;

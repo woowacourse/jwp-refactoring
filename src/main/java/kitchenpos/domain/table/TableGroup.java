@@ -54,3 +54,6 @@ public class TableGroup {
         return orderTables.getOrderTables();
     }
 }
+
+//이 과정에서, 도메인 객체가 다른 도메인과 협력을 통해 검증해야 되는 경우에만 Validator를 사용하도록 했어요.
+//즉, 객체 내부에서 검증할 수 있는 부분은 별도의 `Validator를 사용하지 않았습니다 !
