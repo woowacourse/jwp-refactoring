@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.vo.Quantity;
 
 import javax.persistence.Embedded;

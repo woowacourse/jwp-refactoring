@@ -1,8 +1,8 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.Quantity;
@@ -10,7 +10,7 @@ import kitchenpos.dto.OrderCreateOrderLineItemRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

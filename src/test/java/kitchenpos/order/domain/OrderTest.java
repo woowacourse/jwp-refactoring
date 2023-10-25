@@ -1,5 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
@@ -57,7 +62,7 @@ class OrderTest {
     void success_addOrderLineItems() {
         // given
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
-        final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
+        final Menu menu = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
 
         final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
         final Order order = Order.ofEmptyOrderLineItems(orderTable);

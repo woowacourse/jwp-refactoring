@@ -1,5 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.vo.Name;
 import kitchenpos.domain.vo.Price;
 import kitchenpos.domain.vo.Quantity;
@@ -16,7 +19,7 @@ class OrderLineItemTest {
     void success_create() {
         // given
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
-        final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
+        final Menu menu = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
 
         final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);;
         final Order order = Order.ofEmptyOrderLineItems(orderTable);
@@ -31,7 +34,7 @@ class OrderLineItemTest {
     void success_ofWithoutOrder() {
         // given
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
-        final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
+        final Menu menu = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
 
         // expect
         assertThatCode(() -> OrderLineItem.withoutOrder(menu, new Quantity(10)))
@@ -43,7 +46,7 @@ class OrderLineItemTest {
     void success_assignOrder() {
         // given
         final MenuGroup menuGroup = new MenuGroup(new Name("테스트용 메뉴 그룹명"));
-        final Menu menu = new Menu(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup, MenuProducts.empty());
+        final Menu menu = Menu.withEmptyMenuProducts(new Name("테스트용 메뉴명"), Price.ZERO, menuGroup);
 
         // when
         final OrderLineItem orderLineItem = OrderLineItem.withoutOrder(menu, new Quantity(10));
