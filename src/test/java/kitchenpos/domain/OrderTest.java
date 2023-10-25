@@ -98,16 +98,17 @@ class OrderTest {
             assertThat(order.getOrderStatus()).isEqualTo(orderStatus);
         }
 
-        @DisplayName("[EXCEPTION] 주문 완료 상태에서 주문 완료 상태로 변경할 경우 예외가 발생한다.")
-        @Test
-        void throwException_when_changeOrderStatus_Completion_to_Completion() {
+        @DisplayName("[EXCEPTION] 주문 완료 상태에서 주문 상태를 변경할 경우 예외가 발생한다.")
+        @ParameterizedTest
+        @EnumSource(OrderStatus.class)
+        void throwException_when_changeOrderStatus_Completion_to_Completion(final OrderStatus orderStatus) {
             // given
             final OrderTable orderTable = OrderTable.withoutTableGroup(10, false);
             final Order order = Order.ofEmptyOrderLineItems(orderTable);
             order.changeOrderStatus(OrderStatus.COMPLETION);
 
             // expect
-            assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COMPLETION))
+            assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
