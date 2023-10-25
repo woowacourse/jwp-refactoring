@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 
 public class InMemoryMenuGroupDao implements MenuGroupDao {
 
@@ -12,9 +12,10 @@ public class InMemoryMenuGroupDao implements MenuGroupDao {
 
     @Override
     public MenuGroup save(final MenuGroup entity) {
-        entity.setId((long) (menuGroups.size() + 1));
-        menuGroups.add(entity);
-        return entity;
+        final var id = (long) (menuGroups.size() + 1);
+        final var saved = new MenuGroup(id, entity.getName());
+        menuGroups.add(saved);
+        return saved;
     }
 
     @Override

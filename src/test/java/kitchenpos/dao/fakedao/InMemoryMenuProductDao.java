@@ -3,9 +3,8 @@ package kitchenpos.dao.fakedao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menuproduct.MenuProduct;
 
 public class InMemoryMenuProductDao implements MenuProductDao {
 
@@ -13,9 +12,10 @@ public class InMemoryMenuProductDao implements MenuProductDao {
 
     @Override
     public MenuProduct save(final MenuProduct entity) {
-        entity.setSeq((long) (menuProducts.size() + 1));
-        menuProducts.add(entity);
-        return entity;
+        final var id = (long) (menuProducts.size() + 1);
+        final var saved = new MenuProduct(id, entity.getProduct(), entity.getQuantity());
+        menuProducts.add(saved);
+        return saved;
     }
 
     @Override
@@ -28,12 +28,5 @@ public class InMemoryMenuProductDao implements MenuProductDao {
     @Override
     public List<MenuProduct> findAll() {
         return menuProducts;
-    }
-
-    @Override
-    public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        return menuProducts.stream()
-                           .filter(menuProduct -> menuProduct.getMenuId().equals(menuId))
-                           .collect(Collectors.toList());
     }
 }

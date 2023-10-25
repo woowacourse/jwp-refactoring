@@ -1,13 +1,13 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.menugroup.MenuGroup;
+
 public final class MenuGroupFactory {
 
     private MenuGroupFactory() {
     }
 
     public static MenuGroup createMenuGroupOf(final String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(name);
     }
 }

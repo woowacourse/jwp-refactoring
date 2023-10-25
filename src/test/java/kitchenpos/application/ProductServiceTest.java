@@ -7,8 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.fakedao.InMemoryProductDao;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductFactory;
+import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,10 +34,10 @@ class ProductServiceTest {
             final var productService = new ProductService(fakeProductDao);
             final var validName = "validName";
             final var validPrice = BigDecimal.valueOf(1000);
-            final var productWithValidNameAndPrice = ProductFactory.createProductOf(validName, validPrice);
+            final var productWithValidNameAndPrice = new ProductCreateRequest(validName, validPrice);
 
             // when
-            final ThrowingSupplier<Product> throwingSupplier = () -> productService.create(productWithValidNameAndPrice);
+            final ThrowingSupplier<ProductResponse> throwingSupplier = () -> productService.create(productWithValidNameAndPrice);
 
             // then
             assertDoesNotThrow(throwingSupplier);
@@ -59,9 +60,9 @@ class ProductServiceTest {
             // then
             assertAll(
                     () -> assertThat(products).hasSize(2),
-                    () -> assertThat(products).extracting(Product::getName)
+                    () -> assertThat(products).extracting(ProductResponse::getName)
                                               .containsExactlyInAnyOrder("validName", "validName2"),
-                    () -> assertThat(products).extracting(Product::getPrice)
+                    () -> assertThat(products).extracting(ProductResponse::getPrice)
                                               .containsExactlyInAnyOrder(BigDecimal.valueOf(1000), BigDecimal.valueOf(1000))
             );
         }

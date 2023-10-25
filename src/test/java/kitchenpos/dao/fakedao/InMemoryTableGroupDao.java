@@ -12,9 +12,10 @@ public class InMemoryTableGroupDao implements TableGroupDao {
 
     @Override
     public TableGroup save(final TableGroup entity) {
-        entity.setId((long) (tableGroups.size() + 1));
-        tableGroups.add(entity);
-        return entity;
+        final var id = (long) (tableGroups.size() + 1);
+        final var saved = new TableGroup(id, entity.getOrderTables(), entity.getCreatedDate());
+        tableGroups.add(saved);
+        return saved;
     }
 
     @Override

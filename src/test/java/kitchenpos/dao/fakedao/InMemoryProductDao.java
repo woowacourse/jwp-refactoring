@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 public class InMemoryProductDao implements ProductDao {
 
@@ -12,9 +12,10 @@ public class InMemoryProductDao implements ProductDao {
 
     @Override
     public Product save(final Product entity) {
-        entity.setId((long) (products.size() + 1));
-        products.add(entity);
-        return entity;
+        final var id = (products.size() + 1);
+        final var saved = new Product((long) id, entity.getName(), entity.getPrice());
+        products.add(saved);
+        return saved;
     }
 
     @Override

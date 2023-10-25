@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 
 public class InMemoryMenuDao implements MenuDao {
 
@@ -12,9 +12,10 @@ public class InMemoryMenuDao implements MenuDao {
 
     @Override
     public Menu save(final Menu entity) {
-        entity.setId((long) (menus.size() + 1));
-        menus.add(entity);
-        return entity;
+        final var id = (long) (menus.size() + 1);
+        final var saved = new Menu(id, entity.getName(), entity.getPrice(), entity.getMenuProducts(), entity.getMenuGroup());
+        menus.add(saved);
+        return saved;
     }
 
     @Override
@@ -27,12 +28,5 @@ public class InMemoryMenuDao implements MenuDao {
     @Override
     public List<Menu> findAll() {
         return menus;
-    }
-
-    @Override
-    public long countByIdIn(final List<Long> ids) {
-        return menus.stream()
-                    .filter(menu -> ids.contains(menu.getId()))
-                    .count();
     }
 }
