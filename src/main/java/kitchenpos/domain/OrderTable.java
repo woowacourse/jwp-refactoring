@@ -30,7 +30,7 @@ public class OrderTable {
     private boolean empty;
 
     @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     public OrderTable() {
     }
@@ -92,5 +92,13 @@ public class OrderTable {
             return false;
         }
         return true;
+    }
+
+    public NumberOfGuests getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 }

@@ -33,6 +33,14 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
     public Product getProduct() {
         return product;
     }

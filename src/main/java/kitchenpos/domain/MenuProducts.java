@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
@@ -40,5 +41,9 @@ public class MenuProducts {
         }
 
         return sum;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return Collections.unmodifiableList(menuProducts);
     }
 }

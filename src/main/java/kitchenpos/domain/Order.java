@@ -74,4 +74,16 @@ public class Order {
     public boolean isCompleted() {
         return OrderStatus.COMPLETION.equals(orderStatus);
     }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public OrderLineItems getOrderLineItems() {
+        return orderLineItems;
+    }
 }

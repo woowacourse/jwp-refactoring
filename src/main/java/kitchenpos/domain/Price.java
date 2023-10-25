@@ -2,10 +2,13 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Price implements Comparable<Price>{
+@Access(value = AccessType.FIELD)
+public class Price implements Comparable<Price> {
 
     private BigDecimal price;
 
@@ -42,5 +45,9 @@ public class Price implements Comparable<Price>{
     @Override
     public int compareTo(final Price other) {
         return price.compareTo(other.price);
+    }
+
+    public BigDecimal getPrice() {
+        return price;
     }
 }

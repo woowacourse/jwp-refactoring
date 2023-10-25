@@ -43,4 +43,8 @@ public class TableGroup {
     public void ungroup() {
         orderTables.ungroup();
     }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
 }

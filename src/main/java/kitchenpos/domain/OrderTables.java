@@ -57,4 +57,8 @@ public class OrderTables {
             throw new IllegalArgumentException("계산을 완료한 테이블만 단체 지정을 해제할 수 있습니다.");
         }
     }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
+    }
 }

@@ -36,4 +36,20 @@ public class OrderLineItem {
     public void updateOrder(final Order order) {
         this.order = order;
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

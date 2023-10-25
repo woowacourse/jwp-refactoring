@@ -37,14 +37,30 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public void updateMenuProducts(final List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.updateMenu(this);
         }
         this.menuProducts = MenuProducts.of(menuProducts, price);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
+    }
+
+    public MenuProducts getMenuProducts() {
+        return menuProducts;
     }
 }

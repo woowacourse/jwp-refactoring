@@ -1,8 +1,11 @@
 package kitchenpos.domain;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
 @Embeddable
+@Access(value = AccessType.FIELD)
 public class NumberOfGuests {
 
     private int numberOfGuests;
@@ -23,5 +26,9 @@ public class NumberOfGuests {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님의 수는 최소 한명이어야합니다.");
         }
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 }

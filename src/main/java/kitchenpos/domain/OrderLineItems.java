@@ -29,4 +29,8 @@ public class OrderLineItems {
             throw new IllegalArgumentException("최소 하나의 메뉴를 포함해야합니다.");
         }
     }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
+    }
 }
