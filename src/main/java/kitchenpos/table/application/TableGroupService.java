@@ -10,7 +10,6 @@ import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,7 @@ public class TableGroupService {
         List<OrderTable> orderTables = findOrderTables(createTableGroupRequest.getOrderTables());
         tablesValidator.validate(orderTables, createTableGroupRequest);
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup();
         tableGroupRepository.save(tableGroup);
         saveOrderTables(orderTables, tableGroup);
         return CreateTableGroupResponse.of(tableGroup, orderTables);

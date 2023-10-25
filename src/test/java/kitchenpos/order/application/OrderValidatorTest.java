@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ class OrderValidatorTest {
         OrderLineItem orderLineItem = new OrderLineItem(1L, 3);
 
         Long invalidOrderTableId = 9999999L;
-        Order order = new Order(invalidOrderTableId, LocalDateTime.now());
+        Order order = new Order(invalidOrderTableId);
         assertThatThrownBy(() -> orderValidator.validate(order, List.of(orderLineItem)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -60,7 +59,7 @@ class OrderValidatorTest {
 
         OrderLineItem orderLineItem1 = new OrderLineItem(1L, 3);
         OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2);
-        Order order = new Order(1L, LocalDateTime.now());
+        Order order = new Order(1L);
 
         given(menuRepository.countByIdIn(anyList()))
                 .willReturn(1L);

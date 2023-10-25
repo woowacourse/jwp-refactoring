@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +78,7 @@ class TableGroupServiceTest {
     void 합치려는_테이블이_속한_테이블_그룹이_있으면_예외발생() {
         // given
         OrderTable orderTable1 = new OrderTable(1, true);
-        orderTable1.changeTableGroup(new TableGroup(LocalDateTime.now()));
+        orderTable1.changeTableGroup(new TableGroup());
 
         OrderTable orderTable2 = new OrderTable(2, true);
 

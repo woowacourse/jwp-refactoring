@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -75,7 +74,7 @@ class TableServiceTest {
     void 상태를_바꾸려는_테이블의_테이블_그룹이_존재하면_예외발생() {
         // given
         OrderTable orderTable = new OrderTable(3, false);
-        orderTable.changeTableGroup(new TableGroup(LocalDateTime.now()));
+        orderTable.changeTableGroup(new TableGroup());
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 

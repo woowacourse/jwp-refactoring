@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -131,7 +130,7 @@ class OrderServiceTest {
     @Test
     void 상태를_변경하려는_주문이_이미_완료_상태면_예외발생() {
         // given
-        Order order = new Order(1L, LocalDateTime.now());
+        Order order = new Order(1L);
         order.changeOrderStatus(OrderStatus.COMPLETION);
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
@@ -145,7 +144,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_변경한다() {
         // given
-        Order order = new Order(1L, LocalDateTime.now());
+        Order order = new Order(1L);
         order.changeOrderStatus(OrderStatus.MEAL);
 
         given(orderRepository.findById(anyLong()))

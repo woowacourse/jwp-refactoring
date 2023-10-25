@@ -22,14 +22,13 @@ public class Order {
 
     @Enumerated(STRING)
     private OrderStatus orderStatus = OrderStatus.COOKING;
-    private LocalDateTime orderedTime;
+    private LocalDateTime orderedTime = LocalDateTime.now();
 
     protected Order() {
     }
 
-    public Order(Long orderTableId, LocalDateTime orderedTime) {
+    public Order(Long orderTableId) {
         this.orderTableId = orderTableId;
-        this.orderedTime = orderedTime;
     }
 
     public boolean isCompleted() {

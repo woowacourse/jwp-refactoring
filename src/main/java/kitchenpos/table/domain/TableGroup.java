@@ -13,18 +13,13 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
-    protected TableGroup() {
+    public TableGroup() {
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate) {
+    public TableGroup(Long id) {
         this.id = id;
-        this.createdDate = createdDate;
-    }
-
-    public TableGroup(LocalDateTime createdDate) {
-        this(null, createdDate);
     }
 
     public Long getId() {

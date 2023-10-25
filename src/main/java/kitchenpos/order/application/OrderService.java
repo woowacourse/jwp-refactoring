@@ -12,7 +12,6 @@ import kitchenpos.order.domain.OrderStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(CreateOrderRequest createOrderRequest) {
-        Order order = new Order(createOrderRequest.getOrderTableId(), LocalDateTime.now());
+        Order order = new Order(createOrderRequest.getOrderTableId());
         List<OrderLineItem> orderLineItems = extractOrderLineItems(createOrderRequest);
 
         orderValidator.validate(order, orderLineItems);

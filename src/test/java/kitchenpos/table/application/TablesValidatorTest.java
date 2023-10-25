@@ -6,7 +6,6 @@ import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +55,7 @@ class TablesValidatorTest {
         OrderTable notEmptyOrderTable1 = new OrderTable(3, false);
         OrderTable notEmptyOrderTable2 = new OrderTable(3, false);
 
-        notEmptyOrderTable1.changeTableGroup(new TableGroup(LocalDateTime.now()));
+        notEmptyOrderTable1.changeTableGroup(new TableGroup());
 
         assertThatThrownBy(() -> tablesValidator.validate(List.of(notEmptyOrderTable1, notEmptyOrderTable2), createTableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
