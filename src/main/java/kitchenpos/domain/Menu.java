@@ -31,7 +31,8 @@ public class Menu {
     @JoinColumn(name = "MENU_GROUP_ID")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "MENU_ID", nullable = false, updatable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
@@ -58,7 +59,6 @@ public class Menu {
     }
 
     private void addMenuProduct(final MenuProduct menuProduct) {
-        menuProduct.setMenu(this);
         menuProducts.add(menuProduct);
     }
 

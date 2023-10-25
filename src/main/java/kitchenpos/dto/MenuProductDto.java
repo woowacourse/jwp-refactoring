@@ -16,8 +16,8 @@ public class MenuProductDto {
         this.quantity = quantity;
     }
 
-    public static MenuProductDto toDto(final MenuProduct menuProduct) {
-        return new MenuProductDto(menuProduct.getSeq(), menuProduct.getMenu().getId(), menuProduct.getProduct().getId(),
+    public static MenuProductDto toDto(final MenuProduct menuProduct, final Long menuId) {
+        return new MenuProductDto(menuProduct.getSeq(), menuId, menuProduct.getProduct().getId(),
                 menuProduct.getQuantity());
     }
 

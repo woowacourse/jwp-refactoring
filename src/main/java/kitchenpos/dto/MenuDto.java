@@ -23,8 +23,8 @@ public class MenuDto {
     }
 
     public static MenuDto toDto(final Menu menu) {
-        final List<MenuProductDto> menuProductDtos = menu.getMenuProducts()
-                .stream().map(MenuProductDto::toDto)
+        final List<MenuProductDto> menuProductDtos = menu.getMenuProducts().stream()
+                .map(menuProduct -> MenuProductDto.toDto(menuProduct, menu.getId()))
                 .collect(Collectors.toList());
         return new MenuDto(menu.getId(), menu.getName(), menu.getPrice().getValue(), menu.getMenuGroup().getId(), menuProductDtos);
     }
