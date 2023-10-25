@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.tablegroup.application;
 
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.order.domain.Order;
@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

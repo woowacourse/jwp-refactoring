@@ -6,12 +6,12 @@ import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.order.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.tablegroup.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,11 +1,11 @@
-package kitchenpos.ui;
+package kitchenpos.tablegroup.presentation;
 
 import io.restassured.RestAssured;
-import kitchenpos.application.TableGroupService;
+import kitchenpos.tablegroup.application.TableGroupService;
 import kitchenpos.common.controller.ControllerTest;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.repository.OrderTableRepository;
-import kitchenpos.ui.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.presentation.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.tablegroup.presentation.dto;
 
 import org.springframework.util.CollectionUtils;
 
