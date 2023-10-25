@@ -7,7 +7,7 @@ import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.tablegroup.domain.TableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

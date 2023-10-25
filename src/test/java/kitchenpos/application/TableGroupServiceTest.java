@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.ServiceTest;
 import kitchenpos.order.domain.Order;
-import kitchenpos.table.application.TableGroupService;
-import kitchenpos.table.application.dto.TableGroupCreateRequest;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequest;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
