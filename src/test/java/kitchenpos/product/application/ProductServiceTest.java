@@ -1,8 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import kitchenpos.common.service.ServiceTest;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.repository.ProductRepository;
+import kitchenpos.product.application.ProductService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

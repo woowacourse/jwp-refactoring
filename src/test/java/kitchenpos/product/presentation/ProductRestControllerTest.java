@@ -1,8 +1,8 @@
-package kitchenpos.ui;
+package kitchenpos.product.presentation;
 
 import io.restassured.RestAssured;
 import kitchenpos.common.controller.ControllerTest;
-import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.product.presentation.dto.ProductCreateRequest;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

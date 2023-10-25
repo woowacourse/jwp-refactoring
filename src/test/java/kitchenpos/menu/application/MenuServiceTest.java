@@ -3,10 +3,10 @@ package kitchenpos.menu.application;
 import kitchenpos.common.service.ServiceTest;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import kitchenpos.menugroup.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.product.domain.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
