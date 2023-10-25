@@ -62,6 +62,12 @@ public class OrderService {
         return savedOrderLineItems;
     }
 
+    @Transactional
+    public Order findById(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
+    }
+
     @Transactional(readOnly = true)
     public List<Order> findAll() {
         return orderRepository.findAll();
@@ -70,8 +76,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId,
                                    final String orderStatus) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = findById(orderId);
         savedOrder.changeOrderStatus(OrderStatus.valueOf(orderStatus));
 
         return savedOrder;
