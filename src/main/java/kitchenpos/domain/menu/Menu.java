@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.exception.InvalidPriceException;
@@ -26,7 +27,7 @@ public class Menu {
     private MenuName name;
 
     @Embedded
-    private MenuPrice price;
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id", nullable = false)
@@ -47,7 +48,7 @@ public class Menu {
         this.name = new MenuName(name);
         this.menuProducts = menuProducts;
         menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
-        this.price = new MenuPrice(price);
+        this.price = new Price(price);
         this.menuGroup = menuGroup;
         validateValueLessThanProductTotalPrice(price, calculateMenuProductTotalPrice());
     }

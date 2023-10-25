@@ -1,4 +1,4 @@
-package kitchenpos.domain.product;
+package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import javax.persistence.Column;
@@ -6,17 +6,21 @@ import javax.persistence.Embeddable;
 import kitchenpos.exception.InvalidPriceException;
 
 @Embeddable
-public class ProductPrice {
+public class Price {
 
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 
-    protected ProductPrice() {
+    protected Price() {
     }
 
-    public ProductPrice(final BigDecimal value) {
+    public Price(final BigDecimal value) {
         validate(value);
         this.value = value;
+    }
+
+    public Price(final Price price) {
+        this.value = price.value;
     }
 
     private void validate(final BigDecimal value) {
