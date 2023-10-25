@@ -2,6 +2,7 @@ package kitchenpos.repository;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
@@ -63,7 +64,7 @@ class OrderRepositoryTest {
         @Test
         void 주문_테이블_아이디가_동일하고_모든_주문_상태_포함되는_주문이_존재한다면_참을_반환한다() {
             // given
-            final List<String> orderStatus = List.of(COOKING.name(), MEAL.name(), COMPLETION.name());
+            final List<OrderStatus> orderStatus = List.of(COOKING, MEAL, COMPLETION);
 
             // when
             final boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), orderStatus);
@@ -75,7 +76,7 @@ class OrderRepositoryTest {
         @Test
         void 주문_테이블_아이디가_동일하지만_주문_상태_목록에_포함되지_않는_주문은_거짓을_반환한다() {
             // given
-            final List<String> orderStatus = List.of(MEAL.name(), COMPLETION.name());
+            final List<OrderStatus> orderStatus = List.of(MEAL, COMPLETION);
 
             // when
             final boolean actual = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), orderStatus);
@@ -87,7 +88,7 @@ class OrderRepositoryTest {
         @Test
         void 주문_테이블_아이디가_동일한_주문이_존재하지_않는다면_거짓을_반환한다() {
             // given
-            final List<String> orderStatus = List.of(COOKING.name(), MEAL.name(), COMPLETION.name());
+            final List<OrderStatus> orderStatus = List.of(COOKING, MEAL, COMPLETION);
             final long unsavedId = 999L;
 
             // when
@@ -116,7 +117,7 @@ class OrderRepositoryTest {
         void 주문_테이블_아이디_목록이_모두_존재하고_모든_주문_상태_포함되는_주문이_존재한다면_참을_반환한다() {
             // given
             final List<Long> orderTableIds = OrderTableFixture.주문_테이블_엔티티의_아이디들(orderTables);
-            final List<String> orderStatus = List.of(COOKING.name(), MEAL.name(), COMPLETION.name());
+            final List<OrderStatus> orderStatus = List.of(COOKING, MEAL, COMPLETION);
 
             // when
             final boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatus);
@@ -129,7 +130,7 @@ class OrderRepositoryTest {
         void 주문_테이블_아이디는_모두_동일하지만_주문_상태_목록에_포함되지_않는_주문은_거짓을_반환한다() {
             // given
             final List<Long> orderTableIds = OrderTableFixture.주문_테이블_엔티티의_아이디들(orderTables);
-            final List<String> orderStatus = List.of(MEAL.name(), COMPLETION.name());
+            final List<OrderStatus> orderStatus = List.of(MEAL, COMPLETION);
 
             // when
             final boolean actual = orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatus);
@@ -141,7 +142,7 @@ class OrderRepositoryTest {
         @Test
         void 주문_테이블_아이디가_모두_존재하지_않는다면_거짓을_반환한다() {
             // given
-            final List<String> orderStatus = List.of(COOKING.name(), MEAL.name(), COMPLETION.name());
+            final List<OrderStatus> orderStatus = List.of(COOKING, MEAL, COMPLETION);
             final long unsavedId = 999L;
             final List<Long> orderTableIds = List.of(unsavedId);
 

@@ -6,6 +6,8 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -29,7 +31,8 @@ public class Order {
     @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_order_table"))
     private OrderTable orderTable;
 
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     private LocalDateTime orderedTime;
 
@@ -40,7 +43,7 @@ public class Order {
 
     public Order(
             final OrderTable orderTable,
-            final String orderStatus,
+            final OrderStatus orderStatus,
             final LocalDateTime orderedTime
     ) {
         this.orderTable = orderTable;
@@ -50,7 +53,7 @@ public class Order {
 
     public Order(
             final OrderTable orderTable,
-            final String orderStatus,
+            final OrderStatus orderStatus,
             final LocalDateTime now,
             final List<OrderLineItem> orderLineItems
     ) {
@@ -62,7 +65,7 @@ public class Order {
 
     public static Order of(
             final OrderTable orderTable,
-            final String orderStatus,
+            final OrderStatus orderStatus,
             final LocalDateTime now,
             final List<OrderLineItem> orderLineItems
     ) {
@@ -101,11 +104,11 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void updateOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

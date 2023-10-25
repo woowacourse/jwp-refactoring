@@ -32,6 +32,6 @@ public class OrderRequest {
             final LocalDateTime now,
             final List<OrderLineItem> orderLineItems
     ) {
-        return Order.of(orderTable, orderStatus.name(), now, orderLineItems);
+        return Order.of(orderTable, OrderStatus.valueOf(orderStatus.name()), now, orderLineItems);
     }
 }

@@ -104,13 +104,13 @@ public class OrderService {
                                                 .orElseThrow(() -> new NotFoundOrderException("해당 주문이 존재하지 않습니다."));
 
         validateOrderStatus(order);
-        order.updateOrderStatus(changeStatusRequest.getOrderStatus());
+        order.updateOrderStatus(OrderStatus.valueOf(changeStatusRequest.getOrderStatus()));
 
         return OrderResponse.from(order);
     }
 
     private static void validateOrderStatus(final Order order) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, order.getOrderStatus())) {
             throw new InvalidOrderStatusToChangeException("주문이 상태가 계산 완료라면 상태를 변경할 수 없다.");
         }
     }

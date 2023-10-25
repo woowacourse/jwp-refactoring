@@ -73,7 +73,7 @@ public class TableGroupService {
 
     private void validateOrdersToUngroup(final List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))
         ) {
             throw new NotAllowedUngroupException("단체 지정을 해제할 수 없는 주문이 존재합니다.");
         }

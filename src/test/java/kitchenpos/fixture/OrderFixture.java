@@ -19,7 +19,7 @@ public class OrderFixture {
     private static final long DEFAULT_QUANTITY = 1L;
 
     public static Order 조리_상태의_주문_엔티티_생성(final OrderTable orderTable, final Menu menu) {
-        final Order 주문 = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Order 주문 = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         final OrderLineItem 주문_항목 = new OrderLineItem(주문, menu, DEFAULT_QUANTITY);
         주문.updateOrderLineItems(List.of(주문_항목));
 
@@ -37,7 +37,7 @@ public class OrderFixture {
     }
 
     public static Order 식사_상태의_주문_엔티티_생성(final OrderTable orderTable, final Menu menu) {
-        final Order 주문 = new Order(orderTable, OrderStatus.MEAL.name(), LocalDateTime.now());
+        final Order 주문 = new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now());
         final OrderLineItem 주문_항목 = new OrderLineItem(주문, menu, DEFAULT_QUANTITY);
         주문.updateOrderLineItems(List.of(주문_항목));
 
@@ -45,7 +45,7 @@ public class OrderFixture {
     }
 
     public static Order 계산_완료_상태의_주문_생성(final OrderTable orderTable, final Menu menu) {
-        final Order 주문 = new Order(orderTable, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        final Order 주문 = new Order(orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
         final OrderLineItem 주문_항목 = new OrderLineItem(주문, menu, DEFAULT_QUANTITY);
         주문.updateOrderLineItems(List.of(주문_항목));
 

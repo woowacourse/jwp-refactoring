@@ -33,7 +33,7 @@ public class OrderResponse {
         return new OrderResponse(
                 savedOrder.getId(),
                 savedOrder.getOrderTable().getId(),
-                savedOrder.getOrderStatus(),
+                savedOrder.getOrderStatus().name(),
                 savedOrder.getOrderedTime(),
                 convertToIds(savedOrder.getOrderLineItems())
         );
