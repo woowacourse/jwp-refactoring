@@ -1,7 +1,8 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.BaseTest;
-import kitchenpos.exception.MenuPriceException;
+import kitchenpos.menu.exception.MenuPriceException;
+import kitchenpos.menu.domain.MenuPrice;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

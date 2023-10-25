@@ -1,7 +1,8 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.BaseTest;
-import kitchenpos.exception.MenuProductQuantityException;
+import kitchenpos.menu.exception.MenuProductQuantityException;
+import kitchenpos.menu.domain.MenuProductQuantity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

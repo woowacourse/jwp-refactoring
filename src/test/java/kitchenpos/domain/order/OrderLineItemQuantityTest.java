@@ -1,7 +1,8 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.BaseTest;
-import kitchenpos.exception.OrderLineItemQuantityException;
+import kitchenpos.order.exception.OrderLineItemQuantityException;
+import kitchenpos.order.domain.OrderLineItemQuantity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

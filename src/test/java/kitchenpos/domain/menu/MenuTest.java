@@ -1,10 +1,11 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.BaseTest;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductName;
-import kitchenpos.domain.product.ProductPrice;
-import kitchenpos.exception.MenuException;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductName;
+import kitchenpos.product.domain.ProductPrice;
+import kitchenpos.menu.exception.MenuException;
+import kitchenpos.menu.domain.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

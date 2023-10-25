@@ -1,15 +1,10 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupName;
-import kitchenpos.domain.menu.MenuName;
-import kitchenpos.domain.menu.MenuPrice;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.MenuProductQuantity;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductName;
-import kitchenpos.domain.product.ProductPrice;
+import kitchenpos.menu.domain.*;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductName;
+import kitchenpos.product.domain.ProductPrice;
+import kitchenpos.product.domain.ProductRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

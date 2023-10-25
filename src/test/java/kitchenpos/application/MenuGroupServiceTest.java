@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.CreateMenuGroupDto;
-import kitchenpos.application.dto.MenuGroupDto;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupName;
+import kitchenpos.menu.application.dto.CreateMenuGroupDto;
+import kitchenpos.menu.application.dto.MenuGroupDto;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.domain.MenuGroupRepository;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupName;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;

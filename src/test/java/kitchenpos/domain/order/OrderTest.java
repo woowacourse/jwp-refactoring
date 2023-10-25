@@ -1,7 +1,9 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.BaseTest;
-import kitchenpos.exception.OrderException;
+import kitchenpos.order.exception.OrderException;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

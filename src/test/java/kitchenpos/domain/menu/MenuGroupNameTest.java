@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.BaseTest;
+import kitchenpos.menu.domain.MenuGroupName;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

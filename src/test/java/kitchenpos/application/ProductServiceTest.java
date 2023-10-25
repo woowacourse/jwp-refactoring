@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.application.dto.CreateProductDto;
-import kitchenpos.application.dto.ProductDto;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.domain.product.Product;
-import kitchenpos.domain.product.ProductName;
-import kitchenpos.domain.product.ProductPrice;
-import kitchenpos.exception.ProductPriceException;
+import kitchenpos.product.application.dto.CreateProductDto;
+import kitchenpos.product.application.dto.ProductDto;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductName;
+import kitchenpos.product.domain.ProductPrice;
+import kitchenpos.product.exception.ProductPriceException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;

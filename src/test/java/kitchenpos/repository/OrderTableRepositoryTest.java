@@ -1,9 +1,6 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.order.GuestNumber;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.order.domain.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
