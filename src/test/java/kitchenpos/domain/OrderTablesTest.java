@@ -45,7 +45,7 @@ class OrderTablesTest {
 
         //then
         assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isNull(),
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isTrue()
         );
     }

@@ -36,8 +36,8 @@ class TableGroupTest {
 
         //when&then
         assertAll(
-                () -> Assertions.assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
-                () -> Assertions.assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup)
+                () -> Assertions.assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroup.getId()),
+                () -> Assertions.assertThat(orderTable2.getTableGroupId()).isEqualTo(tableGroup.getId())
         );
     }
 }

@@ -33,7 +33,7 @@ public class OrderTables {
         }
 
         for (final OrderTable savedOrderTable : orderTables) {
-            if (savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+            if (savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new DuplicateCreateTableGroup();
             }
         }

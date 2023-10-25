@@ -50,12 +50,12 @@ class OrderTableTest {
         final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(orderTable, orderTable2)));
 
         //when
-        orderTable.changeTableGroup(tableGroup);
+        orderTable.changeTableGroup(tableGroup.getId());
 
         //then
         assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
-                () -> assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup)
+                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroup.getId()),
+                () -> assertThat(orderTable2.getTableGroupId()).isEqualTo(tableGroup.getId())
         );
     }
 
@@ -65,7 +65,7 @@ class OrderTableTest {
         final OrderTable orderTable = new OrderTable(null, 3, false);
         final OrderTable orderTable2 = new OrderTable(null, 3, false);
         final TableGroup tableGroup = new TableGroup(new OrderTables(List.of(orderTable, orderTable2)));
-        orderTable.changeTableGroup(tableGroup);
+        orderTable.changeTableGroup(tableGroup.getId());
 
         //when
         orderTable.ungroup();
@@ -73,9 +73,9 @@ class OrderTableTest {
 
         //then
         assertAll(
-                () -> assertThat(orderTable.getTableGroup()).isNull(),
+                () -> assertThat(orderTable.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable.isEmpty()).isTrue(),
-                () -> assertThat(orderTable2.getTableGroup()).isNull(),
+                () -> assertThat(orderTable2.getTableGroupId()).isNull(),
                 () -> assertThat(orderTable2.isEmpty()).isTrue()
         );
     }

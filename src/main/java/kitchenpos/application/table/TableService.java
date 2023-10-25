@@ -60,7 +60,7 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(OrderTableNotFoundException::new);
-        final OrderTable newOrderTable = new OrderTable(orderTable.getTableGroup(), orderTableRequest.getNumberOfGuest(), orderTableRequest.getEmpty());
+        final OrderTable newOrderTable = new OrderTable(orderTable.getTableGroupId(), orderTableRequest.getNumberOfGuest(), orderTableRequest.getEmpty());
 
         final OrderTable savedOrder = orderTableRepository.save(newOrderTable);
 

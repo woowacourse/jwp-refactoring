@@ -1,8 +1,5 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.OrderTables;
-
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,7 +39,7 @@ public class TableGroup {
     }
 
     private void changeOrderTableTableGroup(final OrderTables orderTables) {
-        orderTables.getOrderTables().forEach(orderTable -> orderTable.changeTableGroup(this));
+        orderTables.getOrderTables().forEach(orderTable -> orderTable.changeTableGroup(this.getId()));
     }
 
     public Long getId() {
