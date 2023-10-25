@@ -40,6 +40,10 @@ public class MenuProduct {
         this.quantity = new Quantity(quantity);
     }
 
+    public BigDecimal calculateTotalPrice() {
+        return price.multiply(quantity);
+    }
+
     public Long getId() {
         return id;
     }
@@ -50,9 +54,5 @@ public class MenuProduct {
 
     public Quantity getQuantity() {
         return quantity;
-    }
-
-    public BigDecimal getPrice() {
-        return price.multiply(quantity);
     }
 }
