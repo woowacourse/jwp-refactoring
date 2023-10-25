@@ -5,8 +5,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class MenuGroupServiceTest {
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
@@ -27,38 +29,37 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         // given
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("메뉴 그룹");
-        given(menuGroupDao.save(any(MenuGroup.class)))
+        final MenuGroup menuGroup = new MenuGroup(1L, "메뉴 그룹");
+        given(menuGroupRepository.save(any(MenuGroup.class)))
             .willReturn(menuGroup);
 
         // when
         // then
-        final MenuGroup result = menuGroupService.create(menuGroup);
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getName()).isEqualTo("메뉴 그룹");
+        final MenuGroupResponse result = menuGroupService.create(new MenuGroupCreateRequest("메뉴 그룹"));
+        assertThat(result.getId()).isEqualTo(menuGroup.getId());
+        assertThat(result.getName()).isEqualTo(menuGroup.getName());
     }
 
     @DisplayName("메뉴 그룹을 조회한다.")
     @Test
-    void func() {
+    void list() {
         // given
         final List<MenuGroup> expectedMenuGroups = List.of(
-            new MenuGroup(),
-            new MenuGroup(),
-            new MenuGroup(),
-            new MenuGroup()
+            new MenuGroup(1L, "메뉴 그룹 1"),
+            new MenuGroup(2L, "메뉴 그룹 2"),
+            new MenuGroup(3L, "메뉴 그룹 3"),
+            new MenuGroup(4L, "메뉴 그룹 4")
         );
-        given(menuGroupDao.findAll())
+        given(menuGroupRepository.findAll())
             .willReturn(expectedMenuGroups);
 
         // when
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 
         // then
         assertThat(menuGroups)
             .usingRecursiveComparison()
+            .comparingOnlyFields("id", "name")
             .isEqualTo(expectedMenuGroups);
         assertThat(menuGroups.size()).isEqualTo(4);
     }
