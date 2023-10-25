@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto.response;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.product.Product;
+import kitchenpos.application.dto.CreateProductDto;
 
 public class CreateProductResponse {
 
@@ -9,14 +9,10 @@ public class CreateProductResponse {
     private final String name;
     private final BigDecimal price;
 
-    public static CreateProductResponse from(final Product product) {
-        return new CreateProductResponse(product.getId(), product.getName(), product.getPrice());
-    }
-
-    private CreateProductResponse(final Long id, final String name, final BigDecimal price) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
+    public CreateProductResponse(final CreateProductDto dto) {
+        this.id = dto.getId();
+        this.name = dto.getName();
+        this.price = dto.getPrice();
     }
 
     public Long getId() {

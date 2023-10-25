@@ -3,7 +3,7 @@ package kitchenpos.ui.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.order.Order;
+import kitchenpos.application.dto.ReadOrderDto;
 
 public class ReadOrderResponse {
 
@@ -13,19 +13,21 @@ public class ReadOrderResponse {
     private final LocalDateTime orderedTime;
     private final List<ReadOrderLineItemResponse> orderLineItems;
 
-    public ReadOrderResponse(final Order order) {
-        this.id = order.getId();
-        this.orderTableId = order.getOrderTableId();
-        this.orderStatus = order.getOrderStatus().name();
-        this.orderedTime = order.getOrderedTime();
-        this.orderLineItems = convertReadOrderLineItems(order);
+    public ReadOrderResponse(final ReadOrderDto dto) {
+        this.id = dto.getId();
+        this.orderTableId = dto.getOrderTableId();
+        this.orderStatus = dto.getOrderStatus().name();
+        this.orderedTime = dto.getOrderedTime();
+        this.orderLineItems = convertReadOrderLineItems(dto);
     }
 
-    private List<ReadOrderLineItemResponse> convertReadOrderLineItems(final Order order) {
-        return order.getOrderLineItems()
-                    .stream()
-                    .map(ReadOrderLineItemResponse::new)
-                    .collect(Collectors.toList());
+    private List<ReadOrderLineItemResponse> convertReadOrderLineItems(final ReadOrderDto readOrderDto) {
+        return readOrderDto.getOrderLineItems()
+                           .stream()
+                           .map(readOrderLineItemDto ->
+                                   new ReadOrderLineItemResponse(readOrderDto, readOrderLineItemDto)
+                           )
+                           .collect(Collectors.toList());
     }
 
     public Long getId() {

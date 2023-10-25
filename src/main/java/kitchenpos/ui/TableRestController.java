@@ -4,14 +4,16 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.application.dto.ChangeEmptyOrderTableDto;
+import kitchenpos.application.dto.ChangeNumberOfGuestsOrderTableDto;
+import kitchenpos.application.dto.CreateOrderTableDto;
 import kitchenpos.ui.dto.request.CreateOrderTableRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableEmptyRequest;
 import kitchenpos.ui.dto.request.UpdateOrderTableNumberOfGuestsRequest;
 import kitchenpos.ui.dto.response.CreateOrderTableResponse;
 import kitchenpos.ui.dto.response.ReadOrderTableResponse;
+import kitchenpos.ui.dto.response.UpdateEmptyOrderTableResponse;
 import kitchenpos.ui.dto.response.UpdateNumberOfGuestsResponse;
-import kitchenpos.ui.dto.response.UpdateOrderTableEmptyResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,9 +33,9 @@ public class TableRestController {
 
     @PostMapping("/api/tables")
     public ResponseEntity<CreateOrderTableResponse> create(@RequestBody final CreateOrderTableRequest request) {
-        final OrderTable created = tableService.create(request);
-        final URI uri = URI.create("/api/tables/" + created.getId());
-        final CreateOrderTableResponse response = new CreateOrderTableResponse(created);
+        final CreateOrderTableDto createOrderTableDto = tableService.create(request);
+        final URI uri = URI.create("/api/tables/" + createOrderTableDto.getId());
+        final CreateOrderTableResponse response = new CreateOrderTableResponse(createOrderTableDto);
 
         return ResponseEntity.created(uri)
                              .body(response);
@@ -51,12 +53,12 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<UpdateOrderTableEmptyResponse> changeEmpty(
+    public ResponseEntity<UpdateEmptyOrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
             @RequestBody final UpdateOrderTableEmptyRequest request
     ) {
-        final OrderTable updated = tableService.changeEmpty(orderTableId, request);
-        final UpdateOrderTableEmptyResponse response = new UpdateOrderTableEmptyResponse(updated);
+        final ChangeEmptyOrderTableDto changeEmptyOrderTableDto = tableService.changeEmpty(orderTableId, request);
+        final UpdateEmptyOrderTableResponse response = new UpdateEmptyOrderTableResponse(changeEmptyOrderTableDto);
 
         return ResponseEntity.ok()
                              .body(response);
@@ -67,8 +69,10 @@ public class TableRestController {
             @PathVariable final Long orderTableId,
             @RequestBody final UpdateOrderTableNumberOfGuestsRequest request
     ) {
-        final OrderTable updated = tableService.changeNumberOfGuests(orderTableId, request);
-        final UpdateNumberOfGuestsResponse response = new UpdateNumberOfGuestsResponse(updated);
+        final ChangeNumberOfGuestsOrderTableDto changeNumberOfGuestsOrderTableDto =
+                tableService.changeNumberOfGuests(orderTableId, request);
+        final UpdateNumberOfGuestsResponse response =
+                new UpdateNumberOfGuestsResponse(changeNumberOfGuestsOrderTableDto);
 
         return ResponseEntity.ok()
                              .body(response);

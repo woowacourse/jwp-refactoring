@@ -1,6 +1,7 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.CreateOrderLineItemDto;
 
 public class CreateOrderLineItemResponse {
 
@@ -9,9 +10,12 @@ public class CreateOrderLineItemResponse {
     private final Long menuId;
     private final long quantity;
 
-    public CreateOrderLineItemResponse(final OrderLineItem orderLineItem) {
+    public CreateOrderLineItemResponse(
+            final CreateOrderDto createOrderDto,
+            final CreateOrderLineItemDto orderLineItem
+    ) {
         this.seq = orderLineItem.getSeq();
-        this.orderId = orderLineItem.getOrder().getId();
+        this.orderId = createOrderDto.getId();
         this.menuId = orderLineItem.getMenuId();
         this.quantity = orderLineItem.getQuantity();
     }

@@ -1,15 +1,15 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.application.dto.CreateOrderTableDto;
+import kitchenpos.application.dto.ChangeEmptyOrderTableDto;
 
-public class CreateOrderTableResponse {
+public class UpdateEmptyOrderTableResponse {
 
-    private final Long id;
-    private final Long tableGroupId;
-    private final int numberOfGuests;
-    private final boolean empty;
+    private Long id;
+    private Long tableGroupId;
+    private int numberOfGuests;
+    private boolean empty;
 
-    public CreateOrderTableResponse(final CreateOrderTableDto dto) {
+    public UpdateEmptyOrderTableResponse(final ChangeEmptyOrderTableDto dto) {
         this.id = dto.getId();
         this.tableGroupId = dto.getTableGroupId();
         this.numberOfGuests = dto.getNumberOfGuests();

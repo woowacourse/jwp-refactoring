@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.application.dto.ReadMenuDto;
+import kitchenpos.application.dto.ReadMenuProductDto;
 
 public class ReadMenuProductResponse {
 
@@ -10,11 +10,11 @@ public class ReadMenuProductResponse {
     private final Long productId;
     private final long quantity;
 
-    public ReadMenuProductResponse(final Menu menu, final MenuProduct menuProduct) {
-        this.seq = menuProduct.getSeq();
-        this.menuId = menu.getId();
-        this.productId = menuProduct.getProductId();
-        this.quantity = menuProduct.getQuantity();
+    public ReadMenuProductResponse(final ReadMenuDto readMenuDto, final ReadMenuProductDto readMenuProductDto) {
+        this.seq = readMenuProductDto.getSeq();
+        this.menuId = readMenuDto.getId();
+        this.productId = readMenuProductDto.getProductId();
+        this.quantity = readMenuProductDto.getQuantity();
     }
 
     public Long getSeq() {

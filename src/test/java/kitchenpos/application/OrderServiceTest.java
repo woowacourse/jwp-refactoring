@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.ChangeOrderDto;
+import kitchenpos.application.dto.CreateOrderDto;
+import kitchenpos.application.dto.ReadOrderDto;
 import kitchenpos.application.exception.MenuNotFoundException;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
@@ -65,7 +68,7 @@ class OrderServiceTest {
         final CreateOrderRequest request = new CreateOrderRequest(persistOrderTable.getId(), List.of(createOrderLineItemRequest));
 
         // when
-        final Order actual = orderService.create(request);
+        final CreateOrderDto actual = orderService.create(request);
 
         // then
         assertAll(
@@ -116,7 +119,7 @@ class OrderServiceTest {
         final Order expected = persistOrder(persistMenu, OrderStatus.COOKING);
 
         // when
-        final List<Order> actual = orderService.list();
+        final List<ReadOrderDto> actual = orderService.list();
 
         // then
         assertAll(
@@ -134,7 +137,7 @@ class OrderServiceTest {
         final UpdateOrderStatusRequest request = new UpdateOrderStatusRequest(orderStatus);
 
         // when
-        final Order actual = orderService.changeOrderStatus(persistOrder.getId(), request);
+        final ChangeOrderDto actual = orderService.changeOrderStatus(persistOrder.getId(), request);
 
         // then
         assertThat(actual.getOrderStatus().name()).isEqualTo(orderStatus);

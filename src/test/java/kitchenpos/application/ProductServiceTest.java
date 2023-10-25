@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.CreateProductDto;
+import kitchenpos.application.dto.ReadProductDto;
 import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.exception.InvalidPriceException;
@@ -32,7 +34,7 @@ class ProductServiceTest {
         final CreateProductRequest request = new CreateProductRequest("상품", BigDecimal.TEN);
 
         // when
-        final Product actual = productService.create(request);
+        final CreateProductDto actual = productService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -66,7 +68,7 @@ class ProductServiceTest {
         final Product expected = productRepository.save(product);
 
         // when
-        final List<Product> actual = productService.list();
+        final List<ReadProductDto> actual = productService.list();
 
         // then
         assertAll(

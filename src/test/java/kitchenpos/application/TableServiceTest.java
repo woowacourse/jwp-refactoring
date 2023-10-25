@@ -7,6 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.application.dto.ChangeEmptyOrderTableDto;
+import kitchenpos.application.dto.ChangeNumberOfGuestsOrderTableDto;
+import kitchenpos.application.dto.CreateOrderTableDto;
+import kitchenpos.application.dto.ReadOrderTableDto;
 import kitchenpos.application.exception.OrderTableNotFoundException;
 import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.exception.InvalidNumberOfGuestsException;
@@ -63,7 +67,7 @@ class TableServiceTest {
         final CreateOrderTableRequest request = new CreateOrderTableRequest(0, false);
 
         // when
-        final OrderTable actual = tableService.create(request);
+        final CreateOrderTableDto actual = tableService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();
@@ -75,7 +79,7 @@ class TableServiceTest {
         final OrderTable persistOrderTable = orderTableRepository.save(new OrderTable(0, false));
 
         // when
-        final List<OrderTable> actual = tableService.list();
+        final List<ReadOrderTableDto> actual = tableService.list();
 
         // then
         assertAll(
@@ -92,7 +96,8 @@ class TableServiceTest {
         final UpdateOrderTableEmptyRequest request = new UpdateOrderTableEmptyRequest(false);
 
         // when
-        final OrderTable actual = tableService.changeEmpty(persistOrderTable.getId(), request);
+        final ChangeEmptyOrderTableDto actual =
+                tableService.changeEmpty(persistOrderTable.getId(), request);
 
         // then
         assertThat(actual.isEmpty()).isEqualTo(actual.isEmpty());
@@ -115,7 +120,8 @@ class TableServiceTest {
         final UpdateOrderTableNumberOfGuestsRequest request = new UpdateOrderTableNumberOfGuestsRequest(1);
 
         // when
-        final OrderTable actual = tableService.changeNumberOfGuests(persistOrderTable.getId(), request);
+        final ChangeNumberOfGuestsOrderTableDto actual =
+                tableService.changeNumberOfGuests(persistOrderTable.getId(), request);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());

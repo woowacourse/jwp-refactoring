@@ -1,7 +1,7 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.application.dto.CreateMenuDto;
+import kitchenpos.application.dto.CreateMenuProductDto;
 
 public class CreateMenuProductResponse {
 
@@ -10,11 +10,14 @@ public class CreateMenuProductResponse {
     private final Long productId;
     private final long quantity;
 
-    public CreateMenuProductResponse(final Menu menu, final MenuProduct menuProduct) {
-        this.seq = menuProduct.getSeq();
-        this.menuId = menu.getId();
-        this.productId = menuProduct.getProductId();
-        this.quantity = menuProduct.getQuantity();
+    public CreateMenuProductResponse(
+            final CreateMenuDto createMenuDto,
+            final CreateMenuProductDto createMenuProductDto
+    ) {
+        this.seq = createMenuProductDto.getSeq();
+        this.menuId = createMenuDto.getId();
+        this.productId = createMenuProductDto.getProductId();
+        this.quantity = createMenuProductDto.getQuantity();
     }
 
     public Long getSeq() {

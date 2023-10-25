@@ -1,19 +1,19 @@
-package kitchenpos.ui.dto.response;
+package kitchenpos.application.dto;
 
-import kitchenpos.application.dto.ReadOrderTableDto;
+import kitchenpos.domain.ordertable.OrderTable;
 
-public class ReadOrderTableResponse {
+public class ReadOrderTableDto {
 
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public ReadOrderTableResponse(final ReadOrderTableDto dto) {
-        this.id = dto.getId();
-        this.tableGroupId = dto.getTableGroupId();
-        this.numberOfGuests = dto.getNumberOfGuests();
-        this.empty = dto.isEmpty();
+    public ReadOrderTableDto(final OrderTable orderTable) {
+        this.id = orderTable.getId();
+        this.tableGroupId = orderTable.getTableGroupId();
+        this.numberOfGuests = orderTable.getNumberOfGuests();
+        this.empty = orderTable.isEmpty();
     }
 
     public Long getId() {

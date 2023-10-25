@@ -2,6 +2,9 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.CreateMenuDto;
+import kitchenpos.application.dto.ReadMenuDto;
 import kitchenpos.application.exception.MenuGroupNotFoundException;
 import kitchenpos.application.exception.ProductNotFoundException;
 import kitchenpos.domain.menu.repository.MenuRepository;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
 
     private final MenuRepository menuRepository;
@@ -34,13 +38,14 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final CreateMenuRequest request) {
+    public CreateMenuDto create(final CreateMenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                                                        .orElseThrow(MenuGroupNotFoundException::new);
         final List<MenuProduct> menuProducts = findMenuProducts(request);
         final Menu menu = Menu.of(request.getName(), request.getPrice(), menuProducts, menuGroup.getId());
+        final Menu persistMenu = menuRepository.save(menu);
 
-        return menuRepository.save(menu);
+        return new CreateMenuDto(persistMenu);
     }
 
     private List<MenuProduct> findMenuProducts(final CreateMenuRequest menuRequest) {
@@ -48,7 +53,7 @@ public class MenuService {
 
         for (final CreateMenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
-                                              .orElseThrow(ProductNotFoundException::new);
+                                                     .orElseThrow(ProductNotFoundException::new);
 
             final MenuProduct menuProduct = new MenuProduct(
                     product.getId(),
@@ -62,7 +67,10 @@ public class MenuService {
         return menuProducts;
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<ReadMenuDto> list() {
+        return menuRepository.findAll()
+                             .stream()
+                             .map(ReadMenuDto::new)
+                             .collect(Collectors.toList());
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.CreateTableGroupDto;
 import kitchenpos.application.exception.TableGroupNotFoundException;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.tablegroup.repository.TableGroupRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class TableGroupService {
 
     private final GroupingTableService groupingTableService;
@@ -26,13 +28,13 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final CreateTableGroupRequest request) {
+    public CreateTableGroupDto create(final CreateTableGroupRequest request) {
         final TableGroup tableGroup = new TableGroup();
         final TableGroup persistTableGroup = tableGroupRepository.save(tableGroup);
 
         groupingTableService.group(convertOrderTableIds(request), persistTableGroup);
 
-        return persistTableGroup;
+        return new CreateTableGroupDto(persistTableGroup);
     }
 
     private List<Long> convertOrderTableIds(final CreateTableGroupRequest request) {

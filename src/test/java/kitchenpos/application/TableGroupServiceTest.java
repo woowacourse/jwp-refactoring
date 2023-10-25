@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.CreateTableGroupDto;
 import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.exception.InvalidOrderTableSizeException;
 import kitchenpos.domain.menu.Menu;
@@ -66,7 +67,7 @@ class TableGroupServiceTest {
         );
 
         // when
-        final TableGroup actual = tableGroupService.create(request);
+        final CreateTableGroupDto actual = tableGroupService.create(request);
 
         // then
         assertThat(actual.getId()).isPositive();

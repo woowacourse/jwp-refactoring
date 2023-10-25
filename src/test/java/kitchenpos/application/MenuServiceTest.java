@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.application.dto.CreateMenuDto;
+import kitchenpos.application.dto.ReadMenuDto;
 import kitchenpos.application.exception.MenuGroupNotFoundException;
 import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.menu.Menu;
@@ -51,7 +53,7 @@ class MenuServiceTest {
                 List.of(new CreateMenuProductRequest(persistProduct.getId(), 1L)));
 
         // when
-        final Menu actual = menuService.create(request);
+        final CreateMenuDto actual = menuService.create(request);
 
         assertAll(
                 () -> assertThat(actual.getId()).isPositive(),
@@ -122,7 +124,7 @@ class MenuServiceTest {
         final Menu expected = menuRepository.save(menu);
 
         // when
-        final List<Menu> actual = menuService.list();
+        final List<ReadMenuDto> actual = menuService.list();
 
         // then
         assertAll(

@@ -1,16 +1,16 @@
 package kitchenpos.ui.dto.response;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.application.dto.CreateTableGroupDto;
 
 public class CreateTableGroupResponse {
 
     private Long id;
     private LocalDateTime createdDate;
 
-    public CreateTableGroupResponse(final TableGroup tableGroup) {
-        this.id = tableGroup.getId();
-        this.createdDate = tableGroup.getCreatedDate();
+    public CreateTableGroupResponse(final CreateTableGroupDto dto) {
+        this.id = dto.getId();
+        this.createdDate = dto.getCreatedDate();
     }
 
     public Long getId() {

@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto.response;
 
-import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.application.dto.ChangeNumberOfGuestsOrderTableDto;
 
 public class UpdateNumberOfGuestsResponse {
 
@@ -9,11 +9,11 @@ public class UpdateNumberOfGuestsResponse {
     private int numberOfGuests;
     private boolean empty;
 
-    public UpdateNumberOfGuestsResponse(final OrderTable orderTable) {
-        this.id = orderTable.getId();
-        this.tableGroupId = orderTable.getTableGroupId();
-        this.numberOfGuests = orderTable.getNumberOfGuests();
-        this.empty = orderTable.isEmpty();
+    public UpdateNumberOfGuestsResponse(final ChangeNumberOfGuestsOrderTableDto dto) {
+        this.id = dto.getId();
+        this.tableGroupId = dto.getTableGroupId();
+        this.numberOfGuests = dto.getNumberOfGuests();
+        this.empty = dto.isEmpty();
     }
 
     public Long getId() {

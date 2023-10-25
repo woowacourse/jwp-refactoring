@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.application.dto.CreateMenuGroupDto;
+import kitchenpos.application.dto.ReadMenuGroupDto;
 import kitchenpos.config.IntegrationTest;
 import kitchenpos.domain.menugroup.repository.MenuGroupRepository;
 import kitchenpos.domain.menugroup.MenuGroup;
@@ -29,7 +31,7 @@ class MenuGroupServiceTest {
         final CreateMenuGroupRequest request = new CreateMenuGroupRequest("메뉴 그룹");
 
         // when
-        final MenuGroup actual = menuGroupService.create(request);
+        final CreateMenuGroupDto actual = menuGroupService.create(request);
 
         // then
         assertAll(
@@ -55,7 +57,7 @@ class MenuGroupServiceTest {
         menuGroupRepository.save(menuGroup);
 
         // when
-        final List<MenuGroup> actual = menuGroupService.list();
+        final List<ReadMenuGroupDto> actual = menuGroupService.list();
 
         // then
         assertAll(

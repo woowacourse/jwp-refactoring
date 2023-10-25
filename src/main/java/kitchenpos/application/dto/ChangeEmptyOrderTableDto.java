@@ -1,15 +1,15 @@
-package kitchenpos.ui.dto.response;
+package kitchenpos.application.dto;
 
 import kitchenpos.domain.ordertable.OrderTable;
 
-public class UpdateOrderTableEmptyResponse {
+public class ChangeEmptyOrderTableDto {
 
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public UpdateOrderTableEmptyResponse(final OrderTable orderTable) {
+    public ChangeEmptyOrderTableDto(final OrderTable orderTable) {
         this.id = orderTable.getId();
         this.tableGroupId = orderTable.getTableGroupId();
         this.numberOfGuests = orderTable.getNumberOfGuests();
