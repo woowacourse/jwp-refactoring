@@ -2,6 +2,7 @@ package kitchenpos.domain.table;
 
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -16,8 +17,8 @@ public class TableStatusValidator implements TableValidator {
 
     @Override
     public void validate(OrderTable orderTable) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTable.getId(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByOrderTableAndOrderStatusIn(
+                AggregateReference.to(orderTable.getId()), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("주문 상태가 완료가 아닙니다");
         }
     }

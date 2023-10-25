@@ -1,9 +1,12 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.vo.Money;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 
 import java.math.BigDecimal;
@@ -16,7 +19,8 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     private Long id;
     private String name;
     private Money price;
-    private Long menuGroupId;
+    @Column("MENU_GROUP_ID")
+    private AggregateReference<MenuGroup, Long> menuGroup;
 
     @MappedCollection(idColumn = "MENU_ID", keyColumn = "SEQ")
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -30,11 +34,11 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     @PersistenceCreator
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroup, List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = new Money(price);
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = AggregateReference.to(menuGroup);
         this.menuProducts = new ArrayList<>(menuProducts);
     }
 
@@ -57,7 +61,7 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     public Long getMenuGroupId() {
-        return menuGroupId;
+        return menuGroup.getId();
     }
 
     public List<MenuProduct> getMenuProducts() {

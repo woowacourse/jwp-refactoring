@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.table.OrderTable;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
@@ -12,5 +14,5 @@ public interface OrderRepository extends Repository<Order, Long> {
 
     List<Order> findAll();
 
-    boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<OrderStatus> orderStatuses);
+    boolean existsByOrderTableAndOrderStatusIn(AggregateReference<OrderTable, Long> orderTable, List<OrderStatus> orderStatuses);
 }

@@ -1,8 +1,11 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.table.OrderTable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.util.CollectionUtils;
@@ -15,7 +18,8 @@ import java.util.List;
 public class Order extends AbstractAggregateRoot<Order> {
     @Id
     private Long id;
-    private Long orderTableId;
+    @Column("ORDER_TABLE_ID")
+    private AggregateReference<OrderTable, Long> orderTable;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @MappedCollection(idColumn = "ORDER_ID", keyColumn = "SEQ")
@@ -30,10 +34,10 @@ public class Order extends AbstractAggregateRoot<Order> {
     }
 
     @PersistenceCreator
-    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Long orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         validateOrderLineItems(orderLineItems);
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = AggregateReference.to(orderTable);
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = new ArrayList<>(orderLineItems);
@@ -63,7 +67,7 @@ public class Order extends AbstractAggregateRoot<Order> {
     }
 
     public Long getOrderTableId() {
-        return orderTableId;
+        return orderTable.getId();
     }
 
     public OrderStatus getOrderStatus() {

@@ -1,12 +1,16 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.menu.Menu;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
+import org.springframework.data.relational.core.mapping.Column;
 
 public class OrderLineItem {
     @Id
     private Long seq;
-    private Long menuId;
+    @Column("MENU_ID")
+    private AggregateReference<Menu, Long> menu;
     private long quantity;
 
     public OrderLineItem(Long menuId, long quantity) {
@@ -14,9 +18,9 @@ public class OrderLineItem {
     }
 
     @PersistenceCreator
-    public OrderLineItem(Long seq, Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Long menu, long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
+        this.menu = AggregateReference.to(menu);
         this.quantity = quantity;
     }
 
@@ -25,7 +29,7 @@ public class OrderLineItem {
     }
 
     public Long getMenuId() {
-        return menuId;
+        return menu.getId();
     }
 
     public long getQuantity() {
