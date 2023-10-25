@@ -25,9 +25,9 @@ class PriceTest {
         long quantity = 2L;
 
         // when
-        long result = price.multiplyWithQuantity(quantity).longValue();
+        Price result = price.multiplyWithQuantity(quantity);
 
         // then
-        assertThat(result).isEqualTo(2000L);
+        assertThat(result).isEqualTo(new Price(2000L));
     }
 }

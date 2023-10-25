@@ -44,7 +44,7 @@ public class Menu {
     }
 
     private void validateMenuProductsPrice(MenuProducts menuProducts) {
-        BigDecimal totalPrice = menuProducts.calculateTotalPrice();
+        Price totalPrice = menuProducts.calculateTotalPrice();
         if (price.isBigger(totalPrice)) {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 항목의 가격 합보다 작아야한다.");
         }

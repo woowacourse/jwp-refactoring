@@ -32,7 +32,7 @@ public class Product {
         this.price = new Price(price);
     }
 
-    public BigDecimal multiplyWithQuantity(long quantity) {
+    public Price multiplyWithQuantity(long quantity) {
         return price.multiplyWithQuantity(quantity);
     }
 
