@@ -5,7 +5,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -44,7 +44,7 @@ class TableGroupServiceTest {
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
-            final TableGroupRequest request = new TableGroupRequest(orderTables);
+            final TableGroupCreateRequest request = new TableGroupCreateRequest(orderTables);
             final TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
             assertSoftly(softly -> {
@@ -57,7 +57,7 @@ class TableGroupServiceTest {
         void 단체_지정시_2개_보다_작은_테이블을_입력하면_예외가_발생한다() {
             final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
 
-            final TableGroupRequest tableGroup = new TableGroupRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId())));
+            final TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId())));
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -70,7 +70,7 @@ class TableGroupServiceTest {
                 final OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
-            final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
+            final TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(orderTables);
             tableGroupService.create(tableGroup);
 
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -88,8 +88,8 @@ class TableGroupServiceTest {
                 orderTables.add(new OrderTableIdRequest(savedOrderTable.getId()));
             }
 
-            final TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTables);
-            final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
+            final TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTables);
+            final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
             tableGroupService.ungroup(tableGroupResponse.getId());
 
@@ -108,7 +108,7 @@ class TableGroupServiceTest {
                 orderDao.save(new Order(null, savedOrderTable.getId(), status, LocalDateTime.now(), List.of()));
             }
 
-            final TableGroupRequest tableGroup = new TableGroupRequest(orderTables);
+            final TableGroupCreateRequest tableGroup = new TableGroupCreateRequest(orderTables);
             final TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
             assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

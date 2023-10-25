@@ -28,11 +28,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         final OrderTable orderTable = new OrderTable(
                 null,
-                new OrderTableNumberOfGuests(orderTableCreateRequest.getNumberOfGuests()),
-                orderTableCreateRequest.isEmpty()
+                new OrderTableNumberOfGuests(request.getNumberOfGuests()),
+                request.isEmpty()
         );
         final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         return convertToResponse(savedOrderTable);
@@ -85,12 +85,12 @@ public class TableService {
         return convertToResponse(orderTableRepository.save(savedOrderTable));
     }
 
-    private OrderTableResponse convertToResponse(final OrderTable savedOrderTable) {
+    private OrderTableResponse convertToResponse(final OrderTable orderTable) {
         return new OrderTableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroup() == null ? null : savedOrderTable.getTableGroup().getId(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
+                orderTable.getId(),
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
         );
     }
 }

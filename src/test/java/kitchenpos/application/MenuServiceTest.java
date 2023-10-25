@@ -5,8 +5,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductName;
 import kitchenpos.domain.ProductPrice;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
@@ -51,7 +51,7 @@ class MenuServiceTest {
     class 메뉴를_등록한다 {
         @Test
         void 메뉴가_정상적으로_등록된다() {
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.ONE, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.ONE, savedMenuGroupId, menuProducts);
             final MenuResponse response = menuService.create(menu);
 
             assertSoftly(softly -> {
@@ -65,7 +65,7 @@ class MenuServiceTest {
         @ParameterizedTest
         @ValueSource(ints = {0, 1, 255})
         void 메뉴_이름은_255자_이하이다(int length) {
-            final MenuRequest menu = new MenuRequest("메".repeat(length), BigDecimal.ONE, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메".repeat(length), BigDecimal.ONE, savedMenuGroupId, menuProducts);
             final MenuResponse response = menuService.create(menu);
 
             assertSoftly(softly -> {
@@ -78,7 +78,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_이름이_없으면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest(null, BigDecimal.ONE, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest(null, BigDecimal.ONE, savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -86,7 +86,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_가격이_없으면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest("메뉴", null, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", null, savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -94,7 +94,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_이름이_256자_이상이면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest("메".repeat(256), BigDecimal.ONE, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메".repeat(256), BigDecimal.ONE, savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -102,7 +102,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_가격이_0원_보다_작으면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.valueOf(-1), savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.valueOf(-1), savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -113,7 +113,7 @@ class MenuServiceTest {
             final Product product = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.valueOf(Math.pow(10, 16)))));
             menuProducts.add(new MenuProductRequest(product.getId(), 10));
 
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.valueOf(Math.pow(10, 17)), savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.valueOf(Math.pow(10, 17)), savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -121,7 +121,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_그룹이_없으면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.ONE, null, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.ONE, null, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -129,7 +129,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_그룹이_존재하지_않으면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.ONE, savedMenuGroupId + 1, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.ONE, savedMenuGroupId + 1, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -140,7 +140,7 @@ class MenuServiceTest {
             final Product product = productRepository.save(new Product(new ProductName("상품"), new ProductPrice(BigDecimal.ONE)));
             menuProducts.add(new MenuProductRequest(product.getId() + 1, 1));
 
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.ZERO, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.ZERO, savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -148,7 +148,7 @@ class MenuServiceTest {
 
         @Test
         void 메뉴_가격이_메뉴_상품들의_금액을_합한_가격보다_크면_예외가_발생한다() {
-            final MenuRequest menu = new MenuRequest("메뉴", BigDecimal.valueOf(3), savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴", BigDecimal.valueOf(3), savedMenuGroupId, menuProducts);
 
             assertThatThrownBy(() -> menuService.create(menu))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -159,7 +159,7 @@ class MenuServiceTest {
     void 메뉴의_목록을_조회한다() {
         final List<MenuResponse> expected = menuService.list();
         for (int i = 0; i < 3; i++) {
-            final MenuRequest menu = new MenuRequest("메뉴" + i, BigDecimal.ONE, savedMenuGroupId, menuProducts);
+            final MenuCreateRequest menu = new MenuCreateRequest("메뉴" + i, BigDecimal.ONE, savedMenuGroupId, menuProducts);
             expected.add(menuService.create(menu));
         }
 

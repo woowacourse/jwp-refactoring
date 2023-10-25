@@ -7,8 +7,8 @@ import kitchenpos.domain.MenuPrice;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductQuantity;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductRequest;
-import kitchenpos.dto.request.MenuRequest;
 import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
@@ -42,7 +42,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         if (Objects.isNull(request.getName())
                 || Objects.isNull(request.getPrice())
                 || Objects.isNull(request.getMenuGroupId())
@@ -98,13 +98,13 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    private MenuResponse convertToResponse(final Menu savedMenu) {
+    private MenuResponse convertToResponse(final Menu menu) {
         return new MenuResponse(
-                savedMenu.getId(),
-                savedMenu.getName(),
-                savedMenu.getPrice(),
-                savedMenu.getMenuGroup().getId(),
-                menuProductRepository.findAllByMenuId(savedMenu.getId()).stream()
+                menu.getId(),
+                menu.getName(),
+                menu.getPrice(),
+                menu.getMenuGroup().getId(),
+                menuProductRepository.findAllByMenuId(menu.getId()).stream()
                         .map(this::convertToResponse)
                         .collect(Collectors.toList()));
     }

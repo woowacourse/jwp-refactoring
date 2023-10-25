@@ -5,7 +5,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableIdRequest;
-import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import kitchenpos.repository.OrderTableRepository;
@@ -33,8 +33,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<Long> orderTableIds = tableGroupRequest.getOrderTables().stream()
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        final List<Long> orderTableIds = request.getOrderTables().stream()
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
@@ -63,19 +63,7 @@ public class TableGroupService {
             savedOrderTable.changeNotEmpty();
         }
 
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(savedTableGroup);
-
-        return new TableGroupResponse(
-                savedTableGroup.getId(),
-                savedTableGroup.getCreatedDate(),
-                orderTables.stream()
-                        .map(orderTable -> new OrderTableResponse(
-                                orderTable.getId(),
-                                savedTableGroup.getId(),
-                                orderTable.getNumberOfGuests(),
-                                orderTable.isEmpty())
-                        ).collect(Collectors.toList())
-        );
+        return convertToResponse(savedTableGroup);
     }
 
     @Transactional
@@ -95,5 +83,23 @@ public class TableGroupService {
             orderTable.updateTableGroup(null);
             orderTable.changeNotEmpty();
         }
+    }
+
+    private TableGroupResponse convertToResponse(final TableGroup tableGroup) {
+        return new TableGroupResponse(
+                tableGroup.getId(),
+                tableGroup.getCreatedDate(),
+                orderTableRepository.findAllByTableGroup(tableGroup).stream()
+                        .map(this::convertToResponse)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    private OrderTableResponse convertToResponse(final OrderTable orderTable) {
+        return new OrderTableResponse(
+                orderTable.getId(),
+                orderTable.getTableGroup().getId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
     }
 }
