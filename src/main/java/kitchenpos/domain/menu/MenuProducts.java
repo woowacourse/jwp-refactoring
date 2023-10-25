@@ -1,10 +1,11 @@
 package kitchenpos.domain.menu;
 
+import static javax.persistence.CascadeType.PERSIST;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.vo.Price;
@@ -14,7 +15,7 @@ public class MenuProducts {
 
     private static final int MENU_PRODUCT_SIZE_MINIMUM = 1;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected MenuProducts() {
