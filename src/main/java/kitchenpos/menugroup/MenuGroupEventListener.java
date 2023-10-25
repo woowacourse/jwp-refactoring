@@ -16,7 +16,7 @@ public class MenuGroupEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
     public void onMenuCreated(MenuCreatedEvent menuCreatedEvent) {
-        if (menuGroupRepository.findById(menuCreatedEvent.getMenuGroupId()).isEmpty()) {
+        if (menuGroupRepository.existsById(menuCreatedEvent.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
         }
     }
