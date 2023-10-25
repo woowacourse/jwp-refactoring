@@ -42,7 +42,7 @@ public class Menu {
         this.name = MenuName.from(name);
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(this));
+        menuProducts.forEach(menuProduct -> menuProduct.register(this));
         this.menuProducts = new MenuProducts(menuProducts);
         validateTotalPrice();
     }

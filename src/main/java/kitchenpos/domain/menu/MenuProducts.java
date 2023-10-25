@@ -25,7 +25,7 @@ public class MenuProducts {
     }
 
     public void setMenu(final Menu menu) {
-        menuProducts.forEach(menuProduct -> menuProduct.setMenu(menu));
+        menuProducts.forEach(menuProduct -> menuProduct.register(menu));
     }
 
     private void validateMenuProducts(final List<MenuProduct> menuProducts) {
