@@ -20,7 +20,6 @@ import kitchenpos.order.exception.CannotMakeOrderWithEmptyTableException;
 import kitchenpos.order.exception.MenuNotFoundException;
 import kitchenpos.order.exception.OrderNotFoundException;
 import kitchenpos.order.exception.RequestOrderLineItemIsEmptyException;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.exception.OrderTableNotFoundException;
@@ -34,15 +33,12 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
-            OrderLineItemRepository orderLineItemRepository,
             OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
