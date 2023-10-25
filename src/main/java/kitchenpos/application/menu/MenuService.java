@@ -1,8 +1,8 @@
 package kitchenpos.application.menu;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menuGroup.MenuGroup;
-import kitchenpos.domain.menuGroup.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.domain.menu.MenuRepository;
@@ -29,8 +29,7 @@ public class MenuService {
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
-    ) {
+            final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
@@ -41,7 +40,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(MenuGroupNotFoundException::new);
 
-        final Menu menu = new Menu(menuRequest.getName(), new Price(menuRequest.getPrice()), menuGroup,
+        final Menu menu = new Menu(menuRequest.getName(), new Price(menuRequest.getPrice()), menuGroup.getId(),
                 getMenuProducts(menuRequest));
 
         return MenuResponse.from(menuRepository.save(menu));
@@ -52,7 +51,7 @@ public class MenuService {
                 .map(productRequest -> {
                     final Product product = productRepository.findById(productRequest.getProductId())
                             .orElseThrow(ProductNotFoundException::new);
-                    return new MenuProduct(product, productRequest.getQuantity());
+                    return new MenuProduct(product.getId(),product.getName(),new Price(product.getPrice()), productRequest.getQuantity());
                 }).collect(Collectors.toList()), menuRequest.getPrice());
     }
 

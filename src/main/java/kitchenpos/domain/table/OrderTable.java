@@ -1,6 +1,5 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.domain.tableGroup.TableGroup;
 import kitchenpos.exception.orderTableException.IllegalOrderTableGuestNumberException;
 
 import javax.persistence.Entity;

@@ -16,8 +16,9 @@ class MenuProductsTest {
     @Test
     void create() {
         //given
-        final MenuProduct menuProduct1 = new MenuProduct(new Product("이름", new Price(new BigDecimal(1000))), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(new Product("이름2", new Price(new BigDecimal(1000))), 1);
+        final Product product = new Product("이름", new Price(new BigDecimal(1000)));
+        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
+        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
 
         //when && then
         Assertions.assertDoesNotThrow(() -> new MenuProducts(List.of(menuProduct1, menuProduct2), new BigDecimal(1000)));
@@ -26,8 +27,9 @@ class MenuProductsTest {
     @Test
     void validateSum() {
         //given
-        final MenuProduct menuProduct1 = new MenuProduct(new Product("이름", new Price(new BigDecimal(1000))), 1);
-        final MenuProduct menuProduct2 = new MenuProduct(new Product("이름2", new Price(new BigDecimal(1000))), 1);
+        final Product product = new Product("이름", new Price(new BigDecimal(1000)));
+        final MenuProduct menuProduct1 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
+        final MenuProduct menuProduct2 = new MenuProduct(product.getId(), product.getName(), new Price(product.getPrice()), 1);
 
         //when && then
         assertThatThrownBy(() -> new MenuProducts(List.of(menuProduct1, menuProduct2), new BigDecimal(10000)))

@@ -4,7 +4,7 @@ import kitchenpos.application.order.OrderService;
 import kitchenpos.application.table.TableGroupService;
 import kitchenpos.application.table.TableService;
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menuGroup.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.Price;
 import kitchenpos.dto.request.OrderLineItemRequest;
@@ -157,7 +157,7 @@ class TableGroupServiceTest extends ServiceBaseTest {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(new TableGroupRequest(List.of(new OrderTableIdRequest(savedOrderTable.getId()),
                 new OrderTableIdRequest(savedOrderTable2.getId()))));
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("메뉴 그룹"));
-        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup, null));
+        final Menu menu = menuRepository.save(new Menu("메뉴1", new Price(new BigDecimal(1000)), menuGroup.getId(), null));
         final OrderResponse orderResponse = orderService.create(new OrderRequest(savedOrderTable.getId(), List.of(new OrderLineItemRequest(menu.getId(), 3L))));
 
         orderService.changeOrderStatus(orderResponse.getId(), new OrderStatusRequest(orderStatus));

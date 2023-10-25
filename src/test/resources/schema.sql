@@ -19,6 +19,8 @@ create table menu_product
     seq        bigint not null auto_increment,
     quantity   bigint not null,
     menu_id    bigint not null,
+    `name`     varchar(255) not null default null,
+    price      numeric(19,2) not null default null,
     product_id bigint not null,
     primary key (seq)
 );
