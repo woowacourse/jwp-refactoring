@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.vo.product.ProductRequest;
-import kitchenpos.vo.product.ProductResponse;
+import kitchenpos.dto.product.ProductRequest;
+import kitchenpos.dto.product.ProductResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

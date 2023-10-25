@@ -1,15 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.vo.ordertable.ChangeEmptyRequest;
-import kitchenpos.vo.ordertable.ChangeNumberOfGuestsRequest;
-import kitchenpos.vo.ordertable.OrderTableRequest;
+import kitchenpos.dto.ordertable.ChangeEmptyRequest;
+import kitchenpos.dto.ordertable.ChangeNumberOfGuestsRequest;
+import kitchenpos.dto.ordertable.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
