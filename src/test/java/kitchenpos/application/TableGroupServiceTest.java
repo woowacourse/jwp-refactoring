@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupCreateDto;
+import kitchenpos.application.exception.TableGroupAppException.EmptyOrderTablesCreateTableGroupException;
+import kitchenpos.application.exception.TableGroupAppException.OrderTableCountMismatchException;
 import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
 import kitchenpos.domain.exception.TableGroupException.UngroupingNotPossibleException;
 import kitchenpos.domain.menu.Menu;
@@ -77,6 +79,7 @@ class TableGroupServiceTest {
             0
         );
         firstTable = orderTableRepository.save(firstOrderTable);
+        System.out.println("firstTable.getId() = " + firstTable.getId());
         firstOrderTable.changeEmpty(orderStatusChecker, false);
 
         final OrderTable secondOrderTable = new OrderTable(
@@ -114,7 +117,7 @@ class TableGroupServiceTest {
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateDto))
-            .isInstanceOf(InvalidOrderTablesException.class);
+            .isInstanceOf(EmptyOrderTablesCreateTableGroupException.class);
     }
 
     @Test
@@ -142,7 +145,7 @@ class TableGroupServiceTest {
 
         // then
         assertThatThrownBy(() -> tableGroupService.create(duplicatedTableGroupCreateDto))
-            .isInstanceOf(InvalidOrderTablesException.class);
+            .isInstanceOf(OrderTableCountMismatchException.class);
     }
 
     @Test

@@ -3,6 +3,8 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.application.dto.TableGroupCreateDto;
 import kitchenpos.application.exception.TableGroupAppException;
+import kitchenpos.application.exception.TableGroupAppException.EmptyOrderTablesCreateTableGroupException;
+import kitchenpos.application.exception.TableGroupAppException.OrderTableCountMismatchException;
 import kitchenpos.domain.table.OrderStatusChecker;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -29,11 +31,14 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupCreateDto tableGroupCreateDto) {
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(
+        if (tableGroupCreateDto.getOrderTableIds().isEmpty()) {
+            throw new EmptyOrderTablesCreateTableGroupException();
+        }
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdInAndTableGroupIsNull(
             tableGroupCreateDto.getOrderTableIds());
 
         if (tableGroupCreateDto.getOrderTableIds().size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new OrderTableCountMismatchException();
         }
 
         final TableGroup tableGroup = TableGroup.of(savedOrderTables);

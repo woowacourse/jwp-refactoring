@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.exception.TableGroupException.GroupAlreadyExistsException;
+import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
 import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
 import kitchenpos.domain.exception.TableGroupException.UngroupingNotPossibleException;
 import org.springframework.util.CollectionUtils;
@@ -45,7 +45,7 @@ public class TableGroup {
 
         if (orderTables.stream()
             .anyMatch(OrderTable::isEmpty)) {
-            throw new GroupAlreadyExistsException();
+            throw new EmptyTableException();
         }
 
         return tableGroup;
