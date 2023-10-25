@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderMapper {
-
     private final MenuRepository menuRepository;
 
     public OrderMapper(MenuRepository menuRepository) {

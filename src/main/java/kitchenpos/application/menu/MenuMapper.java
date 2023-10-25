@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MenuMapper {
-
     private final ProductRepository productRepository;
 
     public MenuMapper(ProductRepository productRepository) {

@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class TableGroupUngroupedEventHandler {
-
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 

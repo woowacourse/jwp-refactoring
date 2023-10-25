@@ -22,10 +22,7 @@ public class MenuProduct extends BaseEntity {
     }
 
     public MenuProduct(Long productId, String name, Money price, long quantity) {
-        this.productId = productId;
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
+        this(null, productId, name, price, quantity);
     }
 
     public MenuProduct(Long seq, Long productId, String name, Money price, long quantity) {

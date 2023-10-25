@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class OrderTableChangedEventHandler {
-
     private final OrderRepository orderRepository;
 
     public OrderTableChangedEventHandler(OrderRepository orderRepository) {
