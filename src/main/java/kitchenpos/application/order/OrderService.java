@@ -4,23 +4,23 @@ import kitchenpos.application.order.request.OrderCreateRequest;
 import kitchenpos.application.order.request.OrderLineItemCreateRequest;
 import kitchenpos.application.order.request.OrderUpdateRequest;
 import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.order.OrderDao;
-import kitchenpos.domain.order.OrderLineItemRepository;
-import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderDao;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItemRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderDao orderDao;

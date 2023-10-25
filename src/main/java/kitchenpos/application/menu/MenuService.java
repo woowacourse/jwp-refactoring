@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
@@ -77,7 +78,7 @@ public class MenuService {
     }
 
     private Menu mapToMenu(MenuCreateRequest request, BigDecimal sum, List<MenuProductRequest> menuProducts) {
-        final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(),sum );
+        final Menu menu = Menu.of(request.getName(), request.getPrice(), request.getMenuGroupId(), sum);
         for (final MenuProductRequest menuProduct : menuProducts) {
             menu.addProduct(menuProduct.getProductId(), menuProduct.getQuantity());
         }
