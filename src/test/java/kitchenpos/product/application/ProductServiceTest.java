@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.product.dto.request.ProductCreateRequest;
 import kitchenpos.product.dto.response.ProductResponse;
-import kitchenpos.product.application.ProductService;
 import kitchenpos.test.ServiceTest;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.Nested;

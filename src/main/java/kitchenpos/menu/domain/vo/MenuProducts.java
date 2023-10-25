@@ -24,14 +24,14 @@ public class MenuProducts {
         this.menuProducts = menuProducts;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
     public boolean isPriceLessThan(BigDecimal price) {
         BigDecimal sum = menuProducts.stream()
                 .map(MenuProduct::calculatePrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return sum.compareTo(price) < 0;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

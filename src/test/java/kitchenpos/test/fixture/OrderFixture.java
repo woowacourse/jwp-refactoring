@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.domain.vo.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 
 public class OrderFixture {
 

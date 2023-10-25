@@ -3,7 +3,6 @@ package kitchenpos.menu.domain.vo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.menu.domain.vo.MenuName;
 import kitchenpos.test.RandomStringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

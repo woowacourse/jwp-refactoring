@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import kitchenpos.order.domain.vo.OrderStatus;
-import kitchenpos.order.domain.Order;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.test.fixture.OrderFixture;
 import org.junit.jupiter.api.Nested;
