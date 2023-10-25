@@ -43,7 +43,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (notExistsByOrderTables(List.of(savedOrderTable))) {
+        if (isNotExistsByOrderTables(List.of(savedOrderTable))) {
             savedOrderTable.changeEmpty(orderStatusChecker, true);
             return orderTableRepository.save(savedOrderTable);
         }
@@ -66,7 +66,7 @@ public class TableService {
         return orderTableRepository.save(savedOrderTable);
     }
 
-    private boolean notExistsByOrderTables(final List<OrderTable> orderTables) {
+    private boolean isNotExistsByOrderTables(final List<OrderTable> orderTables) {
         return !tableGroupRepository.existsByOrderTablesIn(orderTables);
     }
 }
