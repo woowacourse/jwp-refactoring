@@ -17,6 +17,7 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Long productId;
 
     @Embedded
     private Price price;
@@ -33,6 +34,7 @@ public class MenuProduct {
 
     public MenuProduct(Long id, Product product, int quantity) {
         this.id = id;
+        this.productId = product.getId();
         this.name = product.getName();
         this.price = product.getPrice();
         this.quantity = new Quantity(quantity);
