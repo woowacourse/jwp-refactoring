@@ -4,14 +4,12 @@ import kitchenpos.common.ServiceTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.MenuGroupRepository;
@@ -20,6 +18,9 @@ import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.order.ChangeOrderStatusRequest;
+import kitchenpos.ui.dto.order.OrderRequest;
+import kitchenpos.ui.dto.order.OrderResponse;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,41 +80,34 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void 주문을_등록한다() {
             // given
-            final Order order = OrderFixture.조리_상태의_주문_생성(orderTable, menu);
+            final OrderRequest order = OrderFixture.조리_상태의_주문_요청_dto_생성(orderTable, List.of(menu));
 
             // when
-            final Order actual = orderService.create(order);
+            final OrderResponse actual = orderService.create(order);
 
             // then
-            SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(actual.getId()).isPositive();
-                softAssertions.assertThat(actual).usingRecursiveComparison()
-                              .ignoringFields("id")
-                              .isEqualTo(order);
-            });
+            assertThat(actual.getId()).isPositive();
         }
 
         @Test
         void 주문_등록시_저장된_메뉴의_개수가_다르다면_예외를_반환한다() {
             // given
-            final Order order = OrderFixture.조리_상태의_주문_생성(orderTable, menu);
-            final OrderLineItem usavedOrderLineItem =
-                    OrderLineItemFixture.주문_상품_생성(order, MenuFixture.메뉴_엔티티_생성(menuGroup, products));
-            order.updateOrderLineItems(List.of(usavedOrderLineItem));
+            final Menu unsavedMenu = MenuFixture.메뉴_엔티티_생성(menuGroup, products);
+            final List<Menu> includeUnsavedMenu = List.of(menu, unsavedMenu);
+            final OrderRequest orderRequest = OrderFixture.조리_상태의_주문_요청_dto_생성(orderTable, includeUnsavedMenu);
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
         void 주문_등록시_저장되지_않은_주문_테이블을_갖는다면_예외를_반환한다() {
             // given
-            final Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-            order.updateOrderLineItems(List.of());
+            final OrderRequest orderRequest = OrderFixture.조리_상태의_주문_요청_dto_생성(orderTable, List.of());
 
             // when & then
-            assertThatThrownBy(() -> orderService.create(order))
+            assertThatThrownBy(() -> orderService.create(orderRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -129,18 +122,16 @@ class OrderServiceTest extends ServiceTestConfig {
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
-            final List<Order> order = orderRepository.saveAll(OrderFixture.조리_상태의_주문들_생성(orderTable, menu));
+            final List<Order> order = orderRepository.saveAll(OrderFixture.조리_상태의_주문_엔티티들_생성(orderTable, menu));
 
             // when
-            final List<Order> actual = orderService.list();
+            final List<OrderResponse> actual = orderService.list();
 
             // then
             SoftAssertions.assertSoftly(softAssertions -> {
                 softAssertions.assertThat(actual).hasSize(2);
-                softAssertions.assertThat(actual.get(0).getId())
-                              .isEqualTo(order.get(0).getId());
-                softAssertions.assertThat(actual.get(1).getId())
-                              .isEqualTo(order.get(1).getId());
+                softAssertions.assertThat(actual.get(0).getId()).isEqualTo(order.get(0).getId());
+                softAssertions.assertThat(actual.get(1).getId()).isEqualTo(order.get(1).getId());
             });
         }
     }
@@ -160,12 +151,13 @@ class OrderServiceTest extends ServiceTestConfig {
         }
 
         @Test
-        void 주문_상태를_요리에서_식사로_변경한다() {
+        void 주문_상태를_조리에서_식사로_변경한다() {
             // given
-            final Order order = orderRepository.save(OrderFixture.조리_상태의_주문_생성(orderTable, menu));
+            final Order order = orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(orderTable, menu));
+            final ChangeOrderStatusRequest changeStatusRequest = new ChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
             // when
-            final Order actual = orderService.changeOrderStatus(order.getId(), OrderFixture.식사_상태의_주문_생성(orderTable, menu));
+            final OrderResponse actual = orderService.changeOrderStatus(order.getId(), changeStatusRequest);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
@@ -174,13 +166,11 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void 주문_상태를_식사에서_계산으로_변경한다() {
             // given
-            final Order order = orderRepository.save(OrderFixture.식사_상태의_주문_생성(orderTable, menu));
+            final Order order = orderRepository.save(OrderFixture.식사_상태의_주문_엔티티_생성(orderTable, menu));
+            final ChangeOrderStatusRequest changeStatusRequest = new ChangeOrderStatusRequest(OrderStatus.COMPLETION.name());
 
             // when
-            final Order actual = orderService.changeOrderStatus(
-                    order.getId(),
-                    OrderFixture.계산_완료_상태의_주문_생성(orderTable, menu)
-            );
+            final OrderResponse actual = orderService.changeOrderStatus(order.getId(), changeStatusRequest);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
@@ -189,37 +179,36 @@ class OrderServiceTest extends ServiceTestConfig {
         @Test
         void 주문_상태를_조리에서_계산으로_변경한다() {
             // given
-            final Order order = orderRepository.save(OrderFixture.조리_상태의_주문_생성(orderTable, menu));
+            final Order order = orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(orderTable, menu));
+            final ChangeOrderStatusRequest changeStatusRequest = new ChangeOrderStatusRequest(OrderStatus.COMPLETION.name());
 
             // when
-            final Order actual = orderService.changeOrderStatus(
-                    order.getId(),
-                    OrderFixture.계산_완료_상태의_주문_생성(orderTable, menu)
-            );
+            final OrderResponse actual = orderService.changeOrderStatus(order.getId(), changeStatusRequest);
 
             // then
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
         }
 
         @Test
-        void 주문_상태를_계산에서_주문으로_변경하면_예외를_반환한다() {
+        void 주문_상태를_계산에서_조리로_변경하면_예외를_반환한다() {
             // given
             final Order order = orderRepository.save(OrderFixture.계산_완료_상태의_주문_생성(orderTable, menu));
+            final ChangeOrderStatusRequest changeStatusRequest = new ChangeOrderStatusRequest(OrderStatus.COOKING.name());
 
             // when & then
-            assertThatThrownBy(() ->
-                    orderService.changeOrderStatus(order.getId(), OrderFixture.조리_상태의_주문_생성(orderTable, menu))
-            ).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), changeStatusRequest))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        void 주문_상태를_계산에서_요리로_변경하면_예외를_반환한다() {
+        void 주문_상태를_계산에서_식사로_변경하면_예외를_반환한다() {
             // given
             final Order order = orderRepository.save(OrderFixture.계산_완료_상태의_주문_생성(orderTable, menu));
+            final ChangeOrderStatusRequest changeStatusRequest = new ChangeOrderStatusRequest(OrderStatus.MEAL.name());
 
             // when & then
             assertThatThrownBy(() ->
-                    orderService.changeOrderStatus(order.getId(), OrderFixture.식사_상태의_주문_생성(orderTable, menu))
+                    orderService.changeOrderStatus(order.getId(), changeStatusRequest)
             ).isInstanceOf(IllegalArgumentException.class);
         }
     }

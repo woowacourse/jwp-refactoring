@@ -147,7 +147,7 @@ class TableServiceTest extends ServiceTestConfig {
             final MenuGroup menuGroup = menuGroupRepository.save(MenuGroupFixture.메뉴_그룹_엔티티_생성());
             final List<Product> products = productRepository.saveAll(ProductFixture.상품_엔티티들_생성(2));
             final Menu menu = menuRepository.save(MenuFixture.메뉴_엔티티_생성(menuGroup, products));
-            orderRepository.save(OrderFixture.조리_상태의_주문_생성(orderTable, menu));
+            orderRepository.save(OrderFixture.조리_상태의_주문_엔티티_생성(orderTable, menu));
             final ChangeOrderTableEmptyRequest changeEmptyRequest = new ChangeOrderTableEmptyRequest(true);
 
             // when & then
