@@ -123,10 +123,9 @@ class OrderIntegrationTest extends IntegrationTest {
             List<OrderLineItem> orderLineItems = List.of(
                     new OrderLineItem(menu.getId(), 1)
             );
-            OrderTable orderTable = new OrderTable(4L, 3, false, false);
 
             Order order = new Order(orderLineItems);
-            assertThatThrownBy(() -> orderService.create(orderTable.getId(), order))
+            assertThatThrownBy(() -> orderService.create(-1L, order))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("주문 테이블이 존재하지 않습니다.");
         }

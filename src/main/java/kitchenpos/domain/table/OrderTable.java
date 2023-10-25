@@ -31,15 +31,11 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(Long id, int numberOfGuests, boolean empty, boolean grouped) {
-        this.id = id;
+    public OrderTable(int numberOfGuests, boolean empty, boolean grouped) {
+        this.id = null;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
         this.grouped = grouped;
-    }
-
-    public OrderTable(int numberOfGuests, boolean empty, boolean grouped) {
-        this(null, numberOfGuests, empty, grouped);
     }
 
     public void changeEmpty(boolean empty) {
