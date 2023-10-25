@@ -1,8 +1,10 @@
 package kitchenpos.domain.table;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
+import static kitchenpos.domain.order.OrderFixture.주문;
 import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_주문_테이블;
 import static kitchenpos.domain.table.OrderTableFixture.주문_테이블;
-import static kitchenpos.domain.table.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -20,14 +22,22 @@ class TableGroupTest {
     @Nested
     class 단체_지정을_생성할_때 {
 
+
+    }
+
+    @Nested
+    class 단체_지정을_할_때 {
+
         @Test
         void 주문_테이블_ID_목록과_저장된_주문_테이블_목록의_사이즈가_다를_경우_예외를_던진다() {
             // given
             List<Long> invalidOrderTableIds = List.of(Long.MIN_VALUE, Long.MAX_VALUE);
+            TableGroup tableGroup = TableGroup.from(invalidOrderTableIds);
+
             List<OrderTable> savedOrderTables = List.of(단체_지정_없는_빈_주문_테이블());
 
             // expect
-            assertThatThrownBy(() -> TableGroup.of(invalidOrderTableIds, savedOrderTables))
+            assertThatThrownBy(() -> tableGroup.group(savedOrderTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("존재하지 않는 주문 테이블이 있거나 주문 테이블이 중복되었습니다.");
         }
@@ -36,10 +46,12 @@ class TableGroupTest {
         void 주문_테이블_목록이_비었으면_예외를_던진다() {
             // given
             List<Long> orderTableIds = List.of();
+            TableGroup tableGroup = TableGroup.from(orderTableIds);
+
             List<OrderTable> invalidOrderTables = List.of();
 
             // expect
-            assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
+            assertThatThrownBy(() -> tableGroup.group(invalidOrderTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정의 주문 테이블 개수는 최소 2 이상이어야 합니다.");
         }
@@ -48,10 +60,12 @@ class TableGroupTest {
         void 주문_테이블의_개수가_2개_미만이면_예외를_던진다() {
             // given
             List<Long> orderTableIds = List.of(1L);
+            TableGroup tableGroup = TableGroup.from(orderTableIds);
+
             List<OrderTable> invalidOrderTables = List.of(단체_지정_없는_빈_주문_테이블());
 
             // expect
-            assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
+            assertThatThrownBy(() -> tableGroup.group(invalidOrderTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정의 주문 테이블 개수는 최소 2 이상이어야 합니다.");
         }
@@ -60,11 +74,12 @@ class TableGroupTest {
         void 주문_테이블_중_채워진_테이블이_있는_경우_예외를_던진다() {
             // given
             List<Long> orderTableIds = List.of(1L, 2L);
-            List<OrderTable> invalidOrderTables = List.of(단체_지정_없는_빈_주문_테이블(),
-                    OrderTableFixture.단체_지정_없는_주문_테이블());
+            TableGroup tableGroup = TableGroup.from(orderTableIds);
+
+            List<OrderTable> invalidOrderTables = List.of(단체_지정_없는_빈_주문_테이블(), 단체_지정_없는_주문_테이블());
 
             // expect
-            assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
+            assertThatThrownBy(() -> tableGroup.group(invalidOrderTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정의 주문 테이블이 차 있거나 이미 단체 지정되었습니다.");
         }
@@ -72,12 +87,14 @@ class TableGroupTest {
         @Test
         void 주문_테이블_중_이미_단체_지정된_테이블이_있는_경우_예외를_던진다() {
             // given
-            TableGroup tableGroup = 단체_지정();
             List<Long> orderTableIds = List.of(1L, 2L);
-            List<OrderTable> invalidOrderTables = List.of(단체_지정_없는_빈_주문_테이블(), 주문_테이블(tableGroup));
+            TableGroup tableGroup = TableGroup.from(orderTableIds);
+
+            Long tableGroupId = 1L;
+            List<OrderTable> invalidOrderTables = List.of(단체_지정_없는_빈_주문_테이블(), 주문_테이블(tableGroupId));
 
             // expect
-            assertThatThrownBy(() -> TableGroup.of(orderTableIds, invalidOrderTables))
+            assertThatThrownBy(() -> tableGroup.group(invalidOrderTables))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("단체 지정의 주문 테이블이 차 있거나 이미 단체 지정되었습니다.");
         }
@@ -89,11 +106,13 @@ class TableGroupTest {
         @Test
         void 조리_혹은_식사_주문이_존재하는_경우_예외를_던진다() {
             // given
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(주문_테이블(단체_지정())));
-            boolean hasCookingOrMealOrder = true;
+            OrderTable orderTable = 주문_테이블(1L);
+            orderTable.add(주문(COOKING));
+
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(1L));
 
             // expect
-            assertThatThrownBy(() -> tableGroup.ungroup(hasCookingOrMealOrder))
+            assertThatThrownBy(() -> tableGroup.ungroup(List.of(orderTable)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("조리 혹은 식사 주문이 존재하는 단체 지정은 단체 지정을 취소할 수 없습니다.");
         }
@@ -101,11 +120,11 @@ class TableGroupTest {
         @Test
         void 정상적으로_해제한다() {
             // given
-            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(주문_테이블(단체_지정())));
-            boolean hasCookingOrMealOrder = false;
+            List<OrderTable> orderTables = List.of(주문_테이블(1L));
+            TableGroup tableGroup = new TableGroup(LocalDateTime.now(), List.of(1L));
 
             // expect
-            assertThatNoException().isThrownBy(() -> tableGroup.ungroup(hasCookingOrMealOrder));
+            assertThatNoException().isThrownBy(() -> tableGroup.ungroup(orderTables));
         }
     }
 }

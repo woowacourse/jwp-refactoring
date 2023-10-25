@@ -37,7 +37,7 @@ public class OrderService {
         orderTable.validateTableCanTakeOrder();
 
         long menuCount = menuRepository.countByIdIn(request.getMenuIds());
-        Order order = request.toOrder(menuCount);
+        Order order = request.toOrder(orderTable, menuCount);
         final Order savedOrder = orderRepository.save(order);
         return OrderResponse.from(savedOrder);
     }

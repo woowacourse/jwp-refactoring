@@ -5,6 +5,7 @@ import static kitchenpos.application.TableServiceTest.OrderTableRequestFixture.�
 import static kitchenpos.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_손님_수_변경_요청;
 import static kitchenpos.application.TableServiceTest.OrderTableRequestFixture.주문_테이블_채워진_상태로_변경_요청;
 import static kitchenpos.domain.order.OrderFixture.주문;
+import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
 import static kitchenpos.domain.table.OrderTableFixture.빈_주문_테이블;
 import static kitchenpos.domain.table.OrderTableFixture.주문_테이블;
 import static kitchenpos.domain.table.TableGroupFixture.단체_지정;
@@ -61,7 +62,7 @@ class TableServiceTest {
             softly.assertThat(orderTable.getId()).isNotNull();
             softly.assertThat(orderTable).usingRecursiveComparison()
                     .ignoringFields("id")
-                    .isEqualTo(OrderTableResponse.from(OrderTableFixture.단체_지정_없는_빈_주문_테이블()));
+                    .isEqualTo(OrderTableResponse.from(단체_지정_없는_빈_주문_테이블()));
         });
     }
 
@@ -120,7 +121,7 @@ class TableServiceTest {
             // given
             TableGroup tableGroup = tableGroupRepository.save(단체_지정());
 
-            OrderTable groupedOrderTable = orderTableRepository.save(빈_주문_테이블(tableGroup));
+            OrderTable groupedOrderTable = orderTableRepository.save(빈_주문_테이블(tableGroup.getId()));
 
             // expect
             assertThatThrownBy(() -> tableService.changeIsEmpty(groupedOrderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))
@@ -131,8 +132,9 @@ class TableServiceTest {
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 주문_테이블에_조리_혹은_식사_중인_주문이_있다면_예외를_던진다(String orderStatus) {
             // given
-            OrderTableResponse orderTable = tableService.create(주문_테이블_생성_요청());
-            orderRepository.save(주문(orderTable.getId(), OrderStatus.valueOf(orderStatus)));
+            OrderTable orderTable = 단체_지정_없는_빈_주문_테이블();
+            orderTable.add(주문(OrderStatus.valueOf(orderStatus)));
+            orderTableRepository.save(orderTable);
 
             // expect
             assertThatThrownBy(() -> tableService.changeIsEmpty(orderTable.getId(), 주문_테이블_채워진_상태로_변경_요청()))

@@ -9,6 +9,8 @@ import static kitchenpos.domain.menu.MenuProductFixture.메뉴_상품;
 import static kitchenpos.domain.order.OrderFixture.주문;
 import static kitchenpos.domain.order.OrderLineItemFixture.주문_항목;
 import static kitchenpos.domain.product.ProductFixture.상품;
+import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
+import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_주문_테이블;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -26,7 +28,7 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.domain.table.OrderTableFixture;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemCreateRequest;
@@ -59,7 +61,7 @@ class OrderServiceTest {
     private ProductRepository productRepository;
 
     private OrderLineItem orderLineItem;
-    private Long orderTableId;
+    private OrderTable orderTable;
     private Long emptyOrderTableId;
 
     @BeforeEach
@@ -70,8 +72,8 @@ class OrderServiceTest {
         MenuProduct menuProduct = 메뉴_상품(product);
         Menu menu = menuRepository.save(메뉴(menuGroupId, PRICE, List.of(menuProduct)));
 
-        orderTableId = orderTableRepository.save(OrderTableFixture.단체_지정_없는_주문_테이블()).getId();
-        emptyOrderTableId = orderTableRepository.save(OrderTableFixture.단체_지정_없는_빈_주문_테이블()).getId();
+        orderTable = orderTableRepository.save(단체_지정_없는_주문_테이블());
+        emptyOrderTableId = orderTableRepository.save(단체_지정_없는_빈_주문_테이블()).getId();
         orderLineItem = 주문_항목(menu.getId());
     }
 
@@ -81,7 +83,7 @@ class OrderServiceTest {
         @Test
         void 정상적으로_생성한다() {
             // given
-            OrderCreateRequest order = 주문_생성_요청(orderTableId, List.of(orderLineItem));
+            OrderCreateRequest order = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem));
 
             // when
             OrderResponse createdOrder = orderService.create(order);
@@ -92,14 +94,14 @@ class OrderServiceTest {
                 softly.assertThat(createdOrder).usingRecursiveComparison()
                         .ignoringFields("id", "orderLineItems.seq", "orderLineItems.orderId")
                         .ignoringFieldsOfTypes(LocalDateTime.class)
-                        .isEqualTo(OrderResponse.from(주문(orderTableId, COOKING, List.of(orderLineItem))));
+                        .isEqualTo(OrderResponse.from(주문(orderTable, COOKING, List.of(orderLineItem))));
             });
         }
 
         @Test
         void 주문을_생성할_때_주문_항목이_비었으면_예외를_던진다() {
             // given
-            OrderCreateRequest invalidOrder = 주문_생성_요청(orderTableId, List.of());
+            OrderCreateRequest invalidOrder = 주문_생성_요청(orderTable.getId(), List.of());
 
             // expect
             assertThatThrownBy(() -> orderService.create(invalidOrder))
@@ -109,7 +111,7 @@ class OrderServiceTest {
         @Test
         void 주문을_생성할_때_주문_항목_개수와_메뉴의_개수가_다르면_예외를_던진다() {
             // given
-            OrderCreateRequest invalidOrder = 주문_생성_요청(orderTableId, List.of(orderLineItem, orderLineItem));
+            OrderCreateRequest invalidOrder = 주문_생성_요청(orderTable.getId(), List.of(orderLineItem, orderLineItem));
 
             // expect
             assertThatThrownBy(() -> orderService.create(invalidOrder))
@@ -140,7 +142,7 @@ class OrderServiceTest {
     @Test
     void 주문을_조회한다() {
         // given
-        OrderResponse createdOrder = orderService.create(주문_생성_요청(orderTableId, List.of(orderLineItem)));
+        OrderResponse createdOrder = orderService.create(주문_생성_요청(orderTable.getId(), List.of(orderLineItem)));
 
         // when
         List<OrderResponse> orders = orderService.list();
@@ -153,7 +155,7 @@ class OrderServiceTest {
     @Test
     void 주문_상태를_변경한다() {
         // given
-        Long orderId = orderService.create(주문_생성_요청(orderTableId, List.of(orderLineItem))).getId();
+        Long orderId = orderService.create(주문_생성_요청(orderTable.getId(), List.of(orderLineItem))).getId();
         OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 
         // when

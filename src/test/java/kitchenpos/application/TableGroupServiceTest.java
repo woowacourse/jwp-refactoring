@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import static kitchenpos.application.TableGroupServiceTest.TableGroupRequestFixture.단체_지정_생성_요청;
-import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.order.OrderFixture.주문;
 import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_빈_주문_테이블;
 import static kitchenpos.domain.table.OrderTableFixture.단체_지정_없는_주문_테이블;
+import static kitchenpos.domain.table.OrderTableFixture.주문_테이블;
 import static kitchenpos.domain.table.TableGroupFixture.단체_지정;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.OrderTableRepository;
@@ -64,7 +63,7 @@ class TableGroupServiceTest {
             filledOrderTable = orderTableRepository.save(단체_지정_없는_주문_테이블());
 
             OrderTable orderTable = 단체_지정_없는_주문_테이블();
-            tableGroupRepository.save(단체_지정(List.of(orderTable)));
+            tableGroupRepository.save(단체_지정());
             groupedOrderTable = orderTableRepository.save(orderTable);
         }
 
@@ -82,8 +81,10 @@ class TableGroupServiceTest {
                 softly.assertThat(createdTableGroup).usingRecursiveComparison()
                         .ignoringFields("id", "orderTables.id", "orderTables.tableGroupId")
                         .ignoringFieldsOfTypes(LocalDateTime.class)
-                        .isEqualTo(TableGroupResponse.from(단체_지정(List.of(단체_지정_없는_주문_테이블(),
-                                단체_지정_없는_주문_테이블()))));
+                        .isEqualTo(TableGroupResponse.of(
+                                단체_지정(),
+                                List.of(단체_지정_없는_주문_테이블(), 단체_지정_없는_주문_테이블())
+                        ));
             });
         }
 
@@ -165,8 +166,6 @@ class TableGroupServiceTest {
                     new OrderTableIdRequest(emptyOrderTable_B.getId())
             )));
 
-            saveOrder(emptyOrderTable_A.getId(), COMPLETION);
-
             // when
             tableGroupService.ungroup(tableGroup.getId());
 
@@ -179,10 +178,6 @@ class TableGroupServiceTest {
                     ));
         }
 
-        private Order saveOrder(Long orderTableId, OrderStatus orderStatus) {
-            return orderRepository.save(주문(orderTableId, orderStatus));
-        }
-
         @ParameterizedTest
         @ValueSource(strings = {"COOKING", "MEAL"})
         void 주문_테이블_중_조리_혹은_식사_중인_주문_테이블이_있다면_예외를_던진다(String orderStatus) {
@@ -192,7 +187,9 @@ class TableGroupServiceTest {
                     new OrderTableIdRequest(emptyOrderTable_B.getId())
             )));
 
-            saveOrder(emptyOrderTable_A.getId(), OrderStatus.valueOf(orderStatus));
+            OrderTable orderTable = 주문_테이블(tableGroup.getId());
+            orderTable.add(주문(OrderStatus.valueOf(orderStatus)));
+            orderTableRepository.save(orderTable);
 
             // expect
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

@@ -1,14 +1,18 @@
 package kitchenpos.domain.table;
 
+import static javax.persistence.CascadeType.PERSIST;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import kitchenpos.domain.order.Order;
 
 @Entity
 public class OrderTable {
@@ -19,9 +23,7 @@ public class OrderTable {
     @Id
     private Long id;
 
-    @JoinColumn(name = "table_group_id")
-    @ManyToOne
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -29,27 +31,42 @@ public class OrderTable {
     @Column(name = "empty", nullable = false)
     private boolean isEmpty;
 
-    OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
+    @OneToMany(mappedBy = "orderTable", fetch = EAGER, cascade = PERSIST)
+    private List<Order> orders;
+
+    OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean isEmpty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.isEmpty = isEmpty;
+        this.orders = new ArrayList<>();
     }
 
-    OrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
-        this(null, tableGroup, numberOfGuests, isEmpty);
+    OrderTable(Long tableGroupId, int numberOfGuests, boolean isEmpty) {
+        this(null, tableGroupId, numberOfGuests, isEmpty);
+    }
+
+    protected OrderTable() {
     }
 
     public static OrderTable of(int numberOfGuests, boolean isEmpty) {
         return new OrderTable(null, numberOfGuests, isEmpty);
     }
 
-    protected OrderTable() {
+    public void add(Order order) {
+        orders.add(order);
+        if (!Objects.equals(this, order.getOrderTable())) {
+            order.register(this);
+        }
     }
 
-    public void changeIsEmpty(boolean hasCookingOrMealOrder, boolean isEmpty) {
+    public boolean contains(Order order) {
+        return orders.contains(order);
+    }
+
+    public void changeIsEmpty(boolean isEmpty) {
         validateOrderTableIsGrouped();
-        validateOrderTableHasCookingOrMealOrder(hasCookingOrMealOrder);
+        validateOrderTableHasCookingOrMealOrder();
         this.isEmpty = isEmpty;
     }
 
@@ -59,14 +76,14 @@ public class OrderTable {
         }
     }
 
-    private void validateOrderTableHasCookingOrMealOrder(boolean hasCookingOrMealOrder) {
-        if (hasCookingOrMealOrder) {
+    private void validateOrderTableHasCookingOrMealOrder() {
+        if (hasCookingOrMealOrder()) {
             throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재하는 주문 테이블은 비어있는지 여부를 변경할 수 없습니다.");
         }
     }
 
     public boolean isGrouped() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -91,14 +108,18 @@ public class OrderTable {
         return !isEmpty;
     }
 
-    public void group(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void group(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
         this.isEmpty = false;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.isEmpty = false;
+    }
+
+    public boolean hasCookingOrMealOrder() {
+        return orders.stream().anyMatch(Order::isCookingOrMealStatus);
     }
 
     public void validateTableCanTakeOrder() {
@@ -111,8 +132,12 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

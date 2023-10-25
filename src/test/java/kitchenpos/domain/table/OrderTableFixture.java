@@ -11,15 +11,15 @@ public class OrderTableFixture {
         return new OrderTable(null, 0, true);
     }
 
-    public static OrderTable 빈_주문_테이블(TableGroup tableGroup) {
-        return new OrderTable(tableGroup, 0, true);
+    public static OrderTable 빈_주문_테이블(Long tableGroupId) {
+        return new OrderTable(tableGroupId, 0, true);
     }
 
-    public static OrderTable 주문_테이블(TableGroup tableGroup) {
-        return new OrderTable(tableGroup, 0, false);
+    public static OrderTable 주문_테이블(Long tableGroupId) {
+        return new OrderTable(tableGroupId, 0, false);
     }
 
-    public static OrderTable 주문_테이블(Long orderTableId, TableGroup tableGroup) {
-        return new OrderTable(orderTableId, tableGroup, 0, false);
+    public static OrderTable 주문_테이블(Long orderTableId, Long tableGroupId) {
+        return new OrderTable(orderTableId, tableGroupId, 0, false);
     }
 }

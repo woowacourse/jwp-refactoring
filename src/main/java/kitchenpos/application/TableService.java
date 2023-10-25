@@ -1,8 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
-import static kitchenpos.domain.OrderStatus.MEAL;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.order.OrderRepository;
@@ -43,24 +40,15 @@ public class TableService {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        boolean hasCookingOrMealOrder = orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId,
-                List.of(COOKING, MEAL)
-        );
-
-        orderTable.changeIsEmpty(hasCookingOrMealOrder, request.isEmpty());
-        OrderTable changedOrderTable = orderTableRepository.save(orderTable);
-
-        return OrderTableResponse.from(changedOrderTable);
+        orderTable.changeIsEmpty(request.isEmpty());
+        return OrderTableResponse.from(orderTable);
     }
 
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableNumberOfGuestsUpdateRequest request) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
-        OrderTable changedOrderTable = orderTableRepository.save(savedOrderTable);
-
-        return OrderTableResponse.from(changedOrderTable);
+        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+        return OrderTableResponse.from(orderTable);
     }
 }
