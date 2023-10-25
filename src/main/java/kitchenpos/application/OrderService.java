@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.ui.dto.OrderCreateRequest;
@@ -16,14 +17,14 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
-    private final MenuService menuService;
+    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(final MenuService menuService,
+    public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository) {
-        this.menuService = menuService;
+        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -48,7 +49,7 @@ public class OrderService {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItemCreateRequest::getMenuId)
                 .collect(Collectors.toList());
-        if (orderLineItems.size() != menuService.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("주문 항목과 메뉴 수량이 일치하지 않습니다.");
         }
     }
@@ -56,7 +57,7 @@ public class OrderService {
     private List<OrderLineItem> createOrderLineItems(final List<OrderLineItemCreateRequest> orderLineItems) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemCreateRequest orderLineItem : orderLineItems) {
-            final Menu menuToOrder = menuService.findById(orderLineItem.getMenuId());
+            final Menu menuToOrder = menuRepository.getById(orderLineItem.getMenuId());
             savedOrderLineItems.add(new OrderLineItem(menuToOrder, orderLineItem.getQuantity()));
         }
         return savedOrderLineItems;

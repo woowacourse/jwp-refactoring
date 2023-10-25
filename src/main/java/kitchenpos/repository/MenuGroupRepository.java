@@ -2,7 +2,11 @@ package kitchenpos.repository;
 
 import kitchenpos.domain.MenuGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
+
+    default MenuGroup getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 매뉴그룹입니다."));
+    }
 }

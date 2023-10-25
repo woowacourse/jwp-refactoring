@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuProductCreateRequest;
 import org.springframework.stereotype.Service;
@@ -15,22 +17,22 @@ import java.util.List;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupService menuGroupService;
-    private final ProductService productService;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(final MenuRepository menuRepository,
-                       final MenuGroupService menuGroupService,
-                       final ProductService productService) {
+                       final MenuGroupRepository menuGroupRepository,
+                       final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
-        this.menuGroupService = menuGroupService;
-        this.productService = productService;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     public Menu create(final MenuCreateRequest request) {
         final Menu menu = new Menu(
                 request.getName(),
                 request.getPrice(),
-                menuGroupService.findById(request.getMenuGroupId())
+                menuGroupRepository.getById(request.getMenuGroupId())
         );
         final Menu savedMenu = menuRepository.save(menu);
 
@@ -39,23 +41,12 @@ public class MenuService {
             final MenuProduct menuProduct =
                     new MenuProduct(
                             savedMenu,
-                            productService.findById(menuProductCreateRequest.getProductId()),
+                            productRepository.getById(menuProductCreateRequest.getProductId()),
                             menuProductCreateRequest.getQuantity()
                     );
             savedMenu.addMenuProduct(menuProduct);
         }
         return savedMenu;
-    }
-
-    @Transactional(readOnly = true)
-    public Menu findById(final Long id) {
-        return menuRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 메뉴입니다."));
-    }
-
-    @Transactional(readOnly = true)
-    public int countByIdIn(final List<Long> menuIds) {
-        return menuRepository.countByIdIn(menuIds);
     }
 
     @Transactional(readOnly = true)

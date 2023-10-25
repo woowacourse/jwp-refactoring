@@ -3,11 +3,12 @@ package kitchenpos.repository;
 import kitchenpos.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    boolean existsById(Long productId);
+    default Product getById(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+    }
 
-    List<Product> findAllByIdIn(List<Long> productIds);
+    boolean existsById(Long productId);
 }
