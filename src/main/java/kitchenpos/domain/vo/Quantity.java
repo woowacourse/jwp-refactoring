@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Quantity {
 
+    private static final int LESS_THAN_PARAMETER = -1;
     @Column(nullable = false)
     private Long quantity;
 
@@ -25,7 +26,7 @@ public class Quantity {
     }
 
     private static void validateNullOrNegative(Long quantity) {
-        if (Objects.isNull(quantity) || quantity.compareTo(BigDecimal.ZERO.longValue()) < 0) {
+        if (Objects.isNull(quantity) || quantity.compareTo(BigDecimal.ZERO.longValue()) <= LESS_THAN_PARAMETER) {
             throw new IllegalArgumentException();
         }
     }

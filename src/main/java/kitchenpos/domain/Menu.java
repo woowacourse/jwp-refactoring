@@ -88,7 +88,7 @@ public class Menu {
                 .reduce(Price.ZERO, Price::add);
 
         if (price.moreExpensiveThan(totalPrice)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴의 가격은 포함된 상품들의 합보다 비쌀 수 없습니다.");
         }
     }
 

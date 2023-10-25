@@ -84,7 +84,7 @@ public class Orders {
 
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (isCompletion()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 완료된 주문의 상태를 바꿀 수 없습니다.");
         }
 
         this.orderStatus = orderStatus;

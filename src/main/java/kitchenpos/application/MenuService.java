@@ -58,22 +58,28 @@ public class MenuService {
     }
 
     private MenuGroup findMenuGroup(Long menuGroupId) {
-        validateNull(menuGroupId);
+        validateMenuGroupId(menuGroupId);
 
         return menuGroupRepository.findById(menuGroupId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
+    private void validateMenuGroupId(Long menuGroupId) {
+        if (Objects.isNull(menuGroupId)) {
+            throw new IllegalArgumentException("메뉴 그룹의 ID 는 존재하지 않을 수 없습니다.");
+        }
+    }
+
     private Product findProduct(Long productId) {
-        validateNull(productId);
+        validateProductId(productId);
 
         return productRepository.findById(productId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateNull(Object object) {
-        if (Objects.isNull(object)) {
-            throw new IllegalArgumentException();
+    private void validateProductId(Long productId) {
+        if (Objects.isNull(productId)) {
+            throw new IllegalArgumentException("상품의 ID 는 존재하지 않을 수 없습니다.");
         }
     }
 

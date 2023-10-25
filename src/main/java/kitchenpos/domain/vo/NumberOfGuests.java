@@ -7,6 +7,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class NumberOfGuests {
 
+    private static final int MIN_NUMBER_OF_GUESTS = 0;
+
     @Column(nullable = false)
     private int numberOfGuests;
 
@@ -24,8 +26,8 @@ public class NumberOfGuests {
     }
 
     private static void validate(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+            throw new IllegalArgumentException("방문자는 최소 0명입니다.");
         }
     }
 

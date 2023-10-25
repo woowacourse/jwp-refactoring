@@ -40,14 +40,15 @@ public class TableService {
 
 
     private OrderTable findOrderTable(Long orderTableId) {
-        validateNull(orderTableId);
+        validateOrderTableId(orderTableId);
+
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateNull(Object object) {
-        if (Objects.isNull(object)) {
-            throw new IllegalArgumentException();
+    private void validateOrderTableId(Long orderTableId) {
+        if (Objects.isNull(orderTableId)) {
+            throw new IllegalArgumentException("주문 테이블의 ID 는 존재하지 않을 수 없습니다.");
         }
     }
 

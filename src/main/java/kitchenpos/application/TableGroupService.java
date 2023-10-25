@@ -39,7 +39,7 @@ public class TableGroupService {
 
     private List<OrderTable> findOrderTablesByRequest(List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 그룹을 구성하기 위해서는 주문 테이블이 최소 2개 있어야 합니다.");
         }
 
         return orderTableIds.stream()
@@ -48,15 +48,15 @@ public class TableGroupService {
     }
 
     private OrderTable findOrderTable(Long orderTableId) {
-        validateNull(orderTableId);
+        validateOrderTableId(orderTableId);
 
         return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateNull(Object object) {
-        if (Objects.isNull(object)) {
-            throw new IllegalArgumentException();
+    private void validateOrderTableId(Long orderTableId) {
+        if (Objects.isNull(orderTableId)) {
+            throw new IllegalArgumentException("주문 테이블의 ID 는 존재하지 않을 수 없습니다.");
         }
     }
 
@@ -67,10 +67,16 @@ public class TableGroupService {
     }
 
     private TableGroup findTableGroup(Long tableGroupId) {
-        validateNull(tableGroupId);
+        validateTableGroupId(tableGroupId);
 
         return tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private void validateTableGroupId(Long tableGroupId) {
+        if (Objects.isNull(tableGroupId)) {
+            throw new IllegalArgumentException("테이블 그룹의 ID 는 존재하지 않을 수 없습니다.");
+        }
     }
 
 }

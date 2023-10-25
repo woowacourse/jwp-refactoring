@@ -8,6 +8,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Price {
 
+    private static final int LESS_THAN_PARAMETER = -1;
+    private static final int GREATER_THAN_PARAMETER = 1;
+    private static final int EQUAL_PARAMETER = 0;
+
     public static final Price ZERO = new Price(BigDecimal.ZERO);
 
     @Column(nullable = false)
@@ -45,7 +49,7 @@ public class Price {
     }
 
     private static void validateNegative(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) <= LESS_THAN_PARAMETER) {
             throw new IllegalArgumentException();
         }
     }
@@ -57,7 +61,7 @@ public class Price {
     }
 
     public boolean moreExpensiveThan(Price other) {
-        return price.compareTo(other.getValue()) > 0;
+        return price.compareTo(other.getValue()) >= GREATER_THAN_PARAMETER;
     }
 
     public static Price getFreePrice() {
@@ -78,7 +82,7 @@ public class Price {
             return false;
         }
 
-        return price.compareTo(((Price) other).price) == 0;
+        return price.compareTo(((Price) other).price) == EQUAL_PARAMETER;
     }
 
     @Override
