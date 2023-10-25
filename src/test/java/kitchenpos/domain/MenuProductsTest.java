@@ -21,8 +21,8 @@ class MenuProductsTest {
         // given
         final Product 후라이드 = new Product("후라이드", BigDecimal.valueOf(17000));
         final Product 양념치킨 = new Product("양념치킨", BigDecimal.valueOf(20000));
-        final MenuProduct 후라이드_1개 = new MenuProduct(후라이드, 1l);
-        final MenuProduct 양념치킨_2개 = new MenuProduct(양념치킨, 2l);
+        final MenuProduct 후라이드_1개 = new MenuProduct(후라이드, 1L);
+        final MenuProduct 양념치킨_2개 = new MenuProduct(양념치킨, 2L);
         final MenuProducts menuProducts = new MenuProducts(List.of(후라이드_1개, 양념치킨_2개));
 
         // when

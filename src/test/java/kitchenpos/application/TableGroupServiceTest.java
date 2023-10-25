@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
@@ -56,9 +57,7 @@ class TableGroupServiceTest {
         final TableGroup actual = tableGroupService.create(tableGroup);
 
         // then
-        SoftAssertions.assertSoftly(softAssertions -> {
-            softAssertions.assertThat(actual.getId()).isPositive();
-        });
+        assertThat(actual.getId()).isPositive();
     }
 
     @Test

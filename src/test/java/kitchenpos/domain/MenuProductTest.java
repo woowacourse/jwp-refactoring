@@ -18,7 +18,7 @@ class MenuProductTest {
     void calculateMenuProductPrice() {
         // given
         final Product 후라이드 = new Product("후라이드", BigDecimal.valueOf(17000));
-        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2l);
+        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2L);
 
         // when
         final Price actual = 후라이드_2개.calculateMenuProductPrice();

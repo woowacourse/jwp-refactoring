@@ -47,7 +47,7 @@ class MenuServiceTest {
         // given
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
+        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
 
         final CreateMenuRequest menu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(후라이드_2개));
 
@@ -66,7 +66,7 @@ class MenuServiceTest {
 
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
+        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
@@ -84,7 +84,7 @@ class MenuServiceTest {
 
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
+        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
@@ -101,7 +101,7 @@ class MenuServiceTest {
         final Long invalidMenuGroupId = -999L;
 
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
+        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), invalidMenuGroupId, List.of(후라이드_2개));
 
@@ -118,7 +118,7 @@ class MenuServiceTest {
         final Long invalidProductId = -999L;
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
 
-        final CreateMenuProductRequest invalidMenuProductRequest = new CreateMenuProductRequest(invalidProductId, 2l);
+        final CreateMenuProductRequest invalidMenuProductRequest = new CreateMenuProductRequest(invalidProductId, 2L);
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴.getId(), List.of(invalidMenuProductRequest));
 
         // when & then
@@ -134,7 +134,7 @@ class MenuServiceTest {
         final BigDecimal invalidPrice = BigDecimal.valueOf(50000);
         final Product 후라이드 = productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000)));
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2l);
+        final CreateMenuProductRequest 후라이드_2개 = new CreateMenuProductRequest(후라이드.getId(), 2L);
 
         final CreateMenuRequest invalidMenu = new CreateMenuRequest("후라이드+후라이드", invalidPrice, 두마리메뉴.getId(), List.of(후라이드_2개));
 
@@ -152,9 +152,9 @@ class MenuServiceTest {
         final Product 양념치킨 = productRepository.save(new Product("양념치킨", BigDecimal.valueOf(20000)));
 
         final MenuGroup 두마리메뉴 = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2l);
-        final MenuProduct 후라이드_1개 = new MenuProduct(후라이드, 1l);
-        final MenuProduct 양념치킨_1개 = new MenuProduct(양념치킨, 1l);
+        final MenuProduct 후라이드_2개 = new MenuProduct(후라이드, 2L);
+        final MenuProduct 후라이드_1개 = new MenuProduct(후라이드, 1L);
+        final MenuProduct 양념치킨_1개 = new MenuProduct(양념치킨, 1L);
 
         final Menu 후라이드_후라이드 = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(30000), 두마리메뉴));
 

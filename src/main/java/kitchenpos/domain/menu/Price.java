@@ -25,9 +25,9 @@ public class Price {
     }
 
     public Price multiply(final long quantity) {
-        final BigDecimal value = this.value.multiply(BigDecimal.valueOf(quantity));
+        final BigDecimal multiplyValue = this.value.multiply(BigDecimal.valueOf(quantity));
 
-        return new Price(value);
+        return new Price(multiplyValue);
     }
 
     public BigDecimal getValue() {
