@@ -1,6 +1,6 @@
 package kitchenpos.domain.exception;
 
-import static kitchenpos.domain.MenuGroup.MINIMUM_MENU_GROUP_NAME_LENGTH;
+import static kitchenpos.domain.menu.MenuGroup.MINIMUM_MENU_GROUP_NAME_LENGTH;
 
 import kitchenpos.common.KitchenPosException;
 

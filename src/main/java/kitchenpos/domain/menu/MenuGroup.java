@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 @Entity
 public class MenuGroup {
 
-    public static int MINIMUM_MENU_GROUP_NAME_LENGTH = 1;
+    public static final int MINIMUM_MENU_GROUP_NAME_LENGTH = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class MenuGroup {
         this(null, name);
     }
 
-    public MenuGroup(final Long id, final String name) {
+    private MenuGroup(final Long id, final String name) {
         validate(name);
         this.id = id;
         this.name = name;

@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateDto;
 import kitchenpos.application.dto.OrderTableUpdateGuestDto;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.exception.TableGroupException.GroupAlreadyExistsException;
+import kitchenpos.domain.table.OrderStatusChecker;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderStatusChecker orderStatusChecker;
+    private final TableGroupRepository tableGroupRepository;
 
-    public TableService(final OrderRepository orderRepository,
-        final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+        final OrderStatusChecker orderStatusChecker,
+        final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderStatusChecker = orderStatusChecker;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -40,14 +43,12 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (orderRepository.existsByOrderTableAndOrderStatusIn(savedOrderTable,
-            Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+        if (isNotExistsByOrderTables(List.of(savedOrderTable))) {
+            savedOrderTable.changeEmpty(orderStatusChecker, true);
+            return orderTableRepository.save(savedOrderTable);
         }
 
-        savedOrderTable.changeEmpty(true);
-
-        return orderTableRepository.save(savedOrderTable);
+        throw new GroupAlreadyExistsException();
     }
 
     @Transactional
@@ -63,5 +64,9 @@ public class TableService {
         savedOrderTable.changeGuests(orderTableUpdateGuestDto.getNumberOfGuests());
 
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    private boolean isNotExistsByOrderTables(final List<OrderTable> orderTables) {
+        return !tableGroupRepository.existsByOrderTablesIn(orderTables);
     }
 }

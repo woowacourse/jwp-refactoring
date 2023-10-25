@@ -1,17 +1,13 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Set;
 import kitchenpos.application.dto.TableGroupCreateDto;
 import kitchenpos.application.exception.TableGroupAppException;
-import kitchenpos.application.exception.TableGroupAppException.UngroupingNotPossibleException;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final OrderStatusChecker orderStatusChecker;
 
-    public TableGroupService(final OrderRepository orderRepository,
-        final OrderTableRepository orderTableRepository,
-        final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository,
+        final TableGroupRepository tableGroupRepository,
+        final OrderStatusChecker orderStatusChecker) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.orderStatusChecker = orderStatusChecker;
     }
 
     @Transactional
@@ -51,23 +47,8 @@ public class TableGroupService {
             .orElseThrow(
                 () -> new TableGroupAppException.NotFoundTableGroupException(tableGroupId));
 
-        final boolean existCookingOrMeal = isExistCookingOrMeal(findTableGroup);
-
-        if (existCookingOrMeal) {
-            throw new UngroupingNotPossibleException();
-        }
-
-        findTableGroup.ungroup();
+        findTableGroup.ungroup(orderStatusChecker);
 
         tableGroupRepository.save(findTableGroup);
-    }
-
-    private boolean isExistCookingOrMeal(final TableGroup findTableGroup) {
-        final List<OrderTable> orderTables = findTableGroup.getOrderTables();
-        final Set<Order> findOrders = orderRepository.findAllByOrderTableIn(orderTables);
-
-        return findOrders.stream()
-            .anyMatch(orderTable -> orderTable.isSameStatus(OrderStatus.COOKING)
-                || orderTable.isSameStatus(OrderStatus.MEAL));
     }
 }

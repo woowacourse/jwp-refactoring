@@ -5,18 +5,18 @@ import java.util.List;
 public class OrderCreateDto {
 
     private final Long orderTableId;
-    private final List<OrderLineItemDto> orderLineItemDtos;
+    private final List<OrderLineItemDto> orderLineItems;
 
-    public OrderCreateDto(final Long orderTableId, final List<OrderLineItemDto> orderLineItemDtos) {
+    public OrderCreateDto(final Long orderTableId, final List<OrderLineItemDto> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderLineItemDtos = orderLineItemDtos;
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderLineItemDto> getOrderLineItemDtos() {
-        return orderLineItemDtos;
+    public List<OrderLineItemDto> getOrderLineItems() {
+        return orderLineItems;
     }
 }

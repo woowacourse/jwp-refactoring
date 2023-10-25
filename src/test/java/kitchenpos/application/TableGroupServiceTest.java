@@ -8,24 +8,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.TableGroupCreateDto;
-import kitchenpos.application.exception.TableGroupAppException.UngroupingNotPossibleException;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductRepository;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.domain.exception.TableGroupException.InvalidOrderTablesException;
+import kitchenpos.domain.exception.TableGroupException.UngroupingNotPossibleException;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTableChangeService;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.domain.table.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,7 +60,10 @@ class TableGroupServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
+    private OrderTableChangeService orderTableChangeService;
+
+    @Autowired
+    private OrderStatusChecker orderStatusChecker;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -72,14 +76,14 @@ class TableGroupServiceTest {
         final OrderTable firstOrderTable = new OrderTable(
             0
         );
-        firstOrderTable.changeEmpty(false);
         firstTable = orderTableRepository.save(firstOrderTable);
+        firstOrderTable.changeEmpty(orderStatusChecker, false);
 
         final OrderTable secondOrderTable = new OrderTable(
             0
         );
-        secondOrderTable.changeEmpty(false);
         secondTable = orderTableRepository.save(secondOrderTable);
+        secondOrderTable.changeEmpty(orderStatusChecker, false);
     }
 
     @Test
@@ -95,6 +99,8 @@ class TableGroupServiceTest {
         final List<OrderTable> updatedOrderTables = savedTableGroup.getOrderTables();
         final List<Long> updatedOrderTableIds = updatedOrderTables.stream().map(OrderTable::getId)
             .collect(Collectors.toList());
+
+        tableGroupRepository.flush();
 
         assertThat(updatedOrderTables).hasSize(2);
         assertThat(updatedOrderTableIds).containsExactly(firstTable.getId(), secondTable.getId());
@@ -147,19 +153,17 @@ class TableGroupServiceTest {
 
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
+        tableGroupRepository.flush();
+
         // when
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        // then
-        final OrderTable ungroupedOrderTable = orderTableRepository.findAll().stream()
-            .filter(orderTable -> orderTable.getId().equals(firstTable.getId()))
-            .findFirst()
-            .get();
+        tableGroupRepository.flush();
 
+        // then
         final TableGroup result = tableGroupRepository.findAll().get(0);
 
         assertThat(result.getOrderTables()).isEmpty();
-        assertThat(ungroupedOrderTable.getTableGroup()).isNull();
     }
 
     @ParameterizedTest
@@ -170,12 +174,12 @@ class TableGroupServiceTest {
         final Product product = productRepository.save(
             new Product("테스트상품", BigDecimal.valueOf(1000)));
 
-        final MenuProduct menuProduct = new MenuProduct(product, 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1L);
 
         final Menu menu = menuRepository.save(Menu.of("테스트메뉴", BigDecimal.valueOf(500), menuGroup,
             List.of(menuProduct)));
 
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 1);
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), 1);
 
         final TableGroupCreateDto tableGroupCreateDto = new TableGroupCreateDto(
             List.of(firstTable.getId(), secondTable.getId()));
@@ -183,7 +187,8 @@ class TableGroupServiceTest {
         final TableGroup savedTableGroup = tableGroupService.create(tableGroupCreateDto);
 
         // when
-        final Order order = Order.of(firstTable, List.of(orderLineItem));
+        final Order order = Order.of(firstTable.getId(), orderTableChangeService,
+            List.of(orderLineItem));
         order.changeOrderStatus(orderStatus);
         orderRepository.save(order);
 

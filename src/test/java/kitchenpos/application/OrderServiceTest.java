@@ -13,19 +13,20 @@ import kitchenpos.application.dto.OrderStatusUpdateDto;
 import kitchenpos.application.exception.MenuAppException.NotFoundMenuException;
 import kitchenpos.application.exception.OrderAppException.OrderAlreadyCompletedException;
 import kitchenpos.application.exception.OrderLineItemAppException.EmptyOrderLineItemException;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
 import kitchenpos.domain.exception.OrderException.EmptyOrderTableException;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -56,6 +57,9 @@ class OrderServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private OrderStatusChecker orderStatusChecker;
+
     private OrderTable mockOrderTable;
     private Menu mockMenu;
 
@@ -70,7 +74,7 @@ class OrderServiceTest {
         final Product product = productRepository.save(
             new Product("테스트 상품", BigDecimal.valueOf(10000)));
 
-        final MenuProduct menuProduct = new MenuProduct(product, 2);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 2L);
         final Menu menu = Menu.of(
             "테스트 메뉴",
             BigDecimal.valueOf(10000),
@@ -130,8 +134,8 @@ class OrderServiceTest {
     @Test
     void 주문_생성_시_테이블이_비어있으면_예외가_발생한다() {
         // given when
-        final OrderTable emptyOrderTable = new OrderTable(2);
-        emptyOrderTable.changeEmpty(true);
+        final OrderTable emptyOrderTable = orderTableRepository.save(new OrderTable(2));
+        emptyOrderTable.changeEmpty(orderStatusChecker, true);
         final OrderTable savedOrderTable = orderTableRepository.save(emptyOrderTable);
 
         final OrderLineItemDto orderLineItemDto = new OrderLineItemDto(mockMenu.getId(), 2);

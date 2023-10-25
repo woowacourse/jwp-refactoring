@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import kitchenpos.domain.exception.MenuException.MenuOverPriceException;
@@ -25,7 +26,8 @@ public class Menu {
     @ManyToOne
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id", updatable = false, nullable = false)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
@@ -42,9 +44,6 @@ public class Menu {
     public static Menu of(final String name, final BigDecimal price, final MenuGroup menuGroup,
         final List<MenuProduct> menuProducts) {
         final Menu menu = new Menu(name, price, menuGroup, menuProducts);
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(menu);
-        }
 
         if (menu.checkPriceCondition()) {
             throw new MenuOverPriceException();

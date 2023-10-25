@@ -7,21 +7,22 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateDto;
 import kitchenpos.application.dto.OrderTableUpdateGuestDto;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductRepository;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderLineItemRepository;
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.exception.OrderException.InvalidOrderStatusChangeException;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTableChangeService;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
+import kitchenpos.domain.table.OrderStatusChecker;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.OrderTableRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,10 +54,10 @@ class TableServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private MenuProductRepository menuProductRepository;
+    private OrderTableChangeService orderTableChangeService;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
+    private OrderStatusChecker orderStatusChecker;
 
     @Test
     void 테이블을_등록할_수_있다() {
@@ -157,32 +158,29 @@ class TableServiceTest {
 
     @Test
     void 조리_또는_식사_중인_테이블의_빈상태를_변경할_때_예외가_발생한다() {
-        // given
+        // given when
         final OrderTable savedOrderTable = createOrderTable(false, 2);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("테스트 메뉴그룹"));
         final Product product = productRepository.save(new Product("상품", BigDecimal.valueOf(2000)));
-        final MenuProduct menuProduct = new MenuProduct(product, 1);
+        final MenuProduct menuProduct = new MenuProduct(product.getName(), product.getPrice(), 1L);
         final Menu menu = menuRepository.save(Menu.of("테스트 메뉴", BigDecimal.valueOf(1000), menuGroup,
             List.of(menuProduct)));
-        menuProductRepository.save(menuProduct);
 
-        final OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
-        final Order order = Order.of(savedOrderTable, List.of(orderLineItem));
+        final OrderLineItem orderLineItem = new OrderLineItem(menu.getName(), menu.getPrice(), 2);
+        final Order order = Order.of(savedOrderTable.getId(), orderTableChangeService,
+            List.of(orderLineItem));
         order.changeOrderStatus(OrderStatus.COOKING);
         orderRepository.save(order);
 
-        orderLineItemRepository.save(orderLineItem);
-
-        // when
-
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidOrderStatusChangeException.class);
     }
 
     private OrderTable createOrderTable(final boolean emptyStatus, final int guests) {
         final OrderTable orderTable = new OrderTable(guests);
-        orderTable.changeEmpty(emptyStatus);
-        return orderTableRepository.save(orderTable);
+        orderTableRepository.save(orderTable);
+        orderTable.changeEmpty(orderStatusChecker, emptyStatus);
+        return orderTable;
     }
 }
