@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.common.event.ValidateMenuGroupExistsEvent;
 import kitchenpos.common.vo.Money;
 import kitchenpos.common.vo.PriceIsNegativeException;
 import kitchenpos.fixture.MenuGroupFixture;
@@ -150,5 +151,30 @@ class MenuServiceTest extends ServiceTestContext {
         // then
         assertThat(menuResponses.get(0).getPrice().doubleValue())
                 .isEqualTo(BigDecimal.valueOf(999L).doubleValue());
+    }
+
+    @Test
+    void 메뉴를_생성할_때_메뉴_그룹이_존재하는지를_검증하기_위한_이벤트가_발행된다() {
+        // given
+        MenuGroup menuGroup = MenuGroupFixture.from("name");
+        Product product = ProductFixture.of("name", BigDecimal.valueOf(1000L));
+
+
+        // when
+        menuGroupRepository.save(menuGroup);
+        productRepository.save(product);
+
+        CreateMenuRequest request = new CreateMenuRequest("menuName",
+                BigDecimal.valueOf(999L),
+                menuGroup.getId(),
+                List.of(new MenuProductRequest(product.getId(), 1L)));
+
+        menuService.create(request);
+
+        // then
+        long eventOccurredCount = applicationEvents.stream(ValidateMenuGroupExistsEvent.class)
+                .count();
+
+        assertThat(eventOccurredCount).isEqualTo(1);
     }
 }

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.dto.request.CreateMenuGroupRequest;
 import kitchenpos.menugroup.dto.response.MenuGroupResponse;
+import kitchenpos.menugroup.exception.MenuGroupNotFoundException;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,5 +34,10 @@ public class MenuGroupService {
         return menuGroups.stream()
                 .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
+    }
+
+    public void validateMenuGroupExists(Long menuGroupId) {
+        menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(MenuGroupNotFoundException::new);
     }
 }

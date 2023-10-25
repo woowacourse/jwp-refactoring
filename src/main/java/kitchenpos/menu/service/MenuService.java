@@ -2,6 +2,7 @@ package kitchenpos.menu.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.common.event.ValidateMenuGroupExistsEvent;
 import kitchenpos.common.vo.Money;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
@@ -9,12 +10,10 @@ import kitchenpos.menu.dto.request.CreateMenuRequest;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.response.MenuResponse;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.exception.MenuGroupNotFoundException;
-import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.exception.ProductNotFoundException;
 import kitchenpos.product.repository.ProductRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MenuService {
 
+    private final ApplicationEventPublisher eventPublisher;
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
 
-    public MenuService(MenuRepository menuRepository,
-            MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
+    public MenuService(ApplicationEventPublisher eventPublisher, MenuRepository menuRepository,
+            ProductRepository productRepository) {
+        this.eventPublisher = eventPublisher;
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.productRepository = productRepository;
     }
 
@@ -43,10 +42,8 @@ public class MenuService {
     }
 
     private Menu saveMenu(CreateMenuRequest request) {
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(MenuGroupNotFoundException::new);
-
-        return new Menu(menuGroup.getId(), request.getName(), request.getPrice());
+        eventPublisher.publishEvent(new ValidateMenuGroupExistsEvent(request.getMenuGroupId()));
+        return new Menu(request.getMenuGroupId(), request.getName(), request.getPrice());
     }
 
     private List<MenuProduct> setupMenuProducts(CreateMenuRequest request, Menu menu) {
