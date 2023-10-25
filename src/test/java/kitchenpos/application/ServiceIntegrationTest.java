@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.fixture.MenuFixture.메뉴_생성;
 import static kitchenpos.fixture.MenuGroupFixture.추천_메뉴_그룹;
 import static kitchenpos.fixture.MenuProductFixture.메뉴_상품;
-import static kitchenpos.fixture.OrderFixture.주문_생성;
 import static kitchenpos.fixture.OrderLineItemFixture.메뉴을_가진_주문_항목_생성;
 import static kitchenpos.fixture.ProductFixture.후추_치킨_10000원;
 
@@ -15,10 +14,9 @@ import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.OrderLineItemRepository;
 import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.Orders;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -69,7 +67,7 @@ public abstract class ServiceIntegrationTest {
         databaseCleanup.execute();
     }
 
-    protected Orders 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
+    protected Order 주문을_저장하고_반환받는다(OrderTable savedOrderTable) {
         Product savedProduct = productRepository.save(후추_치킨_10000원());
         MenuGroup savedMenuGroup = menuGroupRepository.save(추천_메뉴_그룹());
         MenuProduct menuProduct = 메뉴_상품(savedProduct, 2);
@@ -83,7 +81,7 @@ public abstract class ServiceIntegrationTest {
         return orderService.create(request);
     }
 
-    protected Orders 주문의_상태를_변환한다(Orders orders, OrderStatus orderStatus) {
+    protected Order 주문의_상태를_변환한다(Order orders, OrderStatus orderStatus) {
         orders.changeOrderStatus(orderStatus);
 
         return orderRepository.save(orders);

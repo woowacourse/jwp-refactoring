@@ -20,8 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-@Entity
-public class Orders {
+@Entity(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,17 +41,17 @@ public class Orders {
     @OneToMany(mappedBy = "orders", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    protected Orders() {
+    protected Order() {
     }
 
-    private Orders(
+    private Order(
             OrderStatus orderStatus,
             LocalDateTime orderedTime
     ) {
         this(null, null, orderStatus, orderedTime);
     }
 
-    private Orders(
+    private Order(
             Long id,
             OrderTable orderTable,
             OrderStatus orderStatus,
@@ -63,11 +63,11 @@ public class Orders {
         this.orderedTime = orderedTime;
     }
 
-    public static Orders of(
+    public static Order of(
             OrderStatus orderStatus,
             List<OrderLineItem> orderLineItems
     ) {
-        Orders orders = new Orders(orderStatus, LocalDateTime.now());
+        Order orders = new Order(orderStatus, LocalDateTime.now());
         orders.addAllOrderLineItems(orderLineItems);
 
         return orders;

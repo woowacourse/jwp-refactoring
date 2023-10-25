@@ -34,7 +34,7 @@ public class OrderTable {
     private boolean empty;
 
     @OneToMany(mappedBy = "orderTable", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private final List<Orders> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     protected OrderTable() {
     }
@@ -65,7 +65,7 @@ public class OrderTable {
         );
     }
 
-    public void addOrder(Orders orders) {
+    public void addOrder(Order orders) {
         if (isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -138,7 +138,7 @@ public class OrderTable {
         return empty;
     }
 
-    public List<Orders> getOrders() {
+    public List<Order> getOrders() {
         return orders;
     }
 

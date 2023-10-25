@@ -18,7 +18,7 @@ public class OrderLineItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
-    private Orders orders;
+    private Order orders;
 
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = false)
@@ -34,7 +34,7 @@ public class OrderLineItem {
         this(null, null, menu, quantity);
     }
 
-    private OrderLineItem(Long seq, Orders orders, Menu menu, Quantity quantity) {
+    private OrderLineItem(Long seq, Order orders, Menu menu, Quantity quantity) {
         this.seq = seq;
         this.orders = orders;
         this.menu = menu;
@@ -51,7 +51,7 @@ public class OrderLineItem {
         );
     }
 
-    public void registerOrders(Orders orders) {
+    public void registerOrders(Order orders) {
         this.orders = orders;
     }
 
@@ -60,7 +60,7 @@ public class OrderLineItem {
     }
 
 
-    public Orders getOrder() {
+    public Order getOrder() {
         return orders;
     }
 

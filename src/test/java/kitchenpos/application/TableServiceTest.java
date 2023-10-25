@@ -1,17 +1,15 @@
 package kitchenpos.application;
 
 import static java.lang.Long.MAX_VALUE;
-import static java.lang.Long.numberOfLeadingZeros;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_없는_주문_테이블_생성;
 import static kitchenpos.fixture.OrderTableFixture.단체_지정이_있는_주문_테이블_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Orders;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -104,7 +102,7 @@ class TableServiceTest extends ServiceIntegrationTest {
         OrderTable savedOrderTable = orderTableRepository.save(
                 단체_지정이_없는_주문_테이블_생성(1, false)
         );
-        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
+        Order orders = 주문을_저장하고_반환받는다(savedOrderTable);
         주문의_상태를_변환한다(orders, OrderStatus.COOKING);
         OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
@@ -117,7 +115,7 @@ class TableServiceTest extends ServiceIntegrationTest {
     void 주문_테이블에_속해_있는_주문_중_단_하나라도_식사중이면_empty_변경이_안된다() {
         // given
         OrderTable savedOrderTable = orderTableRepository.save(단체_지정이_없는_주문_테이블_생성(1, false));
-        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
+        Order orders = 주문을_저장하고_반환받는다(savedOrderTable);
         주문의_상태를_변환한다(orders, OrderStatus.MEAL);
         OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);
 
@@ -134,7 +132,7 @@ class TableServiceTest extends ServiceIntegrationTest {
                 false
         );
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        Orders orders = 주문을_저장하고_반환받는다(savedOrderTable);
+        Order orders = 주문을_저장하고_반환받는다(savedOrderTable);
         orders.changeOrderStatus(OrderStatus.COMPLETION);
         orderRepository.save(orders);
         OrderTableUpdateEmptyRequest request = new OrderTableUpdateEmptyRequest(true);

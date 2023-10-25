@@ -12,7 +12,7 @@ import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.Orders;
+import kitchenpos.domain.Order;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemCreateRequest;
 import kitchenpos.ui.request.OrderUpdateRequest;
@@ -38,11 +38,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Orders create(OrderCreateRequest request) {
+    public Order create(OrderCreateRequest request) {
         List<OrderLineItem> orderLineItems = createOrderLineItemsByRequest(request.getOrderLineItemCreateRequests());
         OrderTable orderTable = findOrderTable(request.getOrderTableId());
 
-        Orders orders = Orders.of(COOKING, orderLineItems);
+        Order orders = Order.of(COOKING, orderLineItems);
         orderTable.addOrder(orders);
 
         return orderRepository.save(orders);
@@ -90,20 +90,20 @@ public class OrderService {
         }
     }
 
-    public List<Orders> list() {
+    public List<Order> list() {
         return orderRepository.findAll();
     }
 
     @Transactional
-    public Orders changeOrderStatus(Long orderId, OrderUpdateRequest request) {
+    public Order changeOrderStatus(Long orderId, OrderUpdateRequest request) {
         OrderStatus orderStatus = OrderStatus.from(request.getOrderStatus());
-        Orders orders = findOrder(orderId);
+        Order orders = findOrder(orderId);
         orders.changeOrderStatus(orderStatus);
 
         return orders;
     }
 
-    private Orders findOrder(Long orderId) {
+    private Order findOrder(Long orderId) {
         validateOrderId(orderId);
 
         return orderRepository.findById(orderId)
