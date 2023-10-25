@@ -1,59 +1,47 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.MenuFixture.양념치킨;
+import static kitchenpos.fixture.OrderTableFixture.테이블1;
+import static kitchenpos.fixture.OrderTableFixture.테이블2;
+import static kitchenpos.fixture.OrderTableFixture.테이블9;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@JdbcTest
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TableGroupServiceTest {
 
     @Autowired
-    private DataSource dataSource;
-
+    private TableService tableService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
     private TableGroupService tableGroupService;
-
-    @Mock
-    private OrderDao mockedOrderDao;
-    @Mock
-    private OrderTableDao mockedOrderTableDao;
-    @Mock
-    private OrderTableDao mockedTableGroupDao;
-
-
-    @BeforeEach
-    void setUp() {
-        var orderDao = new JdbcTemplateOrderDao(dataSource);
-        var orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        var tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-    }
 
     @Test
     void 등록시_두_테이블_이상이어야한다() {
-        var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(테이블1()));
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId())
+        ));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -61,9 +49,11 @@ class TableGroupServiceTest {
 
     @Test
     void 등록시_기존_테이블이어야한다() {
-        var tableGroup = new TableGroup();
         var unsaved = 테이블9();
-        tableGroup.setOrderTables(List.of(테이블1(), unsaved));
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(unsaved.getId())
+        ));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -71,15 +61,10 @@ class TableGroupServiceTest {
 
     @Test
     void 등록시_테이블들은_비어있어야한다() {
-        var orderDao = new JdbcTemplateOrderDao(dataSource);
-        var tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        this.tableGroupService = new TableGroupService(orderDao, mockedOrderTableDao, tableGroupDao);
-
-        var tableGroupWithNotEmpty = new TableGroup();
-        var notEmptyTable = 테이블2();
-        notEmptyTable.setEmpty(false);
-        tableGroupWithNotEmpty.setOrderTables(List.of(테이블1(), notEmptyTable));
-        when(mockedOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroupWithNotEmpty.getOrderTables());
+        var tableGroupWithNotEmpty = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(fillTable(테이블2()).getId())
+        ));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupWithNotEmpty))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -88,52 +73,72 @@ class TableGroupServiceTest {
     @Test
     void 등록시_생성시각을_기록한다() {
         LocalDateTime startedTime = LocalDateTime.now();
-        var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(테이블1(), 테이블2()));
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(테이블2().getId())
+        ));
 
         assertThat(tableGroupService.create(tableGroup).getCreatedDate()).isBetween(startedTime, LocalDateTime.now());
     }
 
     @Test
     void 등록시_테이블들을_이용중으로_바꾼다() {
-        var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(테이블1(), 테이블2()));
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(테이블2().getId())
+        ));
 
-        assertThat(tableGroupService.create(tableGroup).getOrderTables()).allMatch(it -> !it.isEmpty());
+        assertThat(tableGroupService.create(tableGroup).getOrderTables()).allMatch(it -> it.isFull());
     }
 
     @Test
     void 등록한_테이블그룹을_반환한다() {
-        var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(테이블1(), 테이블2()));
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(테이블2().getId())
+        ));
 
         assertThat(tableGroupService.create(tableGroup).getId()).isNotNull();
     }
 
     @Test
     void 그룹해제시_조리중이거나_식사중이면_안된다() {
-        var orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        var tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        this.tableGroupService = new TableGroupService(mockedOrderDao, orderTableDao, tableGroupDao);
-        when(mockedOrderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(테이블2().getId())
+        ));
+        var grouped = tableGroupService.create(tableGroup);
 
-        var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(테이블1(), 테이블2()));
-        var saved = tableGroupService.create(tableGroup);
+        var item = new OrderLineItemRequest(양념치킨().getId(), 1);
+        var order = new OrderRequest(grouped.getOrderTables().get(0).getId(), List.of(item));
+        orderService.create(order);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(saved.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(grouped.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 그룹해제시_테이블그룹을_제거한다() {
-        var tableGroup = new TableGroup();
-        tableGroup.setOrderTables(List.of(테이블1(), 테이블2()));
+        var tableGroup = new TableGroupRequest(List.of(
+                new OrderTableRequest(테이블1().getId()),
+                new OrderTableRequest(테이블2().getId())
+        ));
 
-        var groupped = tableGroupService.create(tableGroup);
-        tableGroupService.ungroup(groupped.getId());
+        var grouped = tableGroupService.create(tableGroup);
+        tableGroupService.ungroup(grouped.getId());
 
-        List<OrderTable> orderTables = new JdbcTemplateOrderTableDao(dataSource).findAllByIdIn(List.of(테이블1().getId(), 테이블2().getId()));
-        orderTables.forEach(it -> assertThat(it.getTableGroupId()).isNull());
+        tableService.list().forEach(it -> assertThat(it.getTableGroup()).isNull());
+    }
+
+    private OrderTable fillTable(OrderTable emptyTable) {
+        return tableService.changeEmpty(emptyTable.getId(), false);
+    }
+
+    private Order orderOneFromTable1(Menu menu) {
+        var fullTable = fillTable(테이블1());
+        var item = new OrderLineItemRequest(menu.getId(), 1);
+        var order = new OrderRequest(fullTable.getId(), List.of(item));
+
+        return orderService.create(order);
     }
 }
