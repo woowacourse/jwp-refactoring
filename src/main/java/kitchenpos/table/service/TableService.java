@@ -89,13 +89,17 @@ public class TableService {
     public void groupOrderTables(Long tableGroupId, List<Long> orderTableIds) {
         List<OrderTable> orderTables = findOrderTables(orderTableIds);
         for (OrderTable orderTable : orderTables) {
-            orderTable.validateIsEmpty();
-            orderTable.validateTableGroupNotExists();
-
-            orderTable.changeEmpty(false);
-            orderTable.changeTableGroup(tableGroupId);
+            changeOrderTableGroup(tableGroupId, orderTable);
         }
         validateOrderTableCount(orderTables);
+    }
+
+    private void changeOrderTableGroup(Long tableGroupId, OrderTable orderTable) {
+        orderTable.validateIsEmpty();
+        orderTable.validateTableGroupNotExists();
+
+        orderTable.changeEmpty(false);
+        orderTable.changeTableGroup(tableGroupId);
     }
 
     private List<OrderTable> findOrderTables(List<Long> orderTableIds) {
