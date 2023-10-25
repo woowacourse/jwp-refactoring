@@ -1,6 +1,6 @@
 package kitchenpos.request;
 
-import kitchenpos.domain.order.Order;
+import kitchenpos.order.Order;
 
 public class OrderCreatedRequest {
 

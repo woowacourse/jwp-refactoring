@@ -1,12 +1,12 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.MenuService;
-import kitchenpos.application.ProductService;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.product.Product;
+import kitchenpos.menu.Menu;
+import kitchenpos.menu.MenuProduct;
+import kitchenpos.menu.MenuService;
+import kitchenpos.menugroup.MenuGroup;
+import kitchenpos.menugroup.MenuGroupRepository;
+import kitchenpos.product.Product;
+import kitchenpos.product.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

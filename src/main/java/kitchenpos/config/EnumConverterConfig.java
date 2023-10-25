@@ -1,6 +1,6 @@
 package kitchenpos.config;
 
-import kitchenpos.domain.order.converter.OrderStatusConverter;
+import kitchenpos.order.converter.OrderStatusConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

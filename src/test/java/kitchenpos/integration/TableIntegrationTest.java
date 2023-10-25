@@ -1,15 +1,15 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.TableGroupService;
-import kitchenpos.application.TableService;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.service.OrderCreateService;
-import kitchenpos.domain.table.OrderTable;
-import kitchenpos.domain.table.TableGroup;
+import kitchenpos.menu.Menu;
+import kitchenpos.order.Order;
+import kitchenpos.order.OrderLineItem;
+import kitchenpos.order.OrderStatus;
+import kitchenpos.order.service.OrderCreateService;
 import kitchenpos.support.FixtureFactory;
+import kitchenpos.table.OrderTable;
+import kitchenpos.table.TableGroup;
+import kitchenpos.table.TableGroupService;
+import kitchenpos.table.TableService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
