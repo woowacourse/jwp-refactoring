@@ -97,16 +97,8 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public void setOrderTable(final OrderTable orderTable) {
-        this.orderTable = orderTable;
     }
 
     public String getOrderStatus() {
@@ -119,10 +111,6 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
