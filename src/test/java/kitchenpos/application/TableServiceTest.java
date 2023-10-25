@@ -31,8 +31,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 주문_테이블을_생성할_수_있다() {
             // given
-            final var tableGroup = tableGroupRepository.save(TableGroup.create());
-            final var request = new OrderTableCreateRequest(tableGroup.getId(), 3, true);
+            final var request = new OrderTableCreateRequest(3, true);
 
             // when
             final var actual = tableService.create(request);
@@ -87,7 +86,7 @@ class TableServiceTest extends ServiceTest {
             // given
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
             orderTableRepository.save(new OrderTable(tableGroup, 3, true));
-            final var request = new OrderTableChangeEmptyRequest(1L, 3, true);
+            final var request = new OrderTableChangeEmptyRequest(true);
 
             // when
             final var actual = tableService.changeEmpty(1L, request);
@@ -103,7 +102,7 @@ class TableServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문_테이블을_사용하면_예외를_반환한다() {
             // given
-            final var request = new OrderTableChangeEmptyRequest(1L, 3, true);
+            final var request = new OrderTableChangeEmptyRequest(true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, request))
@@ -120,7 +119,7 @@ class TableServiceTest extends ServiceTest {
             final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var orderLineItem = new OrderLineItem(menu, 5L);
             orderRepository.save(new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(orderLineItem)));
-            final var request = new OrderTableChangeEmptyRequest(null, 3, true);
+            final var request = new OrderTableChangeEmptyRequest(true);
 
             // when & then
             assertThatThrownBy(() -> tableService.changeEmpty(1L, request))

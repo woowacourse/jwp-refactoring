@@ -35,7 +35,7 @@ class TableGroupServiceTest extends ServiceTest {
 
             final var orderTableRequest1 = new OrderTableRequest(1L);
             final var orderTableRequest2 = new OrderTableRequest(2L);
-            final var request = new TableGroupCreateRequest(LocalDateTime.now(), List.of(orderTableRequest1, orderTableRequest2));
+            final var request = new TableGroupCreateRequest(List.of(orderTableRequest1, orderTableRequest2));
 
             // when
             final var actual = tableGroupService.create(request);
@@ -56,7 +56,7 @@ class TableGroupServiceTest extends ServiceTest {
             final var orderTableRequest1 = new OrderTableRequest(1L);
             final var orderTableRequest2 = new OrderTableRequest(2L);
             final var orderTableRequest3 = new OrderTableRequest(3L);
-            final var request = new TableGroupCreateRequest(LocalDateTime.now(),
+            final var request = new TableGroupCreateRequest(
                     List.of(orderTableRequest1, orderTableRequest2, orderTableRequest3));
 
             // when & then
@@ -100,7 +100,8 @@ class TableGroupServiceTest extends ServiceTest {
             final var tableGroup = tableGroupRepository.save(TableGroup.create());
             final var orderTable = orderTableRepository.save(new OrderTable(tableGroup, 5, false));
             final var menuGroup = menuGroupRepository.save(new MenuGroup("메뉴_그룹_이름"));
-            final var menu = menuRepository.save(new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
+            final var menu = menuRepository.save(
+                    new Menu("메뉴_이름", BigDecimal.valueOf(0), menuGroup, Collections.emptyList()));
             final var orderLineItem = new OrderLineItem(menu, 5L);
             orderRepository.save(new Order(orderTable, OrderStatus.MEAL, LocalDateTime.now(), List.of(orderLineItem)));
 

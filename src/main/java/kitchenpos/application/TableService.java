@@ -34,7 +34,7 @@ public class TableService {
     }
 
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        final TableGroup findTableGroup = findTableGroup(request.getTableGroupId());
+        final TableGroup findTableGroup = TableGroup.create();
         final OrderTable orderTable = new OrderTable(findTableGroup, request.getNumberOfGuests(), request.isEmpty());
         orderTableRepository.save(orderTable);
         return OrderTableResponse.from(orderTable);

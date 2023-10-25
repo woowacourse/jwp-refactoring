@@ -40,7 +40,7 @@ class OrderServiceTest extends ServiceTest {
             orderLineItemRepository.save(new OrderLineItem(order, menu, 5));
 
             final var orderLineItemRequest = new OrderLineItemRequest(1L, 5L);
-            final var request = new OrderCreateRequest(1L, "COOKING", LocalDateTime.now(), List.of(orderLineItemRequest));
+            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when
             final var actual = orderService.create(request);
@@ -64,7 +64,7 @@ class OrderServiceTest extends ServiceTest {
             orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), List.of(orderLineItem)));
 
             final var orderLineItemRequest = new OrderLineItemRequest(1L, 5L);
-            final var orderCreateRequest = new OrderCreateRequest(2L, "COOKING", LocalDateTime.now(), List.of(orderLineItemRequest));
+            final var orderCreateRequest = new OrderCreateRequest(2L, List.of(orderLineItemRequest));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -79,7 +79,7 @@ class OrderServiceTest extends ServiceTest {
             orderTableRepository.save(new OrderTable(tableGroup, 3, false));
 
             final var orderLineItemRequest = new OrderLineItemRequest(999L, 5L);
-            final var request = new OrderCreateRequest(1L, "COOKING", LocalDateTime.now(), List.of(orderLineItemRequest));
+            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -100,8 +100,7 @@ class OrderServiceTest extends ServiceTest {
 
             final var orderLineItemRequest1 = new OrderLineItemRequest(1L, 5L);
             final var orderLineItemRequest2 = new OrderLineItemRequest(1L, 3L);
-            final var request = new OrderCreateRequest(1L, "COOKING", LocalDateTime.now(),
-                    List.of(orderLineItemRequest1, orderLineItemRequest2));
+            final var request = new OrderCreateRequest(1L, List.of(orderLineItemRequest1, orderLineItemRequest2));
 
             // when & then
             assertThatThrownBy(() -> orderService.create(request))
@@ -162,8 +161,7 @@ class OrderServiceTest extends ServiceTest {
             orderLineItemRepository.save(orderLineItem);
 
             final var orderLineItemRequest = new OrderLineItemRequest(1L, 5L);
-            final var request = new OrderChangeStatusRequest(1L, "COOKING", LocalDateTime.now(),
-                    List.of(orderLineItemRequest));
+            final var request = new OrderChangeStatusRequest("COOKING");
 
             // when
             final var actual = orderService.changeOrderStatus(1L, request);
@@ -181,8 +179,7 @@ class OrderServiceTest extends ServiceTest {
         @Test
         void 존재하지_않는_주문의_상태를_변경하면_에러를_반환한다() {
             // given
-            final var request = new OrderChangeStatusRequest(1L, "COOKING", LocalDateTime.now(),
-                    Collections.emptyList());
+            final var request = new OrderChangeStatusRequest("COOKING");
 
             // when & then
             assertThatThrownBy(() -> orderService.changeOrderStatus(1L, request))
