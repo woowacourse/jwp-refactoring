@@ -40,21 +40,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        if (orderRequest.getOrderLineItems().isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderLineItems(orderRequest);
 
-        final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
-                .map(OrderRequest.OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        if (Objects.isNull(orderRequest.getOrderTableId())) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTable(orderRequest);
 
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -71,6 +59,26 @@ public class OrderService {
         orderLineItemRepository.saveAll(orderLineItems.getValues());
 
         return OrderResponse.from(order);
+    }
+
+    private void validateOrderTable(final OrderRequest orderRequest) {
+        if (Objects.isNull(orderRequest.getOrderTableId())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItems(final OrderRequest orderRequest) {
+        if (orderRequest.getOrderLineItems().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
+                .map(OrderRequest.OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
+
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private OrderLineItems mapToOrderLineItems(final OrderRequest orderRequest, final Order order) {

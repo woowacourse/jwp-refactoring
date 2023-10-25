@@ -73,11 +73,11 @@
 
 ### 2단계 - 피드백 요구 사항
 
-- [ ] 2단계 체크리스트 체크하기
+- [x] 2단계 체크리스트 체크하기
 - [x] 메뉴 상품 가격 검증 후 예외처리 도메인으로 이동
-- [ ] OrderService 메서드 추출
+- [x] OrderService 메서드 추출
 - [x] DTO 도입
-- [ ] OrderService create 메서드 추출
+- [x] OrderService create 메서드 추출
 - [ ] OrderService의 changeOrderStatus 검증로직 메서드 분리하여 메서드명으로 의도 표현
 - [x] 도메인 패키지 양방향 참조 끊기
 
