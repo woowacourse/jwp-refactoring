@@ -70,7 +70,7 @@ class OrderTableChangedEventHandlerTest {
     void 테이블의_상태_변경_시_해당_테이블을_사용하는_주문의_상태가_조리중이거나_식사중인_경우_예외를_던진다(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = orderTableRepository.save(테이블(false));
-        OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
+        OrderLineItem orderLineItem = 주문_항목(menu, 2L);
         orderRepository.save(주문(orderTable, orderStatus, List.of(orderLineItem)));
 
         // expect
@@ -93,7 +93,7 @@ class OrderTableChangedEventHandlerTest {
     void 테이블의_상태_변경_시_해당_테이블을_사용하는_주문의_상태가_완료된_경우_예외를_던지지_않는다() {
         // given
         OrderTable orderTable = orderTableRepository.save(테이블(false));
-        OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
+        OrderLineItem orderLineItem = 주문_항목(menu, 2L);
         orderRepository.save(주문(orderTable, COMPLETION, List.of(orderLineItem)));
 
         // expect

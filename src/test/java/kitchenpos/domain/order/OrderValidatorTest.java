@@ -67,18 +67,6 @@ class OrderValidatorTest {
     }
 
     @Test
-    void 등록되지_않은_메뉴를_주문하면_예외를_던진다() {
-        // given
-        OrderTable orderTable = orderTableRepository.save(테이블(false));
-        Order order = new Order(orderTable.getId(), List.of(new OrderLineItem(Long.MAX_VALUE, 1)));
-
-        // expect
-        assertThatThrownBy(() -> sut.validate(order))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("등록되지 않은 메뉴를 주문할 수 없습니다.");
-    }
-
-    @Test
     void 등록되지_않은_테이블에서_주문을_하는_경우_예외를_던진다() {
         // given
         Order order = new Order(1L, List.of(new OrderLineItem(menu.getId(), 1)));

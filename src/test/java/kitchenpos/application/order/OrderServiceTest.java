@@ -95,8 +95,8 @@ public class OrderServiceTest {
 
             // expect
             assertThatThrownBy(() -> sut.create(request))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("등록되지 않은 메뉴를 주문할 수 없습니다.");
+                    .isInstanceOf(NoSuchElementException.class)
+                    .hasMessage("존재하지 않는 메뉴입니다.");
         }
 
         @Test
@@ -148,8 +148,8 @@ public class OrderServiceTest {
         // given
         OrderTable orderTable = orderTableRepository.save(테이블(false));
         Order order1 = orderRepository.save(
-                주문(orderTable, COOKING, List.of(주문_항목(menu.getId(), 2L))));
-        Order order2 = orderRepository.save(주문(orderTable, COOKING, List.of(주문_항목(menu.getId(), 2L))));
+                주문(orderTable, COOKING, List.of(주문_항목(menu, 2L))));
+        Order order2 = orderRepository.save(주문(orderTable, COOKING, List.of(주문_항목(menu, 2L))));
 
         // when
         List<OrderResponse> result = sut.list();
@@ -178,7 +178,7 @@ public class OrderServiceTest {
         void 완료된_주문이라면_예외가_발생한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
+            OrderLineItem orderLineItem = 주문_항목(menu, 2L);
             Order order = orderRepository.save(주문(orderTable, COMPLETION, List.of(orderLineItem)));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(COOKING.name());
 
@@ -192,7 +192,7 @@ public class OrderServiceTest {
         void 주문의_상태가_정상적으로_변경한다() {
             // given
             OrderTable orderTable = orderTableRepository.save(테이블(false));
-            OrderLineItem orderLineItem = 주문_항목(menu.getId(), 2L);
+            OrderLineItem orderLineItem = 주문_항목(menu, 2L);
             Order order = orderRepository.save(주문(orderTable, COOKING, List.of(orderLineItem)));
             OrderStatusUpdateRequest request = new OrderStatusUpdateRequest(MEAL.name());
 

@@ -78,8 +78,8 @@ public class TableGroupUngroupedEventHandlerTest {
         TableGroup tableGroup = tableGroupRepository.save(단체_지정());
         OrderTable orderTable1 = orderTableRepository.save(테이블(false, 0, tableGroup));
         OrderTable orderTable2 = orderTableRepository.save(테이블(false, 0, tableGroup));
-        OrderLineItem orderLineItem1 = 주문_항목(menu.getId(), 2);
-        OrderLineItem orderLineItem2 = 주문_항목(menu.getId(), 2);
+        OrderLineItem orderLineItem1 = 주문_항목(menu, 2);
+        OrderLineItem orderLineItem2 = 주문_항목(menu, 2);
         orderRepository.save(주문(orderTable1, COMPLETION, List.of(orderLineItem1)));
         orderRepository.save(주문(orderTable2, orderStatus, List.of(orderLineItem2)));
 
@@ -105,8 +105,8 @@ public class TableGroupUngroupedEventHandlerTest {
         TableGroup tableGroup = tableGroupRepository.save(단체_지정());
         OrderTable orderTable1 = orderTableRepository.save(테이블(false, 0, tableGroup));
         OrderTable orderTable2 = orderTableRepository.save(테이블(false, 0, tableGroup));
-        OrderLineItem orderLineItem1 = 주문_항목(menu.getId(), 2);
-        OrderLineItem orderLineItem2 = 주문_항목(menu.getId(), 2);
+        OrderLineItem orderLineItem1 = 주문_항목(menu, 2);
+        OrderLineItem orderLineItem2 = 주문_항목(menu, 2);
         orderRepository.save(주문(orderTable1, COMPLETION, List.of(orderLineItem1)));
         orderRepository.save(주문(orderTable2, COMPLETION, List.of(orderLineItem2)));
 
