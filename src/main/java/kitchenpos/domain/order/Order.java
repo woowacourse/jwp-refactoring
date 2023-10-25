@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import static kitchenpos.domain.vo.OrderStatus.COOKING;
 import static kitchenpos.domain.vo.OrderStatus.MEAL;

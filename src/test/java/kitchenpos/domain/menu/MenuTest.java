@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

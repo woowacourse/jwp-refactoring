@@ -1,16 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
-import java.math.BigDecimal;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.domain.vo.Price;
 
 @Entity
-public class Product {
+public class MenuGroup {
 
     private static final int NAME_LENGTH_MAXIMUM = 255;
 
@@ -19,16 +16,18 @@ public class Product {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @Embedded
-    private Price price;
 
-    protected Product() {
+    protected MenuGroup() {
     }
 
-    public Product(final String name, final BigDecimal price) {
+    public MenuGroup(final Long id, final String name) {
         validateName(name);
+        this.id = id;
         this.name = name;
-        this.price = Price.from(price);
+    }
+
+    public MenuGroup(final String name) {
+        this(null, name);
     }
 
     private void validateName(final String name) {
@@ -46,9 +45,5 @@ public class Product {
 
     public String getName() {
         return name;
-    }
-
-    public Price getPrice() {
-        return price;
     }
 }
