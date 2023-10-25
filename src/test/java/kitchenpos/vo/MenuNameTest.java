@@ -1,4 +1,4 @@
-package kitchenpos.domain.vo;
+package kitchenpos.vo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

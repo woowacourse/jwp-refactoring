@@ -1,14 +1,14 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import kitchenpos.config.ServiceTest;
 import kitchenpos.menu.application.request.MenuCreateRequest;
 import kitchenpos.dto.ProductQuantityDto;
 import kitchenpos.menu.application.response.MenuResponse;
-import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import kitchenpos.fixture.MenuGroupFixture;

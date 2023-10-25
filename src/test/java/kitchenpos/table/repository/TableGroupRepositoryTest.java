@@ -1,11 +1,11 @@
-package kitchenpos.repository;
+package kitchenpos.table.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.config.RepositoryTest;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

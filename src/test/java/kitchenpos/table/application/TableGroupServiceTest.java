@@ -1,16 +1,16 @@
-package kitchenpos.application;
+package kitchenpos.table.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.List;
+import kitchenpos.config.ServiceTest;
 import kitchenpos.table.application.request.OrderTableRequest;
 import kitchenpos.table.application.request.TableGroupCreateRequest;
 import kitchenpos.table.application.response.TableGroupResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.order.repository.OrderRepository;

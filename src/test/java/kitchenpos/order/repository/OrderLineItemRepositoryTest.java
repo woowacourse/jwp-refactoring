@@ -1,4 +1,4 @@
-package kitchenpos.repository;
+package kitchenpos.order.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,8 +11,7 @@ import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.repository.OrderLineItemRepository;
-import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.config.RepositoryTest;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.repository.OrderTableRepository;
