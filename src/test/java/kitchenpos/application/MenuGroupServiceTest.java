@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.ui.dto.CreateMenuGroupRequest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.menuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
@@ -24,13 +22,13 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     @DisplayName("메뉴 그룹을 등록한다")
     void create() {
         // given
-        final MenuGroup menuGroup = menuGroup("추천메뉴");
+        final CreateMenuGroupRequest menuGroup = new CreateMenuGroupRequest("추천메뉴");
 
         // when
         final MenuGroup actual = menuGroupService.create(menuGroup);
@@ -43,8 +41,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회한다")
     void list() {
         // given
-        final MenuGroup expect1 = menuGroupDao.save(menuGroup("추천메뉴"));
-        final MenuGroup expect2 = menuGroupDao.save(menuGroup("신메뉴"));
+        final MenuGroup expect1 = menuGroupRepository.save(new MenuGroup("추천메뉴"));
+        final MenuGroup expect2 = menuGroupRepository.save(new MenuGroup("신메뉴"));
 
         // when
         final List<MenuGroup> actual = menuGroupService.list();
@@ -52,8 +50,8 @@ class MenuGroupServiceTest {
         // then
         SoftAssertions.assertSoftly(softAssertions -> {
             softAssertions.assertThat(actual).hasSize(2);
-            softAssertions.assertThat(actual.get(0).getName()).isEqualTo(expect1.getName());
-            softAssertions.assertThat(actual.get(1).getName()).isEqualTo(expect2.getName());
+            softAssertions.assertThat(actual.get(0)).isEqualTo(expect1);
+            softAssertions.assertThat(actual.get(1)).isEqualTo(expect2);
         });
     }
 }
