@@ -43,7 +43,7 @@ public class KitchenposFixture {
         final Field field = ReflectionUtils.findField(OrderTable.class, "id", Long.class);
         assert field != null;
         field.setAccessible(true);
-        ReflectionUtils.setField(field, orderTable, orderTableId);
+        ReflectionUtils.setField(field, orderTable, orderTableId.getId());
 
         return orderTable;
     }

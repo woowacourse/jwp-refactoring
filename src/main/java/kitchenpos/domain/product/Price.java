@@ -37,8 +37,8 @@ public class Price {
         return value.compareTo(BigDecimal.ZERO) < 0;
     }
 
-    public Price multiply(final Price price) {
-        return new Price(this.value.multiply(price.value));
+    public Price multiply(final BigDecimal value) {
+        return new Price(this.value.multiply(value));
     }
 
     public Price add(final Price price) {

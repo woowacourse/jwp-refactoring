@@ -57,7 +57,7 @@ public class MenuService {
         Price sum = new Price(BigDecimal.ZERO);
         for (MenuProductRequest productRequest : menuProductRequests) {
             final Product product = productDao.findMandatoryById(productRequest.getProductId());
-            sum = sum.add(product.multiplyPrice(new Price(BigDecimal.valueOf(productRequest.getQuantity()))));
+            sum = sum.add(product.multiply(new BigDecimal(productRequest.getQuantity())));
         }
 
         if (price.isBiggerThan(sum)) {
