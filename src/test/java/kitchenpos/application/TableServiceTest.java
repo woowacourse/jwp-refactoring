@@ -9,14 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.tablegroup.domain.TableGroup;
 import kitchenpos.fixture.TableGroupFixture;
-import kitchenpos.ui.request.OrderTableCreateRequest;
-import kitchenpos.ui.request.OrderTableUpdateEmptyRequest;
-import kitchenpos.ui.request.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.ordertable.application.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.application.dto.OrderTableUpdateEmptyRequest;
+import kitchenpos.ordertable.application.dto.OrderTableUpdateNumberOfGuestsRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

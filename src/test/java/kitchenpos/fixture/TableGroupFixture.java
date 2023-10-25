@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class TableGroupFixture {
