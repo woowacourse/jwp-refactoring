@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.domain.exception.TableGroupException.CannotAssignOrderTableException;
-import kitchenpos.domain.exception.TableGroupException.InsufficientOrderTableSizeException;
+import kitchenpos.order.domain.exception.TableGroupException.CannotAssignOrderTableException;
+import kitchenpos.order.domain.exception.TableGroupException.InsufficientOrderTableSizeException;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

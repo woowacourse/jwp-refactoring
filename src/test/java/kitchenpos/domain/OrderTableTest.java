@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import java.util.List;
-import kitchenpos.domain.exception.OrderTableException.EmptyTableException;
-import kitchenpos.domain.exception.OrderTableException.ExistsTableGroupException;
-import kitchenpos.domain.exception.OrderTableException.InvalidNumberOfGuestsException;
+import kitchenpos.order.domain.exception.OrderTableException.EmptyTableException;
+import kitchenpos.order.domain.exception.OrderTableException.ExistsTableGroupException;
+import kitchenpos.order.domain.exception.OrderTableException.InvalidNumberOfGuestsException;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -3,7 +3,8 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.exception.ProductException.InvalidProductNameException;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.exception.ProductException.InvalidProductNameException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

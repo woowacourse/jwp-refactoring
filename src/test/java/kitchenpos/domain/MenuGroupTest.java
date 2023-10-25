@@ -2,7 +2,8 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.domain.exception.MenuGroupException.InvalidMenuGroupNameException;
+import kitchenpos.menugroup.domain.exception.MenuGroupException.InvalidMenuGroupNameException;
+import kitchenpos.menugroup.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

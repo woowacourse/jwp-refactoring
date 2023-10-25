@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import java.util.Collections;
-import java.util.List;
-import kitchenpos.domain.exception.OrderException.CompletionOrderException;
-import kitchenpos.domain.exception.OrderException.EmptyOrderLineItemsException;
+import kitchenpos.order.domain.exception.OrderException.CompletionOrderException;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
