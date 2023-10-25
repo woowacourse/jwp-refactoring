@@ -1,33 +1,53 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
-import java.util.List;
+import kitchenpos.domain.vo.Price;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Objects;
 
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @Embedded
+    private Price price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuGroup menuGroup;
+
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu() {
-        this(null, null, null, null, null);
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+    public Menu(final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId, final List<MenuProduct> menuProducts) {
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup, final MenuProducts menuProducts) {
+        validatePrice(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    private void validatePrice(final Price price, final MenuProducts menuProducts) {
+        final Price totalPrice = menuProducts.calculateTotalPrice();
+        if (price.isMoreThan(totalPrice)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override
@@ -35,51 +55,31 @@ public class Menu {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Menu menu = (Menu) o;
-        return Objects.equals(getId(), menu.getId()) && Objects.equals(getName(), menu.getName()) && Objects.equals(getPrice(), menu.getPrice()) && Objects.equals(getMenuGroupId(), menu.getMenuGroupId()) && Objects.equals(getMenuProducts(), menu.getMenuProducts());
+        return Objects.equals(getId(), menu.getId()) && Objects.equals(getName(), menu.getName()) && Objects.equals(getPrice(), menu.getPrice()) && Objects.equals(getMenuGroup(), menu.getMenuGroup()) && Objects.equals(getMenuProducts(), menu.getMenuProducts());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getPrice(), getMenuGroupId(), getMenuProducts());
+        return Objects.hash(getId(), getName(), getPrice(), getMenuGroup(), getMenuProducts());
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

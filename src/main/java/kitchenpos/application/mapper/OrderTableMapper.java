@@ -1,6 +1,5 @@
 package kitchenpos.application.mapper;
 
-import kitchenpos.application.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.request.OrderTableCreateRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
@@ -15,14 +14,8 @@ public class OrderTableMapper {
                 orderTableCreateRequest.isEmpty());
     }
 
-    public static OrderTable mapToOrderTable(final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
-        return new OrderTable(orderTableChangeEmptyRequest.getTableGroupId(),
-                orderTableChangeEmptyRequest.getNumberOfGuests(),
-                orderTableChangeEmptyRequest.isEmpty());
-    }
-
     public static OrderTableResponse mapToResponse(final OrderTable orderTable) {
-        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroupId(),
+        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroup().getId(),
                 orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 }
