@@ -1,7 +1,5 @@
 package kitchenpos.domain.order;
 
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
